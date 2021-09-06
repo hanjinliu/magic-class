@@ -2,7 +2,7 @@ from __future__ import annotations
 import inspect
 from magicgui import magicgui
 from magicgui.widgets import Container, Label, PushButton
-from .utils import iter_members
+from .utils import iter_members, exec_app
 
 # Check if napari is available so that layers are detectable from GUIs.
 try:
@@ -20,7 +20,10 @@ else:
             viewer = None
         return viewer
 
-# TODO: make magicgui options partially selectable.
+# TODO: 
+# - Make magicgui options partially selectable.
+# - Error handling.
+
 
 class BaseGui(Container):
     def __init__(self, layout:str= "vertical", close_on_run:bool=True, name=None):
@@ -64,7 +67,9 @@ class BaseGui(Container):
         if func.__doc__:
             button.tooltip = func.__doc__.strip()
         if len(inspect.signature(func).parameters) == 0:
-            button.changed.connect(func)
+            def run_function(*args):
+                return func()
+            button.changed.connect(run_function)
         else:
             def update_mgui(*args):
                 mgui = magicgui(func)
@@ -96,6 +101,8 @@ class BaseGui(Container):
         self.append(button)
         return None
     
-    def show(self, run:bool=False):
-        super().show(run=run)
+    def show(self):
+        super().show(run=False)
+        self.native.activateWindow()
+        exec_app()
         return None

@@ -1,7 +1,7 @@
 from __future__ import annotations
 from functools import wraps
 from .basegui import BaseGui
-from .utils import check_collision
+from .utils import check_collision, get_app
 
 def magicclass(cls:type|None=None, layout:str="vertical", close_on_run:bool=True):
     """
@@ -41,6 +41,7 @@ def magicclass(cls:type|None=None, layout:str="vertical", close_on_run:bool=True
         
         @wraps(oldclass.__init__)
         def __init__(self, *args, **kwargs):
+            app = get_app()
             super(oldclass, self).__init__(*args, **kwargs)
             BaseGui.__init__(self, layout=layout, close_on_run=close_on_run, name=oldclass.__name__)
             self._convert_methods_into_widgets()
