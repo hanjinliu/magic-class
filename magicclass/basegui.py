@@ -2,6 +2,7 @@ from __future__ import annotations
 import inspect
 from magicgui import magicgui
 from magicgui.widgets import Container, Label, PushButton
+from .utils import iter_members
 
 # Check if napari is available so that layers are detectable from GUIs.
 try:
@@ -22,10 +23,10 @@ else:
 # TODO: make magicgui options partially selectable.
 
 class BaseGui(Container):
-    def __init__(self, layout:str= "vertical", name=None):
+    def __init__(self, layout:str= "vertical", close_on_run:bool=True, name=None):
         super().__init__(layout=layout, labels=False, name=name)
         self._current_dock_widget = None
-        
+        self._close_on_run = close_on_run
     
     def _convert_methods_into_widgets(self):
         cls = self.__class__
@@ -40,9 +41,9 @@ class BaseGui(Container):
         self.append(lbl)
         
         # Bind all the methods
-        base_members = [name for name, _ in inspect.getmembers(BaseGui)]
-        for name, _ in inspect.getmembers(cls):
-            if name.startswith("_") or name in base_members:
+        base_members = set(iter_members(BaseGui))
+        for name in iter_members(cls):
+            if name in base_members:
                 continue
             func = getattr(self, name, None)
             if callable(func):
@@ -50,14 +51,13 @@ class BaseGui(Container):
         
         return self
     
-    def _bind_method(self, func, name=None):
+    def _bind_method(self, func):
         """
         Make a push button from a class method.
         """ 
         if not callable(func):
             raise TypeError(f"{func} is not callable")
-        if name is None:
-            name = func.__name__.replace("_", " ")
+        name = func.__name__.replace("_", " ")
         
         button = PushButton(text=name)
         
@@ -68,12 +68,23 @@ class BaseGui(Container):
         else:
             def update_mgui(*args):
                 mgui = magicgui(func)
-                mgui._call_button.changed.connect(lambda x: mgui.native.close())
                 viewer = get_current_viewer()
                 
                 if viewer is None:
                     mgui.show(True)
+                    if self._close_on_run:
+                        @mgui._call_button.changed.connect
+                        def _(*args):
+                            mgui.native.close()
                 else:
+                    if self._close_on_run:
+                        def _close_widget(*args):
+                            viewer.window.remove_dock_widget(self._current_dock_widget)
+                            mgui.native.close()
+                            self._current_dock_widget = None
+                        
+                        mgui._call_button.changed.connect(_close_widget, position="last")
+                            
                     if self._current_dock_widget:
                         viewer.window.remove_dock_widget(self._current_dock_widget)
                     self._current_dock_widget = viewer.window.add_dock_widget(mgui, name=name)
@@ -85,3 +96,6 @@ class BaseGui(Container):
         self.append(button)
         return None
     
+    def show(self, run:bool=False):
+        super().show(run=run)
+        return None

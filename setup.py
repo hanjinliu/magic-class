@@ -12,7 +12,6 @@ setup(name="magic-class",
       license="GPLv2",
       packages=find_packages(),
       install_requires=[
-            "matplotlib",
             "magicgui>=0.2.10",
       ],
       python_requires=">=3.7",
