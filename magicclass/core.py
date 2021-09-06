@@ -2,7 +2,9 @@ from __future__ import annotations
 from functools import wraps
 from .basegui import BaseGui
 
-def magicclass(cls:type|None=None, parent=None):
+# TODO: check collision
+
+def magicclass(cls:type|None=None, layout="vertical"):
     """
     Decorator that can convert a Python class into a QWidget with push buttons.
     
@@ -12,12 +14,14 @@ def magicclass(cls:type|None=None, parent=None):
     >>> c = C(a=0)
     >>> c.show()
     
+    >>> from pathlib import Path
+    >>>
     >>> @magicclass
     >>> class Reader:
     >>>     def load(self, path:Path):
     >>>         self.data = pd.read_csv(path)
     >>>     
-    >>>     def save(self, path:Path):
+    >>>     def save(self, path:str):
     >>>         self.data.to_csv(path)
             
 
@@ -39,8 +43,7 @@ def magicclass(cls:type|None=None, parent=None):
         @wraps(oldclass.__init__)
         def __init__(self, *args, **kwargs):
             super(oldclass, self).__init__(*args, **kwargs)
-            BaseGui.__init__(self, parent=parent)
-            self.setObjectName(oldclass.__name__)
+            BaseGui.__init__(self, layout=layout, name=oldclass.__name__)
             self._convert_methods_into_widgets()
             
         setattr(newclass, "__init__", __init__)

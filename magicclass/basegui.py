@@ -1,32 +1,43 @@
 from __future__ import annotations
 import inspect
 from magicgui import magicgui
-from qtpy.QtWidgets import QPushButton, QWidget, QVBoxLayout, QLabel
+from magicgui.widgets import Container, Label, PushButton
 
 # Check if napari is available so that layers are detectable from GUIs.
 try:
     import napari
 except ImportError:
     NAPARI_AVAILABLE = False
+    def get_current_viewer() -> None:
+        return None
 else:
     NAPARI_AVAILABLE = True
+    def get_current_viewer() -> "napari.Viewer"|None:
+        try:
+            viewer = napari.current_viewer()
+        except AttributeError:
+            viewer = None
+        return viewer
 
-# TODO: change layout, make magicgui options partially selectable.
+# TODO: make magicgui options partially selectable.
 
-class BaseGui(QWidget):
-    def __init__(self, parent=None):        
-        super().__init__(parent=parent)
-        self.setLayout(QVBoxLayout())
+class BaseGui(Container):
+    def __init__(self, layout:str= "vertical", name=None):
+        super().__init__(layout=layout, labels=False, name=name)
         self._current_dock_widget = None
+        
     
     def _convert_methods_into_widgets(self):
         cls = self.__class__
         
         # Add class docstring as label.
-        lbl = QLabel(self)
+        
         if cls.__doc__:
-            lbl.setText(cls.__doc__.strip())
-        self.layout().addWidget(lbl)
+            doc = cls.__doc__.strip()
+        else:
+            doc = ""
+        lbl = Label(value=doc)
+        self.append(lbl)
         
         # Bind all the methods
         base_members = [name for name, _ in inspect.getmembers(BaseGui)]
@@ -48,19 +59,17 @@ class BaseGui(QWidget):
         if name is None:
             name = func.__name__.replace("_", " ")
         
-        button = QPushButton(name, parent=self)
+        button = PushButton(text=name)
         
         if func.__doc__:
-            button.setToolTip(func.__doc__.strip())
+            button.tooltip = func.__doc__.strip()
         if len(inspect.signature(func).parameters) == 0:
-            button.clicked.connect(func)
+            button.changed.connect(func)
         else:
             def update_mgui(*args):
                 mgui = magicgui(func)
-                if NAPARI_AVAILABLE:
-                    viewer = napari.current_viewer()
-                else:
-                    viewer = None
+                mgui._call_button.changed.connect(lambda x: mgui.native.close())
+                viewer = get_current_viewer()
                 
                 if viewer is None:
                     mgui.show(True)
@@ -71,7 +80,8 @@ class BaseGui(QWidget):
                     self._current_dock_widget.setFloating(True)
                 return None
             
-            button.clicked.connect(update_mgui)
+            button.changed.connect(update_mgui)
         
-        self.layout().addWidget(button)
+        self.append(button)
         return None
+    
