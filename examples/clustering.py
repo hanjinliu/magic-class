@@ -6,6 +6,9 @@ import matplotlib.pyplot as plt
 
 @magicclass
 class Clustering2D:
+    """
+    scikit-learn Kmeans clustering.
+    """
     def __init__(self):
         self.data = None
         self.model = None
@@ -42,5 +45,5 @@ class Clustering2D:
             plt.scatter(d[:,0], d[:,1])
         plt.show()
         
-clstr = Clustering2D()
-clstr.show()
+cl = Clustering2D()
+cl.show()

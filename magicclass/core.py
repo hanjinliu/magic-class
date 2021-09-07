@@ -1,29 +1,18 @@
 from __future__ import annotations
-from functools import wraps
+import inspect
 from .basegui import BaseGui
 from .utils import check_collision, get_app
 
 def magicclass(cls:type|None=None, layout:str="vertical", close_on_run:bool=True):
     """
-    Decorator that can convert a Python class into a QWidget with push buttons.
+    Decorator that can convert a Python class into a widget with push buttons.
     
     >>> @magicclass
     >>> class C:
     >>>     ...
     >>> c = C(a=0)
     >>> c.show()
-    
-    >>> from pathlib import Path
-    >>>
-    >>> @magicclass
-    >>> class Reader:
-    >>>     def load(self, path:Path):
-    >>>         self.data = pd.read_csv(path)
-    >>>     
-    >>>     def save(self, path:str):
-    >>>         self.data.to_csv(path)
             
-
     Parameters
     ----------
     cls : type, optional
@@ -35,14 +24,13 @@ def magicclass(cls:type|None=None, layout:str="vertical", close_on_run:bool=True
     """    
     def wrapper(cls):
         check_collision(cls, BaseGui)
+        doc = cls.__doc__
+        sig = inspect.signature(cls)
         oldclass = type(cls.__name__ + "_Base", (cls,), {})
-        newclass = type(cls.__name__, (oldclass, BaseGui), {})
-        newclass.__doc__ = cls.__doc__
+        newclass = type(cls.__name__, (BaseGui, oldclass), {})
+        newclass.__signature__ = sig
+        newclass.__doc__ = doc
         
-        # TODO: Currently the signature of __init__ contains "cls" or "self". This argument should
-        # be dremoved using inspect._signature_bound_method.
-        
-        @wraps(oldclass.__init__)
         def __init__(self, *args, **kwargs):
             app = get_app() # Without "app = " Jupyter freezes after closing the window!
             super(oldclass, self).__init__(*args, **kwargs)

@@ -25,8 +25,8 @@ else:
 # TODO: 
 # - Make magicgui options partially selectable.
 # - progress bar
-# - some responce when function call finished
-# - matplotlib backend
+# - some responces when function call finished
+# - matplotlib backend (Qt5Agg not working in jupyter!)
 
 class BaseGui(Container):
     def __init__(self, layout:str= "vertical", close_on_run:bool=True, name=None):
@@ -78,9 +78,8 @@ class BaseGui(Container):
         if len(inspect.signature(func).parameters) == 0:
             def run_function(*args):
                 return func()
-            button.changed.connect(run_function)
         else:
-            def update_mgui(*args):
+            def run_function(*args):
                 try:
                     mgui = magicgui(func)
                 except Exception as e:
@@ -113,8 +112,7 @@ class BaseGui(Container):
                     self._current_dock_widget.setFloating(True)
                 return None
             
-            button.changed.connect(update_mgui)
-        
+        button.changed.connect(run_function)
         self.append(button)
         return None
     
@@ -129,7 +127,7 @@ class BaseGui(Container):
     
     def objectName(self):
         """
-        This function let napari's `viewer.window.add_dock_widget` function knows the name.
+        This function make the object name discoverable by napari's `viewer.window.add_dock_widget` function.
         """        
         return self.native.objectName()
     
@@ -147,7 +145,9 @@ def wrap_with_msgbox(func, parent=None):
             out = func(*args, **kwargs)
         except Exception as e:
             raise_error_msg(parent, title=e.__class__.__name__, msg=str(e))
-        else:
-            return out
+            out = None
+        finally:
+            pass
+        return out
     
     return wrapped_func
