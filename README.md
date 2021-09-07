@@ -19,7 +19,6 @@ pip install git+https://github.com/hanjinliu/magic-class
 git clone https://github.com/hanjinliu/magic-class
 ```
 
-
 ### Example
 
 Let's make a simple GUI that can load 1-D data and plot it.
@@ -77,3 +76,5 @@ import napari
 viewer = napari.Viewer()
 viewer.window.add_dock_widget(widget)
 ```
+
+Other examples are in the "examples" folder.
