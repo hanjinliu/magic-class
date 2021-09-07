@@ -70,7 +70,7 @@ You can continue analysis in console.
 widget.plot()
 ```
 
-`magic-class` is also compatible with [napari](). 
+`magic-class` is also compatible with [napari](https://github.com/napari/napari). You can add them to viewers as dock widgets.
 
 ```python
 import napari

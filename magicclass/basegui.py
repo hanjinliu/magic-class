@@ -31,6 +31,7 @@ class BaseGui(Container):
         super().__init__(layout=layout, labels=False, name=name)
         self._current_dock_widget = None
         self._close_on_run = close_on_run
+        self.native.setObjectName(self.__class__.__name__)
     
     def _convert_methods_into_widgets(self):
         cls = self.__class__
@@ -115,6 +116,9 @@ class BaseGui(Container):
         self.native.activateWindow()
         exec_app()
         return None
+    
+    def objectName(self):
+        return self.native.objectName()
     
 def raise_error_msg(parent, title:str="Error", msg:str="error"):
     QMessageBox.critical(parent, title, msg, QMessageBox.Ok)
