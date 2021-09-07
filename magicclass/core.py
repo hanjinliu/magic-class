@@ -41,7 +41,7 @@ def magicclass(cls:type|None=None, layout:str="vertical", close_on_run:bool=True
         
         @wraps(oldclass.__init__)
         def __init__(self, *args, **kwargs):
-            app = get_app()
+            app = get_app() # Without "app = " Jupyter freezes after closing the window!
             super(oldclass, self).__init__(*args, **kwargs)
             BaseGui.__init__(self, layout=layout, close_on_run=close_on_run, name=oldclass.__name__)
             self._convert_methods_into_widgets()

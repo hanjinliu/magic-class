@@ -50,22 +50,25 @@ class BaseGui(Container):
                 continue
             func = getattr(self, name, None)
             if callable(func):
-                self._bind_method(func)
+                self._convert_one_method_into_a_widget(func)
         
         return self
     
-    def _bind_method(self, func):
+    def _convert_one_method_into_a_widget(self, func_):
         """
         Make a push button from a class method.
         """ 
-        if not callable(func):
-            raise TypeError(f"{func} is not callable")
-        name = func.__name__.replace("_", " ")
+        if not callable(func_):
+            raise TypeError(f"{func_} is not callable")
+        name = func_.__name__.replace("_", " ")
         
         button = PushButton(text=name)
-        
-        func = wrap_with_msgbox(func, parent=self.native)
-            
+
+        func = wrap_with_msgbox(func_, parent=self.native)
+        # Strangely, signature must be updated like this. Otherwise, already wrapped member function
+        # will have signature with "self".
+        func.__signature__ = inspect.signature(func_)
+
         if func.__doc__:
             button.tooltip = func.__doc__.strip()
         if len(inspect.signature(func).parameters) == 0:
@@ -123,7 +126,8 @@ def wrap_with_msgbox(func, parent=None):
         try:
             out = func(*args, **kwargs)
         except Exception as e:
-            raise_error_msg(parent, title=e.__class__.__name__, msg=e)
+            raise_error_msg(parent, title=e.__class__.__name__, msg=str(e))
         else:
             return out
+
     return wrapped_func

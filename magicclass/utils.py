@@ -57,6 +57,7 @@ def get_app():
         app = QApplication([])
     global APPLICATION
     APPLICATION = app
+    app.setApplicationName("MagicClass")
     return app
 
 def exec_app():
