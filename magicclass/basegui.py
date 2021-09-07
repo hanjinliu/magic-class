@@ -1,7 +1,9 @@
 from __future__ import annotations
+from functools import wraps
 import inspect
 from magicgui import magicgui
 from magicgui.widgets import Container, Label, PushButton
+from qtpy.QtWidgets import QMessageBox
 from .utils import iter_members, exec_app
 
 # Check if napari is available so that layers are detectable from GUIs.
@@ -35,7 +37,6 @@ class BaseGui(Container):
         cls = self.__class__
         
         # Add class docstring as label.
-        
         if cls.__doc__:
             doc = cls.__doc__.strip()
         else:
@@ -64,6 +65,8 @@ class BaseGui(Container):
         
         button = PushButton(text=name)
         
+        func = wrap_with_msgbox(func, parent=self.native)
+            
         if func.__doc__:
             button.tooltip = func.__doc__.strip()
         if len(inspect.signature(func).parameters) == 0:
@@ -72,7 +75,11 @@ class BaseGui(Container):
             button.changed.connect(run_function)
         else:
             def update_mgui(*args):
-                mgui = magicgui(func)
+                try:
+                    mgui = magicgui(func)
+                except Exception as e:
+                    msg = f"Exception was raised during building magicgui.\n{e.__class__.__name__}: {e}"
+                    raise_error_msg(self.native, msg=msg)
                 viewer = get_current_viewer()
                 
                 if viewer is None:
@@ -106,3 +113,18 @@ class BaseGui(Container):
         self.native.activateWindow()
         exec_app()
         return None
+    
+def raise_error_msg(parent, title:str="Error", msg:str="error"):
+    QMessageBox.critical(parent, title, msg, QMessageBox.Ok)
+    return None
+
+def wrap_with_msgbox(func, parent=None):
+    @wraps(func)
+    def wrapped_func(*args, **kwargs):
+        try:
+            out = func(*args, **kwargs)
+        except Exception as e:
+            raise_error_msg(parent, title=e.__class__.__name__, msg=e)
+        else:
+            return out
+    return wrapped_func
