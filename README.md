@@ -69,3 +69,11 @@ You can continue analysis in console.
 ```python
 widget.plot()
 ```
+
+`magic-class` is also compatible with [napari](). 
+
+```python
+import napari
+viewer = napari.Viewer()
+viewer.window.add_dock_widget(widget)
+```

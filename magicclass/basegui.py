@@ -24,7 +24,6 @@ else:
 
 # TODO: 
 # - Make magicgui options partially selectable.
-# - Error handling.
 
 
 class BaseGui(Container):

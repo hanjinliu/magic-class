@@ -4,10 +4,10 @@ from qtpy.QtWidgets import QApplication
 APPLICATION = None
 
 def iter_members(cls:type, exclude_prefix:str="_") -> str:
-    for name, _ in inspect.getmembers(cls):
-        if name.startswith(exclude_prefix):
-            continue
-        yield name
+    members = filter(lambda x: not x[0].startswith(exclude_prefix),
+                     inspect.getmembers(cls)
+                     )
+    return map(lambda x: x[0], sorted(members, key=get_line_number))
 
 def check_collision(cls0:type, cls1:type):
     mem0 = set(iter_members(cls0, exclude_prefix="__"))
@@ -15,6 +15,13 @@ def check_collision(cls0:type, cls1:type):
     collision = mem0 & mem1
     if collision:
         raise AttributeError(f"Collision: {collision}")
+
+def get_line_number(member) -> int:
+    try:
+        n = member[1].__code__.co_firstlineno
+    except AttributeError:
+        n = -1
+    return n
 
 def gui_qt():
     try:
