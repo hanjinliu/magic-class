@@ -1,0 +1,36 @@
+from magicclass import magicclass
+from sklearn.mixture import GaussianMixture
+from sklearn.cluster import KMeans
+import numpy as np
+import matplotlib.pyplot as plt
+
+@magicclass
+class Clustering2D:
+    def __init__(self):
+        self.data = None
+        self.model = None
+
+    def generate_sample_data(self, n_clusters:int=3, n_samples:int=100):
+        gmm = GaussianMixture(n_components=n_clusters)
+        w = np.random.random(n_clusters)
+        gmm.weights_ = w/np.sum(w)
+        gmm.means_ = np.random.normal(size=(n_clusters, 2))
+        # covariance matrix must be positive-deterministic
+        t = np.random.normal(size=(n_clusters, 2, 2))/3
+        gmm.covariances_ = np.einsum("ijk,ilk->ijl", t, t) 
+        self.data = gmm.sample(n_samples)[0]
+
+    def fit(self, n_clusters:int=3):
+        self.model= KMeans(n_clusters=n_clusters)
+        self.model.fit(self.data)
+        self.n_clusters = n_clusters
+    
+    def plot(self):
+        plt.figure()
+        for i in range(self.n_clusters):
+            d = self.data[self.model.labels_ == i, :]
+            plt.scatter(d[:,0], d[:,1])
+        plt.show()
+        
+clstr = Clustering2D()
+clstr.show()
