@@ -11,6 +11,9 @@ class Clustering2D:
         self.model = None
 
     def generate_sample_data(self, n_clusters:int=3, n_samples:int=100):
+        """
+        Generate random sample data from Gaussian Mixture model.
+        """        
         gmm = GaussianMixture(n_components=n_clusters)
         w = np.random.random(n_clusters)
         gmm.weights_ = w/np.sum(w)
@@ -21,11 +24,18 @@ class Clustering2D:
         self.data = gmm.sample(n_samples)[0]
 
     def fit(self, n_clusters:int=3):
+        """
+        Classify the bound data using K-means method.
+        """        
         self.model= KMeans(n_clusters=n_clusters)
         self.model.fit(self.data)
         self.n_clusters = n_clusters
     
     def plot(self):
+        """
+        Plot the clustering results. Data points belong to different cluster will
+        be plotted in different color.
+        """        
         plt.figure()
         for i in range(self.n_clusters):
             d = self.data[self.model.labels_ == i, :]
