@@ -39,13 +39,16 @@ def magicclass(cls:type|None=None, layout:str="vertical", close_on_run:bool=True
         newclass = type(cls.__name__, (oldclass, BaseGui), {})
         newclass.__doc__ = cls.__doc__
         
+        # TODO: Currently the signature of __init__ contains "cls" or "self". This argument should
+        # be dremoved using inspect._signature_bound_method.
+        
         @wraps(oldclass.__init__)
         def __init__(self, *args, **kwargs):
             app = get_app() # Without "app = " Jupyter freezes after closing the window!
             super(oldclass, self).__init__(*args, **kwargs)
             BaseGui.__init__(self, layout=layout, close_on_run=close_on_run, name=oldclass.__name__)
             self._convert_methods_into_widgets()
-            
+
         setattr(newclass, "__init__", __init__)
         return newclass
     

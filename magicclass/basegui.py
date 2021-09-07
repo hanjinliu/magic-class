@@ -24,7 +24,9 @@ else:
 
 # TODO: 
 # - Make magicgui options partially selectable.
-
+# - progress bar
+# - some responce when function call finished
+# - matplotlib backend
 
 class BaseGui(Container):
     def __init__(self, layout:str= "vertical", close_on_run:bool=True, name=None):
@@ -63,15 +65,16 @@ class BaseGui(Container):
             raise TypeError(f"{func_} is not callable")
         name = func_.__name__.replace("_", " ")
         
-        button = PushButton(text=name)
-
         func = wrap_with_msgbox(func_, parent=self.native)
         # Strangely, signature must be updated like this. Otherwise, already wrapped member function
         # will have signature with "self".
         func.__signature__ = inspect.signature(func_)
 
+        # Prepare a button
+        button = PushButton(text=name)
         if func.__doc__:
             button.tooltip = func.__doc__.strip()
+        
         if len(inspect.signature(func).parameters) == 0:
             def run_function(*args):
                 return func()
@@ -86,12 +89,16 @@ class BaseGui(Container):
                 viewer = get_current_viewer()
                 
                 if viewer is None:
+                    # If napari.Viewer was not found, then open up a magicgui when button is pushed, and close 
+                    # it when function call is finished (if close_on_run==True).
                     mgui.show(True)
                     if self._close_on_run:
                         @mgui._call_button.changed.connect
                         def _(*args):
                             mgui.native.close()
                 else:
+                    # If napari.Viewer was found, then create a magicgui as a dock widget when button is pushed,
+                    # and remove it when function call is finished (if close_on_run==True).
                     if self._close_on_run:
                         def _close_widget(*args):
                             viewer.window.remove_dock_widget(self._current_dock_widget)
@@ -112,12 +119,18 @@ class BaseGui(Container):
         return None
     
     def show(self):
+        """
+        This override assures QApplication is launched.
+        """        
         super().show(run=False)
         self.native.activateWindow()
         exec_app()
         return None
     
     def objectName(self):
+        """
+        This function let napari's `viewer.window.add_dock_widget` function knows the name.
+        """        
         return self.native.objectName()
     
 def raise_error_msg(parent, title:str="Error", msg:str="error"):
@@ -125,6 +138,9 @@ def raise_error_msg(parent, title:str="Error", msg:str="error"):
     return None
 
 def wrap_with_msgbox(func, parent=None):
+    """
+    Wrapper for error handling during GUI running. Instead of raising error in console, show a message box.
+    """    
     @wraps(func)
     def wrapped_func(*args, **kwargs):
         try:
@@ -133,5 +149,5 @@ def wrap_with_msgbox(func, parent=None):
             raise_error_msg(parent, title=e.__class__.__name__, msg=str(e))
         else:
             return out
-
+    
     return wrapped_func
