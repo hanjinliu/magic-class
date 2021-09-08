@@ -11,22 +11,10 @@ from .utils import iter_members
 # Check if napari is available so that layers are detectable from GUIs.
 try:
     import napari
-    # Fully import napari here by requesting "Viewer" attribute. This takes a while, but with out this line
-    # import will take place when get_current_viewer is first called (usually when you first clicked one of
-    # the buttons), which looks like GUI froze.
-    napari.Viewer
 except ImportError:
     NAPARI_AVAILABLE = False
-    def get_current_viewer() -> None:
-        return None
 else:
     NAPARI_AVAILABLE = True
-    def get_current_viewer() -> "napari.Viewer"|None:
-        try:
-            viewer = napari.current_viewer()
-        except AttributeError:
-            viewer = None
-        return viewer
 
 # TODO: 
 # - change button name.
@@ -91,7 +79,12 @@ class BaseGui(Container):
                         msg = f"Exception was raised during building magicgui.\n{e.__class__.__name__}: {e}"
                         raise_error_msg(self.native, msg=msg)
                     
-                    viewer = get_current_viewer()
+                    viewer = None
+                    if NAPARI_AVAILABLE:
+                        try:
+                            viewer = self.parent.parent().qt_viewer.viewer
+                        except AttributeError:
+                            pass
                     
                     if viewer is None:
                         # If napari.Viewer was not found, then open up a magicgui when button is pushed, and 
@@ -137,6 +130,11 @@ class BaseGui(Container):
         This function make the object name discoverable by napari's `viewer.window.add_dock_widget` function.
         """        
         return self.native.objectName()
+    
+    def show(self):
+        super().show()
+        self.native.activateWindow()
+        return None
     
 def raise_error_msg(parent, title:str="Error", msg:str="error"):
     QMessageBox.critical(parent, title, msg, QMessageBox.Ok)
