@@ -27,7 +27,8 @@ def get_line_number(member) -> int:
     Get the line number of a member function in the source code.
     """    
     try:
-        n = member[1].__code__.co_firstlineno
+        original_func = getattr(member[1], "__wrapped__", member[1])
+        n = original_func.__code__.co_firstlineno
     except AttributeError:
         n = -1
     return n
