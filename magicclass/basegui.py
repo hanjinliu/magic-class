@@ -78,13 +78,15 @@ class BaseGui(Container):
             else:
                 def run_function(*args):
                     try:
-                        params = self._parameter_history.get(func.__name__, {})
                         mgui = magicgui(func)
+                        # Recover last inputs if exists.
+                        params = self._parameter_history.get(func.__name__, {})
                         for key, value in params.items():
                             getattr(mgui, key).value = value
                     except Exception as e:
                         msg = f"Exception was raised during building magicgui.\n{e.__class__.__name__}: {e}"
                         raise_error_msg(self.native, msg=msg)
+                        
                     viewer = get_current_viewer()
                     
                     if viewer is None:
@@ -95,7 +97,7 @@ class BaseGui(Container):
                             @mgui._call_button.changed.connect
                             def _close_widget(*args):
                                 inputs = {param: getattr(mgui, param).value
-                                        for param in mgui.__signature__.parameters.keys()}
+                                          for param in mgui.__signature__.parameters.keys()}
                                 self._parameter_history.update({func.__name__: inputs})
                                 mgui.native.close()
                     else:
@@ -108,7 +110,7 @@ class BaseGui(Container):
                                 self._current_dock_widget = None
                             
                             mgui._call_button.changed.connect(_close_widget, position="last")
-                                
+                            
                         if self._current_dock_widget:
                             viewer.window.remove_dock_widget(self._current_dock_widget)
                         self._current_dock_widget = viewer.window.add_dock_widget(mgui, name=name)
@@ -116,17 +118,14 @@ class BaseGui(Container):
                     return None
                 
             button.changed.connect(run_function)
+            try:
+                if not obj.__signature__.enabled:
+                    button.enabled = False
+            except AttributeError:
+                pass
             obj = button
             
         super().append(obj)
-        return None
-
-    def show(self):
-        """
-        This override assures QApplication is launched.
-        """        
-        super().show(run=False)
-        self.native.activateWindow()
         return None
     
     def objectName(self):
