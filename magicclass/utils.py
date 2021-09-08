@@ -59,11 +59,3 @@ def get_app():
     global APPLICATION
     APPLICATION = app
     return app
-
-def exec_app():
-    """
-    Execute QApplication. This function must be called right after showing some QWidget.
-    """    
-    app = QApplication.instance()
-    app.exec_()
-    return None

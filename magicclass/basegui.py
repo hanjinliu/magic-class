@@ -4,7 +4,7 @@ import inspect
 from magicgui import magicgui
 from magicgui.widgets import Container, Label, PushButton
 from qtpy.QtWidgets import QMessageBox
-from .utils import iter_members, exec_app
+from .utils import iter_members
 
 # Check if napari is available so that layers are detectable from GUIs.
 try:
@@ -122,7 +122,6 @@ class BaseGui(Container):
         """        
         super().show(run=False)
         self.native.activateWindow()
-        exec_app()
         return None
     
     def objectName(self):
