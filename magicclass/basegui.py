@@ -1,8 +1,10 @@
 from __future__ import annotations
 from functools import wraps
+from typing import Callable
 import inspect
 from magicgui import magicgui
 from magicgui.widgets import Container, Label, PushButton
+from magicgui.widgets._bases import Widget
 from qtpy.QtWidgets import QMessageBox
 from .utils import iter_members
 
@@ -24,10 +26,9 @@ else:
 
 # TODO: 
 # - Make magicgui options partially selectable.
-# - remember last input
 # - progress bar
 # - some responces when function call finished
-# - matplotlib backend (Qt5Agg not working in jupyter!)
+# - think of nesting magic-class
 
 class BaseGui(Container):
     def __init__(self, layout:str= "vertical", close_on_run:bool=True, name=None):
@@ -43,87 +44,83 @@ class BaseGui(Container):
         # Add class docstring as label.
         if cls.__doc__:
             doc = cls.__doc__.strip()
-        else:
-            doc = ""
-        lbl = Label(value=doc)
-        self.append(lbl)
+            lbl = Label(value=doc)
+            self.append(lbl)
         
         # Bind all the methods
         base_members = set(iter_members(BaseGui))
-        for name in iter_members(cls):
-            if name in base_members:
-                continue
+        for name in filter(lambda x: x not in base_members, iter_members(cls)):
             func = getattr(self, name, None)
             if callable(func):
-                self._convert_one_method_into_a_widget(func)
+                self.append(func)
         
         return self
     
-    def _convert_one_method_into_a_widget(self, func_):
+    def append(self, obj:Widget|Callable) -> None:
         """
-        Make a push button from a class method.
-        """ 
-        if not callable(func_):
-            raise TypeError(f"{func_} is not callable")
-        name = func_.__name__.replace("_", " ")
+        This override enables methods/functions to be appended into Container widgets.
+        """        
+        if not isinstance(obj, Widget) and callable(obj):
+            name = obj.__name__.replace("_", " ")
         
-        func = wrap_with_msgbox(func_, parent=self.native)
-        # Strangely, signature must be updated like this. Otherwise, already wrapped member function
-        # will have signature with "self".
-        func.__signature__ = inspect.signature(func_)
+            func = wrap_with_msgbox(obj, parent=self.native)
+            # Strangely, signature must be updated like this. Otherwise, already wrapped member function
+            # will have signature with "self".
+            func.__signature__ = inspect.signature(obj)
 
-        # Prepare a button
-        button = PushButton(text=name)
-        if func.__doc__:
-            button.tooltip = func.__doc__.strip()
-        
-        if len(inspect.signature(func).parameters) == 0:
-            def run_function(*args):
-                return func()
-        else:
-            def run_function(*args):
-                try:
-                    params = self._parameter_history.get(func.__name__, {})
-                    mgui = magicgui(func)
-                    for key, value in params.items():
-                        getattr(mgui, key).value = value
-                except Exception as e:
-                    msg = f"Exception was raised during building magicgui.\n{e.__class__.__name__}: {e}"
-                    raise_error_msg(self.native, msg=msg)
-                viewer = get_current_viewer()
-                
-                if viewer is None:
-                    # If napari.Viewer was not found, then open up a magicgui when button is pushed, and close 
-                    # it when function call is finished (if close_on_run==True).
-                    mgui.show(True)
-                    if self._close_on_run:
-                        @mgui._call_button.changed.connect
-                        def _close_widget(*args):
-                            inputs = {param: getattr(mgui, param).value 
-                                      for param in mgui.__signature__.parameters.keys()}
-                            self._parameter_history.update({func.__name__: inputs})
-                            mgui.native.close()
-                else:
-                    # If napari.Viewer was found, then create a magicgui as a dock widget when button is pushed,
-                    # and remove it when function call is finished (if close_on_run==True).
-                    if self._close_on_run:
-                        def _close_widget(*args):
-                            viewer.window.remove_dock_widget(self._current_dock_widget)
-                            mgui.native.close()
-                            self._current_dock_widget = None
-                        
-                        mgui._call_button.changed.connect(_close_widget, position="last")
-                            
-                    if self._current_dock_widget:
-                        viewer.window.remove_dock_widget(self._current_dock_widget)
-                    self._current_dock_widget = viewer.window.add_dock_widget(mgui, name=name)
-                    self._current_dock_widget.setFloating(True)
-                return None
+            # Prepare a button
+            button = PushButton(text=name)
+            button.tooltip = func.__doc__.strip() if func.__doc__ else ""
             
-        button.changed.connect(run_function)
-        self.append(button)
+            if len(inspect.signature(func).parameters) == 0:
+                def run_function(*args):
+                    return func()
+            else:
+                def run_function(*args):
+                    try:
+                        params = self._parameter_history.get(func.__name__, {})
+                        mgui = magicgui(func)
+                        for key, value in params.items():
+                            getattr(mgui, key).value = value
+                    except Exception as e:
+                        msg = f"Exception was raised during building magicgui.\n{e.__class__.__name__}: {e}"
+                        raise_error_msg(self.native, msg=msg)
+                    viewer = get_current_viewer()
+                    
+                    if viewer is None:
+                        # If napari.Viewer was not found, then open up a magicgui when button is pushed, and 
+                        # close it when function call is finished (if close_on_run==True).
+                        mgui.show(True)
+                        if self._close_on_run:
+                            @mgui._call_button.changed.connect
+                            def _close_widget(*args):
+                                inputs = {param: getattr(mgui, param).value
+                                        for param in mgui.__signature__.parameters.keys()}
+                                self._parameter_history.update({func.__name__: inputs})
+                                mgui.native.close()
+                    else:
+                        # If napari.Viewer was found, then create a magicgui as a dock widget when button is 
+                        # pushed, and remove it when function call is finished (if close_on_run==True).
+                        if self._close_on_run:
+                            def _close_widget(*args):
+                                viewer.window.remove_dock_widget(self._current_dock_widget)
+                                mgui.native.close()
+                                self._current_dock_widget = None
+                            
+                            mgui._call_button.changed.connect(_close_widget, position="last")
+                                
+                        if self._current_dock_widget:
+                            viewer.window.remove_dock_widget(self._current_dock_widget)
+                        self._current_dock_widget = viewer.window.add_dock_widget(mgui, name=name)
+                        self._current_dock_widget.setFloating(True)
+                    return None
+                
+            button.changed.connect(run_function)
+            obj = button
+            
+        super().append(obj)
         return None
-    
+
     def show(self):
         """
         This override assures QApplication is launched.
