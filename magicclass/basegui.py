@@ -24,6 +24,7 @@ else:
 
 # TODO: 
 # - Make magicgui options partially selectable.
+# - remember last input
 # - progress bar
 # - some responces when function call finished
 # - matplotlib backend (Qt5Agg not working in jupyter!)
@@ -33,6 +34,7 @@ class BaseGui(Container):
         super().__init__(layout=layout, labels=False, name=name)
         self._current_dock_widget = None
         self._close_on_run = close_on_run
+        self._parameter_history:dict[str, dict[str]] = {}
         self.native.setObjectName(self.__class__.__name__)
     
     def _convert_methods_into_widgets(self):
@@ -81,7 +83,10 @@ class BaseGui(Container):
         else:
             def run_function(*args):
                 try:
+                    params = self._parameter_history.get(func.__name__, {})
                     mgui = magicgui(func)
+                    for key, value in params.items():
+                        getattr(mgui, key).value = value
                 except Exception as e:
                     msg = f"Exception was raised during building magicgui.\n{e.__class__.__name__}: {e}"
                     raise_error_msg(self.native, msg=msg)
@@ -93,7 +98,10 @@ class BaseGui(Container):
                     mgui.show(True)
                     if self._close_on_run:
                         @mgui._call_button.changed.connect
-                        def _(*args):
+                        def _close_widget(*args):
+                            inputs = {param: getattr(mgui, param).value 
+                                      for param in mgui.__signature__.parameters.keys()}
+                            self._parameter_history.update({func.__name__: inputs})
                             mgui.native.close()
                 else:
                     # If napari.Viewer was found, then create a magicgui as a dock widget when button is pushed,
