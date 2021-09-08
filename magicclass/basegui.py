@@ -11,6 +11,10 @@ from .utils import iter_members
 # Check if napari is available so that layers are detectable from GUIs.
 try:
     import napari
+    # Fully import napari here by requesting "Viewer" attribute. This takes a while, but with out this line
+    # import will take place when get_current_viewer is first called (usually when you first clicked one of
+    # the buttons), which looks like GUI froze.
+    napari.Viewer
 except ImportError:
     NAPARI_AVAILABLE = False
     def get_current_viewer() -> None:
@@ -25,7 +29,7 @@ else:
         return viewer
 
 # TODO: 
-# - Make magicgui options partially selectable.
+# - change button name.
 # - progress bar
 # - some responces when function call finished
 # - think of nesting magic-class
@@ -86,7 +90,7 @@ class BaseGui(Container):
                     except Exception as e:
                         msg = f"Exception was raised during building magicgui.\n{e.__class__.__name__}: {e}"
                         raise_error_msg(self.native, msg=msg)
-                        
+                    
                     viewer = get_current_viewer()
                     
                     if viewer is None:
