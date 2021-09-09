@@ -6,6 +6,8 @@ from magicgui import magicgui
 from magicgui.widgets import Container, Label, PushButton
 from magicgui.widgets._bases import Widget
 from qtpy.QtWidgets import QMessageBox
+from qtpy.QtGui import QIcon
+from qtpy.QtCore import QSize
 from .utils import iter_members
 
 # Check if napari is available so that layers are detectable from GUIs.
@@ -17,27 +19,11 @@ else:
     NAPARI_AVAILABLE = True
 
 # TODO: 
-# - change button name.
 # - progress bar
 # - some responses when function call finished
 # - think of nesting magic-class
-# - separator
-#   from qtpy.QtWidgets import QFrame
-#   line = QFrame()
-#   line.setFrameShape(QFrame.HLine)
-#   line.setFrameShadow(QFrame.Sunken)
-# - figure
-#   from matplotlib.backends.backend_qt5agg import FigureCanvas
-#   fig, ax = plt.subplots()
-#   canvas = FigureCanvas(fig)
-#   container.native.layout().addWidget(canvas)
-# - icon
-#   from qtpy.QtGui import QIcon, QPixmap
-#   button = PushButton()
-#   pixmap = QPixmap(r"C:\Users\liuha\Desktop\icontest.png")
-#   icon = QIcon(pixmap)
-#   button.native.setIcon(icon)
-#   button.native.setIconSize(pixmap.rect().size())
+# - no-popup mode
+#- "exclusive" mode
 
 class BaseGui(Container):
     def __init__(self, layout:str= "vertical", close_on_run:bool=True, name=None):
@@ -90,8 +76,8 @@ class BaseGui(Container):
                         func_obj_name = f"function-{id(func)}"
                         mgui = magicgui(func)
                         mgui.name = func_obj_name
-                        # sep = separator(self.native, name=name)
-                        # mgui.native.layout().insertWidget(0, sep)
+                        # sep =h_ separator(name=name)
+                        # mgui.insert(0, sep)
                         # Recover last inputs if exists.
                         params = self._parameter_history.get(func.__name__, {})
                         for key, value in params.items():
@@ -140,8 +126,7 @@ class BaseGui(Container):
                 
             button.changed.connect(run_function)
             try:
-                for k, v in obj.__signature__.caller_options.items():
-                    v is None or setattr(button, k, v)
+                signature_to_button_design(obj.__signature__.caller_options, button)
             except AttributeError:
                 pass
             obj = button
@@ -180,3 +165,30 @@ def wrap_with_msgbox(func, parent=None):
         return out
     
     return wrapped_func
+
+def signature_to_button_design(options:dict[str], button:PushButton):
+    # Set Icon
+    icon_path = options.get("icon_path", None)
+    icon_size = options.get("icon_size", None)
+    
+    if icon_path is not None:
+        icon = QIcon(icon_path)
+        button.native.setIcon(icon)
+        button.text = ""
+        if icon_size is not None:
+            button.native.setIconSize(QSize(*icon_size))
+    
+    # Set font
+    font_size = options.get("font_size", None)
+    if font_size is not None:
+        font = button.native.font()
+        font.setPointSize(font_size)
+        button.native.setFont(font)
+        
+    attrs = ("width", "height", "min_width", "min_height", "max_width", "max_height", "text")
+    
+    for k in attrs:
+        v = options.get(k, None)
+        if v is not None:
+            setattr(button, k, v)
+    return None

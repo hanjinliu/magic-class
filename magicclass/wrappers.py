@@ -20,17 +20,51 @@ def set_options(**options):
         return func
     return wrapper
 
-def button_design(width=None, height=None, min_width=None, min_height=None,
-                  max_width=None, max_height=None, text=None):
-    
+def button_design(width:int=None, height:int=None, min_width:int=None, min_height:int=None,
+                  max_width:int=None, max_height:int=None, text:str=None, 
+                  icon_path:str=None, icon_size:tuple[int,int]=None,
+                  font_size:int=None):
+    """
+    Change button design by calling setter when the button is created.
+
+    Parameters
+    ----------
+    width : int, optional
+        Button width. Call ``button.width = width``.
+    height : int, optional
+        Button height. Call ``button.height = height``.
+    min_width : int, optional
+        Button minimum width. Call ``button.min_width = min_width``.
+    min_height : int, optional
+        Button minimum height. Call ``button.min_height = min_height``.
+    max_width : int, optional
+        Button maximum width. Call ``button.max_width = max_width``.
+    max_height : int, optional
+        Button maximum height. Call ``button.max_height = max_height``.
+    text : str, optional
+        Button text. Call ``button.text = text``.
+    icon_path : str, optional
+        Path to icon file. ``min_width`` and ``min_height`` will be automatically set to the icon size
+        if not given.
+    icon_size : tuple of two int, optional
+        Icon size.
+    font_size : int, optional
+        Font size of the text.
+    """    
+    if icon_size is not None:
+        if min_width is None:
+            min_width = icon_size[0]
+        if min_height is None:
+            min_height = icon_size[1]
     caller_options = dict(width=width, height=height, min_width=min_width, min_height=min_height,
-                          max_width=max_width, max_height=max_height, text=text)
+                          max_width=max_width, max_height=max_height, text=text, icon_path=icon_path,
+                          icon_size=icon_size, font_size=font_size)
     def wrapper(func):
         if hasattr(func, "__signature__") and isinstance(func.__signature__, MagicMethodSignature):
             func.__signature__.caller_options.update(caller_options)
         else:
             msig = magic_signature(func, gui_options={})
-            func.__signature__ = MagicMethodSignature.from_magicsignature(msig, caller_options={caller_options})
+            func.__signature__ = MagicMethodSignature.from_magicsignature(msig, caller_options=caller_options)
         return func
     return wrapper
 
