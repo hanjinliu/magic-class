@@ -23,6 +23,9 @@ def magicclass(cls:type|None=None, layout:str="vertical", close_on_run:bool=True
     Decorated class or decorator.
     """    
     def wrapper(cls):
+        if not isinstance(cls, type):
+            raise TypeError(f"magicclass can only wrap classes, not {type(cls)}")
+        
         check_collision(cls, BaseGui)
         doc = cls.__doc__
         sig = inspect.signature(cls)
@@ -36,6 +39,8 @@ def magicclass(cls:type|None=None, layout:str="vertical", close_on_run:bool=True
             super(oldclass, self).__init__(*args, **kwargs)
             BaseGui.__init__(self, layout=layout, close_on_run=close_on_run, name=oldclass.__name__)
             self._convert_methods_into_widgets()
+            if hasattr(self, "__post_init__"):
+                self.__post_init__()
 
         setattr(newclass, "__init__", __init__)
         return newclass
