@@ -19,8 +19,25 @@ else:
 # TODO: 
 # - change button name.
 # - progress bar
-# - some responces when function call finished
+# - some responses when function call finished
 # - think of nesting magic-class
+# - separator
+#   from qtpy.QtWidgets import QFrame
+#   line = QFrame()
+#   line.setFrameShape(QFrame.HLine)
+#   line.setFrameShadow(QFrame.Sunken)
+# - figure
+#   from matplotlib.backends.backend_qt5agg import FigureCanvas
+#   fig, ax = plt.subplots()
+#   canvas = FigureCanvas(fig)
+#   container.native.layout().addWidget(canvas)
+# - icon
+#   from qtpy.QtGui import QIcon, QPixmap
+#   button = PushButton()
+#   pixmap = QPixmap(r"C:\Users\liuha\Desktop\icontest.png")
+#   icon = QIcon(pixmap)
+#   button.native.setIcon(icon)
+#   button.native.setIconSize(pixmap.rect().size())
 
 class BaseGui(Container):
     def __init__(self, layout:str= "vertical", close_on_run:bool=True, name=None):
@@ -54,6 +71,7 @@ class BaseGui(Container):
         """        
         if not isinstance(obj, Widget) and callable(obj):
             name = obj.__name__.replace("_", " ")
+            button = PushButton(name=obj.__name__, text=name)
         
             func = wrap_with_msgbox(obj, parent=self.native)
             # Strangely, signature must be updated like this. Otherwise, already wrapped member function
@@ -61,7 +79,6 @@ class BaseGui(Container):
             func.__signature__ = inspect.signature(obj)
 
             # Prepare a button
-            button = PushButton(text=name)
             button.tooltip = func.__doc__.strip() if func.__doc__ else ""
             
             if len(inspect.signature(func).parameters) == 0:
@@ -70,7 +87,11 @@ class BaseGui(Container):
             else:
                 def run_function(*args):
                     try:
+                        func_obj_name = f"function-{id(func)}"
                         mgui = magicgui(func)
+                        mgui.name = func_obj_name
+                        # sep = separator(self.native, name=name)
+                        # mgui.native.layout().insertWidget(0, sep)
                         # Recover last inputs if exists.
                         params = self._parameter_history.get(func.__name__, {})
                         for key, value in params.items():
@@ -78,6 +99,7 @@ class BaseGui(Container):
                     except Exception as e:
                         msg = f"Exception was raised during building magicgui.\n{e.__class__.__name__}: {e}"
                         raise_error_msg(self.native, msg=msg)
+                        return None
                     
                     viewer = None
                     if NAPARI_AVAILABLE:
@@ -90,12 +112,14 @@ class BaseGui(Container):
                         # If napari.Viewer was not found, then open up a magicgui when button is pushed, and 
                         # close it when function call is finished (if close_on_run==True).
                         mgui.show(True)
+                        # self.append(mgui)
                         if self._close_on_run:
                             @mgui._call_button.changed.connect
                             def _close_widget(*args):
                                 inputs = {param: getattr(mgui, param).value
                                           for param in mgui.__signature__.parameters.keys()}
                                 self._parameter_history.update({func.__name__: inputs})
+                                # self.remove(func_obj_name)
                                 mgui.native.close()
                     else:
                         # If napari.Viewer was found, then create a magicgui as a dock widget when button is 
@@ -116,8 +140,8 @@ class BaseGui(Container):
                 
             button.changed.connect(run_function)
             try:
-                if not obj.__signature__.enabled:
-                    button.enabled = False
+                for k, v in obj.__signature__.caller_options.items():
+                    v is None or setattr(button, k, v)
             except AttributeError:
                 pass
             obj = button
