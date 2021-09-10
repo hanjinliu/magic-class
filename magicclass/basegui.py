@@ -3,12 +3,10 @@ from functools import wraps
 from typing import Callable
 import inspect
 from magicgui import magicgui
-from magicgui.widgets import Container, Label, PushButton
+from magicgui.widgets import Container, Label
 from magicgui.widgets._bases import Widget
-from qtpy.QtWidgets import QMessageBox
-from qtpy.QtGui import QIcon
-from qtpy.QtCore import QSize
 from .utils import iter_members
+from .widgets import PushButtonPlus, raise_error_msg
 
 # Check if napari is available so that layers are detectable from GUIs.
 try:
@@ -57,7 +55,7 @@ class BaseGui(Container):
         """        
         if not isinstance(obj, Widget) and callable(obj):
             name = obj.__name__.replace("_", " ")
-            button = PushButton(name=obj.__name__, text=name)
+            button = PushButtonPlus(name=obj.__name__, text=name)
         
             func = wrap_with_msgbox(obj, parent=self.native)
             # Strangely, signature must be updated like this. Otherwise, already wrapped member function
@@ -126,9 +124,12 @@ class BaseGui(Container):
                 
             button.changed.connect(run_function)
             try:
-                signature_to_button_design(obj.__signature__.caller_options, button)
+                options = obj.__signature__.caller_options
             except AttributeError:
                 pass
+            else:
+                button.from_options(options)
+                
             obj = button
             
         super().append(obj)
@@ -145,9 +146,6 @@ class BaseGui(Container):
         self.native.activateWindow()
         return None
     
-def raise_error_msg(parent, title:str="Error", msg:str="error"):
-    QMessageBox.critical(parent, title, msg, QMessageBox.Ok)
-    return None
 
 def wrap_with_msgbox(func, parent=None):
     """
@@ -166,28 +164,8 @@ def wrap_with_msgbox(func, parent=None):
     
     return wrapped_func
 
-def signature_to_button_design(options:dict[str], button:PushButton):
-    # Set Icon
-    icon_path = options.get("icon_path", None)
-    icon_size = options.get("icon_size", None)
-    
-    if icon_path is not None:
-        icon = QIcon(icon_path)
-        button.native.setIcon(icon)
-        button.text = ""
-        if icon_size is not None:
-            button.native.setIconSize(QSize(*icon_size))
-    
-    # Set font
-    font_size = options.get("font_size", None)
-    if font_size is not None:
-        font = button.native.font()
-        font.setPointSize(font_size)
-        button.native.setFont(font)
-        
-    attrs = ("width", "height", "min_width", "min_height", "max_width", "max_height", "text")
-    
-    for k in attrs:
+def signature_to_button_design(options:dict[str], button:PushButtonPlus):
+    for k, v in options.items():
         v = options.get(k, None)
         if v is not None:
             setattr(button, k, v)

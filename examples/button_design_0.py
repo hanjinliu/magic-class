@@ -3,8 +3,7 @@ from magicclass import magicclass, button_design
 @magicclass(layout="horizontal")
 class Main:
     def __init__(self):
-        self.a = 0
-        self.b = True
+        self.refresh()
         
     @button_design(text="🔍", font_size=30)
     def search(self, keyword:str): 
