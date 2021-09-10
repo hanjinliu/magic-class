@@ -20,8 +20,7 @@ else:
 # - progress bar
 # - some responses when function call finished, like "idle" and "busy"
 # - think of nesting magic-class
-# - class attr
-# - "exclusive" mode
+# - "exclusive" mode <- first add "current call conut" property to PushButtonPlus
 
 
 class BaseGui(Container):
@@ -159,6 +158,7 @@ def _wrap_with_msgbox(func, parent=None):
     """
     Wrapper for error handling during GUI running. Instead of raising error in console, show a message box.
     """    
+    # TODO: Should be wrapped in notification manager if the widget is dockec in napari.
     @wraps(func)
     def wrapped_func(*args, **kwargs):
         try:
