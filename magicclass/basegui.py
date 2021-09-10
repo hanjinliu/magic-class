@@ -18,9 +18,11 @@ else:
 
 # TODO: 
 # - progress bar
-# - some responses when function call finished
+# - some responses when function call finished, like "idle" and "busy"
 # - think of nesting magic-class
-#- "exclusive" mode
+# - class attr
+# - "exclusive" mode
+
 
 class BaseGui(Container):
     def __init__(self, layout:str= "vertical", close_on_run:bool=True, popup:bool=True, name=None):
@@ -53,7 +55,7 @@ class BaseGui(Container):
         """
         This override enables methods/functions to be appended into Container widgets.
         """        
-        if not isinstance(obj, Widget) and callable(obj):
+        if (not isinstance(obj, Widget)) and callable(obj):
             name = obj.__name__.replace("_", " ")
             button = PushButtonPlus(name=obj.__name__, text=name)
         
