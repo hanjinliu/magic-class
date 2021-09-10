@@ -58,12 +58,14 @@ class PushButtonPlus(PushButton):
     
     @property
     def background_color(self):
-        return self.native.palette.color()
+        return self.native.palette().button().color().getRgb()
     
     @background_color.setter
     def background_color(self, color:str|Sequence[float]):
         stylesheet = self.native.styleSheet()
-        stylesheet += f"background-color: {_to_rgb(color)};"
+        d = _stylesheet_to_dict(stylesheet)
+        d.update({"background-color": _to_rgb(color)})
+        stylesheet = _dict_to_stylesheet(d)
         self.native.setStyleSheet(stylesheet)
         
     @property
@@ -97,13 +99,14 @@ class PushButtonPlus(PushButton):
         
     @property
     def font_color(self):
-        # return self.native
         ...
     
     @font_color.setter
     def font_color(self, color:str|Sequence[float]):
         stylesheet = self.native.styleSheet()
-        stylesheet += f"color: {_to_rgb(color)};"
+        d = _stylesheet_to_dict(stylesheet)
+        d.update({"color": _to_rgb(color)})
+        stylesheet = _dict_to_stylesheet(d)
         self.native.setStyleSheet(stylesheet)
 
     @property
@@ -126,5 +129,19 @@ class PushButtonPlus(PushButton):
 def _to_rgb(color):
     if isinstance(color, str):
         color = to_rgb(color)
-    r, g, b = [int(c*255) for c in color]
-    return f"rgb({r},{g},{b})"
+    rgb = ",".join(str(max(min(int(c*255), 255), 0)) for c in color)
+    return f"rgb({rgb})"
+
+def _stylesheet_to_dict(stylesheet:str):
+    if stylesheet == "":
+        return {}
+    lines = stylesheet.split(";")
+    d = dict()
+    for line in lines:
+        k, v = line.split(":")
+        d[k.strip()] = v.strip()
+    return d
+
+def _dict_to_stylesheet(d:dict):
+    stylesheet = [f"{k}: {v}" for k, v in d.items()]
+    return ";".join(stylesheet)
