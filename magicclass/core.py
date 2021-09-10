@@ -1,7 +1,17 @@
 from __future__ import annotations
 import inspect
+from dataclasses import is_dataclass
 from .basegui import BaseGui
 from .utils import check_collision, get_app
+
+# TODO: dataclass compatibility
+# @dataclass
+# @magicclass
+# ... doesn't work if __post_init__ is defined
+# @magicclass
+# @dataclass
+# ... doesn't work in any cases.
+
 
 def magicclass(cls:type|None=None, layout:str="vertical", close_on_run:bool=True,
                popup:bool=True):
@@ -34,6 +44,8 @@ def magicclass(cls:type|None=None, layout:str="vertical", close_on_run:bool=True
     def wrapper(cls):
         if not isinstance(cls, type):
             raise TypeError(f"magicclass can only wrap classes, not {type(cls)}")
+        elif is_dataclass(cls):
+            raise TypeError(f"Type 'dataclass' is currently incompatible with magicclass.")
         
         check_collision(cls, BaseGui)
         doc = cls.__doc__

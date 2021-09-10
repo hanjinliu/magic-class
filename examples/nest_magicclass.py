@@ -35,4 +35,5 @@ class Main:
     def start_class_B(self):
         self.b.show()
 
-Main().show()
+if __name__ == "__main__":
+    Main().show()

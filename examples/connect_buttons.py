@@ -26,4 +26,5 @@ class Steps:
         """        
         print(f"Result is {self.x}")
 
-Steps().show()
+if __name__ == "__main__":
+    Steps().show()

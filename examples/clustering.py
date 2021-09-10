@@ -44,6 +44,7 @@ class Clustering2D:
             d = self.data[self.model.labels_ == i, :]
             plt.scatter(d[:,0], d[:,1])
         plt.show()
-        
-cl = Clustering2D()
-cl.show()
+
+if __name__ == "__main__":
+    cl = Clustering2D()
+    cl.show()

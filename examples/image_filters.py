@@ -62,7 +62,8 @@ class Filters:
         return ndi.gaussian_filter(img, low_sigma) - \
                   ndi.gaussian_filter(img, high_sigma)
 
-filt = Filters()
-viewer = napari.Viewer()
-viewer.window.add_dock_widget(filt)
-napari.run()
+if __name__ == "__main__":
+    filt = Filters()
+    viewer = napari.Viewer()
+    viewer.window.add_dock_widget(filt)
+    napari.run()

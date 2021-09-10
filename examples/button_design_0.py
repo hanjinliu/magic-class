@@ -19,5 +19,6 @@ class Main:
         self.a = a
         self.b = b
 
-m = Main()
-m.show()
+if __name__ == "__main__":
+    m = Main()
+    m.show()

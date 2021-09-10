@@ -18,4 +18,5 @@ class Main:
     def choose_one(self, c):
         print(c)
 
-Main().show()
+if __name__ == "__main__":
+    Main().show()

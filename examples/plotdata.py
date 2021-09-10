@@ -35,5 +35,6 @@ class PlotData:
         plt.plot(self.data)
         plt.show()
 
-plotdata = PlotData()
-plotdata.show()
+if __name__ == "__main__":
+    plotdata = PlotData()
+    plotdata.show()
