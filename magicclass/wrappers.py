@@ -1,11 +1,12 @@
 from __future__ import annotations
 from functools import wraps
 import inspect
-from typing import Iterable, Sequence, Union
+from typing import Iterable, Union
 from magicgui.signature import magic_signature, MagicSignature, cast
 from magicgui.widgets import PushButton
 
-Color = Union[str, Sequence[float]]
+Color = Union[str, Iterable[float]]
+nStrings = Union[str, Iterable[str]]
 
 def set_options(**options):
     """
@@ -72,8 +73,8 @@ def button_design(width:int=None, height:int=None, min_width:int=None, min_heigh
         return func
     return wrapper
 
-def click(enables:str|Iterable[str]=None, disables:str|Iterable[str]=None, enabled:bool=True,
-          shows:str|Iterable[str]=None, hides:str|Iterable[str]=None, visible:bool=True):
+def click(enables:nStrings=None, disables:nStrings=None, enabled:bool=True,
+          shows:nStrings=None, hides:nStrings=None, visible:bool=True):
     """
     Set options of push buttons related to button clickability.
     
@@ -131,6 +132,10 @@ def _assert_iterable_of_str(obj):
     return obj
 
 class MagicMethodSignature(MagicSignature):
+    """
+    This class also retains parameter options for PushButton itself, aside from the FunctionGui options
+    that will be needed when the button is pushed.
+    """    
     def __init__(
         self,
         parameters = None,
