@@ -57,7 +57,7 @@ class BaseGui(Container):
             name = obj.__name__.replace("_", " ")
             button = PushButtonPlus(name=obj.__name__, text=name)
         
-            func = wrap_with_msgbox(obj, parent=self.native)
+            func = _wrap_with_msgbox(obj, parent=self.native)
             # Strangely, signature must be updated like this. Otherwise, already wrapped member function
             # will have signature with "self".
             func.__signature__ = inspect.signature(obj)
@@ -113,16 +113,19 @@ class BaseGui(Container):
                     else:
                         # If napari.Viewer was found, then create a magicgui as a dock widget when button is 
                         # pushed, and remove it when function call is finished (if close_on_run==True).
+                        viewer: napari.Viewer
                         if self._close_on_run:
                             def _close_widget(*args):
-                                viewer.window.remove_dock_widget(self._current_dock_widget)
+                                viewer.window.remove_dock_widget(mgui.parent)
                                 mgui.native.close()
-                                self._current_dock_widget = None
                             
                             mgui._call_button.changed.connect(_close_widget, position="last")
-                            
-                        self._current_dock_widget = viewer.window.add_dock_widget(mgui, name=name)
-                        self._current_dock_widget.setFloating(self._popup)
+                        
+                        dock_name = _find_unique_name(name, viewer)
+                        dock = viewer.window.add_dock_widget(mgui, name=dock_name)
+                        mgui.native.setParent(dock)
+                        dock.setFloating(self._popup)
+                        
                     return None
                 
             button.changed.connect(run_function)
@@ -150,7 +153,7 @@ class BaseGui(Container):
         return None
     
 
-def wrap_with_msgbox(func, parent=None):
+def _wrap_with_msgbox(func, parent=None):
     """
     Wrapper for error handling during GUI running. Instead of raising error in console, show a message box.
     """    
@@ -167,9 +170,10 @@ def wrap_with_msgbox(func, parent=None):
     
     return wrapped_func
 
-def signature_to_button_design(options:dict[str], button:PushButtonPlus):
-    for k, v in options.items():
-        v = options.get(k, None)
-        if v is not None:
-            setattr(button, k, v)
-    return None
+def _find_unique_name(name:str, viewer:"napari.Viewer"):
+    orig_name = name
+    i = 0
+    while name in viewer.window._dock_widgets:
+        name = orig_name + f"-{i}"
+        i += 1
+    return name
