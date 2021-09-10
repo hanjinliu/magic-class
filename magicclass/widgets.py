@@ -62,6 +62,8 @@ class PushButtonPlus(PushButton):
     
     @background_color.setter
     def background_color(self, color:str|Sequence[float]):
+        # TODO: In napari stylesheet is somehow overwritten and all the colored button will be "flat" 
+        # (not shadowed when clicked/toggled)
         stylesheet = self.native.styleSheet()
         d = _stylesheet_to_dict(stylesheet)
         d.update({"background-color": _to_rgb(color)})
@@ -99,7 +101,7 @@ class PushButtonPlus(PushButton):
         
     @property
     def font_color(self):
-        ...
+        return self.native.palette().text().color().getRgb()
     
     @font_color.setter
     def font_color(self, color:str|Sequence[float]):
