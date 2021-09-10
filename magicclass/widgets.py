@@ -1,8 +1,10 @@
 from __future__ import annotations
-from qtpy.QtWidgets import QFrame, QLabel, QMessageBox
+from typing import Sequence
+from qtpy.QtWidgets import QFrame, QLabel, QMessageBox, QPushButton
 from qtpy.QtGui import QIcon
 from qtpy.QtCore import QSize, Qt
 from matplotlib.backends.backend_qt5agg import FigureCanvas
+from matplotlib.colors import to_rgb
 from magicgui.widgets import Container, PushButton
 
 def figure(fig) -> Container:
@@ -51,7 +53,18 @@ def raise_error_msg(parent, title:str="Error", msg:str="error"):
 class PushButtonPlus(PushButton):
     def __init__(self, text:str|None=None, **kwargs):
         super().__init__(text=text, **kwargs)
+        self.native: QPushButton
         self._icon_path = None
+    
+    @property
+    def background_color(self):
+        return self.native.palette.color()
+    
+    @background_color.setter
+    def background_color(self, color:str|Sequence[float]):
+        stylesheet = self.native.styleSheet()
+        stylesheet += f"background-color: {_to_rgb(color)};"
+        self.native.setStyleSheet(stylesheet)
         
     @property
     def icon_path(self):
@@ -63,16 +76,6 @@ class PushButtonPlus(PushButton):
         self.native.setIcon(icon)
     
     @property
-    def font_size(self):
-        return self.native.font().pointSize()
-    
-    @font_size.setter
-    def font_size(self, size:int):
-        font = self.native.font()
-        font.setPointSize(size)
-        self.native.setFont(font)
-    
-    @property
     def icon_size(self):
         qsize = self.native.iconSize()
         return qsize.width(), qsize.height()
@@ -82,9 +85,46 @@ class PushButtonPlus(PushButton):
         w, h = size
         self.native.setIconSize(QSize(w, h))
     
+    @property
+    def font_size(self):
+        return self.native.font().pointSize()
+    
+    @font_size.setter
+    def font_size(self, size:int):
+        font = self.native.font()
+        font.setPointSize(size)
+        self.native.setFont(font)
+        
+    @property
+    def font_color(self):
+        # return self.native
+        ...
+    
+    @font_color.setter
+    def font_color(self, color:str|Sequence[float]):
+        stylesheet = self.native.styleSheet()
+        stylesheet += f"color: {_to_rgb(color)};"
+        self.native.setStyleSheet(stylesheet)
+
+    @property
+    def font_family(self):
+        return self.native.font().family()
+    
+    @font_family.setter
+    def font_family(self, family:str):
+        font = self.native.font()
+        font.setFamily(family)
+        self.native.setFont(font)
+    
     def from_options(self, options:dict[str]):
         for k, v in options.items():
             v = options.get(k, None)
             if v is not None:
                 setattr(self, k, v)
         return None
+
+def _to_rgb(color):
+    if isinstance(color, str):
+        color = to_rgb(color)
+    r, g, b = [int(c*255) for c in color]
+    return f"rgb({r},{g},{b})"

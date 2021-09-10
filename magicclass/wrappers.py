@@ -1,9 +1,11 @@
 from __future__ import annotations
 from functools import wraps
 import inspect
-from typing import Iterable
+from typing import Iterable, Sequence, Union
 from magicgui.signature import magic_signature, MagicSignature, cast
 from magicgui.widgets import PushButton
+
+Color = Union[str, Sequence[float]]
 
 def set_options(**options):
     """
@@ -23,7 +25,8 @@ def set_options(**options):
 def button_design(width:int=None, height:int=None, min_width:int=None, min_height:int=None,
                   max_width:int=None, max_height:int=None, text:str=None, 
                   icon_path:str=None, icon_size:tuple[int,int]=None,
-                  font_size:int=None):
+                  font_size:int=None, font_family:int=None, font_color:Color=None,
+                  background_color:Color=None):
     """
     Change button design by calling setter when the button is created.
 
@@ -58,7 +61,8 @@ def button_design(width:int=None, height:int=None, min_width:int=None, min_heigh
             min_height = icon_size[1]
     caller_options = dict(width=width, height=height, min_width=min_width, min_height=min_height,
                           max_width=max_width, max_height=max_height, text=text, icon_path=icon_path,
-                          icon_size=icon_size, font_size=font_size)
+                          icon_size=icon_size, font_size=font_size, font_family=font_family,
+                          font_color=font_color, background_color=background_color)
     def wrapper(func):
         if hasattr(func, "__signature__") and isinstance(func.__signature__, MagicMethodSignature):
             func.__signature__.caller_options.update(caller_options)
