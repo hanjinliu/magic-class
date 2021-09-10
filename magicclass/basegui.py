@@ -6,7 +6,7 @@ from magicgui import magicgui
 from magicgui.widgets import Container, Label
 from magicgui.widgets._bases import Widget
 from .utils import iter_members
-from .widgets import PushButtonPlus, raise_error_msg
+from .widgets import PushButtonPlus, Separator, raise_error_msg
 
 # Check if napari is available so that layers are detectable from GUIs.
 try:
@@ -20,14 +20,14 @@ else:
 # - progress bar
 # - some responses when function call finished
 # - think of nesting magic-class
-# - no-popup mode
 #- "exclusive" mode
 
 class BaseGui(Container):
-    def __init__(self, layout:str= "vertical", close_on_run:bool=True, name=None):
+    def __init__(self, layout:str= "vertical", close_on_run:bool=True, popup:bool=True, name=None):
         super().__init__(layout=layout, labels=False, name=name)
         self._current_dock_widget = None
         self._close_on_run = close_on_run
+        self._popup = popup
         self._parameter_history:dict[str, dict[str]] = {}
         self.native.setObjectName(self.__class__.__name__)
     
@@ -70,16 +70,15 @@ class BaseGui(Container):
                     return func()
             else:
                 def run_function(*args):
+                    func_obj_name = f"function-{id(func)}"
                     try:
-                        func_obj_name = f"function-{id(func)}"
                         mgui = magicgui(func)
                         mgui.name = func_obj_name
-                        # sep =h_ separator(name=name)
-                        # mgui.insert(0, sep)
                         # Recover last inputs if exists.
                         params = self._parameter_history.get(func.__name__, {})
                         for key, value in params.items():
                             getattr(mgui, key).value = value
+                            
                     except Exception as e:
                         msg = f"Exception was raised during building magicgui.\n{e.__class__.__name__}: {e}"
                         raise_error_msg(self.native, msg=msg)
@@ -95,15 +94,21 @@ class BaseGui(Container):
                     if viewer is None:
                         # If napari.Viewer was not found, then open up a magicgui when button is pushed, and 
                         # close it when function call is finished (if close_on_run==True).
-                        mgui.show(True)
-                        # self.append(mgui)
+                        if self._popup:
+                            mgui.show(True)
+                        else:
+                            sep = Separator(orientation="horizontal", text=name)
+                            mgui.native.layout().insertWidget(0, sep.native)
+                            self.append(mgui)
+                            
                         if self._close_on_run:
                             @mgui._call_button.changed.connect
                             def _close_widget(*args):
                                 inputs = {param: getattr(mgui, param).value
                                           for param in mgui.__signature__.parameters.keys()}
                                 self._parameter_history.update({func.__name__: inputs})
-                                # self.remove(func_obj_name)
+                                if not self._popup:
+                                    self.remove(func_obj_name)
                                 mgui.native.close()
                     else:
                         # If napari.Viewer was found, then create a magicgui as a dock widget when button is 
@@ -116,10 +121,8 @@ class BaseGui(Container):
                             
                             mgui._call_button.changed.connect(_close_widget, position="last")
                             
-                        if self._current_dock_widget:
-                            viewer.window.remove_dock_widget(self._current_dock_widget)
                         self._current_dock_widget = viewer.window.add_dock_widget(mgui, name=name)
-                        self._current_dock_widget.setFloating(True)
+                        self._current_dock_widget.setFloating(self._popup)
                     return None
                 
             button.changed.connect(run_function)

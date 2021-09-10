@@ -3,7 +3,8 @@ import inspect
 from .basegui import BaseGui
 from .utils import check_collision, get_app
 
-def magicclass(cls:type|None=None, layout:str="vertical", close_on_run:bool=True):
+def magicclass(cls:type|None=None, layout:str="vertical", close_on_run:bool=True,
+               popup:bool=True):
     """
     Decorator that can convert a Python class into a widget with push buttons.
     
@@ -17,6 +18,14 @@ def magicclass(cls:type|None=None, layout:str="vertical", close_on_run:bool=True
     ----------
     cls : type, optional
         Class to be decorated.
+    layout : str, "vertical" or "horizontal", default is "vertical"
+        Layout of the main widget.
+    close_on_run : bool, default is True
+        If True, magicgui created by every method will be deleted after the method is completed without
+        exceptions, i.e. magicgui is more like a dialog.
+    popup : bool, default is True
+        If True, magicgui created by every method will be poped up, else they will be appended as a
+        part of the main widget.
     
     Returns
     -------
@@ -37,7 +46,8 @@ def magicclass(cls:type|None=None, layout:str="vertical", close_on_run:bool=True
         def __init__(self, *args, **kwargs):
             app = get_app() # Without "app = " Jupyter freezes after closing the window!
             super(oldclass, self).__init__(*args, **kwargs)
-            BaseGui.__init__(self, layout=layout, close_on_run=close_on_run, name=oldclass.__name__)
+            BaseGui.__init__(self, layout=layout, close_on_run=close_on_run, popup=popup, 
+                             name=oldclass.__name__)
             self._convert_methods_into_widgets()
             if hasattr(self, "__post_init__"):
                 self.__post_init__()
