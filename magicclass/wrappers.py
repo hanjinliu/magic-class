@@ -72,8 +72,8 @@ def button_design(width:int=None, height:int=None, min_width:int=None, min_heigh
         return func
     return wrapper
 
-def click(enables:str|Iterable[str]=None, disables:str|Iterable[str]=None, 
-          switches:str|Iterable[str]=None, enabled:bool=True):
+def click(enables:str|Iterable[str]=None, disables:str|Iterable[str]=None, enabled:bool=True,
+          shows:str|Iterable[str]=None, hides:str|Iterable[str]=None, visible:bool=True):
     """
     Set options of push buttons related to button clickability.
     
@@ -83,14 +83,19 @@ def click(enables:str|Iterable[str]=None, disables:str|Iterable[str]=None,
         Enables other button(s) in this list when clicked.
     disables : str or iterable of str, optional
         Disables other button(s) in this list when clicked.
-    switches : str or iterable of str, optional
-        Switches the states of other button(s) in this list when clicked.
     enabled : bool, default is True
         The initial clickability state of the button.
+    shows : str or iterable of str, optional
+        Make other button(s) in this list visible when clicked.
+    hides : str or iterable of str, optional
+        Make other button(s) in this list invisible when clicked.
+    visible: bool, default is True
+        The initial visibility of the button.
     """
     enables = _assert_iterable_of_str(enables)
     disables = _assert_iterable_of_str(disables)
-    switches = _assert_iterable_of_str(switches)
+    shows = _assert_iterable_of_str(shows)
+    hides = _assert_iterable_of_str(hides)
 
     def wrapper(func):
         @wraps(func)
@@ -102,15 +107,18 @@ def click(enables:str|Iterable[str]=None, disables:str|Iterable[str]=None,
                     button.enabled = True
                 elif button.name in disables and button.enabled:
                     button.enabled = False
-                elif button.name in switches:
-                    button.enabled = not button.enabled
+                elif button.name in shows and not button.visible:
+                    button.visible = True
+                elif button.name in hides and button.visible:
+                    button.visible = False
             return out
         
         if hasattr(func, "__signature__") and isinstance(func.__signature__, MagicMethodSignature):
-            func.__signature__.caller_options.update({"enabled": enabled})
+            func.__signature__.caller_options.update({"enabled": enabled, "visible": visible})
         else:
             msig = magic_signature(func, gui_options={})
-            f.__signature__ = MagicMethodSignature.from_magicsignature(msig, caller_options={"enabled": enabled})
+            f.__signature__ = MagicMethodSignature.from_magicsignature(
+                msig, caller_options={"enabled": enabled, "visible": visible})
         return f
     return wrapper
 
