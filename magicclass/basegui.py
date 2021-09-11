@@ -1,7 +1,8 @@
 from __future__ import annotations
 from functools import wraps
-from typing import Callable
+from typing import Callable, Any
 import inspect
+from contextlib import contextmanager
 import numpy as np
 from pathlib import Path
 from magicgui import magicgui
@@ -22,30 +23,42 @@ else:
 _HARD_TO_RECORD = (np.ndarray,) # This is a temporal solution to avoid recording layer as an numpy
 _INSTANCE = "ins"
 
+# Running mode determines how to construct magic-class GUI.
+# - "default": Error will be raised in message box
+# - "debug": Whether function call ended with error will be recorded in a logger widget.
+# - "raw": Raise errors in console (non-wrapped mode)
+RUNNING_MODE = "default"
+
 LOGGER = Logger(name="logger")
 
+@contextmanager
+def debug():
+    global RUNNING_MODE
+    current_mode = RUNNING_MODE
+    RUNNING_MODE = "debug"
+    LOGGER.show()
+    yield
+    RUNNING_MODE = current_mode
 
 # TODO: 
 # - progress bar
-# - some responses when function call finished, like "idle" and "busy"
+# - show returned value?
 # - think of nesting magic-class
 # - GUI tester
 # - "exclusive" mode
 
 
 class BaseGui(Container):
-    error_handling = "messagebox"
-    
     def __init__(self, layout:str= "vertical", close_on_run:bool=True, popup:bool=True, name=None):
         super().__init__(layout=layout, labels=False, name=name)
         self._current_dock_widget = None
         self._close_on_run = close_on_run
         self._popup = popup
-        self._parameter_history:dict[str, dict[str]] = {}
+        self._parameter_history:dict[str, dict[str, Any]] = {}
         self._recorded_macro = Macro()
         self.native.setObjectName(self.__class__.__name__)
-        # record the line of first macro
-        
+        if RUNNING_MODE == "debug" and LOGGER.n_line > 0:
+            LOGGER.append(f"<hr></hr><br>{self.__class__.__name__} object at {id(self)}")
     
     @property
     def parent_viewer(self) -> "napari.Viewer"|None:
@@ -76,7 +89,7 @@ class BaseGui(Container):
         
         return self
     
-    def _record_macro(self, func:str, args:tuple, kwargs:dict[str]) -> None:
+    def _record_macro(self, func:str, args:tuple, kwargs:dict[str, Any]) -> None:
         """
         Record a function call as a line of macro.
 
@@ -115,7 +128,17 @@ class BaseGui(Container):
         self._recorded_macro.append(line)
         return None
     
-    def _record_parameter_history(self, func:str, kwargs:dict[str]) -> None:
+    def _record_parameter_history(self, func:str, kwargs:dict[str, Any]) -> None:
+        """
+        Record parameter inputs to history for next call.
+
+        Parameters
+        ----------
+        func : str
+            Name of function.
+        kwargs : dict[str]
+            Parameter inputs.
+        """        
         kwargs = {k: v for k, v in kwargs.items() if not isinstance(v, _HARD_TO_RECORD)}
         self._parameter_history.update({func: kwargs})
         return None
@@ -123,16 +146,22 @@ class BaseGui(Container):
     def append(self, obj:Widget|Callable) -> None:
         """
         This override enables methods/functions to be appended into Container widgets.
+        Compatible with ``@magicgui`` decorator inside class: if ``FunctionGui`` object was appended,
+        it will appear on the container as is, rather than a push button.
         """        
         if (not isinstance(obj, Widget)) and callable(obj):
             name = obj.__name__.replace("_", " ")
             button = PushButtonPlus(name=obj.__name__, text=name)
 
             # Wrap function to deal with errors in a right way.
-            wrapper = {"messagebox": _wrap_with_msgbox,
-                       "logger": _wrap_with_logger,
-                       }.get(self.__class__.error_handling, _wrap_with_nothing)
-            
+            if RUNNING_MODE == "default":
+                wrapper = _raise_error_in_msgbox
+            elif RUNNING_MODE == "debug":
+                wrapper = _write_log
+            elif RUNNING_MODE == "raw":
+                wrapper = lambda x: x
+            else:
+                raise ValueError(f"RUNNING_MODE={RUNNING_MODE}")
             func = wrapper(obj, parent=self.native)
             
             # Strangely, signature must be updated like this. Otherwise, already wrapped member function
@@ -146,7 +175,8 @@ class BaseGui(Container):
                 # We don't want a dialog with a single widget "Run" to show up.
                 def run_function(*args):
                     out = func()
-                    self._record_macro(func.__name__, (), {})
+                    if not isinstance(out, Exception):
+                        self._record_macro(func.__name__, (), {})
                     return out
             else:
                 def run_function(*args):
@@ -170,8 +200,21 @@ class BaseGui(Container):
                     
                     viewer = self.parent_viewer
                     
-                    # TODO: use FunctionGui.close and FunctionGui.called.connect in new version of magicgui
-                    
+                    @mgui.called.connect
+                    def _after_run(value):
+                        if isinstance(value, Exception):
+                            return None
+                        inputs = _get_parameters(mgui)
+                        self._record_macro(func.__name__, (), inputs)
+                        self._record_parameter_history(func.__name__, inputs)
+                        if self._close_on_run:
+                            if not self._popup:
+                                try:
+                                    self.remove(func_obj_name)
+                                except ValueError:
+                                    pass
+                            mgui.close()
+                        
                     if viewer is None:
                         # If napari.Viewer was not found, then open up a magicgui when button is pushed, and 
                         # close it when function call is finished (if close_on_run==True).
@@ -181,29 +224,24 @@ class BaseGui(Container):
                             sep = Separator(orientation="horizontal", text=name)
                             mgui.insert(0, sep)
                             self.append(mgui)
-                            
+                        
                         if self._close_on_run:
-                            @mgui._call_button.changed.connect
-                            def _close_widget(*args):
-                                inputs = _get_parameters(mgui)
-                                self._record_macro(func.__name__, (), inputs)
-                                self._record_parameter_history(func.__name__, inputs)
+                            @mgui.called.connect
+                            def _close(value):
                                 if not self._popup:
                                     self.remove(func_obj_name)
-                                mgui.native.close()
+                                mgui.close()
                     else:
                         # If napari.Viewer was found, then create a magicgui as a dock widget when button is 
                         # pushed, and remove it when function call is finished (if close_on_run==True).
                         viewer: napari.Viewer
-                        if self._close_on_run:
-                            def _close_widget(*args):
-                                inputs = _get_parameters(mgui)
-                                self._record_parameter_history(func.__name__, inputs)
-                                viewer.window.remove_dock_widget(mgui.parent)
-                                mgui.native.close()
-                                
-                            _prepend_callback(mgui._call_button, _close_widget)
                         
+                        if self._close_on_run:
+                            @mgui.called.connect
+                            def _close(value):
+                                viewer.window.remove_dock_widget(mgui.parent)
+                                mgui.close()
+                                
                         dock_name = _find_unique_name(name, viewer)
                         dock = viewer.window.add_dock_widget(mgui, name=dock_name)
                         mgui.native.setParent(dock)
@@ -234,12 +272,8 @@ class BaseGui(Container):
         super().show()
         self.native.activateWindow()
         return None
-    
 
-def _wrap_with_msgbox(func, parent=None):
-    """
-    Wrapper for error handling during GUI running. Instead of raising error in console, show a message box.
-    """    
+def _raise_error_in_msgbox(func, parent=None):
     # TODO: Should be wrapped in notification manager if the widget is dockec in napari.
     @wraps(func)
     def wrapped_func(*args, **kwargs):
@@ -247,14 +281,12 @@ def _wrap_with_msgbox(func, parent=None):
             out = func(*args, **kwargs)
         except Exception as e:
             raise_error_msg(parent, title=e.__class__.__name__, msg=str(e))
-            out = None
-        finally:
-            pass
+            out = e
         return out
     
     return wrapped_func
 
-def _wrap_with_logger(func, parent=None): # WIP
+def _write_log(func, parent=None):
     @wraps(func)
     def wrapped_func(*args, **kwargs):
         try:
@@ -262,18 +294,14 @@ def _wrap_with_logger(func, parent=None): # WIP
         except Exception as e:
             log = [f'{func.__name__}: <span style="color: red; font-weight: bold;">{e.__class__.__name__}</span>',
                    f'{e}']
-            
-            out = None
+            out = e
         else:
             log = f'{func.__name__}: <span style="color: blue; font-weight: bold;">Pass</span>'
-        LOGGER.append(log)
-        LOGGER.visible or LOGGER.show()
+        finally:
+            LOGGER.append(log)
         return out
     
     return wrapped_func
-
-def _wrap_with_nothing(func, parent=None):
-    return func
 
 def _find_unique_name(name:str, viewer:"napari.Viewer"):
     orig_name = name
@@ -290,14 +318,6 @@ def _get_parameters(mgui):
               }
     
     return inputs
-
-def _prepend_callback(call_button: PushButtonPlus, callback):
-    old_callbacks = call_button.changed.callbacks
-    call_button.changed.disconnect()
-    new_callbacks = (callback,) + old_callbacks
-    for c in new_callbacks:
-        call_button.changed.connect(c)
-    return call_button
 
 class Macro(list):
     def __repr__(self):
