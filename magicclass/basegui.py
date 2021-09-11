@@ -2,6 +2,7 @@ from __future__ import annotations
 from functools import wraps
 from typing import Callable
 import inspect
+import numpy as np
 from magicgui import magicgui
 from magicgui.widgets import Container, Label
 from magicgui.widgets._bases import Widget
@@ -75,15 +76,19 @@ class BaseGui(Container):
                     try:
                         mgui = magicgui(func)
                         mgui.name = func_obj_name
-                        # Recover last inputs if exists.
-                        params = self._parameter_history.get(func.__name__, {})
-                        for key, value in params.items():
-                            getattr(mgui, key).value = value
                             
                     except Exception as e:
                         msg = f"Exception was raised during building magicgui.\n{e.__class__.__name__}: {e}"
                         raise_error_msg(self.native, msg=msg)
                         return None
+                    
+                    # Recover last inputs if exists.
+                    params = self._parameter_history.get(func.__name__, {})
+                    for key, value in params.items():
+                        try:
+                            getattr(mgui, key).value = value
+                        except ValueError:
+                            pass
                     
                     viewer = None
                     if NAPARI_AVAILABLE:
@@ -105,8 +110,7 @@ class BaseGui(Container):
                         if self._close_on_run:
                             @mgui._call_button.changed.connect
                             def _close_widget(*args):
-                                inputs = {param: getattr(mgui, param).value
-                                          for param in mgui.__signature__.parameters.keys()}
+                                inputs = _record_parameter(mgui)
                                 self._parameter_history.update({func.__name__: inputs})
                                 if not self._popup:
                                     self.remove(func_obj_name)
@@ -117,9 +121,12 @@ class BaseGui(Container):
                         viewer: napari.Viewer
                         if self._close_on_run:
                             def _close_widget(*args):
+                                inputs = _record_parameter(mgui)
+                                self._parameter_history.update({func.__name__: inputs})
                                 viewer.window.remove_dock_widget(mgui.parent)
                                 mgui.native.close()
-                            
+                                
+                            # TODO: do not use position argument
                             mgui._call_button.changed.connect(_close_widget, position="last")
                         
                         dock_name = _find_unique_name(name, viewer)
@@ -179,3 +186,11 @@ def _find_unique_name(name:str, viewer:"napari.Viewer"):
         name = orig_name + f"-{i}"
         i += 1
     return name
+
+def _record_parameter(mgui):
+    inputs = {param: getattr(mgui, param).value
+              for param, value in mgui.__signature__.parameters.keys()
+              if not isinstance(value, np.ndarray)   # TODO: this filter is not a good way
+              }
+    
+    return inputs
