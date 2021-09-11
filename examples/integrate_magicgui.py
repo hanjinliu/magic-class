@@ -5,7 +5,7 @@ from pathlib import Path
 
 @magicclass
 class C:
-    @magicgui
+    @magicgui(auto_call=True)
     def loader(self, path:Path, sep:str=","):
         self.path = path
         self.df = pd.read_csv(path, sep=sep)

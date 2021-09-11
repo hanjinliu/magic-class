@@ -7,7 +7,7 @@ from magicgui import magicgui
 from magicgui.widgets import Container, Label
 from magicgui.widgets._bases import Widget
 from .utils import iter_members
-from .widgets import PushButtonPlus, Separator, raise_error_msg
+from .widgets import PushButtonPlus, Separator, raise_error_msg, prepend_callback
 
 # Check if napari is available so that layers are detectable from GUIs.
 try:
@@ -126,8 +126,7 @@ class BaseGui(Container):
                                 viewer.window.remove_dock_widget(mgui.parent)
                                 mgui.native.close()
                                 
-                            # TODO: do not use position argument
-                            mgui._call_button.changed.connect(_close_widget, position="last")
+                            prepend_callback(mgui._call_button, _close_widget)
                         
                         dock_name = _find_unique_name(name, viewer)
                         dock = viewer.window.add_dock_widget(mgui, name=dock_name)
@@ -189,7 +188,7 @@ def _find_unique_name(name:str, viewer:"napari.Viewer"):
 
 def _record_parameter(mgui):
     inputs = {param: getattr(mgui, param).value
-              for param, value in mgui.__signature__.parameters.keys()
+              for param, value in mgui.__signature__.parameters.items()
               if not isinstance(value, np.ndarray)   # TODO: this filter is not a good way
               }
     
