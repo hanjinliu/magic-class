@@ -33,6 +33,17 @@ class BaseGui(Container):
         self._parameter_history:dict[str, dict[str]] = {}
         self.native.setObjectName(self.__class__.__name__)
     
+    @property
+    def parent_viewer(self) -> "napari.Viewer"|None:
+        """
+        Return napari.Viewer if self is a dock widget of a viewer.
+        """        
+        try:
+            viewer = self.parent.parent().qt_viewer.viewer
+        except AttributeError:
+            viewer = None
+        return viewer
+    
     def _convert_methods_into_widgets(self):
         cls = self.__class__
         
@@ -90,12 +101,7 @@ class BaseGui(Container):
                         except ValueError:
                             pass
                     
-                    viewer = None
-                    if NAPARI_AVAILABLE:
-                        try:
-                            viewer = self.parent.parent().qt_viewer.viewer
-                        except AttributeError:
-                            pass
+                    viewer = self.parent_viewer
                     
                     if viewer is None:
                         # If napari.Viewer was not found, then open up a magicgui when button is pushed, and 
@@ -104,7 +110,7 @@ class BaseGui(Container):
                             mgui.show(True)
                         else:
                             sep = Separator(orientation="horizontal", text=name)
-                            mgui.native.layout().insertWidget(0, sep.native)
+                            mgui.insert(0, sep)
                             self.append(mgui)
                             
                         if self._close_on_run:
@@ -150,7 +156,7 @@ class BaseGui(Container):
     
     def objectName(self):
         """
-        This function make the object name discoverable by napari's `viewer.window.add_dock_widget` function.
+        This function makes the object name discoverable by napari's `viewer.window.add_dock_widget` function.
         """        
         return self.native.objectName()
     
