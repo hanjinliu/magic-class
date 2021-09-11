@@ -1,11 +1,16 @@
 from __future__ import annotations
-from typing import Sequence
-from qtpy.QtWidgets import QFrame, QLabel, QMessageBox, QPushButton, QGridLayout
-from qtpy.QtGui import QIcon
+from typing import Iterable
+from qtpy.QtWidgets import QFrame, QLabel, QMessageBox, QPushButton, QGridLayout, QTextEdit
+from qtpy.QtGui import QIcon, QFont
 from qtpy.QtCore import QSize, Qt
 from matplotlib.backends.backend_qt5agg import FigureCanvas
 from matplotlib.colors import to_rgb
-from magicgui.widgets import Container, PushButton
+from magicgui.widgets import Container, PushButton, TextEdit
+
+
+def raise_error_msg(parent, title:str="Error", msg:str="error"):
+    QMessageBox.critical(parent, title, msg, QMessageBox.Ok)
+    return None
 
 class Figure(Container):
     def __init__(self, fig, layout="vertical", **kwargs):
@@ -33,17 +38,24 @@ class Separator(Container):
         
         self.native.layout().addWidget(main)
 
-def raise_error_msg(parent, title:str="Error", msg:str="error"):
-    QMessageBox.critical(parent, title, msg, QMessageBox.Ok)
-    return None
+class Logger(TextEdit):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.native: QTextEdit
+        self.read_only = True
+        self.native.setFont(QFont("Consolas"))
+        
+    def append(self, text:str|Iterable[str]):
+        if isinstance(text, str):
+            self.native.append(text)
+            vbar = self.native.verticalScrollBar()
+            vbar.setValue(vbar.maximum())
+        else:
+            for txt in text:
+                self.append(txt)
+        return None
 
-def prepend_callback(call_button: PushButton, callback):
-    old_callbacks = call_button.changed.callbacks
-    call_button.changed.disconnect()
-    new_callbacks = (callback,) + old_callbacks
-    for c in new_callbacks:
-        call_button.changed.connect(c)
-    return call_button
+
 
 class PushButtonPlus(PushButton):
     def __init__(self, text:str|None=None, **kwargs):
@@ -56,7 +68,7 @@ class PushButtonPlus(PushButton):
         return self.native.palette().button().color().getRgb()
     
     @background_color.setter
-    def background_color(self, color:str|Sequence[float]):
+    def background_color(self, color:str|Iterable[float]):
         # TODO: In napari stylesheet is somehow overwritten and all the colored button will be "flat" 
         # (not shadowed when clicked/toggled)
         stylesheet = self.native.styleSheet()
@@ -99,7 +111,7 @@ class PushButtonPlus(PushButton):
         return self.native.palette().text().color().getRgb()
     
     @font_color.setter
-    def font_color(self, color:str|Sequence[float]):
+    def font_color(self, color:str|Iterable[float]):
         stylesheet = self.native.styleSheet()
         d = _stylesheet_to_dict(stylesheet)
         d.update({"color": _to_rgb(color)})

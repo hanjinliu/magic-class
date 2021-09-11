@@ -7,7 +7,7 @@ from magicgui import magicgui
 from magicgui.widgets import Container, Label
 from magicgui.widgets._bases import Widget
 from .utils import iter_members
-from .widgets import PushButtonPlus, Separator, raise_error_msg, prepend_callback
+from .widgets import PushButtonPlus, Separator, Logger, raise_error_msg
 
 # Check if napari is available so that layers are detectable from GUIs.
 try:
@@ -16,15 +16,21 @@ except ImportError:
     NAPARI_AVAILABLE = False
 else:
     NAPARI_AVAILABLE = True
+    
+LOGGER = Logger(name="logger")
+
 
 # TODO: 
 # - progress bar
 # - some responses when function call finished, like "idle" and "busy"
 # - think of nesting magic-class
-# - "exclusive" mode <- first add "current call conut" property to PushButtonPlus
+# - GUI tester
+# - "exclusive" mode
 
 
 class BaseGui(Container):
+    error_handling = "messagebox"
+    
     def __init__(self, layout:str= "vertical", close_on_run:bool=True, popup:bool=True, name=None):
         super().__init__(layout=layout, labels=False, name=name)
         self._current_dock_widget = None
@@ -69,8 +75,14 @@ class BaseGui(Container):
         if (not isinstance(obj, Widget)) and callable(obj):
             name = obj.__name__.replace("_", " ")
             button = PushButtonPlus(name=obj.__name__, text=name)
-        
-            func = _wrap_with_msgbox(obj, parent=self.native)
+
+            # Wrap function to deal with errors in a right way.
+            wrapper = {"messagebox": _wrap_with_msgbox,
+                       "logger": _wrap_with_logger,
+                       }.get(self.__class__.error_handling, _wrap_with_nothing)
+            
+            func = wrapper(obj, parent=self.native)
+            
             # Strangely, signature must be updated like this. Otherwise, already wrapped member function
             # will have signature with "self".
             func.__signature__ = inspect.signature(obj)
@@ -79,6 +91,7 @@ class BaseGui(Container):
             button.tooltip = func.__doc__.strip() if func.__doc__ else ""
             
             if len(inspect.signature(func).parameters) == 0:
+                # We don't want a dialog with a single widget "Run" to show up.
                 def run_function(*args):
                     return func()
             else:
@@ -103,11 +116,13 @@ class BaseGui(Container):
                     
                     viewer = self.parent_viewer
                     
+                    # TODO: use FunctionGui.close and FunctionGui.called.connect in new version of magicgui
+                    
                     if viewer is None:
                         # If napari.Viewer was not found, then open up a magicgui when button is pushed, and 
                         # close it when function call is finished (if close_on_run==True).
                         if self._popup:
-                            mgui.show(True)
+                            mgui.show()
                         else:
                             sep = Separator(orientation="horizontal", text=name)
                             mgui.insert(0, sep)
@@ -132,7 +147,7 @@ class BaseGui(Container):
                                 viewer.window.remove_dock_widget(mgui.parent)
                                 mgui.native.close()
                                 
-                            prepend_callback(mgui._call_button, _close_widget)
+                            _prepend_callback(mgui._call_button, _close_widget)
                         
                         dock_name = _find_unique_name(name, viewer)
                         dock = viewer.window.add_dock_widget(mgui, name=dock_name)
@@ -184,6 +199,27 @@ def _wrap_with_msgbox(func, parent=None):
     
     return wrapped_func
 
+def _wrap_with_logger(func, parent=None): # WIP
+    @wraps(func)
+    def wrapped_func(*args, **kwargs):
+        try:
+            out = func(*args, **kwargs)
+        except Exception as e:
+            log = [f'{func.__name__}: <span style="color: red; font-weight: bold;">{e.__class__.__name__}</span>',
+                   f'{e}']
+            
+            out = None
+        else:
+            log = f'{func.__name__}: <span style="color: blue; font-weight: bold;">Pass</span>'
+        LOGGER.append(log)
+        LOGGER.visible or LOGGER.show()
+        return out
+    
+    return wrapped_func
+
+def _wrap_with_nothing(func, parent=None):
+    return func
+
 def _find_unique_name(name:str, viewer:"napari.Viewer"):
     orig_name = name
     i = 0
@@ -199,3 +235,11 @@ def _record_parameter(mgui):
               }
     
     return inputs
+
+def _prepend_callback(call_button: PushButtonPlus, callback):
+    old_callbacks = call_button.changed.callbacks
+    call_button.changed.disconnect()
+    new_callbacks = (callback,) + old_callbacks
+    for c in new_callbacks:
+        call_button.changed.connect(c)
+    return call_button
