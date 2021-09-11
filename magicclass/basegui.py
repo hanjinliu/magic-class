@@ -3,9 +3,11 @@ from functools import wraps
 from typing import Callable
 import inspect
 import numpy as np
+from pathlib import Path
 from magicgui import magicgui
 from magicgui.widgets import Container, Label
 from magicgui.widgets._bases import Widget
+
 from .utils import iter_members
 from .widgets import PushButtonPlus, Separator, Logger, raise_error_msg
 
@@ -17,6 +19,9 @@ except ImportError:
 else:
     NAPARI_AVAILABLE = True
     
+_HARD_TO_RECORD = (np.ndarray,) # This is a temporal solution to avoid recording layer as an numpy
+_INSTANCE = "ins"
+
 LOGGER = Logger(name="logger")
 
 
@@ -37,7 +42,10 @@ class BaseGui(Container):
         self._close_on_run = close_on_run
         self._popup = popup
         self._parameter_history:dict[str, dict[str]] = {}
+        self._recorded_macro = Macro()
         self.native.setObjectName(self.__class__.__name__)
+        # record the line of first macro
+        
     
     @property
     def parent_viewer(self) -> "napari.Viewer"|None:
@@ -50,7 +58,7 @@ class BaseGui(Container):
             viewer = None
         return viewer
     
-    def _convert_methods_into_widgets(self):
+    def _convert_methods_into_widgets(self) -> BaseGui:
         cls = self.__class__
         
         # Add class docstring as label.
@@ -67,6 +75,50 @@ class BaseGui(Container):
                 self.append(func)
         
         return self
+    
+    def _record_macro(self, func:str, args:tuple, kwargs:dict[str]) -> None:
+        """
+        Record a function call as a line of macro.
+
+        Parameters
+        ----------
+        func : str
+            Name of function.
+        args : tuple
+            Arguments.
+        kwargs : dict[str]
+            Keyword arguments.
+        """        
+        arg_inputs = []
+        for a in args:
+            if isinstance(a, _HARD_TO_RECORD):
+                arg_inputs.append(f"var{id(a)}")
+            elif isinstance(a, Path):
+                arg_inputs.append(f"r'{a}'")
+            else:
+                arg_inputs.append(f"{repr(a)}")
+                
+        kwarg_inputs = []
+        for k, v in kwargs.items():
+            if isinstance(v, _HARD_TO_RECORD):
+                kwarg_inputs.append(f"{k}=var{id(v)}")
+            elif isinstance(v, Path):
+                kwarg_inputs.append(f"{k}=r'{v}'")
+            else:
+                kwarg_inputs.append(f"{k}={repr(v)}")
+        kwarg_inputs = ", ".join(kwarg_inputs)
+        
+        if func == self.__class__.__name__:
+            line = f"{_INSTANCE} = {func}({kwarg_inputs})"
+        else:
+            line = f"{_INSTANCE}.{func}({kwarg_inputs})"
+        self._recorded_macro.append(line)
+        return None
+    
+    def _record_parameter_history(self, func:str, kwargs:dict[str]) -> None:
+        kwargs = {k: v for k, v in kwargs.items() if not isinstance(v, _HARD_TO_RECORD)}
+        self._parameter_history.update({func: kwargs})
+        return None
     
     def append(self, obj:Widget|Callable) -> None:
         """
@@ -93,7 +145,9 @@ class BaseGui(Container):
             if len(inspect.signature(func).parameters) == 0:
                 # We don't want a dialog with a single widget "Run" to show up.
                 def run_function(*args):
-                    return func()
+                    out = func()
+                    self._record_macro(func.__name__, (), {})
+                    return out
             else:
                 def run_function(*args):
                     func_obj_name = f"function-{id(func)}"
@@ -131,8 +185,9 @@ class BaseGui(Container):
                         if self._close_on_run:
                             @mgui._call_button.changed.connect
                             def _close_widget(*args):
-                                inputs = _record_parameter(mgui)
-                                self._parameter_history.update({func.__name__: inputs})
+                                inputs = _get_parameters(mgui)
+                                self._record_macro(func.__name__, (), inputs)
+                                self._record_parameter_history(func.__name__, inputs)
                                 if not self._popup:
                                     self.remove(func_obj_name)
                                 mgui.native.close()
@@ -142,8 +197,8 @@ class BaseGui(Container):
                         viewer: napari.Viewer
                         if self._close_on_run:
                             def _close_widget(*args):
-                                inputs = _record_parameter(mgui)
-                                self._parameter_history.update({func.__name__: inputs})
+                                inputs = _get_parameters(mgui)
+                                self._record_parameter_history(func.__name__, inputs)
                                 viewer.window.remove_dock_widget(mgui.parent)
                                 mgui.native.close()
                                 
@@ -169,13 +224,13 @@ class BaseGui(Container):
         super().append(obj)
         return None
     
-    def objectName(self):
+    def objectName(self) -> str:
         """
         This function makes the object name discoverable by napari's `viewer.window.add_dock_widget` function.
         """        
         return self.native.objectName()
     
-    def show(self):
+    def show(self) -> None:
         super().show()
         self.native.activateWindow()
         return None
@@ -228,10 +283,10 @@ def _find_unique_name(name:str, viewer:"napari.Viewer"):
         i += 1
     return name
 
-def _record_parameter(mgui):
+def _get_parameters(mgui):
     inputs = {param: getattr(mgui, param).value
               for param, value in mgui.__signature__.parameters.items()
-              if not isinstance(value, np.ndarray)   # TODO: this filter is not a good way
+              if not isinstance(value, _HARD_TO_RECORD)
               }
     
     return inputs
@@ -243,3 +298,7 @@ def _prepend_callback(call_button: PushButtonPlus, callback):
     for c in new_callbacks:
         call_button.changed.connect(c)
     return call_button
+
+class Macro(list):
+    def __repr__(self):
+        return "\n".join(self)

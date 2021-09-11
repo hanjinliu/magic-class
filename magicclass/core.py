@@ -49,11 +49,15 @@ def magicclass(cls:type|None=None, *, layout:str="vertical", close_on_run:bool=T
         def __init__(self, *args, **kwargs):
             app = get_app() # Without "app = " Jupyter freezes after closing the window!
             BaseGui.__init__(self, layout=layout, close_on_run=close_on_run, popup=popup, 
-                             name=oldclass.__name__)
+                             name=cls.__name__)
             super(oldclass, self).__init__(*args, **kwargs)
             self._convert_methods_into_widgets()
             if hasattr(self, _POST_INIT_NAME) and not is_dataclass(cls):
                 self.__post_init__()
+            try:
+                self._record_macro(cls.__name__, args, kwargs)
+            except Exception:
+                pass
 
         setattr(newclass, "__init__", __init__)
         return newclass
