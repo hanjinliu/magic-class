@@ -44,12 +44,14 @@ class Logger(TextEdit):
         self.native: QTextEdit
         self.read_only = True
         self.native.setFont(QFont("Consolas"))
+        self.n_line = 0
         
     def append(self, text:str|Iterable[str]):
         if isinstance(text, str):
             self.native.append(text)
             vbar = self.native.verticalScrollBar()
             vbar.setValue(vbar.maximum())
+            self.n_line += 1
         else:
             for txt in text:
                 self.append(txt)
