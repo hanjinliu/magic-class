@@ -19,7 +19,11 @@ pip install git+https://github.com/hanjinliu/magic-class
 git clone https://github.com/hanjinliu/magic-class
 ```
 
-### Example
+## Dependencies
+
+`magicgui` > 0.2.11
+
+## Example
 
 Let's make a simple GUI that can load 1-D data and plot it.
 
