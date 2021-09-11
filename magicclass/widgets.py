@@ -5,8 +5,7 @@ from qtpy.QtGui import QIcon
 from qtpy.QtCore import QSize, Qt
 from matplotlib.backends.backend_qt5agg import FigureCanvas
 from matplotlib.colors import to_rgb
-from magicgui.widgets import Container, PushButton, FunctionGui
-from typing import cast
+from magicgui.widgets import Container, PushButton
 
 class Figure(Container):
     def __init__(self, fig, layout="vertical", **kwargs):
@@ -24,13 +23,13 @@ class Separator(Container):
         line.setFrameShape(QFrame.HLine)
         line.setFrameShadow(QFrame.Sunken)
         line.setContentsMargins(0, 0, 0, 0)
-        main.layout().addWidget(line, 0, 0, 1, 2)
+        main.layout().addWidget(line)
         
         if text:
             label = QLabel(text, parent=main)
             label.setContentsMargins(0, 0, 0, 0)
             label.setAlignment(Qt.AlignRight)
-            main.layout().addWidget(label, 0, 2)
+            main.layout().addWidget(label)
         
         self.native.layout().addWidget(main)
 
@@ -39,21 +38,6 @@ def raise_error_msg(parent, title:str="Error", msg:str="error"):
     return None
 
 def prepend_callback(call_button: PushButton, callback):
-    # text = call_button if isinstance(call_button, str) else "Run"
-    # mgui._call_button = PushButton(gui_only=True, text=text, name="call_button")
-    # if not mgui._auto_call:  # (otherwise it already gets called)
-    #     def _disable_button_and_call(val):
-    #         # disable the call button until the function has finished
-    #         mgui._call_button = cast(PushButton, mgui._call_button)
-    #         mgui._call_button.enabled = False
-    #         try:
-    #             callback()
-    #             mgui.__call__()
-    #         finally:
-    #             mgui._call_button.enabled = True
-
-    #     mgui._call_button.changed.connect(_disable_button_and_call)
-    # mgui.append(mgui._call_button)
     old_callbacks = call_button.changed.callbacks
     call_button.changed.disconnect()
     new_callbacks = (callback,) + old_callbacks
