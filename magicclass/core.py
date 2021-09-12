@@ -2,7 +2,7 @@ from __future__ import annotations
 import inspect
 from dataclasses import is_dataclass, _POST_INIT_NAME
 from .class_gui import ClassGui
-from .utils import check_collision, get_app
+from .utils import check_collision, get_app, current_location
 
 _BASE_CLASS_SUFFIX = "_Base"
 
@@ -46,18 +46,25 @@ def magicclass(cls:type|None=None, *, layout:str="vertical", close_on_run:bool=T
         newclass.__signature__ = sig
         newclass.__doc__ = doc
         
+        # Mark the line number of class definition, which is important to determine the order
+        # of widgets when magicclassees were nested. 
+        if cls is None:
+            newclass._class_line_number = current_location(3)
+        else:
+            newclass._class_line_number = current_location(2)
+        
         def __init__(self, *args, **kwargs):
             app = get_app() # Without "app = " Jupyter freezes after closing the window!
             ClassGui.__init__(self, layout=layout, close_on_run=close_on_run, popup=popup, 
                               result_widget=result_widget, name=cls.__name__)
             super(oldclass, self).__init__(*args, **kwargs)
             self._convert_methods_into_widgets()
+            
             if hasattr(self, _POST_INIT_NAME) and not is_dataclass(cls):
                 self.__post_init__()
-            try:
-                self._record_macro(cls.__name__, args, kwargs)
-            except Exception:
-                pass
+            
+            # Record class instance construction
+            self._record_macro(cls.__name__, args, kwargs)
 
         setattr(newclass, "__init__", __init__)
         return newclass

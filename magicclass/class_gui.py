@@ -115,30 +115,35 @@ class ClassGui(Container):
         kwargs : dict[str, Any]
             Keyword arguments.
         """        
-        # if magic-class is nested, this function does not work.
-        arg_inputs = []
-        for a in args:
-            if isinstance(a, _HARD_TO_RECORD):
-                arg_inputs.append(f"var{id(a)}")
-            elif isinstance(a, Path):
-                arg_inputs.append(f"r'{a}'")
+        # TODO: if magic-class is nested, macro will not recorded in a right way.
+        try:
+            arg_inputs = []
+            for a in args:
+                if isinstance(a, _HARD_TO_RECORD):
+                    arg_inputs.append(f"var{id(a)}")
+                elif isinstance(a, Path):
+                    arg_inputs.append(f"r'{a}'")
+                else:
+                    arg_inputs.append(f"{repr(a)}")
+                    
+            kwarg_inputs = []
+            for k, v in kwargs.items():
+                if isinstance(v, _HARD_TO_RECORD):
+                    kwarg_inputs.append(f"{k}=var{id(v)}")
+                elif isinstance(v, Path):
+                    kwarg_inputs.append(f"{k}=r'{v}'")
+                else:
+                    kwarg_inputs.append(f"{k}={repr(v)}")
+            kwarg_inputs = ", ".join(kwarg_inputs)
+            
+            if func == self.__class__.__name__:
+                line = f"{_INSTANCE} = {func}({kwarg_inputs})"
             else:
-                arg_inputs.append(f"{repr(a)}")
-                
-        kwarg_inputs = []
-        for k, v in kwargs.items():
-            if isinstance(v, _HARD_TO_RECORD):
-                kwarg_inputs.append(f"{k}=var{id(v)}")
-            elif isinstance(v, Path):
-                kwarg_inputs.append(f"{k}=r'{v}'")
-            else:
-                kwarg_inputs.append(f"{k}={repr(v)}")
-        kwarg_inputs = ", ".join(kwarg_inputs)
+                line = f"{_INSTANCE}.{func}({kwarg_inputs})"
         
-        if func == self.__class__.__name__:
-            line = f"{_INSTANCE} = {func}({kwarg_inputs})"
-        else:
-            line = f"{_INSTANCE}.{func}({kwarg_inputs})"
+        except Exception as e:
+            line = f"# Fail to record macro due to {e.__class__}"
+            
         self._recorded_macro.append(line)
         return None
     
@@ -237,6 +242,7 @@ class ClassGui(Container):
                                 except ValueError:
                                     pass
                             mgui.close()
+                            
                         if self._result_widget is not None:
                             self._result_widget.value = value
                         
@@ -256,6 +262,7 @@ class ClassGui(Container):
                                 if not self._popup:
                                     self.remove(func_obj_name)
                                 mgui.close()
+                                
                     else:
                         # If napari.Viewer was found, then create a magicgui as a dock widget when button is 
                         # pushed, and remove it when function call is finished (if close_on_run==True).
@@ -293,8 +300,8 @@ class ClassGui(Container):
         """        
         return self.native.objectName()
     
-    def show(self) -> None:
-        super().show()
+    def show(self, run:bool=False) -> None:
+        super().show(run=run)
         self.native.activateWindow()
         return None
 

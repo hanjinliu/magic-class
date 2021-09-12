@@ -1,4 +1,8 @@
+from __future__ import annotations
+from functools import wraps
 import inspect
+import sys
+from typing import Callable
 from qtpy.QtWidgets import QApplication
 
 APPLICATION = None
@@ -26,25 +30,60 @@ def get_line_number(member) -> int:
     """
     Get the line number of a member function or inner class in the source code.
     """    
-    if not isinstance(member[1], type):
-        try:
-            original_func = getattr(member[1], "__wrapped__", member[1])
-            n = original_func.__code__.co_firstlineno
-        except AttributeError:
-            n = -1
-    else:
-        # TODO: This is not a perfect way.
-        class_ = member[1]
-        n = -1
-        for sub_member in iter_members(class_, exclude_prefix="__"):
+    n = -1
+    obj = member[1]
+    if not isinstance(obj, type):
+        if hasattr(obj, "_function_line_number"):
+            n = obj._function_line_number
+        else:
             try:
-                n = getattr(class_, sub_member).__code__.co_firstlineno
+                original_func = getattr(obj, "__wrapped__", obj)
+                n = original_func.__code__.co_firstlineno
             except AttributeError:
                 pass
-            else:
-                break
+    else:
+        n = getattr(obj, "_class_line_number", -1)
 
     return n
+
+def current_location(depth:int=0):
+    frame = sys._getframe(depth)
+    return frame.f_lineno
+
+def inline(obj:type|Callable):
+    """
+    Inline definition of classes or functions. This function is important when you want
+    to define a class or member function outside a magic-class while keep the widget
+    order sorted by the order of source code. 
+
+    Parameters
+    ----------
+    obj : type or callable
+        The object to be inline-defined.
+    """    
+    if isinstance(obj, type):
+        if hasattr(obj, "_class_line_number"):
+            raise AttributeError(
+                f"Class {obj.__name__} already has an attribute '_class_line_number'."
+                 "Thus it is incompatible with inline definition."
+                 )
+        obj._class_line_number = current_location(2)
+    elif callable(obj):
+        if hasattr(obj, "_class_line_number"):
+            raise AttributeError(
+                f"Function {obj.__name__} already has an attribute '_function_line_number'."
+                 "Thus it is incompatible with inline definition."
+                 )
+        # Function must be defined again. Deep copy did not work.
+        @wraps(obj)
+        def _f(*args, **kwargs):
+            return obj(*args, **kwargs)
+        obj = _f
+        obj._function_line_number = current_location(2)
+    else:
+        raise TypeError(f"Can only re-define function or class, not {type(obj)}")
+    
+    return obj
 
 def gui_qt():
     """
