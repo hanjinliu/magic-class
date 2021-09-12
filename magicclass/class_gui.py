@@ -169,15 +169,19 @@ class ClassGui(Container):
         """
         This override enables methods/functions and other magic-class to be appended into Container 
         widgets. Compatible with ``@magicgui`` and ``@magicclass`` decorators inside class. If 
-        ``FunctionGui`` object or ``ClassGui`` object was appended, it will appear on the container as is, rather than a push button.
+        ``FunctionGui`` object or ``ClassGui`` object was appended, it will appear on the container 
+        as is, rather than a push button.
         """        
         if isinstance(obj, type):
             # Inline class definition
-            if issubclass(obj, ClassGui):
+            acceptable = Widget
+            if issubclass(obj, acceptable):
                 obj = obj()
                 obj.parent = self
             else:
-                raise TypeError(f"Cannot append class except for ClassGui (got {obj.__name__})")
+                raise TypeError(
+                    f"Cannot append class except for {acceptable.__name__} (got {obj.__name__})"
+                    )
             
         elif (not isinstance(obj, Widget)) and callable(obj):
             name = obj.__name__.replace("_", " ")

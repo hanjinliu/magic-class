@@ -47,10 +47,13 @@ def get_line_number(member) -> int:
     return n
 
 def current_location(depth:int=0):
+    """
+    Get the current location in the source code.
+    """    
     frame = sys._getframe(depth)
     return frame.f_lineno
 
-def inline(obj:type|Callable, name:str=None):
+def inline(obj:type|Callable, name:str=None, **kwargs):
     """
     Inline definition of classes or functions. This function is important when you want
     to define a class or member function outside a magic-class while keep the widget
@@ -60,14 +63,15 @@ def inline(obj:type|Callable, name:str=None):
     ----------
     obj : type or callable
         The object to be inline-defined.
-    name: str, optional
+    name : str, optional
         Name of the inlined object. This argument is useful when a same class or function
         is inlined for several times.
+    **kwargs : other keyword arguments of constructor.
     """    
     if isinstance(obj, type):
         class _class(obj):
             def __init__(self):
-                super().__init__()
+                super().__init__(**kwargs)
                 self.name = name
             
         obj = _class

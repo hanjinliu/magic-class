@@ -17,6 +17,9 @@ class Figure(Container):
         super().__init__(layout=layout, labels=False, **kwargs)
         canvas = FigureCanvas(fig)
         self.native.layout().addWidget(canvas)
+        self.margins = (0, 0, 0, 0)
+        self.figure = fig
+        self.axes = fig.axes
         
 class Separator(Container):
     def __init__(self, orientation="horizontal", text:str="", name:str=""):
@@ -37,6 +40,7 @@ class Separator(Container):
             main.layout().addWidget(label)
         
         self.native.layout().addWidget(main)
+        self.margins = (0, 0, 0, 0)
 
 class Logger(TextEdit):
     def __init__(self, **kwargs):
@@ -56,7 +60,6 @@ class Logger(TextEdit):
             for txt in text:
                 self.append(txt)
         return None
-
 
 
 class PushButtonPlus(PushButton):

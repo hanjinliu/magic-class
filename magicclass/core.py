@@ -2,7 +2,8 @@ from __future__ import annotations
 import inspect
 from dataclasses import is_dataclass, _POST_INIT_NAME
 from .class_gui import ClassGui
-from .utils import check_collision, get_app, current_location
+from .widgets import Separator
+from .utils import check_collision, get_app, current_location, inline
 
 _BASE_CLASS_SUFFIX = "_Base"
 
@@ -77,3 +78,21 @@ def magicclass(cls:type|None=None, *, layout:str="vertical", parent=None, close_
         return newclass
     
     return wrapper if cls is None else wrapper(cls)
+
+class _h_separator(ClassGui, Separator):
+    def __init__(self):
+        Separator.__init__(self, orientation="horizontal")
+
+class _v_separator(ClassGui, Separator):
+    def __init__(self):
+        Separator.__init__(self, orientation="vertical")
+        
+def separator(name:str=None, orientation:str="horizontal"):
+    if orientation == "horizontal":
+        sep_ = inline(_h_separator, name=name)
+    elif orientation == "vertical":
+        sep_ = inline(_v_separator, name=name)
+    else:
+        raise ValueError("'orientation' must be either 'horizontal' or 'vertical'.")
+    sep_._class_line_number = current_location(2)
+    return sep_
