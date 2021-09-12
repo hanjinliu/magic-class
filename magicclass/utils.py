@@ -24,13 +24,26 @@ def check_collision(cls0:type, cls1:type):
 
 def get_line_number(member) -> int:
     """
-    Get the line number of a member function in the source code.
+    Get the line number of a member function or inner class in the source code.
     """    
-    try:
-        original_func = getattr(member[1], "__wrapped__", member[1])
-        n = original_func.__code__.co_firstlineno
-    except AttributeError:
+    if not isinstance(member[1], type):
+        try:
+            original_func = getattr(member[1], "__wrapped__", member[1])
+            n = original_func.__code__.co_firstlineno
+        except AttributeError:
+            n = -1
+    else:
+        # TODO: This is not a perfect way.
+        class_ = member[1]
         n = -1
+        for sub_member in iter_members(class_, exclude_prefix="__"):
+            try:
+                n = getattr(class_, sub_member).__code__.co_firstlineno
+            except AttributeError:
+                pass
+            else:
+                break
+
     return n
 
 def gui_qt():

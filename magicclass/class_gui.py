@@ -33,6 +33,9 @@ LOGGER = Logger(name="logger")
 
 @contextmanager
 def debug():
+    """
+    Magic-classes that are constructed within this context will enter debug mode.
+    """    
     global RUNNING_MODE
     current_mode = RUNNING_MODE
     RUNNING_MODE = "debug"
@@ -40,7 +43,7 @@ def debug():
     yield
     RUNNING_MODE = current_mode
 
-# TODO: 
+# ideas:
 # - progress bar
 # - show returned value?
 # - think of nesting magic-class
@@ -48,7 +51,7 @@ def debug():
 # - "exclusive" mode
 
 
-class BaseGui(Container):
+class ClassGui(Container):
     def __init__(self, layout:str= "vertical", close_on_run:bool=True, popup:bool=True, name=None):
         super().__init__(layout=layout, labels=False, name=name)
         self._current_dock_widget = None
@@ -57,8 +60,10 @@ class BaseGui(Container):
         self._parameter_history:dict[str, dict[str, Any]] = {}
         self._recorded_macro = Macro()
         self.native.setObjectName(self.__class__.__name__)
-        if RUNNING_MODE == "debug" and LOGGER.n_line > 0:
-            LOGGER.append(f"<hr></hr><br>{self.__class__.__name__} object at {id(self)}")
+        if RUNNING_MODE == "debug":
+            if LOGGER.n_line > 0:
+                LOGGER.append("<hr></hr>")
+            LOGGER.append(f"{self.__class__.__name__} object at {id(self)}")
     
     @property
     def parent_viewer(self) -> "napari.Viewer"|None:
@@ -71,7 +76,7 @@ class BaseGui(Container):
             viewer = None
         return viewer
     
-    def _convert_methods_into_widgets(self) -> BaseGui:
+    def _convert_methods_into_widgets(self) -> ClassGui:
         cls = self.__class__
         
         # Add class docstring as label.
@@ -81,11 +86,11 @@ class BaseGui(Container):
             self.append(lbl)
         
         # Bind all the methods
-        base_members = set(iter_members(BaseGui))
+        base_members = set(iter_members(ClassGui))
         for name in filter(lambda x: x not in base_members, iter_members(cls)):
-            func = getattr(self, name, None)
-            if callable(func):
-                self.append(func)
+            attr = getattr(self, name, None)
+            if callable(attr) or isinstance(attr, type):
+                self.append(attr)
         
         return self
     
@@ -99,9 +104,10 @@ class BaseGui(Container):
             Name of function.
         args : tuple
             Arguments.
-        kwargs : dict[str]
+        kwargs : dict[str, Any]
             Keyword arguments.
         """        
+        # if magic-class is nested, this function does not work.
         arg_inputs = []
         for a in args:
             if isinstance(a, _HARD_TO_RECORD):
@@ -136,20 +142,26 @@ class BaseGui(Container):
         ----------
         func : str
             Name of function.
-        kwargs : dict[str]
+        kwargs : dict[str, Any]
             Parameter inputs.
         """        
         kwargs = {k: v for k, v in kwargs.items() if not isinstance(v, _HARD_TO_RECORD)}
         self._parameter_history.update({func: kwargs})
         return None
     
-    def append(self, obj:Widget|Callable) -> None:
+    def append(self, obj:Widget|Callable|type) -> None:
         """
-        This override enables methods/functions to be appended into Container widgets.
-        Compatible with ``@magicgui`` decorator inside class: if ``FunctionGui`` object was appended,
-        it will appear on the container as is, rather than a push button.
+        This override enables methods/functions and other magic-class to be appended into Container 
+        widgets. Compatible with ``@magicgui`` and ``@magicclass`` decorators inside class. If 
+        ``FunctionGui`` object or ``ClassGui`` object was appended, it will appear on the container as is, rather than a push button.
         """        
-        if (not isinstance(obj, Widget)) and callable(obj):
+        if isinstance(obj, type):
+            if issubclass(obj, ClassGui):
+                obj = obj()
+            else:
+                raise TypeError(f"Cannot append class except for ClassGui (got {obj.__name__})")
+            
+        elif (not isinstance(obj, Widget)) and callable(obj):
             name = obj.__name__.replace("_", " ")
             button = PushButtonPlus(name=obj.__name__, text=name)
 
@@ -274,7 +286,6 @@ class BaseGui(Container):
         return None
 
 def _raise_error_in_msgbox(func, parent=None):
-    # TODO: Should be wrapped in notification manager if the widget is dockec in napari.
     @wraps(func)
     def wrapped_func(*args, **kwargs):
         try:

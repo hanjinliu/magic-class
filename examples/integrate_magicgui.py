@@ -1,21 +1,35 @@
 from magicgui import magicgui
+from magicgui.widgets import LineEdit
 from magicclass import magicclass
-import pandas as pd
-from pathlib import Path
 
 @magicclass
-class C:
-    @magicgui(auto_call=True)
-    def loader(self, path:Path, sep:str=","):
-        self.path = path
-        self.df = pd.read_csv(path, sep=sep)
+class Calculator:
+    """
+    Simple calculator
+    """            
+    def __post_init__(self):
+        self.a, self.b = 0, 0
+        self._result_widget = LineEdit(gui_only=True, name="result")
+        self._result_widget.enabled = False
+        self.append(self._result_widget)
+        
+    @magicgui(layout="horizontal", auto_call=True)
+    def loader(self, a:float, b:float):
+        self.a = a
+        self.b = b
 
-    def show_path(self):
-        print(self.path)
-
-    def show_data(self):
-        print(self.df)
+    def add(self):
+        self._result_widget.value = self.a + self.b
+    
+    def subtract(self):
+        self._result_widget.value = self.a - self.b
+    
+    def multiply(self):
+        self._result_widget.value = self.a * self.b
+    
+    def divide(self):
+        self._result_widget.value = self.a / self.b
 
 if __name__ == "__main__":
-    c = C()
+    c = Calculator()
     c.show()

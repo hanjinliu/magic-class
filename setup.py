@@ -12,7 +12,7 @@ setup(name="magic-class",
       license="GPLv2",
       packages=find_packages(),
       install_requires=[
-            "magicgui>=0.2.10",
+            "magicgui>=0.2.11",
       ],
       python_requires=">=3.7",
       )

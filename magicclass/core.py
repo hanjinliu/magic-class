@@ -1,7 +1,7 @@
 from __future__ import annotations
 import inspect
 from dataclasses import is_dataclass, _POST_INIT_NAME
-from .basegui import BaseGui
+from .class_gui import ClassGui
 from .utils import check_collision, get_app
 
 _BASE_CLASS_SUFFIX = "_Base"
@@ -38,17 +38,17 @@ def magicclass(cls:type|None=None, *, layout:str="vertical", close_on_run:bool=T
         if not isinstance(cls, type):
             raise TypeError(f"magicclass can only wrap classes, not {type(cls)}")
         
-        check_collision(cls, BaseGui)
+        check_collision(cls, ClassGui)
         doc = cls.__doc__
         sig = inspect.signature(cls)
         oldclass = type(cls.__name__ + _BASE_CLASS_SUFFIX, (cls,), {})
-        newclass = type(cls.__name__, (BaseGui, oldclass), {})
+        newclass = type(cls.__name__, (ClassGui, oldclass), {})
         newclass.__signature__ = sig
         newclass.__doc__ = doc
         
         def __init__(self, *args, **kwargs):
             app = get_app() # Without "app = " Jupyter freezes after closing the window!
-            BaseGui.__init__(self, layout=layout, close_on_run=close_on_run, popup=popup, 
+            ClassGui.__init__(self, layout=layout, close_on_run=close_on_run, popup=popup, 
                              name=cls.__name__)
             super(oldclass, self).__init__(*args, **kwargs)
             self._convert_methods_into_widgets()
