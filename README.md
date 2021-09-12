@@ -21,7 +21,7 @@ git clone https://github.com/hanjinliu/magic-class
 
 ## Dependencies
 
-`magicgui` > 0.2.11
+`magicgui` >= 0.2.11
 
 ## Example
 

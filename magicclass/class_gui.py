@@ -45,7 +45,6 @@ def debug():
 
 # ideas:
 # - progress bar
-# - show returned value?
 # - GUI tester
 # - "exclusive" mode
 
@@ -199,7 +198,8 @@ class ClassGui(Container):
                     out = func()
                     if not isinstance(out, Exception):
                         self._record_macro(func.__name__, (), {})
-                    self._result_widget.value = out
+                    if self._result_widget is not None:
+                        self._result_widget.value = out
                     return out
             else:
                 def run_function(*args):
@@ -271,7 +271,6 @@ class ClassGui(Container):
                         dock = viewer.window.add_dock_widget(mgui, name=dock_name)
                         mgui.native.setParent(dock)
                         dock.setFloating(self._popup)
-                    
                     
                     return None
                 
