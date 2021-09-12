@@ -6,7 +6,7 @@ from contextlib import contextmanager
 import numpy as np
 from pathlib import Path
 from magicgui import magicgui
-from magicgui.widgets import Container, Label
+from magicgui.widgets import Container, Label, LineEdit
 from magicgui.widgets._bases import Widget
 
 from .utils import iter_members
@@ -46,17 +46,22 @@ def debug():
 # ideas:
 # - progress bar
 # - show returned value?
-# - think of nesting magic-class
 # - GUI tester
 # - "exclusive" mode
 
 
 class ClassGui(Container):
-    def __init__(self, layout:str= "vertical", close_on_run:bool=True, popup:bool=True, name=None):
+    def __init__(self, layout:str= "vertical", close_on_run:bool=True, popup:bool=True, 
+                 result_widget:bool=False, name=None):
         super().__init__(layout=layout, labels=False, name=name)
         self._current_dock_widget = None
         self._close_on_run = close_on_run
         self._popup = popup
+        
+        self._result_widget: LineEdit | None = None
+        if result_widget:
+            self._result_widget = LineEdit(gui_only=True, name="result")
+            
         self._parameter_history:dict[str, dict[str, Any]] = {}
         self._recorded_macro = Macro()
         self.native.setObjectName(self.__class__.__name__)
@@ -92,6 +97,10 @@ class ClassGui(Container):
             if callable(attr) or isinstance(attr, type):
                 self.append(attr)
         
+        # Append result widget in the bottom
+        if self._result_widget is not None:
+            self._result_widget.enabled = False
+            self.append(self._result_widget)
         return self
     
     def _record_macro(self, func:str, args:tuple, kwargs:dict[str, Any]) -> None:
@@ -156,6 +165,7 @@ class ClassGui(Container):
         ``FunctionGui`` object or ``ClassGui`` object was appended, it will appear on the container as is, rather than a push button.
         """        
         if isinstance(obj, type):
+            # Inline class definition
             if issubclass(obj, ClassGui):
                 obj = obj()
             else:
@@ -163,7 +173,7 @@ class ClassGui(Container):
             
         elif (not isinstance(obj, Widget)) and callable(obj):
             name = obj.__name__.replace("_", " ")
-            button = PushButtonPlus(name=obj.__name__, text=name)
+            button = PushButtonPlus(name=obj.__name__, text=name, gui_only=True)
 
             # Wrap function to deal with errors in a right way.
             if RUNNING_MODE == "default":
@@ -171,7 +181,7 @@ class ClassGui(Container):
             elif RUNNING_MODE == "debug":
                 wrapper = _write_log
             elif RUNNING_MODE == "raw":
-                wrapper = lambda x: x
+                wrapper = lambda x, parent: x
             else:
                 raise ValueError(f"RUNNING_MODE={RUNNING_MODE}")
             func = wrapper(obj, parent=self.native)
@@ -189,6 +199,7 @@ class ClassGui(Container):
                     out = func()
                     if not isinstance(out, Exception):
                         self._record_macro(func.__name__, (), {})
+                    self._result_widget.value = out
                     return out
             else:
                 def run_function(*args):
@@ -226,6 +237,8 @@ class ClassGui(Container):
                                 except ValueError:
                                     pass
                             mgui.close()
+                        if self._result_widget is not None:
+                            self._result_widget.value = value
                         
                     if viewer is None:
                         # If napari.Viewer was not found, then open up a magicgui when button is pushed, and 
@@ -258,7 +271,8 @@ class ClassGui(Container):
                         dock = viewer.window.add_dock_widget(mgui, name=dock_name)
                         mgui.native.setParent(dock)
                         dock.setFloating(self._popup)
-                        
+                    
+                    
                     return None
                 
             button.changed.connect(run_function)
@@ -324,8 +338,7 @@ def _find_unique_name(name:str, viewer:"napari.Viewer"):
 
 def _get_parameters(mgui):
     inputs = {param: getattr(mgui, param).value
-              for param, value in mgui.__signature__.parameters.items()
-              if not isinstance(value, _HARD_TO_RECORD)
+              for param in mgui.__signature__.parameters.keys()
               }
     
     return inputs

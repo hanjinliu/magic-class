@@ -7,7 +7,7 @@ from .utils import check_collision, get_app
 _BASE_CLASS_SUFFIX = "_Base"
 
 def magicclass(cls:type|None=None, *, layout:str="vertical", close_on_run:bool=True,
-               popup:bool=True):
+               popup:bool=True, result_widget:bool=False):
     """
     Decorator that can convert a Python class into a widget with push buttons.
     
@@ -49,7 +49,7 @@ def magicclass(cls:type|None=None, *, layout:str="vertical", close_on_run:bool=T
         def __init__(self, *args, **kwargs):
             app = get_app() # Without "app = " Jupyter freezes after closing the window!
             ClassGui.__init__(self, layout=layout, close_on_run=close_on_run, popup=popup, 
-                             name=cls.__name__)
+                              result_widget=result_widget, name=cls.__name__)
             super(oldclass, self).__init__(*args, **kwargs)
             self._convert_methods_into_widgets()
             if hasattr(self, _POST_INIT_NAME) and not is_dataclass(cls):
