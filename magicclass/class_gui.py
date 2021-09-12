@@ -172,6 +172,7 @@ class ClassGui(Container):
             # Inline class definition
             if issubclass(obj, ClassGui):
                 obj = obj()
+                obj.parent = self
             else:
                 raise TypeError(f"Cannot append class except for ClassGui (got {obj.__name__})")
             

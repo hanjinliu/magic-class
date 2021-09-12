@@ -48,12 +48,19 @@ def magicclass(cls:type|None=None, *, layout:str="vertical", close_on_run:bool=T
         
         # Mark the line number of class definition, which is important to determine the order
         # of widgets when magicclassees were nested. 
+        
+        if hasattr(newclass, "_class_line_number"):
+            raise AttributeError(
+                f"Class {newclass.__name__} already has an attribute '_class_line_number'."
+                 "Thus it is incompatible with magic-class."
+                 )
         if cls is None:
             newclass._class_line_number = current_location(3)
         else:
             newclass._class_line_number = current_location(2)
         
         def __init__(self, *args, **kwargs):
+            # TODO: with this definition, we must define "parent" argument if we want to set parent.
             app = get_app() # Without "app = " Jupyter freezes after closing the window!
             ClassGui.__init__(self, layout=layout, close_on_run=close_on_run, popup=popup, 
                               result_widget=result_widget, name=cls.__name__)

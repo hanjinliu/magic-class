@@ -62,18 +62,8 @@ def inline(obj:type|Callable):
         The object to be inline-defined.
     """    
     if isinstance(obj, type):
-        if hasattr(obj, "_class_line_number"):
-            raise AttributeError(
-                f"Class {obj.__name__} already has an attribute '_class_line_number'."
-                 "Thus it is incompatible with inline definition."
-                 )
         obj._class_line_number = current_location(2)
     elif callable(obj):
-        if hasattr(obj, "_class_line_number"):
-            raise AttributeError(
-                f"Function {obj.__name__} already has an attribute '_function_line_number'."
-                 "Thus it is incompatible with inline definition."
-                 )
         # Function must be defined again. Deep copy did not work.
         @wraps(obj)
         def _f(*args, **kwargs):
