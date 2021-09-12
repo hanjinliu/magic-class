@@ -6,7 +6,7 @@ from .utils import check_collision, get_app, current_location
 
 _BASE_CLASS_SUFFIX = "_Base"
 
-def magicclass(cls:type|None=None, *, layout:str="vertical", close_on_run:bool=True,
+def magicclass(cls:type|None=None, *, layout:str="vertical", parent=None, close_on_run:bool=True,
                popup:bool=True, result_widget:bool=False):
     """
     Decorator that can convert a Python class into a widget with push buttons.
@@ -23,6 +23,8 @@ def magicclass(cls:type|None=None, *, layout:str="vertical", close_on_run:bool=T
         Class to be decorated.
     layout : str, "vertical" or "horizontal", default is "vertical"
         Layout of the main widget.
+    parent : magicgui.widgets._base.Widget, optional
+        Parent widget if exists.
     close_on_run : bool, default is True
         If True, magicgui created by every method will be deleted after the method is completed without
         exceptions, i.e. magicgui is more like a dialog.
@@ -48,7 +50,6 @@ def magicclass(cls:type|None=None, *, layout:str="vertical", close_on_run:bool=T
         
         # Mark the line number of class definition, which is important to determine the order
         # of widgets when magicclassees were nested. 
-        
         if hasattr(newclass, "_class_line_number"):
             raise AttributeError(
                 f"Class {newclass.__name__} already has an attribute '_class_line_number'."
@@ -60,10 +61,9 @@ def magicclass(cls:type|None=None, *, layout:str="vertical", close_on_run:bool=T
             newclass._class_line_number = current_location(2)
         
         def __init__(self, *args, **kwargs):
-            # TODO: with this definition, we must define "parent" argument if we want to set parent.
             app = get_app() # Without "app = " Jupyter freezes after closing the window!
-            ClassGui.__init__(self, layout=layout, close_on_run=close_on_run, popup=popup, 
-                              result_widget=result_widget, name=cls.__name__)
+            ClassGui.__init__(self, layout=layout, parent=parent, close_on_run=close_on_run, 
+                              popup=popup, result_widget=result_widget, name=cls.__name__)
             super(oldclass, self).__init__(*args, **kwargs)
             self._convert_methods_into_widgets()
             

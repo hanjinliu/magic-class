@@ -50,7 +50,7 @@ def current_location(depth:int=0):
     frame = sys._getframe(depth)
     return frame.f_lineno
 
-def inline(obj:type|Callable):
+def inline(obj:type|Callable, name:str=None):
     """
     Inline definition of classes or functions. This function is important when you want
     to define a class or member function outside a magic-class while keep the widget
@@ -60,9 +60,19 @@ def inline(obj:type|Callable):
     ----------
     obj : type or callable
         The object to be inline-defined.
+    name: str, optional
+        Name of the inlined object. This argument is useful when a same class or function
+        is inlined for several times.
     """    
     if isinstance(obj, type):
+        class _class(obj):
+            def __init__(self):
+                super().__init__()
+                self.name = name
+            
+        obj = _class
         obj._class_line_number = current_location(2)
+        
     elif callable(obj):
         # Function must be defined again. Deep copy did not work.
         @wraps(obj)
@@ -73,6 +83,8 @@ def inline(obj:type|Callable):
     else:
         raise TypeError(f"Can only re-define function or class, not {type(obj)}")
     
+    if name is not None:
+        obj.__name__ = name
     return obj
 
 def gui_qt():

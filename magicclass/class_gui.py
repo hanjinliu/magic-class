@@ -47,12 +47,15 @@ def debug():
 # - progress bar
 # - GUI tester
 # - "exclusive" mode
+# - use __annotations__?
 
 
 class ClassGui(Container):
-    def __init__(self, layout:str= "vertical", close_on_run:bool=True, popup:bool=True, 
+    def __init__(self, layout:str= "vertical", parent=None, close_on_run:bool=True, popup:bool=True, 
                  result_widget:bool=False, name=None):
         super().__init__(layout=layout, labels=False, name=name)
+        if parent is not None:
+            self.parent = parent
         self._current_dock_widget = None
         self._close_on_run = close_on_run
         self._popup = popup
