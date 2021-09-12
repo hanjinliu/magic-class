@@ -177,7 +177,6 @@ class ClassGui(Container):
             acceptable = Widget
             if issubclass(obj, acceptable):
                 obj = obj()
-                obj.parent = self
             else:
                 raise TypeError(
                     f"Cannot append class except for {acceptable.__name__} (got {obj.__name__})"
