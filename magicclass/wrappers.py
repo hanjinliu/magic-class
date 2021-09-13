@@ -3,7 +3,7 @@ from functools import wraps
 import inspect
 from typing import Iterable, Union
 from magicgui.signature import magic_signature, MagicSignature, cast
-from magicgui.widgets import PushButton
+from magicgui.widgets._bases import Widget
 
 Color = Union[str, Iterable[float]]
 nStrings = Union[str, Iterable[str]]
@@ -102,16 +102,16 @@ def click(enables:nStrings=None, disables:nStrings=None, enabled:bool=True,
         @wraps(func)
         def f(self, *args, **kwargs):
             out = func(self, *args, **kwargs)
-            for button in filter(lambda x: isinstance(x, PushButton), self):
-                button: PushButton
-                if button.name in enables and not button.enabled:
-                    button.enabled = True
-                elif button.name in disables and button.enabled:
-                    button.enabled = False
-                elif button.name in shows and not button.visible:
-                    button.visible = True
-                elif button.name in hides and button.visible:
-                    button.visible = False
+            for widget in filter(lambda x: isinstance(x, Widget), self):
+                widget: Widget
+                if widget.name in enables and not widget.enabled:
+                    widget.enabled = True
+                elif widget.name in disables and widget.enabled:
+                    widget.enabled = False
+                elif widget.name in shows and not widget.visible:
+                    widget.visible = True
+                elif widget.name in hides and widget.visible:
+                    widget.visible = False
             return out
         
         if hasattr(func, "__signature__") and isinstance(func.__signature__, MagicMethodSignature):

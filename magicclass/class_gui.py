@@ -9,7 +9,7 @@ from magicgui import magicgui
 from magicgui.widgets import Container, Label, LineEdit
 from magicgui.widgets._bases import Widget
 
-from .utils import iter_members
+from .utils import InlineClass, iter_members_and_annotations
 from .widgets import PushButtonPlus, Separator, Logger, raise_error_msg
 
 # Check if napari is available so that layers are detectable from GUIs.
@@ -46,8 +46,7 @@ def debug():
 # ideas:
 # - progress bar
 # - GUI tester
-# - "exclusive" mode
-# - use __annotations__?
+# - use __annotations__
 
 
 class ClassGui(Container):
@@ -67,9 +66,8 @@ class ClassGui(Container):
         self._parameter_history:dict[str, dict[str, Any]] = {}
         self._recorded_macro = Macro()
         self.native.setObjectName(self.__class__.__name__)
+            
         if RUNNING_MODE == "debug":
-            if LOGGER.n_line > 0:
-                LOGGER.append("<hr></hr>")
             LOGGER.append(f"{self.__class__.__name__} object at {id(self)}")
     
     @property
@@ -85,6 +83,7 @@ class ClassGui(Container):
     
     def _convert_methods_into_widgets(self) -> ClassGui:
         cls = self.__class__
+        cls_annotations = cls.__annotations__
         
         # Add class docstring as label.
         if cls.__doc__:
@@ -92,11 +91,31 @@ class ClassGui(Container):
             lbl = Label(value=doc)
             self.append(lbl)
         
-        # Bind all the methods
-        base_members = set(iter_members(ClassGui))
-        for name in filter(lambda x: x not in base_members, iter_members(cls)):
-            attr = getattr(self, name, None)
-            if callable(attr) or isinstance(attr, type):
+        # Bind all the methods and annotations
+        base_members = set(iter_members_and_annotations(ClassGui))
+        for name in filter(lambda x: x not in base_members, iter_members_and_annotations(cls)):
+            if name in cls_annotations.keys():
+                widgetclass = cls_annotations[name]
+                if not issubclass(widgetclass, Widget):
+                    continue
+                
+                if not issubclass(widgetclass, InlineClass):
+                    # Class widgetclass was not defined in an inline way. Widget may
+                    # appear in a wrong position because magicclass cannot determine
+                    # its line number. 
+                    pass
+                
+                if hasattr(self, name) and isinstance(getattr(self, name), Widget):
+                    # If the annotation has a default value, same widget will be created
+                    # twice.
+                    continue
+                
+                attr = widgetclass()
+                setattr(self, name, attr)
+            else:
+                attr = getattr(self, name, None)
+                
+            if callable(attr) or isinstance(attr, (type, Widget)):
                 self.append(attr)
         
         # Append result widget in the bottom
@@ -195,7 +214,7 @@ class ClassGui(Container):
                 wrapper = lambda x, parent: x
             else:
                 raise ValueError(f"RUNNING_MODE={RUNNING_MODE}")
-            func = wrapper(obj, parent=self.native)
+            func = wrapper(obj, parent=self)
             
             # Strangely, signature must be updated like this. Otherwise, already wrapped member function
             # will have signature with "self".
@@ -312,13 +331,13 @@ class ClassGui(Container):
         self.native.activateWindow()
         return None
 
-def _raise_error_in_msgbox(func, parent=None):
+def _raise_error_in_msgbox(func, parent:Widget=None):
     @wraps(func)
     def wrapped_func(*args, **kwargs):
         try:
             out = func(*args, **kwargs)
         except Exception as e:
-            raise_error_msg(parent, title=e.__class__.__name__, msg=str(e))
+            raise_error_msg(parent.native, title=e.__class__.__name__, msg=str(e))
             out = e
         return out
     
@@ -330,11 +349,13 @@ def _write_log(func, parent=None):
         try:
             out = func(*args, **kwargs)
         except Exception as e:
-            log = [f'{func.__name__}: <span style="color: red; font-weight: bold;">{e.__class__.__name__}</span>',
+            log = [f'{parent.__class__.__name__}.{func.__name__}: '
+                   f'<span style="color: red; font-weight: bold;">{e.__class__.__name__}</span>',
                    f'{e}']
             out = e
         else:
-            log = f'{func.__name__}: <span style="color: blue; font-weight: bold;">Pass</span>'
+            log = f'{parent.__class__.__name__}.{func.__name__}: ' \
+                   '<span style="color: blue; font-weight: bold;">Pass</span>'
         finally:
             LOGGER.append(log)
         return out

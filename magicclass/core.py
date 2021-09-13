@@ -2,8 +2,7 @@ from __future__ import annotations
 import inspect
 from dataclasses import is_dataclass, _POST_INIT_NAME
 from .class_gui import ClassGui
-from .widgets import Separator
-from .utils import check_collision, get_app, current_location, inline
+from .utils import check_collision, get_app, current_location
 
 _BASE_CLASS_SUFFIX = "_Base"
 
@@ -43,11 +42,13 @@ def magicclass(cls:type|None=None, *, layout:str="vertical", parent=None, close_
         
         check_collision(cls, ClassGui)
         doc = cls.__doc__
+        annot = cls.__dict__.get("__annotations__", {})
         sig = inspect.signature(cls)
         oldclass = type(cls.__name__ + _BASE_CLASS_SUFFIX, (cls,), {})
         newclass = type(cls.__name__, (ClassGui, oldclass), {})
         newclass.__signature__ = sig
         newclass.__doc__ = doc
+        newclass.__annotations__ = ClassGui.__annotations__ | annot
         
         # Mark the line number of class definition, which is important to determine the order
         # of widgets when magicclassees were nested. 
@@ -78,21 +79,3 @@ def magicclass(cls:type|None=None, *, layout:str="vertical", parent=None, close_
         return newclass
     
     return wrapper if cls is None else wrapper(cls)
-
-class _h_separator(ClassGui, Separator):
-    def __init__(self):
-        Separator.__init__(self, orientation="horizontal")
-
-class _v_separator(ClassGui, Separator):
-    def __init__(self):
-        Separator.__init__(self, orientation="vertical")
-        
-def separator(name:str=None, orientation:str="horizontal"):
-    if orientation == "horizontal":
-        sep_ = inline(_h_separator, name=name)
-    elif orientation == "vertical":
-        sep_ = inline(_v_separator, name=name)
-    else:
-        raise ValueError("'orientation' must be either 'horizontal' or 'vertical'.")
-    sep_._class_line_number = current_location(2)
-    return sep_
