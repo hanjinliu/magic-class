@@ -7,7 +7,7 @@ import numpy as np
 from pathlib import Path
 from magicgui import magicgui
 from magicgui.widgets import Container, Label, LineEdit
-from magicgui.widgets._bases import Widget
+from magicgui.widgets._bases import Widget, ValueWidget
 
 from .utils import InlineClass, iter_members_and_annotations
 from .widgets import PushButtonPlus, Separator, Logger, raise_error_msg
@@ -43,10 +43,10 @@ def debug():
     yield
     RUNNING_MODE = current_mode
 
-# ideas:
-# - progress bar
-# - GUI tester
-# - use __annotations__
+# TODO:
+# - GUI tester.
+# - Recursive macro recording using event emitter chain. ClassGui should receive events from child ClassGui.
+#   I should not start implementing this feature until magicgui's psygnal is ready.
 
 
 class ClassGui(Container):
@@ -64,7 +64,7 @@ class ClassGui(Container):
             self._result_widget = LineEdit(gui_only=True, name="result")
             
         self._parameter_history:dict[str, dict[str, Any]] = {}
-        self._recorded_macro = Macro()
+        self._recorded_macro:Macro[str] = Macro()
         self.native.setObjectName(self.__class__.__name__)
             
         if RUNNING_MODE == "debug":
@@ -91,6 +91,18 @@ class ClassGui(Container):
             lbl = Label(value=doc)
             self.append(lbl)
         
+        # def _define_set_value(name):
+        #     def _set_value(event):
+        #         value = event.source.value
+        #         prefix = f"{_INSTANCE}.{name} = "
+        #         line = f"{prefix}{_safe_str(value)}"
+        #         if self._recorded_macro and self._recorded_macro[-1].startswith(prefix):
+        #             self._recorded_macro[-1] = line
+        #         else:
+        #             self._recorded_macro.append(line)
+        #         return None
+        #     return _set_value
+                
         # Bind all the methods and annotations
         base_members = set(iter_members_and_annotations(ClassGui))
         for name in filter(lambda x: x not in base_members, iter_members_and_annotations(cls)):
@@ -112,9 +124,13 @@ class ClassGui(Container):
                 
                 attr = widgetclass()
                 setattr(self, name, attr)
+                
             else:
                 attr = getattr(self, name, None)
                 
+            # if isinstance(attr, ValueWidget):
+            #     attr.changed.connect(_define_set_value(name))
+                        
             if callable(attr) or isinstance(attr, (type, Widget)):
                 self.append(attr)
         
@@ -139,29 +155,19 @@ class ClassGui(Container):
         """        
         # TODO: if magic-class is nested, macro will not recorded in a right way.
         try:
-            arg_inputs = []
+            inputs = []
             for a in args:
-                if isinstance(a, _HARD_TO_RECORD):
-                    arg_inputs.append(f"var{id(a)}")
-                elif isinstance(a, Path):
-                    arg_inputs.append(f"r'{a}'")
-                else:
-                    arg_inputs.append(f"{repr(a)}")
+                inputs.append(_safe_str(a))
                     
-            kwarg_inputs = []
             for k, v in kwargs.items():
-                if isinstance(v, _HARD_TO_RECORD):
-                    kwarg_inputs.append(f"{k}=var{id(v)}")
-                elif isinstance(v, Path):
-                    kwarg_inputs.append(f"{k}=r'{v}'")
-                else:
-                    kwarg_inputs.append(f"{k}={repr(v)}")
-            kwarg_inputs = ", ".join(kwarg_inputs)
+                inputs.append(f"{k}={_safe_str(v)}")
+                
+            inputs = ", ".join(inputs)
             
             if func == self.__class__.__name__:
-                line = f"{_INSTANCE} = {func}({kwarg_inputs})"
+                line = f"{_INSTANCE} = {func}({inputs})"
             else:
-                line = f"{_INSTANCE}.{func}({kwarg_inputs})"
+                line = f"{_INSTANCE}.{func}({inputs})"
         
         except Exception as e:
             line = f"# Fail to record macro due to {e.__class__}"
@@ -321,6 +327,9 @@ class ClassGui(Container):
                 button.from_options(options)
                 
             obj = button
+        
+        # if isinstance(obj, ClassGui):
+        #     obj.changed.connect(lambda x: self.changed(value=x.value))
             
         return super().append(obj)
     
@@ -380,6 +389,15 @@ def _get_parameters(mgui):
               }
     
     return inputs
+
+def _safe_str(obj):
+    if isinstance(obj, _HARD_TO_RECORD):
+        out = f"var{id(obj)}"
+    elif isinstance(obj, Path):
+        out = f"r'{obj}'"
+    else:
+        out = f"{repr(obj)}"
+    return out
 
 class Macro(list):
     def __repr__(self):
