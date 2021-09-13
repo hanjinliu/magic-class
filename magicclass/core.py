@@ -64,6 +64,7 @@ def magicclass(cls:type|None=None, *, layout:str="vertical", parent=None, close_
         
         def __init__(self, *args, **kwargs):
             app = get_app() # Without "app = " Jupyter freezes after closing the window!
+            macro_init = Expr.parse_init(cls, args, kwargs)
             ClassGui.__init__(self, layout=layout, parent=parent, close_on_run=close_on_run, 
                               popup=popup, result_widget=result_widget, name=cls.__name__)
             super(oldclass, self).__init__(*args, **kwargs)
@@ -73,7 +74,7 @@ def magicclass(cls:type|None=None, *, layout:str="vertical", parent=None, close_
                 self.__post_init__()
             
             # Record class instance construction
-            self._recorded_macro.append(Expr.parse_init(cls, args, kwargs))
+            self._recorded_macro.append(macro_init)
 
         setattr(newclass, "__init__", __init__)
         return newclass

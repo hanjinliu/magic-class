@@ -22,7 +22,6 @@ else:
     NAPARI_AVAILABLE = True
     
 _HARD_TO_RECORD = (np.ndarray,) # This is a temporal solution to avoid recording layer as an numpy
-_INSTANCE = "ins"
 
 # Running mode determines how to construct magic-class GUI.
 # - "default": Error will be raised in message box
@@ -44,11 +43,7 @@ def debug():
     yield
     RUNNING_MODE = current_mode
 
-# TODO:
-# - GUI tester.
-# - Recursive macro recording using event emitter chain. ClassGui should receive events from child ClassGui.
-#   I should not start implementing this feature until magicgui's psygnal is ready.
-
+# BUG: Method name "func" causes application to break.
 
 class ClassGui(Container):
     def __init__(self, layout:str= "vertical", parent=None, close_on_run:bool=True, popup:bool=True, 
@@ -142,7 +137,7 @@ class ClassGui(Container):
             self.append(self._result_widget)
         return self
     
-    def _record_macro(self, func:str, args:tuple, kwargs:dict[str, Any]) -> None:
+    def _record_macro(self, func:Callable, args:tuple, kwargs:dict[str, Any]) -> None:
         """
         Record a function call as a line of macro.
 
@@ -155,20 +150,6 @@ class ClassGui(Container):
         kwargs : dict[str, Any]
             Keyword arguments.
         """        
-        # TODO: if magic-class is nested, macro will not recorded in a right way.
-        # try:
-        #     head = Head.method
-        #     inputs = [func]
-        #     for a in args:
-        #         inputs.append(a)
-                    
-        #     for k, v in kwargs.items():
-        #         inputs.append(Expr(Head.setvalue, [v], symbol=k))
-                    
-        # except Exception as e:
-        #     head = Head.comment
-        #     args = [f"Fail to record macro due to {e.__class__}"]
-        
         macro = Expr.parse_method(func, args, kwargs)
         self._recorded_macro.append(macro)
         return None
@@ -338,6 +319,20 @@ class ClassGui(Container):
         super().show(run=run)
         self.native.activateWindow()
         return None
+    
+    def create_macro(self, symbol:str="ui") -> list[str]:
+        macro: list[tuple[int, str]]
+        macro = _collect_macro(self._recorded_macro, symbol)
+        for name, attr in filter(lambda x: not x[0].startswith("_"), self.__dict__.items()):
+            if not isinstance(attr, ClassGui):
+                continue
+            macro += _collect_macro(attr._recorded_macro, f"{symbol}.{name}")
+
+        sorted_macro = map(lambda x: x[1], sorted(macro, key=lambda x: x[0]))
+        return "\n".join(sorted_macro)
+
+def _collect_macro(macro:Macro, symbol:str) -> list[tuple[int, str]]:
+    return list((expr.number, expr.str_as(symbol)) for expr in macro)
 
 def _raise_error_in_msgbox(func, parent:Widget=None):
     @wraps(func)
@@ -420,7 +415,7 @@ class Head(Enum):
 
 class Expr:
     n = 0
-    def __init__(self, head:Head, args:Iterable[Any], symbol:str="ins"):
+    def __init__(self, head:Head, args:Iterable[Any], symbol:str="ui"):
         self.head = head
         self.args = [_safe_str(a) for a in args]
         self.symbol = symbol
@@ -458,7 +453,7 @@ class Expr:
         return line
     
     @classmethod
-    def parse_method(cls, func:str, args:tuple[Any], kwargs:dict[str, Any], symbol:str="ins"):
+    def parse_method(cls, func:Callable, args:tuple[Any], kwargs:dict[str, Any], symbol:str="ui"):
         head = Head.method
         inputs = [func]
         for a in args:
@@ -469,7 +464,14 @@ class Expr:
         return cls(head=head, args=inputs, symbol=symbol)
 
     @classmethod
-    def parse_init(cls, clsname:str, args:tuple[Any], kwargs:dict[str, Any], symbol:str="ins"):
-        self = cls.parse_method(clsname, args, kwargs, symbol=symbol)
+    def parse_init(cls, other_cls:type, args:tuple[Any], kwargs:dict[str, Any], symbol:str="ui"):
+        self = cls.parse_method(other_cls, args, kwargs, symbol=symbol)
         self.head = Head.construction
         return self
+    
+    def str_as(self, symbol:str):
+        old_symbol = self.symbol
+        self.symbol = symbol
+        out = str(self)
+        self.symbol = old_symbol
+        return out
