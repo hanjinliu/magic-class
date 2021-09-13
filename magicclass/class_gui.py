@@ -1,6 +1,7 @@
 from __future__ import annotations
+from enum import Enum, auto
 from functools import wraps
-from typing import Callable, Any
+from typing import Callable, Iterable, Any
 import inspect
 from contextlib import contextmanager
 import numpy as np
@@ -64,7 +65,7 @@ class ClassGui(Container):
             self._result_widget = LineEdit(gui_only=True, name="result")
             
         self._parameter_history:dict[str, dict[str, Any]] = {}
-        self._recorded_macro:Macro[str] = Macro()
+        self._recorded_macro:Macro[Expr] = Macro()
         self.native.setObjectName(self.__class__.__name__)
             
         if RUNNING_MODE == "debug":
@@ -91,17 +92,18 @@ class ClassGui(Container):
             lbl = Label(value=doc)
             self.append(lbl)
         
-        # def _define_set_value(name):
-        #     def _set_value(event):
-        #         value = event.source.value
-        #         prefix = f"{_INSTANCE}.{name} = "
-        #         line = f"{prefix}{_safe_str(value)}"
-        #         if self._recorded_macro and self._recorded_macro[-1].startswith(prefix):
-        #             self._recorded_macro[-1] = line
-        #         else:
-        #             self._recorded_macro.append(line)
-        #         return None
-        #     return _set_value
+        def _define_set_value(name):
+            def _set_value(event):
+                value = event.source.value # TODO: fix after psygnal start to be used.
+                args = [name, value]
+                expr = Expr(head=Head.setattr, args=args)
+                last_expr = self._recorded_macro[-1]
+                if last_expr.head == Head.setattr and last_expr.args[0][1:-1] == name:
+                    self._recorded_macro[-1] = expr
+                else:
+                    self._recorded_macro.append(expr)
+                return None
+            return _set_value
                 
         # Bind all the methods and annotations
         base_members = set(iter_members_and_annotations(ClassGui))
@@ -128,8 +130,8 @@ class ClassGui(Container):
             else:
                 attr = getattr(self, name, None)
                 
-            # if isinstance(attr, ValueWidget):
-            #     attr.changed.connect(_define_set_value(name))
+            if isinstance(attr, ValueWidget):
+                attr.changed.connect(_define_set_value(name))
                         
             if callable(attr) or isinstance(attr, (type, Widget)):
                 self.append(attr)
@@ -154,25 +156,21 @@ class ClassGui(Container):
             Keyword arguments.
         """        
         # TODO: if magic-class is nested, macro will not recorded in a right way.
-        try:
-            inputs = []
-            for a in args:
-                inputs.append(_safe_str(a))
+        # try:
+        #     head = Head.method
+        #     inputs = [func]
+        #     for a in args:
+        #         inputs.append(a)
                     
-            for k, v in kwargs.items():
-                inputs.append(f"{k}={_safe_str(v)}")
-                
-            inputs = ", ".join(inputs)
-            
-            if func == self.__class__.__name__:
-                line = f"{_INSTANCE} = {func}({inputs})"
-            else:
-                line = f"{_INSTANCE}.{func}({inputs})"
+        #     for k, v in kwargs.items():
+        #         inputs.append(Expr(Head.setvalue, [v], symbol=k))
+                    
+        # except Exception as e:
+        #     head = Head.comment
+        #     args = [f"Fail to record macro due to {e.__class__}"]
         
-        except Exception as e:
-            line = f"# Fail to record macro due to {e.__class__}"
-            
-        self._recorded_macro.append(line)
+        macro = Expr.parse_method(func, args, kwargs)
+        self._recorded_macro.append(macro)
         return None
     
     def _record_parameter_history(self, func:str, kwargs:dict[str, Any]) -> None:
@@ -237,7 +235,7 @@ class ClassGui(Container):
                 def run_function(*args):
                     out = func()
                     if not isinstance(out, Exception):
-                        self._record_macro(func.__name__, (), {})
+                        self._record_macro(func, (), {})
                     if self._result_widget is not None:
                         self._result_widget.value = out
                     return out
@@ -268,7 +266,7 @@ class ClassGui(Container):
                         if isinstance(value, Exception):
                             return None
                         inputs = _get_parameters(mgui)
-                        self._record_macro(func.__name__, (), inputs)
+                        self._record_macro(func, (), inputs)
                         self._record_parameter_history(func.__name__, inputs)
                         if self._close_on_run:
                             if not self._popup:
@@ -328,9 +326,6 @@ class ClassGui(Container):
                 
             obj = button
         
-        # if isinstance(obj, ClassGui):
-        #     obj.changed.connect(lambda x: self.changed(value=x.value))
-            
         return super().append(obj)
     
     def objectName(self) -> str:
@@ -395,10 +390,86 @@ def _safe_str(obj):
         out = f"var{id(obj)}"
     elif isinstance(obj, Path):
         out = f"r'{obj}'"
+    elif hasattr(obj, "__name__"):
+        out = obj.__name__
+    elif isinstance(obj, str):
+        out = repr(obj)
     else:
-        out = f"{repr(obj)}"
+        out = str(obj)
     return out
 
 class Macro(list):
-    def __repr__(self):
-        return "\n".join(self)
+    def append(self, __object:Expr):
+        if not isinstance(__object, Expr):
+            raise TypeError("Cannot append objects to Macro except for MacroExpr objecs.")
+        return super().append(__object)
+    
+    def __str__(self) -> str:
+        return "\n".join(map(str, self))
+        
+class Head(Enum):
+    construction = auto()
+    method = auto()
+    getattr = auto()
+    setattr = auto()
+    getitem = auto()
+    setitem = auto()
+    call = auto()
+    setvalue = auto()
+    comment = auto()
+
+class Expr:
+    n = 0
+    def __init__(self, head:Head, args:Iterable[Any], symbol:str="ins"):
+        self.head = head
+        self.args = [_safe_str(a) for a in args]
+        self.symbol = symbol
+        self.number = self.__class__.n
+        self.__class__.n += 1
+    
+    def __repr__(self) -> str:
+        out = [f"head: {self.head.name}\nargs:\n"]
+        for i, arg in enumerate(self.args):
+            out.append(f"    {i}: {arg}\n")
+        return "".join(out)
+    
+    def __str__(self) -> str:
+        func, *vals = self.args
+        if self.head == Head.construction:
+            line = f"{self.symbol} = {func}({', '.join(vals)})"
+        elif self.head == Head.method:
+            line = f"{self.symbol}.{func}({', '.join(vals)})"
+        elif self.head == Head.getattr:
+            line = f"{self.symbol}.{self.args[0][1:-1]}"
+        elif self.head == Head.setattr:
+            line = f"{self.symbol}.{self.args[0][1:-1]} = {self.args[1]}"
+        elif self.head == Head.getitem:
+            line = f"{self.symbol}[{self.args[0]}]"
+        elif self.head == Head.setitem:
+            line = f"{self.symbol}[{self.args[0]}] = {self.args[1]}"
+        elif self.head == Head.call:
+            line = f"{self.symbol}{tuple(self.args)}"
+        elif self.head == Head.comment:
+            line = f"# {self.args[0]}"
+        elif self.head == Head.setvalue:
+            line = f"{self.symbol}={self.args[0]}"
+        else:
+            raise ValueError(self.head)
+        return line
+    
+    @classmethod
+    def parse_method(cls, func:str, args:tuple[Any], kwargs:dict[str, Any], symbol:str="ins"):
+        head = Head.method
+        inputs = [func]
+        for a in args:
+            inputs.append(a)
+                
+        for k, v in kwargs.items():
+            inputs.append(cls(Head.setvalue, [v], symbol=k))
+        return cls(head=head, args=inputs, symbol=symbol)
+
+    @classmethod
+    def parse_init(cls, clsname:str, args:tuple[Any], kwargs:dict[str, Any], symbol:str="ins"):
+        self = cls.parse_method(clsname, args, kwargs, symbol=symbol)
+        self.head = Head.construction
+        return self

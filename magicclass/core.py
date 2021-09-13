@@ -1,7 +1,7 @@
 from __future__ import annotations
 import inspect
 from dataclasses import is_dataclass, _POST_INIT_NAME
-from .class_gui import ClassGui
+from .class_gui import ClassGui, Expr, Head
 from .utils import check_collision, get_app, current_location
 
 _BASE_CLASS_SUFFIX = "_Base"
@@ -73,7 +73,7 @@ def magicclass(cls:type|None=None, *, layout:str="vertical", parent=None, close_
                 self.__post_init__()
             
             # Record class instance construction
-            self._record_macro(cls.__name__, args, kwargs)
+            self._recorded_macro.append(Expr.parse_init(cls, args, kwargs))
 
         setattr(newclass, "__init__", __init__)
         return newclass
