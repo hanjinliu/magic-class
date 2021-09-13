@@ -202,6 +202,8 @@ class ClassGui(Container):
                     )
             
         elif (not isinstance(obj, Widget)) and callable(obj):
+            # Convert methods into push buttons
+            
             name = obj.__name__.replace("_", " ")
             button = PushButtonPlus(name=obj.__name__, text=name, gui_only=True)
 
@@ -214,6 +216,7 @@ class ClassGui(Container):
                 wrapper = lambda x, parent: x
             else:
                 raise ValueError(f"RUNNING_MODE={RUNNING_MODE}")
+            
             func = wrapper(obj, parent=self)
             
             # Strangely, signature must be updated like this. Otherwise, already wrapped member function
@@ -308,6 +311,8 @@ class ClassGui(Container):
                     return None
                 
             button.changed.connect(run_function)
+            
+            # If button design is given, load the options.
             try:
                 options = obj.__signature__.caller_options
             except AttributeError:
@@ -317,8 +322,7 @@ class ClassGui(Container):
                 
             obj = button
             
-        super().append(obj)
-        return None
+        return super().append(obj)
     
     def objectName(self) -> str:
         """

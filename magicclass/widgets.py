@@ -3,6 +3,7 @@ from typing import Iterable
 from qtpy.QtWidgets import QFrame, QLabel, QMessageBox, QPushButton, QGridLayout, QTextEdit
 from qtpy.QtGui import QIcon, QFont
 from qtpy.QtCore import QSize, Qt
+import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvas
 from matplotlib.colors import to_rgb
 from magicgui.widgets import Container, PushButton, TextEdit
@@ -13,13 +14,19 @@ def raise_error_msg(parent, title:str="Error", msg:str="error"):
     return None
 
 class Figure(Container):
-    def __init__(self, fig, layout="vertical", **kwargs):
+    def __init__(self, fig=None, layout="vertical", **kwargs):
+        if fig is None:
+            fig, _ = plt.subplots()
+        
         super().__init__(layout=layout, labels=False, **kwargs)
         canvas = FigureCanvas(fig)
         self.native.layout().addWidget(canvas)
         self.margins = (0, 0, 0, 0)
         self.figure = fig
         self.axes = fig.axes
+        
+    def draw(self):
+        self.figure.canvas.draw()
         
 class Separator(Container):
     def __init__(self, orientation="horizontal", text:str="", name:str=""):
