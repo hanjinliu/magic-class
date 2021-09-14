@@ -1,7 +1,6 @@
 from __future__ import annotations
 import inspect
 from magicclass.field import MagicField
-import sys
 from qtpy.QtWidgets import QApplication
 
 APPLICATION = None
@@ -41,13 +40,6 @@ def get_line_number(member) -> int:
         n = obj.lineno
 
     return n
-
-def current_location(depth:int=0):
-    """
-    Get the current location in the source code.
-    """    
-    frame = sys._getframe(depth)
-    return frame.f_lineno
 
 def gui_qt():
     """

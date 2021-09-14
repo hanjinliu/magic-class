@@ -3,7 +3,8 @@ import inspect
 from dataclasses import is_dataclass, _POST_INIT_NAME
 from .class_gui import ClassGui
 from .macro import Expr
-from .utils import check_collision, get_app, current_location
+from .utils import check_collision, get_app
+from .field import current_location
 
 _BASE_CLASS_SUFFIX = "_Base"
 

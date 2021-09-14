@@ -126,7 +126,7 @@ class ClassGui(Container):
             self.append(self._result_widget)
         return self
     
-    def append(self, obj:Widget|Callable) -> None:
+    def insert(self, key:int, obj:Widget|Callable) -> None:
         """
         This override enables methods/functions and other magic-class to be appended into Container 
         widgets. Compatible with ``@magicgui`` and ``@magicclass`` decorators inside class. If 
@@ -238,7 +238,7 @@ class ClassGui(Container):
             f = _nested_function_gui_callback(self, obj)
             obj.called.connect(f)
         
-        return super().append(obj)
+        return super().insert(key, obj)
     
     def objectName(self) -> str:
         """
