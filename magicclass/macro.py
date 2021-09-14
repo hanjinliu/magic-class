@@ -109,6 +109,13 @@ class Expr:
     def __str__(self) -> str:
         return self.__class__._map[self.head](self)
     
+    def __eq__(self, expr:Expr) -> bool:
+        if not isinstance(expr, self.__class__):
+            raise ValueError(f"'==' is not supported between Expr and {type(expr)}")
+        if self.head != Head.value or expr.head != Head.value:
+            raise ValueError("Cannot conduct '==' operation except for value expression.")
+        return self.args[0] == expr.args[0]
+        
     @classmethod
     def parse_method(cls, func:Callable, args:tuple[Any], kwargs:dict[str, Any], 
                      symbol:str="ui") -> Expr:

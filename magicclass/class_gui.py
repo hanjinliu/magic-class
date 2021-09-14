@@ -7,7 +7,8 @@ from contextlib import contextmanager
 from .macro import Macro, Expr, Head
 from magicgui import magicgui
 from magicgui.widgets import Container, Label, LineEdit, FunctionGui
-from magicgui.widgets._bases import Widget, ValueWidget
+from magicgui.widgets._bases import Widget, ValueWidget, ButtonWidget
+from magicgui.widgets._concrete import _LabeledWidget
 
 from .utils import iter_members_and_annotations
 from .widgets import PushButtonPlus, Separator, Logger, raise_error_msg
@@ -279,6 +280,9 @@ class ClassGui(Container):
             # magic-class has to know when the nested FunctionGui is called.
             f = _nested_function_gui_callback(self, obj)
             obj.called.connect(f)
+        
+        elif not isinstance(obj, (_LabeledWidget, ButtonWidget)):
+            obj = _LabeledWidget(obj)
         
         return super().append(obj)
     
