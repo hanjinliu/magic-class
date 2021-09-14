@@ -87,7 +87,7 @@ class ClassGui(Container):
             def _set_value(event):
                 value = event.source.value # TODO: fix after psygnal start to be used.
                 expr = Expr(head=Head.setattr, args=[name, value])
-                last_expr:Expr = self._recorded_macro[-1]
+                last_expr = self._recorded_macro[-1]
                 if last_expr.head == expr.head and last_expr.args[0] == expr.args[0]:
                     self._recorded_macro[-1] = expr
                 else:
@@ -315,7 +315,7 @@ class ClassGui(Container):
         # type annotation
         annot = []
         for expr in self._recorded_macro:
-            expr:Expr
+            expr: Expr
             for idt in expr.iter_args():
                 if not idt.valid:
                     annot.append(idt.as_annotation())
@@ -386,7 +386,7 @@ def _nested_function_gui_callback(cgui:ClassGui, fgui:FunctionGui):
         if fgui._auto_call:
             # Auto-call will cause many redundant macros. To avoid this, only the last input
             # will be recorded in magic-class.
-            last_expr:Expr = cgui._recorded_macro[-1]
+            last_expr = cgui._recorded_macro[-1]
             if last_expr.head == expr.head and \
                 last_expr.args[0].symbol == expr.args[0].symbol:
                 cgui._recorded_macro.pop()

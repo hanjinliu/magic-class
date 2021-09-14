@@ -78,6 +78,10 @@ def magicclass(cls:type|None=None, *, layout:str="vertical", parent=None, close_
             self._recorded_macro.append(macro_init)
 
         setattr(newclass, "__init__", __init__)
+        
+        # Users may want to override repr
+        setattr(newclass, "__repr__", oldclass.__repr__)
+        
         return newclass
     
     return wrapper if cls is None else wrapper(cls)

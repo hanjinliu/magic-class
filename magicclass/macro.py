@@ -2,7 +2,7 @@ from __future__ import annotations
 from enum import Enum, auto
 from collections import UserList, UserString
 from pathlib import Path
-from typing import Callable, Iterable, Any
+from typing import Callable, Iterable, Any, overload
 import numpy as np
 
 class Identifier(UserString):
@@ -35,6 +35,15 @@ class Macro(UserList):
     
     def __str__(self) -> str:
         return "\n".join(map(str, self))
+    
+    @overload
+    def __getitem__(self, key: int | str) -> Expr: ...
+
+    @overload
+    def __getitem__(self, key: slice) -> Macro[Expr]: ...
+        
+    def __getitem__(self, key):
+        return super().__getitem__(key)
         
 class Head(Enum):
     init    = auto()
@@ -59,8 +68,8 @@ class Expr:
     and "args" denotes the arguments needed for the operation. Other attributes, such as "symbol", is not
     necessary as a Expr object but it is useful to create executable codes.
     """    
-    n = 0
-    _map = {
+    n:int = 0
+    _map: dict[Head, Callable[[Expr], str]] = {
         Head.init   : lambda e: f"{e.symbol} = {e.args[0]}({', '.join(map(str, e.args[1:]))})",
         Head.method : lambda e: f"{e.symbol}.{e.args[0]}({', '.join(map(str, e.args[1:]))})",
         Head.getattr: lambda e: f"{e.symbol}.{str(e.args[0]).strip(_QUOTE)}",
@@ -87,7 +96,7 @@ class Expr:
     def __repr__(self) -> str:
         return self._repr()
     
-    def _repr(self, ind:int=0):
+    def _repr(self, ind:int=0) -> str:
         if self.head == Head.value:
             return str(self)
         elif self.head == Head.assign:
