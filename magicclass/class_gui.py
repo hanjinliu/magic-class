@@ -1,11 +1,9 @@
 from __future__ import annotations
-from enum import Enum, auto
 from functools import wraps
-from typing import Callable, Iterable, Any
+from typing import Callable, Any
 import inspect
 from contextlib import contextmanager
-import numpy as np
-from pathlib import Path
+from .macro import Macro, Expr, Head, _HARD_TO_RECORD
 from magicgui import magicgui
 from magicgui.widgets import Container, Label, LineEdit
 from magicgui.widgets._bases import Widget, ValueWidget
@@ -21,7 +19,6 @@ except ImportError:
 else:
     NAPARI_AVAILABLE = True
     
-_HARD_TO_RECORD = (np.ndarray,) # This is a temporal solution to avoid recording layer as an numpy
 
 # Running mode determines how to construct magic-class GUI.
 # - "default": Error will be raised in message box
@@ -44,6 +41,7 @@ def debug():
     RUNNING_MODE = current_mode
 
 # BUG: Method name "func" causes application to break.
+# TODO: FunctionGui response is inaccessible from ClassGui (macro not recorded)
 
 class ClassGui(Container):
     def __init__(self, layout:str= "vertical", parent=None, close_on_run:bool=True, popup:bool=True, 
@@ -124,6 +122,7 @@ class ClassGui(Container):
                 
             else:
                 attr = getattr(self, name, None)
+            
                 
             if isinstance(attr, ValueWidget):
                 attr.changed.connect(_define_set_value(name))
@@ -246,6 +245,7 @@ class ClassGui(Container):
                     def _after_run(value):
                         if isinstance(value, Exception):
                             return None
+                        # TODO: ImageData is recorded as None
                         inputs = _get_parameters(mgui)
                         self._record_macro(func, (), inputs)
                         self._record_parameter_history(func.__name__, inputs)
@@ -320,7 +320,15 @@ class ClassGui(Container):
         self.native.activateWindow()
         return None
     
-    def create_macro(self, symbol:str="ui") -> list[str]:
+    def create_macro(self, symbol:str="ui") -> str:
+        """
+        Create executable Python scripts from the recorded macro object.
+
+        Parameters
+        ----------
+        symbol : str, default is "ui"
+            Symbol of the instance.
+        """        
         macro: list[tuple[int, str]]
         macro = _collect_macro(self._recorded_macro, symbol)
         for name, attr in filter(lambda x: not x[0].startswith("_"), self.__dict__.items()):
@@ -379,99 +387,3 @@ def _get_parameters(mgui):
               }
     
     return inputs
-
-def _safe_str(obj):
-    if isinstance(obj, _HARD_TO_RECORD):
-        out = f"var{id(obj)}"
-    elif isinstance(obj, Path):
-        out = f"r'{obj}'"
-    elif hasattr(obj, "__name__"):
-        out = obj.__name__
-    elif isinstance(obj, str):
-        out = repr(obj)
-    else:
-        out = str(obj)
-    return out
-
-class Macro(list):
-    def append(self, __object:Expr):
-        if not isinstance(__object, Expr):
-            raise TypeError("Cannot append objects to Macro except for MacroExpr objecs.")
-        return super().append(__object)
-    
-    def __str__(self) -> str:
-        return "\n".join(map(str, self))
-        
-class Head(Enum):
-    construction = auto()
-    method = auto()
-    getattr = auto()
-    setattr = auto()
-    getitem = auto()
-    setitem = auto()
-    call = auto()
-    setvalue = auto()
-    comment = auto()
-
-class Expr:
-    n = 0
-    def __init__(self, head:Head, args:Iterable[Any], symbol:str="ui"):
-        self.head = head
-        self.args = [_safe_str(a) for a in args]
-        self.symbol = symbol
-        self.number = self.__class__.n
-        self.__class__.n += 1
-    
-    def __repr__(self) -> str:
-        out = [f"head: {self.head.name}\nargs:\n"]
-        for i, arg in enumerate(self.args):
-            out.append(f"    {i}: {arg}\n")
-        return "".join(out)
-    
-    def __str__(self) -> str:
-        func, *vals = self.args
-        if self.head == Head.construction:
-            line = f"{self.symbol} = {func}({', '.join(vals)})"
-        elif self.head == Head.method:
-            line = f"{self.symbol}.{func}({', '.join(vals)})"
-        elif self.head == Head.getattr:
-            line = f"{self.symbol}.{self.args[0][1:-1]}"
-        elif self.head == Head.setattr:
-            line = f"{self.symbol}.{self.args[0][1:-1]} = {self.args[1]}"
-        elif self.head == Head.getitem:
-            line = f"{self.symbol}[{self.args[0]}]"
-        elif self.head == Head.setitem:
-            line = f"{self.symbol}[{self.args[0]}] = {self.args[1]}"
-        elif self.head == Head.call:
-            line = f"{self.symbol}{tuple(self.args)}"
-        elif self.head == Head.comment:
-            line = f"# {self.args[0]}"
-        elif self.head == Head.setvalue:
-            line = f"{self.symbol}={self.args[0]}"
-        else:
-            raise ValueError(self.head)
-        return line
-    
-    @classmethod
-    def parse_method(cls, func:Callable, args:tuple[Any], kwargs:dict[str, Any], symbol:str="ui"):
-        head = Head.method
-        inputs = [func]
-        for a in args:
-            inputs.append(a)
-                
-        for k, v in kwargs.items():
-            inputs.append(cls(Head.setvalue, [v], symbol=k))
-        return cls(head=head, args=inputs, symbol=symbol)
-
-    @classmethod
-    def parse_init(cls, other_cls:type, args:tuple[Any], kwargs:dict[str, Any], symbol:str="ui"):
-        self = cls.parse_method(other_cls, args, kwargs, symbol=symbol)
-        self.head = Head.construction
-        return self
-    
-    def str_as(self, symbol:str):
-        old_symbol = self.symbol
-        self.symbol = symbol
-        out = str(self)
-        self.symbol = old_symbol
-        return out
