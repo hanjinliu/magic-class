@@ -1,6 +1,5 @@
-from magicclass import magicclass, inline, button_design
+from magicclass import magicclass, field, button_design
 from magicclass.widgets import Separator
-from magicgui.widgets import LineEdit, Slider
 
 @magicclass(result_widget=True)
 class Function:
@@ -10,16 +9,16 @@ class Function:
     using inline function.
     """    
     
-    line = inline(LineEdit, name="line_edit")
+    line = field(str, name="line_edit")
     
-    slider = inline(Slider, name="slider")
+    slider = field(int, name="slider", widget_type="Slider")
     
-    sep = inline(Separator)
+    sep = field(Separator)
     
     @button_design(text="Run")
     def call_button(self):
-        s = self["line_edit"].value
-        i = self["slider"].value
+        s = self.line
+        i = self.slider
         return f"{s}-{i}"
 
 if __name__ == "__main__":

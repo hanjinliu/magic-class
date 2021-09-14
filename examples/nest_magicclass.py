@@ -1,4 +1,4 @@
-from magicclass import magicclass, inline
+from magicclass import magicclass, field
 
 # Magic-class can be nested. There are several ways of nesting magic-classes.
 
@@ -65,7 +65,7 @@ class Main2:
         def func_b1(self):
             print("b1")    
 
-# inline definition using inline function
+# inline definition using field function
 @magicclass(layout="horizontal")
 class A3:
     """
@@ -92,8 +92,8 @@ class Main3:
     Main class III
     inline definition using inline function
     """    
-    A: inline(A3)
-    B: inline(B3)
+    A = field(A3)
+    B = field(B3)
     
 if __name__ == "__main__":
     m = Main()
