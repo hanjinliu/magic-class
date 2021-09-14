@@ -1,25 +1,33 @@
 from __future__ import annotations
 from enum import Enum, auto
+from collections import UserList, UserString
 from pathlib import Path
 from typing import Callable, Iterable, Any
 import numpy as np
 
-_HARD_TO_RECORD = (np.ndarray,) # This is a temporal solution to avoid recording layer as an numpy
+class Identifier(UserString):
+    def __init__(self, obj:Any):
+        self.valid = True
+        if isinstance(obj, Path):
+            seq = f"r'{obj}'"
+        elif hasattr(obj, "__name__"): # class or function
+            seq = obj.__name__
+        elif isinstance(obj, str):
+            seq = repr(obj)
+        elif np.isscalar(obj): # int, float, bool, ...
+            seq = obj
+        else:
+            seq = f"var{hex(id(obj))}" # hexadecimals are easier to distinguish
+            self.valid = False
+            
+        super().__init__(seq)
+        self.type:type = type(obj)
+    
+    def as_annotation(self):
+        return f"# {self}: {self.type}"
+        
 
-def _safe_str(obj):
-    if isinstance(obj, _HARD_TO_RECORD):
-        out = f"var{id(obj)}"
-    elif isinstance(obj, Path):
-        out = f"r'{obj}'"
-    elif hasattr(obj, "__name__"):
-        out = obj.__name__
-    elif isinstance(obj, str):
-        out = repr(obj)
-    else:
-        out = str(obj)
-    return out
-
-class Macro(list):
+class Macro(UserList):
     def append(self, __object:Expr):
         if not isinstance(__object, Expr):
             raise TypeError("Cannot append objects to Macro except for MacroExpr objecs.")
@@ -40,7 +48,7 @@ class Head(Enum):
     value   = auto()
     comment = auto()
 
-QUOTE = "'"
+_QUOTE = "'"
 
 class Expr:
     """
@@ -55,8 +63,8 @@ class Expr:
     _map = {
         Head.init   : lambda e: f"{e.symbol} = {e.args[0]}({', '.join(map(str, e.args[1:]))})",
         Head.method : lambda e: f"{e.symbol}.{e.args[0]}({', '.join(map(str, e.args[1:]))})",
-        Head.getattr: lambda e: f"{e.symbol}.{str(e.args[0]).strip(QUOTE)}",
-        Head.setattr: lambda e: f"{e.symbol}.{str(e.args[0]).strip(QUOTE)} = {e.args[1]}",
+        Head.getattr: lambda e: f"{e.symbol}.{str(e.args[0]).strip(_QUOTE)}",
+        Head.setattr: lambda e: f"{e.symbol}.{str(e.args[0]).strip(_QUOTE)} = {e.args[1]}",
         Head.getitem: lambda e: f"{e.symbol}[{e.args[0]}]",
         Head.setitem: lambda e: f"{e.symbol}[{e.args[0]}] = {e.args[1]}",
         Head.call   : lambda e: f"{e.symbol}({', '.join(map(str, e.args))})",
@@ -71,6 +79,7 @@ class Expr:
             self.args = args
         else:
             self.args = list(map(self.__class__.parse, args))
+            
         self.symbol = symbol
         self.number = self.__class__.n
         self.__class__.n += 1
@@ -81,7 +90,9 @@ class Expr:
     def _repr(self, ind:int=0):
         if self.head == Head.value:
             return str(self)
-        out = [f"head: {self.head.name}\n{' '*ind}args:\n"]
+        elif self.head == Head.assign:
+            return f"{self.symbol} = {self.args[0]}"
+        out = [f"\nhead: {self.head.name}\n{' '*ind}args:\n"]
         for i, arg in enumerate(self.args):
             out.append(f"{i:>{ind+2}}: {arg._repr(ind+4)}\n")
         return "".join(out)
@@ -90,7 +101,8 @@ class Expr:
         return self.__class__._map[self.head](self)
     
     @classmethod
-    def parse_method(cls, func:Callable, args:tuple[Any], kwargs:dict[str, Any], symbol:str="ui"):
+    def parse_method(cls, func:Callable, args:tuple[Any], kwargs:dict[str, Any], 
+                     symbol:str="ui") -> Expr:
         head = Head.method
         inputs = [func]
         for a in args:
@@ -101,18 +113,26 @@ class Expr:
         return cls(head=head, args=inputs, symbol=symbol)
 
     @classmethod
-    def parse_init(cls, other_cls:type, args:tuple[Any], kwargs:dict[str, Any], symbol:str="ui"):
+    def parse_init(cls, other_cls:type, args:tuple[Any], kwargs:dict[str, Any], 
+                   symbol:str="ui") -> Expr:
         self = cls.parse_method(other_cls, args, kwargs, symbol=symbol)
         self.head = Head.init
         return self
     
     @classmethod
-    def parse(cls, a: Any):
-        return a if isinstance(a, cls) else cls(Head.value, [_safe_str(a)])
+    def parse(cls, a: Any) -> Expr:
+        return a if isinstance(a, cls) else cls(Head.value, [Identifier(a)])
     
-    def str_as(self, symbol:str):
+    def str_as(self, symbol:str) -> str:
         old_symbol = self.symbol
         self.symbol = symbol
         out = str(self)
         self.symbol = old_symbol
         return out
+    
+    def iter_args(self) -> Identifier:
+        for arg in self.args:
+            if isinstance(arg, self.__class__):
+                yield from arg.iter_args()
+            else:
+                yield arg

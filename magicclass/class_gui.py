@@ -2,8 +2,9 @@ from __future__ import annotations
 from functools import wraps
 from typing import Callable, Any
 import inspect
+import numpy as np
 from contextlib import contextmanager
-from .macro import Macro, Expr, Head, _HARD_TO_RECORD
+from .macro import Macro, Expr, Head
 from magicgui import magicgui
 from magicgui.widgets import Container, Label, LineEdit, FunctionGui
 from magicgui.widgets._bases import Widget, ValueWidget
@@ -171,7 +172,7 @@ class ClassGui(Container):
         kwargs : dict[str, Any]
             Parameter inputs.
         """        
-        kwargs = {k: v for k, v in kwargs.items() if not isinstance(v, _HARD_TO_RECORD)}
+        kwargs = {k: v for k, v in kwargs.items() if not isinstance(v, np.ndarray)}
         self._parameter_history.update({func: kwargs})
         return None
     
@@ -236,9 +237,6 @@ class ClassGui(Container):
                             pass
                     
                     viewer = self.parent_viewer
-                    
-                    f = _temporal_function_gui_callback(self, mgui)
-                    mgui.called.connect(f)
                         
                     if viewer is None:
                         # If napari.Viewer was not found, then open up a magicgui when button is pushed, and 
@@ -272,6 +270,9 @@ class ClassGui(Container):
                         dock = viewer.window.add_dock_widget(mgui, name=dock_name)
                         mgui.native.setParent(dock)
                         dock.setFloating(self._popup)
+                    
+                    f = _temporal_function_gui_callback(self, mgui)
+                    mgui.called.connect(f)
                     
                     return None
                 
@@ -317,7 +318,17 @@ class ClassGui(Container):
             macro += _collect_macro(attr._recorded_macro, f"{symbol}.{name}")
 
         sorted_macro = map(lambda x: x[1], sorted(macro, key=lambda x: x[0]))
-        return "\n".join(sorted_macro)
+        script =  "\n".join(sorted_macro)
+        
+        # type annotation
+        annot = []
+        for expr in self._recorded_macro:
+            expr:Expr
+            for idt in expr.iter_args():
+                if not idt.valid:
+                    annot.append(idt.as_annotation())
+        
+        return "\n".join(annot) + "\n" + script
 
 def _collect_macro(macro:Macro, symbol:str) -> list[tuple[int, str]]:
     return list((expr.number, expr.str_as(symbol)) for expr in macro)
@@ -387,6 +398,7 @@ def _nested_function_gui_callback(cgui:ClassGui, fgui:FunctionGui):
             if last_expr.head == expr.head and \
                 last_expr.args[0].symbol == expr.args[0].symbol:
                 cgui._recorded_macro.pop()
+
         cgui._recorded_macro.append(expr)
     return _after_run
 
