@@ -5,7 +5,7 @@ import inspect
 from contextlib import contextmanager
 from .macro import Macro, Expr, Head, _HARD_TO_RECORD
 from magicgui import magicgui
-from magicgui.widgets import Container, Label, LineEdit
+from magicgui.widgets import Container, Label, LineEdit, FunctionGui
 from magicgui.widgets._bases import Widget, ValueWidget
 
 from .utils import InlineClass, iter_members_and_annotations
@@ -41,7 +41,6 @@ def debug():
     RUNNING_MODE = current_mode
 
 # BUG: Method name "func" causes application to break.
-# TODO: FunctionGui response is inaccessible from ClassGui (macro not recorded)
 
 class ClassGui(Container):
     def __init__(self, layout:str= "vertical", parent=None, close_on_run:bool=True, popup:bool=True, 
@@ -88,10 +87,9 @@ class ClassGui(Container):
         def _define_set_value(name):
             def _set_value(event):
                 value = event.source.value # TODO: fix after psygnal start to be used.
-                args = [name, value]
-                expr = Expr(head=Head.setattr, args=args)
-                last_expr = self._recorded_macro[-1]
-                if last_expr.head == Head.setattr and last_expr.args[0][1:-1] == name:
+                expr = Expr(head=Head.setattr, args=[name, value])
+                last_expr:Expr = self._recorded_macro[-1]
+                if last_expr.head == expr.head and last_expr.args[0] == expr.args[0]:
                     self._recorded_macro[-1] = expr
                 else:
                     self._recorded_macro.append(expr)
@@ -123,11 +121,20 @@ class ClassGui(Container):
             else:
                 attr = getattr(self, name, None)
             
+            if isinstance(attr, type):
+                # Nested magic-class, or such as "a = inline(LineEdit)".
+                acceptable = Widget
+                if issubclass(attr, acceptable):
+                    attr = attr()
+                else:
+                    raise TypeError(
+                        f"Cannot append class except for {acceptable.__name__} (got {attr.__name__})"
+                        )
                 
             if isinstance(attr, ValueWidget):
                 attr.changed.connect(_define_set_value(name))
                         
-            if callable(attr) or isinstance(attr, (type, Widget)):
+            if callable(attr) or isinstance(attr, Widget):
                 self.append(attr)
         
         # Append result widget in the bottom
@@ -168,24 +175,14 @@ class ClassGui(Container):
         self._parameter_history.update({func: kwargs})
         return None
     
-    def append(self, obj:Widget|Callable|type) -> None:
+    def append(self, obj:Widget|Callable) -> None:
         """
         This override enables methods/functions and other magic-class to be appended into Container 
         widgets. Compatible with ``@magicgui`` and ``@magicclass`` decorators inside class. If 
         ``FunctionGui`` object or ``ClassGui`` object was appended, it will appear on the container 
         as is, rather than a push button.
         """        
-        if isinstance(obj, type):
-            # Inline class definition
-            acceptable = Widget
-            if issubclass(obj, acceptable):
-                obj = obj()
-            else:
-                raise TypeError(
-                    f"Cannot append class except for {acceptable.__name__} (got {obj.__name__})"
-                    )
-            
-        elif (not isinstance(obj, Widget)) and callable(obj):
+        if (not isinstance(obj, Widget)) and callable(obj):
             # Convert methods into push buttons
             
             name = obj.__name__.replace("_", " ")
@@ -221,10 +218,9 @@ class ClassGui(Container):
                     return out
             else:
                 def run_function(*args):
-                    func_obj_name = f"function-{id(func)}"
                     try:
                         mgui = magicgui(func)
-                        mgui.name = func_obj_name
+                        mgui.name = f"function-{id(func)}"
                             
                     except Exception as e:
                         msg = f"Exception was raised during building magicgui.\n{e.__class__.__name__}: {e}"
@@ -241,24 +237,8 @@ class ClassGui(Container):
                     
                     viewer = self.parent_viewer
                     
-                    @mgui.called.connect
-                    def _after_run(value):
-                        if isinstance(value, Exception):
-                            return None
-                        # TODO: ImageData is recorded as None
-                        inputs = _get_parameters(mgui)
-                        self._record_macro(func, (), inputs)
-                        self._record_parameter_history(func.__name__, inputs)
-                        if self._close_on_run:
-                            if not self._popup:
-                                try:
-                                    self.remove(func_obj_name)
-                                except ValueError:
-                                    pass
-                            mgui.close()
-                            
-                        if self._result_widget is not None:
-                            self._result_widget.value = value
+                    f = _temporal_function_gui_callback(self, mgui)
+                    mgui.called.connect(f)
                         
                     if viewer is None:
                         # If napari.Viewer was not found, then open up a magicgui when button is pushed, and 
@@ -274,7 +254,7 @@ class ClassGui(Container):
                             @mgui.called.connect
                             def _close(value):
                                 if not self._popup:
-                                    self.remove(func_obj_name)
+                                    self.remove(mgui.name)
                                 mgui.close()
                                 
                     else:
@@ -298,14 +278,14 @@ class ClassGui(Container):
             button.changed.connect(run_function)
             
             # If button design is given, load the options.
-            try:
-                options = obj.__signature__.caller_options
-            except AttributeError:
-                pass
-            else:
-                button.from_options(options)
+            button.from_options(obj)
                 
             obj = button
+        
+        elif isinstance(obj, FunctionGui):
+            # magic-class has to know when the nested FunctionGui is called.
+            f = _nested_function_gui_callback(self, obj)
+            obj.called.connect(f)
         
         return super().append(obj)
     
@@ -387,3 +367,41 @@ def _get_parameters(mgui):
               }
     
     return inputs
+
+def _nested_function_gui_callback(cgui:ClassGui, fgui:FunctionGui):
+    def _after_run(e):
+        value = e.value
+        if isinstance(value, Exception):
+            return None
+        inputs = _get_parameters(fgui)
+        args = [Expr(head=Head.assign, args=[v], symbol=k) for k, v in inputs.items()]
+        expr = Expr(head=Head.getattr, 
+                    args=[Expr(head=Head.call, 
+                                args=args[1:], 
+                                symbol=fgui.name)]
+                    )
+        if fgui._auto_call:
+            # Auto-call will cause many redundant macros. To avoid this, only the last input
+            # will be recorded in magic-class.
+            last_expr:Expr = cgui._recorded_macro[-1]
+            if last_expr.head == expr.head and \
+                last_expr.args[0].symbol == expr.args[0].symbol:
+                cgui._recorded_macro.pop()
+        cgui._recorded_macro.append(expr)
+    return _after_run
+
+def _temporal_function_gui_callback(cgui:ClassGui, fgui:FunctionGui):
+    def _after_run(value):
+        if isinstance(value, Exception):
+            return None
+        inputs = _get_parameters(fgui)
+        cgui._record_macro(fgui._function, (), inputs)
+        cgui._record_parameter_history(fgui._function.__name__, inputs)
+        if cgui._close_on_run:
+            if not cgui._popup:
+                cgui.remove(fgui.name)
+            fgui.close()
+            
+        if cgui._result_widget is not None:
+            cgui._result_widget.value = value
+    return _after_run

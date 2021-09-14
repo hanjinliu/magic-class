@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Iterable
+from typing import Callable, Iterable
 from qtpy.QtWidgets import QFrame, QLabel, QMessageBox, QPushButton, QGridLayout, QTextEdit
 from qtpy.QtGui import QIcon, QFont
 from qtpy.QtCore import QSize, Qt
@@ -140,7 +140,13 @@ class PushButtonPlus(PushButton):
         font.setFamily(family)
         self.native.setFont(font)
     
-    def from_options(self, options:dict[str]):
+    def from_options(self, options:dict[str]|Callable):
+        if callable(options):
+            try:
+                options = options.__signature__.caller_options
+            except AttributeError:
+                return None
+                
         for k, v in options.items():
             v = options.get(k, None)
             if v is not None:

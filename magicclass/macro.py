@@ -29,15 +29,18 @@ class Macro(list):
         return "\n".join(map(str, self))
         
 class Head(Enum):
-    init     = auto()
-    method   = auto()
-    getattr  = auto()
-    setattr  = auto()
-    getitem  = auto()
-    setitem  = auto()
-    call     = auto()
-    setvalue = auto()
-    comment  = auto()
+    init    = auto()
+    method  = auto()
+    getattr = auto()
+    setattr = auto()
+    getitem = auto()
+    setitem = auto()
+    call    = auto()
+    assign  = auto()
+    value   = auto()
+    comment = auto()
+
+QUOTE = "'"
 
 class Expr:
     """
@@ -50,28 +53,37 @@ class Expr:
     """    
     n = 0
     _map = {
-        Head.init    : lambda e: f"{e.symbol} = {e.args[0]}({', '.join(e.args[1:])})",
-        Head.method  : lambda e: f"{e.symbol}.{e.args[0]}({', '.join(e.args[1:])})",
-        Head.getattr : lambda e: f"{e.symbol}.{e.args[0][1:-1]}",
-        Head.setattr : lambda e: f"{e.symbol}.{e.args[0][1:-1]} = {e.args[1]}",
-        Head.getitem : lambda e: f"{e.symbol}[{e.args[0]}]",
-        Head.setitem : lambda e: f"{e.symbol}[{e.args[0]}] = {e.args[1]}",
-        Head.call    : lambda e: f"{e.symbol}{tuple(e.args)}",
-        Head.comment : lambda e: f"# {e.args[0]}",
-        Head.setvalue: lambda e: f"{e.symbol}={e.args[0]}"
+        Head.init   : lambda e: f"{e.symbol} = {e.args[0]}({', '.join(map(str, e.args[1:]))})",
+        Head.method : lambda e: f"{e.symbol}.{e.args[0]}({', '.join(map(str, e.args[1:]))})",
+        Head.getattr: lambda e: f"{e.symbol}.{str(e.args[0]).strip(QUOTE)}",
+        Head.setattr: lambda e: f"{e.symbol}.{str(e.args[0]).strip(QUOTE)} = {e.args[1]}",
+        Head.getitem: lambda e: f"{e.symbol}[{e.args[0]}]",
+        Head.setitem: lambda e: f"{e.symbol}[{e.args[0]}] = {e.args[1]}",
+        Head.call   : lambda e: f"{e.symbol}({', '.join(map(str, e.args))})",
+        Head.assign : lambda e: f"{e.symbol}={e.args[0]}",
+        Head.value  : lambda e: str(e.args[0]),
+        Head.comment: lambda e: f"# {e.args[0]}",
     }
     
     def __init__(self, head:Head, args:Iterable[Any], symbol:str="ui"):
         self.head = head
-        self.args = [_safe_str(a) for a in args]
+        if head == Head.value:
+            self.args = args
+        else:
+            self.args = list(map(self.__class__.parse, args))
         self.symbol = symbol
         self.number = self.__class__.n
         self.__class__.n += 1
     
     def __repr__(self) -> str:
-        out = [f"head: {self.head.name}\nargs:\n"]
+        return self._repr()
+    
+    def _repr(self, ind:int=0):
+        if self.head == Head.value:
+            return str(self)
+        out = [f"head: {self.head.name}\n{' '*ind}args:\n"]
         for i, arg in enumerate(self.args):
-            out.append(f"    {i}: {arg}\n")
+            out.append(f"{i:>{ind+2}}: {arg._repr(ind+4)}\n")
         return "".join(out)
     
     def __str__(self) -> str:
@@ -85,7 +97,7 @@ class Expr:
             inputs.append(a)
                 
         for k, v in kwargs.items():
-            inputs.append(cls(Head.setvalue, [v], symbol=k))
+            inputs.append(cls(Head.assign, [v], symbol=k))
         return cls(head=head, args=inputs, symbol=symbol)
 
     @classmethod
@@ -93,6 +105,10 @@ class Expr:
         self = cls.parse_method(other_cls, args, kwargs, symbol=symbol)
         self.head = Head.init
         return self
+    
+    @classmethod
+    def parse(cls, a: Any):
+        return a if isinstance(a, cls) else cls(Head.value, [_safe_str(a)])
     
     def str_as(self, symbol:str):
         old_symbol = self.symbol
