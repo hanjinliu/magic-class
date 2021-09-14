@@ -37,7 +37,7 @@ def magicclass(cls:type|None=None, *, layout:str="vertical", parent=None, close_
     -------
     Decorated class or decorator.
     """    
-    def wrapper(cls):
+    def wrapper(cls) -> ClassGui:
         if not isinstance(cls, type):
             raise TypeError(f"magicclass can only wrap classes, not {type(cls)}")
         

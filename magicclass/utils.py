@@ -8,9 +8,6 @@ from qtpy.QtWidgets import QApplication
 
 APPLICATION = None
 
-class InlineClass:
-    _class_line_number: int
-
 def iter_members_and_annotations(cls:type, exclude_prefix:str="_") -> Iterable[str]:
     # All the class members
     members = filter(lambda x: not x[0].startswith(exclude_prefix),
@@ -68,7 +65,7 @@ def inline_base(obj:type|Callable, name:str=None, _depth:int=3, **kwargs):
         name = obj.__name__
 
     if isinstance(obj, type):
-        class _class(obj, InlineClass):
+        class _class(obj):
             def __init__(self):
                 super().__init__(**kwargs)
                 self.name = name

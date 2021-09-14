@@ -9,7 +9,7 @@ from magicgui import magicgui
 from magicgui.widgets import Container, Label, LineEdit, FunctionGui
 from magicgui.widgets._bases import Widget, ValueWidget
 
-from .utils import InlineClass, iter_members_and_annotations
+from .utils import iter_members_and_annotations
 from .widgets import PushButtonPlus, Separator, Logger, raise_error_msg
 
 # Check if napari is available so that layers are detectable from GUIs.
@@ -40,8 +40,6 @@ def debug():
     LOGGER.show()
     yield
     RUNNING_MODE = current_mode
-
-# BUG: Method name "func" causes application to break.
 
 class ClassGui(Container):
     def __init__(self, layout:str= "vertical", parent=None, close_on_run:bool=True, popup:bool=True, 
@@ -104,12 +102,6 @@ class ClassGui(Container):
                 widgetclass = cls_annotations[name]
                 if not issubclass(widgetclass, Widget):
                     continue
-                
-                if not issubclass(widgetclass, InlineClass):
-                    # Class widgetclass was not defined in an inline way. Widget may
-                    # appear in a wrong position because magicclass cannot determine
-                    # its line number. 
-                    pass
                 
                 if hasattr(self, name) and isinstance(getattr(self, name), Widget):
                     # If the annotation has a default value, same widget will be created
@@ -333,11 +325,11 @@ class ClassGui(Container):
 def _collect_macro(macro:Macro, symbol:str) -> list[tuple[int, str]]:
     return list((expr.number, expr.str_as(symbol)) for expr in macro)
 
-def _raise_error_in_msgbox(func, parent:Widget=None):
-    @wraps(func)
+def _raise_error_in_msgbox(_func, parent:Widget=None):
+    @wraps(_func)
     def wrapped_func(*args, **kwargs):
         try:
-            out = func(*args, **kwargs)
+            out = _func(*args, **kwargs)
         except Exception as e:
             raise_error_msg(parent.native, title=e.__class__.__name__, msg=str(e))
             out = e
@@ -345,18 +337,18 @@ def _raise_error_in_msgbox(func, parent:Widget=None):
     
     return wrapped_func
 
-def _write_log(func, parent=None):
-    @wraps(func)
+def _write_log(_func, parent=None):
+    @wraps(_func)
     def wrapped_func(*args, **kwargs):
         try:
-            out = func(*args, **kwargs)
+            out = _func(*args, **kwargs)
         except Exception as e:
-            log = [f'{parent.__class__.__name__}.{func.__name__}: '
+            log = [f'{parent.__class__.__name__}.{_func.__name__}: '
                    f'<span style="color: red; font-weight: bold;">{e.__class__.__name__}</span>',
                    f'{e}']
             out = e
         else:
-            log = f'{parent.__class__.__name__}.{func.__name__}: ' \
+            log = f'{parent.__class__.__name__}.{_func.__name__}: ' \
                    '<span style="color: blue; font-weight: bold;">Pass</span>'
         finally:
             LOGGER.append(log)
@@ -409,10 +401,6 @@ def _temporal_function_gui_callback(cgui:ClassGui, fgui:FunctionGui):
         inputs = _get_parameters(fgui)
         cgui._record_macro(fgui._function, (), inputs)
         cgui._record_parameter_history(fgui._function.__name__, inputs)
-        if cgui._close_on_run:
-            if not cgui._popup:
-                cgui.remove(fgui.name)
-            fgui.close()
             
         if cgui._result_widget is not None:
             cgui._result_widget.value = value
