@@ -6,20 +6,6 @@ from skimage.morphology import disk
 
 @magicclass
 class Filters:
-    def __init__(self):
-        self._macro = []
-        self.images = {}
-
-    @property
-    def macro(self):
-        return "\n".join(self._macro)
-
-    def _get_symbol(self, img):
-        id_ = id(img)
-        if id_ not in self.images:
-            self.images[id_] = f"img{len(self.images)}"
-        return self.images[id_]
-
     def gaussian_filter(self, img:ImageData, sigma=1.0) -> ImageData:
         """
         Run Gaussian filter
