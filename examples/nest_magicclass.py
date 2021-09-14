@@ -1,5 +1,7 @@
 from magicclass import magicclass, inline
 
+# Magic-class can be nested. There are several ways of nesting magic-classes.
+
 # 1. Keep other magic-class as instances.
 @magicclass(layout="horizontal")
 class A:
@@ -90,8 +92,8 @@ class Main3:
     Main class III
     inline definition using inline function
     """    
-    A = inline(A3)
-    B = inline(B3)
+    A: inline(A3)
+    B: inline(B3)
     
 if __name__ == "__main__":
     m = Main()
