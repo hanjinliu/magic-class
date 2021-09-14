@@ -7,11 +7,11 @@ from contextlib import contextmanager
 from .macro import Macro, Expr, Head
 from magicgui import magicgui
 from magicgui.widgets import Container, Label, LineEdit, FunctionGui
-from magicgui.widgets._bases import Widget, ValueWidget, ButtonWidget
-from magicgui.widgets._concrete import _LabeledWidget
+from magicgui.widgets._bases import Widget, ValueWidget
 
-from .utils import iter_members_and_annotations
+from .utils import iter_members
 from .widgets import PushButtonPlus, Separator, Logger, raise_error_msg
+from .field import MagicField
 
 # Check if napari is available so that layers are detectable from GUIs.
 try:
@@ -45,7 +45,7 @@ def debug():
 class ClassGui(Container):
     def __init__(self, layout:str= "vertical", parent=None, close_on_run:bool=True, popup:bool=True, 
                  result_widget:bool=False, name=None):
-        super().__init__(layout=layout, labels=False, name=name)
+        super().__init__(layout=layout, name=name)
         if parent is not None:
             self.parent = parent
         self._current_dock_widget = None
@@ -76,7 +76,6 @@ class ClassGui(Container):
     
     def _convert_methods_into_widgets(self) -> ClassGui:
         cls = self.__class__
-        cls_annotations = cls.__annotations__
         
         # Add class docstring as label.
         if cls.__doc__:
@@ -87,6 +86,7 @@ class ClassGui(Container):
         def _define_set_value(name):
             def _set_value(event):
                 value = event.source.value # TODO: fix after psygnal start to be used.
+                setattr(self, name, value)
                 expr = Expr(head=Head.setattr, args=[name, value])
                 last_expr = self._recorded_macro[-1]
                 if last_expr.head == expr.head and last_expr.args[0] == expr.args[0]:
@@ -97,37 +97,26 @@ class ClassGui(Container):
             return _set_value
                 
         # Bind all the methods and annotations
-        base_members = set(iter_members_and_annotations(ClassGui))
-        for name in filter(lambda x: x not in base_members, iter_members_and_annotations(cls)):
-            if name in cls_annotations.keys():
-                widgetclass = cls_annotations[name]
-                if not issubclass(widgetclass, Widget):
-                    continue
-                
-                if hasattr(self, name) and isinstance(getattr(self, name), Widget):
-                    # If the annotation has a default value, same widget will be created
-                    # twice.
-                    continue
-                
-                attr = widgetclass()
-                setattr(self, name, attr)
-                
-            else:
-                attr = getattr(self, name, None)
+        base_members = set(iter_members(ClassGui))
+        for name in filter(lambda x: x not in base_members, iter_members(cls)):
+            attr = getattr(self, name, None)
             
             if isinstance(attr, type):
-                # Nested magic-class, or such as "a = inline(LineEdit)".
-                acceptable = Widget
-                if issubclass(attr, acceptable):
-                    attr = attr()
+                # Nested magic-class
+                attr = attr()
+                setattr(self, name, attr)
+            
+            elif isinstance(attr, MagicField):
+                attr = attr.to_widget()
+                if attr.name == "" or attr.name == name:
+                    attr.name = "_" + name
+                    
+                if isinstance(attr, ValueWidget):
+                    attr.changed.connect(_define_set_value(name))
+                    setattr(self, name, attr.value)
                 else:
-                    raise TypeError(
-                        f"Cannot append class except for {acceptable.__name__} (got {attr.__name__})"
-                        )
+                    setattr(self, name, attr)
                 
-            if isinstance(attr, ValueWidget):
-                attr.changed.connect(_define_set_value(name))
-                        
             if callable(attr) or isinstance(attr, Widget):
                 self.append(attr)
         
@@ -136,38 +125,6 @@ class ClassGui(Container):
             self._result_widget.enabled = False
             self.append(self._result_widget)
         return self
-    
-    def _record_macro(self, func:Callable, args:tuple, kwargs:dict[str, Any]) -> None:
-        """
-        Record a function call as a line of macro.
-
-        Parameters
-        ----------
-        func : str
-            Name of function.
-        args : tuple
-            Arguments.
-        kwargs : dict[str, Any]
-            Keyword arguments.
-        """        
-        macro = Expr.parse_method(func, args, kwargs)
-        self._recorded_macro.append(macro)
-        return None
-    
-    def _record_parameter_history(self, func:str, kwargs:dict[str, Any]) -> None:
-        """
-        Record parameter inputs to history for next call.
-
-        Parameters
-        ----------
-        func : str
-            Name of function.
-        kwargs : dict[str, Any]
-            Parameter inputs.
-        """        
-        kwargs = {k: v for k, v in kwargs.items() if not isinstance(v, np.ndarray)}
-        self._parameter_history.update({func: kwargs})
-        return None
     
     def append(self, obj:Widget|Callable) -> None:
         """
@@ -281,9 +238,6 @@ class ClassGui(Container):
             f = _nested_function_gui_callback(self, obj)
             obj.called.connect(f)
         
-        elif not isinstance(obj, (_LabeledWidget, ButtonWidget)):
-            obj = _LabeledWidget(obj)
-        
         return super().append(obj)
     
     def objectName(self) -> str:
@@ -325,6 +279,40 @@ class ClassGui(Container):
                     annot.append(idt.as_annotation())
         
         return "\n".join(annot) + "\n" + script
+    
+    
+    def _record_macro(self, func:Callable, args:tuple, kwargs:dict[str, Any]) -> None:
+        """
+        Record a function call as a line of macro.
+
+        Parameters
+        ----------
+        func : str
+            Name of function.
+        args : tuple
+            Arguments.
+        kwargs : dict[str, Any]
+            Keyword arguments.
+        """        
+        macro = Expr.parse_method(func, args, kwargs)
+        self._recorded_macro.append(macro)
+        return None
+    
+    def _record_parameter_history(self, func:str, kwargs:dict[str, Any]) -> None:
+        """
+        Record parameter inputs to history for next call.
+
+        Parameters
+        ----------
+        func : str
+            Name of function.
+        kwargs : dict[str, Any]
+            Parameter inputs.
+        """        
+        kwargs = {k: v for k, v in kwargs.items() if not isinstance(v, np.ndarray)}
+        self._parameter_history.update({func: kwargs})
+        return None
+    
 
 def _collect_macro(macro:Macro, symbol:str) -> list[tuple[int, str]]:
     return list((expr.number, expr.str_as(symbol)) for expr in macro)
