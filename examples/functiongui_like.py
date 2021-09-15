@@ -6,13 +6,15 @@ class Function:
     """
     This class does almost same thing as FunctionGui. 
     You can design GUI easily just by aligning objects 
-    using inline function.
+    using field function.
     """    
+    # The first argument is used to infer widget type
+    line = field("text here", name="line_edit")
     
-    line = field(str, name="line_edit")
+    # Annotation is also used to determine widget type
+    slider:int = field(name="slider")
     
-    slider = field(int, name="slider", widget_type="Slider")
-    
+    # Or widget class
     sep = field(Separator)
     
     @button_design(text="Run")

@@ -54,7 +54,7 @@ class MagicField(Field):
         widget.name = self.name
         return widget
 
-def field(obj:Any=MISSING, name:str="", widget_type:str|type[WidgetProtocol]|None = None, 
+def field(obj:Any=MISSING, *, name:str="", widget_type:str|type[WidgetProtocol]|None = None, 
           options:WidgetOptions={}) -> MagicField:
     """
     Make a MagicField object.
@@ -62,7 +62,6 @@ def field(obj:Any=MISSING, name:str="", widget_type:str|type[WidgetProtocol]|Non
     >>> i = field(1)
     >>> i:int = field()
     >>> i:int = field(widget_type="Slider")
-    >>> i = 
 
     Parameters
     ----------
