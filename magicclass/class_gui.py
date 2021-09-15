@@ -293,7 +293,6 @@ class ClassGui(Container):
         # type annotation
         annot = []
         for expr in self._recorded_macro:
-            expr: Expr
             for idt in expr.iter_args():
                 if not idt.valid:
                     annot.append(idt.as_annotation())

@@ -2,7 +2,7 @@ from __future__ import annotations
 from enum import Enum, auto
 from collections import UserList, UserString
 from pathlib import Path
-from typing import Callable, Iterable, Any, overload
+from typing import Callable, Iterable, Iterator, Any, overload
 import numpy as np
 
 class Identifier(UserString):
@@ -44,6 +44,9 @@ class Macro(UserList):
         
     def __getitem__(self, key):
         return super().__getitem__(key)
+    
+    def __iter__(self) -> Iterator[Expr]:
+        return super().__iter__()
         
 class Head(Enum):
     init    = auto()
