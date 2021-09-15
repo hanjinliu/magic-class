@@ -110,6 +110,12 @@ class ClassGui(Container):
                 setattr(self, name, attr)
             
             elif isinstance(attr, MagicField):
+                if not attr.is_ready():
+                    try:
+                        attr.default_factory = cls.__annotations__[name]
+                    except (AttributeError, KeyError):
+                        raise AttributeError(f"Cannot determine proper widget of {name}")
+                    
                 attr = attr.to_widget()
                 if attr.name == "" or attr.name == name:
                     attr.name = "_" + name
