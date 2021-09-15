@@ -1,17 +1,17 @@
 from __future__ import annotations
 import inspect
+import types
+from typing import Iterator
 from magicclass.field import MagicField
 from qtpy.QtWidgets import QApplication
 
 APPLICATION = None
 
-def iter_members(cls:type, exclude_prefix:str="_") -> str:
+def iter_members(cls:type, exclude_prefix:str="_") -> Iterator[str]:
     """
     Iterate over all the members in the order of source code line number. 
     """    
-    members = filter(lambda x: not x[0].startswith(exclude_prefix),
-                     inspect.getmembers(cls)
-                     )
+    members = getmembers(cls, exclude_prefix)
     return map(lambda x: x[0], sorted(members, key=get_line_number))
 
 def check_collision(cls0:type, cls1:type):
@@ -40,6 +40,44 @@ def get_line_number(member) -> int:
         n = obj.lineno
 
     return n
+
+def getmembers(object, exclude_prefix):
+    """
+    This function is identical to inspect.getmembers except for the order
+    of the results. We have to sort the name in the order of line number.
+    """    
+    if inspect.isclass(object):
+        mro = (object,) + inspect.getmro(object)
+    else:
+        mro = ()
+    results = []
+    processed = set()
+    names = dir(object)
+    try:
+        for base in object.__bases__:
+            for k, v in base.__dict__.items():
+                if isinstance(v, types.DynamicClassAttribute):
+                    names.append(k)
+    except AttributeError:
+        pass
+    for key in names:
+        try:
+            value = getattr(object, key)
+            # handle the duplicate key
+            if key in processed:
+                raise AttributeError
+        except AttributeError:
+            for base in mro:
+                if key in base.__dict__:
+                    value = base.__dict__[key]
+                    break
+            else:
+                continue
+        if not key.startswith(exclude_prefix):
+            results.append((key, value))
+        processed.add(key)
+    
+    return results
 
 def gui_qt():
     """
