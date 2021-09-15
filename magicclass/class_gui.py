@@ -4,13 +4,15 @@ from typing import Callable, Any
 import inspect
 import numpy as np
 from contextlib import contextmanager
-from .macro import Macro, Expr, Head
+from docstring_parser import parse
 from magicgui import magicgui
 from magicgui.widgets import Container, Label, LineEdit, FunctionGui
-from magicgui.widgets._bases import Widget, ValueWidget
+from magicgui.widgets._bases import Widget, ValueWidget, ButtonWidget
+from magicgui.widgets._concrete import _LabeledWidget
 
+from .macro import Macro, Expr, Head
 from .utils import iter_members
-from .widgets import PushButtonPlus, Separator, Logger, raise_error_msg
+from .widgets import PushButtonPlus, Separator, Logger, FrozenContainer, raise_error_msg
 from .field import MagicField
 
 # Check if napari is available so that layers are detectable from GUIs.
@@ -79,7 +81,7 @@ class ClassGui(Container):
         
         # Add class docstring as label.
         if cls.__doc__:
-            doc = cls.__doc__.strip()
+            doc = _extract_tooltip(cls)
             lbl = Label(value=doc)
             self.append(lbl)
         
@@ -87,6 +89,7 @@ class ClassGui(Container):
             def _set_value(event):
                 value = event.source.value # TODO: fix after psygnal start to be used.
                 setattr(self, name, value)
+                self.changed(value=self)
                 expr = Expr(head=Head.setattr, args=[name, value])
                 last_expr = self._recorded_macro[-1]
                 if last_expr.head == expr.head and last_expr.args[0] == expr.args[0]:
@@ -156,7 +159,7 @@ class ClassGui(Container):
             func.__signature__ = inspect.signature(obj)
 
             # Prepare a button
-            button.tooltip = func.__doc__.strip() if func.__doc__ else ""
+            button.tooltip = _extract_tooltip(func)
             
             if len(inspect.signature(func).parameters) == 0:
                 # We don't want a dialog with a single widget "Run" to show up.
@@ -238,7 +241,18 @@ class ClassGui(Container):
             f = _nested_function_gui_callback(self, obj)
             obj.called.connect(f)
         
-        return super().insert(key, obj)
+        elif self.labels and not isinstance(obj, (_LabeledWidget, ButtonWidget, ClassGui, FrozenContainer, Label)):
+            obj = _LabeledWidget(obj)
+            obj.label_changed.connect(self._unify_label_widths)
+
+        self._list.insert(key, obj)
+        if key < 0:
+            key += len(self)
+            
+        self._widget._mgui_insert_widget(key, obj)
+        self._unify_label_widths()
+        
+        return None
     
     def objectName(self) -> str:
         """
@@ -316,6 +330,18 @@ class ClassGui(Container):
 
 def _collect_macro(macro:Macro, symbol:str) -> list[tuple[int, str]]:
     return list((expr.number, expr.str_as(symbol)) for expr in macro)
+
+def _extract_tooltip(obj: Any) -> str:
+    if not hasattr(obj, "__doc__"):
+        return ""
+    
+    doc = parse(obj.__doc__)
+    if doc.short_description is None:
+        return ""
+    elif doc.long_description is None:
+        return doc.short_description
+    else:
+        return doc.short_description + "\n" + doc.long_description
 
 def _raise_error_in_msgbox(_func, parent:Widget=None):
     @wraps(_func)

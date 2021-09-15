@@ -1,5 +1,6 @@
 from __future__ import annotations
 from typing import Callable, Iterable
+from PyQt5.QtWidgets import QWidget
 from qtpy.QtWidgets import QFrame, QLabel, QMessageBox, QPushButton, QGridLayout, QTextEdit
 from qtpy.QtGui import QIcon, QFont
 from qtpy.QtCore import QSize, Qt
@@ -13,22 +14,36 @@ def raise_error_msg(parent, title:str="Error", msg:str="error"):
     QMessageBox.critical(parent, title, msg, QMessageBox.Ok)
     return None
 
-class Figure(Container):
+class FrozenContainer(Container):
+    """
+    Non-editable container. 
+    This class is useful to add QWidget into Container. If a QWidget is added via 
+    Container.layout(), it will be invisible from Container. We can solve this
+    problem by "wrapping" a QWidget with a Container.
+    """    
+    def insert(self, key, value):
+        raise AttributeError(f"Cannot insert widget to {self.__class__.__name__}")
+    
+    def set_widget(self, widget:QWidget):
+        self.native.layout().addWidget(widget)
+        self.margins = (0, 0, 0, 0)
+        return None
+
+class Figure(FrozenContainer):
     def __init__(self, fig=None, layout="vertical", **kwargs):
         if fig is None:
             fig, _ = plt.subplots()
         
         super().__init__(layout=layout, labels=False, **kwargs)
         canvas = FigureCanvas(fig)
-        self.native.layout().addWidget(canvas)
-        self.margins = (0, 0, 0, 0)
+        self.set_widget(canvas)
         self.figure = fig
         self.axes = fig.axes
         
     def draw(self):
         self.figure.canvas.draw()
         
-class Separator(Container):
+class Separator(FrozenContainer):
     def __init__(self, orientation="horizontal", text:str="", name:str=""):
         super().__init__(layout=orientation, labels=False, name=name)
         main = QFrame(parent=self.native)
@@ -46,8 +61,7 @@ class Separator(Container):
             label.setAlignment(Qt.AlignRight)
             main.layout().addWidget(label)
         
-        self.native.layout().addWidget(main)
-        self.margins = (0, 0, 0, 0)
+        self.set_widget(main)
 
 class Logger(TextEdit):
     def __init__(self, **kwargs):
