@@ -149,7 +149,10 @@ class Expr:
         self.symbol = old_symbol
         return out
     
-    def iter_args(self) -> Identifier:
+    def iter_args(self) -> Iterator[Identifier]:
+        """
+        Recursively iterate along all the arguments.
+        """
         for arg in self.args:
             if isinstance(arg, self.__class__):
                 yield from arg.iter_args()

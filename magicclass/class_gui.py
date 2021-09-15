@@ -11,7 +11,7 @@ from magicgui.widgets._bases import Widget, ValueWidget, ButtonWidget
 from magicgui.widgets._concrete import _LabeledWidget
 
 from .macro import Macro, Expr, Head
-from .utils import iter_members
+from .utils import iter_members, n_parameters
 from .widgets import PushButtonPlus, Separator, Logger, FrozenContainer, raise_error_msg
 from .field import MagicField
 
@@ -106,10 +106,14 @@ class ClassGui(Container):
             
             if isinstance(attr, type):
                 # Nested magic-class
-                attr = attr()
+                if n_parameters(attr.__init__) > 1 and issubclass(attr, ClassGui):
+                    attr = attr(self)
+                else:
+                    attr = attr()
                 setattr(self, name, attr)
             
             elif isinstance(attr, MagicField):
+                # If MagicField is given by field() function.
                 if attr.not_ready():
                     try:
                         attr.default_factory = cls.__annotations__[name]
@@ -167,7 +171,7 @@ class ClassGui(Container):
             # Prepare a button
             button.tooltip = _extract_tooltip(func)
             
-            if len(inspect.signature(func).parameters) == 0:
+            if n_parameters(func) == 0:
                 # We don't want a dialog with a single widget "Run" to show up.
                 def run_function(*args):
                     out = func()

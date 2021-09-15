@@ -1,7 +1,7 @@
 from __future__ import annotations
 import inspect
 import types
-from typing import Iterator
+from typing import Callable, Iterator
 from magicclass.field import MagicField
 from qtpy.QtWidgets import QApplication
 
@@ -78,6 +78,12 @@ def getmembers(object, exclude_prefix):
         processed.add(key)
     
     return results
+
+def n_parameters(func: Callable):
+    """
+    Count the number of parameters of a callable object.
+    """    
+    return len(inspect.signature(func).parameters)
 
 def gui_qt():
     """
