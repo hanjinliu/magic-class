@@ -1,12 +1,12 @@
 from __future__ import annotations
 import sys
 from typing import Any, TYPE_CHECKING
-from magicgui.widgets import  create_widget
+from magicgui.widgets import create_widget
 from magicgui.widgets._bases import Widget
-from magicgui.widgets._protocols import WidgetProtocol
 from dataclasses import Field, MISSING
 
 if TYPE_CHECKING:
+    from magicgui.widgets._protocols import WidgetProtocol
     from magicgui.types import WidgetOptions
 
 class MagicField(Field):

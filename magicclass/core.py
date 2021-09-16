@@ -78,7 +78,7 @@ def magicclass(cls:type|None=None, *, layout:str="vertical", parent=None, close_
                               popup=popup, result_widget=result_widget, name=cls.__name__)
             super(oldclass, self).__init__(*args, **kwargs)
             
-            self._convert_methods_into_widgets()
+            self._convert_attributes_into_widgets()
             
             if hasattr(self, _POST_INIT_NAME) and not is_dataclass(cls):
                 self.__post_init__()
