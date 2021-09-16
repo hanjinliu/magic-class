@@ -33,6 +33,8 @@ def get_line_number(member) -> int:
     """    
     n = -1
     obj = member[1]
+    if isinstance(obj, type):
+        n = getattr(obj, "_class_line_number", -1)
     if callable(obj):
         try:
             original_func = getattr(obj, "__wrapped__", obj)

@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import QWidget
 from qtpy.QtWidgets import QFrame, QLabel, QMessageBox, QPushButton, QGridLayout, QTextEdit
 from qtpy.QtGui import QIcon, QFont
 from qtpy.QtCore import QSize, Qt
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvas
 from matplotlib.colors import to_rgb
@@ -32,7 +33,10 @@ class FrozenContainer(Container):
 class Figure(FrozenContainer):
     def __init__(self, fig=None, layout="vertical", **kwargs):
         if fig is None:
+            backend = mpl.get_backend()
+            mpl.use("Agg")
             fig, _ = plt.subplots()
+            mpl.use(backend)
         
         super().__init__(layout=layout, labels=False, **kwargs)
         canvas = FigureCanvas(fig)
