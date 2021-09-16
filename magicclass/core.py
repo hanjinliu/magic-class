@@ -9,7 +9,9 @@ from .field import current_location
 
 _BASE_CLASS_SUFFIX = "_Base"
 
-def magicclass(cls:type|None=None, *, layout:str="vertical", parent=None, close_on_run:bool=True,
+_DEPTH = 2
+
+def magicclass(class_:type|None=None, *, layout:str="vertical", parent=None, close_on_run:bool=True,
                popup:bool=True, labels:bool=True, result_widget:bool=False):
     """
     Decorator that can convert a Python class into a widget with push buttons.
@@ -22,7 +24,7 @@ def magicclass(cls:type|None=None, *, layout:str="vertical", parent=None, close_
             
     Parameters
     ----------
-    cls : type, optional
+    class_ : type, optional
         Class to be decorated.
     layout : str, "vertical" or "horizontal", default is "vertical"
         Layout of the main widget.
@@ -65,20 +67,22 @@ def magicclass(cls:type|None=None, *, layout:str="vertical", parent=None, close_
                 f"Class {newclass.__name__} already has an attribute '_class_line_number'."
                  "Thus it is incompatible with magic-class."
                  )
-        if cls is None:
-            newclass._class_line_number = current_location(3)
+        if class_ is None:
+            newclass._class_line_number = current_location(_DEPTH)
         else:
-            newclass._class_line_number = current_location(2)
+            newclass._class_line_number = current_location(_DEPTH + 1)
         
         @wraps(oldclass.__init__)
         def __init__(self, *args, **kwargs):
             app = get_app() # Without "app = " Jupyter freezes after closing the window!
             macro_init = Expr.parse_init(cls, args, kwargs)
+            global _DEPTH
+            _DEPTH += 1
             ClassGui.__init__(self, layout=layout, parent=parent, close_on_run=close_on_run, 
                               popup=popup, labels=labels, result_widget=result_widget,
                               name=cls.__name__)
             super(oldclass, self).__init__(*args, **kwargs)
-            
+            _DEPTH -= 1
             self._convert_attributes_into_widgets()
             
             if hasattr(self, _POST_INIT_NAME) and not is_dataclass(cls):
@@ -94,4 +98,4 @@ def magicclass(cls:type|None=None, *, layout:str="vertical", parent=None, close_
         
         return newclass
     
-    return wrapper if cls is None else wrapper(cls)
+    return wrapper if class_ is None else wrapper(class_)
