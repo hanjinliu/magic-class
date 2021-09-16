@@ -9,19 +9,6 @@ from magicgui.widgets._bases import Widget
 Color = Union[str, Iterable[float]]
 nStrings = Union[str, Iterable[str]]
 
-
-# TODO: 
-# @button_design(text="X")
-# @set_options(n={"widget_type":"Slider"})
-
-# -> OK
-
-# @set_options(n={"widget_type":"Slider"})
-# @button_design(text="X")
-
-# -> not working
-
-
 def set_options(**options):
     """
     Set MagicSignature to functions. By decorating a function like below:
@@ -180,21 +167,19 @@ class MagicMethodSignature(MagicSignature):
     def from_signature(cls, sig: inspect.Signature, gui_options=None, caller_options=None) -> MagicMethodSignature:
         if not isinstance(sig, inspect.Signature):
             raise TypeError("'sig' must be an instance of 'inspect.Signature'")
-        parameters = {k: inspect.Parameter(
-            param.name,
-            param.kind,
-            default=param.default,
-            annotation=param.annotation,
-        ) for k, param in sig.parameters.items()}
+        # prepare parameters again
+        parameters = {k: inspect.Parameter(param.name,
+                                           param.kind,
+                                           default=param.default,
+                                           annotation=param.annotation) 
+                      for k, param in sig.parameters.items()}
         
-        out = cls(
+        return cls(
             list(parameters.values()),
             return_annotation=sig.return_annotation,
             gui_options=gui_options,
             caller_options=caller_options
-        )
-
-        return out
+            )
     
     @classmethod
     def get_gui_options(cls, self:inspect.Signature|MagicSignature):

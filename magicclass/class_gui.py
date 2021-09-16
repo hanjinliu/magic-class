@@ -46,6 +46,7 @@ def debug():
     RUNNING_MODE = current_mode
 
 class ClassGui(Container):
+    # This class is always inherited by @magicclass decorator.
     def __init__(self, layout:str= "vertical", parent=None, close_on_run:bool=True, popup:bool=True, 
                  result_widget:bool=False, labels:bool=True, name=None):
         super().__init__(layout=layout, labels=labels, name=name)
@@ -59,10 +60,10 @@ class ClassGui(Container):
         if result_widget:
             self._result_widget = LineEdit(gui_only=True, name="result")
             
-        self._parameter_history:dict[str, dict[str, Any]] = {}
-        self._recorded_macro:Macro[Expr] = Macro()
+        self._parameter_history: dict[str, dict[str, Any]] = {}
+        self._recorded_macro: Macro[Expr] = Macro()
         self.native.setObjectName(self.__class__.__name__)
-        self.__magicclass_parent__ = None
+        self.__magicclass_parent__ = None # This attribute is used to determine whether self is nested.
 
         if RUNNING_MODE == "debug":
             LOGGER.append(f"{self.__class__.__name__} object at {id(self)}")
@@ -79,6 +80,10 @@ class ClassGui(Container):
         return viewer
     
     def _convert_attributes_into_widgets(self) -> ClassGui:
+        """
+        This function is called in dynamically created __init__. Methods, fields and nested
+        classes are converted to magicgui widgets.
+        """        
         cls = self.__class__
         
         # Add class docstring as label.
@@ -213,7 +218,9 @@ class ClassGui(Container):
         Callable
             Same method as input, but has updated signature to hide the button.
         """        
-        # TODO: may need support for FunctionGui?
+        # TODO: Need support for FunctionGui?
+        # TODO: How to wrap MagicField?
+        
         funcname = method.__name__
             
         @wraps(method)
