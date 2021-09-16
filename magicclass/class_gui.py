@@ -11,7 +11,7 @@ from magicgui.widgets._bases import Widget, ValueWidget, ButtonWidget
 from magicgui.widgets._concrete import _LabeledWidget
 
 from .macro import Macro, Expr, Head
-from .utils import iter_members, n_parameters
+from .utils import iter_members, n_parameters, get_line_number
 from .widgets import PushButtonPlus, Separator, Logger, FrozenContainer, raise_error_msg
 from .field import MagicField
 from .wrappers import upgrade_signature
@@ -134,13 +134,15 @@ class ClassGui(Container):
             # magic-class has to know when the nested FunctionGui is called.
             f = _nested_function_gui_callback(self, obj)
             obj.called.connect(f)
+            # if not obj.visible:
+            #     obj.visible = False
         
         elif self.labels and not isinstance(obj, (_LabeledWidget, ButtonWidget, ClassGui, FrozenContainer, Label)):
             obj = _LabeledWidget(obj)
             obj.label_changed.connect(self._unify_label_widths)
         
         elif isinstance(obj, ClassGui):
-            self.__magicclass_parent__ = self
+            obj.__magicclass_parent__ = self
             obj.margins = (0, 0, 0, 0)
 
         self._list.insert(key, obj)
@@ -218,20 +220,38 @@ class ClassGui(Container):
         Callable
             Same method as input, but has updated signature to hide the button.
         """        
-        # TODO: Need support for FunctionGui?
-        # TODO: How to wrap MagicField?
-        
-        funcname = method.__name__
+        if isinstance(method, FunctionGui):
+            funcname = method.name
+            options = dict(call_button=method._call_button.text if method._call_button else None,
+                           layout=method.layout,
+                           labels=method.labels,
+                           auto_call=method._auto_call,
+                           result_widget=bool(method._result_widget)
+                           )
+            @magicgui(**options)
+            @wraps(method._function)
+            def childmethod(self:cls, *args, **kwargs):
+                self_ = self.__magicclass_parent__
+                return getattr(self_, funcname)(self_, *args, **kwargs)
+
+        else:
+            funcname = method.__name__
             
-        @wraps(method)
-        def childmethod(cls_:cls, *args, **kwargs):
-            return getattr(cls_.__magicclass_parent__, funcname)(*args, **kwargs)
+            @wraps(method)
+            def childmethod(self:cls, *args, **kwargs):
+                return getattr(self.__magicclass_parent__, funcname)(*args, **kwargs)
         
         if hasattr(cls, funcname):
-            raise AttributeError(f"Class {cls.__name__} already has attribute {funcname}")
+            # Sometimes we want to pre-define function to arrange the order of widgets.
+            # By updating __wrapped__ attribute we can overwrite the line number
+            childmethod.__wrapped__ = getattr(cls, funcname)
         
+        # The easiest way to hide the button of original function is to make it invisible.
+        if isinstance(method, FunctionGui):
+            method.visible = False # TODO: not working
+        else:
+            upgrade_signature(method, caller_options={"visible": False})
         setattr(cls, funcname, childmethod)
-        upgrade_signature(method, caller_options={"visible": False})
         return method
     
     def _create_widget_from_field(self, name:str, fld:MagicField):
@@ -240,8 +260,10 @@ class ClassGui(Container):
             try:
                 fld.default_factory = cls.__annotations__[name]
                 if isinstance(fld.default_factory, str):
+                    # Sometimes annotation is not type but str. 
                     from pydoc import locate
                     fld.default_factory = locate(fld.default_factory)
+                    
             except (AttributeError, KeyError):
                 pass
             
@@ -309,7 +331,7 @@ class ClassGui(Container):
                 except Exception as e:
                     msg = f"Exception was raised during building magicgui.\n{e.__class__.__name__}: {e}"
                     raise_error_msg(self.native, msg=msg)
-                    return None
+                    raise e
                 
                 # Recover last inputs if exists.
                 params = self._parameter_history.get(func.__name__, {})
