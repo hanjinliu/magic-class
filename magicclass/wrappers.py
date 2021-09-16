@@ -135,10 +135,10 @@ def upgrade_signature(func, gui_options:dict=None, caller_options:dict=None):
     
     sig = _get_signature(func)
     
-    new_gui_options = MagicMethodSignature.get_gui_options(sig)
+    new_gui_options = MagicMethodSignature.get_gui_options(sig).copy()
     new_gui_options.update(gui_options)
     
-    new_caller_options = getattr(sig, "caller_options", {})
+    new_caller_options = getattr(sig, "caller_options", {}).copy()
     new_caller_options.update(caller_options)
 
     func.__signature__ = MagicMethodSignature.from_signature(
