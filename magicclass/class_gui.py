@@ -48,8 +48,8 @@ def debug():
 class ClassGui(Container):
     __magicclass_parent__ = None
     def __init__(self, layout:str= "vertical", parent=None, close_on_run:bool=True, popup:bool=True, 
-                 result_widget:bool=False, name=None):
-        super().__init__(layout=layout, name=name)
+                 result_widget:bool=False, labels:bool=True, name=None):
+        super().__init__(layout=layout, labels=labels, name=name)
         if parent is not None:
             self.parent = parent
         self._current_dock_widget = None
@@ -219,8 +219,11 @@ class ClassGui(Container):
         def childmethod(cls_:cls, *args, **kwargs):
             return getattr(cls_.__magicclass_parent__, funcname)(*args, **kwargs)
         
+        if hasattr(cls, funcname):
+            raise AttributeError(f"Class {cls.__name__} already has attribute {funcname}")
+        
         setattr(cls, funcname, childmethod)
-        upgrade_signature(method, {"visible": False})
+        upgrade_signature(method, caller_options={"visible": False})
         return method
     
     def _create_widget_from_field(self, name:str, fld:MagicField):

@@ -25,7 +25,7 @@ def check_collision(cls0:type, cls1:type):
     mem1 = set(x[0] for x in iter_members(cls1, exclude_prefix="__"))
     collision = mem0 & mem1
     if collision:
-        raise AttributeError(f"Collision: {collision}")
+        raise AttributeError(f"Collision between {cls0.__name__} and {cls1.__name__}: {collision}")
 
 def get_line_number(member) -> int:
     """

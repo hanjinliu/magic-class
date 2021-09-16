@@ -42,6 +42,10 @@ class Figure(FrozenContainer):
         
     def draw(self):
         self.figure.canvas.draw()
+    
+    @property
+    def ax(self):
+        return self.axes[0]
         
 class Separator(FrozenContainer):
     def __init__(self, orientation="horizontal", text:str="", name:str=""):

@@ -10,7 +10,7 @@ from .field import current_location
 _BASE_CLASS_SUFFIX = "_Base"
 
 def magicclass(cls:type|None=None, *, layout:str="vertical", parent=None, close_on_run:bool=True,
-               popup:bool=True, result_widget:bool=False):
+               popup:bool=True, labels:bool=True, result_widget:bool=False):
     """
     Decorator that can convert a Python class into a widget with push buttons.
     
@@ -75,7 +75,8 @@ def magicclass(cls:type|None=None, *, layout:str="vertical", parent=None, close_
             app = get_app() # Without "app = " Jupyter freezes after closing the window!
             macro_init = Expr.parse_init(cls, args, kwargs)
             ClassGui.__init__(self, layout=layout, parent=parent, close_on_run=close_on_run, 
-                              popup=popup, result_widget=result_widget, name=cls.__name__)
+                              popup=popup, labels=labels, result_widget=result_widget,
+                              name=cls.__name__)
             super(oldclass, self).__init__(*args, **kwargs)
             
             self._convert_attributes_into_widgets()
