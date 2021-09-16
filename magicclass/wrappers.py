@@ -114,8 +114,8 @@ def click(enables:nStrings=None, disables:nStrings=None, enabled:bool=True,
                     widget.visible = False
             return out
         
-        if hasattr(func, "__signature__") and isinstance(func.__signature__, MagicMethodSignature):
-            func.__signature__.caller_options.update({"enabled": enabled, "visible": visible})
+        if hasattr(f, "__signature__") and isinstance(f.__signature__, MagicMethodSignature):
+            f.__signature__.caller_options.update({"enabled": enabled, "visible": visible})
         else:
             msig = magic_signature(func, gui_options={})
             f.__signature__ = MagicMethodSignature.from_magicsignature(
@@ -123,6 +123,14 @@ def click(enables:nStrings=None, disables:nStrings=None, enabled:bool=True,
         return f
     return wrapper
 
+def upgrade_signature(func, caller_options):
+    if hasattr(func, "__signature__") and isinstance(func.__signature__, MagicMethodSignature):
+        func.__signature__.caller_options.update(caller_options)
+    else:
+        msig = magic_signature(func, gui_options={})
+        func.__signature__ = MagicMethodSignature.from_magicsignature(
+            msig, caller_options=caller_options)
+    return func
 
 def _assert_iterable_of_str(obj):
     if obj is None:

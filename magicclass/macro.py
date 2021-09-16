@@ -70,8 +70,10 @@ class Expr:
     Expr objects are mainly composed of "head" and "args". "Head" denotes what kind of operation it is,
     and "args" denotes the arguments needed for the operation. Other attributes, such as "symbol", is not
     necessary as a Expr object but it is useful to create executable codes.
-    """    
+    """
     n:int = 0
+    
+    # a map of how to conver expression into string.
     _map: dict[Head, Callable[[Expr], str]] = {
         Head.init   : lambda e: f"{e.symbol} = {e.args[0]}({', '.join(map(str, e.args[1:]))})",
         Head.method : lambda e: f"{e.symbol}.{e.args[0]}({', '.join(map(str, e.args[1:]))})",
@@ -100,6 +102,9 @@ class Expr:
         return self._repr()
     
     def _repr(self, ind:int=0) -> str:
+        """
+        Recursively expand expressions until it reaches value/assign expression.
+        """
         if self.head == Head.value:
             return str(self)
         elif self.head == Head.assign:
@@ -122,6 +127,9 @@ class Expr:
     @classmethod
     def parse_method(cls, func:Callable, args:tuple[Any], kwargs:dict[str, Any], 
                      symbol:str="ui") -> Expr:
+        """
+        Make a method call expression.
+        """
         head = Head.method
         inputs = [func]
         for a in args:
@@ -134,6 +142,9 @@ class Expr:
     @classmethod
     def parse_init(cls, other_cls:type, args:tuple[Any], kwargs:dict[str, Any], 
                    symbol:str="ui") -> Expr:
+        """
+        Make a construction (__init__) expression.
+        """
         self = cls.parse_method(other_cls, args, kwargs, symbol=symbol)
         self.head = Head.init
         return self
