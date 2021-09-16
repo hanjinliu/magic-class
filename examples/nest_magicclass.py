@@ -96,10 +96,10 @@ class Main3:
     B = field(B3)
     
 if __name__ == "__main__":
-    m = Main()
-    m.show()
-    m = Main2()
-    m.show()
-    m = Main3()
-    m.show()
+    m1 = Main()
+    m1.show()
+    m2 = Main2()
+    m2.show()
+    m3 = Main3()
+    m3.show()
     

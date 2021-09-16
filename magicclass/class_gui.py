@@ -46,7 +46,6 @@ def debug():
     RUNNING_MODE = current_mode
 
 class ClassGui(Container):
-    __magicclass_parent__ = None
     def __init__(self, layout:str= "vertical", parent=None, close_on_run:bool=True, popup:bool=True, 
                  result_widget:bool=False, labels:bool=True, name=None):
         super().__init__(layout=layout, labels=labels, name=name)
@@ -63,7 +62,8 @@ class ClassGui(Container):
         self._parameter_history:dict[str, dict[str, Any]] = {}
         self._recorded_macro:Macro[Expr] = Macro()
         self.native.setObjectName(self.__class__.__name__)
-            
+        self.__magicclass_parent__ = None
+
         if RUNNING_MODE == "debug":
             LOGGER.append(f"{self.__class__.__name__} object at {id(self)}")
     
@@ -96,9 +96,6 @@ class ClassGui(Container):
             if isinstance(attr, type):
                 # Nested magic-class
                 widget = attr()
-                if issubclass(attr, ClassGui):
-                    attr.__magicclass_parent__ = self
-                    widget.margins = (0, 0, 0, 0)
                 setattr(self, name, widget)
             
             elif isinstance(attr, MagicField):
@@ -136,6 +133,10 @@ class ClassGui(Container):
         elif self.labels and not isinstance(obj, (_LabeledWidget, ButtonWidget, ClassGui, FrozenContainer, Label)):
             obj = _LabeledWidget(obj)
             obj.label_changed.connect(self._unify_label_widths)
+        
+        elif isinstance(obj, ClassGui):
+            self.__magicclass_parent__ = self
+            obj.margins = (0, 0, 0, 0)
 
         self._list.insert(key, obj)
         if key < 0:
@@ -171,7 +172,7 @@ class ClassGui(Container):
         for name, attr in filter(lambda x: not x[0].startswith("_"), self.__dict__.items()):
             if not isinstance(attr, ClassGui):
                 continue
-            macro += _collect_macro(attr._recorded_macro, f"{selfvar}.{name}", self.__class__.__name__)
+            macro += _collect_macro(attr._recorded_macro, f"{selfvar}.{name}", self.__magicclass_parent__)
 
         sorted_macro = map(lambda x: x[1], sorted(macro, key=lambda x: x[0]))
         script =  "\n".join(sorted_macro)
@@ -394,12 +395,12 @@ class ClassGui(Container):
 def _collect_macro(macro:Macro, symbol:str, parent=None) -> list[tuple[int, str]]:
     out = []
     for expr in macro:
-        if parent and expr.head == Head.init and expr.args[0].args[0] != parent:
+        if parent and expr.head == Head.init and expr.args[0].args[0] != parent.__class__.__name__:
             # nested magic-class construction is always invisible from the parent.
             # We should not record something like 'ui.A = A()'.
             continue
         out.append((expr.number, expr.str_as(symbol)))
-    return list((expr.number, expr.str_as(symbol)) for expr in macro)
+    return out
 
 def _extract_tooltip(obj: Any) -> str:
     if not hasattr(obj, "__doc__"):
