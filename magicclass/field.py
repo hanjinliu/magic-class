@@ -21,6 +21,9 @@ class MagicField(Field):
                          hash=False, compare=False, metadata=metadata)
         self.lineno = -1
     
+    def __repr__(self):
+        return "Magic" + super().__repr__()
+    
     def ready(self) -> bool:
         return not self.not_ready()
     

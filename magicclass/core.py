@@ -1,4 +1,5 @@
 from __future__ import annotations
+from functools import wraps
 import inspect
 from dataclasses import is_dataclass, _POST_INIT_NAME
 from .class_gui import ClassGui
@@ -43,13 +44,18 @@ def magicclass(cls:type|None=None, *, layout:str="vertical", parent=None, close_
             raise TypeError(f"magicclass can only wrap classes, not {type(cls)}")
         
         check_collision(cls, ClassGui)
+        # get class attributes first
         doc = cls.__doc__
-        annot = cls.__dict__.get("__annotations__", {})
         sig = inspect.signature(cls)
+        annot = cls.__dict__.get("__annotations__", {})
+        
         oldclass = type(cls.__name__ + _BASE_CLASS_SUFFIX, (cls,), {})
         newclass = type(cls.__name__, (ClassGui, oldclass), {})
+        
         newclass.__signature__ = sig
         newclass.__doc__ = doc
+        
+        # concatenate annotations
         newclass.__annotations__ = ClassGui.__annotations__ | annot
         
         # Mark the line number of class definition, which is important to determine the order
@@ -64,12 +70,14 @@ def magicclass(cls:type|None=None, *, layout:str="vertical", parent=None, close_
         else:
             newclass._class_line_number = current_location(2)
         
+        @wraps(oldclass.__init__)
         def __init__(self, *args, **kwargs):
             app = get_app() # Without "app = " Jupyter freezes after closing the window!
             macro_init = Expr.parse_init(cls, args, kwargs)
             ClassGui.__init__(self, layout=layout, parent=parent, close_on_run=close_on_run, 
                               popup=popup, result_widget=result_widget, name=cls.__name__)
             super(oldclass, self).__init__(*args, **kwargs)
+            
             self._convert_methods_into_widgets()
             
             if hasattr(self, _POST_INIT_NAME) and not is_dataclass(cls):

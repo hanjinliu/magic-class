@@ -85,7 +85,51 @@ class ClassGui(Container):
             lbl = Label(value=doc)
             self.append(lbl)
         
-        def _define_set_value(name):
+        # Bind all the methods and annotations
+        base_members = set(x[0] for x in iter_members(ClassGui))
+        for name, attr in filter(lambda x: x[0] not in base_members, iter_members(cls)):
+            if name in ("changed", "_widget"):
+                continue
+
+            if isinstance(attr, type):
+                # Nested magic-class
+                if n_parameters(attr.__init__) > 1 and issubclass(attr, ClassGui):
+                    widget = attr(self)
+                else:
+                    widget = attr()
+                setattr(self, name, widget)
+            
+            elif isinstance(attr, MagicField):
+                # If MagicField is given by field() function.
+                widget = self._create_widget_from_field(name, attr)
+            else:
+                # convert class method into instance method
+                widget = getattr(self, name, None)
+                
+            if callable(widget) or isinstance(widget, Widget):
+                self.append(widget)
+        
+        # Append result widget in the bottom
+        if self._result_widget is not None:
+            self._result_widget.enabled = False
+            self.append(self._result_widget)
+            
+        return self
+    
+    def _create_widget_from_field(self, name:str, fld:MagicField):
+        cls = self.__class__
+        if fld.not_ready():
+            try:
+                fld.default_factory = cls.__annotations__[name]
+            except (AttributeError, KeyError):
+                pass
+            
+        widget = fld.to_widget()
+        if widget.name == "" or widget.name == name:
+            widget.name = "_" + name
+            
+        if isinstance(widget, ValueWidget):
+            @widget.changed.connect
             def _set_value(event):
                 value = event.source.value # TODO: fix after psygnal start to be used.
                 setattr(self, name, value)
@@ -97,48 +141,11 @@ class ClassGui(Container):
                 else:
                     self._recorded_macro.append(expr)
                 return None
-            return _set_value
-                
-        # Bind all the methods and annotations
-        base_members = set(iter_members(ClassGui))
-        for name in filter(lambda x: x not in base_members, iter_members(cls)):
-            attr = getattr(self, name, None)
-            
-            if isinstance(attr, type):
-                # Nested magic-class
-                if n_parameters(attr.__init__) > 1 and issubclass(attr, ClassGui):
-                    attr = attr(self)
-                else:
-                    attr = attr()
-                setattr(self, name, attr)
-            
-            elif isinstance(attr, MagicField):
-                # If MagicField is given by field() function.
-                if attr.not_ready():
-                    try:
-                        attr.default_factory = cls.__annotations__[name]
-                    except (AttributeError, KeyError):
-                        pass
-                    
-                attr = attr.to_widget()
-                if attr.name == "" or attr.name == name:
-                    attr.name = "_" + name
-                    
-                if isinstance(attr, ValueWidget):
-                    attr.changed.connect(_define_set_value(name))
-                    setattr(self, name, attr.value)
-                else:
-                    setattr(self, name, attr)
-                
-            if callable(attr) or isinstance(attr, Widget):
-                self.append(attr)
+            setattr(self, name, widget.value)
+        else:
+            setattr(self, name, widget)
+        return widget
         
-        # Append result widget in the bottom
-        if self._result_widget is not None:
-            self._result_widget.enabled = False
-            self.append(self._result_widget)
-        return self
-    
     def insert(self, key:int, obj:Widget|Callable) -> None:
         """
         This override enables methods/functions and other magic-class to be appended into Container 
