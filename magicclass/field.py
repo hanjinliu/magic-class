@@ -3,6 +3,7 @@ import sys
 from typing import Any, TYPE_CHECKING
 from magicgui.widgets import create_widget
 from magicgui.widgets._bases import Widget
+from magicgui.widgets._bases.value_widget import UNSET
 from dataclasses import Field, MISSING
 
 if TYPE_CHECKING:
@@ -11,7 +12,7 @@ if TYPE_CHECKING:
 
 class MagicField(Field):
     """
-    Field class for magicgui construction.
+    Field class for magicgui construction. This object is compatible with dataclass.
     """    
     def __init__(self, default=MISSING, default_factory=MISSING, metadata:dict={}):
         metadata = metadata.copy()
@@ -44,7 +45,7 @@ class MagicField(Field):
         ValueError
             If there is not enough information to build a widget.
         """        
-        value = None if self.default is MISSING else self.default
+        value = UNSET if self.default is MISSING else self.default
         annotation = None if self.default_factory is MISSING else self.default_factory
         
         if self.default_factory is not MISSING and issubclass(self.default_factory, Widget):
