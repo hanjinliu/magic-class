@@ -1,12 +1,26 @@
 from __future__ import annotations
 from functools import wraps
 import inspect
+from magicclass.utils import gui_qt
 from typing import Iterable, Union
 from magicgui.signature import magic_signature, MagicSignature, cast
 from magicgui.widgets._bases import Widget
 
 Color = Union[str, Iterable[float]]
 nStrings = Union[str, Iterable[str]]
+
+
+# TODO: 
+# @button_design(text="X")
+# @set_options(n={"widget_type":"Slider"})
+
+# -> OK
+
+# @set_options(n={"widget_type":"Slider"})
+# @button_design(text="X")
+
+# -> not working
+
 
 def set_options(**options):
     """
@@ -19,7 +33,7 @@ def set_options(**options):
     then magicgui knows what widget it should be converted to. 
     """    
     def wrapper(func):
-        func.__signature__ = magic_signature(func, gui_options=options)
+        upgrade_signature(func, gui_options=options)
         return func
     return wrapper
 
@@ -65,11 +79,7 @@ def button_design(width:int=None, height:int=None, min_width:int=None, min_heigh
                           icon_size=icon_size, font_size=font_size, font_family=font_family,
                           font_color=font_color, background_color=background_color)
     def wrapper(func):
-        if hasattr(func, "__signature__") and isinstance(func.__signature__, MagicMethodSignature):
-            func.__signature__.caller_options.update(caller_options)
-        else:
-            msig = magic_signature(func, gui_options={})
-            func.__signature__ = MagicMethodSignature.from_magicsignature(msig, caller_options=caller_options)
+        upgrade_signature(func, caller_options=caller_options)
         return func
     return wrapper
 
@@ -114,23 +124,34 @@ def click(enables:nStrings=None, disables:nStrings=None, enabled:bool=True,
                     widget.visible = False
             return out
         
-        if hasattr(f, "__signature__") and isinstance(f.__signature__, MagicMethodSignature):
-            f.__signature__.caller_options.update({"enabled": enabled, "visible": visible})
-        else:
-            msig = magic_signature(func, gui_options={})
-            f.__signature__ = MagicMethodSignature.from_magicsignature(
-                msig, caller_options={"enabled": enabled, "visible": visible})
+        caller_options = {"enabled": enabled, "visible": visible}
+        upgrade_signature(f, caller_options=caller_options)
         return f
     return wrapper
 
-def upgrade_signature(func, caller_options):
-    if hasattr(func, "__signature__") and isinstance(func.__signature__, MagicMethodSignature):
-        func.__signature__.caller_options.update(caller_options)
-    else:
-        msig = magic_signature(func, gui_options={})
-        func.__signature__ = MagicMethodSignature.from_magicsignature(
-            msig, caller_options=caller_options)
+def upgrade_signature(func, gui_options:dict=None, caller_options:dict=None):
+    gui_options = gui_options or {}
+    caller_options = caller_options or {}
+    
+    sig = _get_signature(func)
+    
+    new_gui_options = MagicMethodSignature.get_gui_options(sig)
+    new_gui_options.update(gui_options)
+    
+    new_caller_options = getattr(sig, "caller_options", {})
+    new_caller_options.update(caller_options)
+
+    func.__signature__ = MagicMethodSignature.from_signature(
+            sig, gui_options=new_gui_options, caller_options=new_caller_options)
+
     return func
+
+def _get_signature(func):
+    if hasattr(func, "__signature__"):
+        sig = func.__signature__
+    else:
+        sig = inspect.signature(func)
+    return sig
 
 def _assert_iterable_of_str(obj):
     if obj is None:
@@ -156,22 +177,28 @@ class MagicMethodSignature(MagicSignature):
         self.caller_options = caller_options
     
     @classmethod
-    def from_signature(cls, sig: MagicSignature, gui_options=None, caller_options=None) -> MagicMethodSignature:
-        if type(sig) is cls:
-            return cast(MagicSignature, sig)
-        elif not isinstance(sig, inspect.Signature):
+    def from_signature(cls, sig: inspect.Signature, gui_options=None, caller_options=None) -> MagicMethodSignature:
+        if not isinstance(sig, inspect.Signature):
             raise TypeError("'sig' must be an instance of 'inspect.Signature'")
-        sig = MagicSignature.from_signature(sig, gui_options=gui_options)
-        return cls.from_magicsignature(sig, caller_options=caller_options)
-    
-    @classmethod
-    def from_magicsignature(cls, sig: MagicSignature, caller_options=None) -> MagicMethodSignature:
-        if type(sig) is cls:
-            return cast(MagicSignature, sig)
-        elif not isinstance(sig, MagicSignature):
-            raise TypeError("'sig' must be an instance of MagicSignature")
-        return cls(
-            list(sig.parameters.values()),
+        parameters = {k: inspect.Parameter(
+            param.name,
+            param.kind,
+            default=param.default,
+            annotation=param.annotation,
+        ) for k, param in sig.parameters.items()}
+        
+        out = cls(
+            list(parameters.values()),
             return_annotation=sig.return_annotation,
+            gui_options=gui_options,
             caller_options=caller_options
         )
+
+        return out
+    
+    @classmethod
+    def get_gui_options(cls, self:inspect.Signature|MagicSignature):
+        if type(self) is inspect.Signature:
+            return {}
+        else:
+            return {k: v.options for k, v in self.parameters.items()}
