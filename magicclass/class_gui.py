@@ -171,7 +171,7 @@ class ClassGui(Container):
         for name, attr in filter(lambda x: not x[0].startswith("_"), self.__dict__.items()):
             if not isinstance(attr, ClassGui):
                 continue
-            macro += _collect_macro(attr._recorded_macro, f"{selfvar}.{name}")
+            macro += _collect_macro(attr._recorded_macro, f"{selfvar}.{name}", self.__class__.__name__)
 
         sorted_macro = map(lambda x: x[1], sorted(macro, key=lambda x: x[0]))
         script =  "\n".join(sorted_macro)
@@ -189,8 +189,32 @@ class ClassGui(Container):
         return out
     
     @classmethod
-    def connect(cls, method):
+    def wraps(cls, method:Callable) -> Callable:
+        """
+        Wrap a parent method in a child magic-class.
+        
+        Basically, this function is used as a wrapper like below.
+        
+        >>> @magicclass
+        >>> class C:
+        >>>     @magicclass
+        >>>     class D: ...
+        >>>     @D.wraps
+        >>>     def func(self, ...): ...
+
+        Parameters
+        ----------
+        method : Callable
+            Parent method
+
+        Returns
+        -------
+        Callable
+            Same method as input, but has updated signature to hide the button.
+        """        
+        # TODO: may need support for FunctionGui?
         funcname = method.__name__
+            
         @wraps(method)
         def childmethod(cls_:cls, *args, **kwargs):
             return getattr(cls_.__magicclass_parent__, funcname)(*args, **kwargs)
@@ -361,7 +385,14 @@ class ClassGui(Container):
         return None
     
 
-def _collect_macro(macro:Macro, symbol:str) -> list[tuple[int, str]]:
+def _collect_macro(macro:Macro, symbol:str, parent=None) -> list[tuple[int, str]]:
+    out = []
+    for expr in macro:
+        if parent and expr.head == Head.init and expr.args[0].args[0] != parent:
+            # nested magic-class construction is always invisible from the parent.
+            # We should not record something like 'ui.A = A()'.
+            continue
+        out.append((expr.number, expr.str_as(symbol)))
     return list((expr.number, expr.str_as(symbol)) for expr in macro)
 
 def _extract_tooltip(obj: Any) -> str:
