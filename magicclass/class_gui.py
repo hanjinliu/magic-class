@@ -231,6 +231,9 @@ class ClassGui(Container):
         if fld.not_ready():
             try:
                 fld.default_factory = cls.__annotations__[name]
+                if isinstance(fld.default_factory, str):
+                    from pydoc import locate
+                    fld.default_factory = locate(fld.default_factory)
             except (AttributeError, KeyError):
                 pass
             
