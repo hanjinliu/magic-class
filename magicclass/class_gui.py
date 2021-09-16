@@ -14,6 +14,7 @@ from .macro import Macro, Expr, Head
 from .utils import iter_members, n_parameters
 from .widgets import PushButtonPlus, Separator, Logger, FrozenContainer, raise_error_msg
 from .field import MagicField
+from .wrappers import upgrade_signature
 
 # Check if napari is available so that layers are detectable from GUIs.
 try:
@@ -45,6 +46,7 @@ def debug():
     RUNNING_MODE = current_mode
 
 class ClassGui(Container):
+    __magicclass_parent__ = None
     def __init__(self, layout:str= "vertical", parent=None, close_on_run:bool=True, popup:bool=True, 
                  result_widget:bool=False, name=None):
         super().__init__(layout=layout, name=name)
@@ -76,7 +78,7 @@ class ClassGui(Container):
             viewer = None
         return viewer
     
-    def _convert_methods_into_widgets(self) -> ClassGui:
+    def _convert_attributes_into_widgets(self) -> ClassGui:
         cls = self.__class__
         
         # Add class docstring as label.
@@ -93,10 +95,10 @@ class ClassGui(Container):
 
             if isinstance(attr, type):
                 # Nested magic-class
-                if n_parameters(attr.__init__) > 1 and issubclass(attr, ClassGui):
-                    widget = attr(self)
-                else:
-                    widget = attr()
+                widget = attr()
+                if issubclass(attr, ClassGui):
+                    attr.__magicclass_parent__ = self
+                    widget.margins = (0, 0, 0, 0)
                 setattr(self, name, widget)
             
             elif isinstance(attr, MagicField):
@@ -116,36 +118,6 @@ class ClassGui(Container):
             
         return self
     
-    def _create_widget_from_field(self, name:str, fld:MagicField):
-        cls = self.__class__
-        if fld.not_ready():
-            try:
-                fld.default_factory = cls.__annotations__[name]
-            except (AttributeError, KeyError):
-                pass
-            
-        widget = fld.to_widget()
-        if widget.name == "" or widget.name == name:
-            widget.name = "_" + name
-            
-        if isinstance(widget, ValueWidget):
-            @widget.changed.connect
-            def _set_value(event):
-                value = event.source.value # TODO: fix after psygnal start to be used.
-                setattr(self, name, value)
-                self.changed(value=self)
-                expr = Expr(head=Head.setattr, args=[name, value])
-                last_expr = self._recorded_macro[-1]
-                if last_expr.head == expr.head and last_expr.args[0] == expr.args[0]:
-                    self._recorded_macro[-1] = expr
-                else:
-                    self._recorded_macro.append(expr)
-                return None
-            setattr(self, name, widget.value)
-        else:
-            setattr(self, name, widget)
-        return widget
-        
     def insert(self, key:int, obj:Widget|Callable) -> None:
         """
         This override enables methods/functions and other magic-class to be appended into Container 
@@ -154,104 +126,7 @@ class ClassGui(Container):
         as is, rather than a push button.
         """        
         if (not isinstance(obj, Widget)) and callable(obj):
-            # Convert methods into push buttons
-            
-            name = obj.__name__.replace("_", " ")
-            button = PushButtonPlus(name=obj.__name__, text=name, gui_only=True)
-
-            # Wrap function to deal with errors in a right way.
-            if RUNNING_MODE == "default":
-                wrapper = _raise_error_in_msgbox
-            elif RUNNING_MODE == "debug":
-                wrapper = _write_log
-            elif RUNNING_MODE == "raw":
-                wrapper = lambda x, parent: x
-            else:
-                raise ValueError(f"RUNNING_MODE={RUNNING_MODE}")
-            
-            func = wrapper(obj, parent=self)
-            
-            # Strangely, signature must be updated like this. Otherwise, already wrapped member function
-            # will have signature with "self".
-            func.__signature__ = inspect.signature(obj)
-
-            # Prepare a button
-            button.tooltip = _extract_tooltip(func)
-            
-            if n_parameters(func) == 0:
-                # We don't want a dialog with a single widget "Run" to show up.
-                def run_function(*args):
-                    out = func()
-                    if not isinstance(out, Exception):
-                        self._record_macro(func, (), {})
-                    if self._result_widget is not None:
-                        self._result_widget.value = out
-                    return out
-            else:
-                def run_function(*args):
-                    try:
-                        mgui = magicgui(func)
-                        mgui.name = f"function-{id(func)}"
-                            
-                    except Exception as e:
-                        msg = f"Exception was raised during building magicgui.\n{e.__class__.__name__}: {e}"
-                        raise_error_msg(self.native, msg=msg)
-                        return None
-                    
-                    # Recover last inputs if exists.
-                    params = self._parameter_history.get(func.__name__, {})
-                    for key, value in params.items():
-                        try:
-                            getattr(mgui, key).value = value
-                        except ValueError:
-                            pass
-                    
-                    viewer = self.parent_viewer
-                        
-                    if viewer is None:
-                        # If napari.Viewer was not found, then open up a magicgui when button is pushed, and 
-                        # close it when function call is finished (if close_on_run==True).
-                        if self._popup:
-                            mgui.show()
-                        else:
-                            sep = Separator(orientation="horizontal", text=name)
-                            mgui.insert(0, sep)
-                            self.append(mgui)
-                        
-                        if self._close_on_run:
-                            @mgui.called.connect
-                            def _close(value):
-                                if not self._popup:
-                                    self.remove(mgui.name)
-                                mgui.close()
-                                
-                    else:
-                        # If napari.Viewer was found, then create a magicgui as a dock widget when button is 
-                        # pushed, and remove it when function call is finished (if close_on_run==True).
-                        viewer: napari.Viewer
-                        
-                        if self._close_on_run:
-                            @mgui.called.connect
-                            def _close(value):
-                                viewer.window.remove_dock_widget(mgui.parent)
-                                mgui.close()
-                                
-                        dock_name = _find_unique_name(name, viewer)
-                        dock = viewer.window.add_dock_widget(mgui, name=dock_name)
-                        mgui.native.setParent(dock)
-                        dock.setFloating(self._popup)
-                    
-                    f = _temporal_function_gui_callback(self, mgui)
-                    mgui.called.connect(f)
-                    
-                    return None
-                
-            button.changed.connect(run_function)
-            
-            # If button design is given, load the options.
-            button.from_options(obj)
-                
-            obj = button
+            obj = self._create_widget_from_method(obj)
         
         elif isinstance(obj, FunctionGui):
             # magic-class has to know when the nested FunctionGui is called.
@@ -290,13 +165,13 @@ class ClassGui(Container):
         ----------
         symbol : str, default is "ui"
             Symbol of the instance.
-        """        
-        macro: list[tuple[int, str]]
-        macro = _collect_macro(self._recorded_macro, symbol)
+        """
+        selfvar = f"var{hex(id(self))}"
+        macro = _collect_macro(self._recorded_macro, selfvar)
         for name, attr in filter(lambda x: not x[0].startswith("_"), self.__dict__.items()):
             if not isinstance(attr, ClassGui):
                 continue
-            macro += _collect_macro(attr._recorded_macro, f"{symbol}.{name}")
+            macro += _collect_macro(attr._recorded_macro, f"{selfvar}.{name}")
 
         sorted_macro = map(lambda x: x[1], sorted(macro, key=lambda x: x[0]))
         script =  "\n".join(sorted_macro)
@@ -308,8 +183,150 @@ class ClassGui(Container):
                 if not idt.valid:
                     annot.append(idt.as_annotation())
         
-        return "\n".join(annot) + "\n" + script
+        out = "\n".join(annot) + "\n" + script
+        out = out.replace(selfvar, symbol)
+        
+        return out
     
+    @classmethod
+    def connect(cls, method):
+        funcname = method.__name__
+        @wraps(method)
+        def childmethod(cls_:cls, *args, **kwargs):
+            return getattr(cls_.__magicclass_parent__, funcname)(*args, **kwargs)
+        
+        setattr(cls, funcname, childmethod)
+        upgrade_signature(method, {"visible": False})
+        return method
+    
+    def _create_widget_from_field(self, name:str, fld:MagicField):
+        cls = self.__class__
+        if fld.not_ready():
+            try:
+                fld.default_factory = cls.__annotations__[name]
+            except (AttributeError, KeyError):
+                pass
+            
+        widget = fld.to_widget()
+        if widget.name == "" or widget.name == name:
+            widget.name = "_" + name
+            
+        if isinstance(widget, ValueWidget):
+            @widget.changed.connect
+            def _set_value(event):
+                value = event.source.value # TODO: fix after psygnal start to be used.
+                setattr(self, name, value)
+                self.changed(value=self)
+                expr = Expr(head=Head.setattr, args=[name, value])
+                last_expr = self._recorded_macro[-1]
+                if last_expr.head == expr.head and last_expr.args[0] == expr.args[0]:
+                    self._recorded_macro[-1] = expr
+                else:
+                    self._recorded_macro.append(expr)
+                return None
+            setattr(self, name, widget.value)
+        else:
+            setattr(self, name, widget)
+        return widget
+    
+    def _create_widget_from_method(self, obj):
+        # Convert methods into push buttons
+        name = obj.__name__.replace("_", " ")
+        button = PushButtonPlus(name=obj.__name__, text=name, gui_only=True)
+
+        # Wrap function to deal with errors in a right way.
+        if RUNNING_MODE == "default":
+            wrapper = _raise_error_in_msgbox
+        elif RUNNING_MODE == "debug":
+            wrapper = _write_log
+        elif RUNNING_MODE == "raw":
+            wrapper = lambda x, parent: x
+        else:
+            raise ValueError(f"RUNNING_MODE={RUNNING_MODE}")
+        
+        func = wrapper(obj, parent=self)
+        
+        # Strangely, signature must be updated like this. Otherwise, already wrapped member function
+        # will have signature with "self".
+        func.__signature__ = inspect.signature(obj)
+
+        # Prepare a button
+        button.tooltip = _extract_tooltip(func)
+        
+        if n_parameters(func) == 0:
+            # We don't want a dialog with a single widget "Run" to show up.
+            def run_function(*args):
+                out = func()
+                if not isinstance(out, Exception):
+                    self._record_macro(func, (), {})
+                if self._result_widget is not None:
+                    self._result_widget.value = out
+                return out
+        else:
+            def run_function(*args):
+                try:
+                    mgui = magicgui(func)
+                    mgui.name = f"function-{id(func)}"
+                        
+                except Exception as e:
+                    msg = f"Exception was raised during building magicgui.\n{e.__class__.__name__}: {e}"
+                    raise_error_msg(self.native, msg=msg)
+                    return None
+                
+                # Recover last inputs if exists.
+                params = self._parameter_history.get(func.__name__, {})
+                for key, value in params.items():
+                    try:
+                        getattr(mgui, key).value = value
+                    except ValueError:
+                        pass
+                
+                viewer = self.parent_viewer
+                    
+                if viewer is None:
+                    # If napari.Viewer was not found, then open up a magicgui when button is pushed, and 
+                    # close it when function call is finished (if close_on_run==True).
+                    if self._popup:
+                        mgui.show()
+                    else:
+                        sep = Separator(orientation="horizontal", text=name)
+                        mgui.insert(0, sep)
+                        self.append(mgui)
+                    
+                    if self._close_on_run:
+                        @mgui.called.connect
+                        def _close(value):
+                            if not self._popup:
+                                self.remove(mgui.name)
+                            mgui.close()
+                            
+                else:
+                    # If napari.Viewer was found, then create a magicgui as a dock widget when button is 
+                    # pushed, and remove it when function call is finished (if close_on_run==True).
+                    viewer: napari.Viewer
+                    
+                    if self._close_on_run:
+                        @mgui.called.connect
+                        def _close(value):
+                            viewer.window.remove_dock_widget(mgui.parent)
+                            mgui.close()
+                            
+                    dock_name = _find_unique_name(name, viewer)
+                    dock = viewer.window.add_dock_widget(mgui, name=dock_name)
+                    mgui.native.setParent(dock)
+                    dock.setFloating(self._popup)
+                
+                f = _temporal_function_gui_callback(self, mgui)
+                mgui.called.connect(f)
+                
+                return None
+            
+        button.changed.connect(run_function)
+        
+        # If button design is given, load the options.
+        button.from_options(obj)
+            
+        return button
     
     def _record_macro(self, func:Callable, args:tuple, kwargs:dict[str, Any]) -> None:
         """
