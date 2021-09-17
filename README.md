@@ -81,4 +81,16 @@ viewer = napari.Viewer()
 viewer.window.add_dock_widget(widget)
 ```
 
+Another outstanding feature of `magic-class` is its macro recorder functionalities. After you pushed "load" &rarr; "plot" you can make an executable Python script like below.
+
+```python
+print(widget.create_macro())
+```
+
+```
+ui = PlotData(title='Title')
+ui.load(path=r'...')
+ui.plot()
+```
+
 Other examples are in the "examples" folder.
