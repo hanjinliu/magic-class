@@ -134,8 +134,6 @@ class ClassGui(Container):
             # magic-class has to know when the nested FunctionGui is called.
             f = _nested_function_gui_callback(self, obj)
             obj.called.connect(f)
-            # if not obj.visible:
-            #     obj.visible = False
         
         elif self.labels and not isinstance(obj, (_LabeledWidget, ButtonWidget, ClassGui, FrozenContainer, Label)):
             obj = _LabeledWidget(obj)
@@ -175,16 +173,19 @@ class ClassGui(Container):
             Symbol of the instance.
         """
         selfvar = f"var{hex(id(self))}"
+        
+        # Recursively build macro from nested magic-classes
         macro = _collect_macro(self._recorded_macro, selfvar)
         for name, attr in filter(lambda x: not x[0].startswith("_"), self.__dict__.items()):
             if not isinstance(attr, ClassGui):
                 continue
             macro += _collect_macro(attr._recorded_macro, f"{selfvar}.{name}", self.__magicclass_parent__)
 
+        # Sort by the recorded order
         sorted_macro = map(lambda x: x[1], sorted(macro, key=lambda x: x[0]))
         script =  "\n".join(sorted_macro)
         
-        # type annotation
+        # type annotation for the hard-to-record types
         annot = []
         for expr in self._recorded_macro:
             for idt in expr.iter_args():
@@ -272,6 +273,13 @@ class ClassGui(Container):
             widget.name = "_" + name
             
         if isinstance(widget, ValueWidget):
+            # If the field has callbacks, connect it to the newly generated widget.
+            for callback in fld.callbacks:
+                funcname = callback.__name__
+                if hasattr(self, funcname):
+                    widget.changed.connect(lambda x: getattr(self, funcname)(x))
+            
+            # By default, set value function will be connected to the widget.
             @widget.changed.connect
             def _set_value(event):
                 value = event.source.value # TODO: fix after psygnal start to be used.
@@ -284,6 +292,7 @@ class ClassGui(Container):
                 else:
                     self._recorded_macro.append(expr)
                 return None
+            
             setattr(self, name, widget.value)
         else:
             setattr(self, name, widget)

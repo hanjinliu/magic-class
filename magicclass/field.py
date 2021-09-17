@@ -1,14 +1,16 @@
 from __future__ import annotations
 import sys
-from typing import Any, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING, Callable
 from magicgui.widgets import create_widget
-from magicgui.widgets._bases import Widget
+from magicgui.widgets._bases import Widget, ValueWidget
 from magicgui.widgets._bases.value_widget import UNSET
 from dataclasses import Field, MISSING
 
 if TYPE_CHECKING:
     from magicgui.widgets._protocols import WidgetProtocol
     from magicgui.types import WidgetOptions
+
+# TODO: callbacks:Callable|list[Callable]=...
 
 class MagicField(Field):
     """
@@ -21,6 +23,7 @@ class MagicField(Field):
         super().__init__(default=default, default_factory=default_factory, init=True, repr=True, 
                          hash=False, compare=False, metadata=metadata)
         self.lineno = -1
+        self.callbacks:list[Callable] = []
     
     def __repr__(self):
         return "Magic" + super().__repr__()
@@ -57,6 +60,11 @@ class MagicField(Field):
                                    )
         widget.name = self.name
         return widget
+    
+    def connect(self, func):
+        self.callbacks.append(func)
+        return func
+    
 
 def field(obj:Any=MISSING, *, name:str="", widget_type:str|type[WidgetProtocol]|None = None, 
           options:WidgetOptions={}) -> MagicField:
