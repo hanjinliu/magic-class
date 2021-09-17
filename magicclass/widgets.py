@@ -10,6 +10,7 @@ from matplotlib.backends.backend_qt5agg import FigureCanvas
 from matplotlib.colors import to_rgb
 from magicgui.widgets import Container, PushButton, TextEdit
 
+__all__ = ["raise_error_msg", "Figure", "Separator", "Logger", "PushButtonPlus"]
 
 def raise_error_msg(parent, title:str="Error", msg:str="error"):
     QMessageBox.critical(parent, title, msg, QMessageBox.Ok)

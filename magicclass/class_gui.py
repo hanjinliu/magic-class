@@ -176,11 +176,7 @@ class ClassGui(Container):
         selfvar = f"var{hex(id(self))}"
         
         # Recursively build macro from nested magic-classes
-        macro = _collect_macro(self._recorded_macro, selfvar)
-        for name, attr in filter(lambda x: not x[0].startswith("_"), self.__dict__.items()):
-            if not isinstance(attr, ClassGui):
-                continue
-            macro += _collect_macro(attr._recorded_macro, f"{selfvar}.{name}", self.__magicclass_parent__)
+        macro = _collect_child_macro(self, selfvar)
 
         # Sort by the recorded order
         sorted_macro = map(lambda x: x[1], sorted(macro, key=lambda x: x[0]))
@@ -293,9 +289,17 @@ class ClassGui(Container):
             def _set_value(event):
                 value = event.source.value # TODO: fix after psygnal start to be used.
                 self.changed(value=self)
-                expr = Expr(head=Head.setattr, args=[name, value])
+                if isinstance(value, Exception):
+                    return None
+                expr = Expr(head=Head.setattr, 
+                            args=[Expr(head=Head.getattr, 
+                                       args=["value"], 
+                                       symbol=name),
+                                       value]
+                            )
+                
                 last_expr = self._recorded_macro[-1]
-                if last_expr.head == expr.head and last_expr.args[0] == expr.args[0]:
+                if last_expr.head == expr.head and last_expr.args[0].symbol == expr.args[0].symbol:
                     self._recorded_macro[-1] = expr
                 else:
                     self._recorded_macro.append(expr)
@@ -306,8 +310,8 @@ class ClassGui(Container):
     
     def _create_widget_from_method(self, obj):
         # Convert methods into push buttons
-        name = obj.__name__.replace("_", " ")
-        button = PushButtonPlus(name=obj.__name__, text=name, gui_only=True)
+        text = obj.__name__.replace("_", " ")
+        button = PushButtonPlus(name=obj.__name__, text=text, gui_only=True)
 
         # Wrap function to deal with errors in a right way.
         if RUNNING_MODE == "default":
@@ -364,7 +368,7 @@ class ClassGui(Container):
                     if self._popup:
                         mgui.show()
                     else:
-                        sep = Separator(orientation="horizontal", text=name)
+                        sep = Separator(orientation="horizontal", text=text)
                         mgui.insert(0, sep)
                         self.append(mgui)
                     
@@ -386,7 +390,7 @@ class ClassGui(Container):
                             viewer.window.remove_dock_widget(mgui.parent)
                             mgui.close()
                             
-                    dock_name = _find_unique_name(name, viewer)
+                    dock_name = _find_unique_name(text, viewer)
                     dock = viewer.window.add_dock_widget(mgui, name=dock_name)
                     mgui.native.setParent(dock)
                     dock.setFloating(self._popup)
@@ -445,6 +449,14 @@ def _collect_macro(macro:Macro, symbol:str, parent=None) -> list[tuple[int, str]
             continue
         out.append((expr.number, expr.str_as(symbol)))
     return out
+
+def _collect_child_macro(self:ClassGui, symbol:str):
+    macro = _collect_macro(self._recorded_macro, symbol, self.__magicclass_parent__)
+    for name, attr in filter(lambda x: not x[0].startswith("_"), self.__dict__.items()):
+        if not isinstance(attr, ClassGui):
+            continue
+        macro += _collect_child_macro(attr, symbol=f"{symbol}.{name}")
+    return macro
 
 def _extract_tooltip(obj: Any) -> str:
     if not hasattr(obj, "__doc__"):
