@@ -11,7 +11,7 @@ from magicgui.widgets._bases import Widget, ValueWidget, ButtonWidget
 from magicgui.widgets._concrete import _LabeledWidget
 
 from .macro import Macro, Expr, Head
-from .utils import iter_members, n_parameters, get_line_number
+from .utils import iter_members, n_parameters
 from .widgets import PushButtonPlus, Separator, Logger, FrozenContainer, raise_error_msg
 from .field import MagicField
 from .wrappers import upgrade_signature
@@ -93,7 +93,7 @@ class ClassGui(Container):
             self.append(lbl)
         
         # Bind all the methods and annotations
-        base_members = set(x[0] for x in iter_members(ClassGui))
+        base_members = set(x[0] for x in iter_members(ClassGui))        
         for name, attr in filter(lambda x: x[0] not in base_members, iter_members(cls)):
             if name in ("changed", "_widget"):
                 continue
@@ -127,6 +127,7 @@ class ClassGui(Container):
         ``FunctionGui`` object or ``ClassGui`` object was appended, it will appear on the container 
         as is, rather than a push button.
         """        
+        
         if (not isinstance(obj, Widget)) and callable(obj):
             obj = self._create_widget_from_method(obj)
         
@@ -276,8 +277,14 @@ class ClassGui(Container):
             # If the field has callbacks, connect it to the newly generated widget.
             for callback in fld.callbacks:
                 funcname = callback.__name__
-                if hasattr(self, funcname):
-                    widget.changed.connect(lambda x: getattr(self, funcname)(x))
+                @widget.changed.connect
+                def _callback(event):
+                    # search for parent instances that have the same name.
+                    current_self = self
+                    while not hasattr(current_self, funcname):
+                        current_self = self.__magicclass_parent__
+                    return getattr(current_self, funcname)(event)
+                    
             
             # By default, set value function will be connected to the widget.
             @widget.changed.connect
