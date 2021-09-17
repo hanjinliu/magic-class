@@ -1,9 +1,8 @@
 from __future__ import annotations
 from functools import wraps
 import inspect
-from magicclass.utils import gui_qt
 from typing import Iterable, Union
-from magicgui.signature import magic_signature, MagicSignature, cast
+from magicgui.signature import MagicSignature
 from magicgui.widgets._bases import Widget
 
 Color = Union[str, Iterable[float]]

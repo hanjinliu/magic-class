@@ -270,8 +270,7 @@ class ClassGui(Container):
                 pass
             
         widget = fld.to_widget()
-        if widget.name == "" or widget.name == name:
-            widget.name = "_" + name
+        widget.name = widget.name or name
             
         if isinstance(widget, ValueWidget):
             # If the field has callbacks, connect it to the newly generated widget.
@@ -283,14 +282,16 @@ class ClassGui(Container):
                     current_self = self
                     while not hasattr(current_self, funcname):
                         current_self = self.__magicclass_parent__
-                    return getattr(current_self, funcname)(event)
-                    
+                    try:
+                        getattr(current_self, funcname)(event)
+                    except TypeError:
+                        getattr(current_self, funcname)()
+                    return None                    
             
             # By default, set value function will be connected to the widget.
             @widget.changed.connect
             def _set_value(event):
                 value = event.source.value # TODO: fix after psygnal start to be used.
-                setattr(self, name, value)
                 self.changed(value=self)
                 expr = Expr(head=Head.setattr, args=[name, value])
                 last_expr = self._recorded_macro[-1]
@@ -300,9 +301,7 @@ class ClassGui(Container):
                     self._recorded_macro.append(expr)
                 return None
             
-            setattr(self, name, widget.value)
-        else:
-            setattr(self, name, widget)
+        setattr(self, name, widget)
         return widget
     
     def _create_widget_from_method(self, obj):

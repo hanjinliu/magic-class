@@ -15,9 +15,11 @@ class Plot:
     @parameters.a.connect
     @parameters.b.connect
     def _plot(self, event=None):
+        a = self.parameters.a.value
+        b = self.parameters.b.value
         t = np.linspace(0, 4*np.pi, 200)
         self.canvas.ax.cla()
-        self.canvas.ax.plot(np.sin(self.parameters.a*t), np.sin(self.parameters.b*t))
+        self.canvas.ax.plot(np.sin(a*t), np.sin(b*t))
         self.canvas.draw()
 
 if __name__ == "__main__":
