@@ -1,9 +1,12 @@
 from __future__ import annotations
 from functools import wraps
 import inspect
-from typing import Iterable, Union
+from typing import Iterable, Iterator, Union, TYPE_CHECKING
 from magicgui.signature import MagicSignature
-from magicgui.widgets._bases import Widget
+from magicgui.widgets._bases import ButtonWidget
+
+if TYPE_CHECKING:
+    from .class_gui import ClassGui
 
 Color = Union[str, Iterable[float]]
 nStrings = Union[str, Iterable[str]]
@@ -89,25 +92,24 @@ def click(enables:nStrings=None, disables:nStrings=None, enabled:bool=True,
     visible: bool, default is True
         The initial visibility of the button.
     """
-    enables = _assert_iterable_of_str(enables)
-    disables = _assert_iterable_of_str(disables)
-    shows = _assert_iterable_of_str(shows)
-    hides = _assert_iterable_of_str(hides)
-
-    def wrapper(func):
+    enables = [n.split(".") for n in _assert_iterable_of_str(enables)]
+    disables = [n.split(".") for n in _assert_iterable_of_str(disables)]
+    shows = [n.split(".") for n in _assert_iterable_of_str(shows)]
+    hides = [n.split(".") for n in _assert_iterable_of_str(hides)]
+    
+    def wrapper(func):   
         @wraps(func)
         def f(self, *args, **kwargs):
             out = func(self, *args, **kwargs)
-            for widget in filter(lambda x: isinstance(x, Widget), self):
-                widget: Widget
-                if widget.name in enables and not widget.enabled:
-                    widget.enabled = True
-                elif widget.name in disables and widget.enabled:
-                    widget.enabled = False
-                elif widget.name in shows and not widget.visible:
-                    widget.visible = True
-                elif widget.name in hides and widget.visible:
-                    widget.visible = False
+            for button in _iter_button_widgets(self, enables):
+                button.enabled = True
+            for button in _iter_button_widgets(self, disables):
+                button.enabled = False
+            for button in _iter_button_widgets(self, shows):
+                button.visible = True
+            for button in _iter_button_widgets(self, hides):
+                button.visible = False
+            
             return out
         
         caller_options = {"enabled": enabled, "visible": visible}
@@ -145,6 +147,22 @@ def _assert_iterable_of_str(obj):
     elif isinstance(obj, str):
         obj = [obj]
     return obj
+
+def _iter_button_widgets(self:ClassGui, descriptor:list[list[str]]) -> Iterator[ButtonWidget]:
+    for names in descriptor:
+        ins = self
+        for a in names[:-1]:
+            if a != "":
+                ins = getattr(ins, a)
+            else:
+                ins = ins.__magicclass_parent__
+        
+        button = ins[names[-1]]
+        if not isinstance(button, ButtonWidget):
+            s = ".".join(descriptor)
+            raise TypeError(f"{button} is not a button. This exception happened due to {s}.")
+        yield button
+
 
 class MagicMethodSignature(MagicSignature):
     """
