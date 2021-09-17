@@ -19,8 +19,8 @@ class Function:
     
     @button_design(text="Run")
     def call_button(self):
-        s = self.line
-        i = self.slider
+        s = self.line.value
+        i = self.slider.value
         return f"{s}-{i}"
 
 if __name__ == "__main__":
