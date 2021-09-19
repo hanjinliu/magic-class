@@ -443,22 +443,22 @@ class ClassGui(Container):
         return None
     
 
-def _collect_macro(macro:Macro, symbol:str, parent=None) -> list[tuple[int, str]]:
+def _collect_macro(macro:Macro, symbol:str, root:bool) -> list[tuple[int, str]]:
     out = []
     for expr in macro:
-        if parent and expr.head == Head.init and expr.args[0].args[0] != parent.__class__.__name__:
+        if not root and expr.head == Head.init:
             # nested magic-class construction is always invisible from the parent.
             # We should not record something like 'ui.A = A()'.
             continue
         out.append((expr.number, expr.str_as(symbol)))
     return out
 
-def _collect_child_macro(self:ClassGui, symbol:str):
-    macro = _collect_macro(self._recorded_macro, symbol, self.__magicclass_parent__)
+def _collect_child_macro(self:ClassGui, symbol:str, root:bool=True):
+    macro = _collect_macro(self._recorded_macro, symbol, root=root)
     for name, attr in filter(lambda x: not x[0].startswith("_"), self.__dict__.items()):
         if not isinstance(attr, ClassGui):
             continue
-        macro += _collect_child_macro(attr, symbol=f"{symbol}.{name}")
+        macro += _collect_child_macro(attr, symbol=f"{symbol}.{name}", root=False)
     return macro
 
 def _extract_tooltip(obj: Any) -> str:
