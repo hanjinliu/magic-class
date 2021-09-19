@@ -12,7 +12,7 @@ _BASE_CLASS_SUFFIX = "_Base"
 _DEPTH = 2
 
 def magicclass(class_:type|None=None, *, layout:str="vertical", parent=None, close_on_run:bool=True,
-               popup:bool=True, labels:bool=True, result_widget:bool=False):
+               popup:bool=True, labels:bool=True, result_widget:bool=False) -> ClassGui:
     """
     Decorator that can convert a Python class into a widget with push buttons.
     

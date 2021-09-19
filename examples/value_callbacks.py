@@ -8,10 +8,10 @@ options = {"widget_type": "FloatSlider", "min": 0.2, "max": 10}
 class Plot:
     @magicclass(layout="horizontal")
     class parameters:
-        a:int = field(options=options)
-        b:int = field(options=options)
+        a = field(int, options=options)
+        b = field(int, options=options)
     canvas = field(Figure)
-    
+
     @parameters.a.connect
     @parameters.b.connect
     def _plot(self, event=None):
