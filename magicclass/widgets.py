@@ -133,10 +133,10 @@ class ListView:
         self.widget = list(filter(lambda x: not isinstance(x, PushButton), widget))
     
     def __repr__(self):
-        return repr(self.widget)
+        return repr([w.value for w in self.widget])
     
     def __str__(self):
-        return str(self.widget)
+        return str([w.value for w in self.widget])
     
     def __len__(self):
         return len(self.widget)
