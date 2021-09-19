@@ -52,7 +52,7 @@ class ClassGui(Container):
         super().__init__(layout=layout, labels=labels, name=name)
         if parent is not None:
             self.parent = parent
-        self._current_dock_widget = None
+            
         self._close_on_run = close_on_run
         self._popup = popup
         
@@ -79,47 +79,6 @@ class ClassGui(Container):
             viewer = None
         return viewer
     
-    def _convert_attributes_into_widgets(self) -> ClassGui:
-        """
-        This function is called in dynamically created __init__. Methods, fields and nested
-        classes are converted to magicgui widgets.
-        """        
-        cls = self.__class__
-        
-        # Add class docstring as label.
-        if cls.__doc__:
-            doc = _extract_tooltip(cls)
-            lbl = Label(value=doc)
-            self.append(lbl)
-        
-        # Bind all the methods and annotations
-        base_members = set(x[0] for x in iter_members(ClassGui))        
-        for name, attr in filter(lambda x: x[0] not in base_members, iter_members(cls)):
-            if name in ("changed", "_widget"):
-                continue
-
-            if isinstance(attr, type):
-                # Nested magic-class
-                widget = attr()
-                setattr(self, name, widget)
-            
-            elif isinstance(attr, MagicField):
-                # If MagicField is given by field() function.
-                widget = self._create_widget_from_field(name, attr)
-            else:
-                # convert class method into instance method
-                widget = getattr(self, name, None)
-                
-            if callable(widget) or isinstance(widget, Widget):
-                self.append(widget)
-        
-        # Append result widget in the bottom
-        if self._result_widget is not None:
-            self._result_widget.enabled = False
-            self.append(self._result_widget)
-            
-        return self
-    
     def insert(self, key:int, obj:Widget|Callable) -> None:
         """
         This override enables methods/functions and other magic-class to be appended into Container 
@@ -136,7 +95,8 @@ class ClassGui(Container):
             f = _nested_function_gui_callback(self, obj)
             obj.called.connect(f)
         
-        elif self.labels and not isinstance(obj, (_LabeledWidget, ButtonWidget, ClassGui, FrozenContainer, Label)):
+        elif self.labels and not isinstance(obj, (_LabeledWidget, ButtonWidget, ClassGui, 
+                                                  FrozenContainer, Label)):
             obj = _LabeledWidget(obj)
             obj.label_changed.connect(self._unify_label_widths)
         
@@ -180,7 +140,7 @@ class ClassGui(Container):
 
         # Sort by the recorded order
         sorted_macro = map(lambda x: x[1], sorted(macro, key=lambda x: x[0]))
-        script =  "\n".join(sorted_macro)
+        script = "\n".join(sorted_macro)
         
         # type annotation for the hard-to-record types
         annot = []
@@ -237,7 +197,8 @@ class ClassGui(Container):
             
             @wraps(method)
             def childmethod(self:cls, *args, **kwargs):
-                return getattr(self.__magicclass_parent__, funcname)(*args, **kwargs)
+                self_ = self.__magicclass_parent__
+                return getattr(self_, funcname)(*args, **kwargs)
         
         if hasattr(cls, funcname):
             # Sometimes we want to pre-define function to arrange the order of widgets.
@@ -251,6 +212,48 @@ class ClassGui(Container):
             upgrade_signature(method, caller_options={"visible": False})
         setattr(cls, funcname, childmethod)
         return method
+    
+    def _convert_attributes_into_widgets(self) -> ClassGui:
+        """
+        This function is called in dynamically created __init__. Methods, fields and nested
+        classes are converted to magicgui widgets.
+        """        
+        cls = self.__class__
+        
+        # Add class docstring as label.
+        if cls.__doc__:
+            doc = _extract_tooltip(cls)
+            lbl = Label(value=doc)
+            self.append(lbl)
+        
+        # Bind all the methods and annotations
+        base_members = set(x[0] for x in iter_members(ClassGui))        
+        for name, attr in filter(lambda x: x[0] not in base_members, iter_members(cls)):
+            if name in ("changed", "_widget"):
+                continue
+
+            if isinstance(attr, type):
+                # Nested magic-class
+                widget = attr()
+                setattr(self, name, widget)
+            
+            elif isinstance(attr, MagicField):
+                # If MagicField is given by field() function.
+                widget = self._create_widget_from_field(name, attr)
+                
+            else:
+                # convert class method into instance method
+                widget = getattr(self, name, None)
+                
+            if callable(widget) or isinstance(widget, Widget):
+                self.append(widget)
+        
+        # Append result widget in the bottom
+        if self._result_widget is not None:
+            self._result_widget.enabled = False
+            self.append(self._result_widget)
+            
+        return self
     
     def _create_widget_from_field(self, name:str, fld:MagicField):
         cls = self.__class__
@@ -268,7 +271,7 @@ class ClassGui(Container):
         widget = fld.to_widget()
         widget.name = widget.name or name
             
-        if isinstance(widget, ValueWidget):
+        if isinstance(widget, (ValueWidget, Container)):
             # If the field has callbacks, connect it to the newly generated widget.
             for callback in fld.callbacks:
                 funcname = callback.__name__
