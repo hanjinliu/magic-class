@@ -83,7 +83,7 @@ class Separator(FrozenContainer):
 class ListEdit(Container):
     def __init__(
         self,
-        value: Iterable[Any] = UNSET,
+        value: Iterable[_V] = UNSET,
         annotation: type = None, # such as int, str, ...
         layout: str = "horizontal",
         **kwargs,
@@ -128,6 +128,14 @@ class ListEdit(Container):
     def value(self):
         return ListView(self)
 
+    @value.setter
+    def value(self, vals:Iterable[_V]):
+        for i in reversed(range(len(self))):
+            if not isinstance(self[i], PushButton):
+                self.pop(i)
+        for v in vals:
+            self.append_new(v)        
+    
 class ListView:
     def __init__(self, widget: ListEdit):
         self.widget = list(filter(lambda x: not isinstance(x, PushButton), widget))
@@ -170,7 +178,7 @@ class ListView:
 class TupleEdit(Container):
     def __init__(
         self,
-        value: Iterable[Any] = UNSET,
+        value: Iterable[_V] = UNSET,
         annotation: type = None, # such as int, str, ...
         layout: str = "horizontal",
         **kwargs,
@@ -200,7 +208,13 @@ class TupleEdit(Container):
     @property        
     def value(self):
         return tuple(w.value for w in self)
-        
+
+    @value.setter
+    def value(self, vals:Iterable[_V]):
+        if len(vals) != len(self):
+            raise ValueError("Length of tuple does not match.")
+        for w, v in zip(self, vals):
+            w.value = v
     
 class Logger(TextEdit):
     def __init__(self, **kwargs):
