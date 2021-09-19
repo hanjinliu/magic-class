@@ -1,5 +1,6 @@
 from __future__ import annotations
-from typing import Callable, Iterable
+from typing import Any, Callable, Iterable, TypeVar, overload
+import inspect
 from PyQt5.QtWidgets import QWidget
 from qtpy.QtWidgets import QFrame, QLabel, QMessageBox, QPushButton, QGridLayout, QTextEdit
 from qtpy.QtGui import QIcon, QFont
@@ -8,9 +9,14 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvas
 from matplotlib.colors import to_rgb
-from magicgui.widgets import Container, PushButton, TextEdit
+from magicgui.widgets import create_widget, Container, PushButton, TextEdit
+from magicgui.widgets._bases.value_widget import UNSET
 
-__all__ = ["raise_error_msg", "Figure", "Separator", "Logger", "PushButtonPlus"]
+# Here's some widgets that doesn't seem needed for magicgui but commonly used in magicclass.
+
+__all__ = ["raise_error_msg", "Figure", "Separator", "ListEdit", "Logger", "PushButtonPlus"]
+
+_V = TypeVar("_V")
 
 def raise_error_msg(parent, title:str="Error", msg:str="error"):
     QMessageBox.critical(parent, title, msg, QMessageBox.Ok)
@@ -32,21 +38,23 @@ class FrozenContainer(Container):
         return None
 
 class Figure(FrozenContainer):
-    def __init__(self, fig=None, layout="vertical", **kwargs):
-        if fig is None:
-            backend = mpl.get_backend()
-            mpl.use("Agg")
-            fig, _ = plt.subplots()
-            mpl.use(backend)
+    def __init__(self, nrows:int=1, ncols:int=1, figsize=(4, 3), layout:str="vertical", **kwargs):
+        backend = mpl.get_backend()
+        mpl.use("Agg")
+        fig, _ = plt.subplots(nrows, ncols, figsize=figsize)
+        mpl.use(backend)
         
         super().__init__(layout=layout, labels=False, **kwargs)
         canvas = FigureCanvas(fig)
         self.set_widget(canvas)
         self.figure = fig
-        self.axes = fig.axes
         
     def draw(self):
         self.figure.canvas.draw()
+    
+    @property
+    def axes(self):
+        return self.figure.axes
     
     @property
     def ax(self):
@@ -72,6 +80,128 @@ class Separator(FrozenContainer):
         
         self.set_widget(main)
 
+class ListEdit(Container):
+    def __init__(
+        self,
+        value: Iterable[Any] = UNSET,
+        annotation: type = None, # such as int, str, ...
+        layout: str = "horizontal",
+        **kwargs,
+    ):
+        if value is not UNSET:
+            types = set(type(a) for a in value)
+            if len(types) == 1:
+                self._type = types.pop()
+            else:
+                self._type = str
+                
+        else:
+            self._type = annotation if annotation is not inspect._empty else str
+            value = []
+        
+        super().__init__(layout=layout, labels=False, **kwargs)
+        
+        button_plus = PushButton(text="+")
+        button_plus.changed.connect(lambda e: self.append_new())
+        
+        button_minus = PushButton(text="-")
+        button_minus.changed.connect(self.delete_last)
+        
+        self.append(button_plus)
+        self.append(button_minus)
+        
+        for a in value:
+            self.append_new(a)
+    
+    def append_new(self, value=UNSET):
+        i = len(self)-2
+        widget = create_widget(value=value, annotation=self._type, name=f"value_{i}")
+        self.insert(i, widget)
+    
+    def delete_last(self, value):
+        try:
+            self.pop(-3)
+        except IndexError:
+            pass
+    
+    @property
+    def value(self):
+        return ListView(self)
+
+class ListView:
+    def __init__(self, widget: ListEdit):
+        self.widget = list(filter(lambda x: not isinstance(x, PushButton), widget))
+    
+    def __repr__(self):
+        return repr(self.widget)
+    
+    def __str__(self):
+        return str(self.widget)
+    
+    def __len__(self):
+        return len(self.widget)
+    
+    @overload
+    def __getitem__(self, i:int) -> _V: ...
+    @overload
+    def __getitem__(self, key:slice) -> list[_V]: ...
+    @overload
+    def __setitem__(self, key:int, value:_V) -> None: ...
+    @overload
+    def __setitem__(self, key:slice, value:_V|Iterable[_V]) -> None: ...
+    
+    def __getitem__(self, key:int|slice):
+        if isinstance(key, int):
+            return self.widget[key].value
+        else:
+            return [w.value for w in self.widget[key]]
+    
+    def __setitem__(self, key, value):
+        if isinstance(key, int):
+            self.widget[key].value = value
+        else:
+            if isinstance(value, type(self.widget.value[0])):
+                for w in self.widget[key]:
+                    w.value = value
+            else:
+                for w, v in zip(self.widget[key], value):
+                    w.value = v
+                    
+class TupleEdit(Container):
+    def __init__(
+        self,
+        value: Iterable[Any] = UNSET,
+        annotation: type = None, # such as int, str, ...
+        layout: str = "horizontal",
+        **kwargs,
+    ):
+            
+        if value is not UNSET:
+            types = set(type(a) for a in value)
+            if len(types) == 1:
+                self._type = types.pop()
+            else:
+                self._type = str
+                
+        else:
+            self._type = annotation if annotation is not inspect._empty else str
+            value = (UNSET, UNSET)
+
+        super().__init__(layout=layout, labels=False, **kwargs)
+        
+        for a in value:
+            self.append_new(a)
+
+    def append_new(self, value=UNSET):
+        i = len(self)
+        widget = create_widget(value=value, annotation=self._type, name=f"value_{i}")
+        self.insert(i, widget)
+            
+    @property        
+    def value(self):
+        return tuple(w.value for w in self)
+        
+    
 class Logger(TextEdit):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
