@@ -139,6 +139,22 @@ class ClassGui(Container):
             self.native.activateWindow()
         return None
     
+    def close(self):
+        current_self = self
+        while hasattr(current_self, "__magicclass_parent__") and current_self.__magicclass_parent__:
+            current_self = current_self.__magicclass_parent__
+        
+        viewer = current_self.parent_viewer
+        if viewer is not None:
+            try:
+                viewer.window.remove_dock_widget(self.parent)
+            except Exception:
+                pass
+            
+        super().close()
+            
+        return None
+    
     def create_macro(self, symbol:str="ui") -> str:
         """
         Create executable Python scripts from the recorded macro object.
