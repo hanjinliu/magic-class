@@ -63,10 +63,13 @@ class ClassGui(Container):
         self._parameter_history: dict[str, dict[str, Any]] = {}
         self._recorded_macro: Macro[Expr] = Macro()
         self.native.setObjectName(self.__class__.__name__)
-        self.__magicclass_parent__ = None # This attribute is used to determine whether self is nested.
+        
+        # This attribute is used to determine whether self is nested.
+        self.__magicclass_parent__: None|ClassGui = None
 
         if RUNNING_MODE == "debug":
             LOGGER.append(f"{self.__class__.__name__} object at {id(self)}")
+        
     
     @property
     def parent_viewer(self) -> "napari.Viewer"|None:
@@ -101,7 +104,6 @@ class ClassGui(Container):
             obj.label_changed.connect(self._unify_label_widths)
         
         elif isinstance(obj, ClassGui):
-            obj.__magicclass_parent__ = self
             obj.margins = (0, 0, 0, 0)
 
         self._list.insert(key, obj)
@@ -120,8 +122,21 @@ class ClassGui(Container):
         return self.native.objectName()
     
     def show(self, run:bool=False) -> None:
-        super().show(run=run)
-        self.native.activateWindow()
+        """
+        Show ClassGui. If any of the parent ClassGui is a dock widget in napari, then this will also show up
+        as a dock widget (floating if popup=True).
+        """        
+        current_self = self
+        while hasattr(current_self, "__magicclass_parent__") and current_self.__magicclass_parent__:
+            current_self = current_self.__magicclass_parent__
+        
+        viewer = current_self.parent_viewer
+        if viewer is not None:
+            dock = viewer.window.add_dock_widget(self, area="right", allowed_areas=["left", "right"])
+            dock.setFloating(current_self._popup)
+        else:
+            super().show(run=run)
+            self.native.activateWindow()
         return None
     
     def create_macro(self, symbol:str="ui") -> str:
@@ -178,8 +193,8 @@ class ClassGui(Container):
         Callable
             Same method as input, but has updated signature to hide the button.
         """        
+        clsname, funcname = method.__qualname__.split(".")
         if isinstance(method, FunctionGui):
-            funcname = method.name
             options = dict(call_button=method._call_button.text if method._call_button else None,
                            layout=method.layout,
                            labels=method.labels,
@@ -189,16 +204,20 @@ class ClassGui(Container):
             @magicgui(**options)
             @wraps(method._function)
             def childmethod(self:cls, *args, **kwargs):
-                self_ = self.__magicclass_parent__
-                return getattr(self_, funcname)(self_, *args, **kwargs)
+                current_self = self.__magicclass_parent__
+                while not (hasattr(current_self, funcname) and 
+                           current_self.__class__.__name__ == clsname):
+                    current_self = current_self.__magicclass_parent__
+                return getattr(current_self, funcname)(current_self, *args, **kwargs)
 
         else:
-            funcname = method.__name__
-            
             @wraps(method)
             def childmethod(self:cls, *args, **kwargs):
-                self_ = self.__magicclass_parent__
-                return getattr(self_, funcname)(*args, **kwargs)
+                current_self = self.__magicclass_parent__
+                while not (hasattr(current_self, funcname) and 
+                           current_self.__class__.__name__ == clsname):
+                    current_self = current_self.__magicclass_parent__
+                return getattr(current_self, funcname)(*args, **kwargs)
         
         if hasattr(cls, funcname):
             # Sometimes we want to pre-define function to arrange the order of widgets.
@@ -213,7 +232,7 @@ class ClassGui(Container):
         setattr(cls, funcname, childmethod)
         return method
     
-    def _convert_attributes_into_widgets(self) -> ClassGui:
+    def _convert_attributes_into_widgets(self):
         """
         This function is called in dynamically created __init__. Methods, fields and nested
         classes are converted to magicgui widgets.
@@ -244,8 +263,11 @@ class ClassGui(Container):
             else:
                 # convert class method into instance method
                 widget = getattr(self, name, None)
+            
+            if isinstance(widget, ClassGui):
+                widget.__magicclass_parent__ = self
                 
-            if callable(widget) or isinstance(widget, Widget):
+            if not name.startswith("_") and (callable(widget) or isinstance(widget, Widget)):
                 self.append(widget)
         
         # Append result widget in the bottom
@@ -253,7 +275,7 @@ class ClassGui(Container):
             self._result_widget.enabled = False
             self.append(self._result_widget)
             
-        return self
+        return None
     
     def _create_widget_from_field(self, name:str, fld:MagicField):
         cls = self.__class__
@@ -274,40 +296,43 @@ class ClassGui(Container):
         if isinstance(widget, (ValueWidget, Container)):
             # If the field has callbacks, connect it to the newly generated widget.
             for callback in fld.callbacks:
-                funcname = callback.__name__
+                # funcname = callback.__name__
+                clsname, funcname = callback.__qualname__.split(".")
                 @widget.changed.connect
                 def _callback(event):
                     # search for parent instances that have the same name.
                     current_self = self
-                    while not hasattr(current_self, funcname):
-                        current_self = self.__magicclass_parent__
+                    while not (hasattr(current_self, funcname) and 
+                               current_self.__class__.__name__ == clsname):
+                        current_self = current_self.__magicclass_parent__
                     try:
                         getattr(current_self, funcname)(event)
                     except TypeError:
                         getattr(current_self, funcname)()
-                    return None                    
+                    return None         
             
-            # By default, set value function will be connected to the widget.
-            @widget.changed.connect
-            def _set_value(event):
-                value = event.source.value # TODO: fix after psygnal start to be used.
-                self.changed(value=self)
-                if isinstance(value, Exception):
+            if hasattr(widget, "value"):        
+                # By default, set value function will be connected to the widget.
+                @widget.changed.connect
+                def _set_value(event):
+                    value = event.source.value # TODO: fix after psygnal start to be used.
+                    self.changed(value=self)
+                    if isinstance(value, Exception):
+                        return None
+                    expr = Expr(head=Head.setattr, 
+                                args=[Expr(head=Head.getattr, 
+                                            args=["value"], 
+                                            symbol=name),
+                                            value]
+                                )
+                    
+                    last_expr = self._recorded_macro[-1]
+                    if last_expr.head == expr.head and last_expr.args[0].symbol == expr.args[0].symbol:
+                        self._recorded_macro[-1] = expr
+                    else:
+                        self._recorded_macro.append(expr)
                     return None
-                expr = Expr(head=Head.setattr, 
-                            args=[Expr(head=Head.getattr, 
-                                       args=["value"], 
-                                       symbol=name),
-                                       value]
-                            )
-                
-                last_expr = self._recorded_macro[-1]
-                if last_expr.head == expr.head and last_expr.args[0].symbol == expr.args[0].symbol:
-                    self._recorded_macro[-1] = expr
-                else:
-                    self._recorded_macro.append(expr)
-                return None
-            
+        
         setattr(self, name, widget)
         return widget
     
@@ -328,7 +353,7 @@ class ClassGui(Container):
         
         func = wrapper(obj, parent=self)
         
-        # Strangely, signature must be updated like this. Otherwise, already wrapped member function
+        # Signature must be updated like this. Otherwise, already wrapped member function
         # will have signature with "self".
         func.__signature__ = inspect.signature(obj)
 
@@ -364,6 +389,9 @@ class ClassGui(Container):
                         pass
                 
                 viewer = self.parent_viewer
+                
+                if self.parent:
+                    mgui.native.setParent(self.parent)
                     
                 if viewer is None:
                     # If napari.Viewer was not found, then open up a magicgui when button is pushed, and 
@@ -395,7 +423,6 @@ class ClassGui(Container):
                             
                     dock_name = _find_unique_name(text, viewer)
                     dock = viewer.window.add_dock_widget(mgui, name=dock_name)
-                    mgui.native.setParent(dock)
                     dock.setFloating(self._popup)
                 
                 f = _temporal_function_gui_callback(self, mgui)
@@ -455,7 +482,7 @@ def _collect_macro(macro:Macro, symbol:str, root:bool) -> list[tuple[int, str]]:
 
 def _collect_child_macro(self:ClassGui, symbol:str, root:bool=True):
     macro = _collect_macro(self._recorded_macro, symbol, root=root)
-    for name, attr in filter(lambda x: not x[0].startswith("_"), self.__dict__.items()):
+    for name, attr in filter(lambda x: not x[0].startswith("__"), self.__dict__.items()):
         if not isinstance(attr, ClassGui):
             continue
         macro += _collect_child_macro(attr, symbol=f"{symbol}.{name}", root=False)

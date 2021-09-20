@@ -8,7 +8,7 @@ from qtpy.QtWidgets import QApplication
 
 APPLICATION = None
 
-def iter_members(cls:type, exclude_prefix:str="_") -> Iterator[str]:
+def iter_members(cls:type, exclude_prefix:str="__") -> Iterator[str]:
     """
     Iterate over all the members in the order of source code line number. 
     """    
@@ -21,8 +21,8 @@ def check_collision(cls0:type, cls1:type):
     """
     Check if two classes have name collisions.
     """    
-    mem0 = set(x[0] for x in iter_members(cls0, exclude_prefix="__"))
-    mem1 = set(x[0] for x in iter_members(cls1, exclude_prefix="__"))
+    mem0 = set(x[0] for x in iter_members(cls0))
+    mem1 = set(x[0] for x in iter_members(cls1))
     collision = mem0 & mem1
     if collision:
         raise AttributeError(f"Collision between {cls0.__name__} and {cls1.__name__}: {collision}")
