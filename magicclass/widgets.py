@@ -86,6 +86,7 @@ class ListEdit(Container):
         value: Iterable[_V] = UNSET,
         annotation: type = None, # such as int, str, ...
         layout: str = "horizontal",
+        options: dict = None,
         **kwargs,
     ):
         if value is not UNSET:
@@ -98,6 +99,8 @@ class ListEdit(Container):
         else:
             self._type = annotation if annotation is not inspect._empty else str
             value = []
+            
+        self.child_options = options or {}
         
         super().__init__(layout=layout, labels=False, **kwargs)
         
@@ -115,7 +118,8 @@ class ListEdit(Container):
     
     def append_new(self, value=UNSET):
         i = len(self)-2
-        widget = create_widget(value=value, annotation=self._type, name=f"value_{i}")
+        widget = create_widget(value=value, annotation=self._type, name=f"value_{i}",
+                               options=self.child_options)
         self.insert(i, widget)
     
     def delete_last(self, value):
@@ -181,6 +185,7 @@ class TupleEdit(Container):
         value: Iterable[_V] = UNSET,
         annotation: type = None, # such as int, str, ...
         layout: str = "horizontal",
+        options: dict = None,
         **kwargs,
     ):
             
@@ -196,13 +201,15 @@ class TupleEdit(Container):
             value = (UNSET, UNSET)
 
         super().__init__(layout=layout, labels=False, **kwargs)
+        self.child_options = options or {}
         
         for a in value:
             self.append_new(a)
 
     def append_new(self, value=UNSET):
         i = len(self)
-        widget = create_widget(value=value, annotation=self._type, name=f"value_{i}")
+        widget = create_widget(value=value, annotation=self._type, name=f"value_{i}", 
+                               options=self.child_options)
         self.insert(i, widget)
             
     @property        
