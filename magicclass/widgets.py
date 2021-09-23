@@ -14,7 +14,7 @@ from magicgui.widgets._bases.value_widget import UNSET
 
 # Here's some widgets that doesn't seem needed for magicgui but commonly used in magicclass.
 
-__all__ = ["raise_error_msg", "Figure", "Separator", "ListEdit", "Logger", "PushButtonPlus"]
+__all__ = ["raise_error_msg", "Figure", "Separator", "ListEdit", "Logger", "CheckButton", "PushButtonPlus"]
 
 _V = TypeVar("_V")
 
@@ -242,6 +242,10 @@ class Logger(TextEdit):
                 self.append(txt)
         return None
 
+class CheckButton(PushButton):
+    def __init__(self, text:str|None=None, **kwargs):
+        super().__init__(text=text, **kwargs)
+        self.native.setCheckable(True)
 
 class PushButtonPlus(PushButton):
     def __init__(self, text:str|None=None, **kwargs):
