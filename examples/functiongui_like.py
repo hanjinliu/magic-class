@@ -12,7 +12,7 @@ class Function:
     line = field("text here", name="line_edit")
     
     # Annotation is also used to determine widget type
-    slider:int = field(name="slider")
+    slider = field(name="slider", widget_type="Slider")
     
     # Or widget class
     sep = field(Separator)
