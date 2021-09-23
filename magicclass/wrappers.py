@@ -1,7 +1,7 @@
 from __future__ import annotations
 from functools import wraps
 import inspect
-from typing import Iterable, Iterator, Union, TYPE_CHECKING
+from typing import Callable, Iterable, Iterator, Union, TYPE_CHECKING
 from magicgui.signature import MagicSignature
 from magicgui.widgets._bases import ButtonWidget
 
@@ -92,10 +92,10 @@ def click(enables:nStrings=None, disables:nStrings=None, enabled:bool=True,
     visible: bool, default is True
         The initial visibility of the button.
     """
-    enables = [n.split(".") for n in _assert_iterable_of_str(enables)]
-    disables = [n.split(".") for n in _assert_iterable_of_str(disables)]
-    shows = [n.split(".") for n in _assert_iterable_of_str(shows)]
-    hides = [n.split(".") for n in _assert_iterable_of_str(hides)]
+    enables = _assert_iterable(enables)
+    disables = _assert_iterable(disables)
+    shows = _assert_iterable(shows)
+    hides = _assert_iterable(hides)
     
     def wrapper(func):   
         @wraps(func)
@@ -141,26 +141,36 @@ def _get_signature(func):
         sig = inspect.signature(func)
     return sig
 
-def _assert_iterable_of_str(obj):
+def _assert_iterable(obj):
     if obj is None:
         obj = []
-    elif isinstance(obj, str):
+    elif isinstance(obj, str) or callable(obj):
         obj = [obj]
     return obj
 
-def _iter_button_widgets(self:ClassGui, descriptor:list[list[str]]) -> Iterator[ButtonWidget]:
-    for names in descriptor:
-        ins = self
-        for a in names[:-1]:
-            if a != "":
-                ins = getattr(ins, a)
-            else:
-                ins = ins.__magicclass_parent__
-        
-        button = ins[names[-1]]
-        if not isinstance(button, ButtonWidget):
-            s = ".".join(descriptor)
-            raise TypeError(f"{button} is not a button. This exception happened due to {s}.")
+def _iter_button_widgets(self:ClassGui, descriptors:Iterable[list[str]] | Iterable[Callable]
+                         ) -> Iterator[ButtonWidget]:
+    for f in descriptors:
+        if callable(f):
+            # A.B.func -> B.func, if self is an object of A.
+            f = f.__qualname__.split(self.__class__.__name__)[1][1:]
+            
+        if isinstance(f, str):
+            *clsnames, funcname = f.split(".")
+            # search for parent class that match the description.
+            ins = self
+            for a in clsnames:
+                if a != "":
+                    ins = getattr(ins, a)
+                else:
+                    ins = ins.__magicclass_parent__
+            
+            button = ins[funcname]
+            if not isinstance(button, ButtonWidget):
+                s = ".".join(descriptors)
+                raise TypeError(f"{button} is not a button. This exception happened due to {s}.")
+        else:
+            raise TypeError(f"Unexpected type in click decorator: {type(f)}")
         yield button
 
 
