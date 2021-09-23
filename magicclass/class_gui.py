@@ -47,6 +47,7 @@ def debug():
 
 class ClassGui(Container):
     # This class is always inherited by @magicclass decorator.
+    
     def __init__(self, layout:str= "vertical", parent=None, close_on_run:bool=True, popup:bool=True, 
                  result_widget:bool=False, labels:bool=True, name=None):
         super().__init__(layout=layout, labels=labels, name=name)
@@ -155,7 +156,7 @@ class ClassGui(Container):
             
         return None
     
-    def create_macro(self, symbol:str="ui") -> str:
+    def create_macro(self, symbol:str="ui", show:bool=False) -> str:
         """
         Create executable Python scripts from the recorded macro object.
 
@@ -163,6 +164,8 @@ class ClassGui(Container):
         ----------
         symbol : str, default is "ui"
             Symbol of the instance.
+        show : bool, default is False
+            Launch a TextEdit window that shows recorded macro.
         """
         selfvar = f"var{hex(id(self))}"
         
@@ -183,6 +186,11 @@ class ClassGui(Container):
         out = "\n".join(annot) + "\n" + script
         out = out.replace(selfvar, symbol)
         
+        if show:
+            win = Logger(name="macro")
+            win.read_only = False
+            win.append(out.split("\n"))
+            win.show()
         return out
     
     @classmethod
@@ -209,42 +217,40 @@ class ClassGui(Container):
         Callable
             Same method as input, but has updated signature to hide the button.
         """        
-        clsname, funcname = method.__qualname__.split(".")
+        # Base function to get access to the original function
+        def _childmethod(self:cls, *args, **kwargs):
+            current_self = self.__magicclass_parent__
+            while not (hasattr(current_self, funcname) and 
+                        current_self.__class__.__name__ == clsname):
+                current_self = current_self.__magicclass_parent__
+            return getattr(current_self, funcname)(*args, **kwargs)
+        
+        # If method is defined as a member of class X, __qualname__ will be X.<method name>.
+        # We can know the namespace of the wrapped function with __qualname__.
         if isinstance(method, FunctionGui):
+            clsname, funcname = method._function.__qualname__.split(".")
             options = dict(call_button=method._call_button.text if method._call_button else None,
                            layout=method.layout,
                            labels=method.labels,
                            auto_call=method._auto_call,
                            result_widget=bool(method._result_widget)
                            )
-            @magicgui(**options)
-            @wraps(method._function)
-            def childmethod(self:cls, *args, **kwargs):
-                current_self = self.__magicclass_parent__
-                while not (hasattr(current_self, funcname) and 
-                           current_self.__class__.__name__ == clsname):
-                    current_self = current_self.__magicclass_parent__
-                return getattr(current_self, funcname)(current_self, *args, **kwargs)
+            method = method._function
+            childmethod = magicgui(**options)(wraps(method)(_childmethod))
+            method = _copy_function(method)
 
         else:
-            @wraps(method)
-            def childmethod(self:cls, *args, **kwargs):
-                current_self = self.__magicclass_parent__
-                while not (hasattr(current_self, funcname) and 
-                           current_self.__class__.__name__ == clsname):
-                    current_self = current_self.__magicclass_parent__
-                return getattr(current_self, funcname)(*args, **kwargs)
+            clsname, funcname = method.__qualname__.split(".")
+            childmethod = wraps(method)(_childmethod)
+        
+        # To avoid two buttons with same bound function being showed up
+        upgrade_signature(method, caller_options={"visible": False})
         
         if hasattr(cls, funcname):
             # Sometimes we want to pre-define function to arrange the order of widgets.
             # By updating __wrapped__ attribute we can overwrite the line number
             childmethod.__wrapped__ = getattr(cls, funcname)
         
-        # The easiest way to hide the button of original function is to make it invisible.
-        if isinstance(method, FunctionGui):
-            method.visible = False # TODO: not working
-        else:
-            upgrade_signature(method, caller_options={"visible": False})
         setattr(cls, funcname, childmethod)
         return method
     
@@ -441,9 +447,9 @@ class ClassGui(Container):
                     dock = viewer.window.add_dock_widget(mgui, name=dock_name)
                     dock.setFloating(self._popup)
                 
-                f = _temporal_function_gui_callback(self, mgui)
+                f = _temporal_function_gui_callback(self, mgui, button)
                 mgui.called.connect(f)
-                
+                button.mgui = mgui
                 return None
             
         button.changed.connect(run_function)
@@ -585,7 +591,7 @@ def _nested_function_gui_callback(cgui:ClassGui, fgui:FunctionGui):
         cgui._recorded_macro.append(expr)
     return _after_run
 
-def _temporal_function_gui_callback(cgui:ClassGui, fgui:FunctionGui):
+def _temporal_function_gui_callback(cgui:ClassGui, fgui:FunctionGui, button:PushButtonPlus):
     def _after_run(value):
         if isinstance(value, Exception):
             return None
@@ -595,4 +601,12 @@ def _temporal_function_gui_callback(cgui:ClassGui, fgui:FunctionGui):
             
         if cgui._result_widget is not None:
             cgui._result_widget.value = value
+        
+        button.mgui = None
     return _after_run
+
+def _copy_function(f):
+    @wraps(f)
+    def out(self, *args, **kwargs):
+        return f(self, *args, **kwargs)
+    return out
