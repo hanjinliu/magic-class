@@ -319,20 +319,8 @@ class ClassGui(Container):
             # If the field has callbacks, connect it to the newly generated widget.
             for callback in fld.callbacks:
                 # funcname = callback.__name__
-                clsname, funcname = callback.__qualname__.split(".")
-                @widget.changed.connect
-                def _callback(event):
-                    # search for parent instances that have the same name.
-                    current_self = self
-                    while not (hasattr(current_self, funcname) and 
-                               current_self.__class__.__name__ == clsname):
-                        current_self = current_self.__magicclass_parent__
-                    try:
-                        getattr(current_self, funcname)(event)
-                    except TypeError:
-                        getattr(current_self, funcname)()
-                    return None         
-            
+                widget.changed.connect(_define_callback(self, callback))
+                
             if hasattr(widget, "value"):        
                 # By default, set value function will be connected to the widget.
                 @widget.changed.connect
@@ -610,3 +598,18 @@ def _copy_function(f):
     def out(self, *args, **kwargs):
         return f(self, *args, **kwargs)
     return out
+
+def _define_callback(self: ClassGui, callback: Callable):
+    clsname, funcname = callback.__qualname__.split(".")
+    def _callback(event):
+        # search for parent instances that have the same name.
+        current_self = self
+        while not (hasattr(current_self, funcname) and 
+                    current_self.__class__.__name__ == clsname):
+            current_self = current_self.__magicclass_parent__
+        try:
+            getattr(current_self, funcname)(event)
+        except TypeError:
+            getattr(current_self, funcname)()
+        return None
+    return _callback
