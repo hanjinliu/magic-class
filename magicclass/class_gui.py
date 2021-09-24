@@ -325,6 +325,10 @@ class ClassGui(Container):
                 # By default, set value function will be connected to the widget.
                 @widget.changed.connect
                 def _set_value(event):
+                    if not event.source.enabled:
+                        # If widget is read only, it means that value is set in script (not manually).
+                        # Thus this event should not be recorded as a macro.
+                        return None
                     value = event.source.value # TODO: fix after psygnal start to be used.
                     self.changed(value=self)
                     if isinstance(value, Exception):
