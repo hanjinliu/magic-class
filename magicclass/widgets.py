@@ -48,6 +48,7 @@ class Figure(FrozenContainer):
         canvas = FigureCanvas(fig)
         self.set_widget(canvas)
         self.figure = fig
+        self.min_height = 40
         
     def draw(self):
         self.figure.canvas.draw()
@@ -61,6 +62,7 @@ class Figure(FrozenContainer):
         return self.axes[0]
         
 class Separator(FrozenContainer):
+    # TODO: not shown in napari
     def __init__(self, orientation="horizontal", text:str="", name:str=""):
         super().__init__(layout=orientation, labels=False, name=name)
         main = QFrame(parent=self.native)

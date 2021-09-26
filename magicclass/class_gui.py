@@ -2,6 +2,7 @@ from __future__ import annotations
 from functools import wraps
 from typing import Callable, Any
 import inspect
+from copy import deepcopy
 import numpy as np
 from contextlib import contextmanager
 from docstring_parser import parse
@@ -156,6 +157,32 @@ class ClassGui(Container):
             
         return None
     
+    def _collect_macro(self, myname:str=None) -> list[tuple[int, Expr]]:
+        out = []
+        macro = deepcopy(self._recorded_macro)
+        
+        for expr in macro:
+            if expr.head == Head.init:
+                # nested magic-class construction is always invisible from the parent.
+                # We should not record something like 'ui.A = A()'.
+                continue
+            
+            if myname is not None:
+                for _expr in expr.iter_expr():
+                    # if _expr.head in (Head.value, Head.getattr, Head.getitem):
+                    if _expr.args[0] == "{x}":
+                        _expr.args[0] = Expr(Head.getattr, args=["{x}", myname])
+                
+            out.append((expr.number, expr))
+        
+        for name, attr in filter(lambda x: not x[0].startswith("__"), self.__dict__.items()):
+            # Collect all the macro from child magic-classes recursively
+            if not isinstance(attr, ClassGui):
+                continue
+            out += attr._collect_macro(myname=name)
+        
+        return out
+    
     def create_macro(self, symbol:str="ui", show:bool=False) -> str:
         """
         Create executable Python scripts from the recorded macro object.
@@ -167,30 +194,36 @@ class ClassGui(Container):
         show : bool, default is False
             Launch a TextEdit window that shows recorded macro.
         """
-        selfvar = f"var{hex(id(self))}"
-        
         # Recursively build macro from nested magic-classes
-        macro = _collect_child_macro(self, selfvar)
+        macro = [(0, self._recorded_macro[0])] + self._collect_macro()
 
         # Sort by the recorded order
-        sorted_macro = map(lambda x: x[1], sorted(macro, key=lambda x: x[0]))
+        sorted_macro = map(lambda x: str(x[1]), sorted(macro, key=lambda x: x[0]))
         script = "\n".join(sorted_macro)
         
         # type annotation for the hard-to-record types
         annot = []
+        idt_list = []
         for expr in self._recorded_macro:
             for idt in expr.iter_args():
-                if not idt.valid:
-                    annot.append(idt.as_annotation())
+                if idt.valid or idt in idt_list:
+                    continue
+                idt_list.append(idt)
+                annot.append(idt.as_annotation())
         
         out = "\n".join(annot) + "\n" + script
-        out = out.replace(selfvar, symbol)
+        out = out.format(x=symbol)
         
         if show:
             win = Logger(name="macro")
             win.read_only = False
             win.append(out.split("\n"))
-            win.show()
+            viewer = self.parent_viewer
+            if viewer is not None:
+                dock = viewer.window.add_dock_widget(win, area="right", allowed_areas=["left", "right"])
+                dock.setFloating(self._popup)
+            else:
+                win.show()
         return out
     
     @classmethod
@@ -333,15 +366,11 @@ class ClassGui(Container):
                     self.changed(value=self)
                     if isinstance(value, Exception):
                         return None
-                    expr = Expr(head=Head.setattr, 
-                                args=[Expr(head=Head.getattr, 
-                                            args=["value"], 
-                                            symbol=name),
-                                            value]
-                                )
+                    sub = Expr(head=Head.getattr, args=[name, "value"]) # name.value
+                    expr = Expr(head=Head.setattr, args=["{x}", sub, value]) # {x}.name.value = value
                     
                     last_expr = self._recorded_macro[-1]
-                    if last_expr.head == expr.head and last_expr.args[0].symbol == expr.args[0].symbol:
+                    if last_expr.head == expr.head and last_expr.args[1].args[0] == expr.args[1].args[0]:
                         self._recorded_macro[-1] = expr
                     else:
                         self._recorded_macro.append(expr)
@@ -376,12 +405,10 @@ class ClassGui(Container):
         
         if n_parameters(func) == 0:
             # We don't want a dialog with a single widget "Run" to show up.
+            f = _temporal_function_gui_callback(self, func, button)
             def run_function(*args):
                 out = func()
-                if not isinstance(out, Exception):
-                    self._record_macro(func, (), {})
-                if self._result_widget is not None:
-                    self._result_widget.value = out
+                f(out)
                 return out
         else:
             def run_function(*args):
@@ -484,24 +511,6 @@ class ClassGui(Container):
         return None
     
 
-def _collect_macro(macro:Macro, symbol:str, root:bool) -> list[tuple[int, str]]:
-    out = []
-    for expr in macro:
-        if not root and expr.head == Head.init:
-            # nested magic-class construction is always invisible from the parent.
-            # We should not record something like 'ui.A = A()'.
-            continue
-        out.append((expr.number, expr.str_as(symbol)))
-    return out
-
-def _collect_child_macro(self:ClassGui, symbol:str, root:bool=True):
-    macro = _collect_macro(self._recorded_macro, symbol, root=root)
-    for name, attr in filter(lambda x: not x[0].startswith("__"), self.__dict__.items()):
-        if not isinstance(attr, ClassGui):
-            continue
-        macro += _collect_child_macro(attr, symbol=f"{symbol}.{name}", root=False)
-    return macro
-
 def _extract_tooltip(obj: Any) -> str:
     if not hasattr(obj, "__doc__"):
         return ""
@@ -566,34 +575,46 @@ def _nested_function_gui_callback(cgui:ClassGui, fgui:FunctionGui):
         if isinstance(value, Exception):
             return None
         inputs = _get_parameters(fgui)
-        args = [Expr(head=Head.assign, args=[v], symbol=k) for k, v in inputs.items()]
-        expr = Expr(head=Head.getattr, 
-                    args=[Expr(head=Head.call, 
-                                args=args[1:], 
-                                symbol=fgui.name)]
-                    )
+        args = [Expr(head=Head.assign, args=[k, v]) for k, v in inputs.items()]
+        # args[0] is self
+        sub = Expr(head=Head.getattr, args=["{x}", fgui.name]) # {x}.func
+        expr = Expr(head=Head.call, args=[sub] + args[1:]) # {x}.func(args...)
+
         if fgui._auto_call:
             # Auto-call will cause many redundant macros. To avoid this, only the last input
             # will be recorded in magic-class.
             last_expr = cgui._recorded_macro[-1]
-            if last_expr.head == expr.head and \
-                last_expr.args[0].symbol == expr.args[0].symbol:
+            if last_expr.head == Head.call and last_expr.args[0].head == Head.getattr and \
+                last_expr.args[0].args[1] == expr.args[0].args[1]:
                 cgui._recorded_macro.pop()
 
         cgui._recorded_macro.append(expr)
     return _after_run
 
-def _temporal_function_gui_callback(cgui:ClassGui, fgui:FunctionGui, button:PushButtonPlus):
+def _temporal_function_gui_callback(cgui:ClassGui, fgui:FunctionGui|Callable, button:PushButtonPlus):
     def _after_run(value):
         if isinstance(value, Exception):
             return None
-        inputs = _get_parameters(fgui)
-        cgui._record_macro(fgui._function, (), inputs)
-        cgui._record_parameter_history(fgui._function.__name__, inputs)
-            
+        
+        if isinstance(fgui, FunctionGui):
+            inputs = _get_parameters(fgui)
+            cgui._record_parameter_history(fgui._function.__name__, inputs)
+            _function = fgui._function
+        else:
+            inputs = {}
+            _function = fgui
+        
+        if len(button.changed.callbacks) > 1:
+            b = Expr(head=Head.getitem, args=["{x}", button.name])
+            ev = Expr(head=Head.getattr, args=[b, "changed"])
+            macro = Expr(head=Head.call, args=[ev])
+            cgui._recorded_macro.append(macro)
+        else:
+            cgui._record_macro(_function, (), inputs)
+        
         if cgui._result_widget is not None:
             cgui._result_widget.value = value
-        
+            
         button.mgui = None
     return _after_run
 
