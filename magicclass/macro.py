@@ -13,8 +13,13 @@ class Identifier(UserString):
         elif hasattr(obj, "__name__"): # class or function
             seq = obj.__name__
         elif isinstance(obj, str):
-            seq = repr(obj)
+            if obj == "{x}":
+                seq = obj
+            else:
+                seq = repr(obj)
         elif np.isscalar(obj): # int, float, bool, ...
+            seq = obj
+        elif isinstance(obj, (tuple, list)):
             seq = obj
         else:
             seq = f"var{hex(id(obj))}" # hexadecimals are easier to distinguish
@@ -47,10 +52,12 @@ class Macro(UserList):
     
     def __iter__(self) -> Iterator[Expr]:
         return super().__iter__()
+    
+    def __repr__(self):
+        return ",\n".join(repr(expr) for expr in self)
         
 class Head(Enum):
     init    = auto()
-    method  = auto()
     getattr = auto()
     setattr = auto()
     getitem = auto()
@@ -61,6 +68,9 @@ class Head(Enum):
     comment = auto()
 
 _QUOTE = "'"
+
+def sy(arg):
+    return str(arg).strip(_QUOTE)
 
 class Expr:
     """
@@ -75,26 +85,24 @@ class Expr:
     
     # a map of how to conver expression into string.
     _map: dict[Head, Callable[[Expr], str]] = {
-        Head.init   : lambda e: f"{e.symbol} = {e.args[0]}({', '.join(map(str, e.args[1:]))})",
-        Head.method : lambda e: f"{e.symbol}.{e.args[0]}({', '.join(map(str, e.args[1:]))})",
-        Head.getattr: lambda e: f"{e.symbol}.{str(e.args[0]).strip(_QUOTE)}",
-        Head.setattr: lambda e: f"{e.symbol}.{str(e.args[0]).strip(_QUOTE)} = {e.args[1]}",
-        Head.getitem: lambda e: f"{e.symbol}[{e.args[0]}]",
-        Head.setitem: lambda e: f"{e.symbol}[{e.args[0]}] = {e.args[1]}",
-        Head.call   : lambda e: f"{e.symbol}({', '.join(map(str, e.args))})",
-        Head.assign : lambda e: f"{e.symbol}={e.args[0]}",
+        Head.init   : lambda e: f"{sy(e.args[0])} = {e.args[1]}({', '.join(map(str, e.args[2:]))})",
+        Head.getattr: lambda e: f"{sy(e.args[0])}.{sy(e.args[1])}",
+        Head.setattr: lambda e: f"{sy(e.args[0])}.{sy(e.args[1])} = {e.args[2]}",
+        Head.getitem: lambda e: f"{sy(e.args[0])}[{e.args[1]}]",
+        Head.setitem: lambda e: f"{sy(e.args[0])}[{e.args[1]}] = {e.args[2]}",
+        Head.call   : lambda e: f"{sy(e.args[0])}({', '.join(map(str, e.args[1:]))})",
+        Head.assign : lambda e: f"{sy(e.args[0])}={e.args[1]}",
         Head.value  : lambda e: str(e.args[0]),
         Head.comment: lambda e: f"# {e.args[0]}",
     }
     
-    def __init__(self, head:Head, args:Iterable[Any], symbol:str="ui"):
+    def __init__(self, head:Head, args:Iterable[Any]):
         self.head = head
         if head == Head.value:
             self.args = args
         else:
             self.args = list(map(self.__class__.parse, args))
             
-        self.symbol = symbol
         self.number = self.__class__.n
         self.__class__.n += 1
     
@@ -105,11 +113,9 @@ class Expr:
         """
         Recursively expand expressions until it reaches value/assign expression.
         """
-        if self.head == Head.value:
+        if self.head in (Head.value, Head.assign):
             return str(self)
-        elif self.head == Head.assign:
-            return f"{self.symbol} = {self.args[0]}"
-        out = [f"\nhead: {self.head.name}\n{' '*ind}args:\n"]
+        out = [f"head: {self.head.name}\n{' '*ind}args:\n"]
         for i, arg in enumerate(self.args):
             out.append(f"{i:>{ind+2}}: {arg._repr(ind+4)}\n")
         return "".join(out)
@@ -118,47 +124,45 @@ class Expr:
         return self.__class__._map[self.head](self)
     
     def __eq__(self, expr:Expr) -> bool:
-        if not isinstance(expr, self.__class__):
+        if self.head != Head.value:
+            raise TypeError(f"Expression must be value, got {self.head}")
+        if isinstance(expr, str):
+            return self.args[0] == expr
+        elif isinstance(expr, self.__class__):
+            return self.args[0] == expr.args[0]
+        else:
             raise ValueError(f"'==' is not supported between Expr and {type(expr)}")
-        if self.head != Head.value or expr.head != Head.value:
-            raise ValueError("Cannot conduct '==' operation except for value expression.")
-        return self.args[0] == expr.args[0]
         
     @classmethod
-    def parse_method(cls, func:Callable, args:tuple[Any], kwargs:dict[str, Any], 
-                     symbol:str="ui") -> Expr:
+    def parse_method(cls, func:Callable, args:tuple[Any], kwargs:dict[str, Any]) -> Expr:
         """
         Make a method call expression.
         """
-        head = Head.method
-        inputs = [func]
+        method = cls(head=Head.getattr, args=["{x}", func]) # ui.func
+        inputs = [method] + cls.convert_args(args, kwargs)
+        return cls(head=Head.call, args=inputs) # ui.func(a=0,b=2)
+
+    @classmethod
+    def parse_init(cls, init_cls:type, args:tuple[Any], kwargs:dict[str, Any]) -> Expr:
+        """
+        Make a construction (__init__) expression.
+        """
+        inputs = ["{x}", init_cls] + cls.convert_args(args, kwargs)
+        return cls(head=Head.init, args=inputs)
+    
+    @classmethod
+    def convert_args(cls, args:tuple, kwargs:dict) -> list:
+        inputs = []
         for a in args:
             inputs.append(a)
                 
         for k, v in kwargs.items():
-            inputs.append(cls(Head.assign, [v], symbol=k))
-        return cls(head=head, args=inputs, symbol=symbol)
-
-    @classmethod
-    def parse_init(cls, other_cls:type, args:tuple[Any], kwargs:dict[str, Any], 
-                   symbol:str="ui") -> Expr:
-        """
-        Make a construction (__init__) expression.
-        """
-        self = cls.parse_method(other_cls, args, kwargs, symbol=symbol)
-        self.head = Head.init
-        return self
+            inputs.append(cls(Head.assign, [k, v]))
+        return inputs
     
     @classmethod
     def parse(cls, a: Any) -> Expr:
         return a if isinstance(a, cls) else cls(Head.value, [Identifier(a)])
-    
-    def str_as(self, symbol:str) -> str:
-        old_symbol = self.symbol
-        self.symbol = symbol
-        out = str(self)
-        self.symbol = old_symbol
-        return out
     
     def iter_args(self) -> Iterator[Identifier]:
         """
@@ -169,3 +173,16 @@ class Expr:
                 yield from arg.iter_args()
             else:
                 yield arg
+    
+    def iter_expr(self) -> Iterator[Expr]:
+        """
+        Recursively iterate over all the nested Expr, until it reached to non-nested Expr.
+        """        
+        yielded = False
+        for arg in self.args:
+            if isinstance(arg, self.__class__):
+                yield from arg.iter_expr()
+                yielded = True
+        
+        if not yielded:
+            yield self
