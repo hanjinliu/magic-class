@@ -183,7 +183,7 @@ class ClassGui(Container):
         
         return out
     
-    def create_macro(self, symbol:str="ui", show:bool=False) -> str:
+    def create_macro(self, show:bool=False, symbol:str="ui") -> str:
         """
         Create executable Python scripts from the recorded macro object.
 
@@ -220,7 +220,8 @@ class ClassGui(Container):
             win.append(out.split("\n"))
             viewer = self.parent_viewer
             if viewer is not None:
-                dock = viewer.window.add_dock_widget(win, area="right", allowed_areas=["left", "right"])
+                dock = viewer.window.add_dock_widget(win, area="right", name="Macro",
+                                                     allowed_areas=["left", "right"])
                 dock.setFloating(self._popup)
             else:
                 win.show()
@@ -284,6 +285,8 @@ class ClassGui(Container):
             # By updating __wrapped__ attribute we can overwrite the line number
             childmethod.__wrapped__ = getattr(cls, funcname)
         
+        if hasattr(method, "__doc__"):
+            childmethod.__doc__ = method.__doc__
         setattr(cls, funcname, childmethod)
         return method
     

@@ -1,8 +1,10 @@
 from __future__ import annotations
 from typing import Any, Callable, Iterable, TypeVar, overload
 import inspect
+from collections import defaultdict
 from PyQt5.QtWidgets import QWidget
-from qtpy.QtWidgets import QFrame, QLabel, QMessageBox, QPushButton, QGridLayout, QTextEdit
+from qtpy.QtWidgets import (QFrame, QLabel, QMessageBox, QPushButton, QGridLayout, QTextEdit, 
+                            QListWidget, QListWidgetItem, QAbstractItemView)
 from qtpy.QtGui import QIcon, QFont
 from qtpy.QtCore import QSize, Qt
 import matplotlib as mpl
@@ -132,7 +134,7 @@ class ListEdit(Container):
     
     @property
     def value(self):
-        return ListView(self)
+        return ListDataView(self)
 
     @value.setter
     def value(self, vals:Iterable[_V]):
@@ -142,7 +144,7 @@ class ListEdit(Container):
         for v in vals:
             self.append_new(v)        
     
-class ListView:
+class ListDataView:
     def __init__(self, widget: ListEdit):
         self.widget = list(filter(lambda x: not isinstance(x, PushButton), widget))
     
@@ -243,6 +245,76 @@ class Logger(TextEdit):
             for txt in text:
                 self.append(txt)
         return None
+    
+class ListWidget(FrozenContainer):
+    def __init__(self, dragdrop:bool=True, **kwargs):
+        super().__init__(labels=False, **kwargs)
+        self._listwidget = QListWidget(self.native)
+        self.set_widget(self._listwidget)
+        self._callbacks: defaultdict[type, list[Callable[[Any, int], Any]]] = defaultdict(list)
+        self._delegates: dict[type, Callable[[Any], str]] = dict()
+        @self._listwidget.itemDoubleClicked.connect
+        def _(item):
+            type_ = type(item.obj)
+            callbacks = self._callbacks.get(type_, [])
+            for callback in callbacks:
+                try:
+                    callback(item.obj, self._listwidget.row(item))
+                except TypeError:
+                    callback(item.obj)
+        
+        if dragdrop:
+            self._listwidget.setAcceptDrops(True)
+            self._listwidget.setDragEnabled(True)
+            self._listwidget.setDragDropMode(QAbstractItemView.DragDropMode.InternalMove)
+    
+    @property
+    def nitems(self) -> int:
+        return self._listwidget.count()
+    
+    @property
+    def value(self) -> list[Any]:
+        return [self._listwidget.item(i).obj for i in range(self.nitems)]
+        
+    def add_item(self, obj: Any):
+        self.insert_item(self.nitems, obj)
+    
+    def insert_item(self, i: int, obj: Any):
+        name = self._delegates.get(type(obj), str)(obj)
+        item = PyListWidgetItem(self._listwidget, obj=obj, name=name)
+        self._listwidget.insertItem(i, item)
+    
+    def pop_item(self, i: int) -> Any:
+        item = self._listwidget.item(i)
+        obj = item.obj
+        self._listwidget.removeItemWidget(item)
+        return obj
+
+    def clear(self):
+        self._listwidget.clear()
+    
+    def register_callback(self, type_: type):
+        def wrapper(func: Callable):
+            self._callbacks[type_].append(func)
+            return func
+        return wrapper
+    
+    def register_delegate(self, type_: type):
+        def wrapper(func: Callable):
+            self._delegates[type_] = func
+            return func
+        return wrapper
+    
+
+class PyListWidgetItem(QListWidgetItem):
+    def __init__(self, parent:QListWidget=None, obj=None, name=None):
+        super().__init__(parent)
+        if obj is not None:
+            self.obj = obj
+        if name is None:
+            self.setText(str(obj))
+        else:
+            self.setText(name)
 
 class CheckButton(PushButton):
     def __init__(self, text:str|None=None, **kwargs):
