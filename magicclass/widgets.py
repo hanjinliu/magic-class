@@ -17,7 +17,8 @@ from magicgui.widgets._bases.value_widget import UNSET
 
 # Here's some widgets that doesn't seem needed for magicgui but commonly used in magicclass.
 
-__all__ = ["raise_error_msg", "Figure", "Separator", "ListEdit", "Logger", "CheckButton", "PushButtonPlus"]
+__all__ = ["raise_error_msg", "Figure", "Separator", "ListEdit", "Logger", "ListWidget", 
+           "CheckButton", "PushButtonPlus"]
 
 _V = TypeVar("_V")
 
@@ -304,10 +305,8 @@ class ListWidget(FrozenContainer):
         self._listwidget.insertItem(i, item)
     
     def pop_item(self, i: int) -> Any:
-        item = self._listwidget.item(i)
-        obj = item.obj
-        self._listwidget.removeItemWidget(item)
-        return obj
+        self._listwidget.takeItem(i)
+        return None
 
     def clear(self):
         self._listwidget.clear()

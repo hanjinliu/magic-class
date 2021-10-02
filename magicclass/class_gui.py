@@ -49,14 +49,22 @@ def debug():
 class ClassGui(Container):
     # This class is always inherited by @magicclass decorator.
     
-    def __init__(self, layout:str= "vertical", parent=None, close_on_run:bool=True, popup:bool=True, 
-                 result_widget:bool=False, labels:bool=True, name=None):
+    def __init__(self, 
+                 layout: str = "vertical", 
+                 parent = None, 
+                 close_on_run: bool = True,
+                 popup: bool = True, 
+                 result_widget: bool = False,
+                 labels: bool = True, 
+                 name: str = None, 
+                 single_call: bool = True):
         super().__init__(layout=layout, labels=labels, name=name)
         if parent is not None:
             self.parent = parent
             
         self._close_on_run = close_on_run
         self._popup = popup
+        self._single_call = single_call
         
         self._result_widget: LineEdit | None = None
         if result_widget:
@@ -415,6 +423,9 @@ class ClassGui(Container):
                 return out
         else:
             def run_function(*args):
+                if button.mgui is not None:
+                    button.mgui.native.activateWindow()
+                    return None
                 try:
                     mgui = magicgui(func)
                     mgui.name = f"function-{id(func)}"
