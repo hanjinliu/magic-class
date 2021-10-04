@@ -3,6 +3,7 @@ from functools import wraps
 import inspect
 from dataclasses import is_dataclass, _POST_INIT_NAME
 from .class_gui import ClassGui
+from .menu_gui import MenuGui
 from .macro import Expr
 from .utils import check_collision, get_app
 from .field import current_location
@@ -106,3 +107,63 @@ def magicclass(class_: type|None = None,
         return newclass
     
     return wrapper if class_ is None else wrapper(class_)
+
+
+def magicmenu(class_: type = None, *, parent=None):
+    def wrapper(cls) -> MenuGui:
+        if not isinstance(cls, type):
+            raise TypeError(f"magicclass can only wrap classes, not {type(cls)}")
+        
+        check_collision(cls, MenuGui)
+        # get class attributes first
+        doc = cls.__doc__
+        sig = inspect.signature(cls)
+        # annot = cls.__dict__.get("__annotations__", {})
+        
+        oldclass = type(cls.__name__ + _BASE_CLASS_SUFFIX, (cls,), {})
+        newclass = type(cls.__name__, (MenuGui, oldclass), {})
+        
+        newclass.__signature__ = sig
+        newclass.__doc__ = doc
+        
+        # concatenate annotations
+        # newclass.__annotations__ = MenuGui.__annotations__ | annot
+        
+        # Mark the line number of class definition, which is important to determine the order
+        # of widgets when magicclassees were nested. 
+        if hasattr(newclass, "_class_line_number"):
+            raise AttributeError(
+                f"Class {newclass.__name__} already has an attribute '_class_line_number'."
+                 "Thus it is incompatible with magic-class."
+                 )
+        if class_ is None:
+            newclass._class_line_number = current_location(_DEPTH)
+        else:
+            newclass._class_line_number = current_location(_DEPTH + 1)
+        
+        @wraps(oldclass.__init__)
+        def __init__(self, *args, **kwargs):
+            app = get_app() # Without "app = " Jupyter freezes after closing the window!
+            macro_init = Expr.parse_init(cls, args, kwargs)
+            global _DEPTH
+            _DEPTH += 1
+            MenuGui.__init__(self, parent=parent)
+            super(oldclass, self).__init__(*args, **kwargs)
+            _DEPTH -= 1
+            self._convert_attributes_into_widgets()
+            
+            if hasattr(self, _POST_INIT_NAME) and not is_dataclass(cls):
+                self.__post_init__()
+            
+            # Record class instance construction
+            # self._recorded_macro.append(macro_init)
+
+        setattr(newclass, "__init__", __init__)
+        
+        # Users may want to override repr
+        setattr(newclass, "__repr__", oldclass.__repr__)
+        
+        return newclass
+    
+    return wrapper if class_ is None else wrapper(class_)
+

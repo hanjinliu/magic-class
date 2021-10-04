@@ -2,9 +2,15 @@ from __future__ import annotations
 import inspect
 import types
 from dataclasses import _FIELDS
-from typing import Callable, Iterator
+from functools import wraps
+from typing import Callable, Iterator, Any, TYPE_CHECKING
+from docstring_parser import parse
+from qtpy.QtWidgets import QApplication, QMessageBox
 from magicclass.field import MagicField
-from qtpy.QtWidgets import QApplication
+
+if TYPE_CHECKING:
+    from magicgui.widgets._bases import Widget
+    import napari
 
 APPLICATION = None
 
@@ -89,6 +95,43 @@ def n_parameters(func: Callable):
     Count the number of parameters of a callable object.
     """    
     return len(inspect.signature(func).parameters)
+
+def extract_tooltip(obj: Any) -> str:
+    if not hasattr(obj, "__doc__"):
+        return ""
+    
+    doc = parse(obj.__doc__)
+    if doc.short_description is None:
+        return ""
+    elif doc.long_description is None:
+        return doc.short_description
+    else:
+        return doc.short_description + "\n" + doc.long_description
+
+def raise_error_msg(parent, title:str="Error", msg:str="error"):
+    QMessageBox.critical(parent, title, msg, QMessageBox.Ok)
+    return None
+
+def raise_error_in_msgbox(_func, parent:Widget=None):
+    @wraps(_func)
+    def wrapped_func(*args, **kwargs):
+        try:
+            out = _func(*args, **kwargs)
+        except Exception as e:
+            QMessageBox.critical(parent.native, e.__class__.__name__, str(e), QMessageBox.Ok)
+            out = e
+        return out
+    
+    return wrapped_func
+
+
+def find_unique_name(name:str, viewer:"napari.Viewer"):
+    orig_name = name
+    i = 0
+    while name in viewer.window._dock_widgets:
+        name = orig_name + f"-{i}"
+        i += 1
+    return name
 
 def gui_qt():
     """

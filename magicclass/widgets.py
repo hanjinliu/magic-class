@@ -5,7 +5,8 @@ import inspect
 from collections import defaultdict
 from PyQt5.QtWidgets import QWidget
 from qtpy.QtWidgets import (QFrame, QLabel, QMessageBox, QPushButton, QGridLayout, QTextEdit, 
-                            QListWidget, QListWidgetItem, QAbstractItemView, QMenu, QAction)
+                            QListWidget, QListWidgetItem, QAbstractItemView, QMenu, QAction, 
+                            QColorDialog)
 from qtpy.QtGui import QIcon, QFont
 from qtpy.QtCore import QSize, Qt
 import matplotlib as mpl
@@ -85,6 +86,10 @@ class Separator(FrozenContainer):
             main.layout().addWidget(label)
         
         self.set_widget(main)
+    
+class ColorDialog(Container):
+    def __init__(self, value):
+        ...
 
 class ListEdit(Container):
     def __init__(

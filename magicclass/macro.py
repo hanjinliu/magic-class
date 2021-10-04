@@ -2,6 +2,7 @@ from __future__ import annotations
 from enum import Enum, auto
 from collections import UserList, UserString
 from pathlib import Path
+from copy import deepcopy
 from typing import Callable, Iterable, Iterator, Any, overload
 import numpy as np
 
@@ -186,3 +187,64 @@ class Expr:
         
         if not yielded:
             yield self
+
+class MacroMixin:
+    def __init__(self):
+        self._recorded_macro: Macro[Expr] = Macro()
+    
+    def create_macro(self, symbol:str="ui") -> str:
+        """
+        Create executable Python scripts from the recorded macro object.
+
+        Parameters
+        ----------
+        symbol : str, default is "ui"
+            Symbol of the instance.
+        """
+        # Recursively build macro from nested magic-classes
+        macro = [(0, self._recorded_macro[0])] + self._collect_macro()
+
+        # Sort by the recorded order
+        sorted_macro = map(lambda x: str(x[1]), sorted(macro, key=lambda x: x[0]))
+        script = "\n".join(sorted_macro)
+        
+        # type annotation for the hard-to-record types
+        annot = []
+        idt_list = []
+        for expr in self._recorded_macro:
+            for idt in expr.iter_args():
+                if idt.valid or idt in idt_list:
+                    continue
+                idt_list.append(idt)
+                annot.append(idt.as_annotation())
+        
+        out = "\n".join(annot) + "\n" + script
+        out = out.format(x=symbol)
+        
+        return out
+    
+    def _collect_macro(self, myname:str=None) -> list[tuple[int, Expr]]:
+        out = []
+        macro = deepcopy(self._recorded_macro)
+        
+        for expr in macro:
+            if expr.head == Head.init:
+                # nested magic-class construction is always invisible from the parent.
+                # We should not record something like 'ui.A = A()'.
+                continue
+            
+            if myname is not None:
+                for _expr in expr.iter_expr():
+                    # if _expr.head in (Head.value, Head.getattr, Head.getitem):
+                    if _expr.args[0] == "{x}":
+                        _expr.args[0] = Expr(Head.getattr, args=["{x}", myname])
+                
+            out.append((expr.number, expr))
+        
+        for name, attr in filter(lambda x: not x[0].startswith("__"), self.__dict__.items()):
+            # Collect all the macro from child magic-classes recursively
+            if not isinstance(attr, MacroMixin):
+                continue
+            out += attr._collect_macro(myname=name)
+        
+        return out

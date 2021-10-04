@@ -5,17 +5,19 @@ import inspect
 from copy import deepcopy
 import numpy as np
 from contextlib import contextmanager
-from docstring_parser import parse
+from qtpy.QtWidgets import QMenuBar
 from magicgui import magicgui
 from magicgui.widgets import Container, Label, LineEdit, FunctionGui
 from magicgui.widgets._bases import Widget, ValueWidget, ButtonWidget
 from magicgui.widgets._concrete import _LabeledWidget
 
-from .macro import Macro, Expr, Head
-from .utils import iter_members, n_parameters
-from .widgets import PushButtonPlus, Separator, Logger, FrozenContainer, raise_error_msg
+from .macro import Macro, Expr, Head, MacroMixin
+from .utils import (iter_members, n_parameters, extract_tooltip, raise_error_in_msgbox,
+                    raise_error_msg, find_unique_name)
+from .widgets import PushButtonPlus, Separator, Logger, FrozenContainer
 from .field import MagicField
 from .wrappers import upgrade_signature
+from .menu_gui import MenuGui
 
 # Check if napari is available so that layers are detectable from GUIs.
 try:
@@ -46,7 +48,7 @@ def debug():
     yield
     RUNNING_MODE = current_mode
 
-class ClassGui(Container):
+class ClassGui(Container, MacroMixin):
     # This class is always inherited by @magicclass decorator.
     
     def __init__(self, 
@@ -58,7 +60,9 @@ class ClassGui(Container):
                  labels: bool = True, 
                  name: str = None, 
                  single_call: bool = True):
-        super().__init__(layout=layout, labels=labels, name=name)
+        Container.__init__(self, layout=layout, labels=labels, name=name)
+        MacroMixin.__init__(self)
+        
         if parent is not None:
             self.parent = parent
             
@@ -66,12 +70,13 @@ class ClassGui(Container):
         self._popup = popup
         self._single_call = single_call
         
+        self._menubar = None
+        
         self._result_widget: LineEdit | None = None
         if result_widget:
             self._result_widget = LineEdit(gui_only=True, name="result")
             
         self._parameter_history: dict[str, dict[str, Any]] = {}
-        self._recorded_macro: Macro[Expr] = Macro()
         self.native.setObjectName(self.__class__.__name__)
         
         # This attribute is used to determine whether self is nested.
@@ -107,7 +112,7 @@ class ClassGui(Container):
             # magic-class has to know when the nested FunctionGui is called.
             f = _nested_function_gui_callback(self, obj)
             obj.called.connect(f)
-        
+            
         elif self.labels and not isinstance(obj, (_LabeledWidget, ButtonWidget, ClassGui, 
                                                   FrozenContainer, Label)):
             obj = _LabeledWidget(obj)
@@ -164,63 +169,19 @@ class ClassGui(Container):
         super().close()
             
         return None
-    
-    def _collect_macro(self, myname:str=None) -> list[tuple[int, Expr]]:
-        out = []
-        macro = deepcopy(self._recorded_macro)
         
-        for expr in macro:
-            if expr.head == Head.init:
-                # nested magic-class construction is always invisible from the parent.
-                # We should not record something like 'ui.A = A()'.
-                continue
-            
-            if myname is not None:
-                for _expr in expr.iter_expr():
-                    # if _expr.head in (Head.value, Head.getattr, Head.getitem):
-                    if _expr.args[0] == "{x}":
-                        _expr.args[0] = Expr(Head.getattr, args=["{x}", myname])
-                
-            out.append((expr.number, expr))
-        
-        for name, attr in filter(lambda x: not x[0].startswith("__"), self.__dict__.items()):
-            # Collect all the macro from child magic-classes recursively
-            if not isinstance(attr, ClassGui):
-                continue
-            out += attr._collect_macro(myname=name)
-        
-        return out
-    
     def create_macro(self, show:bool=False, symbol:str="ui") -> str:
         """
         Create executable Python scripts from the recorded macro object.
 
         Parameters
         ----------
-        symbol : str, default is "ui"
-            Symbol of the instance.
         show : bool, default is False
             Launch a TextEdit window that shows recorded macro.
+        symbol : str, default is "ui"
+            Symbol of the instance.
         """
-        # Recursively build macro from nested magic-classes
-        macro = [(0, self._recorded_macro[0])] + self._collect_macro()
-
-        # Sort by the recorded order
-        sorted_macro = map(lambda x: str(x[1]), sorted(macro, key=lambda x: x[0]))
-        script = "\n".join(sorted_macro)
-        
-        # type annotation for the hard-to-record types
-        annot = []
-        idt_list = []
-        for expr in self._recorded_macro:
-            for idt in expr.iter_args():
-                if idt.valid or idt in idt_list:
-                    continue
-                idt_list.append(idt)
-                annot.append(idt.as_annotation())
-        
-        out = "\n".join(annot) + "\n" + script
-        out = out.format(x=symbol)
+        out = super().create_macro(symbol=symbol)
         
         if show:
             win = Logger(name="macro")
@@ -307,7 +268,7 @@ class ClassGui(Container):
         
         # Add class docstring as label.
         if cls.__doc__:
-            doc = _extract_tooltip(cls)
+            doc = extract_tooltip(cls)
             lbl = Label(value=doc)
             self.append(lbl)
         
@@ -332,6 +293,13 @@ class ClassGui(Container):
             
             if isinstance(widget, ClassGui):
                 widget.__magicclass_parent__ = self
+                
+            elif isinstance(widget, MenuGui):
+                if self._menubar is None:
+                    self._menubar = QMenuBar(self.native)
+                    self.native.layout().setMenuBar(self._menubar)
+                
+                self._menubar.addMenu(widget.native)
                 
             if not name.startswith("_") and (callable(widget) or isinstance(widget, Widget)):
                 self.append(widget)
@@ -397,7 +365,7 @@ class ClassGui(Container):
 
         # Wrap function to deal with errors in a right way.
         if RUNNING_MODE == "default":
-            wrapper = _raise_error_in_msgbox
+            wrapper = raise_error_in_msgbox
         elif RUNNING_MODE == "debug":
             wrapper = _write_log
         elif RUNNING_MODE == "raw":
@@ -412,7 +380,7 @@ class ClassGui(Container):
         func.__signature__ = inspect.signature(obj)
 
         # Prepare a button
-        button.tooltip = _extract_tooltip(func)
+        button.tooltip = extract_tooltip(func)
         
         if n_parameters(func) == 0:
             # We don't want a dialog with a single widget "Run" to show up.
@@ -476,7 +444,7 @@ class ClassGui(Container):
                             viewer.window.remove_dock_widget(mgui.parent)
                             mgui.close()
                             
-                    dock_name = _find_unique_name(text, viewer)
+                    dock_name = find_unique_name(text, viewer)
                     dock = viewer.window.add_dock_widget(mgui, name=dock_name)
                     dock.setFloating(self._popup)
                 
@@ -525,29 +493,7 @@ class ClassGui(Container):
         return None
     
 
-def _extract_tooltip(obj: Any) -> str:
-    if not hasattr(obj, "__doc__"):
-        return ""
-    
-    doc = parse(obj.__doc__)
-    if doc.short_description is None:
-        return ""
-    elif doc.long_description is None:
-        return doc.short_description
-    else:
-        return doc.short_description + "\n" + doc.long_description
 
-def _raise_error_in_msgbox(_func, parent:Widget=None):
-    @wraps(_func)
-    def wrapped_func(*args, **kwargs):
-        try:
-            out = _func(*args, **kwargs)
-        except Exception as e:
-            raise_error_msg(parent.native, title=e.__class__.__name__, msg=str(e))
-            out = e
-        return out
-    
-    return wrapped_func
 
 def _write_log(_func, parent=None):
     @wraps(_func)
@@ -567,14 +513,6 @@ def _write_log(_func, parent=None):
         return out
     
     return wrapped_func
-
-def _find_unique_name(name:str, viewer:"napari.Viewer"):
-    orig_name = name
-    i = 0
-    while name in viewer.window._dock_widgets:
-        name = orig_name + f"-{i}"
-        i += 1
-    return name
 
 def _get_parameters(mgui):
     inputs = {param: getattr(mgui, param).value
