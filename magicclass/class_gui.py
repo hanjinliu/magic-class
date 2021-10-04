@@ -135,7 +135,7 @@ class ClassGui(Container, MacroMixin):
         """        
         return self.native.objectName()
     
-    def show(self, run:bool=False) -> None:
+    def show(self, run: bool = False) -> None:
         """
         Show ClassGui. If any of the parent ClassGui is a dock widget in napari, then this will also show up
         as a dock widget (floating if popup=True).
@@ -392,6 +392,7 @@ class ClassGui(Container, MacroMixin):
         else:
             def run_function(*args):
                 if button.mgui is not None:
+                    button.mgui.show()
                     button.mgui.native.activateWindow()
                     return None
                 try:

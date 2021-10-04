@@ -210,6 +210,7 @@ class MenuGui(MacroMixin):
         else:
             def run_function(*args):
                 if action.mgui is not None:
+                    action.mgui.show()
                     action.mgui.native.activateWindow()
                     return None
                 try:
@@ -275,13 +276,7 @@ def _temporal_function_gui_callback(menugui:MenuGui, fgui:FunctionGui|Callable, 
         else:
             inputs = {}
             _function = fgui
-        
-        if len(action.changed.callbacks) > 1:
-            b = Expr(head=Head.getitem, args=["{x}", action.name])
-            ev = Expr(head=Head.getattr, args=[b, "changed"])
-            macro = Expr(head=Head.call, args=[ev])
-            menugui._recorded_macro.append(macro)
-        else:
-            menugui._record_macro(_function, (), inputs)
+        # TODO: callbacks
+        menugui._record_macro(_function, (), inputs)
         action.mgui = None
     return _after_run
