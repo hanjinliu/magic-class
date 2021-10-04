@@ -13,7 +13,7 @@ from magicgui.widgets._concrete import _LabeledWidget
 
 from .macro import Macro, Expr, Head, MacroMixin
 from .utils import (iter_members, n_parameters, extract_tooltip, raise_error_in_msgbox,
-                    raise_error_msg, find_unique_name)
+                    raise_error_msg, get_parameters, find_unique_name)
 from .widgets import PushButtonPlus, Separator, Logger, FrozenContainer
 from .field import MagicField
 from .wrappers import upgrade_signature
@@ -76,7 +76,6 @@ class ClassGui(Container, MacroMixin):
         if result_widget:
             self._result_widget = LineEdit(gui_only=True, name="result")
             
-        self._parameter_history: dict[str, dict[str, Any]] = {}
         self.native.setObjectName(self.__class__.__name__)
         
         # This attribute is used to determine whether self is nested.
@@ -295,6 +294,7 @@ class ClassGui(Container, MacroMixin):
                 widget.__magicclass_parent__ = self
                 
             elif isinstance(widget, MenuGui):
+                widget.__magicclass_parent__ = self
                 if self._menubar is None:
                     self._menubar = QMenuBar(self.native)
                     self.native.layout().setMenuBar(self._menubar)
@@ -460,40 +460,6 @@ class ClassGui(Container, MacroMixin):
             
         return button
     
-    def _record_macro(self, func:Callable, args:tuple, kwargs:dict[str, Any]) -> None:
-        """
-        Record a function call as a line of macro.
-
-        Parameters
-        ----------
-        func : str
-            Name of function.
-        args : tuple
-            Arguments.
-        kwargs : dict[str, Any]
-            Keyword arguments.
-        """        
-        macro = Expr.parse_method(func, args, kwargs)
-        self._recorded_macro.append(macro)
-        return None
-    
-    def _record_parameter_history(self, func:str, kwargs:dict[str, Any]) -> None:
-        """
-        Record parameter inputs to history for next call.
-
-        Parameters
-        ----------
-        func : str
-            Name of function.
-        kwargs : dict[str, Any]
-            Parameter inputs.
-        """        
-        kwargs = {k: v for k, v in kwargs.items() if not isinstance(v, np.ndarray)}
-        self._parameter_history.update({func: kwargs})
-        return None
-    
-
-
 
 def _write_log(_func, parent=None):
     @wraps(_func)
@@ -514,19 +480,12 @@ def _write_log(_func, parent=None):
     
     return wrapped_func
 
-def _get_parameters(mgui):
-    inputs = {param: getattr(mgui, param).value
-              for param in mgui.__signature__.parameters.keys()
-              }
-    
-    return inputs
-
 def _nested_function_gui_callback(cgui:ClassGui, fgui:FunctionGui):
     def _after_run(e):
         value = e.value
         if isinstance(value, Exception):
             return None
-        inputs = _get_parameters(fgui)
+        inputs = get_parameters(fgui)
         args = [Expr(head=Head.assign, args=[k, v]) for k, v in inputs.items()]
         # args[0] is self
         sub = Expr(head=Head.getattr, args=["{x}", fgui.name]) # {x}.func
@@ -549,7 +508,7 @@ def _temporal_function_gui_callback(cgui:ClassGui, fgui:FunctionGui|Callable, bu
             return None
         
         if isinstance(fgui, FunctionGui):
-            inputs = _get_parameters(fgui)
+            inputs = get_parameters(fgui)
             cgui._record_parameter_history(fgui._function.__name__, inputs)
             _function = fgui._function
         else:

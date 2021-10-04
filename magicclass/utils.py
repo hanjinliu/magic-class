@@ -10,6 +10,7 @@ from magicclass.field import MagicField
 
 if TYPE_CHECKING:
     from magicgui.widgets._bases import Widget
+    from magicgui.widgets import FunctionGui
     import napari
 
 APPLICATION = None
@@ -124,6 +125,12 @@ def raise_error_in_msgbox(_func, parent:Widget=None):
     
     return wrapped_func
 
+def get_parameters(fgui: FunctionGui):
+    inputs = {param: getattr(fgui, param).value
+              for param in fgui.__signature__.parameters.keys()
+              }
+    
+    return inputs
 
 def find_unique_name(name:str, viewer:"napari.Viewer"):
     orig_name = name

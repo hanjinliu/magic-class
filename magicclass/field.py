@@ -58,7 +58,7 @@ class MagicField(Field):
                                    )
         widget.name = self.name
         return widget
-    
+        
     def connect(self, func):
         self.callbacks.append(func)
         return func

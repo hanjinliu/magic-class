@@ -191,6 +191,7 @@ class Expr:
 class MacroMixin:
     def __init__(self):
         self._recorded_macro: Macro[Expr] = Macro()
+        self._parameter_history: dict[str, dict[str, Any]] = {}
     
     def create_macro(self, symbol:str="ui") -> str:
         """
@@ -248,3 +249,35 @@ class MacroMixin:
             out += attr._collect_macro(myname=name)
         
         return out
+    
+    def _record_macro(self, func:Callable, args:tuple, kwargs:dict[str, Any]) -> None:
+        """
+        Record a function call as a line of macro.
+
+        Parameters
+        ----------
+        func : str
+            Name of function.
+        args : tuple
+            Arguments.
+        kwargs : dict[str, Any]
+            Keyword arguments.
+        """        
+        macro = Expr.parse_method(func, args, kwargs)
+        self._recorded_macro.append(macro)
+        return None
+    
+    def _record_parameter_history(self, func:str, kwargs:dict[str, Any]) -> None:
+        """
+        Record parameter inputs to history for next call.
+
+        Parameters
+        ----------
+        func : str
+            Name of function.
+        kwargs : dict[str, Any]
+            Parameter inputs.
+        """        
+        kwargs = {k: v for k, v in kwargs.items() if not isinstance(v, np.ndarray)}
+        self._parameter_history.update({func: kwargs})
+        return None
