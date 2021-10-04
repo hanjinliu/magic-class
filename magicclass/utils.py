@@ -140,6 +140,22 @@ def find_unique_name(name:str, viewer:"napari.Viewer"):
         i += 1
     return name
 
+
+def define_callback(self, callback: Callable):
+    clsname, funcname = callback.__qualname__.split(".")
+    def _callback(event):
+        # search for parent instances that have the same name.
+        current_self = self
+        while not (hasattr(current_self, funcname) and 
+                    current_self.__class__.__name__ == clsname):
+            current_self = current_self.__magicclass_parent__
+        try:
+            getattr(current_self, funcname)(event)
+        except TypeError:
+            getattr(current_self, funcname)()
+        return None
+    return _callback
+
 def gui_qt():
     """
     Call "%gui qt" magic,

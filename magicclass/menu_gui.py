@@ -11,7 +11,7 @@ import napari
 from magicclass.field import MagicField
 
 from magicclass.widgets import Separator
-from .utils import iter_members, n_parameters
+from .utils import define_callback, iter_members, n_parameters
 from .macro import Macro, Expr, Head, MacroMixin
 from .wrappers import upgrade_signature
 
@@ -22,8 +22,7 @@ if TYPE_CHECKING:
     from .class_gui import ClassGui
 
 # TODO: MagicField-MenuGui interface
-# - change enabled/visible
-# - connect method of MagicField
+# - make subscriptable
 
 class Action(QAction):
     def __init__(self, *args, **kwargs):
@@ -57,6 +56,19 @@ class Action(QAction):
     @visible.setter
     def visible(self, value: bool):
         self.setVisible(value)
+    
+    def from_options(self, options:dict[str]|Callable):
+        if callable(options):
+            try:
+                options = options.__signature__.caller_options
+            except AttributeError:
+                return None
+                
+        for k, v in options.items():
+            v = options.get(k, None)
+            if v is not None:
+                setattr(self, k, v)
+        return None
 
 class MenuGui(MacroMixin):
     def __init__(self, parent=None, name=None):
@@ -154,6 +166,9 @@ class MenuGui(MacroMixin):
         value = False if fld.default is MISSING else fld.default
         name = fld.metadata.get("text", name)
         action = Action(name, None, checkable=True, checked=value)
+        for callback in fld.callbacks:
+            action.triggered.connect(define_callback(self, callback))
+            
         @action.triggered.connect
         def _set_value(event):
             sub = Expr(head=Head.getattr, args=[name, "value"]) # name.value
@@ -245,7 +260,7 @@ class MenuGui(MacroMixin):
                 return None
             
         action.triggered.connect(run_function)
-            
+        action.from_options(obj)
         return action
 
 def _temporal_function_gui_callback(menugui:MenuGui, fgui:FunctionGui|Callable, action:Action):
@@ -261,7 +276,12 @@ def _temporal_function_gui_callback(menugui:MenuGui, fgui:FunctionGui|Callable, 
             inputs = {}
             _function = fgui
         
-        menugui._record_macro(_function, (), inputs)
-                    
+        if len(action.changed.callbacks) > 1:
+            b = Expr(head=Head.getitem, args=["{x}", action.name])
+            ev = Expr(head=Head.getattr, args=[b, "changed"])
+            macro = Expr(head=Head.call, args=[ev])
+            menugui._recorded_macro.append(macro)
+        else:
+            menugui._record_macro(_function, (), inputs)
         action.mgui = None
     return _after_run

@@ -156,7 +156,7 @@ def magicmenu(class_: type = None, *, parent=None):
                 self.__post_init__()
             
             # Record class instance construction
-            # self._recorded_macro.append(macro_init)
+            self._recorded_macro.append(macro_init)
 
         setattr(newclass, "__init__", __init__)
         

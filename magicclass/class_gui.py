@@ -12,7 +12,7 @@ from magicgui.widgets._bases import Widget, ValueWidget, ButtonWidget
 from magicgui.widgets._concrete import _LabeledWidget
 
 from .macro import Macro, Expr, Head, MacroMixin
-from .utils import (iter_members, n_parameters, extract_tooltip, raise_error_in_msgbox,
+from .utils import (define_callback, iter_members, n_parameters, extract_tooltip, raise_error_in_msgbox,
                     raise_error_msg, get_parameters, find_unique_name)
 from .widgets import PushButtonPlus, Separator, Logger, FrozenContainer
 from .field import MagicField
@@ -331,7 +331,7 @@ class ClassGui(Container, MacroMixin):
             # If the field has callbacks, connect it to the newly generated widget.
             for callback in fld.callbacks:
                 # funcname = callback.__name__
-                widget.changed.connect(_define_callback(self, callback))
+                widget.changed.connect(define_callback(self, callback))
                 
             if hasattr(widget, "value"):        
                 # By default, set value function will be connected to the widget.
@@ -534,18 +534,3 @@ def _copy_function(f):
     def out(self, *args, **kwargs):
         return f(self, *args, **kwargs)
     return out
-
-def _define_callback(self: ClassGui, callback: Callable):
-    clsname, funcname = callback.__qualname__.split(".")
-    def _callback(event):
-        # search for parent instances that have the same name.
-        current_self = self
-        while not (hasattr(current_self, funcname) and 
-                    current_self.__class__.__name__ == clsname):
-            current_self = current_self.__magicclass_parent__
-        try:
-            getattr(current_self, funcname)(event)
-        except TypeError:
-            getattr(current_self, funcname)()
-        return None
-    return _callback
