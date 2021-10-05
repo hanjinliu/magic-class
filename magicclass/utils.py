@@ -156,6 +156,17 @@ def define_callback(self, callback: Callable):
         return None
     return _callback
 
+def show_mgui(mgui: FunctionGui):
+    try:
+        viewer = mgui.parent.parent().qt_viewer.viewer
+    except AttributeError:
+        mgui.show()
+        mgui.native.activateWindow()
+    else:
+        viewer.window._dock_widgets[mgui.parent.objectName()].show()
+    return None
+    
+
 def gui_qt():
     """
     Call "%gui qt" magic,

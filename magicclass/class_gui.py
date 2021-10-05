@@ -1,9 +1,7 @@
 from __future__ import annotations
 from functools import wraps
-from typing import Callable, Any
+from typing import Callable
 import inspect
-from copy import deepcopy
-import numpy as np
 from contextlib import contextmanager
 from qtpy.QtWidgets import QMenuBar
 from magicgui import magicgui
@@ -13,7 +11,7 @@ from magicgui.widgets._concrete import _LabeledWidget
 
 from .macro import Macro, Expr, Head, MacroMixin
 from .utils import (define_callback, iter_members, n_parameters, extract_tooltip, raise_error_in_msgbox,
-                    raise_error_msg, get_parameters, find_unique_name)
+                    raise_error_msg, get_parameters, find_unique_name, show_mgui)
 from .widgets import PushButtonPlus, Separator, Logger, FrozenContainer
 from .field import MagicField
 from .wrappers import upgrade_signature
@@ -82,16 +80,18 @@ class ClassGui(Container, MacroMixin):
         self.__magicclass_parent__: None|ClassGui = None
 
         if RUNNING_MODE == "debug":
-            LOGGER.append(f"{self.__class__.__name__} object at {id(self)}")
-        
+            LOGGER.append(f"{self.__class__.__name__} object at {id(self)}")  
     
     @property
     def parent_viewer(self) -> "napari.Viewer"|None:
         """
         Return napari.Viewer if self is a dock widget of a viewer.
-        """        
+        """
+        current_self = self
+        while hasattr(current_self, "__magicclass_parent__") and current_self.__magicclass_parent__:
+            current_self = current_self.__magicclass_parent__
         try:
-            viewer = self.parent.parent().qt_viewer.viewer
+            viewer = current_self.parent.parent().qt_viewer.viewer
         except AttributeError:
             viewer = None
         return viewer
@@ -154,11 +154,7 @@ class ClassGui(Container, MacroMixin):
         return None
     
     def close(self):
-        current_self = self
-        while hasattr(current_self, "__magicclass_parent__") and current_self.__magicclass_parent__:
-            current_self = current_self.__magicclass_parent__
-        
-        viewer = current_self.parent_viewer
+        viewer = self.parent_viewer
         if viewer is not None:
             try:
                 viewer.window.remove_dock_widget(self.parent)
@@ -296,9 +292,10 @@ class ClassGui(Container, MacroMixin):
             elif isinstance(widget, MenuGui):
                 widget.__magicclass_parent__ = self
                 if self._menubar is None:
-                    self._menubar = QMenuBar(self.native)
+                    self._menubar = QMenuBar(parent=self.native)
                     self.native.layout().setMenuBar(self._menubar)
                 
+                widget.native.setParent(self._menubar, widget.native.windowFlags())
                 self._menubar.addMenu(widget.native)
                 
             if not name.startswith("_") and (callable(widget) or isinstance(widget, Widget)):
@@ -392,8 +389,7 @@ class ClassGui(Container, MacroMixin):
         else:
             def run_function(*args):
                 if button.mgui is not None:
-                    button.mgui.show()
-                    button.mgui.native.activateWindow()
+                    show_mgui(button.mgui)
                     return None
                 try:
                     mgui = magicgui(func)
