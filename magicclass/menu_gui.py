@@ -3,7 +3,6 @@ from functools import wraps
 from typing import Callable, Any, TYPE_CHECKING
 from dataclasses import MISSING
 import inspect
-import numpy as np
 from magicgui import magicgui
 from magicgui.widgets import FunctionGui
 from qtpy.QtWidgets import QMenu, QAction
@@ -16,18 +15,18 @@ from .macro import Macro, Expr, Head, MacroMixin
 from .wrappers import upgrade_signature
 
 from .utils import (iter_members, n_parameters, extract_tooltip, raise_error_in_msgbox, 
-                    raise_error_msg, get_parameters, find_unique_name)
+                    raise_error_msg, get_parameters, find_unique_name, show_mgui)
 
 if TYPE_CHECKING:
     from .class_gui import ClassGui
 
-# TODO: MagicField-MenuGui interface
-# - make subscriptable
 
 class Action(QAction):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.mgui = None
+        self.setObjectName(self.text())
+        self._callbacks = []
         
     @property
     def name(self):
@@ -75,7 +74,7 @@ class MenuGui(MacroMixin):
         super().__init__()
         name = name or self.__class__.__name__
         self.native = QMenu(name, parent)
-        self._actions = []
+        self._list: list[MenuGui|Action] = []
         self.__magicclass_parent__: None|ClassGui|MenuGui = None
         self._parameter_history: dict[str, dict[str, Any]] = {}
         self._recorded_macro: Macro[Expr] = Macro()
@@ -90,8 +89,12 @@ class MenuGui(MacroMixin):
         """
         Return napari.Viewer if self is a dock widget of a viewer.
         """        
+        current_self = self
+        while hasattr(current_self, "__magicclass_parent__") and current_self.__magicclass_parent__:
+            current_self = current_self.__magicclass_parent__
+        
         try:
-            viewer = self.__magicclass_parent__.parent.parent().qt_viewer.viewer
+            viewer = current_self.parent.parent().qt_viewer.viewer
         except AttributeError:
             viewer = None
         return viewer
@@ -123,15 +126,28 @@ class MenuGui(MacroMixin):
         
         return None
     
+    def __getitem__(self, key):
+        out = None
+        for obj in self._list:
+            if obj.objectName() == key:
+                out = obj
+                break
+        if out is None:
+            raise KeyError(key)
+        return out
+    
     def append(self, obj: Callable|MenuGui|Action|Separator):
         if isinstance(obj, Action):
             self.native.addAction(obj)
-            self._actions.append(obj)
+            self._list.append(obj)
         elif callable(obj):
             action = self._convert_method_into_action(obj)
             self.append(action)
         elif isinstance(obj, MenuGui):
+            obj.__magicclass_parent__ = self
             self.native.addMenu(obj.native)
+            obj.native.setParent(self.native, obj.native.windowFlags())
+            self._list.append(obj)
         elif isinstance(obj, Separator):
             self.native.addSeparator()
         else:
@@ -162,12 +178,14 @@ class MenuGui(MacroMixin):
         setattr(cls, funcname, childmethod)
         return method
     
-    def _create_widget_from_field(self, name:str, fld:MagicField):
+    def _create_widget_from_field(self, name: str, fld: MagicField):
         value = False if fld.default is MISSING else fld.default
         name = fld.metadata.get("text", name)
         action = Action(name, None, checkable=True, checked=value)
         for callback in fld.callbacks:
-            action.triggered.connect(define_callback(self, callback))
+            callback = define_callback(self, callback)
+            action.triggered.connect(callback)
+            action._callbacks.append(callback)
             
         @action.triggered.connect
         def _set_value(event):
@@ -210,8 +228,7 @@ class MenuGui(MacroMixin):
         else:
             def run_function(*args):
                 if action.mgui is not None:
-                    action.mgui.show()
-                    action.mgui.native.activateWindow()
+                    show_mgui(action.mgui)
                     return None
                 try:
                     mgui = magicgui(func)
@@ -231,10 +248,7 @@ class MenuGui(MacroMixin):
                         pass
                 
                 viewer = self.parent_viewer
-                
-                if self.parent:
-                    mgui.native.setParent(self.parent)
-                    
+                        
                 if viewer is None:
                     mgui.show()
                     
@@ -276,7 +290,11 @@ def _temporal_function_gui_callback(menugui:MenuGui, fgui:FunctionGui|Callable, 
         else:
             inputs = {}
             _function = fgui
-        # TODO: callbacks
+        
+        # if action._callbacks:
+        #     # TODO: use event emitter
+        #     ...
+        # else:
         menugui._record_macro(_function, (), inputs)
         action.mgui = None
     return _after_run
