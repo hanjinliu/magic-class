@@ -1,11 +1,11 @@
 from __future__ import annotations
 from functools import wraps
+from pathlib import Path
 from typing import Callable
 import inspect
-from contextlib import contextmanager
 from qtpy.QtWidgets import QMenuBar
 from magicgui import magicgui
-from magicgui.widgets import Container, Label, LineEdit, FunctionGui
+from magicgui.widgets import Container, Label, LineEdit, FunctionGui, FileEdit
 from magicgui.widgets._bases import Widget, ValueWidget, ButtonWidget
 from magicgui.widgets._concrete import _LabeledWidget
 
@@ -24,27 +24,7 @@ except ImportError:
     NAPARI_AVAILABLE = False
 else:
     NAPARI_AVAILABLE = True
-    
 
-# Running mode determines how to construct magic-class GUI.
-# - "default": Error will be raised in message box
-# - "debug": Whether function call ended with error will be recorded in a logger widget.
-# - "raw": Raise errors in console (non-wrapped mode)
-RUNNING_MODE = "default"
-
-LOGGER = Logger(name="logger")
-
-@contextmanager
-def debug():
-    """
-    Magic-classes that are constructed within this context will enter debug mode.
-    """    
-    global RUNNING_MODE
-    current_mode = RUNNING_MODE
-    RUNNING_MODE = "debug"
-    LOGGER.show()
-    yield
-    RUNNING_MODE = current_mode
 
 class ClassGui(Container, MacroMixin):
     # This class is always inherited by @magicclass decorator.
@@ -78,9 +58,6 @@ class ClassGui(Container, MacroMixin):
         
         # This attribute is used to determine whether self is nested.
         self.__magicclass_parent__: None|ClassGui = None
-
-        if RUNNING_MODE == "debug":
-            LOGGER.append(f"{self.__class__.__name__} object at {id(self)}")  
     
     @property
     def parent_viewer(self) -> "napari.Viewer"|None:
@@ -361,14 +338,7 @@ class ClassGui(Container, MacroMixin):
         button = PushButtonPlus(name=obj.__name__, text=text, gui_only=True)
 
         # Wrap function to deal with errors in a right way.
-        if RUNNING_MODE == "default":
-            wrapper = raise_error_in_msgbox
-        elif RUNNING_MODE == "debug":
-            wrapper = _write_log
-        elif RUNNING_MODE == "raw":
-            wrapper = lambda x, parent: x
-        else:
-            raise ValueError(f"RUNNING_MODE={RUNNING_MODE}")
+        wrapper = raise_error_in_msgbox
         
         func = wrapper(obj, parent=self)
         
@@ -378,7 +348,6 @@ class ClassGui(Container, MacroMixin):
 
         # Prepare a button
         button.tooltip = extract_tooltip(func)
-        
         if n_parameters(func) == 0:
             # We don't want a dialog with a single widget "Run" to show up.
             f = _temporal_function_gui_callback(self, func, button)
@@ -386,6 +355,16 @@ class ClassGui(Container, MacroMixin):
                 out = func()
                 f(out)
                 return out
+            
+        elif n_parameters(func) == 1 and type(FunctionGui.from_callable(func)[0]) is FileEdit:
+            f = _temporal_function_gui_callback(self, func, button)
+            def run_function(*args):
+                button.mgui = FunctionGui.from_callable(func)[0]
+                button.mgui._on_choose_clicked()
+                out = func(button.mgui.value)
+                f(out)
+                return out
+            
         else:
             def run_function(*args):
                 if button.mgui is not None:
@@ -457,26 +436,6 @@ class ClassGui(Container, MacroMixin):
             
         return button
     
-
-def _write_log(_func, parent=None):
-    @wraps(_func)
-    def wrapped_func(*args, **kwargs):
-        try:
-            out = _func(*args, **kwargs)
-        except Exception as e:
-            log = [f'{parent.__class__.__name__}.{_func.__name__}: '
-                   f'<span style="color: red; font-weight: bold;">{e.__class__.__name__}</span>',
-                   f'{e}']
-            out = e
-        else:
-            log = f'{parent.__class__.__name__}.{_func.__name__}: ' \
-                   '<span style="color: blue; font-weight: bold;">Pass</span>'
-        finally:
-            LOGGER.append(log)
-        return out
-    
-    return wrapped_func
-
 def _nested_function_gui_callback(cgui:ClassGui, fgui:FunctionGui):
     def _after_run(e):
         value = e.value

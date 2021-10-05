@@ -4,7 +4,7 @@ from typing import Callable, Any, TYPE_CHECKING
 from dataclasses import MISSING
 import inspect
 from magicgui import magicgui
-from magicgui.widgets import FunctionGui
+from magicgui.widgets import FunctionGui, FileEdit
 from qtpy.QtWidgets import QMenu, QAction
 import napari
 from magicclass.field import MagicField
@@ -225,6 +225,16 @@ class MenuGui(MacroMixin):
                 out = func()
                 f(out)
                 return out
+        
+        elif n_parameters(func) == 1 and type(FunctionGui.from_callable(func)[0]) is FileEdit:
+            f = _temporal_function_gui_callback(self, func, action)
+            def run_function(*args):
+                action.mgui = FunctionGui.from_callable(func)[0]
+                action.mgui._on_choose_clicked()
+                out = func(action.mgui.value)
+                f(out)
+                return out
+            
         else:
             def run_function(*args):
                 if action.mgui is not None:

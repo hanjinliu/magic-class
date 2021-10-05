@@ -391,7 +391,7 @@ class PushButtonPlus(PushButton):
         super().__init__(text=text, **kwargs)
         self.native: QPushButton
         self._icon_path = None
-        self.mgui = None
+        self.mgui: Container = None
     
     @property
     def background_color(self):
