@@ -27,7 +27,8 @@ class Action(QAction):
         self.mgui = None
         if text:
             self.text = text
-        self.setObjectName(name or self.text)
+        if name:
+            self.setObjectName(name)
         self._callbacks = []
         
     @property
@@ -194,8 +195,8 @@ class MenuGui(MacroMixin):
     
     def _create_widget_from_field(self, name: str, fld: MagicField):
         value = False if fld.default is MISSING else fld.default
-        name = fld.metadata.get("text", name)
-        action = Action(name, None, checkable=True, checked=value)
+        text = fld.metadata.get("text", name)
+        action = Action(name=name, text=text, parent=None, checkable=True, checked=value)
         for callback in fld.callbacks:
             callback = define_callback(self, callback)
             action.triggered.connect(callback)
@@ -218,7 +219,7 @@ class MenuGui(MacroMixin):
     def _convert_method_into_action(self, obj):
         # Convert methods into push buttons
         text = obj.__name__.replace("_", " ")
-        action = Action(text, self.native)
+        action = Action(name=obj.__name__, text=text, parent=self.native)
 
         # Wrap function to deal with errors in a right way.
         wrapper = raise_error_in_msgbox

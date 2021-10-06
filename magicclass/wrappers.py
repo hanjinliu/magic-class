@@ -32,7 +32,7 @@ def set_design(width:int=None, height:int=None, min_width:int=None, min_height:i
                font_size:int=None, font_family:int=None, font_color:Color=None,
                background_color:Color=None):
     """
-    Change button design by calling setter when the button is created.
+    Change button/action design by calling setter when the widget is created.
 
     Parameters
     ----------
