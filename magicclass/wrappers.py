@@ -26,11 +26,11 @@ def set_options(**options):
         return func
     return wrapper
 
-def button_design(width:int=None, height:int=None, min_width:int=None, min_height:int=None,
-                  max_width:int=None, max_height:int=None, text:str=None, 
-                  icon_path:str=None, icon_size:tuple[int,int]=None,
-                  font_size:int=None, font_family:int=None, font_color:Color=None,
-                  background_color:Color=None):
+def set_design(width:int=None, height:int=None, min_width:int=None, min_height:int=None,
+               max_width:int=None, max_height:int=None, text:str=None, 
+               icon_path:str=None, icon_size:tuple[int,int]=None,
+               font_size:int=None, font_family:int=None, font_color:Color=None,
+               background_color:Color=None):
     """
     Change button design by calling setter when the button is created.
 
@@ -63,10 +63,8 @@ def button_design(width:int=None, height:int=None, min_width:int=None, min_heigh
             min_width = icon_size[0]
         if min_height is None:
             min_height = icon_size[1]
-    caller_options = dict(width=width, height=height, min_width=min_width, min_height=min_height,
-                          max_width=max_width, max_height=max_height, text=text, icon_path=icon_path,
-                          icon_size=icon_size, font_size=font_size, font_family=font_family,
-                          font_color=font_color, background_color=background_color)
+            
+    caller_options = locals()
     def wrapper(func):
         upgrade_signature(func, caller_options=caller_options)
         return func

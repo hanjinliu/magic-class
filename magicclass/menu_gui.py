@@ -22,15 +22,29 @@ if TYPE_CHECKING:
 
 
 class Action(QAction):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, name=None, text=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.mgui = None
-        self.setObjectName(self.text())
+        if text:
+            self.text = text
+        self.setObjectName(name or self.text)
         self._callbacks = []
         
     @property
-    def name(self):
+    def name(self) -> str:
         return self.objectName()
+    
+    @name.setter
+    def name(self, value: str):
+        self.setObjectName(value)
+    
+    @property
+    def text(self) -> str:
+        return super().text()
+    
+    @text.setter
+    def text(self, value: str):
+        self.setText(value)
     
     @property
     def enabled(self):

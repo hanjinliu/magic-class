@@ -1,4 +1,4 @@
-from magicclass import magicclass, field, button_design
+from magicclass import magicclass, field, set_design
 from magicclass.widgets import Separator
 
 @magicclass(result_widget=True)
@@ -17,7 +17,7 @@ class Function:
     # Or widget class
     sep = field(Separator)
     
-    @button_design(text="Run")
+    @set_design(text="Run")
     def call_button(self):
         s = self.line.value
         i = self.slider.value
