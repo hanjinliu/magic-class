@@ -1,6 +1,7 @@
 from __future__ import annotations
 from functools import wraps
 from pathlib import Path
+import os
 from typing import Callable
 import inspect
 from qtpy.QtWidgets import QMenuBar
@@ -350,19 +351,40 @@ class ClassGui(Container, MacroMixin):
         button.tooltip = extract_tooltip(func)
         if n_parameters(func) == 0:
             # We don't want a dialog with a single widget "Run" to show up.
-            f = _temporal_function_gui_callback(self, func, button)
+            callback = _temporal_function_gui_callback(self, func, button)
             def run_function(*args):
                 out = func()
-                f(out)
+                callback(out)
                 return out
             
         elif n_parameters(func) == 1 and type(FunctionGui.from_callable(func)[0]) is FileEdit:
-            f = _temporal_function_gui_callback(self, func, button)
+            # We don't want to open a magicgui dialog and again open a file dialog.
             def run_function(*args):
-                button.mgui = FunctionGui.from_callable(func)[0]
-                button.mgui._on_choose_clicked()
-                out = func(button.mgui.value)
-                f(out)
+                mgui = magicgui(func)
+                mgui.name = f"function-{id(func)}"
+                    
+                button.mgui = mgui
+                
+                callback = _temporal_function_gui_callback(self, mgui, button)
+                params = self._parameter_history.get(func.__name__, {})
+                path = "."
+                for key, value in params.items():
+                    getattr(button.mgui, key).value = value
+                    path = str(value)
+                
+                fdialog: FileEdit = button.mgui[0]
+                result = fdialog._show_file_dialog(
+                    fdialog.mode,
+                    caption=fdialog._btn_text,
+                    start_path=path,
+                    filter=fdialog.filter,
+                )
+                if result:
+                    mgui[0].value = result
+                    out = func(result)
+                    callback(out)
+                else:
+                    out = None
                 return out
             
         else:
@@ -424,8 +446,8 @@ class ClassGui(Container, MacroMixin):
                     dock = viewer.window.add_dock_widget(mgui, name=dock_name)
                     dock.setFloating(self._popup)
                 
-                f = _temporal_function_gui_callback(self, mgui, button)
-                mgui.called.connect(f)
+                callback = _temporal_function_gui_callback(self, mgui, button)
+                mgui.called.connect(callback)
                 button.mgui = mgui
                 return None
             
@@ -458,7 +480,7 @@ def _nested_function_gui_callback(cgui:ClassGui, fgui:FunctionGui):
         cgui._recorded_macro.append(expr)
     return _after_run
 
-def _temporal_function_gui_callback(cgui:ClassGui, fgui:FunctionGui|Callable, button:PushButtonPlus):
+def _temporal_function_gui_callback(cgui: ClassGui, fgui: FunctionGui|Callable, button: PushButtonPlus):
     def _after_run(value):
         if isinstance(value, Exception):
             return None

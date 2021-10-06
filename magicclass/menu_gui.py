@@ -235,19 +235,40 @@ class MenuGui(MacroMixin):
         
         if n_parameters(func) == 0:
             # We don't want a dialog with a single widget "Run" to show up.
-            f = _temporal_function_gui_callback(self, func, action)
+            callback = _temporal_function_gui_callback(self, func, action)
             def run_function(*args):
                 out = func()
-                f(out)
+                callback(out)
                 return out
         
         elif n_parameters(func) == 1 and type(FunctionGui.from_callable(func)[0]) is FileEdit:
-            f = _temporal_function_gui_callback(self, func, action)
+            # We don't want to open a magicgui dialog and again open a file dialog.
             def run_function(*args):
-                action.mgui = FunctionGui.from_callable(func)[0]
-                action.mgui._on_choose_clicked()
-                out = func(action.mgui.value)
-                f(out)
+                mgui = magicgui(func)
+                mgui.name = f"function-{id(func)}"
+                    
+                action.mgui = mgui
+                
+                callback = _temporal_function_gui_callback(self, mgui, action)
+                params = self._parameter_history.get(func.__name__, {})
+                path = "."
+                for key, value in params.items():
+                    getattr(action.mgui, key).value = value
+                    path = str(value)
+                
+                fdialog = action.mgui[0]
+                result = fdialog._show_file_dialog(
+                    fdialog.mode,
+                    caption=fdialog._btn_text,
+                    start_path=path,
+                    filter=fdialog.filter,
+                )
+                if result:
+                    mgui[0].value = result
+                    out = func(result)
+                    callback(out)
+                else:
+                    out = None
                 return out
             
         else:
@@ -294,8 +315,8 @@ class MenuGui(MacroMixin):
                     dock = viewer.window.add_dock_widget(mgui, name=dock_name)
                     dock.setFloating(True)
                 
-                f = _temporal_function_gui_callback(self, mgui, action)
-                mgui.called.connect(f)
+                callback = _temporal_function_gui_callback(self, mgui, action)
+                mgui.called.connect(callback)
                 action.mgui = mgui
                 return None
             
