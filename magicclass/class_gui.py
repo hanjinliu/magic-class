@@ -1,22 +1,16 @@
 from __future__ import annotations
-from functools import wraps
-from pathlib import Path
-import os
 from typing import Callable
-import inspect
-from qtpy.QtWidgets import QMenuBar
-from magicgui import magicgui
-from magicgui.widgets import Container, Label, LineEdit, FunctionGui, FileEdit
+from qtpy.QtWidgets import QMenuBar, QWidget
+from magicgui.widgets import Container, Label, LineEdit, FunctionGui
 from magicgui.widgets._bases import Widget, ValueWidget, ButtonWidget
 from magicgui.widgets._concrete import _LabeledWidget
 
-from .macro import Macro, Expr, Head, MacroMixin
-from .utils import (define_callback, iter_members, n_parameters, extract_tooltip, raise_error_in_msgbox,
-                    raise_error_msg, get_parameters, find_unique_name, show_mgui)
-from .widgets import PushButtonPlus, Separator, Logger, FrozenContainer
+from .macro import Expr, Head
+from .utils import define_callback, iter_members, extract_tooltip, get_parameters
+from .widgets import PushButtonPlus, FrozenContainer
 from .field import MagicField
-from .wrappers import upgrade_signature
 from .menu_gui import MenuGui
+from ._base import BaseGui
 
 # Check if napari is available so that layers are detectable from GUIs.
 try:
@@ -27,8 +21,9 @@ else:
     NAPARI_AVAILABLE = True
 
 
-class ClassGui(Container, MacroMixin):
+class ClassGui(Container, BaseGui):
     # This class is always inherited by @magicclass decorator.
+    _component_class = PushButtonPlus
     
     def __init__(self, 
                  layout: str = "vertical", 
@@ -39,26 +34,18 @@ class ClassGui(Container, MacroMixin):
                  labels: bool = True, 
                  name: str = None, 
                  single_call: bool = True):
+        BaseGui.__init__(self, close_on_run=close_on_run, popup=popup, single_call=single_call)
         Container.__init__(self, layout=layout, labels=labels, name=name)
-        MacroMixin.__init__(self)
         
         if parent is not None:
             self.parent = parent
             
-        self._close_on_run = close_on_run
-        self._popup = popup
-        self._single_call = single_call
-        
         self._menubar = None
         
         self._result_widget: LineEdit | None = None
         if result_widget:
             self._result_widget = LineEdit(gui_only=True, name="result")
             
-        self.native.setObjectName(self.__class__.__name__)
-        
-        # This attribute is used to determine whether self is nested.
-        self.__magicclass_parent__: None|ClassGui = None
     
     @property
     def parent_viewer(self) -> "napari.Viewer"|None:
@@ -107,12 +94,6 @@ class ClassGui(Container, MacroMixin):
         
         return None
     
-    def objectName(self) -> str:
-        """
-        This function makes the object name discoverable by napari's `viewer.window.add_dock_widget` function.
-        """        
-        return self.native.objectName()
-    
     def show(self, run: bool = False) -> None:
         """
         Show ClassGui. If any of the parent ClassGui is a dock widget in napari, then this will also show up
@@ -143,95 +124,6 @@ class ClassGui(Container, MacroMixin):
             
         return None
         
-    def create_macro(self, show:bool=False, symbol:str="ui") -> str:
-        """
-        Create executable Python scripts from the recorded macro object.
-
-        Parameters
-        ----------
-        show : bool, default is False
-            Launch a TextEdit window that shows recorded macro.
-        symbol : str, default is "ui"
-            Symbol of the instance.
-        """
-        out = super().create_macro(symbol=symbol)
-        
-        if show:
-            win = Logger(name="macro")
-            win.read_only = False
-            win.append(out.split("\n"))
-            viewer = self.parent_viewer
-            if viewer is not None:
-                dock = viewer.window.add_dock_widget(win, area="right", name="Macro",
-                                                     allowed_areas=["left", "right"])
-                dock.setFloating(self._popup)
-            else:
-                win.show()
-        return out
-    
-    @classmethod
-    def wraps(cls, method:Callable) -> Callable:
-        """
-        Wrap a parent method in a child magic-class.
-        
-        Basically, this function is used as a wrapper like below.
-        
-        >>> @magicclass
-        >>> class C:
-        >>>     @magicclass
-        >>>     class D: ...
-        >>>     @D.wraps
-        >>>     def func(self, ...): ...
-
-        Parameters
-        ----------
-        method : Callable
-            Parent method
-
-        Returns
-        -------
-        Callable
-            Same method as input, but has updated signature to hide the button.
-        """        
-        # Base function to get access to the original function
-        def _childmethod(self:cls, *args, **kwargs):
-            current_self = self.__magicclass_parent__
-            while not (hasattr(current_self, funcname) and 
-                        current_self.__class__.__name__ == clsname):
-                current_self = current_self.__magicclass_parent__
-            return getattr(current_self, funcname)(*args, **kwargs)
-        
-        # If method is defined as a member of class X, __qualname__ will be X.<method name>.
-        # We can know the namespace of the wrapped function with __qualname__.
-        if isinstance(method, FunctionGui):
-            clsname, funcname = method._function.__qualname__.split(".")
-            options = dict(call_button=method._call_button.text if method._call_button else None,
-                           layout=method.layout,
-                           labels=method.labels,
-                           auto_call=method._auto_call,
-                           result_widget=bool(method._result_widget)
-                           )
-            method = method._function
-            childmethod = magicgui(**options)(wraps(method)(_childmethod))
-            method = _copy_function(method)
-
-        else:
-            clsname, funcname = method.__qualname__.split(".")
-            childmethod = wraps(method)(_childmethod)
-        
-        # To avoid two buttons with same bound function being showed up
-        upgrade_signature(method, caller_options={"visible": False})
-        
-        if hasattr(cls, funcname):
-            # Sometimes we want to pre-define function to arrange the order of widgets.
-            # By updating __wrapped__ attribute we can overwrite the line number
-            childmethod.__wrapped__ = getattr(cls, funcname)
-        
-        if hasattr(method, "__doc__"):
-            childmethod.__doc__ = method.__doc__
-        setattr(cls, funcname, childmethod)
-        return method
-    
     def _convert_attributes_into_widgets(self):
         """
         This function is called in dynamically created __init__. Methods, fields and nested
@@ -333,130 +225,6 @@ class ClassGui(Container, MacroMixin):
         setattr(self, name, widget)
         return widget
     
-    def _create_widget_from_method(self, obj):
-        # Convert methods into push buttons
-        text = obj.__name__.replace("_", " ")
-        button = PushButtonPlus(name=obj.__name__, text=text, gui_only=True)
-
-        # Wrap function to deal with errors in a right way.
-        wrapper = raise_error_in_msgbox
-        
-        func = wrapper(obj, parent=self)
-        
-        # Signature must be updated like this. Otherwise, already wrapped member function
-        # will have signature with "self".
-        func.__signature__ = inspect.signature(obj)
-
-        # Prepare a button
-        button.tooltip = extract_tooltip(func)
-        if n_parameters(func) == 0:
-            # We don't want a dialog with a single widget "Run" to show up.
-            callback = _temporal_function_gui_callback(self, func, button)
-            def run_function(*args):
-                out = func()
-                callback(out)
-                return out
-            
-        elif n_parameters(func) == 1 and type(FunctionGui.from_callable(func)[0]) is FileEdit:
-            # We don't want to open a magicgui dialog and again open a file dialog.
-            def run_function(*args):
-                mgui = magicgui(func)
-                mgui.name = f"function-{id(func)}"
-                    
-                button.mgui = mgui
-                
-                callback = _temporal_function_gui_callback(self, mgui, button)
-                params = self._parameter_history.get(func.__name__, {})
-                path = "."
-                for key, value in params.items():
-                    getattr(button.mgui, key).value = value
-                    path = str(value)
-                
-                fdialog: FileEdit = button.mgui[0]
-                result = fdialog._show_file_dialog(
-                    fdialog.mode,
-                    caption=fdialog._btn_text,
-                    start_path=path,
-                    filter=fdialog.filter,
-                )
-                if result:
-                    mgui[0].value = result
-                    out = func(result)
-                    callback(out)
-                else:
-                    out = None
-                return out
-            
-        else:
-            def run_function(*args):
-                if button.mgui is not None:
-                    show_mgui(button.mgui)
-                    return None
-                try:
-                    mgui = magicgui(func)
-                    mgui.name = f"function-{id(func)}"
-                        
-                except Exception as e:
-                    msg = f"Exception was raised during building magicgui.\n{e.__class__.__name__}: {e}"
-                    raise_error_msg(self.native, msg=msg)
-                    raise e
-                
-                # Recover last inputs if exists.
-                params = self._parameter_history.get(func.__name__, {})
-                for key, value in params.items():
-                    try:
-                        getattr(mgui, key).value = value
-                    except ValueError:
-                        pass
-                
-                viewer = self.parent_viewer
-                
-                if self.parent:
-                    mgui.native.setParent(self.parent)
-                    
-                if viewer is None:
-                    # If napari.Viewer was not found, then open up a magicgui when button is pushed, and 
-                    # close it when function call is finished (if close_on_run==True).
-                    if self._popup:
-                        mgui.show()
-                    else:
-                        sep = Separator(orientation="horizontal", text=text)
-                        mgui.insert(0, sep)
-                        self.append(mgui)
-                    
-                    if self._close_on_run:
-                        @mgui.called.connect
-                        def _close(value):
-                            if not self._popup:
-                                self.remove(mgui.name)
-                            mgui.close()
-                            
-                else:
-                    # If napari.Viewer was found, then create a magicgui as a dock widget when button is 
-                    # pushed, and remove it when function call is finished (if close_on_run==True).
-                    viewer: napari.Viewer
-                    
-                    if self._close_on_run:
-                        @mgui.called.connect
-                        def _close(value):
-                            viewer.window.remove_dock_widget(mgui.parent)
-                            mgui.close()
-                            
-                    dock_name = find_unique_name(text, viewer)
-                    dock = viewer.window.add_dock_widget(mgui, name=dock_name)
-                    dock.setFloating(self._popup)
-                
-                callback = _temporal_function_gui_callback(self, mgui, button)
-                mgui.called.connect(callback)
-                button.mgui = mgui
-                return None
-            
-        button.changed.connect(run_function)
-        
-        # If button design is given, load the options.
-        button.from_options(obj)
-            
-        return button
     
 def _nested_function_gui_callback(cgui:ClassGui, fgui:FunctionGui):
     def _after_run(e):
@@ -479,36 +247,3 @@ def _nested_function_gui_callback(cgui:ClassGui, fgui:FunctionGui):
 
         cgui._recorded_macro.append(expr)
     return _after_run
-
-def _temporal_function_gui_callback(cgui: ClassGui, fgui: FunctionGui|Callable, button: PushButtonPlus):
-    def _after_run(value):
-        if isinstance(value, Exception):
-            return None
-        
-        if isinstance(fgui, FunctionGui):
-            inputs = get_parameters(fgui)
-            cgui._record_parameter_history(fgui._function.__name__, inputs)
-            _function = fgui._function
-        else:
-            inputs = {}
-            _function = fgui
-        
-        if len(button.changed.callbacks) > 1:
-            b = Expr(head=Head.getitem, args=["{x}", button.name])
-            ev = Expr(head=Head.getattr, args=[b, "changed"])
-            macro = Expr(head=Head.call, args=[ev])
-            cgui._recorded_macro.append(macro)
-        else:
-            cgui._record_macro(_function, (), inputs)
-        
-        if cgui._result_widget is not None:
-            cgui._result_widget.value = value
-            
-        button.mgui = None
-    return _after_run
-
-def _copy_function(f):
-    @wraps(f)
-    def out(self, *args, **kwargs):
-        return f(self, *args, **kwargs)
-    return out

@@ -109,7 +109,10 @@ def magicclass(class_: type|None = None,
     return wrapper if class_ is None else wrapper(class_)
 
 
-def magicmenu(class_: type = None, *, parent=None):
+def magicmenu(class_: type = None, *, parent=None, 
+              close_on_run: bool = True,
+              popup: bool = True,
+              single_call: bool = True):
     def wrapper(cls) -> MenuGui:
         if not isinstance(cls, type):
             raise TypeError(f"magicclass can only wrap classes, not {type(cls)}")
@@ -125,9 +128,6 @@ def magicmenu(class_: type = None, *, parent=None):
         
         newclass.__signature__ = sig
         newclass.__doc__ = doc
-        
-        # concatenate annotations
-        # newclass.__annotations__ = MenuGui.__annotations__ | annot
         
         # Mark the line number of class definition, which is important to determine the order
         # of widgets when magicclassees were nested. 
@@ -147,7 +147,8 @@ def magicmenu(class_: type = None, *, parent=None):
             macro_init = Expr.parse_init(cls, args, kwargs)
             global _DEPTH
             _DEPTH += 1
-            MenuGui.__init__(self, parent=parent)
+            MenuGui.__init__(self, parent=parent, close_on_run=close_on_run, popup=popup, 
+                             single_call=single_call)
             super(oldclass, self).__init__(*args, **kwargs)
             _DEPTH -= 1
             self._convert_attributes_into_widgets()

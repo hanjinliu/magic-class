@@ -2,7 +2,6 @@ from __future__ import annotations
 from enum import Enum, auto
 from collections import UserList, UserString
 from pathlib import Path
-from copy import deepcopy
 from typing import Callable, Iterable, Iterator, Any, overload
 import numpy as np
 
@@ -31,31 +30,6 @@ class Identifier(UserString):
     
     def as_annotation(self):
         return f"# {self}: {self.type}"
-        
-
-class Macro(UserList):
-    def append(self, __object:Expr):
-        if not isinstance(__object, Expr):
-            raise TypeError("Cannot append objects to Macro except for MacroExpr objecs.")
-        return super().append(__object)
-    
-    def __str__(self) -> str:
-        return "\n".join(map(str, self))
-    
-    @overload
-    def __getitem__(self, key: int | str) -> Expr: ...
-
-    @overload
-    def __getitem__(self, key: slice) -> Macro[Expr]: ...
-        
-    def __getitem__(self, key):
-        return super().__getitem__(key)
-    
-    def __iter__(self) -> Iterator[Expr]:
-        return super().__iter__()
-    
-    def __repr__(self):
-        return ",\n".join(repr(expr) for expr in self)
         
 class Head(Enum):
     init    = auto()
@@ -188,96 +162,27 @@ class Expr:
         if not yielded:
             yield self
 
-class MacroMixin:
-    def __init__(self):
-        self._recorded_macro: Macro[Expr] = Macro()
-        self._parameter_history: dict[str, dict[str, Any]] = {}
+        
+class Macro(UserList):
+    def append(self, __object:Expr):
+        if not isinstance(__object, Expr):
+            raise TypeError("Cannot append objects to Macro except for MacroExpr objecs.")
+        return super().append(__object)
     
-    def create_macro(self, symbol:str="ui") -> str:
-        """
-        Create executable Python scripts from the recorded macro object.
-
-        Parameters
-        ----------
-        symbol : str, default is "ui"
-            Symbol of the instance.
-        """
-        # Recursively build macro from nested magic-classes
-        macro = [(0, self._recorded_macro[0])] + self._collect_macro()
-
-        # Sort by the recorded order
-        sorted_macro = map(lambda x: str(x[1]), sorted(macro, key=lambda x: x[0]))
-        script = "\n".join(sorted_macro)
-        
-        # type annotation for the hard-to-record types
-        annot = []
-        idt_list = []
-        for expr in self._recorded_macro:
-            for idt in expr.iter_args():
-                if idt.valid or idt in idt_list:
-                    continue
-                idt_list.append(idt)
-                annot.append(idt.as_annotation())
-        
-        out = "\n".join(annot) + "\n" + script
-        out = out.format(x=symbol)
-        
-        return out
+    def __str__(self) -> str:
+        return "\n".join(map(str, self))
     
-    def _collect_macro(self, myname:str=None) -> list[tuple[int, Expr]]:
-        out = []
-        macro = deepcopy(self._recorded_macro)
-        
-        for expr in macro:
-            if expr.head == Head.init:
-                # nested magic-class construction is always invisible from the parent.
-                # We should not record something like 'ui.A = A()'.
-                continue
-            
-            if myname is not None:
-                for _expr in expr.iter_expr():
-                    # if _expr.head in (Head.value, Head.getattr, Head.getitem):
-                    if _expr.args[0] == "{x}":
-                        _expr.args[0] = Expr(Head.getattr, args=["{x}", myname])
-                
-            out.append((expr.number, expr))
-        
-        for name, attr in filter(lambda x: not x[0].startswith("__"), self.__dict__.items()):
-            # Collect all the macro from child magic-classes recursively
-            if not isinstance(attr, MacroMixin):
-                continue
-            out += attr._collect_macro(myname=name)
-        
-        return out
-    
-    def _record_macro(self, func:Callable, args:tuple, kwargs:dict[str, Any]) -> None:
-        """
-        Record a function call as a line of macro.
+    @overload
+    def __getitem__(self, key: int | str) -> Expr: ...
 
-        Parameters
-        ----------
-        func : str
-            Name of function.
-        args : tuple
-            Arguments.
-        kwargs : dict[str, Any]
-            Keyword arguments.
-        """        
-        macro = Expr.parse_method(func, args, kwargs)
-        self._recorded_macro.append(macro)
-        return None
+    @overload
+    def __getitem__(self, key: slice) -> Macro[Expr]: ...
+        
+    def __getitem__(self, key):
+        return super().__getitem__(key)
     
-    def _record_parameter_history(self, func:str, kwargs:dict[str, Any]) -> None:
-        """
-        Record parameter inputs to history for next call.
-
-        Parameters
-        ----------
-        func : str
-            Name of function.
-        kwargs : dict[str, Any]
-            Parameter inputs.
-        """        
-        kwargs = {k: v for k, v in kwargs.items() if not isinstance(v, np.ndarray)}
-        self._parameter_history.update({func: kwargs})
-        return None
+    def __iter__(self) -> Iterator[Expr]:
+        return super().__iter__()
+    
+    def __repr__(self):
+        return ",\n".join(repr(expr) for expr in self)
