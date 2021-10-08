@@ -27,5 +27,5 @@ class Steps:
         print(f"Result is {self.x}")
 
 if __name__ == "__main__":
-    s = Steps()
-    s.show()
+    ui = Steps()
+    ui.show()

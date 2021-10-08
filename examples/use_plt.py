@@ -27,5 +27,5 @@ class RandomPlot:
         self.fig.canvas.draw()
         
 if __name__ == "__main__":
-    pl = RandomPlot()
-    pl.show()
+    ui = RandomPlot()
+    ui.show()

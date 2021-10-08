@@ -24,5 +24,5 @@ class Function:
         return f"{s}-{i}"
 
 if __name__ == "__main__":
-    f = Function()
-    f.show()
+    ui = Function()
+    ui.show()

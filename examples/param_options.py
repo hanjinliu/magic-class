@@ -19,4 +19,5 @@ class Main:
         print(c)
 
 if __name__ == "__main__":
-    Main().show()
+    ui = Main()
+    ui.show()

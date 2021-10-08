@@ -29,5 +29,5 @@ class Calculator:
         return self.a / self.b
 
 if __name__ == "__main__":
-    c = Calculator()
-    c.show()
+    ui = Calculator()
+    ui.show()

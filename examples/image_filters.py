@@ -33,7 +33,7 @@ class Filters:
                   ndi.gaussian_filter(img, high_sigma)
 
 if __name__ == "__main__":
-    filt = Filters()
+    ui = Filters()
     viewer = napari.Viewer()
-    viewer.window.add_dock_widget(filt)
+    viewer.window.add_dock_widget(ui)
     napari.run()

@@ -63,5 +63,5 @@ class Main:
     
         
 if __name__ == "__main__":
-    s = Main()
-    s.show()
+    ui = Main()
+    ui.show()

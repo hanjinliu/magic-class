@@ -20,5 +20,5 @@ class Main:
         self.b = b
 
 if __name__ == "__main__":
-    m = Main()
-    m.show()
+    ui = Main()
+    ui.show()

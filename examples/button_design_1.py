@@ -13,5 +13,5 @@ class Main:
         self["change_color"].background_color = color_cycle[self.i]
 
 if __name__ == "__main__":
-    m = Main()
-    m.show()
+    ui = Main()
+    ui.show()

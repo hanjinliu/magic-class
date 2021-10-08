@@ -46,5 +46,5 @@ class Clustering2D:
         plt.show()
 
 if __name__ == "__main__":
-    cl = Clustering2D()
-    cl.show()
+    ui = Clustering2D()
+    ui.show()

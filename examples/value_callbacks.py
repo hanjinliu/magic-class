@@ -23,5 +23,5 @@ class Plot:
         self.canvas.draw()
 
 if __name__ == "__main__":
-    m = Plot()
-    m.show()
+    ui = Plot()
+    ui.show()
