@@ -5,10 +5,11 @@ import inspect
 import numpy as np
 from copy import deepcopy
 from magicgui import magicgui
-from magicgui.widgets import FunctionGui, FileEdit
+from magicgui.widgets import FunctionGui, FileEdit, Container
+from magicgui.widgets._bases import ValueWidget
 
 from .macro import Macro, Expr, Head
-from .utils import (n_parameters, extract_tooltip, raise_error_in_msgbox,
+from .utils import (define_callback, n_parameters, extract_tooltip, raise_error_in_msgbox,
                     raise_error_msg, get_parameters, find_unique_name, show_mgui)
 from .widgets import Separator, Logger
 from .field import MagicField
@@ -199,7 +200,7 @@ class BaseGui:
         return out
     
     @classmethod
-    def wraps(cls, method:Callable) -> Callable:
+    def wraps(cls, method: Callable) -> Callable:
         """
         Wrap a parent method in a child magic-class.
         
@@ -268,11 +269,55 @@ class BaseGui:
         """        
         raise NotImplementedError()
     
+    
     def _create_widget_from_field(self, name:str, fld:MagicField):
-        raise NotImplementedError()
+        cls = self.__class__
+        if fld.not_ready():
+            try:
+                fld.default_factory = cls.__annotations__[name]
+                if isinstance(fld.default_factory, str):
+                    # Sometimes annotation is not type but str. 
+                    from pydoc import locate
+                    fld.default_factory = locate(fld.default_factory)
+                    
+            except (AttributeError, KeyError):
+                pass
+            
+        widget = fld.to_widget()
+        widget.name = widget.name or name
+            
+        if isinstance(widget, (ValueWidget, Container)):
+            # If the field has callbacks, connect it to the newly generated widget.
+            for callback in fld.callbacks:
+                # funcname = callback.__name__
+                widget.changed.connect(define_callback(self, callback))
+                
+            if hasattr(widget, "value"):        
+                # By default, set value function will be connected to the widget.
+                @widget.changed.connect
+                def _set_value(event):
+                    if not event.source.enabled:
+                        # If widget is read only, it means that value is set in script (not manually).
+                        # Thus this event should not be recorded as a macro.
+                        return None
+                    value = event.source.value # TODO: fix after psygnal start to be used.
+                    self.changed(value=self)
+                    if isinstance(value, Exception):
+                        return None
+                    sub = Expr(head=Head.getattr, args=[name, "value"]) # name.value
+                    expr = Expr(head=Head.setattr, args=["{x}", sub, value]) # {x}.name.value = value
+                    
+                    last_expr = self._recorded_macro[-1]
+                    if last_expr.head == expr.head and last_expr.args[1].args[0] == expr.args[1].args[0]:
+                        self._recorded_macro[-1] = expr
+                    else:
+                        self._recorded_macro.append(expr)
+                    return None
+        
+        setattr(self, name, widget)
+        return widget
     
     def _create_widget_from_method(self, obj):
-        # Convert methods into push buttons
         text = obj.__name__.replace("_", " ")
         widget = self._component_class(name=obj.__name__, text=text, gui_only=True)
 
@@ -285,7 +330,7 @@ class BaseGui:
         # will have signature with "self".
         func.__signature__ = inspect.signature(obj)
 
-        # Prepare a button
+        # Prepare a button or action
         widget.tooltip = extract_tooltip(func)
         if n_parameters(func) == 0:
             # We don't want a dialog with a single widget "Run" to show up.

@@ -1,12 +1,12 @@
 from __future__ import annotations
 from typing import Callable
-from qtpy.QtWidgets import QMenuBar, QWidget
+from qtpy.QtWidgets import QMenuBar
 from magicgui.widgets import Container, Label, LineEdit, FunctionGui
-from magicgui.widgets._bases import Widget, ValueWidget, ButtonWidget
+from magicgui.widgets._bases import Widget, ButtonWidget
 from magicgui.widgets._concrete import _LabeledWidget
 
 from .macro import Expr, Head
-from .utils import define_callback, iter_members, extract_tooltip, get_parameters
+from .utils import iter_members, extract_tooltip, get_parameters
 from .widgets import PushButtonPlus, FrozenContainer
 from .field import MagicField
 from .menu_gui import MenuGui
@@ -177,53 +177,6 @@ class ClassGui(Container, BaseGui):
             self.append(self._result_widget)
             
         return None
-    
-    def _create_widget_from_field(self, name:str, fld:MagicField):
-        cls = self.__class__
-        if fld.not_ready():
-            try:
-                fld.default_factory = cls.__annotations__[name]
-                if isinstance(fld.default_factory, str):
-                    # Sometimes annotation is not type but str. 
-                    from pydoc import locate
-                    fld.default_factory = locate(fld.default_factory)
-                    
-            except (AttributeError, KeyError):
-                pass
-            
-        widget = fld.to_widget()
-        widget.name = widget.name or name
-            
-        if isinstance(widget, (ValueWidget, Container)):
-            # If the field has callbacks, connect it to the newly generated widget.
-            for callback in fld.callbacks:
-                # funcname = callback.__name__
-                widget.changed.connect(define_callback(self, callback))
-                
-            if hasattr(widget, "value"):        
-                # By default, set value function will be connected to the widget.
-                @widget.changed.connect
-                def _set_value(event):
-                    if not event.source.enabled:
-                        # If widget is read only, it means that value is set in script (not manually).
-                        # Thus this event should not be recorded as a macro.
-                        return None
-                    value = event.source.value # TODO: fix after psygnal start to be used.
-                    self.changed(value=self)
-                    if isinstance(value, Exception):
-                        return None
-                    sub = Expr(head=Head.getattr, args=[name, "value"]) # name.value
-                    expr = Expr(head=Head.setattr, args=["{x}", sub, value]) # {x}.name.value = value
-                    
-                    last_expr = self._recorded_macro[-1]
-                    if last_expr.head == expr.head and last_expr.args[1].args[0] == expr.args[1].args[0]:
-                        self._recorded_macro[-1] = expr
-                    else:
-                        self._recorded_macro.append(expr)
-                    return None
-        
-        setattr(self, name, widget)
-        return widget
     
     
 def _nested_function_gui_callback(cgui:ClassGui, fgui:FunctionGui):

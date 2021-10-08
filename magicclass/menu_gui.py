@@ -1,15 +1,13 @@
 from __future__ import annotations
 from typing import Callable
-from dataclasses import MISSING
 from magicgui.events import EventEmitter
 from qtpy.QtWidgets import QMenu, QAction
 from magicclass.field import MagicField
 
 from magicclass.widgets import Separator
 from ._base import BaseGui
-from .macro import Expr, Head
 
-from .utils import define_callback, iter_members
+from .utils import iter_members
 
 class Action:
     def __init__(self, *args, name=None, text=None, gui_only=True, **kwargs):
@@ -125,7 +123,11 @@ class MenuGui(BaseGui):
                 # convert class method into instance method
                 widget = getattr(self, name, None)
                             
-            if not name.startswith("_") and (callable(widget) or isinstance(widget, (MenuGui, Action, Separator))):
+            if (not name.startswith("_") 
+                and (callable(widget) 
+                     or isinstance(widget, (MenuGui, Action, Separator))
+                     )
+                ):
                 self.append(widget)
         
         return None
@@ -155,34 +157,5 @@ class MenuGui(BaseGui):
         elif isinstance(obj, Separator):
             self.native.addSeparator()
         else:
-            raise TypeError(type(obj))
+            raise TypeError(f"{type(obj)} is not supported.")
         
-    def _create_widget_from_field(self, name: str, fld: MagicField):
-        value = False if fld.default is MISSING else fld.default
-        text = fld.metadata.get("text", name)
-        action = self._component_class(name=name, text=text, parent=None, 
-                                       checkable=True, checked=value)
-        for callback in fld.callbacks:
-            callback = define_callback(self, callback)
-            action.changed.connect(callback)
-            action._callbacks.append(callback)
-            
-        @action.changed.connect
-        def _set_value(event):
-            if not event.source.enabled:
-                # If widget is read only, it means that value is set in script (not manually).
-                # Thus this event should not be recorded as a macro.
-                return None
-                    
-            sub = Expr(head=Head.getattr, args=[name, "value"]) # name.value
-            expr = Expr(head=Head.setattr, args=["{x}", sub, value]) # {x}.name.value = value
-            
-            last_expr = self._recorded_macro[-1]
-            if last_expr.head == expr.head and last_expr.args[1].args[0] == expr.args[1].args[0]:
-                self._recorded_macro[-1] = expr
-            else:
-                self._recorded_macro.append(expr)
-            return None
-        setattr(self, name, action)
-        return action
-    
