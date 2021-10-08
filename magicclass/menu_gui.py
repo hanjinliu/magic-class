@@ -82,6 +82,7 @@ class Action:
                 setattr(self, k, v)
         return None
 
+
 class MenuGui(BaseGui):
     _component_class = Action
     
@@ -94,8 +95,9 @@ class MenuGui(BaseGui):
         super().__init__(close_on_run=close_on_run, popup=popup, single_call=single_call)
         name = name or self.__class__.__name__
         self.native = QMenu(name, parent)
-        self._list: list[MenuGui|Action] = []
+        self.native.setToolTipsVisible(True)
         self.native.setObjectName(self.__class__.__name__)
+        self._list: list[MenuGui|Action] = []
         
     @property
     def parent(self):

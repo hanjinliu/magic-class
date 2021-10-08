@@ -15,14 +15,14 @@ _DEPTH = 2
 def magicclass(class_: type|None = None,
                *,
                layout: str = "vertical", 
-               parent = None, 
+               labels: bool = True, 
                close_on_run: bool = True,
                popup: bool = True,
-               labels: bool = True, 
                result_widget: bool = False, 
-               single_call: bool = True) -> ClassGui:
+               single_call: bool = True, 
+               parent = None) -> ClassGui:
     """
-    Decorator that can convert a Python class into a widget with push buttons.
+    Decorator that can convert a Python class into a widget.
     
     >>> @magicclass
     >>> class C:
@@ -36,14 +36,21 @@ def magicclass(class_: type|None = None,
         Class to be decorated.
     layout : str, "vertical" or "horizontal", default is "vertical"
         Layout of the main widget.
-    parent : magicgui.widgets._base.Widget, optional
-        Parent widget if exists.
+    labels : bool, default is True
+        If true, magicgui labels are shown.
     close_on_run : bool, default is True
         If True, magicgui created by every method will be deleted after the method is completed without
         exceptions, i.e. magicgui is more like a dialog.
     popup : bool, default is True
         If True, magicgui created by every method will be poped up, else they will be appended as a
         part of the main widget.
+    result_widget : bool, default is False
+        If true, FunctionGui-like results widget will be added.
+    single_call : bool, default is True 
+        If true, user cannot call the same function at the same time. If same button is clicked, the 
+        existing magicgui window is re-activated.
+    parent : magicgui.widgets._base.Widget, optional
+        Parent widget if exists.
     
     Returns
     -------
@@ -109,10 +116,41 @@ def magicclass(class_: type|None = None,
     return wrapper if class_ is None else wrapper(class_)
 
 
-def magicmenu(class_: type = None, *, parent=None, 
+def magicmenu(class_: type = None, 
+              *, 
               close_on_run: bool = True,
               popup: bool = True,
-              single_call: bool = True):
+              single_call: bool = True,
+              parent=None):
+    """
+    Decorator that can convert a Python class into a widget.
+    
+    >>> @magicclass
+    >>> class C:
+    >>>     ...
+    >>> c = C(a=0)
+    >>> c.show()
+            
+    Parameters
+    ----------
+    class_ : type, optional
+        Class to be decorated.
+    close_on_run : bool, default is True
+        If True, magicgui created by every method will be deleted after the method is completed without
+        exceptions, i.e. magicgui is more like a dialog.
+    popup : bool, default is True
+        If True, magicgui created by every method will be poped up, else they will be appended as a
+        part of the main widget.
+    single_call : bool, default is True 
+        If true, user cannot call the same function at the same time. If same button is clicked, the 
+        existing magicgui window is re-activated.
+    parent : magicgui.widgets._base.Widget, optional
+        Parent widget if exists.
+    
+    Returns
+    -------
+    Decorated class or decorator.
+    """    
     def wrapper(cls) -> MenuGui:
         if not isinstance(cls, type):
             raise TypeError(f"magicclass can only wrap classes, not {type(cls)}")
@@ -121,7 +159,6 @@ def magicmenu(class_: type = None, *, parent=None,
         # get class attributes first
         doc = cls.__doc__
         sig = inspect.signature(cls)
-        # annot = cls.__dict__.get("__annotations__", {})
         
         oldclass = type(cls.__name__ + _BASE_CLASS_SUFFIX, (cls,), {})
         newclass = type(cls.__name__, (MenuGui, oldclass), {})
