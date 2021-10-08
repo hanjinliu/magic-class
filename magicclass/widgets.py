@@ -6,7 +6,7 @@ from collections import defaultdict
 from PyQt5.QtWidgets import QWidget
 from qtpy.QtWidgets import (QFrame, QLabel, QMessageBox, QPushButton, QGridLayout, QTextEdit, 
                             QListWidget, QListWidgetItem, QAbstractItemView, QMenu, QAction)
-from qtpy.QtGui import QIcon, QFont
+from qtpy.QtGui import QIcon
 from qtpy.QtCore import QSize, Qt
 import matplotlib as mpl
 import matplotlib.pyplot as plt

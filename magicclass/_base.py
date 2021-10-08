@@ -151,8 +151,8 @@ class BaseGui:
             win.native.setFont(QFont("Consolas"))
             win.read_only = False
             for text in out.split("\n"):
-                self.native.append(text)
-            vbar = self.native.verticalScrollBar()
+                win.native.append(text)
+            vbar = win.native.verticalScrollBar()
             vbar.setValue(vbar.maximum())
             
             viewer = self.parent_viewer
