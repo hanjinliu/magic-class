@@ -4,14 +4,15 @@ from typing import Callable, Any
 import inspect
 import numpy as np
 from copy import deepcopy
+from qtpy.QtGui import QFont
 from magicgui import magicgui
-from magicgui.widgets import FunctionGui, FileEdit, Container
+from magicgui.widgets import FunctionGui, FileEdit, Container, TextEdit
 from magicgui.widgets._bases import ValueWidget
 
 from .macro import Macro, Expr, Head
 from .utils import (define_callback, n_parameters, extract_tooltip, raise_error_in_msgbox,
                     raise_error_msg, get_parameters, find_unique_name, show_mgui)
-from .widgets import Separator, Logger
+from .widgets import Separator
 from .field import MagicField
 from .wrappers import upgrade_signature
 
@@ -35,47 +36,6 @@ class BaseGui:
         self._result_widget = None
         self._single_call = single_call
     
-    def create_macro(self, show: bool = False, symbol: str = "ui") -> str:
-        """
-        Create executable Python scripts from the recorded macro object.
-
-        Parameters
-        ----------
-        symbol : str, default is "ui"
-            Symbol of the instance.
-        """
-        # Recursively build macro from nested magic-classes
-        macro = [(0, self._recorded_macro[0])] + self._collect_macro()
-
-        # Sort by the recorded order
-        sorted_macro = map(lambda x: str(x[1]), sorted(macro, key=lambda x: x[0]))
-        script = "\n".join(sorted_macro)
-        
-        # type annotation for the hard-to-record types
-        annot = []
-        idt_list = []
-        for expr in self._recorded_macro:
-            for idt in expr.iter_args():
-                if idt.valid or idt in idt_list:
-                    continue
-                idt_list.append(idt)
-                annot.append(idt.as_annotation())
-        
-        out = "\n".join(annot) + "\n" + script
-        out = out.format(x=symbol)
-        
-        if show:
-            win = Logger(name="macro")
-            win.read_only = False
-            win.append(out.split("\n"))
-            viewer = self.parent_viewer
-            if viewer is not None:
-                dock = viewer.window.add_dock_widget(win, area="right", name="Macro",
-                                                     allowed_areas=["left", "right"])
-                dock.setFloating(self._popup)
-            else:
-                win.show()
-        return out
     
     def _collect_macro(self, myname:str=None) -> list[tuple[int, Expr]]:
         out = []
@@ -187,9 +147,14 @@ class BaseGui:
         out = out.format(x=symbol)
         
         if show:
-            win = Logger(name="macro")
+            win = TextEdit(name="macro")
+            win.native.setFont(QFont("Consolas"))
             win.read_only = False
-            win.append(out.split("\n"))
+            for text in out.split("\n"):
+                self.native.append(text)
+            vbar = self.native.verticalScrollBar()
+            vbar.setValue(vbar.maximum())
+            
             viewer = self.parent_viewer
             if viewer is not None:
                 dock = viewer.window.add_dock_widget(win, area="right", name="Macro",

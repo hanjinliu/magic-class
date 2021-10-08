@@ -30,7 +30,7 @@ from magicgui.widgets import (
 )
 
 from .class_gui import ClassGui
-from .widgets import FrozenContainer, PushButtonPlus, Logger
+from .widgets import FrozenContainer, PushButtonPlus
 
 _CHARS = string.digits + string.ascii_lowercase + string.ascii_uppercase
 
@@ -116,7 +116,7 @@ class Tester(Container):
         self.niter = niter
         self.timeout = timeout
         super().__init__(labels=False)
-        self.log = Logger(name="Tester")
+        self.log = TextEdit(name="Tester")
         self.append(self.log)
         self.show()
         self.run()
@@ -139,10 +139,10 @@ class Tester(Container):
                 try:
                     x = _TEST_MAP[type(widget)](widget)
                 except Exception as e:
-                    self.log.append([f"{widget.name} Failed", f"{e}"])
+                    self.log.native.append([f"{widget.name} Failed", f"{e}"])
                 else:
                     if x:
-                        self.log.append(f"{x}")
+                        self.log.native.append(f"{x}")
                         count += 1
                         pbar.increment(dprogress)
                         

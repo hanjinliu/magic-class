@@ -5,8 +5,7 @@ import inspect
 from collections import defaultdict
 from PyQt5.QtWidgets import QWidget
 from qtpy.QtWidgets import (QFrame, QLabel, QMessageBox, QPushButton, QGridLayout, QTextEdit, 
-                            QListWidget, QListWidgetItem, QAbstractItemView, QMenu, QAction, 
-                            QColorDialog)
+                            QListWidget, QListWidgetItem, QAbstractItemView, QMenu, QAction)
 from qtpy.QtGui import QIcon, QFont
 from qtpy.QtCore import QSize, Qt
 import matplotlib as mpl
@@ -18,7 +17,7 @@ from magicgui.widgets._bases.value_widget import UNSET
 
 # Here's some widgets that doesn't seem needed for magicgui but commonly used in magicclass.
 
-__all__ = ["raise_error_msg", "Figure", "Separator", "ListEdit", "Logger", "ListWidget", 
+__all__ = ["raise_error_msg", "Figure", "Separator", "ListEdit", "ListWidget", 
            "CheckButton", "PushButtonPlus"]
 
 _V = TypeVar("_V")
@@ -87,9 +86,6 @@ class Separator(FrozenContainer):
         
         self.set_widget(main)
     
-class ColorDialog(Container):
-    def __init__(self, value):
-        ...
 
 class ListEdit(Container):
     def __init__(
@@ -233,25 +229,6 @@ class TupleEdit(Container):
             raise ValueError("Length of tuple does not match.")
         for w, v in zip(self, vals):
             w.value = v
-    
-class Logger(TextEdit):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.native: QTextEdit
-        self.read_only = True
-        self.native.setFont(QFont("Consolas"))
-        self.n_line = 0
-        
-    def append(self, text:str|Iterable[str]):
-        if isinstance(text, str):
-            self.native.append(text)
-            vbar = self.native.verticalScrollBar()
-            vbar.setValue(vbar.maximum())
-            self.n_line += 1
-        else:
-            for txt in text:
-                self.append(txt)
-        return None
 
 _Callback = Callable[[Any, int], Any]
     
