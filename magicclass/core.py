@@ -73,7 +73,8 @@ def magicclass(class_: type|None = None,
         newclass.__doc__ = doc
         
         # concatenate annotations
-        newclass.__annotations__ = ClassGui.__annotations__ | annot
+        newclass.__annotations__ = ClassGui.__annotations__.copy()
+        newclass.__annotations__.update(annot)
         
         # Mark the line number of class definition, which is important to determine the order
         # of widgets when magicclassees were nested. 

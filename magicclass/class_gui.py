@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Callable
+from typing import Callable, TYPE_CHECKING
 from qtpy.QtWidgets import QMenuBar
 from magicgui.widgets import Container, Label, LineEdit, FunctionGui
 from magicgui.widgets._bases import Widget, ButtonWidget
@@ -12,14 +12,11 @@ from .field import MagicField
 from .menu_gui import MenuGui
 from ._base import BaseGui
 
-# Check if napari is available so that layers are detectable from GUIs.
-try:
-    import napari
-except ImportError:
-    NAPARI_AVAILABLE = False
-else:
-    NAPARI_AVAILABLE = True
-
+if TYPE_CHECKING:
+    try:
+        import napari
+    except ImportError:
+        pass
 
 class ClassGui(Container, BaseGui):
     # This class is always inherited by @magicclass decorator.

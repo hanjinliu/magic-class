@@ -1,6 +1,6 @@
 # magic-class
 
-In [magicgui](https://github.com/napari/magicgui) you can make simple GUIs from functions. However, we usually have to create GUIs that are composed of several buttons, and each button is connected with a class method.
+In [magicgui](https://github.com/napari/magicgui) you can make simple GUIs from functions. However, we usually have to create GUIs that are composed of several buttons, and each button is connected with a class method. You may also want a menu bar on the top of the GUI, or sometimes a `magicgui` widget docked in it.
 
 Decorate your class with `@magicclass` and your can use the class both in GUI and from console!
 
@@ -22,6 +22,7 @@ git clone https://github.com/hanjinliu/magic-class
 ## Dependencies
 
 `magicgui` >= 0.2.11
+`numpy` >= 1.20.3
 
 ## Example
 
@@ -81,7 +82,7 @@ viewer = napari.Viewer()
 viewer.window.add_dock_widget(widget)
 ```
 
-Another outstanding feature of `magic-class` is its macro recorder functionalities. After you pushed "load" &rarr; "plot" you can make an executable Python script like below.
+Another outstanding feature of `magic-class` is its **macro recorder functionalities**. After you pushed "load" &rarr; "plot" you can make an executable Python script like below.
 
 ```python
 print(widget.create_macro())
@@ -92,5 +93,46 @@ ui = PlotData(title='Title')
 ui.load(path=r'...')
 ui.plot()
 ```
+
+To make nicer GUI, you can also nest `magic-class`:
+
+```python
+@magicclass
+class PlotData:
+    @magicclass
+    class Menu: ...
+```
+
+add menus with `@magicmenu` decorator:
+
+```python
+@magicclass
+class PlotData:
+    @magicmenu
+    class File: ...
+    @magicmenu
+    class Edit: ...
+```
+
+directly integrate `magicgui`:
+
+```python
+@magicclass
+class PlotData:
+    @magicgui
+    def load(self, path: Path): ...
+```
+
+set design on each button:
+
+```python
+from magicclass import set_design
+@magicclass
+class PlotData:
+    @set_design(text="💣")
+    def clear(self): ...
+```
+
+... and so on.
 
 Other examples are in the "examples" folder.

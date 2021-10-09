@@ -6,7 +6,7 @@ from functools import wraps
 from typing import Callable, Iterator, Any, TYPE_CHECKING
 from docstring_parser import parse
 from qtpy.QtWidgets import QApplication, QMessageBox
-from magicclass.field import MagicField
+from .field import MagicField
 
 if TYPE_CHECKING:
     from magicgui.widgets._bases import Widget

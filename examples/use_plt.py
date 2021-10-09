@@ -9,22 +9,22 @@ class RandomPlot:
     Plot random data or clear it.
     """    
     def __post_init__(self):
-        self.fig, self.ax = plt.subplots()
-        self.append(Figure(self.fig))
+        self.figure = Figure()
+        self.append(self.figure)
         
     def plot(self):
         """
         Plot random data.
         """        
-        self.ax.plot(np.random.random(100))
-        self.fig.canvas.draw()
+        self.figure.ax.plot(np.random.random(100))
+        self.figure.draw()
     
     def clear_plot(self):
         """
         Clear current data.
         """        
-        self.ax.cla()
-        self.fig.canvas.draw()
+        self.figure.ax.cla()
+        self.figure.draw()
         
 if __name__ == "__main__":
     ui = RandomPlot()

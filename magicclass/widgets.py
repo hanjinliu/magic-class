@@ -4,7 +4,7 @@ from typing import Any, Callable, Iterable, TypeVar, overload
 import inspect
 from collections import defaultdict
 from PyQt5.QtWidgets import QWidget
-from qtpy.QtWidgets import (QFrame, QLabel, QMessageBox, QPushButton, QGridLayout, QTextEdit, 
+from qtpy.QtWidgets import (QFrame, QLabel, QMessageBox, QPushButton, QGridLayout,
                             QListWidget, QListWidgetItem, QAbstractItemView, QMenu, QAction)
 from qtpy.QtGui import QIcon
 from qtpy.QtCore import QSize, Qt
@@ -12,7 +12,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvas
 from matplotlib.colors import to_rgb
-from magicgui.widgets import create_widget, Container, PushButton, TextEdit
+from magicgui.widgets import create_widget, Container, PushButton
 from magicgui.widgets._bases.value_widget import UNSET
 
 # Here's some widgets that doesn't seem needed for magicgui but commonly used in magicclass.

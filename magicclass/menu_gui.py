@@ -2,9 +2,9 @@ from __future__ import annotations
 from typing import Callable
 from magicgui.events import EventEmitter
 from qtpy.QtWidgets import QMenu, QAction
-from magicclass.field import MagicField
+from .field import MagicField
 
-from magicclass.widgets import Separator
+from .widgets import Separator
 from ._base import BaseGui
 
 from .utils import iter_members
