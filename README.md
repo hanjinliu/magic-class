@@ -11,7 +11,7 @@ Decorate your class with `@magicclass` and your can use the class both in GUI an
 - use pip
 
 ```
-pip install git+https://github.com/hanjinliu/magic-class
+pip install magic-class
 ```
 
 - from source
@@ -22,6 +22,7 @@ git clone https://github.com/hanjinliu/magic-class
 ## Dependencies
 
 `magicgui` >= 0.2.11
+
 `numpy` >= 1.20.3
 
 ## Example
