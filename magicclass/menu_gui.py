@@ -69,7 +69,7 @@ class Action:
     def visible(self, value: bool):
         self.native.setVisible(value)
     
-    def from_options(self, options:dict[str]|Callable):
+    def from_options(self, options: dict[str]|Callable):
         if callable(options):
             try:
                 options = options.__signature__.caller_options

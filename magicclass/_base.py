@@ -1,6 +1,6 @@
 from __future__ import annotations
 from functools import wraps
-from typing import Callable, Any
+from typing import Callable, Any, TYPE_CHECKING
 import inspect
 import numpy as np
 from copy import deepcopy
@@ -17,12 +17,11 @@ from .field import MagicField
 from .wrappers import upgrade_signature
 
 # Check if napari is available so that layers are detectable from GUIs.
-try:
-    import napari
-except ImportError:
-    NAPARI_AVAILABLE = False
-else:
-    NAPARI_AVAILABLE = True
+if TYPE_CHECKING:
+    try:
+        import napari
+    except ImportError:
+        pass
 
 class BaseGui:
     _component_class: type = None
@@ -189,7 +188,7 @@ class BaseGui:
             Same method as input, but has updated signature to hide the button.
         """        
         # Base function to get access to the original function
-        def _childmethod(self:cls, *args, **kwargs):
+        def _childmethod(self: cls, *args, **kwargs):
             current_self = self.__magicclass_parent__
             while not (hasattr(current_self, funcname) and 
                         current_self.__class__.__name__ == clsname):
@@ -209,7 +208,12 @@ class BaseGui:
             method = method._function
             childmethod = magicgui(**options)(wraps(method)(_childmethod))
             method = _copy_function(method)
-
+        
+        elif isinstance(method, type):
+            ins = method()
+            clsname, funcname = method.__qualname__.split(".")
+            childmethod = wraps(ins)(_childmethod)
+            method = ins
         else:
             clsname, funcname = method.__qualname__.split(".")
             childmethod = wraps(method)(_childmethod)
@@ -235,7 +239,7 @@ class BaseGui:
         raise NotImplementedError()
     
     
-    def _create_widget_from_field(self, name:str, fld:MagicField):
+    def _create_widget_from_field(self, name: str, fld: MagicField):
         cls = self.__class__
         if fld.not_ready():
             try:

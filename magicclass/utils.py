@@ -1,30 +1,30 @@
 from __future__ import annotations
 import inspect
-import types
 from dataclasses import _FIELDS
 from functools import wraps
 from typing import Callable, Iterator, Any, TYPE_CHECKING
 from docstring_parser import parse
 from qtpy.QtWidgets import QApplication, QMessageBox
-from .field import MagicField
+
 
 if TYPE_CHECKING:
     from magicgui.widgets._bases import Widget
     from magicgui.widgets import FunctionGui
     import napari
+    from .field import MagicField
 
 APPLICATION = None
 
-def iter_members(cls:type, exclude_prefix:str="__") -> Iterator[str]:
+def iter_members(cls: type, exclude_prefix: str = "__") -> Iterator[str]:
     """
     Iterate over all the members in the order of source code line number. 
     """    
     members = getmembers(cls, exclude_prefix)
     fields: dict[str, MagicField] = getattr(cls, _FIELDS, {})
 
-    return sorted(members + list(fields.items()), key=get_line_number)
+    return members + list(fields.items())
 
-def check_collision(cls0:type, cls1:type):
+def check_collision(cls0: type, cls1: type):
     """
     Check if two classes have name collisions.
     """    
@@ -34,44 +34,25 @@ def check_collision(cls0:type, cls1:type):
     if collision:
         raise AttributeError(f"Collision between {cls0.__name__} and {cls1.__name__}: {collision}")
 
-def get_line_number(member) -> int:
-    """
-    Get the line number of a member function or inner class in the source code.
-    """    
-    n = -1
-    obj = member[1]
-    if isinstance(obj, type):
-        n = getattr(obj, "_class_line_number", -1)
-    elif callable(obj):
-        try:
-            original_func = getattr(obj, "__wrapped__", obj)
-            n = original_func.__code__.co_firstlineno
-        except AttributeError:
-            pass
-    elif isinstance(obj, MagicField):
-        n = obj.lineno
 
-    return n
-
-def getmembers(object, exclude_prefix):
+def getmembers(object: type, exclude_prefix: str):
     """
     This function is identical to inspect.getmembers except for the order
     of the results. We have to sort the name in the order of line number.
     """    
-    if inspect.isclass(object):
-        mro = (object,) + inspect.getmro(object)
-    else:
-        mro = ()
+    mro = (object,) + inspect.getmro(object)
     results = []
     processed = set()
-    names = dir(object)
+    names: list[str] = list(object.__dict__.keys())
     try:
-        for base in object.__bases__:
-            for k, v in base.__dict__.items():
-                if isinstance(v, types.DynamicClassAttribute):
+        for base in mro:
+            for k in base.__dict__.keys():
+                if k not in names:
                     names.append(k)
+                    
     except AttributeError:
         pass
+    
     for key in names:
         try:
             value = getattr(object, key)
@@ -109,11 +90,11 @@ def extract_tooltip(obj: Any) -> str:
     else:
         return doc.short_description + "\n" + doc.long_description
 
-def raise_error_msg(parent, title:str="Error", msg:str="error"):
+def raise_error_msg(parent, title: str = "Error", msg: str = "error"):
     QMessageBox.critical(parent, title, msg, QMessageBox.Ok)
     return None
 
-def raise_error_in_msgbox(_func, parent:Widget=None):
+def raise_error_in_msgbox(_func, parent: Widget = None):
     @wraps(_func)
     def wrapped_func(*args, **kwargs):
         try:
@@ -132,7 +113,7 @@ def get_parameters(fgui: FunctionGui):
     
     return inputs
 
-def find_unique_name(name:str, viewer:"napari.Viewer"):
+def find_unique_name(name: str, viewer: "napari.Viewer"):
     orig_name = name
     i = 0
     while name in viewer.window._dock_widgets:

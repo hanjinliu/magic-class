@@ -6,11 +6,8 @@ from .class_gui import ClassGui
 from .menu_gui import MenuGui
 from .macro import Expr
 from .utils import check_collision, get_app
-from .field import current_location
 
 _BASE_CLASS_SUFFIX = "_Base"
-
-_DEPTH = 2
 
 def magicclass(class_: type|None = None,
                *,
@@ -76,29 +73,14 @@ def magicclass(class_: type|None = None,
         newclass.__annotations__ = ClassGui.__annotations__.copy()
         newclass.__annotations__.update(annot)
         
-        # Mark the line number of class definition, which is important to determine the order
-        # of widgets when magicclassees were nested. 
-        if hasattr(newclass, "_class_line_number"):
-            raise AttributeError(
-                f"Class {newclass.__name__} already has an attribute '_class_line_number'."
-                 "Thus it is incompatible with magic-class."
-                 )
-        if class_ is None:
-            newclass._class_line_number = current_location(_DEPTH)
-        else:
-            newclass._class_line_number = current_location(_DEPTH + 1)
-        
         @wraps(oldclass.__init__)
         def __init__(self, *args, **kwargs):
             app = get_app() # Without "app = " Jupyter freezes after closing the window!
             macro_init = Expr.parse_init(cls, args, kwargs)
-            global _DEPTH
-            _DEPTH += 1
             ClassGui.__init__(self, layout=layout, parent=parent, close_on_run=close_on_run, 
                               popup=popup, labels=labels, result_widget=result_widget,
                               name=cls.__name__, single_call=single_call)
             super(oldclass, self).__init__(*args, **kwargs)
-            _DEPTH -= 1
             self._convert_attributes_into_widgets()
             
             if hasattr(self, _POST_INIT_NAME) and not is_dataclass(cls):
@@ -166,29 +148,14 @@ def magicmenu(class_: type = None,
         
         newclass.__signature__ = sig
         newclass.__doc__ = doc
-        
-        # Mark the line number of class definition, which is important to determine the order
-        # of widgets when magicclassees were nested. 
-        if hasattr(newclass, "_class_line_number"):
-            raise AttributeError(
-                f"Class {newclass.__name__} already has an attribute '_class_line_number'."
-                 "Thus it is incompatible with magic-class."
-                 )
-        if class_ is None:
-            newclass._class_line_number = current_location(_DEPTH)
-        else:
-            newclass._class_line_number = current_location(_DEPTH + 1)
-        
+                
         @wraps(oldclass.__init__)
         def __init__(self, *args, **kwargs):
             app = get_app() # Without "app = " Jupyter freezes after closing the window!
             macro_init = Expr.parse_init(cls, args, kwargs)
-            global _DEPTH
-            _DEPTH += 1
             MenuGui.__init__(self, parent=parent, close_on_run=close_on_run, popup=popup, 
                              single_call=single_call)
             super(oldclass, self).__init__(*args, **kwargs)
-            _DEPTH -= 1
             self._convert_attributes_into_widgets()
             
             if hasattr(self, _POST_INIT_NAME) and not is_dataclass(cls):

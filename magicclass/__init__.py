@@ -1,4 +1,4 @@
-__version__ = "0.4.1"
+__version__ = "0.4.2dev0"
 
 from .core import magicclass, magicmenu
 from .tester import Tester

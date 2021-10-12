@@ -36,13 +36,18 @@ class FrozenContainer(Container):
     def insert(self, key, value):
         raise AttributeError(f"Cannot insert widget to {self.__class__.__name__}")
     
-    def set_widget(self, widget:QWidget):
+    def set_widget(self, widget: QWidget):
         self.native.layout().addWidget(widget)
         self.margins = (0, 0, 0, 0)
         return None
 
 class Figure(FrozenContainer):
-    def __init__(self, nrows:int=1, ncols:int=1, figsize=(4, 3), layout:str="vertical", **kwargs):
+    def __init__(self, 
+                 nrows: int = 1,
+                 ncols: int = 1,
+                 figsize: tuple[int, int] = (4, 3),
+                 layout: str = "vertical", 
+                 **kwargs):
         backend = mpl.get_backend()
         mpl.use("Agg")
         fig, _ = plt.subplots(nrows, ncols, figsize=figsize)

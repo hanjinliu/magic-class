@@ -71,6 +71,7 @@ class ClassGui(Container, BaseGui):
         
         elif isinstance(obj, FunctionGui):
             # magic-class has to know when the nested FunctionGui is called.
+            # BUG: only one FunctionGui will be added
             f = _nested_function_gui_callback(self, obj)
             obj.called.connect(f)
             
@@ -137,7 +138,7 @@ class ClassGui(Container, BaseGui):
         # Bind all the methods and annotations
         base_members = set(x[0] for x in iter_members(ClassGui))        
         for name, attr in filter(lambda x: x[0] not in base_members, iter_members(cls)):
-            if name in ("changed", "_widget"):
+            if name in ClassGui.__annotations__.keys():
                 continue
 
             if isinstance(attr, type):
@@ -176,7 +177,7 @@ class ClassGui(Container, BaseGui):
         return None
     
     
-def _nested_function_gui_callback(cgui:ClassGui, fgui:FunctionGui):
+def _nested_function_gui_callback(cgui: ClassGui, fgui: FunctionGui):
     def _after_run(e):
         value = e.value
         if isinstance(value, Exception):

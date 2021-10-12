@@ -1,10 +1,11 @@
 from __future__ import annotations
 import sys
 from typing import Any, TYPE_CHECKING, Callable
+import inspect
+from dataclasses import Field, MISSING
 from magicgui.widgets import create_widget
 from magicgui.widgets._bases import Widget
 from magicgui.widgets._bases.value_widget import UNSET
-from dataclasses import Field, MISSING
 
 if TYPE_CHECKING:
     from magicgui.widgets._protocols import WidgetProtocol
@@ -49,28 +50,34 @@ class MagicField(Field):
         value = UNSET if self.default is MISSING else self.default
         annotation = None if self.default_factory is MISSING else self.default_factory
         
-        if self.default_factory is not MISSING and issubclass(self.default_factory, Widget):
-            widget = self.default_factory(**self.metadata.get("options", {}))
+        if self.default_factory is not MISSING:
+            if issubclass(self.default_factory, Widget):
+                widget = self.default_factory(**self.metadata.get("options", {}))
+                widget.name = self.name
+                
+            else:
+                raise TypeError(f"Cannot convert type {self.default_factory} to a field.")
         else:
             widget = create_widget(value=value, 
                                    annotation=annotation,
                                    **self.metadata
                                    )
-        widget.name = self.name
+            widget.name = self.name
         return widget
         
-    def connect(self, func):
+    def connect(self, func: Callable):
+        if not callable(func):
+            raise TypeError("Cannot connect non-callable object")
         self.callbacks.append(func)
         return func
     
 
-def field(obj:Any=MISSING, *, name:str="", widget_type:str|type[WidgetProtocol]|None = None, 
-          options:WidgetOptions={}) -> MagicField:
+def field(obj: Any = MISSING, *, name: str = "", widget_type: str|type[WidgetProtocol]|None = None, 
+          options: WidgetOptions = {}) -> MagicField:
     """
     Make a MagicField object.
     
     >>> i = field(1)
-    >>> i:int = field()
     >>> i:int = field(widget_type="Slider")
 
     Parameters
@@ -98,13 +105,5 @@ def field(obj:Any=MISSING, *, name:str="", widget_type:str|type[WidgetProtocol]|
         f = MagicField(metadata=metadata)
     else:
         f = MagicField(default=obj, metadata=metadata)
-    f.lineno = current_location(2)
     f.name = name
     return f
-
-def current_location(depth:int=0):
-    """
-    Get the current location in the source code.
-    """    
-    frame = sys._getframe(depth)
-    return frame.f_lineno
