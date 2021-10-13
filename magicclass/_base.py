@@ -209,11 +209,6 @@ class BaseGui:
             childmethod = magicgui(**options)(wraps(method)(_childmethod))
             method = _copy_function(method)
         
-        elif isinstance(method, type):
-            ins = method()
-            clsname, funcname = method.__qualname__.split(".")
-            childmethod = wraps(ins)(_childmethod)
-            method = ins
         else:
             clsname, funcname = method.__qualname__.split(".")
             childmethod = wraps(method)(_childmethod)
@@ -298,7 +293,7 @@ class BaseGui:
         # Signature must be updated like this. Otherwise, already wrapped member function
         # will have signature with "self".
         func.__signature__ = inspect.signature(obj)
-
+        
         # Prepare a button or action
         widget.tooltip = extract_tooltip(func)
         if n_parameters(func) == 0:
@@ -429,7 +424,7 @@ def _temporal_function_gui_callback(bgui: BaseGui, fgui: FunctionGui|Callable, w
             inputs = {}
             _function = fgui
         
-        if len(widget.changed.callbacks) > 1:
+        if len(widget.changed.callbacks) > 2:
             b = Expr(head=Head.getitem, args=["{x}", widget.name])
             ev = Expr(head=Head.getattr, args=[b, "changed"])
             macro = Expr(head=Head.call, args=[ev])

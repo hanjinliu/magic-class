@@ -2,7 +2,7 @@ from __future__ import annotations
 from functools import wraps
 import inspect
 from dataclasses import is_dataclass, _POST_INIT_NAME
-from .class_gui import ClassGui
+from .class_gui import ClassGui, ScrollableClassGui, CollapsibleClassGui
 from .menu_gui import MenuGui
 from .macro import Expr
 from .utils import check_collision, get_app
@@ -17,7 +17,9 @@ def magicclass(class_: type|None = None,
                popup: bool = True,
                result_widget: bool = False, 
                single_call: bool = True, 
-               parent = None) -> ClassGui:
+               widget_type: str = None,
+               parent = None
+               ) -> ClassGui:
     """
     Decorator that can convert a Python class into a widget.
     
@@ -56,28 +58,36 @@ def magicclass(class_: type|None = None,
     def wrapper(cls) -> ClassGui:
         if not isinstance(cls, type):
             raise TypeError(f"magicclass can only wrap classes, not {type(cls)}")
+        if widget_type is None:
+            class_gui = ClassGui
+        elif widget_type == "scrollable":
+            class_gui = ScrollableClassGui
+        elif widget_type == "collapsible":
+            class_gui = CollapsibleClassGui
+        else:
+            raise ValueError(widget_type)
         
-        check_collision(cls, ClassGui)
+        check_collision(cls, class_gui)
         # get class attributes first
         doc = cls.__doc__
         sig = inspect.signature(cls)
         annot = cls.__dict__.get("__annotations__", {})
         
         oldclass = type(cls.__name__ + _BASE_CLASS_SUFFIX, (cls,), {})
-        newclass = type(cls.__name__, (ClassGui, oldclass), {})
+        newclass = type(cls.__name__, (class_gui, oldclass), {})
         
         newclass.__signature__ = sig
         newclass.__doc__ = doc
         
         # concatenate annotations
-        newclass.__annotations__ = ClassGui.__annotations__.copy()
+        newclass.__annotations__ = class_gui.__annotations__.copy()
         newclass.__annotations__.update(annot)
         
         @wraps(oldclass.__init__)
         def __init__(self, *args, **kwargs):
             app = get_app() # Without "app = " Jupyter freezes after closing the window!
             macro_init = Expr.parse_init(cls, args, kwargs)
-            ClassGui.__init__(self, layout=layout, parent=parent, close_on_run=close_on_run, 
+            class_gui.__init__(self, layout=layout, parent=parent, close_on_run=close_on_run, 
                               popup=popup, labels=labels, result_widget=result_widget,
                               name=cls.__name__, single_call=single_call)
             super(oldclass, self).__init__(*args, **kwargs)
@@ -88,6 +98,8 @@ def magicclass(class_: type|None = None,
             
             # Record class instance construction
             self._recorded_macro.append(macro_init)
+            if widget_type == "collapsible":
+                self.btn_text = self.__class__.__name__
 
         setattr(newclass, "__init__", __init__)
         
@@ -104,7 +116,8 @@ def magicmenu(class_: type = None,
               close_on_run: bool = True,
               popup: bool = True,
               single_call: bool = True,
-              parent=None):
+              parent=None
+              ):
     """
     Decorator that can convert a Python class into a widget.
     

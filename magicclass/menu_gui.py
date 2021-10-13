@@ -1,7 +1,8 @@
 from __future__ import annotations
 from typing import Callable
 from magicgui.events import EventEmitter
-from qtpy.QtWidgets import QMenu, QAction
+from qtpy.QtGui import QIcon
+from qtpy.QtWidgets import QMenu, QToolButton, QAction
 from .field import MagicField
 
 from .widgets import Separator
@@ -13,6 +14,7 @@ class Action:
     def __init__(self, *args, name=None, text=None, gui_only=True, **kwargs):
         self.native = QAction(*args, **kwargs)
         self.mgui = None
+        self._icon_path = None
         if text:
             self.text = text
         if name:
@@ -68,6 +70,15 @@ class Action:
     @visible.setter
     def visible(self, value: bool):
         self.native.setVisible(value)
+    
+    @property
+    def icon_path(self):
+        return self._icon_path
+    
+    @icon_path.setter
+    def icon_path(self, path:str):
+        icon = QIcon(path)
+        self.native.setIcon(icon)
     
     def from_options(self, options: dict[str]|Callable):
         if callable(options):
@@ -160,4 +171,3 @@ class MenuGui(BaseGui):
             self.native.addSeparator()
         else:
             raise TypeError(f"{type(obj)} is not supported.")
-        

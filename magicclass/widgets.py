@@ -3,8 +3,7 @@ from functools import wraps
 from typing import Any, Callable, Iterable, TypeVar, overload
 import inspect
 from collections import defaultdict
-from PyQt5.QtWidgets import QWidget
-from qtpy.QtWidgets import (QFrame, QLabel, QMessageBox, QPushButton, QGridLayout,
+from qtpy.QtWidgets import (QFrame, QLabel, QMessageBox, QPushButton, QGridLayout, QWidget,
                             QListWidget, QListWidgetItem, QAbstractItemView, QMenu, QAction)
 from qtpy.QtGui import QIcon
 from qtpy.QtCore import QSize, Qt
