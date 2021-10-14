@@ -1,14 +1,15 @@
 from __future__ import annotations
 from typing import Callable
 from magicgui.events import EventEmitter
+from magicgui.widgets._bases import ButtonWidget
 from qtpy.QtGui import QIcon
 from qtpy.QtWidgets import QMenu, QAction
-from .field import MagicField
 
+from .field import MagicField
 from .widgets import Separator
 from ._base import BaseGui
-
-from .utils import iter_members
+from .macro import Expr, Head
+from .utils import iter_members, define_callback
 
 class Action:
     def __init__(self, *args, name=None, text=None, gui_only=True, **kwargs):
@@ -113,6 +114,52 @@ class MenuGui(BaseGui):
     @property
     def parent(self):
         return self.native.parent()
+
+    def _create_widget_from_field(self, name: str, fld: MagicField):
+        cls = self.__class__
+        if fld.not_ready():
+            try:
+                fld.default_factory = cls.__annotations__[name]
+                if isinstance(fld.default_factory, str):
+                    # Sometimes annotation is not type but str. 
+                    from pydoc import locate
+                    fld.default_factory = locate(fld.default_factory)
+                    
+            except (AttributeError, KeyError):
+                pass
+            
+        widget = fld.to_widget()
+        widget.name = widget.name or name
+            
+        if isinstance(widget, ButtonWidget):
+            # If the field has callbacks, connect it to the newly generated widget.
+            widget = Action(checkable=True, checked=widget.value, text=widget.name, name=widget.name)
+            for callback in fld.callbacks:
+                # funcname = callback.__name__
+                widget.changed.connect(define_callback(self, callback))
+                     
+            # By default, set value function will be connected to the widget.
+            @widget.changed.connect
+            def _set_value(event):
+                if not event.source.enabled:
+                    # If widget is read only, it means that value is set in script (not manually).
+                    # Thus this event should not be recorded as a macro.
+                    return None
+                value = event.source.value # TODO: fix after psygnal start to be used.
+                if isinstance(value, Exception):
+                    return None
+                sub = Expr(head=Head.getattr, args=[name, "value"]) # name.value
+                expr = Expr(head=Head.setattr, args=["{x}", sub, value]) # {x}.name.value = value
+                
+                last_expr = self._recorded_macro[-1]
+                if last_expr.head == expr.head and last_expr.args[1].args[0] == expr.args[1].args[0]:
+                    self._recorded_macro[-1] = expr
+                else:
+                    self._recorded_macro.append(expr)
+                return None
+    
+        setattr(self, name, widget)
+        return widget
     
     def _convert_attributes_into_widgets(self):
         cls = self.__class__
@@ -134,13 +181,16 @@ class MenuGui(BaseGui):
                 
             else:
                 # convert class method into instance method
-                widget = getattr(self, name, None)
-                            
-            if (not name.startswith("_") 
-                and (callable(widget) 
-                     or isinstance(widget, (MenuGui, Action, Separator))
-                     )
-                ):
+                if not hasattr(attr, "__magicclass_wrapped__"):
+                    widget = getattr(self, name, None)
+                else:
+                    # If the method is redefined, the newer one should be used instead, while the
+                    # order of widgets should be follow the place of the older method.
+                    widget = attr.__magicclass_wrapped__.__get__(self)
+            
+            if name.startswith("_"):
+                continue
+            if callable(widget) or isinstance(widget, (MenuGui, Action, Separator)):
                 self.append(widget)
         
         return None
