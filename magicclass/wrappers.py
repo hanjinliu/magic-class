@@ -5,8 +5,8 @@ from magicgui.widgets._bases import ButtonWidget
 from .signature import upgrade_signature
 
 if TYPE_CHECKING:
-    from .class_gui import ClassGui
-    from magicclass.menu_gui import Action, MenuGui
+    from ._base import BaseGui
+    from magicclass.menu_gui import Action
 
 Color = Union[str, Iterable[float]]
 nStrings = Union[str, Iterable[str]]
@@ -70,8 +70,8 @@ def set_design(width:int=None, height:int=None, min_width:int=None, min_height:i
         return func
     return wrapper
 
-def click(enables:nStrings=None, disables:nStrings=None, enabled:bool=True,
-          shows:nStrings=None, hides:nStrings=None, visible:bool=True):
+def click(enables:nStrings=None, disables:nStrings=None, enabled: bool=True,
+          shows:nStrings=None, hides:nStrings=None, visible: bool=True):
     """
     Set options of push buttons related to button clickability.
     
@@ -122,7 +122,7 @@ def _assert_iterable(obj):
         obj = [obj]
     return obj
 
-def _iter_widgets(self: ClassGui|MenuGui, 
+def _iter_widgets(self: BaseGui, 
                   descriptors: Iterable[list[str]] | Iterable[Callable]
                   ) -> Iterator[ButtonWidget|Action]:
     for f in descriptors:

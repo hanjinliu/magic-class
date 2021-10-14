@@ -50,8 +50,10 @@ class Figure(FrozenContainer):
                  **kwargs):
         backend = mpl.get_backend()
         mpl.use("Agg")
-        fig, _ = plt.subplots(nrows, ncols, figsize=figsize)
-        mpl.use(backend)
+        try:
+            fig, _ = plt.subplots(nrows, ncols, figsize=figsize)
+        finally:
+            mpl.use(backend)
         
         super().__init__(layout=layout, labels=False, **kwargs)
         canvas = FigureCanvas(fig)
