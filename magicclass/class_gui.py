@@ -11,7 +11,7 @@ from .utils import iter_members, extract_tooltip, get_parameters, define_callbac
 from .widgets import PushButtonPlus, FrozenContainer
 from .field import MagicField
 from .menu_gui import MenuGui
-from .containers import ScrollableContainer, CollapsibleContainer, ToolBox
+from .containers import ButtonContainer, ScrollableContainer, CollapsibleContainer, ToolBox
 from ._base import BaseGui
 
 C = TypeVar("C")
@@ -103,7 +103,7 @@ class ClassGuiBase(BaseGui):
             elif isinstance(attr, FunctionGui):
                 widget = attr
                 p0 = list(signature(attr).parameters)[0]
-                getattr(widget, p0).bind(self)
+                getattr(widget, p0).bind(self) # set self to the first argument
                 
             else:
                 # convert class method into instance method
@@ -252,6 +252,9 @@ class ScrollableClassGui: pass
 
 @make_gui(CollapsibleContainer)
 class CollapsibleClassGui: pass
+
+@make_gui(ButtonContainer)
+class ButtonClassGui: pass
 
 @make_gui(ToolBox)
 class ToolBoxClassGui: pass

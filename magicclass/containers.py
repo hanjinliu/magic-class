@@ -68,6 +68,22 @@ class _ScrollableContainer(ContainerBase):
         self._qwidget.layout().addWidget(self._scroll_area)
         self._qwidget.layout().setContentsMargins(0, 0, 0, 0)
 
+class _ButtonContainer(ContainerBase):
+    def __init__(self, layout="vertical", btn_text=""):
+        QBaseWidget.__init__(self, QtW.QWidget)
+        if layout == "horizontal":
+            self._layout: QtW.QLayout = QtW.QHBoxLayout()
+        else:
+            self._layout = QtW.QVBoxLayout()
+        
+        self._qwidget = QtW.QPushButton()
+        self._inner_widget = QtW.QWidget()
+        self._inner_widget.setParent(self._qwidget, self._inner_widget.windowFlags())
+        self._inner_widget.setLayout(self._layout)
+        
+        self._qwidget.setText(btn_text)
+        self._qwidget.clicked.connect(lambda x: self._inner_widget.show())
+        
 class _CollapsibleContainer(ContainerBase):
     """
     Collapsible container.
@@ -123,6 +139,18 @@ class ToolBox(ContainerWidget):
 @wrap_container(base=_ScrollableContainer)
 class ScrollableContainer(ContainerWidget):
     """A scrollable Container Widget."""
+
+@wrap_container(base=_ButtonContainer)
+class ButtonContainer(ContainerWidget):
+    """A Container Widget hidden in a button."""    
+    
+    @property
+    def btn_text(self):
+        return self._widget._qwidget.text()
+
+    @btn_text.setter
+    def btn_text(self, text: str):
+        self._widget._qwidget.setText(text)
 
 @wrap_container(base=_CollapsibleContainer)
 class CollapsibleContainer(ContainerWidget):
