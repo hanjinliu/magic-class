@@ -11,13 +11,14 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvas
 from matplotlib.colors import to_rgb
-from magicgui.widgets import create_widget, Container, PushButton
+from magicgui.widgets import create_widget, Container, PushButton, __all__ as mgui_all
+from magicgui.widgets import * # to avoid importing both magicgui.widgets and magicclass.widgets
 from magicgui.widgets._bases.value_widget import UNSET
 
 # Here's some widgets that doesn't seem needed for magicgui but commonly used in magicclass.
 
 __all__ = ["raise_error_msg", "Figure", "Separator", "ListEdit", "ListWidget", 
-           "CheckButton", "PushButtonPlus"]
+           "CheckButton", "PushButtonPlus"] + mgui_all
 
 _V = TypeVar("_V")
 

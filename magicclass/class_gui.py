@@ -1,5 +1,6 @@
 from __future__ import annotations
 from typing import TypeVar
+from inspect import signature
 from qtpy.QtWidgets import QMenuBar
 from magicgui.widgets import Container, MainWindow,Label, LineEdit, FunctionGui
 from magicgui.widgets._bases import Widget, ButtonWidget, ValueWidget
@@ -20,6 +21,7 @@ class ClassGuiBase(BaseGui):
     _component_class = PushButtonPlus
     _container_widget: type[C]
     _widget: C
+    _result_widget: LineEdit
     
     def _create_widget_from_field(self, name: str, fld: MagicField):
         cls = self.__class__
@@ -87,7 +89,7 @@ class ClassGuiBase(BaseGui):
         for name, attr in filter(lambda x: x[0] not in base_members, iter_members(cls)):
             if name in ClassGuiBase.__annotations__.keys():
                 continue
-                
+            
             # First make sure none of them is type object nor MagicField object.
             if isinstance(attr, type):
                 # Nested magic-class
@@ -97,11 +99,17 @@ class ClassGuiBase(BaseGui):
             elif isinstance(attr, MagicField):
                 # If MagicField is given by field() function.
                 widget = self._create_widget_from_field(name, attr)
+            
+            elif isinstance(attr, FunctionGui):
+                widget = attr
+                p0 = list(signature(attr).parameters)[0]
+                getattr(widget, p0).bind(self)
                 
             else:
                 # convert class method into instance method
                 if not hasattr(attr, "__magicclass_wrapped__"):
                     widget = getattr(self, name, None)
+                    
                 else:
                     # If the method is redefined, the newer one should be used instead, while the
                     # order of widgets should be follow the place of the older method.
@@ -118,16 +126,22 @@ class ClassGuiBase(BaseGui):
             
             elif isinstance(widget, Widget) or callable(widget):
                 if (not isinstance(widget, Widget)) and callable(widget):
+                    # Methods (FunctionGui not included)
                     widget = self._create_widget_from_method(widget)
                 
                 elif isinstance(widget, ClassGuiBase):
+                    # magic-class has to know its parent
                     widget.__magicclass_parent__ = self
 
                 elif isinstance(widget, FunctionGui):
                     # magic-class has to know when the nested FunctionGui is called.
-                    # BUG: only one FunctionGui will be added
                     f = _nested_function_gui_callback(self, widget)
                     widget.called.connect(f)
+                    
+                else:
+                    widget.name = widget.name or name
+                    if hasattr(widget, "text"):
+                        widget.text = widget.text or name
                 
                 # Now, "widget" is a Widget object.
                 
