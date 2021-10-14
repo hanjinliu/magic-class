@@ -216,14 +216,15 @@ class BaseGui:
         # To avoid two buttons with same bound function being showed up
         upgrade_signature(method, caller_options={"visible": False})
         
-        if hasattr(cls, funcname):
-            # Sometimes we want to pre-define function to arrange the order of widgets.
-            # By updating __wrapped__ attribute we can overwrite the line number
-            childmethod.__wrapped__ = getattr(cls, funcname)
-        
         if hasattr(method, "__doc__"):
             childmethod.__doc__ = method.__doc__
-        setattr(cls, funcname, childmethod)
+        
+        if hasattr(cls, funcname):
+            # Sometimes we want to pre-define function to arrange the order of widgets.
+            getattr(cls, funcname).__wrapped__ = childmethod
+            getattr(cls, funcname).__magicclass_wrapped__ = childmethod
+        else:
+            setattr(cls, funcname, childmethod)
         return method
     
     def _convert_attributes_into_widgets(self):
@@ -296,6 +297,7 @@ class BaseGui:
         
         # Prepare a button or action
         widget.tooltip = extract_tooltip(func)
+        
         if n_parameters(func) == 0:
             # We don't want a dialog with a single widget "Run" to show up.
             callback = _temporal_function_gui_callback(self, func, widget)
@@ -304,12 +306,11 @@ class BaseGui:
                 callback(out)
                 return out
             
-        elif n_parameters(func) == 1 and type(FunctionGui.from_callable(func)[0]) is FileEdit:
+        elif n_parameters(func) == 1 and type(FunctionGui.from_callable(func)[-1]) is FileEdit:
             # We don't want to open a magicgui dialog and again open a file dialog.
             def run_function(*args):
                 mgui = magicgui(func)
                 mgui.name = f"function-{id(func)}"
-                    
                 widget.mgui = mgui
                 
                 callback = _temporal_function_gui_callback(self, mgui, widget)
@@ -319,7 +320,7 @@ class BaseGui:
                     getattr(widget.mgui, key).value = value
                     path = str(value)
                 
-                fdialog: FileEdit = widget.mgui[0]
+                fdialog: FileEdit = widget.mgui[-1]
                 result = fdialog._show_file_dialog(
                     fdialog.mode,
                     caption=fdialog._btn_text,
@@ -327,7 +328,7 @@ class BaseGui:
                     filter=fdialog.filter,
                 )
                 if result:
-                    mgui[0].value = result
+                    mgui[-1].value = result
                     out = func(result)
                     callback(out)
                 else:
@@ -424,6 +425,10 @@ def _temporal_function_gui_callback(bgui: BaseGui, fgui: FunctionGui|Callable, w
             inputs = {}
             _function = fgui
         
+        # Standard button will be connected with two callbacks.
+        # 1. Build FunctionGui
+        # 2. Emit value changed signal.
+        # But if there are more, they also have to be called.
         if len(widget.changed.callbacks) > 2:
             b = Expr(head=Head.getitem, args=["{x}", widget.name])
             ev = Expr(head=Head.getattr, args=[b, "changed"])

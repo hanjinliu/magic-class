@@ -2,7 +2,7 @@ from __future__ import annotations
 from functools import wraps
 import inspect
 from dataclasses import is_dataclass, _POST_INIT_NAME
-from .class_gui import ClassGui, ScrollableClassGui, CollapsibleClassGui
+from .class_gui import ClassGui, MainWindowClassGui, ScrollableClassGui, CollapsibleClassGui, ToolBoxClassGui
 from .menu_gui import MenuGui
 from .macro import Expr
 from .utils import check_collision, get_app
@@ -48,6 +48,8 @@ def magicclass(class_: type|None = None,
     single_call : bool, default is True 
         If true, user cannot call the same function at the same time. If same button is clicked, the 
         existing magicgui window is re-activated.
+    widget_type : str, optional
+        Widget type of container. Currently "scrollable" and "collapsible" are available.
     parent : magicgui.widgets._base.Widget, optional
         Parent widget if exists.
     
@@ -64,6 +66,10 @@ def magicclass(class_: type|None = None,
             class_gui = ScrollableClassGui
         elif widget_type == "collapsible":
             class_gui = CollapsibleClassGui
+        elif widget_type == "toolbox":
+            class_gui = ToolBoxClassGui
+        elif widget_type == "mainwindow":
+            class_gui = MainWindowClassGui
         else:
             raise ValueError(widget_type)
         

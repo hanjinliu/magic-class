@@ -1,9 +1,8 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
-import warnings
-from qtpy.QtWidgets import QMenuBar, QToolBar
-from magicgui.widgets import Container, Label, LineEdit, FunctionGui
-from magicgui.widgets._bases import Widget, ButtonWidget
+from qtpy.QtWidgets import QMenuBar
+from magicgui.widgets import Container, MainWindow,Label, LineEdit, FunctionGui
+from magicgui.widgets._bases import Widget, ButtonWidget, ValueWidget
 from magicgui.widgets._concrete import _LabeledWidget
 
 from .macro import Expr, Head
@@ -11,7 +10,7 @@ from .utils import iter_members, extract_tooltip, get_parameters
 from .widgets import PushButtonPlus, FrozenContainer
 from .field import MagicField
 from .menu_gui import MenuGui
-from .containers import ScrollableContainer, CollapsibleContainer
+from .containers import ScrollableContainer, CollapsibleContainer, ToolBox
 from ._base import BaseGui
 
 if TYPE_CHECKING:
@@ -23,30 +22,7 @@ if TYPE_CHECKING:
 class ClassGuiBase(BaseGui):
     # This class is always inherited by @magicclass decorator.
     _component_class = PushButtonPlus
-    
-    def __init__(self, 
-                 layout: str = "vertical", 
-                 parent = None, 
-                 close_on_run: bool = True,
-                 popup: bool = True, 
-                 result_widget: bool = False,
-                 labels: bool = True, 
-                 name: str = None, 
-                 single_call: bool = True
-                 ):
-        Container.__init__(self, layout=layout, labels=labels, name=name)
-        BaseGui.__init__(self, close_on_run=close_on_run, popup=popup, single_call=single_call)
-        
-        if parent is not None:
-            self.parent = parent
-            
-        self._menubar: QMenuBar | None = None
-        self._toolbar: QToolBar | None = None
-        
-        self._result_widget: LineEdit | None = None
-        if result_widget:
-            self._result_widget = LineEdit(gui_only=True, name="result")
-            
+    _container_widget: type
     
     @property
     def parent_viewer(self) -> "napari.Viewer"|None:
@@ -106,11 +82,13 @@ class ClassGuiBase(BaseGui):
             self.append(lbl)
         
         # Bind all the methods and annotations
-        base_members = set(x[0] for x in iter_members(Container)) | set(x[0] for x in iter_members(ClassGuiBase))
+        base_members = set(x[0] for x in iter_members(self._container_widget)) 
+        base_members |= set(x[0] for x in iter_members(ClassGuiBase))
         for name, attr in filter(lambda x: x[0] not in base_members, iter_members(cls)):
             if name in ClassGuiBase.__annotations__.keys() or name.startswith("_"):
                 continue
-            
+                
+            # First make sure none of them is type object nor MagicField object.
             if isinstance(attr, type):
                 # Nested magic-class
                 widget = attr()
@@ -122,7 +100,13 @@ class ClassGuiBase(BaseGui):
                 
             else:
                 # convert class method into instance method
-                widget = getattr(self, name, None)
+                
+                if not hasattr(attr, "__magicclass_wrapped__"):
+                    widget = getattr(self, name, None)
+                else:
+                    # If the method is redefined, the newer one should be used instead, while the
+                    # order of widgets should be follow the place of the older method.
+                    widget = attr.__magicclass_wrapped__.__get__(self)
             
             if isinstance(widget, MenuGui):
                 widget.__magicclass_parent__ = self
@@ -140,33 +124,44 @@ class ClassGuiBase(BaseGui):
                 elif isinstance(widget, ClassGuiBase):
                     widget.__magicclass_parent__ = self
                     widget.margins = (0, 0, 0, 0)
-            
-                if isinstance(widget, FunctionGui):
+
+                elif isinstance(widget, FunctionGui):
                     # magic-class has to know when the nested FunctionGui is called.
                     # BUG: only one FunctionGui will be added
                     f = _nested_function_gui_callback(self, widget)
                     widget.called.connect(f)
+                
+                # Now, "widget" is a Widget object.
                     
-                elif self.labels and not isinstance(widget, (_LabeledWidget, ButtonWidget, ClassGuiBase, 
-                                                        FrozenContainer, Label)):
-                    widget = _LabeledWidget(widget)
-                    widget.label_changed.connect(self._unify_label_widths)
-            
-                try:
-                    self.append(widget)
-                except Exception as e:
-                    msg = f"Could not convert {attr!r} into a widget due to {type(e)}: {e}"
-                    warnings.warn(msg, UserWarning)
+                _hide_labels = (_LabeledWidget, ButtonWidget, ClassGuiBase, FrozenContainer, Label)
+                
+                if isinstance(widget, ValueWidget):
+                    widget.changed.connect(lambda x: self.changed(value=self))
+                _widget = widget
+
+                if self.labels:
+                    if not isinstance(widget, _hide_labels):
+                        _widget = _LabeledWidget(widget)
+                        widget.label_changed.connect(self._unify_label_widths)
+
+                key = len(self)
+                self._list.insert(key, widget)
+                self._widget._mgui_insert_widget(key, _widget)
                 
         # Append result widget in the bottom
         if self._result_widget is not None:
             self._result_widget.enabled = False
             self.append(self._result_widget)
-            
+        
+        self._unify_label_widths()
+
         return None
 
-def make_gui(container):
-    def wrapper(cls):
+def make_gui(container: type):
+    """
+    Make a ClassGui class from a Container widget.
+    """    
+    def wrapper(cls: ClassGuiBase):
         cls = type(cls.__name__, (container, ClassGuiBase), {})
         def __init__(self, 
                     layout: str = "vertical", 
@@ -178,6 +173,7 @@ def make_gui(container):
                     name: str = None, 
                     single_call: bool = True
                     ):
+
             container.__init__(self, layout=layout, labels=labels, name=name)
             BaseGui.__init__(self, close_on_run=close_on_run, popup=popup, single_call=single_call)
             
@@ -185,12 +181,12 @@ def make_gui(container):
                 self.parent = parent
                 
             self._menubar = None
-            self._toolbar = None
             
             self._result_widget = None
             if result_widget:
                 self._result_widget = LineEdit(gui_only=True, name="result")
         cls.__init__ = __init__
+        cls._container_widget = container
         return cls
     return wrapper
 
@@ -204,7 +200,13 @@ class ScrollableClassGui: pass
 @make_gui(CollapsibleContainer)
 class CollapsibleClassGui: pass
 
-def _nested_function_gui_callback(cgui: ClassGui, fgui: FunctionGui):
+@make_gui(ToolBox)
+class ToolBoxClassGui: pass
+
+@make_gui(MainWindow)
+class MainWindowClassGui: pass
+
+def _nested_function_gui_callback(cgui: ClassGuiBase, fgui: FunctionGui):
     def _after_run(e):
         value = e.value
         if isinstance(value, Exception):
