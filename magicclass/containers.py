@@ -14,10 +14,10 @@ from magicgui.backends._qtpy.widgets import (
 
 C = TypeVar("C")
 
-def wrap_container(
-    cls: type[C] = None,
-    base: type = None
-) -> Callable | type[C]:
+def wrap_container(cls: type[C] = None, base: type = None) -> Callable | type[C]:
+    """
+    Provide a wrapper for a new container widget with a new protocol.
+    """    
     def wrapper(cls) -> type[Widget]:
         def __init__(self, **kwargs):
             app = use_app()
@@ -132,7 +132,6 @@ class CollapsibleContainer(ContainerWidget):
     def btn_text(self):
         return self._widget._expand_btn.text()
 
-    
     @btn_text.setter
     def btn_text(self, text: str):
         self._widget._expand_btn.setText(text)

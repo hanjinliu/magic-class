@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import Callable
 from magicgui.events import EventEmitter
 from qtpy.QtGui import QIcon
-from qtpy.QtWidgets import QMenu, QToolButton, QAction
+from qtpy.QtWidgets import QMenu, QAction
 from .field import MagicField
 
 from .widgets import Separator

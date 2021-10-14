@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, TypeVar
 from qtpy.QtWidgets import QMenuBar
 from magicgui.widgets import Container, MainWindow,Label, LineEdit, FunctionGui
 from magicgui.widgets._bases import Widget, ButtonWidget, ValueWidget
@@ -18,56 +18,15 @@ if TYPE_CHECKING:
         import napari
     except ImportError:
         pass
+
+C = TypeVar("C")
     
 class ClassGuiBase(BaseGui):
     # This class is always inherited by @magicclass decorator.
     _component_class = PushButtonPlus
-    _container_widget: type
-    
-    @property
-    def parent_viewer(self) -> "napari.Viewer"|None:
-        """
-        Return napari.Viewer if self is a dock widget of a viewer.
-        """
-        current_self = self
-        while hasattr(current_self, "__magicclass_parent__") and current_self.__magicclass_parent__:
-            current_self = current_self.__magicclass_parent__
-        try:
-            viewer = current_self.parent.parent().qt_viewer.viewer
-        except AttributeError:
-            viewer = None
-        return viewer
-    
-    def show(self, run: bool = False) -> None:
-        """
-        Show ClassGui. If any of the parent ClassGui is a dock widget in napari, then this will also show up
-        as a dock widget (floating if popup=True).
-        """        
-        current_self = self
-        while hasattr(current_self, "__magicclass_parent__") and current_self.__magicclass_parent__:
-            current_self = current_self.__magicclass_parent__
-        
-        viewer = current_self.parent_viewer
-        if viewer is not None:
-            dock = viewer.window.add_dock_widget(self, area="right", allowed_areas=["left", "right"])
-            dock.setFloating(current_self._popup)
-        else:
-            super().show(run=run)
-            self.native.activateWindow()
-        return None
-    
-    def close(self):
-        viewer = self.parent_viewer
-        if viewer is not None:
-            try:
-                viewer.window.remove_dock_widget(self.parent)
-            except Exception:
-                pass
+    _container_widget: type[C]
+    _widget: C
             
-        super().close()
-            
-        return None
-        
     def _convert_attributes_into_widgets(self):
         """
         This function is called in dynamically created __init__. Methods, fields and nested
@@ -185,7 +144,42 @@ def make_gui(container: type):
             self._result_widget = None
             if result_widget:
                 self._result_widget = LineEdit(gui_only=True, name="result")
+            
+            self.native.setObjectName(self.__class__.__name__)
+        
+        def show(self, run: bool = False) -> None:
+            """
+            Show ClassGui. If any of the parent ClassGui is a dock widget in napari, then this will also show up
+            as a dock widget (floating if popup=True).
+            """        
+            current_self = self
+            while hasattr(current_self, "__magicclass_parent__") and current_self.__magicclass_parent__:
+                current_self = current_self.__magicclass_parent__
+            
+            viewer = current_self.parent_viewer
+            if viewer is not None:
+                dock = viewer.window.add_dock_widget(self, area="right", allowed_areas=["left", "right"])
+                dock.setFloating(current_self._popup)
+            else:
+                container.show(self, run=run)
+                self.native.activateWindow()
+            return None
+        
+        def close(self):
+            viewer = self.parent_viewer
+            if viewer is not None:
+                try:
+                    viewer.window.remove_dock_widget(self.parent)
+                except Exception:
+                    pass
+                
+            container.close(self)
+                
+            return None
+        
         cls.__init__ = __init__
+        cls.show = show
+        cls.close = close
         cls._container_widget = container
         return cls
     return wrapper
