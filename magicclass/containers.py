@@ -1,15 +1,18 @@
 from __future__ import annotations
 from typing import TypeVar, Callable
+import warnings
 from qtpy import QtWidgets as QtW
-from qtpy.QtCore import Qt, Slot
+from qtpy.QtCore import Qt
 from magicgui.application import use_app
 from magicgui.widgets._bases import Widget
 from magicgui.widgets._concrete import merge_super_sigs, ContainerWidget
-from magicgui.backends._qtpy.widgets import QBaseWidget, Container as ContainerBase
+from magicgui.backends._qtpy.widgets import (
+    QBaseWidget, 
+    Container as ContainerBase,
+    MainWindow as MainWindowBase
+    )
 
 C = TypeVar("C")
-_ICON_EXP = "▼ "
-_ICON_CLP = "▲ "
 
 def wrap_container(
     cls: type[C] = None,
@@ -28,6 +31,24 @@ def wrap_container(
 
     return wrapper(cls) if cls else wrapper
 
+
+class _ToolBox(ContainerBase):
+    _qwidget: QtW.QToolBox
+    def __init__(self, layout="vertical"):
+        QBaseWidget.__init__(self, QtW.QToolBox)
+        
+        if layout == "horizontal":
+            msg = "Horizontal ToolBox is not implemented yet."
+            warnings.warn(msg, UserWarning)
+            
+        self._layout = self._qwidget.layout()
+    
+    def _mgui_insert_widget(self, position: int, widget: Widget):
+        if isinstance(widget.native, QtW.QWidget) and isinstance(widget, ContainerBase):
+            self._qwidget.insertItem(position, widget.native, widget.name)
+        else:
+            self._layout.insertWidget(position, widget.native)
+
 class _ScrollableContainer(ContainerBase):
     def __init__(self, layout="vertical"):
         QBaseWidget.__init__(self, QtW.QWidget)
@@ -45,9 +66,13 @@ class _ScrollableContainer(ContainerBase):
         
         self._qwidget.setLayout(QtW.QHBoxLayout())
         self._qwidget.layout().addWidget(self._scroll_area)
-        self._qwidget.setContentsMargins(0, 0, 0, 0)
+        self._qwidget.layout().setContentsMargins(0, 0, 0, 0)
 
 class _CollapsibleContainer(ContainerBase):
+    """
+    Collapsible container.
+    See https://stackoverflow.com/questions/32476006/how-to-make-an-expandable-collapsable-section-widget-in-qt.
+    """    
     def __init__(self, layout="vertical", btn_text=""):
         QBaseWidget.__init__(self, QtW.QWidget)
         if layout == "horizontal":
@@ -59,32 +84,41 @@ class _CollapsibleContainer(ContainerBase):
         self._qwidget.setLayout(QtW.QVBoxLayout())
         self._inner_widget = QtW.QWidget(self._qwidget)
         self._inner_widget.setLayout(self._layout)
-        self._btn_text = btn_text
         
-        self._expanded = True
         self._qwidget.layout().setSpacing(0)
-        self._qwidget.layout().setContentsMargins(0, 0, 0, 0)
-        self._expand_btn = QtW.QPushButton(_ICON_EXP + self._btn_text, self._qwidget)
-        self._expand_btn.setStyleSheet("text-align:left;")
+        self._layout.setContentsMargins(0, 0, 0, 0)
+        
+        self._expand_btn = QtW.QToolButton(self._qwidget)
+        self._expand_btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        self._expand_btn.setArrowType(Qt.ArrowType.RightArrow)
+        self._expand_btn.setText(btn_text)
+        self._expand_btn.setCheckable(True)
+        self._expand_btn.setChecked(False)
+        self._expand_btn.setStyleSheet("QToolButton { border: none; text-align: left;}")
         self._expand_btn.clicked.connect(self._mgui_change_expand)
+        self._mgui_change_expand()
+        
         self._qwidget.layout().addWidget(self._expand_btn, 0, Qt.AlignTop)
         self._qwidget.layout().addWidget(self._inner_widget, 0, Qt.AlignTop)
-        self._qwidget.setContentsMargins(0, 0, 0, 0)
+        self._qwidget.layout().setContentsMargins(0, 0, 0, 0)
     
     def _mgui_change_expand(self):
-        if self._expanded:
+        if not self._expand_btn.isChecked():
             self._inner_widget.setMaximumHeight(0)
-            self._qwidget.setFixedHeight(self._expand_btn.height())
-            self._qwidget.setMaximumHeight(self._expand_btn.height())
-            self._expanded = False
-            self._expand_btn.setText(_ICON_CLP + self._btn_text)
+            w = self._qwidget.width()
+            h = max(self._expand_btn.sizeHint().height(), 30)
+            self._qwidget.resize(w, h)
+            self._expand_btn.setArrowType(Qt.ArrowType.RightArrow)
         else:
             h = self._inner_widget.sizeHint().height()
+            w = self._qwidget.width()
             self._inner_widget.setMaximumHeight(h)
-            self._qwidget.setMaximumHeight(self._expand_btn.height() + h)
-            self._qwidget.setFixedHeight(self._expand_btn.height() + h)
-            self._expanded = True
-            self._expand_btn.setText(_ICON_EXP + self._btn_text)
+            self._qwidget.resize(w, self._expand_btn.sizeHint().height() + h)
+            self._expand_btn.setArrowType(Qt.ArrowType.DownArrow)
+
+@wrap_container(base=_ToolBox)
+class ToolBox(ContainerWidget):
+    """A Tool box Widget."""
 
 @wrap_container(base=_ScrollableContainer)
 class ScrollableContainer(ContainerWidget):
@@ -96,13 +130,9 @@ class CollapsibleContainer(ContainerWidget):
     
     @property
     def btn_text(self):
-        return self._widget._btn_text
+        return self._widget._expand_btn.text()
+
     
     @btn_text.setter
     def btn_text(self, text: str):
-        self._widget._btn_text = text
-        if self._widget._expanded:
-            self._widget._expand_btn.setText(_ICON_EXP + text)
-        else:
-            self._widget._expand_btn.setText(_ICON_CLP + text)
-            
+        self._widget._expand_btn.setText(text)
