@@ -10,7 +10,7 @@ class Plot:
     class parameters:
         a = field(int, options=options)
         b = field(int, options=options)
-    canvas = field(Figure)
+    canvas = Figure()
 
     @parameters.a.connect
     @parameters.b.connect

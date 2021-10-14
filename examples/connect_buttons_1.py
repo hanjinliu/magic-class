@@ -34,7 +34,7 @@ class Main:
             self.canvas.draw()
             self.y = y
         
-        canvas = field(Figure)
+        canvas = Figure()
     
     @magicclass
     class fitter:
@@ -44,7 +44,7 @@ class Main:
         mean = field(float)
         sd = field(float, options={"min": 1, "step": 0.5})
         def fit(self): ... # pre-definition
-        canvas = field(Figure)
+        canvas = Figure()
     
     # Here namespace is "Main" (although button widget will appear in "fitter"!!)
     @fitter.wraps

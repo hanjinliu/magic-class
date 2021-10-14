@@ -1,5 +1,4 @@
 from __future__ import annotations
-import sys
 from typing import Any, TYPE_CHECKING, Callable
 import inspect
 from dataclasses import Field, MISSING
@@ -21,7 +20,6 @@ class MagicField(Field):
             default = metadata.pop("value", MISSING)
         super().__init__(default=default, default_factory=default_factory, init=True, repr=True, 
                          hash=False, compare=False, metadata=metadata)
-        self.lineno = -1
         self.callbacks:list[Callable] = []
     
     def __repr__(self):
@@ -50,19 +48,14 @@ class MagicField(Field):
         value = UNSET if self.default is MISSING else self.default
         annotation = None if self.default_factory is MISSING else self.default_factory
         
-        if self.default_factory is not MISSING:
-            if issubclass(self.default_factory, Widget):
-                widget = self.default_factory(**self.metadata.get("options", {}))
-                widget.name = self.name
-                
-            else:
-                raise TypeError(f"Cannot convert type {self.default_factory} to a field.")
+        if self.default_factory is not MISSING and issubclass(self.default_factory, Widget):
+            widget = self.default_factory(**self.metadata.get("options", {}))
         else:
             widget = create_widget(value=value, 
                                    annotation=annotation,
                                    **self.metadata
                                    )
-            widget.name = self.name
+        widget.name = self.name
         return widget
         
     def connect(self, func: Callable):

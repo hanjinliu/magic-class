@@ -236,51 +236,7 @@ class BaseGui:
     
     
     def _create_widget_from_field(self, name: str, fld: MagicField):
-        cls = self.__class__
-        if fld.not_ready():
-            try:
-                fld.default_factory = cls.__annotations__[name]
-                if isinstance(fld.default_factory, str):
-                    # Sometimes annotation is not type but str. 
-                    from pydoc import locate
-                    fld.default_factory = locate(fld.default_factory)
-                    
-            except (AttributeError, KeyError):
-                pass
-            
-        widget = fld.to_widget()
-        widget.name = widget.name or name
-            
-        if isinstance(widget, (ValueWidget, Container)):
-            # If the field has callbacks, connect it to the newly generated widget.
-            for callback in fld.callbacks:
-                # funcname = callback.__name__
-                widget.changed.connect(define_callback(self, callback))
-                
-            if hasattr(widget, "value"):        
-                # By default, set value function will be connected to the widget.
-                @widget.changed.connect
-                def _set_value(event):
-                    if not event.source.enabled:
-                        # If widget is read only, it means that value is set in script (not manually).
-                        # Thus this event should not be recorded as a macro.
-                        return None
-                    value = event.source.value # TODO: fix after psygnal start to be used.
-                    self.changed(value=self)
-                    if isinstance(value, Exception):
-                        return None
-                    sub = Expr(head=Head.getattr, args=[name, "value"]) # name.value
-                    expr = Expr(head=Head.setattr, args=["{x}", sub, value]) # {x}.name.value = value
-                    
-                    last_expr = self._recorded_macro[-1]
-                    if last_expr.head == expr.head and last_expr.args[1].args[0] == expr.args[1].args[0]:
-                        self._recorded_macro[-1] = expr
-                    else:
-                        self._recorded_macro.append(expr)
-                    return None
-        
-        setattr(self, name, widget)
-        return widget
+        raise NotImplementedError()
     
     def _create_widget_from_method(self, obj):
         text = obj.__name__.replace("_", " ")
@@ -306,7 +262,7 @@ class BaseGui:
                 callback(out)
                 return out
             
-        elif n_parameters(func) == 1 and type(FunctionGui.from_callable(func)[-1]) is FileEdit:
+        elif n_parameters(func) == 1 and type(FunctionGui.from_callable(func)[0]) is FileEdit:
             # We don't want to open a magicgui dialog and again open a file dialog.
             def run_function(*args):
                 mgui = magicgui(func)
@@ -320,7 +276,7 @@ class BaseGui:
                     getattr(widget.mgui, key).value = value
                     path = str(value)
                 
-                fdialog: FileEdit = widget.mgui[-1]
+                fdialog: FileEdit = widget.mgui[0]
                 result = fdialog._show_file_dialog(
                     fdialog.mode,
                     caption=fdialog._btn_text,
@@ -328,7 +284,7 @@ class BaseGui:
                     filter=fdialog.filter,
                 )
                 if result:
-                    mgui[-1].value = result
+                    fdialog.value = result
                     out = func(result)
                     callback(out)
                 else:

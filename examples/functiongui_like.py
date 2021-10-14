@@ -15,7 +15,7 @@ class Function:
     slider = field(name="slider", widget_type="Slider")
     
     # Or widget class
-    sep = field(Separator)
+    sep = Separator()
     
     @set_design(text="Run")
     def call_button(self):
