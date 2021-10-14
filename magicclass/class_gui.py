@@ -1,23 +1,17 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, TypeVar
+from typing import TypeVar
 from qtpy.QtWidgets import QMenuBar
 from magicgui.widgets import Container, MainWindow,Label, LineEdit, FunctionGui
 from magicgui.widgets._bases import Widget, ButtonWidget, ValueWidget
 from magicgui.widgets._concrete import _LabeledWidget
 
 from .macro import Expr, Head
-from .utils import iter_members, extract_tooltip, get_parameters
+from .utils import iter_members, extract_tooltip, get_parameters, define_callback
 from .widgets import PushButtonPlus, FrozenContainer
 from .field import MagicField
 from .menu_gui import MenuGui
 from .containers import ScrollableContainer, CollapsibleContainer, ToolBox
 from ._base import BaseGui
-
-if TYPE_CHECKING:
-    try:
-        import napari
-    except ImportError:
-        pass
 
 C = TypeVar("C")
     
@@ -26,7 +20,54 @@ class ClassGuiBase(BaseGui):
     _component_class = PushButtonPlus
     _container_widget: type[C]
     _widget: C
+    
+    def _create_widget_from_field(self, name: str, fld: MagicField):
+        cls = self.__class__
+        if fld.not_ready():
+            try:
+                fld.default_factory = cls.__annotations__[name]
+                if isinstance(fld.default_factory, str):
+                    # Sometimes annotation is not type but str. 
+                    from pydoc import locate
+                    fld.default_factory = locate(fld.default_factory)
+                    
+            except (AttributeError, KeyError):
+                pass
             
+        widget = fld.to_widget()
+        widget.name = widget.name or name
+            
+        if isinstance(widget, (ValueWidget, Container)):
+            # If the field has callbacks, connect it to the newly generated widget.
+            for callback in fld.callbacks:
+                # funcname = callback.__name__
+                widget.changed.connect(define_callback(self, callback))
+                
+            if hasattr(widget, "value"):        
+                # By default, set value function will be connected to the widget.
+                @widget.changed.connect
+                def _set_value(event):
+                    if not event.source.enabled:
+                        # If widget is read only, it means that value is set in script (not manually).
+                        # Thus this event should not be recorded as a macro.
+                        return None
+                    value = event.source.value # TODO: fix after psygnal start to be used.
+                    self.changed(value=self)
+                    if isinstance(value, Exception):
+                        return None
+                    sub = Expr(head=Head.getattr, args=[name, "value"]) # name.value
+                    expr = Expr(head=Head.setattr, args=["{x}", sub, value]) # {x}.name.value = value
+                    
+                    last_expr = self._recorded_macro[-1]
+                    if last_expr.head == expr.head and last_expr.args[1].args[0] == expr.args[1].args[0]:
+                        self._recorded_macro[-1] = expr
+                    else:
+                        self._recorded_macro.append(expr)
+                    return None
+        
+        setattr(self, name, widget)
+        return widget
+    
     def _convert_attributes_into_widgets(self):
         """
         This function is called in dynamically created __init__. Methods, fields and nested
@@ -44,7 +85,7 @@ class ClassGuiBase(BaseGui):
         base_members = set(x[0] for x in iter_members(self._container_widget)) 
         base_members |= set(x[0] for x in iter_members(ClassGuiBase))
         for name, attr in filter(lambda x: x[0] not in base_members, iter_members(cls)):
-            if name in ClassGuiBase.__annotations__.keys() or name.startswith("_"):
+            if name in ClassGuiBase.__annotations__.keys():
                 continue
                 
             # First make sure none of them is type object nor MagicField object.
@@ -59,7 +100,6 @@ class ClassGuiBase(BaseGui):
                 
             else:
                 # convert class method into instance method
-                
                 if not hasattr(attr, "__magicclass_wrapped__"):
                     widget = getattr(self, name, None)
                 else:
@@ -82,7 +122,6 @@ class ClassGuiBase(BaseGui):
                 
                 elif isinstance(widget, ClassGuiBase):
                     widget.__magicclass_parent__ = self
-                    widget.margins = (0, 0, 0, 0)
 
                 elif isinstance(widget, FunctionGui):
                     # magic-class has to know when the nested FunctionGui is called.
@@ -91,11 +130,17 @@ class ClassGuiBase(BaseGui):
                     widget.called.connect(f)
                 
                 # Now, "widget" is a Widget object.
-                    
+                
+                if name.startswith("_"):
+                    continue
+                
                 _hide_labels = (_LabeledWidget, ButtonWidget, ClassGuiBase, FrozenContainer, Label)
                 
                 if isinstance(widget, ValueWidget):
                     widget.changed.connect(lambda x: self.changed(value=self))
+                if isinstance(widget, ClassGuiBase):
+                    widget.margins = (0, 0, 0, 0)
+                    
                 _widget = widget
 
                 if self.labels:
