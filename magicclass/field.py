@@ -14,13 +14,13 @@ class MagicField(Field):
     """
     Field class for magicgui construction. This object is compatible with dataclass.
     """    
-    def __init__(self, default=MISSING, default_factory=MISSING, metadata:dict={}):
+    def __init__(self, default=MISSING, default_factory=MISSING, metadata: dict = {}):
         metadata = metadata.copy()
         if default is MISSING:
             default = metadata.pop("value", MISSING)
         super().__init__(default=default, default_factory=default_factory, init=True, repr=True, 
                          hash=False, compare=False, metadata=metadata)
-        self.callbacks:list[Callable] = []
+        self.callbacks: list[Callable] = []
     
     def __repr__(self):
         return "Magic" + super().__repr__()
@@ -59,19 +59,26 @@ class MagicField(Field):
         return widget
         
     def connect(self, func: Callable):
+        """
+        Set callback function to "ready to connect" state.
+        """        
         if not callable(func):
             raise TypeError("Cannot connect non-callable object")
         self.callbacks.append(func)
         return func
     
 
-def field(obj: Any = MISSING, *, name: str = "", widget_type: str|type[WidgetProtocol]|None = None, 
-          options: WidgetOptions = {}) -> MagicField:
+def field(obj: Any = MISSING,
+          *, 
+          name: str = "", 
+          widget_type: str | type[WidgetProtocol] | None = None, 
+          options: WidgetOptions = {}
+          ) -> MagicField:
     """
     Make a MagicField object.
     
     >>> i = field(1)
-    >>> i:int = field(widget_type="Slider")
+    >>> i = field(widget_type="Slider")
 
     Parameters
     ----------

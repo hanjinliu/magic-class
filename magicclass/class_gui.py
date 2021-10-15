@@ -116,6 +116,7 @@ class ClassGuiBase(BaseGui):
             else:
                 # convert class method into instance method
                 if not hasattr(attr, "__magicclass_wrapped__"):
+                    # Standard method definition
                     widget = getattr(self, name, None)
                     
                 else:
@@ -124,6 +125,7 @@ class ClassGuiBase(BaseGui):
                     widget = attr.__magicclass_wrapped__.__get__(self)
             
             if isinstance(widget, MenuGui):
+                # Add menubar to container
                 widget.__magicclass_parent__ = self
                 if self._menubar is None:
                     self._menubar = QMenuBar(parent=self.native)
@@ -152,7 +154,8 @@ class ClassGuiBase(BaseGui):
                     if hasattr(widget, "text") and not widget.text:
                         widget.text = widget.name
                 
-                # Now, "widget" is a Widget object.
+                # Now, "widget" is a Widget object. Add widget in a way similar to "insert" method 
+                # of Container.
                 
                 if name.startswith("_"):
                     continue
@@ -213,7 +216,7 @@ def make_gui(container: type, no_margin: bool = True):
             if result_widget:
                 self._result_widget = LineEdit(gui_only=True, name="result")
             
-            self.native.setObjectName(self.__class__.__name__)
+            self.native.setObjectName(self.name)
         
         def show(self, run: bool = False) -> None:
             """
