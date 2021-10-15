@@ -44,10 +44,29 @@ class _ToolBox(ContainerBase):
         self._layout = self._qwidget.layout()
     
     def _mgui_insert_widget(self, position: int, widget: Widget):
-        if isinstance(widget.native, QtW.QWidget) and isinstance(widget, ContainerBase):
+        if isinstance(widget.native, QtW.QWidget) and isinstance(widget, ContainerWidget):
             self._qwidget.insertItem(position, widget.native, widget.name)
         else:
             self._layout.insertWidget(position, widget.native)
+
+class _Tab(ContainerBase):
+    _qwidget: QtW.QTabWidget
+    def __init__(self, layout="vertical"):
+        QBaseWidget.__init__(self, QtW.QTabWidget)
+        
+        if layout == "horizontal":
+            self._layout: QtW.QLayout = QtW.QHBoxLayout()
+        else:
+            self._layout = QtW.QVBoxLayout()
+            
+        self._qwidget.setLayout(self._layout)
+    
+    def _mgui_insert_widget(self, position: int, widget: Widget):
+        if isinstance(widget.native, QtW.QWidget) and isinstance(widget, ContainerWidget):
+            self._qwidget.insertTab(position, widget.native, widget.name)
+        else:
+            self._layout.insertWidget(position, widget.native)
+    
 
 class _ScrollableContainer(ContainerBase):
     def __init__(self, layout="vertical"):
@@ -135,6 +154,10 @@ class _CollapsibleContainer(ContainerBase):
 @wrap_container(base=_ToolBox)
 class ToolBox(ContainerWidget):
     """A Tool box Widget."""
+
+@wrap_container(base=_Tab)
+class TabbedContainer(ContainerWidget):
+    """A tab categorized Container Widget."""
 
 @wrap_container(base=_ScrollableContainer)
 class ScrollableContainer(ContainerWidget):

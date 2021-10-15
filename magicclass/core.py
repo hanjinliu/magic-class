@@ -8,7 +8,9 @@ from .class_gui import (
     ScrollableClassGui,
     ButtonClassGui, 
     CollapsibleClassGui,
-    ToolBoxClassGui)
+    TabbedClassGui,
+    ToolBoxClassGui,
+    )
 from .menu_gui import MenuGui
 from .macro import Expr
 from .utils import check_collision, get_app
@@ -76,6 +78,8 @@ def magicclass(class_: type|None = None,
             class_gui = ButtonClassGui
         elif widget_type == "toolbox":
             class_gui = ToolBoxClassGui
+        elif widget_type == "tabbed":
+            class_gui = TabbedClassGui
         elif widget_type == "mainwindow":
             class_gui = MainWindowClassGui
         else:
@@ -103,7 +107,7 @@ def magicclass(class_: type|None = None,
             macro_init = Expr.parse_init(cls, args, kwargs)
             class_gui.__init__(self, layout=layout, parent=parent, close_on_run=close_on_run, 
                               popup=popup, labels=labels, result_widget=result_widget,
-                              name=cls.__name__, single_call=single_call)
+                              name=cls.__name__.replace("_", " "), single_call=single_call)
             super(oldclass, self).__init__(*args, **kwargs)
             self._convert_attributes_into_widgets()
             

@@ -11,7 +11,7 @@ from .utils import iter_members, extract_tooltip, get_parameters, define_callbac
 from .widgets import PushButtonPlus, FrozenContainer
 from .field import MagicField
 from .menu_gui import MenuGui
-from .containers import ButtonContainer, ScrollableContainer, CollapsibleContainer, ToolBox
+from .containers import ButtonContainer, ScrollableContainer, CollapsibleContainer, TabbedContainer, ToolBox
 from ._base import BaseGui
 
 C = TypeVar("C")
@@ -22,6 +22,7 @@ class ClassGuiBase(BaseGui):
     _container_widget: type[C]
     _widget: C
     _result_widget: LineEdit
+    _remove_child_margins: bool
     
     def _create_widget_from_field(self, name: str, fld: MagicField):
         cls = self.__class__
@@ -139,9 +140,10 @@ class ClassGuiBase(BaseGui):
                     widget.called.connect(f)
                     
                 else:
-                    widget.name = widget.name or name
-                    if hasattr(widget, "text"):
-                        widget.text = widget.text or name
+                    if not widget.name:
+                        widget.name = name.replace("_", " ")
+                    if hasattr(widget, "text") and not widget.text:
+                        widget.text = widget.name
                 
                 # Now, "widget" is a Widget object.
                 
@@ -152,7 +154,7 @@ class ClassGuiBase(BaseGui):
                 
                 if isinstance(widget, ValueWidget):
                     widget.changed.connect(lambda x: self.changed(value=self))
-                if isinstance(widget, ClassGuiBase):
+                if isinstance(widget, ClassGuiBase) and self._remove_child_margins:
                     widget.margins = (0, 0, 0, 0)
                     
                 _widget = widget
@@ -175,7 +177,7 @@ class ClassGuiBase(BaseGui):
 
         return None
 
-def make_gui(container: type):
+def make_gui(container: type, no_margin: bool = True):
     """
     Make a ClassGui class from a Container widget.
     """    
@@ -240,6 +242,7 @@ def make_gui(container: type):
         cls.show = show
         cls.close = close
         cls._container_widget = container
+        cls._remove_child_margins = no_margin
         return cls
     return wrapper
 
@@ -256,8 +259,11 @@ class CollapsibleClassGui: pass
 @make_gui(ButtonContainer)
 class ButtonClassGui: pass
 
-@make_gui(ToolBox)
+@make_gui(ToolBox, no_margin=True)
 class ToolBoxClassGui: pass
+
+@make_gui(TabbedContainer, no_margin=True)
+class TabbedClassGui: pass
 
 @make_gui(MainWindow)
 class MainWindowClassGui: pass

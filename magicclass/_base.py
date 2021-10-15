@@ -6,11 +6,10 @@ import numpy as np
 from copy import deepcopy
 from qtpy.QtGui import QFont
 from magicgui import magicgui
-from magicgui.widgets import FunctionGui, FileEdit, Container, TextEdit
-from magicgui.widgets._bases import ValueWidget
+from magicgui.widgets import FunctionGui, FileEdit, TextEdit
 
 from .macro import Macro, Expr, Head
-from .utils import (define_callback, n_parameters, extract_tooltip, raise_error_in_msgbox,
+from .utils import (n_parameters, extract_tooltip, raise_error_in_msgbox,
                     raise_error_msg, get_parameters, find_unique_name, show_mgui)
 from .widgets import Separator
 from .field import MagicField
@@ -26,7 +25,7 @@ if TYPE_CHECKING:
 class BaseGui:
     _component_class: type = None
     
-    def __init__(self, close_on_run=True, popup=True, single_call=True):
+    def __init__(self, close_on_run = True, popup = True, single_call = True):
         self._recorded_macro: Macro[Expr] = Macro()
         self._parameter_history: dict[str, dict[str, Any]] = {}
         self.__magicclass_parent__: None|BaseGui = None
@@ -36,7 +35,7 @@ class BaseGui:
         self._single_call = single_call
     
     
-    def _collect_macro(self, myname:str=None) -> list[tuple[int, Expr]]:
+    def _collect_macro(self, myname: str = None) -> list[tuple[int, Expr]]:
         out = []
         macro = deepcopy(self._recorded_macro)
         
@@ -62,7 +61,7 @@ class BaseGui:
         
         return out
     
-    def _record_macro(self, func:Callable, args:tuple, kwargs:dict[str, Any]) -> None:
+    def _record_macro(self, func: Callable, args: tuple, kwargs: dict[str, Any]) -> None:
         """
         Record a function call as a line of macro.
 
@@ -236,6 +235,16 @@ class BaseGui:
     
     
     def _create_widget_from_field(self, name: str, fld: MagicField):
+        """
+        This function is called when magic-class encountered a MagicField in its definition.
+
+        Parameters
+        ----------
+        name : str
+            Name of variable
+        fld : MagicField
+            A field object that describes what type of widget it should be.
+        """        
         raise NotImplementedError()
     
     def _create_widget_from_method(self, obj):
