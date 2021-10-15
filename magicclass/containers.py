@@ -66,7 +66,29 @@ class _Tab(ContainerBase):
             self._qwidget.insertTab(position, widget.native, widget.name)
         else:
             self._layout.insertWidget(position, widget.native)
+
+class _Stack(ContainerBase):
+    _qwidget: QtW.QWidget
+    def __init__(self, layout="vertical"):
+        QBaseWidget.__init__(self, QtW.QWidget)
+        
+        if layout == "horizontal":
+            self._layout: QtW.QLayout = QtW.QHBoxLayout()
+        else:
+            self._layout = QtW.QVBoxLayout()
+        
+        self._stacked_widget = QtW.QStackedWidget(self._qwidget)
+        self._stacked_widget.setContentsMargins(0, 0, 0, 0)
+        self._inner_widget = QtW.QWidget(self._qwidget)
+        self._qwidget.setLayout(self._layout)
+        self._layout.addWidget(self._stacked_widget)
+        self._layout.addWidget(self._inner_widget)
     
+    def _mgui_insert_widget(self, position: int, widget: Widget):
+        if isinstance(widget.native, QtW.QWidget) and isinstance(widget, ContainerWidget):
+            self._stacked_widget.insertWidget(position, widget.native)
+        else:
+            self._layout.insertWidget(position, widget.native)
 
 class _ScrollableContainer(ContainerBase):
     def __init__(self, layout="vertical"):
@@ -158,6 +180,19 @@ class ToolBox(ContainerWidget):
 @wrap_container(base=_Tab)
 class TabbedContainer(ContainerWidget):
     """A tab categorized Container Widget."""
+
+@wrap_container(base=_Stack)
+class StackedContainer(ContainerWidget):
+    """A stacked Container Widget"""
+    
+    @property
+    def current_index(self):
+        return self._widget._stacked_widget.currentIndex()
+    
+    @current_index.setter
+    def current_index(self, index: int):
+        self._widget._stacked_widget.setCurrentIndex(index)
+        
 
 @wrap_container(base=_ScrollableContainer)
 class ScrollableContainer(ContainerWidget):

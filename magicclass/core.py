@@ -1,6 +1,7 @@
 from __future__ import annotations
 from functools import wraps
 import inspect
+from enum import Enum
 from dataclasses import is_dataclass, _POST_INIT_NAME
 from .class_gui import (
     ClassGui, 
@@ -9,6 +10,7 @@ from .class_gui import (
     ButtonClassGui, 
     CollapsibleClassGui,
     TabbedClassGui,
+    StackedClassGui,
     ToolBoxClassGui,
     )
 from .menu_gui import MenuGui
@@ -17,15 +19,37 @@ from .utils import check_collision, get_app
 
 _BASE_CLASS_SUFFIX = "_Base"
 
+class WidgetType(Enum):
+    none = "none"
+    scrollable = "scrollable"
+    collapsible = "collapsible"
+    button = "button"
+    toolbox = "toolbox"
+    tabbed = "tabbed"
+    stacked = "stacked"
+    mainwindow = "mainwindow"
+
+TYPE_MAP = {
+    WidgetType.none: ClassGui,
+    WidgetType.scrollable: ScrollableClassGui,
+    WidgetType.collapsible: CollapsibleClassGui,
+    WidgetType.button: ButtonClassGui,
+    WidgetType.toolbox: ToolBoxClassGui,
+    WidgetType.tabbed: TabbedClassGui,
+    WidgetType.stacked: StackedClassGui,
+    WidgetType.mainwindow: MainWindowClassGui,
+}
+
 def magicclass(class_: type|None = None,
                *,
                layout: str = "vertical", 
                labels: bool = True, 
+               name: str = None,
                close_on_run: bool = True,
                popup: bool = True,
                result_widget: bool = False, 
                single_call: bool = True, 
-               widget_type: str = None,
+               widget_type: WidgetType | str = WidgetType.none,
                parent = None
                ) -> ClassGui:
     """
@@ -45,6 +69,8 @@ def magicclass(class_: type|None = None,
         Layout of the main widget.
     labels : bool, default is True
         If true, magicgui labels are shown.
+    name : str
+        Name of GUI.
     close_on_run : bool, default is True
         If True, magicgui created by every method will be deleted after the method is completed without
         exceptions, i.e. magicgui is more like a dialog.
@@ -56,7 +82,7 @@ def magicclass(class_: type|None = None,
     single_call : bool, default is True 
         If true, user cannot call the same function at the same time. If same button is clicked, the 
         existing magicgui window is re-activated.
-    widget_type : str, optional
+    widget_type : WidgetType or str, optional
         Widget type of container.
     parent : magicgui.widgets._base.Widget, optional
         Parent widget if exists.
@@ -68,22 +94,8 @@ def magicclass(class_: type|None = None,
     def wrapper(cls) -> ClassGui:
         if not isinstance(cls, type):
             raise TypeError(f"magicclass can only wrap classes, not {type(cls)}")
-        if widget_type is None:
-            class_gui = ClassGui
-        elif widget_type == "scrollable":
-            class_gui = ScrollableClassGui
-        elif widget_type == "collapsible":
-            class_gui = CollapsibleClassGui
-        elif widget_type == "button":
-            class_gui = ButtonClassGui
-        elif widget_type == "toolbox":
-            class_gui = ToolBoxClassGui
-        elif widget_type == "tabbed":
-            class_gui = TabbedClassGui
-        elif widget_type == "mainwindow":
-            class_gui = MainWindowClassGui
-        else:
-            raise ValueError(widget_type)
+        
+        class_gui = TYPE_MAP[WidgetType(widget_type)]
         
         check_collision(cls, class_gui)
         # get class attributes first
@@ -105,9 +117,16 @@ def magicclass(class_: type|None = None,
         def __init__(self, *args, **kwargs):
             app = get_app() # Without "app = " Jupyter freezes after closing the window!
             macro_init = Expr.parse_init(cls, args, kwargs)
-            class_gui.__init__(self, layout=layout, parent=parent, close_on_run=close_on_run, 
-                              popup=popup, labels=labels, result_widget=result_widget,
-                              name=cls.__name__.replace("_", " "), single_call=single_call)
+            class_gui.__init__(self, 
+                               layout=layout,
+                               parent=parent,
+                               close_on_run=close_on_run, 
+                               popup=popup,
+                               labels=labels,
+                               result_widget=result_widget,
+                               name=name or cls.__name__.replace("_", " "), 
+                               single_call=single_call
+                               )
             super(oldclass, self).__init__(*args, **kwargs)
             self._convert_attributes_into_widgets()
             

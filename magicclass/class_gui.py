@@ -11,7 +11,14 @@ from .utils import iter_members, extract_tooltip, get_parameters, define_callbac
 from .widgets import PushButtonPlus, FrozenContainer
 from .field import MagicField
 from .menu_gui import MenuGui
-from .containers import ButtonContainer, ScrollableContainer, CollapsibleContainer, TabbedContainer, ToolBox
+from .containers import (
+    ButtonContainer,
+    ScrollableContainer,
+    CollapsibleContainer,
+    StackedContainer,
+    TabbedContainer,
+    ToolBox
+    )
 from ._base import BaseGui
 
 C = TypeVar("C")
@@ -259,11 +266,14 @@ class CollapsibleClassGui: pass
 @make_gui(ButtonContainer)
 class ButtonClassGui: pass
 
-@make_gui(ToolBox, no_margin=True)
+@make_gui(ToolBox, no_margin=False)
 class ToolBoxClassGui: pass
 
-@make_gui(TabbedContainer, no_margin=True)
+@make_gui(TabbedContainer, no_margin=False)
 class TabbedClassGui: pass
+
+@make_gui(StackedContainer, no_margin=False)
+class StackedClassGui: pass
 
 @make_gui(MainWindow)
 class MainWindowClassGui: pass
