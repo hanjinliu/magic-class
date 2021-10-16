@@ -46,12 +46,14 @@ class Figure(FrozenContainer):
                  nrows: int = 1,
                  ncols: int = 1,
                  figsize: tuple[int, int] = (4, 3),
+                 style = "default",
                  layout: str = "vertical", 
                  **kwargs):
         backend = mpl.get_backend()
         mpl.use("Agg")
         try:
-            fig, _ = plt.subplots(nrows, ncols, figsize=figsize)
+            with plt.style.context(style):
+                fig, _ = plt.subplots(nrows, ncols, figsize=figsize)
         finally:
             mpl.use(backend)
         
@@ -70,7 +72,11 @@ class Figure(FrozenContainer):
     
     @property
     def ax(self):
-        return self.axes[0]
+        try:
+            _ax = self.axes[0]
+        except IndexError:
+            _ax = self.figure.add_subplot(111)
+        return _ax
         
 class Separator(FrozenContainer):
     # TODO: not shown in napari

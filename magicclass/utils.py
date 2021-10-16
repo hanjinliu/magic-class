@@ -113,15 +113,6 @@ def get_parameters(fgui: FunctionGui):
     
     return inputs
 
-def find_unique_name(name: str, viewer: "napari.Viewer"):
-    orig_name = name
-    i = 0
-    while name in viewer.window._dock_widgets:
-        name = orig_name + f"-{i}"
-        i += 1
-    return name
-
-
 def define_callback(self, callback: Callable):
     clsname, funcname = callback.__qualname__.split(".")
     def _callback(event):

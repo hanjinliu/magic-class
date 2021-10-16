@@ -1,5 +1,5 @@
 from __future__ import annotations
-from functools import wraps as fwraps
+from functools import wraps as fwraps, partial
 from typing import Callable, Any, TYPE_CHECKING
 import inspect
 import numpy as np
@@ -10,7 +10,7 @@ from magicgui.widgets import FunctionGui, FileEdit, TextEdit
 
 from .macro import Macro, Expr, Head
 from .utils import (n_parameters, extract_tooltip, raise_error_in_msgbox,
-                    raise_error_msg, get_parameters, find_unique_name, show_mgui)
+                    raise_error_msg, get_parameters, show_mgui)
 from .widgets import Separator
 from .field import MagicField
 from .wrappers import upgrade_signature
@@ -163,7 +163,7 @@ class BaseGui:
         return out
     
     @classmethod
-    def wraps(cls, method_or_template: Callable | None = None) -> Callable:
+    def wraps(cls, method: Callable | None = None, *, template: Callable | None = None) -> Callable:
         """
         Wrap a parent method in a child magic-class.
         
@@ -178,17 +178,17 @@ class BaseGui:
 
         Parameters
         ----------
-        method_or_template : Callable, optional
-            If decorator is used without argument, the parent method will be passed to this 
-            parameter. If decorator is used with an argument, this parameter should be a
-            function template to refer to correct signature.
-
+        method : Callable, optional
+            Method of parent class.
+        template : Callable, optional
+            Function template for signature.
+            
         Returns
         -------
         Callable
             Same method as input, but has updated signature to hide the button.
         """      
-        def wrapper(method: Callable, template: Callable | None):
+        def wrapper(method: Callable):
             # Base function to get access to the original function
             def _childmethod(self: cls, *args, **kwargs):
                 current_self = self.__magicclass_parent__
@@ -199,9 +199,9 @@ class BaseGui:
             
             # Must be template as long as this wrapper function is called
             if template is None:
-                _wraps = fwraps(method)
+                _wrap_func = fwraps(method)
             else:
-                def _wraps(f):
+                def _wrap_func(f):
                     f = _wraps(template, reference=method)(f)
                     f.__wrapped__ = method
                     f.__name__ = method.__name__
@@ -219,12 +219,12 @@ class BaseGui:
                             result_widget=bool(method._result_widget)
                             )
                 method = method._function
-                childmethod = magicgui(**options)(_wraps(_childmethod))
+                childmethod = magicgui(**options)(_wrap_func(_childmethod))
                 method = _copy_function(method)
             
             else:
                 clsname, funcname = method.__qualname__.split(".")
-                childmethod = _wraps(_childmethod)
+                childmethod = _wrap_func(_childmethod)
             
             # To avoid two buttons with same bound function being showed up
             upgrade_signature(method, caller_options={"visible": False})
@@ -240,22 +240,7 @@ class BaseGui:
                 setattr(cls, funcname, childmethod)
             return method
         
-        # Because the first argument is always a callable object, returned object must be
-        # able to dispatch whether a callable object will be passed again.
-        @wraps(method_or_template)
-        def _dispacher(*args, **kwargs):
-            if callable(args[0]) and len(args) == 1 and len(kwargs) == 0:
-                # Case of 
-                # >>> @A.wraps(template_function)
-                # >>> def function(self, ...): ...
-                return wrapper(args[0], method_or_template)
-            else:
-                # Case of 
-                # >>> @A.wraps
-                # >>> def function(self, ...): ...
-                return wrapper(method_or_template, 0)(*args, **kwargs)
-            
-        return _dispacher
+        return wrapper if method is None else wrapper(method)
     
     def _convert_attributes_into_widgets(self):
         """
