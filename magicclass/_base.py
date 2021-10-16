@@ -1,6 +1,6 @@
 from __future__ import annotations
-from functools import wraps as fwraps, partial
-from typing import Callable, Any, TYPE_CHECKING
+from functools import wraps as fwraps
+from typing import Callable, Any, TYPE_CHECKING, TypeVar
 import inspect
 import numpy as np
 from copy import deepcopy
@@ -9,7 +9,7 @@ from magicgui import magicgui
 from magicgui.widgets import FunctionGui, FileEdit, TextEdit
 
 from .macro import Macro, Expr, Head
-from .utils import (n_parameters, extract_tooltip, raise_error_in_msgbox,
+from .utils import (iter_members, n_parameters, extract_tooltip, raise_error_in_msgbox,
                     raise_error_msg, get_parameters, show_mgui)
 from .widgets import Separator
 from .field import MagicField
@@ -413,6 +413,8 @@ def _copy_function(f):
     return out
 
 
+_C = TypeVar("_C", Callable, type)
+
 def wraps(template: Callable | inspect.Signature) -> Callable:
     """
     Update signature using a template.
@@ -430,7 +432,13 @@ def wraps(template: Callable | inspect.Signature) -> Callable:
     return _wraps(template)
 
 def _wraps(template: Callable | inspect.Signature, reference: Callable = None) -> Callable:
-    def wrapper(f: Callable) -> Callable:
+    def wrapper(f: _C) -> _C:
+        if isinstance(f, type):
+            for name, attr in iter_members(f):
+                if callable(attr) or isinstance(attr, type):
+                    wrapper(attr)
+            return f
+        
         Param = inspect.Parameter
         if reference is None:
             old_signature = inspect.signature(f)
@@ -446,6 +454,7 @@ def _wraps(template: Callable | inspect.Signature, reference: Callable = None) -
         else:
             raise TypeError(f"template must be a callable object or signature, but got {type(template)}.")
         
+        # update empty signatures
         template_params = template_signature.parameters
         new_params: list[Param] = []
         
@@ -459,6 +468,7 @@ def _wraps(template: Callable | inspect.Signature, reference: Callable = None) -
             else:
                 new_params.append(v)
         
+        # update empty return annotation
         if old_signature.return_annotation is inspect._empty:
             return_annotation = template_signature.return_annotation
         else:

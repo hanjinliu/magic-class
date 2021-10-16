@@ -44,6 +44,16 @@ class _Splitter(ContainerBase):
     def _mgui_insert_widget(self, position: int, widget: Widget):
         self._qwidget.insertWidget(position, widget.native)
 
+    
+    def _mgui_remove_widget(self, widget: Widget):
+        raise NotImplementedError()
+
+    def _mgui_get_margins(self) -> tuple[int, int, int, int]:
+        raise NotImplementedError()
+
+    def _mgui_set_margins(self, margins: tuple[int, int, int, int]) -> None:
+        raise NotImplementedError()
+        
 class _ToolBox(ContainerBase):
     _qwidget: QtW.QToolBox
     def __init__(self, layout="vertical"):
@@ -57,6 +67,15 @@ class _ToolBox(ContainerBase):
     
     def _mgui_insert_widget(self, position: int, widget: Widget):
         self._qwidget.insertItem(position, widget.native, widget.name)
+    
+    def _mgui_remove_widget(self, widget: Widget):
+        for i in range(self._qwidget.count()):
+            if self._qwidget.widget(i) is widget.native:
+                self._qwidget.removeItem(i)
+                widget.native.setParent(None)
+                break
+        else:
+            raise ValueError(f"Widget {widget.name} not found.")
 
 class _Tab(ContainerBase):
     _qwidget: QtW.QTabWidget
@@ -72,6 +91,16 @@ class _Tab(ContainerBase):
     
     def _mgui_insert_widget(self, position: int, widget: Widget):
         self._qwidget.insertTab(position, widget.native, widget.name)
+    
+    def _mgui_remove_widget(self, widget: Widget):
+        for i in range(self._qwidget.count()):
+            if self._qwidget.widget(i) is widget.native:
+                self._qwidget.removeTab(i)
+                widget.native.setParent(None)
+                break
+        else:
+            raise ValueError(f"Widget {widget.name} not found.")
+
 
 class _Stack(ContainerBase):
     _qwidget: QtW.QWidget
@@ -92,6 +121,10 @@ class _Stack(ContainerBase):
     
     def _mgui_insert_widget(self, position: int, widget: Widget):
         self._stacked_widget.insertWidget(position, widget.native)
+    
+    def _mgui_remove_widget(self, widget: Widget):
+        self._stacked_widget.removeWidget(widget.native)
+        widget.native.setParent(None)
 
 class _ScrollableContainer(ContainerBase):
     def __init__(self, layout="vertical"):
