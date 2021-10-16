@@ -9,6 +9,7 @@ from .class_gui import (
     ScrollableClassGui,
     ButtonClassGui, 
     CollapsibleClassGui,
+    SplitClassGui,
     TabbedClassGui,
     StackedClassGui,
     ToolBoxClassGui,
@@ -22,6 +23,7 @@ _BASE_CLASS_SUFFIX = "_Base"
 class WidgetType(Enum):
     none = "none"
     scrollable = "scrollable"
+    split = "split"
     collapsible = "collapsible"
     button = "button"
     toolbox = "toolbox"
@@ -32,6 +34,7 @@ class WidgetType(Enum):
 _TYPE_MAP = {
     WidgetType.none: ClassGui,
     WidgetType.scrollable: ScrollableClassGui,
+    WidgetType.split: SplitClassGui,
     WidgetType.collapsible: CollapsibleClassGui,
     WidgetType.button: ButtonClassGui,
     WidgetType.toolbox: ToolBoxClassGui,

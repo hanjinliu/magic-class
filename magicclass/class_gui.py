@@ -15,6 +15,7 @@ from .containers import (
     ButtonContainer,
     ScrollableContainer,
     CollapsibleContainer,
+    SplitterContainer,
     StackedContainer,
     TabbedContainer,
     ToolBox
@@ -259,6 +260,9 @@ def make_gui(container: type, no_margin: bool = True):
 
 @make_gui(Container)
 class ClassGui: pass
+
+@make_gui(SplitterContainer)
+class SplitClassGui: pass
 
 @make_gui(ScrollableContainer)
 class ScrollableClassGui: pass

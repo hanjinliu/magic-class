@@ -31,6 +31,18 @@ def wrap_container(cls: type[C] = None, base: type = None) -> Callable | type[C]
 
     return wrapper(cls) if cls else wrapper
 
+class _Splitter(ContainerBase):
+    _qwidget: QtW.QSplitter
+    def __init__(self, layout="vertical"):
+        QBaseWidget.__init__(self, QtW.QSplitter)
+        
+        if layout == "horizontal":
+            self._qwidget.setOrientation(Qt.Horizontal)
+        else:
+            self._qwidget.setOrientation(Qt.Vertical)
+    
+    def _mgui_insert_widget(self, position: int, widget: Widget):
+        self._qwidget.insertWidget(position, widget.native)
 
 class _ToolBox(ContainerBase):
     _qwidget: QtW.QToolBox
@@ -164,6 +176,11 @@ class _CollapsibleContainer(ContainerBase):
             self._qwidget.resize(w, self._expand_btn.sizeHint().height() + h)
             self._expand_btn.setArrowType(Qt.ArrowType.DownArrow)
 
+
+@wrap_container(base=_Splitter)
+class SplitterContainer(ContainerWidget):
+    """A Container equipped with splitter"""
+    
 @wrap_container(base=_ToolBox)
 class ToolBox(ContainerWidget):
     """A Tool box Widget."""

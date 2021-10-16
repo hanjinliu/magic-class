@@ -50,8 +50,8 @@ class Figure(FrozenContainer):
                  layout: str = "vertical", 
                  **kwargs):
         backend = mpl.get_backend()
-        mpl.use("Agg")
         try:
+            mpl.use("Agg")
             with plt.style.context(style):
                 fig, _ = plt.subplots(nrows, ncols, figsize=figsize)
         finally:
@@ -64,6 +64,7 @@ class Figure(FrozenContainer):
         self.min_height = 40
         
     def draw(self):
+        self.figure.tight_layout()
         self.figure.canvas.draw()
     
     @property
