@@ -86,11 +86,9 @@ class ClassGuiBase(BaseGui):
         """        
         cls = self.__class__
         
-        # Add class docstring as label.
-        if cls.__doc__:
-            doc = extract_tooltip(cls)
-            lbl = Label(value=doc)
-            self.append(lbl)
+        # Add class docstring as tooltip.
+        doc = extract_tooltip(cls)
+        self.tooltip = doc
         
         # Bind all the methods and annotations
         base_members = set(x[0] for x in iter_members(self._container_widget)) 
