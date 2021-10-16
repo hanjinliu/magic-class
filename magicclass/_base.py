@@ -158,13 +158,8 @@ class BaseGui:
             vbar = win.native.verticalScrollBar()
             vbar.setValue(vbar.maximum())
             
-            viewer = self.parent_viewer
-            if viewer is not None:
-                dock = viewer.window.add_dock_widget(win, area="right", name="Macro",
-                                                     allowed_areas=["left", "right"])
-                dock.setFloating(self._popup)
-            else:
-                win.show()
+            win.native.setParent(self.native, win.native.windowFlags())
+            
         return out
     
     @classmethod
@@ -357,49 +352,31 @@ class BaseGui:
                         getattr(mgui, key).value = value
                     except ValueError:
                         pass
-                
-                viewer = self.parent_viewer
-                                    
-                if viewer is None:
-                    # If napari.Viewer was not found, then open up a magicgui when button is pushed, and 
-                    # close it when function call is finished (if close_on_run==True).
-                    if self._popup:
-                        mgui.show()
-                    else:
-                        current_self = self
-                        while (hasattr(current_self, "__magicclass_parent__") 
-                               and current_self.__magicclass_parent__):
-                            current_self = current_self.__magicclass_parent__
-                        
-                        sep = Separator(orientation="horizontal", text=text)
-                        mgui.insert(0, sep)
-                        current_self.append(mgui)
                     
-                    if self._close_on_run:
-                        @mgui.called.connect
-                        def _close(value):
-                            if not self._popup:
-                                current_self = self
-                                while (hasattr(current_self, "__magicclass_parent__") 
-                                    and current_self.__magicclass_parent__):
-                                    current_self = current_self.__magicclass_parent__
-                                current_self.remove(mgui)
-                            mgui.close()
-                            
+                mgui.native.setParent(self.native, mgui.native.windowFlags())
+                    
+                if self._popup:
+                    mgui.show()
                 else:
-                    # If napari.Viewer was found, then create a magicgui as a dock widget when button is 
-                    # pushed, and remove it when function call is finished (if close_on_run==True).
-                    viewer: napari.Viewer
+                    current_self = self
+                    while (hasattr(current_self, "__magicclass_parent__") 
+                            and current_self.__magicclass_parent__):
+                        current_self = current_self.__magicclass_parent__
                     
-                    if self._close_on_run:
-                        @mgui.called.connect
-                        def _close(value):
-                            viewer.window.remove_dock_widget(mgui.parent)
-                            mgui.close()
-                            
-                    dock_name = find_unique_name(text, viewer)
-                    dock = viewer.window.add_dock_widget(mgui, name=dock_name)
-                    dock.setFloating(self._popup)
+                    sep = Separator(orientation="horizontal", text=text)
+                    mgui.insert(0, sep)
+                    current_self.append(mgui)
+                
+                if self._close_on_run:
+                    @mgui.called.connect
+                    def _close(value):
+                        if not self._popup:
+                            current_self = self
+                            while (hasattr(current_self, "__magicclass_parent__") 
+                                and current_self.__magicclass_parent__):
+                                current_self = current_self.__magicclass_parent__
+                            current_self.remove(mgui)
+                        mgui.close()
                 
                 callback = _temporal_function_gui_callback(self, mgui, widget)
                 mgui.called.connect(callback)
