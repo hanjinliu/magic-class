@@ -107,10 +107,9 @@ def raise_error_in_msgbox(_func, parent: Widget = None):
     return wrapped_func
 
 def get_parameters(fgui: FunctionGui):
-    inputs = {param: getattr(fgui, param).value
+    inputs = {param: fgui[param].value
               for param in fgui.__signature__.parameters.keys()
               }
-    
     return inputs
 
 def define_callback(self, callback: Callable):
