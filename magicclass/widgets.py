@@ -46,14 +46,17 @@ class Figure(FrozenContainer):
                  nrows: int = 1,
                  ncols: int = 1,
                  figsize: tuple[int, int] = (4, 3),
-                 style = "default",
+                 style = None,
                  layout: str = "vertical", 
                  **kwargs):
         backend = mpl.get_backend()
         try:
             mpl.use("Agg")
-            with plt.style.context(style):
+            if style is None:
                 fig, _ = plt.subplots(nrows, ncols, figsize=figsize)
+            else:
+                with plt.style.context(style):
+                    fig, _ = plt.subplots(nrows, ncols, figsize=figsize)
         finally:
             mpl.use(backend)
         

@@ -2,9 +2,9 @@
 
 In [magicgui](https://github.com/napari/magicgui) you can make simple GUIs from functions. However, we usually have to create GUIs that are composed of several buttons, and each button is connected with a class method. You may also want a menu bar on the top of the GUI, or sometimes a `magicgui` widget docked in it.
 
-Decorate your class with `@magicclass` and your can use the class both in GUI and from console!
+Decorate your classes with `@magicclass` and you can use the class both in GUI and from console. They are easy to maintain and minimize the time spent on debugging of GUI implementation.
 
-`magic-class` is work in progress. Feel free to report issues and make suggestions :smile:.
+`magic-class` is work in progress. Feel free to report issues and make suggestions!
 
 ## Installation
 
@@ -21,9 +21,11 @@ git clone https://github.com/hanjinliu/magic-class
 
 ## Dependencies
 
-`magicgui` >= 0.2.11
+`magicgui>=0.2.11`
 
-`numpy` >= 1.20.3
+`numpy>=1.20.3`
+
+`matplotlib>=3.4.2`
 
 ## Example
 
@@ -130,7 +132,7 @@ set design on each button:
 from magicclass import set_design
 @magicclass
 class PlotData:
-    @set_design(text="💣")
+    @set_design(text="Clear Data")
     def clear(self): ...
 ```
 
