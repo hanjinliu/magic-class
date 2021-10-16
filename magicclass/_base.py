@@ -53,11 +53,16 @@ class BaseGui:
                 
             out.append((expr.number, expr))
         
+        if myname is not None:
+            prefix = myname + "."
+        else:
+            prefix = ""
+        
         for name, attr in filter(lambda x: not x[0].startswith("__"), self.__dict__.items()):
             # Collect all the macro from child magic-classes recursively
             if not isinstance(attr, BaseGui):
                 continue
-            out += attr._collect_macro(myname=name)
+            out += attr._collect_macro(myname=prefix+name)
         
         return out
     
