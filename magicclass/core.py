@@ -1,5 +1,5 @@
 from __future__ import annotations
-from functools import wraps
+from functools import wraps as fwraps
 import inspect
 from enum import Enum
 from dataclasses import is_dataclass, _POST_INIT_NAME
@@ -29,7 +29,7 @@ class WidgetType(Enum):
     stacked = "stacked"
     mainwindow = "mainwindow"
 
-TYPE_MAP = {
+_TYPE_MAP = {
     WidgetType.none: ClassGui,
     WidgetType.scrollable: ScrollableClassGui,
     WidgetType.collapsible: CollapsibleClassGui,
@@ -95,7 +95,7 @@ def magicclass(class_: type|None = None,
         if not isinstance(cls, type):
             raise TypeError(f"magicclass can only wrap classes, not {type(cls)}")
         
-        class_gui = TYPE_MAP[WidgetType(widget_type)]
+        class_gui = _TYPE_MAP[WidgetType(widget_type)]
         
         check_collision(cls, class_gui)
         # get class attributes first
@@ -113,7 +113,7 @@ def magicclass(class_: type|None = None,
         newclass.__annotations__ = class_gui.__annotations__.copy()
         newclass.__annotations__.update(annot)
         
-        @wraps(oldclass.__init__)
+        @fwraps(oldclass.__init__)
         def __init__(self, *args, **kwargs):
             app = get_app() # Without "app = " Jupyter freezes after closing the window!
             macro_init = Expr.parse_init(cls, args, kwargs)
@@ -199,7 +199,7 @@ def magicmenu(class_: type = None,
         newclass.__signature__ = sig
         newclass.__doc__ = doc
                 
-        @wraps(oldclass.__init__)
+        @fwraps(oldclass.__init__)
         def __init__(self, *args, **kwargs):
             app = get_app() # Without "app = " Jupyter freezes after closing the window!
             macro_init = Expr.parse_init(cls, args, kwargs)

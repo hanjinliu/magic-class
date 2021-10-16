@@ -1,5 +1,5 @@
 from __future__ import annotations
-from functools import wraps
+from functools import wraps as fwraps
 from typing import Callable, Any, TYPE_CHECKING
 import inspect
 import numpy as np
@@ -113,7 +113,7 @@ class BaseGui:
         """        
         return self.native.objectName()
     
-    def create_macro(self, show:bool=False, symbol:str="ui") -> str:
+    def create_macro(self, show: bool = False, symbol: str = "ui") -> str:
         """
         Create executable Python scripts from the recorded macro object.
 
@@ -163,7 +163,7 @@ class BaseGui:
         return out
     
     @classmethod
-    def wraps(cls, method: Callable) -> Callable:
+    def wraps(cls, method_or_template: Callable | None = None) -> Callable:
         """
         Wrap a parent method in a child magic-class.
         
@@ -178,53 +178,84 @@ class BaseGui:
 
         Parameters
         ----------
-        method : Callable
-            Parent method
+        method_or_template : Callable, optional
+            If decorator is used without argument, the parent method will be passed to this 
+            parameter. If decorator is used with an argument, this parameter should be a
+            function template to refer to correct signature.
 
         Returns
         -------
         Callable
             Same method as input, but has updated signature to hide the button.
-        """        
-        # Base function to get access to the original function
-        def _childmethod(self: cls, *args, **kwargs):
-            current_self = self.__magicclass_parent__
-            while not (hasattr(current_self, funcname) and 
-                        current_self.__class__.__name__ == clsname):
-                current_self = current_self.__magicclass_parent__
-            return getattr(current_self, funcname)(*args, **kwargs)
+        """      
+        def wrapper(method: Callable, template: Callable | None):
+            # Base function to get access to the original function
+            def _childmethod(self: cls, *args, **kwargs):
+                current_self = self.__magicclass_parent__
+                while not (hasattr(current_self, funcname) and 
+                            current_self.__class__.__name__ == clsname):
+                    current_self = current_self.__magicclass_parent__
+                return getattr(current_self, funcname)(*args, **kwargs)
+            
+            # Must be template as long as this wrapper function is called
+            if template is None:
+                _wraps = fwraps(method)
+            else:
+                def _wraps(f):
+                    f = _wraps(template, reference=method)(f)
+                    f.__wrapped__ = method
+                    f.__name__ = method.__name__
+                    f.__qualname__ = method.__qualname__
+                    return f
+                    
+            # If method is defined as a member of class X, __qualname__ will be X.<method name>.
+            # We can know the namespace of the wrapped function with __qualname__.
+            if isinstance(method, FunctionGui):
+                clsname, funcname = method._function.__qualname__.split(".")
+                options = dict(call_button=method._call_button.text if method._call_button else None,
+                            layout=method.layout,
+                            labels=method.labels,
+                            auto_call=method._auto_call,
+                            result_widget=bool(method._result_widget)
+                            )
+                method = method._function
+                childmethod = magicgui(**options)(_wraps(_childmethod))
+                method = _copy_function(method)
+            
+            else:
+                clsname, funcname = method.__qualname__.split(".")
+                childmethod = _wraps(_childmethod)
+            
+            # To avoid two buttons with same bound function being showed up
+            upgrade_signature(method, caller_options={"visible": False})
+            
+            if hasattr(method, "__doc__"):
+                childmethod.__doc__ = method.__doc__
+            
+            if hasattr(cls, funcname):
+                # Sometimes we want to pre-define function to arrange the order of widgets.
+                getattr(cls, funcname).__wrapped__ = childmethod
+                getattr(cls, funcname).__magicclass_wrapped__ = childmethod
+            else:
+                setattr(cls, funcname, childmethod)
+            return method
         
-        # If method is defined as a member of class X, __qualname__ will be X.<method name>.
-        # We can know the namespace of the wrapped function with __qualname__.
-        if isinstance(method, FunctionGui):
-            clsname, funcname = method._function.__qualname__.split(".")
-            options = dict(call_button=method._call_button.text if method._call_button else None,
-                           layout=method.layout,
-                           labels=method.labels,
-                           auto_call=method._auto_call,
-                           result_widget=bool(method._result_widget)
-                           )
-            method = method._function
-            childmethod = magicgui(**options)(wraps(method)(_childmethod))
-            method = _copy_function(method)
-        
-        else:
-            clsname, funcname = method.__qualname__.split(".")
-            childmethod = wraps(method)(_childmethod)
-        
-        # To avoid two buttons with same bound function being showed up
-        upgrade_signature(method, caller_options={"visible": False})
-        
-        if hasattr(method, "__doc__"):
-            childmethod.__doc__ = method.__doc__
-        
-        if hasattr(cls, funcname):
-            # Sometimes we want to pre-define function to arrange the order of widgets.
-            getattr(cls, funcname).__wrapped__ = childmethod
-            getattr(cls, funcname).__magicclass_wrapped__ = childmethod
-        else:
-            setattr(cls, funcname, childmethod)
-        return method
+        # Because the first argument is always a callable object, returned object must be
+        # able to dispatch whether a callable object will be passed again.
+        @wraps(method_or_template)
+        def _dispacher(*args, **kwargs):
+            if callable(args[0]) and len(args) == 1 and len(kwargs) == 0:
+                # Case of 
+                # >>> @A.wraps(template_function)
+                # >>> def function(self, ...): ...
+                return wrapper(args[0], method_or_template)
+            else:
+                # Case of 
+                # >>> @A.wraps
+                # >>> def function(self, ...): ...
+                return wrapper(method_or_template, 0)(*args, **kwargs)
+            
+        return _dispacher
     
     def _convert_attributes_into_widgets(self):
         """
@@ -409,7 +440,67 @@ def _temporal_function_gui_callback(bgui: BaseGui, fgui: FunctionGui|Callable, w
     return _after_run
 
 def _copy_function(f):
-    @wraps(f)
+    @fwraps(f)
     def out(self, *args, **kwargs):
         return f(self, *args, **kwargs)
     return out
+
+
+def wraps(template: Callable | inspect.Signature) -> Callable:
+    """
+    Update signature using a template.
+
+    Parameters
+    ----------
+    template : Callable or inspect.Signature object
+        Template function or its signature.
+
+    Returns
+    -------
+    Callable
+        Same function with updated signature.
+    """    
+    return _wraps(template)
+
+def _wraps(template: Callable | inspect.Signature, reference: Callable = None) -> Callable:
+    def wrapper(f: Callable) -> Callable:
+        Param = inspect.Parameter
+        if reference is None:
+            old_signature = inspect.signature(f)
+        else:
+            old_signature = inspect.signature(reference)
+            
+        old_params = old_signature.parameters
+        
+        if callable(template):
+            template_signature = inspect.signature(template)
+        elif isinstance(template, inspect.Signature):
+            template_signature = template
+        else:
+            raise TypeError(f"template must be a callable object or signature, but got {type(template)}.")
+        
+        template_params = template_signature.parameters
+        new_params: list[Param] = []
+        
+        for k, v in old_params.items():
+            if v.annotation is inspect._empty and v.default is inspect._empty:
+                new_params.append(
+                    template_params.get(k, 
+                                        Param(k, Param.POSITIONAL_OR_KEYWORD)
+                                        )
+                    )
+            else:
+                new_params.append(v)
+        
+        if old_signature.return_annotation is inspect._empty:
+            return_annotation = template_signature.return_annotation
+        else:
+            return_annotation = old_signature.return_annotation
+        
+        f.__signature__ = inspect.Signature(
+            parameters=new_params,
+            return_annotation=return_annotation
+            )
+        return f
+    return wrapper
+    

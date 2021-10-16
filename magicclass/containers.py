@@ -44,10 +44,7 @@ class _ToolBox(ContainerBase):
         self._layout = self._qwidget.layout()
     
     def _mgui_insert_widget(self, position: int, widget: Widget):
-        if isinstance(widget.native, QtW.QWidget) and isinstance(widget, ContainerWidget):
-            self._qwidget.insertItem(position, widget.native, widget.name)
-        else:
-            self._layout.insertWidget(position, widget.native)
+        self._qwidget.insertItem(position, widget.native, widget.name)
 
 class _Tab(ContainerBase):
     _qwidget: QtW.QTabWidget
@@ -58,14 +55,11 @@ class _Tab(ContainerBase):
             self._layout: QtW.QLayout = QtW.QHBoxLayout()
         else:
             self._layout = QtW.QVBoxLayout()
-            
+        
         self._qwidget.setLayout(self._layout)
     
     def _mgui_insert_widget(self, position: int, widget: Widget):
-        if isinstance(widget.native, QtW.QWidget) and isinstance(widget, ContainerWidget):
-            self._qwidget.insertTab(position, widget.native, widget.name)
-        else:
-            self._layout.insertWidget(position, widget.native)
+        self._qwidget.insertTab(position, widget.native, widget.name)
 
 class _Stack(ContainerBase):
     _qwidget: QtW.QWidget
@@ -85,10 +79,7 @@ class _Stack(ContainerBase):
         self._layout.addWidget(self._inner_widget)
     
     def _mgui_insert_widget(self, position: int, widget: Widget):
-        if isinstance(widget.native, QtW.QWidget) and isinstance(widget, ContainerWidget):
-            self._stacked_widget.insertWidget(position, widget.native)
-        else:
-            self._layout.insertWidget(position, widget.native)
+        self._stacked_widget.insertWidget(position, widget.native)
 
 class _ScrollableContainer(ContainerBase):
     def __init__(self, layout="vertical"):
@@ -180,6 +171,14 @@ class ToolBox(ContainerWidget):
 @wrap_container(base=_Tab)
 class TabbedContainer(ContainerWidget):
     """A tab categorized Container Widget."""
+    
+    @property
+    def current_index(self):
+        return self.native.currentIndex()
+    
+    @current_index.setter
+    def current_index(self, index: int):
+        self.native.setCurrentIndex(index)
 
 @wrap_container(base=_Stack)
 class StackedContainer(ContainerWidget):
