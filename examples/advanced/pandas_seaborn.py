@@ -5,9 +5,25 @@ import pandas as pd
 import seaborn as sns
 from pathlib import Path
 
+class CachedTable(Table):
+    # Because we have to convert table data into DataFrame many times,
+    # DataFrame should be cached.
+    def __init__(self, value, **kwargs):
+        if isinstance(value, pd.DataFrame):
+            self._dataframe = value
+        else:
+            self._dataframe = None
+        super().__init__(value, **kwargs)
+    
+    def to_dataframe(self) -> pd.DataFrame:
+        if self._dataframe is not None:
+            return self._dataframe
+        else:
+            return super().to_dataframe()
+
 @magicclass(widget_type="tabbed", labels=False)
 class TableList:
-    """List of table"""
+    """List of tables"""
 
 @magicclass(layout="horizontal", widget_type="split")
 class Analyzer:
@@ -54,7 +70,7 @@ class Analyzer:
         """        
         header = None if header == "" else int(header)
         df = pd.read_csv(path, header=header)
-        table = Table(df, name=os.path.basename(path))
+        table = CachedTable(df, name=os.path.basename(path))
         self.table_list.append(table)
         self.table_list.current_index = len(self.table_list) - 1
     
@@ -103,25 +119,36 @@ class Analyzer:
         df.hist(ax=self.canvas.ax)
         self.canvas.draw()
     
-    @Tools.Plot_Menu.wraps
-    def Box_Plot(self):
+    def _seaborn_plot(self, plot_function, x: str, y: str, hue: str, dodge: bool = False):
+        # Seaborn plot functions have the same API.
+        # Also, this function can be used as a template of signature with "wraps" method.
+        x = x or None
+        y = y or None
+        hue = hue or None
+        self.canvas.figure.clf()
+        df = self._current_df()
+        plot_function(data=df, ax=self.canvas.ax, x=x, y=y, hue=hue, dodge=dodge)
+        self.canvas.draw()
+    
+    @Tools.Plot_Menu.wraps(template=_seaborn_plot)
+    def Box_Plot(self, x, y, hue, dodge):
         """Show box plot"""        
-        self._seaborn_plot(sns.boxplot)
+        self._seaborn_plot(sns.boxplot, x, y, hue, dodge)
     
-    @Tools.Plot_Menu.wraps
-    def Swarm_Plot(self):
+    @Tools.Plot_Menu.wraps(template=_seaborn_plot)
+    def Swarm_Plot(self, x, y, hue, dodge):
         """Show (bee)swarm plot"""        
-        self._seaborn_plot(sns.swarmplot)
+        self._seaborn_plot(sns.swarmplot, x, y, hue, dodge)
     
-    @Tools.Plot_Menu.wraps
-    def Violin_Plot(self): 
+    @Tools.Plot_Menu.wraps(template=_seaborn_plot)
+    def Violin_Plot(self, x, y, hue, dodge): 
         """Show violin plot"""        
-        self._seaborn_plot(sns.violinplot)
+        self._seaborn_plot(sns.violinplot, x, y, hue, dodge)
     
-    @Tools.Plot_Menu.wraps
-    def Boxen_Plot(self): 
+    @Tools.Plot_Menu.wraps(template=_seaborn_plot)
+    def Boxen_Plot(self, x, y, hue, dodge): 
         """Show boxen plot"""        
-        self._seaborn_plot(sns.boxenplot)
+        self._seaborn_plot(sns.boxenplot, x, y, hue, dodge)
     
     @Tools.Plot_Control.wraps
     def set_title(self, title: str):
@@ -159,11 +186,6 @@ class Analyzer:
         df = table.to_dataframe()
         return df
 
-    def _seaborn_plot(self, plot_function):
-        self.canvas.figure.clf()
-        df = self._current_df()
-        plot_function(data=df, ax=self.canvas.ax)
-        self.canvas.draw()
     
 if __name__ == "__main__":
     ui = Analyzer()
