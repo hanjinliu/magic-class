@@ -1,7 +1,9 @@
 from __future__ import annotations
 from typing import Any, TYPE_CHECKING, Callable
 import inspect
+from enum import Enum
 from dataclasses import Field, MISSING
+from magicgui.type_map import get_widget_class
 from magicgui.widgets import create_widget
 from magicgui.widgets._bases import Widget
 from magicgui.widgets._bases.value_widget import UNSET
@@ -44,21 +46,18 @@ class MagicField(Field):
         ------
         ValueError
             If there is not enough information to build a widget.
-        """        
-        value = UNSET if self.default is MISSING else self.default
-        annotation = None if self.default_factory is MISSING else self.default_factory
-        
+        """                
         if self.default_factory is not MISSING and issubclass(self.default_factory, Widget):
-            widget = self.default_factory(**self.metadata.get("options", {}))
+            widget = self.default_factory(**self.options)
         else:
-            widget = create_widget(value=value, 
-                                   annotation=annotation,
+            widget = create_widget(value=self.value, 
+                                   annotation=self.annotation,
                                    **self.metadata
                                    )
         widget.name = self.name
         return widget
         
-    def connect(self, func: Callable):
+    def connect(self, func: Callable) -> Callable:
         """
         Set callback function to "ready to connect" state.
         """        
@@ -66,7 +65,78 @@ class MagicField(Field):
             raise TypeError("Cannot connect non-callable object")
         self.callbacks.append(func)
         return func
+
+    @property
+    def value(self) -> Any:
+        return UNSET if self.default is MISSING else self.default
     
+    @property
+    def annotation(self):
+        return None if self.default_factory is MISSING else self.default_factory
+    
+    @property
+    def param_kind(self) -> inspect._ParameterKind:
+        raise NotImplementedError()
+    
+    @property
+    def options(self) -> dict:
+        return self.metadata.get("options", {})
+    
+    @property
+    def native(self) -> Widget:
+        raise RuntimeError(f"{self!r} has not been converted to a widget yet.")
+    
+    @property
+    def enabled(self) -> bool:
+        return self.options.get("enabled", True)
+    
+    @property
+    def parent(self) -> Widget:
+        raise RuntimeError(f"{self!r} has not been converted to a widget yet.")
+    
+    @property
+    def widget_type(self) -> str:
+        if self.default_factory is not MISSING and issubclass(self.default_factory, Widget):
+            wcls = self.default_factory
+        else:
+            wcls = get_widget_class(value=self.value, annotation=self.annotation)
+        return wcls.__name__
+
+    @property
+    def label(self) -> str:
+        return self.options.get("label", True)
+    
+    @property
+    def width(self) -> int:
+        raise RuntimeError(f"{self!r} has not been converted to a widget yet.")
+    
+    @property
+    def min_width(self) -> int:
+        raise RuntimeError(f"{self!r} has not been converted to a widget yet.")
+
+    @property
+    def max_width(self) -> int:
+        raise RuntimeError(f"{self!r} has not been converted to a widget yet.")
+    
+    @property
+    def height(self) -> int:
+        raise RuntimeError(f"{self!r} has not been converted to a widget yet.")
+
+    @property
+    def min_height(self) -> int:
+        raise RuntimeError(f"{self!r} has not been converted to a widget yet.")
+
+    @property
+    def max_height(self) -> int:
+        raise RuntimeError(f"{self!r} has not been converted to a widget yet.")
+
+    @property
+    def tooltip(self) -> str | None:
+        raise RuntimeError(f"{self!r} has not been converted to a widget yet.")
+
+    @property
+    def visible(self) -> bool:
+        return self.options.get("visible", True)
 
 def field(obj: Any = MISSING,
           *, 
