@@ -1,5 +1,5 @@
 from __future__ import annotations
-from functools import wraps as fwraps
+from functools import wraps as functools_wraps
 import inspect
 from enum import Enum
 from dataclasses import is_dataclass, _POST_INIT_NAME
@@ -94,11 +94,13 @@ def magicclass(class_: type|None = None,
     -------
     Decorated class or decorator.
     """    
+    widget_type = WidgetType(widget_type)
+    
     def wrapper(cls) -> ClassGui:
         if not isinstance(cls, type):
             raise TypeError(f"magicclass can only wrap classes, not {type(cls)}")
         
-        class_gui = _TYPE_MAP[WidgetType(widget_type)]
+        class_gui = _TYPE_MAP[widget_type]
         
         check_collision(cls, class_gui)
         # get class attributes first
@@ -116,7 +118,7 @@ def magicclass(class_: type|None = None,
         newclass.__annotations__ = class_gui.__annotations__.copy()
         newclass.__annotations__.update(annot)
         
-        @fwraps(oldclass.__init__)
+        @functools_wraps(oldclass.__init__)
         def __init__(self, *args, **kwargs):
             app = get_app() # Without "app = " Jupyter freezes after closing the window!
             macro_init = Expr.parse_init(cls, args, kwargs)
@@ -138,8 +140,8 @@ def magicclass(class_: type|None = None,
             
             # Record class instance construction
             self._recorded_macro.append(macro_init)
-            if widget_type in ("collapsible", "button"):
-                self.btn_text = self.__class__.__name__
+            if widget_type in (WidgetType.collapsible, WidgetType.button):
+                self.btn_text = self.name
 
         newclass.__init__ = __init__
         
@@ -202,7 +204,7 @@ def magicmenu(class_: type = None,
         newclass.__signature__ = sig
         newclass.__doc__ = doc
                 
-        @fwraps(oldclass.__init__)
+        @functools_wraps(oldclass.__init__)
         def __init__(self, *args, **kwargs):
             app = get_app() # Without "app = " Jupyter freezes after closing the window!
             macro_init = Expr.parse_init(cls, args, kwargs)

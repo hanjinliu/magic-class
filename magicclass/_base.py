@@ -1,5 +1,5 @@
 from __future__ import annotations
-from functools import wraps as fwraps
+from functools import wraps as functools_wraps
 from typing import Callable, Any, TYPE_CHECKING, TypeVar
 import inspect
 import numpy as np
@@ -21,6 +21,8 @@ if TYPE_CHECKING:
         import napari
     except ImportError:
         pass
+
+_MCLASS_PARENT = "__magicclass_parent__"
 
 class BaseGui:
     _component_class: type = None
@@ -99,12 +101,12 @@ class BaseGui:
         return None
     
     @property
-    def parent_viewer(self) -> "napari.Viewer"|None:
+    def parent_viewer(self) -> "napari.Viewer" | None:
         """
         Return napari.Viewer if self is a dock widget of a viewer.
         """
         current_self = self
-        while hasattr(current_self, "__magicclass_parent__") and current_self.__magicclass_parent__:
+        while hasattr(current_self, _MCLASS_PARENT) and current_self.__magicclass_parent__:
             current_self = current_self.__magicclass_parent__
         try:
             viewer = current_self.parent.parent().qt_viewer.viewer
@@ -114,7 +116,8 @@ class BaseGui:
     
     def objectName(self) -> str:
         """
-        This function makes the object name discoverable by napari's `viewer.window.add_dock_widget` function.
+        This function makes the object name discoverable by napari's 
+        `viewer.window.add_dock_widget` function.
         """        
         return self.native.objectName()
     
@@ -146,24 +149,31 @@ class BaseGui:
                 idt_list.append(idt)
                 annot.append(idt.as_annotation())
         
-        out = "\n".join(annot) + "\n" + script
+        if annot:
+            out = "\n".join(annot) + "\n" + script
+        else:
+            out = script
+            
         out = out.format(x=symbol)
         
         if show:
             win = TextEdit(name="macro")
             win.native.setFont(QFont("Consolas"))
             win.read_only = False
-            for text in out.split("\n"):
-                win.native.append(text)
+            win.value = out
             vbar = win.native.verticalScrollBar()
             vbar.setValue(vbar.maximum())
             
             win.native.setParent(self.native, win.native.windowFlags())
+            win.show()
             
         return out
     
     @classmethod
-    def wraps(cls, method: Callable | None = None, *, template: Callable | None = None) -> Callable:
+    def wraps(cls, 
+              method: Callable | None = None,
+              *, 
+              template: Callable | None = None) -> Callable:
         """
         Wrap a parent method in a child magic-class.
         
@@ -199,7 +209,7 @@ class BaseGui:
             
             # Must be template as long as this wrapper function is called
             if template is None:
-                _wrap_func = fwraps(method)
+                _wrap_func = functools_wraps(method)
             else:
                 def _wrap_func(f):
                     f = _wraps(template, reference=method)(f)
@@ -212,12 +222,13 @@ class BaseGui:
             # We can know the namespace of the wrapped function with __qualname__.
             if isinstance(method, FunctionGui):
                 clsname, funcname = method._function.__qualname__.split(".")
-                options = dict(call_button=method._call_button.text if method._call_button else None,
-                            layout=method.layout,
-                            labels=method.labels,
-                            auto_call=method._auto_call,
-                            result_widget=bool(method._result_widget)
-                            )
+                options = dict(
+                    call_button=method._call_button.text if method._call_button else None,
+                    layout=method.layout,
+                    labels=method.labels,
+                    auto_call=method._auto_call,
+                    result_widget=bool(method._result_widget)
+                    )
                 method = method._function
                 childmethod = magicgui(**options)(_wrap_func(_childmethod))
                 method = _copy_function(method)
@@ -287,7 +298,8 @@ class BaseGui:
                 callback(out)
                 return out
             
-        elif n_parameters(func) == 1 and type(FunctionGui.from_callable(func)[0]) is FileEdit:
+        elif n_parameters(func) == 1 and \
+            isinstance(FunctionGui.from_callable(func)[0], FileEdit):
             # We don't want to open a magicgui dialog and again open a file dialog.
             def run_function(*args):
                 mgui = magicgui(func)
@@ -326,7 +338,8 @@ class BaseGui:
                     mgui.name = f"function-{id(func)}"
                         
                 except Exception as e:
-                    msg = f"Exception was raised during building magicgui.\n{e.__class__.__name__}: {e}"
+                    msg = "Exception was raised during building magicgui.\n" \
+                         f"{e.__class__.__name__}: {e}"
                     raise_error_msg(self.native, msg=msg)
                     raise e
                 
@@ -335,7 +348,7 @@ class BaseGui:
                 for key, value in params.items():
                     try:
                         getattr(mgui, key).value = value
-                    except ValueError:
+                    except (ValueError, AttributeError):
                         pass
                     
                 mgui.native.setParent(self.native, mgui.native.windowFlags())
@@ -344,7 +357,7 @@ class BaseGui:
                     mgui.show()
                 else:
                     current_self = self
-                    while (hasattr(current_self, "__magicclass_parent__") 
+                    while (hasattr(current_self, _MCLASS_PARENT) 
                             and current_self.__magicclass_parent__):
                         current_self = current_self.__magicclass_parent__
                     
@@ -357,7 +370,7 @@ class BaseGui:
                     def _close(value):
                         if not self._popup:
                             current_self = self
-                            while (hasattr(current_self, "__magicclass_parent__") 
+                            while (hasattr(current_self, _MCLASS_PARENT) 
                                 and current_self.__magicclass_parent__):
                                 current_self = current_self.__magicclass_parent__
                             current_self.remove(mgui)
@@ -407,7 +420,7 @@ def _temporal_function_gui_callback(bgui: BaseGui, fgui: FunctionGui|Callable, w
     return _after_run
 
 def _copy_function(f):
-    @fwraps(f)
+    @functools_wraps(f)
     def out(self, *args, **kwargs):
         return f(self, *args, **kwargs)
     return out
@@ -415,9 +428,10 @@ def _copy_function(f):
 
 _C = TypeVar("_C", Callable, type)
 
-def wraps(template: Callable | inspect.Signature) -> Callable:
+def wraps(template: Callable | inspect.Signature) -> Callable[[_C], _C]:
     """
-    Update signature using a template.
+    Update signature using a template. If class is wrapped, then all the methods
+    except for those start with "__" will be wrapped.
 
     Parameters
     ----------
@@ -427,11 +441,13 @@ def wraps(template: Callable | inspect.Signature) -> Callable:
     Returns
     -------
     Callable
-        Same function with updated signature.
+        A wrapper which take a function or class as an input and returns same
+        function or class with updated signature(s).
     """    
     return _wraps(template)
 
-def _wraps(template: Callable | inspect.Signature, reference: Callable = None) -> Callable:
+def _wraps(template: Callable | inspect.Signature, 
+           reference: Callable = None) -> Callable:
     def wrapper(f: _C) -> _C:
         if isinstance(f, type):
             for name, attr in iter_members(f):
@@ -452,7 +468,8 @@ def _wraps(template: Callable | inspect.Signature, reference: Callable = None) -
         elif isinstance(template, inspect.Signature):
             template_signature = template
         else:
-            raise TypeError(f"template must be a callable object or signature, but got {type(template)}.")
+            raise TypeError("template must be a callable object or signature, "
+                           f"but got {type(template)}.")
         
         # update empty signatures
         template_params = template_signature.parameters

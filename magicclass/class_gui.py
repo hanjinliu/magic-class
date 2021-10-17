@@ -46,7 +46,7 @@ class ClassGuiBase(BaseGui):
                 pass
             
         widget = fld.to_widget()
-        widget.name = widget.name or name
+        widget.name = widget.name or name.replace("_", " ")
             
         if isinstance(widget, (ValueWidget, Container)):
             # If the field has callbacks, connect it to the newly generated widget.
