@@ -4,8 +4,8 @@ from ._base import BaseGui
 from .field import field
 from .macro import Identifier
 from enum import Enum
-from qtpy.QtGui import QFont
-from magicgui.widgets import Container, Label, TextEdit
+from qtpy.QtGui import QFont, QTextOption
+from magicgui.widgets import Container, TextEdit
 import numpy as np
 
 class Layout(Enum):
@@ -27,6 +27,7 @@ class MagicClassCreator:
             layout_ = field(Layout)
             labels_ = field(True)
             name_ = field("Gui")
+            tooltip_ = field("")
             widget_type_ = field(WidgetType)
             
             def append_(self): ...
@@ -47,30 +48,26 @@ class MagicClassCreator:
         @magicclass(labels=False, widget_type="tabbed")
         class Panels:
             @magicclass(labels=False)
-            class GUI: pass
+            class GUI:
+                """
+                Your GUI looks like this!
+                """
             @magicclass(labels=False)
             class Code:
+                """
+                A template of Python code is available here!
+                """                
                 txt = TextEdit()
                 txt.native.setFont(QFont("Consolas"))
                 def __post_init__(self):
                     self.txt.native.setParent(self.native, self.txt.native.windowFlags())
+                    self.txt.native.setWordWrapMode(QTextOption.NoWrap)
         
         def Back_to_parent(self): ...
         def Reset(self): ...
     
     @Tools.Add_Container.wraps
     def append_(self):
-        widget = self._to_container()
-        if self._creation is None:
-            self._creation = widget
-            self.ViewPanel.Panels.GUI.append(self._creation)
-        else:
-            self._creation.append(widget)
-            if isinstance(widget, BaseGui):
-                self._creation = widget
-        self._create_code()
-        
-    def _to_container(self):
         parent = self.Tools.Add_Container
         kwargs= dict(layout=parent.layout_.value.name, 
                      labels=parent.labels_.value,
@@ -78,21 +75,49 @@ class MagicClassCreator:
                      widget_type=parent.widget_type_.value.name
                      )
         @magicclass(**kwargs)
-        class _container:
-            """Created by magicclass creator"""
+        class _container: pass
         kw = _dict_to_arguments(kwargs)
         if kw:
             kw = f"({kw})"
         self._code.append((f"@magicclass{kw}", self._indent))
         self._code.append((f"class {parent.name_.value}:", self._indent))
         self._indent += 4
-        return _container()
-    
+        
+        tooltip = parent.tooltip_.value
+        if tooltip:
+            self._code.append((f"\"\"\"{tooltip}\"\"\"", self._indent))
+            
+        widget = _container()
+        
+        if self._creation is None:
+            self._creation = widget
+            self.ViewPanel.Panels.GUI.append(self._creation)
+        else:
+            self._creation.append(widget)
+            if isinstance(widget, BaseGui):
+                widget.__magicclass_parent__ = self._creation
+                self._creation = widget
+                
+        self._create_code()
+        
     @Tools.Add_basic_widget.wraps
-    def append_PushButton(self, text="", tooltip=""):
-        self._append_widget(False, 
-                            {"text": text, "tooltip": tooltip}, 
-                            widget_type="PushButton")
+    def append_PushButton(self, function_name="", text="", tooltip=""):
+        if function_name == "":
+            raise ValueError("function name must be specified")
+        if text:
+            self._code.append((f"@set_design(text={text!r})", self._indent))
+        else:
+            text = function_name
+                
+        if tooltip:
+            self._code.append((f"def {function_name}(self):", self._indent))
+            self._code.append((f"\"\"\"{tooltip}\"\"\"", self._indent + 4))
+        else:
+            self._code.append((f"def {function_name}(self): ...", self._indent))
+        
+        fld = field(False, options={"text": text, "tooltip": tooltip}, widget_type="PushButton")
+        self._creation.append(fld.to_widget())
+        self._create_code()
         
     @Tools.Add_basic_widget.wraps
     def append_LineEdit(self, label_="", value="", tooltip=""):
@@ -107,9 +132,9 @@ class MagicClassCreator:
     @Tools.Add_basic_widget.wraps
     def append_SpinBox(self, label_="", value="", min="0", max="1000", step="1", tooltip=""):
         label = label_ or None
-        value = _as_scalar(value)
         min = _as_scalar(min)
         max = _as_scalar(max)
+        value = _as_scalar(value) if value else min
         step = _as_scalar(step)
         if value < min:
             min = value
@@ -121,9 +146,9 @@ class MagicClassCreator:
     @Tools.Add_basic_widget.wraps
     def append_Slider(self, label_="", value="", min="0", max="1000", step="1", tooltip=""):
         label = label_ or None
-        value = _as_scalar(value)
         min = _as_scalar(min)
         max = _as_scalar(max)
+        value = _as_scalar(value) if value else min
         step = _as_scalar(step)
         if value < min:
             min = value
