@@ -94,7 +94,7 @@ class ClassGuiBase(BaseGui):
         base_members = set(x[0] for x in iter_members(self._container_widget)) 
         base_members |= set(x[0] for x in iter_members(ClassGuiBase))
         for name, attr in filter(lambda x: x[0] not in base_members, iter_members(cls)):
-            if name in ClassGuiBase.__annotations__.keys():
+            if name in ClassGuiBase.__annotations__.keys() or isinstance(attr, property):
                 continue
             
             # First make sure none of them is type object nor MagicField object.
