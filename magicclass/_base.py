@@ -22,8 +22,6 @@ if TYPE_CHECKING:
     except ImportError:
         pass
 
-_MCLASS_PARENT = "__magicclass_parent__"
-
 class BaseGui:
     _component_class: type = None
     
@@ -105,11 +103,9 @@ class BaseGui:
         """
         Return napari.Viewer if self is a dock widget of a viewer.
         """
-        current_self = self
-        while hasattr(current_self, _MCLASS_PARENT) and current_self.__magicclass_parent__:
-            current_self = current_self.__magicclass_parent__
+        parent_self = self._search_parent_magicclass()
         try:
-            viewer = current_self.parent.parent().qt_viewer.viewer
+            viewer = parent_self.parent.parent().qt_viewer.viewer
         except AttributeError:
             viewer = None
         return viewer
@@ -353,26 +349,20 @@ class BaseGui:
                 if self._popup:
                     mgui.show()
                 else:
-                    current_self = self
-                    while (hasattr(current_self, _MCLASS_PARENT) 
-                            and current_self.__magicclass_parent__):
-                        current_self = current_self.__magicclass_parent__
+                    parent_self = self._search_parent_magicclass()
                     
                     sep = Separator(orientation="horizontal", text=text)
                     mgui.label = ""
                     mgui.margins = (0, 0, 0, 0)
                     mgui.insert(0, sep)
-                    current_self.append(mgui)
+                    parent_self.append(mgui)
                 
                 if self._close_on_run:
                     @mgui.called.connect
                     def _close(value):
                         if not self._popup:
-                            current_self = self
-                            while (hasattr(current_self, _MCLASS_PARENT) 
-                                and current_self.__magicclass_parent__):
-                                current_self = current_self.__magicclass_parent__
-                            current_self.remove(mgui)
+                            parent_self = self._search_parent_magicclass()
+                            parent_self.remove(mgui)
                         mgui.close()
                 
                 callback = _temporal_function_gui_callback(self, mgui, widget)
@@ -386,6 +376,13 @@ class BaseGui:
         widget.from_options(obj)
             
         return widget
+    
+    def _search_parent_magicclass(self) -> BaseGui:
+        current_self = self
+        while (hasattr(current_self, "__magicclass_parent__") 
+            and current_self.__magicclass_parent__):
+            current_self = current_self.__magicclass_parent__
+        return current_self
     
 def _temporal_function_gui_callback(bgui: BaseGui, fgui: FunctionGui|Callable, widget):
     def _after_run(value):

@@ -230,22 +230,18 @@ def make_gui(container: type[ContainerWidget], no_margin: bool = True):
             Show ClassGui. If any of the parent ClassGui is a dock widget in napari, then this
             will also show up as a dock widget (floating if popup=True).
             """        
-            current_self = self
-            while hasattr(current_self, "__magicclass_parent__") and current_self.__magicclass_parent__:
-                current_self = current_self.__magicclass_parent__
+            parent_self = self._search_parent_magicclass()
             
-            viewer = current_self.parent_viewer
+            viewer = parent_self.parent_viewer
             if viewer is not None:
                 dock = viewer.window.add_dock_widget(self, area="right", allowed_areas=["left", "right"])
-                dock.setFloating(current_self._popup)
+                dock.setFloating(parent_self._popup)
             else:
                 container.show(self, run=run)
             return None
         
         def close(self: cls):
-            current_self = self
-            while hasattr(current_self, "__magicclass_parent__") and current_self.__magicclass_parent__:
-                current_self = current_self.__magicclass_parent__
+            current_self = self._search_parent_magicclass()
             
             viewer = current_self.parent_viewer
             if viewer is not None:
