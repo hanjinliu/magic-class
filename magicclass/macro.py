@@ -21,6 +21,8 @@ class Identifier(UserString):
             seq = obj
         elif isinstance(obj, (tuple, list)):
             seq = obj
+        elif isinstance(obj, Enum):
+            seq = repr(str(obj.name))
         else:
             seq = f"var{hex(id(obj))}" # hexadecimals are easier to distinguish
             self.valid = False
