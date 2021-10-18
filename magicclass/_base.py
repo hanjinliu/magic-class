@@ -28,7 +28,7 @@ class BaseGui:
     def __init__(self, close_on_run = True, popup = True, single_call = True):
         self._recorded_macro: Macro[Expr] = Macro()
         self._parameter_history: dict[str, dict[str, Any]] = {}
-        self.__magicclass_parent__: None|BaseGui = None
+        self.__magicclass_parent__: None | BaseGui = None
         self._popup = popup
         self._close_on_run = close_on_run
         self._result_widget = None

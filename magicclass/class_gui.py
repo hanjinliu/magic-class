@@ -138,8 +138,11 @@ class ClassGuiBase(BaseGui):
                     # Methods (FunctionGui not included)
                     widget = self._create_widget_from_method(widget)
                 
-                elif isinstance(widget, ClassGuiBase):
-                    # magic-class has to know its parent
+                elif hasattr(widget, "__magicclass_parent__") or \
+                    hasattr(widget.__class__, "__magicclass_parent__"):
+                    # magic-class has to know its parent.
+                    # if __magicclass_parent__ is defined as a property, hasattr must be called
+                    # with a type object (not instance).
                     widget.__magicclass_parent__ = self
 
                 elif isinstance(widget, FunctionGui):
