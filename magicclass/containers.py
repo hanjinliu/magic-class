@@ -35,24 +35,28 @@ class _Splitter(ContainerBase):
     _qwidget: QtW.QSplitter
     def __init__(self, layout="vertical"):
         QBaseWidget.__init__(self, QtW.QSplitter)
-        
+        # SetLayout is not supported for QSplitter.
+        # Layout is just a dummy.
         if layout == "horizontal":
             self._qwidget.setOrientation(Qt.Horizontal)
+            self._layout = QtW.QHBoxLayout()
         else:
             self._qwidget.setOrientation(Qt.Vertical)
+            self._layout = QtW.QVBoxLayout()
+                
     
     def _mgui_insert_widget(self, position: int, widget: Widget):
         self._qwidget.insertWidget(position, widget.native)
 
-    
     def _mgui_remove_widget(self, widget: Widget):
-        raise NotImplementedError()
+        widget.native.setParent(None)
 
     def _mgui_get_margins(self) -> tuple[int, int, int, int]:
-        raise NotImplementedError()
+        return (0, 0, 0, 0)
 
     def _mgui_set_margins(self, margins: tuple[int, int, int, int]) -> None:
-        raise NotImplementedError()
+        pass
+
         
 class _ToolBox(ContainerBase):
     _qwidget: QtW.QToolBox
