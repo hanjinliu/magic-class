@@ -303,17 +303,15 @@ class BaseGui:
             # We don't want to open a magicgui dialog and again open a file dialog.
             def run_function(*args):
                 mgui = magicgui(func)
-                mgui.name = f"function-{id(func)}"
-                widget.mgui = mgui
                 
                 callback = _temporal_function_gui_callback(self, mgui, widget)
                 params = self._parameter_history.get(func.__name__, {})
                 path = "."
                 for key, value in params.items():
-                    getattr(widget.mgui, key).value = value
+                    mgui[key].value = value
                     path = str(value)
                 
-                fdialog: FileEdit = widget.mgui[0]
+                fdialog: FileEdit = mgui[0]
                 result = fdialog._show_file_dialog(
                     fdialog.mode,
                     caption=fdialog._btn_text,
@@ -335,7 +333,6 @@ class BaseGui:
                     return None
                 try:
                     mgui = magicgui(func)
-                    mgui.name = f"function-{id(func)}"
                         
                 except Exception as e:
                     msg = "Exception was raised during building magicgui.\n" \
@@ -347,7 +344,7 @@ class BaseGui:
                 params = self._parameter_history.get(func.__name__, {})
                 for key, value in params.items():
                     try:
-                        getattr(mgui, key).value = value
+                        mgui[key].value = value
                     except (ValueError, AttributeError):
                         pass
                     
@@ -362,6 +359,8 @@ class BaseGui:
                         current_self = current_self.__magicclass_parent__
                     
                     sep = Separator(orientation="horizontal", text=text)
+                    mgui.label = ""
+                    mgui.margins = (0, 0, 0, 0)
                     mgui.insert(0, sep)
                     current_self.append(mgui)
                 

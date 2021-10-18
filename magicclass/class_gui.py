@@ -3,7 +3,7 @@ from typing import TypeVar
 from inspect import signature
 from qtpy.QtWidgets import QMenuBar
 from magicgui.widgets import Container, MainWindow,Label, LineEdit, FunctionGui
-from magicgui.widgets._bases import Widget, ButtonWidget, ValueWidget
+from magicgui.widgets._bases import Widget, ButtonWidget, ValueWidget, ContainerWidget
 from magicgui.widgets._concrete import _LabeledWidget
 
 from .macro import Expr, Head
@@ -156,26 +156,8 @@ class ClassGuiBase(BaseGui):
                 # Now, "widget" is a Widget object. Add widget in a way similar to "insert" method 
                 # of Container.
                 
-                if name.startswith("_"):
-                    continue
-                
-                _hide_labels = (_LabeledWidget, ButtonWidget, ClassGuiBase, FrozenContainer, Label)
-                
-                if isinstance(widget, ValueWidget):
-                    widget.changed.connect(lambda x: self.changed(value=self))
-                if isinstance(widget, ClassGuiBase) and self._remove_child_margins:
-                    widget.margins = (0, 0, 0, 0)
-                    
-                _widget = widget
-
-                if self.labels:
-                    if not isinstance(widget, _hide_labels):
-                        _widget = _LabeledWidget(widget)
-                        widget.label_changed.connect(self._unify_label_widths)
-
-                key = len(self)
-                self._list.insert(key, widget)
-                self._widget._mgui_insert_widget(key, _widget)
+                if not name.startswith("_"):
+                    self.insert(len(self), widget)
                 
         # Append result widget in the bottom
         if self._result_widget is not None:
@@ -186,25 +168,28 @@ class ClassGuiBase(BaseGui):
 
         return None
 
-def make_gui(container: type, no_margin: bool = True):
+def make_gui(container: type[ContainerWidget], no_margin: bool = True):
     """
     Make a ClassGui class from a Container widget.
+    Because GUI class inherits Container here, functions that need overriden must be defined
+    here, not in ClassGuiBase.
     """    
-    def wrapper(cls: ClassGuiBase):
-        cls = type(cls.__name__, (container, ClassGuiBase), {})
-        def __init__(self, 
-                    layout: str = "vertical", 
-                    parent = None, 
-                    close_on_run: bool = True,
-                    popup: bool = True, 
-                    result_widget: bool = False,
-                    labels: bool = True, 
-                    name: str = None, 
-                    single_call: bool = True
-                    ):
+    def wrapper(cls_: type[ClassGuiBase]):
+        cls = type(cls_.__name__, (container, ClassGuiBase), {})
+        def __init__(self: cls, 
+                     layout: str = "vertical", 
+                     parent = None, 
+                     close_on_run: bool = True,
+                     popup: bool = True, 
+                     result_widget: bool = False,
+                     labels: bool = True, 
+                     name: str = None, 
+                     single_call: bool = True
+                     ):
 
             container.__init__(self, layout=layout, labels=labels, name=name)
-            BaseGui.__init__(self, close_on_run=close_on_run, popup=popup, single_call=single_call)
+            BaseGui.__init__(self, close_on_run=close_on_run, popup=popup, 
+                             single_call=single_call)
             
             if parent is not None:
                 self.parent = parent
@@ -217,10 +202,33 @@ def make_gui(container: type, no_margin: bool = True):
             
             self.native.setObjectName(self.name)
         
-        def show(self, run: bool = False) -> None:
+        def insert(self: cls, key: int, widget: Widget):
+            _hide_labels = (_LabeledWidget, ButtonWidget, ClassGuiBase, FrozenContainer, Label)
+                
+            if isinstance(widget, ValueWidget):
+                widget.changed.connect(lambda x: self.changed(value=self))
+            if isinstance(widget, ClassGuiBase) and self._remove_child_margins:
+                widget.margins = (0, 0, 0, 0)
+                
+            _widget = widget
+
+            if self.labels:
+                # no labels for button widgets (push buttons, checkboxes, have their own)
+                if not isinstance(widget, _hide_labels):
+                    _widget = _LabeledWidget(widget)
+                    widget.label_changed.connect(self._unify_label_widths)
+
+            self._list.insert(key, widget)
+            if key < 0:
+                key += len(self)
+            self._widget._mgui_insert_widget(key, _widget)
+            self._unify_label_widths()
+
+        
+        def show(self: cls, run: bool = False) -> None:
             """
-            Show ClassGui. If any of the parent ClassGui is a dock widget in napari, then this will also show up
-            as a dock widget (floating if popup=True).
+            Show ClassGui. If any of the parent ClassGui is a dock widget in napari, then this
+            will also show up as a dock widget (floating if popup=True).
             """        
             current_self = self
             while hasattr(current_self, "__magicclass_parent__") and current_self.__magicclass_parent__:
@@ -232,11 +240,14 @@ def make_gui(container: type, no_margin: bool = True):
                 dock.setFloating(current_self._popup)
             else:
                 container.show(self, run=run)
-                self.native.activateWindow()
             return None
         
-        def close(self):
-            viewer = self.parent_viewer
+        def close(self: cls):
+            current_self = self
+            while hasattr(current_self, "__magicclass_parent__") and current_self.__magicclass_parent__:
+                current_self = current_self.__magicclass_parent__
+            
+            viewer = current_self.parent_viewer
             if viewer is not None:
                 try:
                     viewer.window.remove_dock_widget(self.parent)
@@ -248,6 +259,7 @@ def make_gui(container: type, no_margin: bool = True):
             return None
         
         cls.__init__ = __init__
+        cls.insert = insert
         cls.show = show
         cls.close = close
         cls._container_widget = container
