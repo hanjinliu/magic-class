@@ -14,7 +14,7 @@ class Plot:
 
     @parameters.a.connect
     @parameters.b.connect
-    def _plot(self, event=None):
+    def _plot(self):
         a = self.parameters.a.value
         b = self.parameters.b.value
         t = np.linspace(0, 4*np.pi, 200)

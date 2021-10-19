@@ -31,7 +31,6 @@ class BaseGui:
         self.__magicclass_parent__: None | BaseGui = None
         self._popup = popup
         self._close_on_run = close_on_run
-        self._result_widget = None
         self._single_call = single_call
     
     
@@ -291,15 +290,15 @@ class BaseGui:
         if n_parameters(func) == 0:
             # We don't want a dialog with a single widget "Run" to show up.
             callback = _temporal_function_gui_callback(self, func, widget)
-            def run_function(*args):
+            def run_function():
                 out = func()
-                callback(out)
+                callback()
                 return out
             
         elif n_parameters(func) == 1 and \
             isinstance(FunctionGui.from_callable(func)[0], FileEdit):
             # We don't want to open a magicgui dialog and again open a file dialog.
-            def run_function(*args):
+            def run_function():
                 mgui = magicgui(func)
                 
                 callback = _temporal_function_gui_callback(self, mgui, widget)
@@ -319,13 +318,13 @@ class BaseGui:
                 if result:
                     fdialog.value = result
                     out = func(result)
-                    callback(out)
+                    callback()
                 else:
                     out = None
                 return out
             
         else:
-            def run_function(*args):
+            def run_function():
                 if widget.mgui is not None and self._single_call:
                     show_mgui(widget.mgui)
                     return None
@@ -361,7 +360,7 @@ class BaseGui:
                 
                 if self._close_on_run:
                     @mgui.called.connect
-                    def _close(value):
+                    def _close():
                         if not self._popup:
                             parent_self = self._search_parent_magicclass()
                             parent_self.remove(mgui)
@@ -387,10 +386,7 @@ class BaseGui:
         return current_self
     
 def _temporal_function_gui_callback(bgui: BaseGui, fgui: FunctionGui|Callable, widget):
-    def _after_run(value):
-        if isinstance(value, Exception):
-            return None
-        
+    def _after_run():
         if isinstance(fgui, FunctionGui):
             inputs = get_parameters(fgui)
             bgui._record_parameter_history(fgui._function.__name__, inputs)
@@ -403,16 +399,13 @@ def _temporal_function_gui_callback(bgui: BaseGui, fgui: FunctionGui|Callable, w
         # 1. Build FunctionGui
         # 2. Emit value changed signal.
         # But if there are more, they also have to be called.
-        if len(widget.changed.callbacks) > 2:
+        if len(widget.changed._slots) > 2:
             b = Expr(head=Head.getitem, args=["{x}", widget.name])
             ev = Expr(head=Head.getattr, args=[b, "changed"])
             macro = Expr(head=Head.call, args=[ev])
             bgui._recorded_macro.append(macro)
         else:
             bgui._record_macro(_function, (), inputs)
-        
-        if bgui._result_widget is not None:
-            bgui._result_widget.value = value
             
         widget.mgui = None
     return _after_run

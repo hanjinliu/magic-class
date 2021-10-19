@@ -1,7 +1,7 @@
 from magicclass import magicclass, field, set_design
-from magicclass.widgets import Separator
+from magicclass.widgets import Separator, LineEdit
 
-@magicclass(result_widget=True)
+@magicclass
 class Function:
     """
     This class does almost same thing as FunctionGui. 
@@ -21,7 +21,9 @@ class Function:
     def call_button(self):
         s = self.line.value
         i = self.slider.value
-        return f"{s}-{i}"
+        self.result.value = f"{s}-{i}"
+
+    result = LineEdit(enabled=False)
 
 if __name__ == "__main__":
     ui = Function()

@@ -1,7 +1,7 @@
 from magicgui import magicgui
-from magicclass import magicclass
+from magicclass import magicclass, field
 
-@magicclass(result_widget=True)
+@magicclass
 class Calculator:
     """
     Simple calculator
@@ -17,16 +17,18 @@ class Calculator:
         self.b = b
 
     def add(self):
-        return self.a + self.b
+        self.answer.value =  self.a + self.b
     
     def subtract(self):
-        return self.a - self.b
+        self.answer.value =  self.a - self.b
     
     def multiply(self):
-        return self.a * self.b
+        self.answer.value =  self.a * self.b
     
     def divide(self):
-        return self.a / self.b
+        self.answer.value =  self.a / self.b
+    
+    answer = field(str, options={"enabled": False})
 
 if __name__ == "__main__":
     ui = Calculator()

@@ -50,7 +50,6 @@ def magicclass(class_: type|None = None,
                name: str = None,
                close_on_run: bool = True,
                popup: bool = True,
-               result_widget: bool = False, 
                single_call: bool = True, 
                widget_type: WidgetType | str = WidgetType.none,
                parent = None
@@ -80,8 +79,6 @@ def magicclass(class_: type|None = None,
     popup : bool, default is True
         If True, magicgui created by every method will be poped up, else they will be appended as a
         part of the main widget.
-    result_widget : bool, default is False
-        If true, FunctionGui-like results widget will be added.
     single_call : bool, default is True 
         If true, user cannot call the same function at the same time. If same button is clicked, the 
         existing magicgui window is re-activated.
@@ -128,7 +125,6 @@ def magicclass(class_: type|None = None,
                                close_on_run=close_on_run, 
                                popup=popup,
                                labels=labels,
-                               result_widget=result_widget,
                                name=name or cls.__name__.replace("_", " "), 
                                single_call=single_call
                                )

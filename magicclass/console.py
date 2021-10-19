@@ -1,11 +1,16 @@
 from ipykernel.connect import get_connection_file
 from IPython import get_ipython
+from magicgui.events import Signal
 from qtconsole.client import QtKernelClient
 from qtconsole.rich_jupyter_widget import RichJupyterWidget
 from magicgui.widgets import Widget
 from .widgets import FrozenContainer
 
 class _Console(RichJupyterWidget):
+    changed = Signal(str)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
     def connect_parent(self, ui: Widget):
         if not isinstance(ui, Widget):
             raise TypeError(f"Cannot connect QtConsole to {type(ui)}.")
@@ -18,12 +23,17 @@ class _Console(RichJupyterWidget):
         self.kernel_manager = None
         self.kernel_client = kernel_client
         self.shell.push({"ui": ui})
-    
-
+        
 class Console(FrozenContainer):
+    changed = Signal(str)
+    executed = Signal(str)
     def __init__(self, **kwargs):
         super().__init__(labels=False, **kwargs)
+        
         self.console = _Console()
+        @self.console.changed.connect
+        def _callback(e: str):
+            self.changed.emit(e)
         self.set_widget(self.console)
     
     @property
@@ -42,6 +52,7 @@ class Console(FrozenContainer):
     @value.setter
     def value(self, code: str) -> None:
         """Set code string to Jupyter QtConsole buffer"""
+        self.console.input_buffer = ""
         if not isinstance(code, str):
             raise ValueError(f"Cannot set {type(code)}.")
         cursor = self.console._control.textCursor()
@@ -53,4 +64,7 @@ class Console(FrozenContainer):
     
     def execute(self):
         """Execute current code block"""
+        code = self.value
         self.console.execute()
+        self.executed.emit(code)
+        

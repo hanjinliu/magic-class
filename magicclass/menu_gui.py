@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import Callable
-from magicgui.events import EventEmitter
+from magicgui.events import Signal
 from magicgui.widgets._bases import ButtonWidget
 from qtpy.QtGui import QIcon
 from qtpy.QtWidgets import QMenu, QAction
@@ -12,6 +12,7 @@ from .macro import Expr, Head
 from .utils import iter_members, define_callback
 
 class Action:
+    changed = Signal(object)
     def __init__(self, *args, name=None, text=None, gui_only=True, **kwargs):
         self.native = QAction(*args, **kwargs)
         self.mgui = None
@@ -21,8 +22,8 @@ class Action:
         if name:
             self.native.setObjectName(name)
         self._callbacks = []
-        self.changed = EventEmitter(source=self, type="changed")
-        self.native.triggered.connect(lambda e: self.changed(value=self.value))
+        
+        self.native.triggered.connect(lambda: self.changed.emit(self.value))
         
     @property
     def name(self) -> str:
@@ -139,25 +140,8 @@ class MenuGui(BaseGui):
                 widget.changed.connect(define_callback(self, callback))
                      
             # By default, set value function will be connected to the widget.
-            @widget.changed.connect
-            def _set_value(event):
-                if not event.source.enabled:
-                    # If widget is read only, it means that value is set in script (not manually).
-                    # Thus this event should not be recorded as a macro.
-                    return None
-                value = event.source.value # TODO: fix after psygnal start to be used.
-                if isinstance(value, Exception):
-                    return None
-                sub = Expr(head=Head.getattr, args=[name, "value"]) # name.value
-                expr = Expr(head=Head.setattr, args=["{x}", sub, value]) # {x}.name.value = value
+            widget.changed.connect(_value_widget_callback(self, widget, name))
                 
-                last_expr = self._recorded_macro[-1]
-                if last_expr.head == expr.head and last_expr.args[1].args[0] == expr.args[1].args[0]:
-                    self._recorded_macro[-1] = expr
-                else:
-                    self._recorded_macro.append(expr)
-                return None
-    
         setattr(self, name, widget)
         return widget
     
@@ -221,3 +205,22 @@ class MenuGui(BaseGui):
             self.native.addSeparator()
         else:
             raise TypeError(f"{type(obj)} is not supported.")
+
+def _value_widget_callback(mgui: MenuGui, widget: ButtonWidget, name: str):
+    def _set_value():
+        if not widget.enabled:
+            # If widget is read only, it means that value is set in script (not manually).
+            # Thus this event should not be recorded as a macro.
+            return None
+        value = widget.value
+        if isinstance(value, Exception):
+            return None
+        sub = Expr(head=Head.getattr, args=[name, "value"]) # name.value
+        expr = Expr(head=Head.setattr, args=["{x}", sub, value]) # {x}.name.value = value
+        
+        last_expr = mgui._recorded_macro[-1]
+        if last_expr.head == expr.head and last_expr.args[1].args[0] == expr.args[1].args[0]:
+            mgui._recorded_macro[-1] = expr
+        else:
+            mgui._recorded_macro.append(expr)
+    return _set_value

@@ -39,7 +39,6 @@ class MagicClassCreator:
             class Others:
                 close_on_run_ = field(True)
                 popup_ = field(True)
-                result_widget_ = field(False)
                 
             def append_(self): ...
         
@@ -88,7 +87,6 @@ class MagicClassCreator:
                      widget_type=parent.widget_type_.value.name,
                      close_on_run=parent.Others.close_on_run_.value,
                      popup=parent.Others.popup_.value,
-                     result_widget=parent.Others.result_widget_.value,
                      )
         
         name = parent.name_.value

@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import TypeVar
+from typing import Any
 from inspect import signature
 from qtpy.QtWidgets import QMenuBar
 from magicgui.widgets import Container, MainWindow,Label, LineEdit, FunctionGui
@@ -26,7 +26,6 @@ class ClassGuiBase(BaseGui):
     # This class is always inherited by @magicclass decorator.
     _component_class = PushButtonPlus
     _container_widget: type
-    _result_widget: LineEdit
     _remove_child_margins: bool
     
     def _create_widget_from_field(self, name: str, fld: MagicField):
@@ -53,26 +52,9 @@ class ClassGuiBase(BaseGui):
                 
             if hasattr(widget, "value"):        
                 # By default, set value function will be connected to the widget.
-                @widget.changed.connect
-                def _set_value(event):
-                    if not event.source.enabled:
-                        # If widget is read only, it means that value is set in script (not manually).
-                        # Thus this event should not be recorded as a macro.
-                        return None
-                    value = event.source.value # TODO: fix after psygnal start to be used.
-                    self.changed(value=self)
-                    if isinstance(value, Exception):
-                        return None
-                    sub = Expr(head=Head.getattr, args=[name, "value"]) # name.value
-                    expr = Expr(head=Head.setattr, args=["{x}", sub, value]) # {x}.name.value = value
-                    
-                    last_expr = self._recorded_macro[-1]
-                    if last_expr.head == expr.head and last_expr.args[1].args[0] == expr.args[1].args[0]:
-                        self._recorded_macro[-1] = expr
-                    else:
-                        self._recorded_macro.append(expr)
-                    return None
-        
+                f = _value_widget_callback(self, widget, name)
+                widget.changed.connect(f)
+                
         setattr(self, name, widget)
         return widget
     
@@ -158,12 +140,7 @@ class ClassGuiBase(BaseGui):
                 
                 if not name.startswith("_"):
                     self.insert(len(self), widget)
-                
-        # Append result widget in the bottom
-        if self._result_widget is not None:
-            self._result_widget.enabled = False
-            self.append(self._result_widget)
-        
+                        
         self._unify_label_widths()
 
         return None
@@ -181,7 +158,6 @@ def make_gui(container: type[ContainerWidget], no_margin: bool = True):
                      parent = None, 
                      close_on_run: bool = True,
                      popup: bool = True, 
-                     result_widget: bool = False,
                      labels: bool = True, 
                      name: str = None, 
                      single_call: bool = True
@@ -196,17 +172,13 @@ def make_gui(container: type[ContainerWidget], no_margin: bool = True):
                 
             self._menubar = None
             
-            self._result_widget = None
-            if result_widget:
-                self._result_widget = LineEdit(gui_only=True, name="result")
-            
             self.native.setObjectName(self.name)
         
         def insert(self: cls, key: int, widget: Widget):
             _hide_labels = (_LabeledWidget, ButtonWidget, ClassGuiBase, FrozenContainer, Label)
                 
             if isinstance(widget, ValueWidget):
-                widget.changed.connect(lambda x: self.changed(value=self))
+                widget.changed.connect(lambda: self.changed.emit(self))
             if isinstance(widget, ClassGuiBase) and self._remove_child_margins:
                 widget.margins = (0, 0, 0, 0)
                 
@@ -297,10 +269,7 @@ class StackedClassGui: pass
 class MainWindowClassGui: pass
 
 def _nested_function_gui_callback(cgui: ClassGuiBase, fgui: FunctionGui):
-    def _after_run(e):
-        value = e.value
-        if isinstance(value, Exception):
-            return None
+    def _after_run():
         inputs = get_parameters(fgui)
         args = [Expr(head=Head.assign, args=[k, v]) for k, v in inputs.items()]
         # args[0] is self
@@ -317,3 +286,21 @@ def _nested_function_gui_callback(cgui: ClassGuiBase, fgui: FunctionGui):
 
         cgui._recorded_macro.append(expr)
     return _after_run
+
+def _value_widget_callback(cgui: ClassGuiBase, widget: ValueWidget, name: str):
+    def _set_value():
+        if not widget.enabled:
+            # If widget is read only, it means that value is set in script (not manually).
+            # Thus this event should not be recorded as a macro.
+            return None
+        cgui.changed.emit(cgui)
+        sub = Expr(head=Head.getattr, args=[name, "value"]) # name.value
+        expr = Expr(head=Head.setattr, args=["{x}", sub, widget.value]) # {x}.name.value = value
+        
+        last_expr = cgui._recorded_macro[-1]
+        if last_expr.head == expr.head and last_expr.args[1].args[0] == expr.args[1].args[0]:
+            cgui._recorded_macro[-1] = expr
+        else:
+            cgui._recorded_macro.append(expr)
+        return None
+    return _set_value

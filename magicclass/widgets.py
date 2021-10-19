@@ -129,7 +129,7 @@ class ListEdit(Container):
         super().__init__(layout=layout, labels=False, **kwargs)
         
         button_plus = PushButton(text="+")
-        button_plus.changed.connect(lambda e: self.append_new())
+        button_plus.changed.connect(lambda: self.append_new())
         
         button_minus = PushButton(text="-")
         button_minus.changed.connect(self.delete_last)
@@ -146,7 +146,7 @@ class ListEdit(Container):
                                options=self.child_options)
         self.insert(i, widget)
     
-    def delete_last(self, value):
+    def delete_last(self):
         try:
             self.pop(-3)
         except IndexError:
