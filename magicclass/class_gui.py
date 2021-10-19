@@ -82,6 +82,10 @@ class ClassGuiBase(BaseGui):
                 widget = attr()
                 setattr(self, name, widget)
             
+            elif isinstance(attr, ClassGuiBase):
+                widget = attr
+                setattr(self, name, widget)
+            
             elif isinstance(attr, MagicField):
                 # If MagicField is given by field() function.
                 widget = self._create_widget_from_field(name, attr)

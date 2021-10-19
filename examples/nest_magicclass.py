@@ -2,51 +2,15 @@ from magicclass import magicclass, field
 
 # Magic-class can be nested. There are several ways of nesting magic-classes.
 
-# 1. Keep other magic-class as instances.
-@magicclass(layout="horizontal")
-class A:
-    """
-    Class A
-    """    
-    def func_a0(self):
-        print("a0")
-    def func_a1(self):
-        print("a1")
-
-@magicclass(layout="horizontal")
-class B:
-    """
-    Class B
-    """    
-    def func_b0(self):
-        print("b0")
-    def func_b1(self):
-        print("b1")    
-
-@magicclass
-class Main:
-    """
-    Main class
-    """    
-    def __init__(self):
-        # Make magic-class instance inside.
-        self.a = A()
-        self.b = B()
-    
-    def start_class_A(self):
-        self.a.show()
-    def start_class_B(self):
-        self.b.show()
-    
 # 2. Inline definition
 @magicclass
-class Main2:
+class Main1:
     """
-    Main class II
+    Main class I
     inline definition
     """    
     @magicclass(layout="horizontal")
-    class A2:
+    class A1:
         """
         Class A
         """    
@@ -56,7 +20,7 @@ class Main2:
             print("a1")
 
     @magicclass(layout="horizontal")
-    class B2:
+    class B1:
         """
         Class B
         """    
@@ -67,7 +31,7 @@ class Main2:
 
 # inline definition using field function
 @magicclass(layout="horizontal")
-class A3:
+class A2:
     """
     Class A
     """    
@@ -77,7 +41,7 @@ class A3:
         print("a1")
 
 @magicclass(layout="horizontal")
-class B3:
+class B2:
     """
     Class B
     """    
@@ -87,19 +51,16 @@ class B3:
         print("b1")    
         
 @magicclass
-class Main3:
+class Main2:
     """
-    Main class III
-    inline definition using inline function
+    Main class II
     """    
-    A = field(A3)
-    B = field(B3)
+    A = A2()
+    B = B2()
     
 if __name__ == "__main__":
-    m1 = Main()
+    m1 = Main1()
     m1.show()
     m2 = Main2()
     m2.show()
-    m3 = Main3()
-    m3.show()
     

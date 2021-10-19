@@ -12,7 +12,7 @@ class Calculator:
     # In this case you should use "field" function, but this is a good
     # example to show how to integrate magicgui into magic-class.
     @magicgui(layout="horizontal", auto_call=True)
-    def loader(self, a:float, b:float):
+    def loader(self, a: float, b: float):
         self.a = a
         self.b = b
 
