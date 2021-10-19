@@ -6,6 +6,7 @@ from .macro import Identifier
 from enum import Enum
 from qtpy.QtGui import QFont, QTextOption
 from magicgui.widgets import Container, TextEdit
+from magicgui.types import FileDialogMode
 import numpy as np
 
 class Layout(Enum):
@@ -19,6 +20,10 @@ class MagicClassCreator:
         self.Reset()
         w0 = self.width/2
         self.Tools.width = self.ViewPanel.width = w0
+    
+    @property
+    def gui(self):
+        return self.ViewPanel.Panels.GUI[0]
         
     @magicclass(widget_type=WidgetType.tabbed)
     class Tools:
@@ -30,6 +35,12 @@ class MagicClassCreator:
             tooltip_ = field("")
             widget_type_ = field(WidgetType)
             
+            @magicclass(widget_type="collapsible")
+            class Others:
+                close_on_run_ = field(True)
+                popup_ = field(True)
+                result_widget_ = field(False)
+                
             def append_(self): ...
         
         @magicclass
@@ -40,6 +51,7 @@ class MagicClassCreator:
             def append_SpinBox(self): ...
             def append_Slider(self): ...
             def append_Label(self): ...
+            def append_FileEdit(self): ...
             def append_Table(self): ...
     
     
@@ -64,6 +76,7 @@ class MagicClassCreator:
                     self.txt.native.setWordWrapMode(QTextOption.NoWrap)
         
         def Back_to_parent(self): ...
+        def Remove_last_widget(self): ...
         def Reset(self): ...
     
     @Tools.Add_Container.wraps
@@ -72,65 +85,88 @@ class MagicClassCreator:
         kwargs= dict(layout=parent.layout_.value.name, 
                      labels=parent.labels_.value,
                      name=parent.name_.value,
-                     widget_type=parent.widget_type_.value.name
+                     widget_type=parent.widget_type_.value.name,
+                     close_on_run=parent.Others.close_on_run_.value,
+                     popup=parent.Others.popup_.value,
+                     result_widget=parent.Others.result_widget_.value,
                      )
+        
+        name = parent.name_.value
+        if hasattr(self._current_container, name):
+            raise ValueError(f"Name collision: {name}")
+        elif name == "":
+            raise ValueError("Name is not set.")
+        
         @magicclass(**kwargs)
         class _container: pass
         kw = _dict_to_arguments(kwargs)
         if kw:
             kw = f"({kw})"
-        self._code.append((f"@magicclass{kw}", self._indent))
-        self._code.append((f"class {parent.name_.value}:", self._indent))
+        _code_list = []
+        _code_list.append((f"@magicclass{kw}", self._indent))
+        _code_list.append((f"class {parent.name_.value}:", self._indent))
         self._indent += 4
         
         tooltip = parent.tooltip_.value
         if tooltip:
-            self._code.append((f"\"\"\"{tooltip}\"\"\"", self._indent))
+            _code_list.append((f"\"\"\"{tooltip}\"\"\"", self._indent))
             
         widget = _container()
         
-        if self._creation is None:
-            self._creation = widget
-            self.ViewPanel.Panels.GUI.append(self._creation)
+        if self._current_container is None:
+            self._current_container = widget
+            self.ViewPanel.Panels.GUI.append(self._current_container)
         else:
-            self._creation.append(widget)
+            self._current_container.append(widget)
             if isinstance(widget, BaseGui):
-                widget.__magicclass_parent__ = self._creation
-                self._creation = widget
-                
+                widget.__magicclass_parent__ = self._current_container
+                self._current_container = widget
+        
+        self._code.append(_code_list)
         self._create_code()
         
     @Tools.Add_basic_widget.wraps
     def append_PushButton(self, function_name="", text="", tooltip=""):
+        """Append PushButton widget by function definition."""
         if function_name == "":
             raise ValueError("function name must be specified")
+        elif hasattr(self._current_container, function_name):
+            raise ValueError(f"Name collision: {function_name}")
+        
+        _code_list = []
+        
         if text:
-            self._code.append((f"@set_design(text={text!r})", self._indent))
+            _code_list.append((f"@set_design(text={text!r})", self._indent))
         else:
             text = function_name
                 
         if tooltip:
-            self._code.append((f"def {function_name}(self):", self._indent))
-            self._code.append((f"\"\"\"{tooltip}\"\"\"", self._indent + 4))
+            _code_list.append((f"def {function_name}(self):", self._indent))
+            _code_list.append((f"\"\"\"{tooltip}\"\"\"", self._indent + 4))
         else:
-            self._code.append((f"def {function_name}(self): ...", self._indent))
+            _code_list.append((f"def {function_name}(self): ...", self._indent))
+        
         
         fld = field(False, options={"text": text, "tooltip": tooltip}, widget_type="PushButton")
-        self._creation.append(fld.to_widget())
+        self._current_container.append(fld.to_widget())
+        self._code.append(_code_list)
         self._create_code()
         
     @Tools.Add_basic_widget.wraps
     def append_LineEdit(self, label_="", value="", tooltip=""):
+        """Append LineEdit widget."""
         label = label_ or None
         self._append_widget(value, {"label": label, "tooltip": tooltip})
     
     @Tools.Add_basic_widget.wraps
     def append_CheckBox(self, label_="", checked=False, tooltip=""):
+        """Append CheckBox widget."""
         label = label_ or None
         self._append_widget(checked, {"label": label, "tooltip": tooltip})
     
     @Tools.Add_basic_widget.wraps
     def append_SpinBox(self, label_="", value="", min="0", max="1000", step="1", tooltip=""):
+        """Append SpinBox or FloatSpinBox widget."""
         label = label_ or None
         min = _as_scalar(min)
         max = _as_scalar(max)
@@ -145,6 +181,7 @@ class MagicClassCreator:
     
     @Tools.Add_basic_widget.wraps
     def append_Slider(self, label_="", value="", min="0", max="1000", step="1", tooltip=""):
+        """Append Slider or FloatSlider widget."""
         label = label_ or None
         min = _as_scalar(min)
         max = _as_scalar(max)
@@ -161,12 +198,21 @@ class MagicClassCreator:
     
     @Tools.Add_basic_widget.wraps
     def append_Label(self, label_="", tooltip=""):
+        """Append Label widget."""
         self._append_widget(label_, 
                             {"tooltip": tooltip},
                             widget_type="Label")
     
     @Tools.Add_basic_widget.wraps
+    def append_FileEdit(self, mode=FileDialogMode.EXISTING_FILE, tooltip=""):
+        """Append FileEdit widget."""
+        self._append_widget(".", 
+                            {"mode": mode, "tooltip": tooltip},
+                            widget_type="FileEdit")
+    
+    @Tools.Add_basic_widget.wraps
     def append_Table(self, label_="", n_rows=4, n_columns=3, tooltip=""):
+        """Append Table widget."""
         data = np.zeros((n_rows, n_columns), dtype="<U32")
         self._append_widget(data, 
                             {"tooltip": tooltip, "label": label_},
@@ -178,33 +224,46 @@ class MagicClassCreator:
         fld = field(value, options=options, **kwargs)
         kw = _dict_to_arguments(kwargs)
         code = f"f{self._nfield} = field({Identifier(value)}, options={options}, {kw})"
-        self._code.append((code, self._indent))
-        self._creation.append(fld.to_widget())
+        self._code.append([(code, self._indent)])
+        self._current_container.append(fld.to_widget())
         self._create_code()
         self._nfield += 1
         
     def _create_code(self):
         out = []
-        for code, ind in self._code:
-            out.append(" "*ind + code)
+        for code in self._code:
+            for line, ind in code:
+                out.append(" "*ind + line)
         out = "\n".join(out)
         self.code_block.value = out
     
     @ViewPanel.wraps    
     def Back_to_parent(self):
-        if self._creation.__magicclass_parent__ is None:
+        if self._current_container.__magicclass_parent__ is None:
             raise ValueError("No more parent!")
-        self._creation = self._creation.__magicclass_parent__
+        self._current_container = self._current_container.__magicclass_parent__
         self._indent -= 4
     
     @ViewPanel.wraps    
+    def Remove_last_widget(self):
+        if isinstance(self._current_container, BaseGui) and len(self._current_container) == 0:
+            self.Back_to_parent()
+        del self._current_container[-1]
+        self._code.pop()
+        self._create_code()
+    
+    @ViewPanel.wraps    
     def Reset(self):
-        self._creation: None | BaseGui | Container = None
-        self._code: list[str] = []
+        """
+        Delete GUI and reset states.
+        """        
+        self._current_container: None | BaseGui | Container = None
+        self._code: list[list[tuple[str, int]]] = []
         self._nfield: int = 0
         self._indent: int = 0
         self.ViewPanel.Panels.GUI.clear()
         self.code_block.value = ""
+    
 
 def _as_scalar(value: str):
     try:

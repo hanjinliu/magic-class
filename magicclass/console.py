@@ -43,7 +43,7 @@ class Console(FrozenContainer):
     def value(self, code: str) -> None:
         """Set code string to Jupyter QtConsole buffer"""
         if not isinstance(code, str):
-            raise ValueError("Cannot set code ")
+            raise ValueError(f"Cannot set {type(code)}.")
         cursor = self.console._control.textCursor()
         lines = code.split("\n")
         for line in lines[:-1]:
