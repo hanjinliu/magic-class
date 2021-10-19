@@ -22,13 +22,10 @@ from .containers import (
     )
 from ._base import BaseGui
 
-C = TypeVar("C")
-    
 class ClassGuiBase(BaseGui):
     # This class is always inherited by @magicclass decorator.
     _component_class = PushButtonPlus
-    _container_widget: type[C]
-    _widget: C
+    _container_widget: type
     _result_widget: LineEdit
     _remove_child_margins: bool
     
@@ -237,10 +234,15 @@ def make_gui(container: type[ContainerWidget], no_margin: bool = True):
             
             viewer = parent_self.parent_viewer
             if viewer is not None:
-                dock = viewer.window.add_dock_widget(self, area="right", allowed_areas=["left", "right"])
-                dock.setFloating(parent_self._popup)
+                name = self.parent.objectName()
+                if name in viewer.window._dock_widgets:
+                    viewer.window._dock_widgets[name].show()
+                else: 
+                    dock = viewer.window.add_dock_widget(self, area="right", allowed_areas=["left", "right"])
+                    dock.setFloating(parent_self._popup)
             else:
                 container.show(self, run=run)
+                self.native.activateWindow()
             return None
         
         def close(self: cls):
