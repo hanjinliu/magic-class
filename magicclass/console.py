@@ -6,8 +6,10 @@ from qtconsole.rich_jupyter_widget import RichJupyterWidget
 from magicgui.widgets import Widget
 from .widgets import FrozenContainer
 
+# Referred to napari_console
+# https://github.com/napari/napari-console
+
 class _Console(RichJupyterWidget):
-    changed = Signal(str)
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         
@@ -23,17 +25,14 @@ class _Console(RichJupyterWidget):
         self.kernel_manager = None
         self.kernel_client = kernel_client
         self.shell.push({"ui": ui})
+
         
 class Console(FrozenContainer):
-    changed = Signal(str)
     executed = Signal(str)
     def __init__(self, **kwargs):
         super().__init__(labels=False, **kwargs)
         
         self.console = _Console()
-        @self.console.changed.connect
-        def _callback(e: str):
-            self.changed.emit(e)
         self.set_widget(self.console)
     
     @property
