@@ -4,14 +4,13 @@ from typing import Callable, Any, TYPE_CHECKING, TypeVar
 import inspect
 import numpy as np
 from copy import deepcopy
-from qtpy.QtGui import QFont
 from magicgui import magicgui
-from magicgui.widgets import FunctionGui, FileEdit, TextEdit
+from magicgui.widgets import FunctionGui, FileEdit
 
 from .macro import Macro, Expr, Head
 from .utils import (iter_members, n_parameters, extract_tooltip, raise_error_in_msgbox,
                     raise_error_msg, get_parameters, show_mgui)
-from .widgets import Separator
+from .widgets import Separator, ConsoleTextEdit
 from .field import MagicField
 from .wrappers import upgrade_signature
 
@@ -152,8 +151,7 @@ class BaseGui:
         out = out.format(x=symbol)
         
         if show:
-            win = TextEdit(name="macro")
-            win.native.setFont(QFont("Consolas"))
+            win = ConsoleTextEdit(name="macro")
             win.read_only = False
             win.value = out
             vbar = win.native.verticalScrollBar()

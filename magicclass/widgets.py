@@ -5,7 +5,7 @@ import inspect
 from collections import defaultdict
 from qtpy.QtWidgets import (QFrame, QLabel, QMessageBox, QPushButton, QGridLayout, QWidget,
                             QListWidget, QListWidgetItem, QAbstractItemView, QMenu, QAction)
-from qtpy.QtGui import QIcon
+from qtpy.QtGui import QIcon, QFont, QTextOption
 from qtpy.QtCore import QSize, Qt
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -103,7 +103,12 @@ class Separator(FrozenContainer):
         
         self.set_widget(main)
     
-
+class ConsoleTextEdit(TextEdit):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.native.setFont(QFont("Consolas"))
+        self.native.setWordWrapMode(QTextOption.NoWrap)
+        
 class ListEdit(Container):
     def __init__(
         self,

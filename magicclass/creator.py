@@ -3,9 +3,9 @@ from .core import magicclass, WidgetType
 from ._base import BaseGui
 from .field import field
 from .macro import Identifier
+from .widgets import ConsoleTextEdit
 from enum import Enum
-from qtpy.QtGui import QFont, QTextOption
-from magicgui.widgets import Container, TextEdit
+from magicgui.widgets import Container
 from magicgui.types import FileDialogMode
 import numpy as np
 
@@ -68,11 +68,7 @@ class MagicClassCreator:
                 """
                 A template of Python code is available here!
                 """                
-                txt = TextEdit()
-                txt.native.setFont(QFont("Consolas"))
-                def __post_init__(self):
-                    self.txt.native.setParent(self.native, self.txt.native.windowFlags())
-                    self.txt.native.setWordWrapMode(QTextOption.NoWrap)
+                txt = ConsoleTextEdit(name="code")
         
         def Back_to_parent(self): ...
         def Remove_last_widget(self): ...

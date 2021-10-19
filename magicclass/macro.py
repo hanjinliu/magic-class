@@ -2,10 +2,17 @@ from __future__ import annotations
 from enum import Enum, auto
 from collections import UserList, UserString
 from pathlib import Path
-from typing import Callable, Iterable, Iterator, Any, overload
+from typing import Callable, Iterable, Iterator, Any, overload, TypeVar
 import numpy as np
 
+T = TypeVar("T")
+
 class Identifier(UserString):
+    _map: dict[type, Callable[[Any], str]] = {
+        tuple: lambda e: e,
+        list: lambda e: e,
+        Enum: lambda e: repr(str(e.name))
+    }
     def __init__(self, obj:Any):
         self.valid = True
         if isinstance(obj, Path):
@@ -19,19 +26,27 @@ class Identifier(UserString):
                 seq = repr(obj)
         elif np.isscalar(obj): # int, float, bool, ...
             seq = obj
-        elif isinstance(obj, (tuple, list)):
-            seq = obj
-        elif isinstance(obj, Enum):
-            seq = repr(str(obj.name))
         else:
-            seq = f"var{hex(id(obj))}" # hexadecimals are easier to distinguish
-            self.valid = False
+            for k, func in self._map.items():
+                if isinstance(obj, k):
+                    seq = func(obj)
+                    break
+            else:
+                seq = f"var{hex(id(obj))}" # hexadecimals are easier to distinguish
+                self.valid = False
             
         super().__init__(seq)
-        self.type:type = type(obj)
+        self.type: type = type(obj)
     
     def as_annotation(self):
         return f"# {self}: {self.type}"
+    
+    @classmethod
+    def register_type(cls, type: type[T], function: Callable[[T], str]):
+        cls._map[type] = function
+
+def register_type(type: type[T], function: Callable[[T], str]):
+    return Identifier.register_type(type, function)
         
 class Head(Enum):
     init    = auto()
@@ -58,7 +73,7 @@ class Expr:
     and "args" denotes the arguments needed for the operation. Other attributes, such as "symbol", is not
     necessary as a Expr object but it is useful to create executable codes.
     """
-    n:int = 0
+    n: int = 0
     
     # a map of how to conver expression into string.
     _map: dict[Head, Callable[[Expr], str]] = {
@@ -73,7 +88,7 @@ class Expr:
         Head.comment: lambda e: f"# {e.args[0]}",
     }
     
-    def __init__(self, head:Head, args:Iterable[Any]):
+    def __init__(self, head: Head, args: Iterable[Any]):
         self.head = head
         if head == Head.value:
             self.args = args
@@ -100,7 +115,7 @@ class Expr:
     def __str__(self) -> str:
         return self.__class__._map[self.head](self)
     
-    def __eq__(self, expr:Expr) -> bool:
+    def __eq__(self, expr: Expr) -> bool:
         if self.head != Head.value:
             raise TypeError(f"Expression must be value, got {self.head}")
         if isinstance(expr, str):
@@ -114,6 +129,7 @@ class Expr:
     def parse_method(cls, func: Callable, args: tuple[Any, ...], kwargs: dict[str, Any]) -> Expr:
         """
         Make a method call expression.
+        Expression: {x} = func(*args, **kwargs)
         """
         method = cls(head=Head.getattr, args=["{x}", func]) # ui.func
         inputs = [method] + cls.convert_args(args, kwargs)
@@ -123,6 +139,7 @@ class Expr:
     def parse_init(cls, init_cls: type, args: tuple[Any, ...], kwargs: dict[str, Any]) -> Expr:
         """
         Make a construction (__init__) expression.
+        Expression: {x} = init_cls(*args, **kwargs)
         """
         inputs = ["{x}", init_cls] + cls.convert_args(args, kwargs)
         return cls(head=Head.init, args=inputs)
@@ -166,7 +183,7 @@ class Expr:
 
         
 class Macro(UserList):
-    def append(self, __object:Expr):
+    def append(self, __object: Expr):
         if not isinstance(__object, Expr):
             raise TypeError("Cannot append objects to Macro except for MacroExpr objecs.")
         return super().append(__object)
