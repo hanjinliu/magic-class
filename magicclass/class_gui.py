@@ -1,7 +1,7 @@
 from __future__ import annotations
 from inspect import signature
 from qtpy.QtWidgets import QMenuBar
-from magicgui.widgets import Container, MainWindow,Label, FunctionGui
+from magicgui.widgets import Container, MainWindow,Label, FunctionGui, Image, Table
 from magicgui.widgets._bases import Widget, ButtonWidget, ValueWidget, ContainerWidget
 from magicgui.widgets._concrete import _LabeledWidget
 
@@ -179,7 +179,8 @@ def make_gui(container: type[ContainerWidget], no_margin: bool = True):
             self.native.setObjectName(self.name)
         
         def insert(self: cls, key: int, widget: Widget):
-            _hide_labels = (_LabeledWidget, ButtonWidget, ClassGuiBase, FrozenContainer, Label)
+            _hide_labels = (_LabeledWidget, ButtonWidget, ClassGuiBase, FrozenContainer, Label,
+                            Image, Table)
                 
             if isinstance(widget, ValueWidget):
                 widget.changed.connect(lambda: self.changed.emit(self))

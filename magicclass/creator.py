@@ -202,19 +202,21 @@ class MagicClassCreator:
                             widget_type="Label")
     
     @Tools.Add_basic_widget.wraps
-    def append_FileEdit(self, mode=FileDialogMode.EXISTING_FILE, tooltip=""):
+    def append_FileEdit(self, label_="", mode=FileDialogMode.EXISTING_FILE, tooltip=""):
         """Append FileEdit widget."""
         self._append_widget(".", 
-                            {"mode": mode, "tooltip": tooltip},
+                            {"mode": mode, "tooltip": tooltip, "label": label_},
                             widget_type="FileEdit")
     
     @Tools.Add_basic_widget.wraps
-    def append_Table(self, label_="", n_rows=4, n_columns=3, tooltip=""):
+    def append_Table(self, label_="", n_rows=4, n_columns=3, read_only=False, tooltip=""):
         """Append Table widget."""
         data = np.zeros((n_rows, n_columns), dtype="<U32")
         self._append_widget(data, 
                             {"tooltip": tooltip, "label": label_},
                             widget_type="Table")
+        if read_only:
+            self._current_container[-1].read_only = True
     
     def _append_widget(self, value, options=None, **kwargs):
         if options is None:
