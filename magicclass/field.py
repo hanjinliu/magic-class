@@ -179,28 +179,28 @@ def field(obj: Any = MISSING,
     return f
 
 
-class Settings:
-    def __init__(self, name: str = None, param_options: dict[str: dict] = None):
-        params = []
-        for _name, value in self.__class__.__dict__.items():
-            if _name.startswith("_") or callable(value):
-                continue
-            params.append(
-                inspect.Parameter(_name, 
-                                  kind=inspect.Parameter.POSITIONAL_OR_KEYWORD,
-                                  default=value,
-                                  annotation=type(value)
-                                  )
-                )
-        self._parameters = params
+# class Settings:
+#     def __init__(self, name: str = None, param_options: dict[str: dict] = None):
+#         params = []
+#         for _name, value in self.__class__.__dict__.items():
+#             if _name.startswith("_") or callable(value):
+#                 continue
+#             params.append(
+#                 inspect.Parameter(_name, 
+#                                   kind=inspect.Parameter.POSITIONAL_OR_KEYWORD,
+#                                   default=value,
+#                                   annotation=type(value)
+#                                   )
+#                 )
+#         self._parameters = params
         
-        self.__signature__ = inspect.Signature(params)
-        self.__class__.__signature__ = self.__signature__
-        self.__doc__: str = getattr(self.__class__, "__doc__", "")
-        self.__name__: str = self.__class__.__name__
-        self.__qualname__: str = self.__class__.__qualname__
+#         self.__signature__ = inspect.Signature(params)
+#         self.__class__.__signature__ = self.__signature__
+#         self.__doc__: str = getattr(self.__class__, "__doc__", "")
+#         self.__name__: str = self.__class__.__name__
+#         self.__qualname__: str = self.__class__.__qualname__
         
-    def __call__(self, *args):
-        for name, arg in zip((a.name for a in self._parameters), args):
-            setattr(self, name, arg)
+#     def __call__(self, *args):
+#         for name, arg in zip((a.name for a in self._parameters), args):
+#             setattr(self, name, arg)
     

@@ -196,11 +196,8 @@ class BaseGui:
         def wrapper(method: Callable):
             # Base function to get access to the original function
             def _childmethod(self: cls, *args, **kwargs):
-                current_self = self.__magicclass_parent__
-                while not (hasattr(current_self, funcname) and 
-                            current_self.__class__.__name__ == clsname):
-                    current_self = current_self.__magicclass_parent__
-                return getattr(current_self, funcname)(*args, **kwargs)
+                _, parent_method = _search_wrapper(self, funcname, clsname)
+                return parent_method(*args, **kwargs)
             
             # Must be template as long as this wrapper function is called
             if template is None:
@@ -289,8 +286,10 @@ class BaseGui:
         
         if n_parameters(func) == 0:
             # We don't want a dialog with a single widget "Run" to show up.
-            callback = _temporal_function_gui_callback(self, func, widget)
             def run_function():
+                # NOTE: callback must be defined inside function. Magic class must be
+                # "compiled" otherwise function wrappings are not ready!
+                callback = _temporal_function_gui_callback(self, func, widget)
                 out = func()
                 callback()
                 return out
@@ -386,33 +385,36 @@ class BaseGui:
         return current_self
     
 def _temporal_function_gui_callback(bgui: BaseGui, fgui: FunctionGui|Callable, widget):
+    if isinstance(fgui, FunctionGui):
+        _function = fgui._function
+    else:
+        _function = fgui
+    cls_method = getattr(bgui.__class__, _function.__name__)
+    if hasattr(cls_method, "__magicclass_wrapped__"):
+        clsname, funcname = _function.__qualname__.split(".")
+        root, _function = _search_wrapper(bgui, funcname, clsname)
+    else:
+        root = bgui
+        
     def _after_run():
         if isinstance(fgui, FunctionGui):
             inputs = get_parameters(fgui)
             bgui._record_parameter_history(fgui._function.__name__, inputs)
-            _function = fgui._function
         else:
             inputs = {}
-            _function = fgui
         
         # Standard button will be connected with two callbacks.
         # 1. Build FunctionGui
         # 2. Emit value changed signal.
         # But if there are more, they also have to be called.
+        if len(widget.changed._slots) > 2:
+            b = Expr(head=Head.getitem, args=["{x}", widget.name])
+            ev = Expr(head=Head.getattr, args=[b, "changed"])
+            macro = Expr(head=Head.call, args=[ev])
+            bgui._recorded_macro.append(macro)
+        else:
+            root._record_macro(_function, (), inputs)
         
-        # TODO: These lines are not correct due to wraps
-        # if len(widget.changed._slots) > 2:
-        #     b = Expr(head=Head.getitem, args=["{x}", widget.name])
-        #     ev = Expr(head=Head.getattr, args=[b, "changed"])
-        #     macro = Expr(head=Head.call, args=[ev])
-        #     bgui._recorded_macro.append(macro)
-        # else:
-        #     bgui._record_macro(_function, (), inputs)
-        b = Expr(head=Head.getitem, args=["{x}", widget.name])
-        ev = Expr(head=Head.getattr, args=[b, "changed"])
-        macro = Expr(head=Head.call, args=[ev])
-        bgui._recorded_macro.append(macro)
-        widget.mgui = None
     return _after_run
 
 def _copy_function(f):
@@ -421,6 +423,12 @@ def _copy_function(f):
         return f(self, *args, **kwargs)
     return out
 
+def _search_wrapper(bgui: BaseGui, funcname: str, clsname: str) -> tuple[BaseGui, Callable]:
+    current_self = bgui.__magicclass_parent__
+    while not (hasattr(current_self, funcname) and 
+                current_self.__class__.__name__ == clsname):
+        current_self = current_self.__magicclass_parent__
+    return current_self, getattr(current_self, funcname)
 
 _C = TypeVar("_C", Callable, type)
 
