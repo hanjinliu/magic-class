@@ -19,7 +19,7 @@ setup(
     download_url="https://github.com/hanjinliu/magic-class",
     packages=find_packages(),
     install_requires=[
-          "magicgui>=0.2.11",
+          "magicgui>=0.3.0",
           "numpy>=1.20.3",
           "matplotlib>=3.4.2"
     ],
