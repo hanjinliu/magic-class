@@ -241,7 +241,6 @@ class BaseGui:
                 predifined.__wrapped__ = childmethod
                 predifined.__magicclass_wrapped__ = childmethod
                 method.__doc__ = method.__doc__ or predifined.__doc__
-                setattr(cls, funcname, childmethod)
             else:
                 setattr(cls, funcname, childmethod)
             
