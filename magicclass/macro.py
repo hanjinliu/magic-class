@@ -111,7 +111,7 @@ class Expr:
             raise ValueError(f"'==' is not supported between Expr and {type(expr)}")
         
     @classmethod
-    def parse_method(cls, func:Callable, args:tuple[Any], kwargs:dict[str, Any]) -> Expr:
+    def parse_method(cls, func: Callable, args: tuple[Any, ...], kwargs: dict[str, Any]) -> Expr:
         """
         Make a method call expression.
         """
@@ -120,7 +120,7 @@ class Expr:
         return cls(head=Head.call, args=inputs) # ui.func(a=0,b=2)
 
     @classmethod
-    def parse_init(cls, init_cls:type, args:tuple[Any], kwargs:dict[str, Any]) -> Expr:
+    def parse_init(cls, init_cls: type, args: tuple[Any, ...], kwargs: dict[str, Any]) -> Expr:
         """
         Make a construction (__init__) expression.
         """
@@ -128,7 +128,7 @@ class Expr:
         return cls(head=Head.init, args=inputs)
     
     @classmethod
-    def convert_args(cls, args:tuple, kwargs:dict) -> list:
+    def convert_args(cls, args: tuple[Any, ...], kwargs: dict[str, Any]) -> list:
         inputs = []
         for a in args:
             inputs.append(a)

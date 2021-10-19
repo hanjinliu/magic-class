@@ -1,8 +1,7 @@
 from __future__ import annotations
-from typing import Any
 from inspect import signature
 from qtpy.QtWidgets import QMenuBar
-from magicgui.widgets import Container, MainWindow,Label, LineEdit, FunctionGui
+from magicgui.widgets import Container, MainWindow,Label, FunctionGui
 from magicgui.widgets._bases import Widget, ButtonWidget, ValueWidget, ContainerWidget
 from magicgui.widgets._concrete import _LabeledWidget
 
@@ -85,6 +84,7 @@ class ClassGuiBase(BaseGui):
             elif isinstance(attr, ClassGuiBase):
                 widget = attr
                 setattr(self, name, widget)
+                widget.native.setParent(self.native, widget.native.windowFlags())
             
             elif isinstance(attr, MagicField):
                 # If MagicField is given by field() function.
@@ -100,7 +100,7 @@ class ClassGuiBase(BaseGui):
                 if not hasattr(attr, "__magicclass_wrapped__"):
                     # Standard method definition
                     widget = getattr(self, name, None)
-                    
+
                 else:
                     # If the method is redefined, the newer one should be used instead, while the
                     # order of widgets should be follow the place of the older method.
@@ -209,7 +209,7 @@ def make_gui(container: type[ContainerWidget], no_margin: bool = True):
             parent_self = self._search_parent_magicclass()
             
             viewer = parent_self.parent_viewer
-            if viewer is not None:
+            if viewer is not None and self.parent is not None:
                 name = self.parent.objectName()
                 if name in viewer.window._dock_widgets:
                     viewer.window._dock_widgets[name].show()

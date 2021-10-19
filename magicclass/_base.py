@@ -241,6 +241,7 @@ class BaseGui:
                 predifined.__wrapped__ = childmethod
                 predifined.__magicclass_wrapped__ = childmethod
                 method.__doc__ = method.__doc__ or predifined.__doc__
+                setattr(cls, funcname, childmethod)
             else:
                 setattr(cls, funcname, childmethod)
             
@@ -271,7 +272,7 @@ class BaseGui:
         """        
         raise NotImplementedError()
     
-    def _create_widget_from_method(self, obj):
+    def _create_widget_from_method(self, obj: Callable):
         text = obj.__name__.replace("_", " ")
         widget = self._component_class(name=obj.__name__, text=text, gui_only=True)
 
@@ -399,14 +400,19 @@ def _temporal_function_gui_callback(bgui: BaseGui, fgui: FunctionGui|Callable, w
         # 1. Build FunctionGui
         # 2. Emit value changed signal.
         # But if there are more, they also have to be called.
-        if len(widget.changed._slots) > 2:
-            b = Expr(head=Head.getitem, args=["{x}", widget.name])
-            ev = Expr(head=Head.getattr, args=[b, "changed"])
-            macro = Expr(head=Head.call, args=[ev])
-            bgui._recorded_macro.append(macro)
-        else:
-            bgui._record_macro(_function, (), inputs)
-            
+        
+        # TODO: These lines are not correct due to wraps
+        # if len(widget.changed._slots) > 2:
+        #     b = Expr(head=Head.getitem, args=["{x}", widget.name])
+        #     ev = Expr(head=Head.getattr, args=[b, "changed"])
+        #     macro = Expr(head=Head.call, args=[ev])
+        #     bgui._recorded_macro.append(macro)
+        # else:
+        #     bgui._record_macro(_function, (), inputs)
+        b = Expr(head=Head.getitem, args=["{x}", widget.name])
+        ev = Expr(head=Head.getattr, args=[b, "changed"])
+        macro = Expr(head=Head.call, args=[ev])
+        bgui._recorded_macro.append(macro)
         widget.mgui = None
     return _after_run
 
