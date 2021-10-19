@@ -236,15 +236,17 @@ class BaseGui:
             # To avoid two buttons with same bound function being showed up
             upgrade_signature(method, caller_options={"visible": False})
             
-            if hasattr(method, "__doc__"):
-                childmethod.__doc__ = method.__doc__
-            
             if hasattr(cls, funcname):
                 # Sometimes we want to pre-define function to arrange the order of widgets.
-                getattr(cls, funcname).__wrapped__ = childmethod
-                getattr(cls, funcname).__magicclass_wrapped__ = childmethod
+                predifined = getattr(cls, funcname)
+                predifined.__wrapped__ = childmethod
+                predifined.__magicclass_wrapped__ = childmethod
+                method.__doc__ = method.__doc__ or predifined.__doc__
             else:
                 setattr(cls, funcname, childmethod)
+            
+            childmethod.__doc__ = method.__doc__
+            
             return method
         
         return wrapper if method is None else wrapper(method)
