@@ -1,79 +1,112 @@
 from __future__ import annotations
+from contextlib import contextmanager
+from functools import wraps
+import inspect
+from copy import deepcopy
 from enum import Enum, auto
-from collections import UserList, UserString
+from collections import UserList
 from pathlib import Path
 from typing import Callable, Iterable, Iterator, Any, overload, TypeVar
+from types import FunctionType, MethodType
 import numpy as np
 
 T = TypeVar("T")
 
-class Symbol(UserString):
+class Symbol:
     
     # Map of how to convert object into a symbol.
-    _map: dict[type, Callable[[Any], str]] = {
-        tuple: lambda e: e,
-        list: lambda e: e,
-        Enum: lambda e: repr(str(e.name))
+    _type_map: dict[type, Callable[[Any], str]] = {
+        type: lambda e: e.__name__,
+        FunctionType: lambda e: e.__name__,
+        Enum: lambda e: repr(str(e.name)),
+        Path: lambda e: f"r'{e}'",
     }
     
-    def __init__(self, obj: Any):
+    _id_map: dict[int, Symbol] = {}
+    
+    def __init__(self, seq: str, type: type = Any):
+        self.data = str(seq)
+        self.type = type
         self.valid = True
-        if isinstance(obj, self.__class__):
-            seq = obj.data
-        elif isinstance(obj, Path):
-            seq = f"r'{obj}'"
-        elif hasattr(obj, "__name__"): # class or function
-            seq = obj.__name__
-        elif isinstance(obj, str):
-            if obj == "{x}":
-                seq = obj
-            else:
-                seq = repr(obj)
-        elif np.isscalar(obj): # int, float, bool, ...
-            seq = obj
-        else:
-            for k, func in self._map.items():
-                if isinstance(obj, k):
-                    seq = func(obj)
-                    break
-            else:
-                seq = f"var{hex(id(obj))}" # hexadecimals are easier to distinguish
-                self.valid = False
-            
-        super().__init__(seq)
-        self.type: type = type(obj)
+    
+    def __repr__(self) -> str:
+        return ":" + self.data
+    
+    def __str__(self) -> str:
+        return self.data
+    
+    def __hash__(self) -> int:
+        return id(self)
+    
+    @classmethod
+    def from_id(cls, obj: Any):
+        _id = id(obj)
+        try:
+            out = cls._id_map[_id]
+        except KeyError:
+            out = symbol(obj)
+            cls._id_map[_id] = out
+        return out
     
     def as_annotation(self):
         return f"# {self}: {self.type}"
+    
+    def as_parameter(self, default=inspect._empty):
+        return inspect.Parameter(self.data, 
+                                 inspect.Parameter.POSITIONAL_OR_KEYWORD, 
+                                 default=default,
+                                 annotation=self.type)
     
     @classmethod
     def register_type(cls, type: type[T], function: Callable[[T], str]):
         if not callable(function):
             raise TypeError("The second argument must be callable.")
-        cls._map[type] = function
+        cls._type_map[type] = function
     
-    @classmethod
-    def from_str(cls, s: str):
-        if not isinstance(s, str):
-            raise TypeError(type(s))
-        self = cls("")
-        self.data = s
-        self.type = Symbol
-        return self
+def symbol(obj: Any) -> Symbol:
+    if isinstance(obj, Symbol):
+        return obj
+    elif id(obj) in Symbol._id_map.keys():
+        return Symbol._id_map[id(obj)]
+    
+    valid = True
+    
+    if isinstance(obj, str):
+        seq = repr(obj)
+    elif np.isscalar(obj): # int, float, bool, ...
+        seq = obj
+    elif isinstance(obj, (tuple, list)):
+        seq = type(obj)([symbol(a) for a in obj])
+    elif type(obj) in Symbol._type_map:
+        seq = Symbol._type_map[type(obj)](obj)
+    else:
+        for k, func in Symbol._type_map.items():
+            if isinstance(obj, k):
+                seq = func(obj)
+                break
+        else:
+            seq = f"var{hex(id(obj))}" # hexadecimals are easier to distinguish
+            valid = False
+            
+    sym = Symbol(seq, type(seq))
+    sym.valid = valid
+    if not valid:
+        Symbol._id_map[id(obj)] = sym
+    return sym
 
 def register_type(type: type[T], function: Callable[[T], str]):
     return Symbol.register_type(type, function)
         
 class Head(Enum):
-    init    = auto()
-    getattr = auto()
-    setattr = auto()
-    getitem = auto()
-    setitem = auto()
-    call    = auto()
-    assign  = auto()
-    value   = auto()
-    comment = auto()
+    init    = "init"
+    getattr = "getattr"
+    setattr = "setattr"
+    getitem = "getitem"
+    setitem = "setitem"
+    call    = "call"
+    assign  = "assign"
+    value   = "value"
+    comment = "comment"
 
 _QUOTE = "'"
 
@@ -105,9 +138,9 @@ class Expr:
     }
     
     def __init__(self, head: Head, args: Iterable[Any]):
-        self.head = head
+        self.head = Head(head)
         if head == Head.value:
-            self.args = args
+            self.args = list(args)
         else:
             self.args = list(map(self.__class__.parse, args))
             
@@ -140,37 +173,56 @@ class Expr:
             return self.args[0] == expr.args[0]
         else:
             raise ValueError(f"'==' is not supported between Expr and {type(expr)}")
+    
+    def copy(self):
+        return deepcopy(self)
+    
+    def eval(self, __globals: dict[str: Any] = None, __locals: dict[str: Any] = None):
+        return eval(str(self), __globals, __locals)
         
     @classmethod
-    def parse_method(cls, func: Callable, args: tuple[Any, ...], kwargs: dict[str, Any]) -> Expr:
+    def parse_method(cls, obj: Any, func: Callable, args: tuple[Any, ...], kwargs: dict[str, Any]) -> Expr:
         """
         Make a method call expression.
-        Expression: {x}.func(*args, **kwargs)
+        Expression: obj.func(*args, **kwargs)
         """
-        method = cls(head=Head.getattr, args=["{x}", func]) # ui.func
+        method = cls(head=Head.getattr, args=[Symbol.from_id(obj), func])
         inputs = [method] + cls.convert_args(args, kwargs)
-        return cls(head=Head.call, args=inputs) # ui.func(a=0,b=2)
+        return cls(head=Head.call, args=inputs)
 
     @classmethod
-    def parse_init(cls, init_cls: type, args: tuple[Any, ...], kwargs: dict[str, Any]) -> Expr:
-        """
-        Make a construction (__init__) expression.
-        Expression: {x} = init_cls(*args, **kwargs)
-        """
-        inputs = ["{x}", init_cls] + cls.convert_args(args, kwargs)
+    def parse_init(cls, 
+                   obj: Any,
+                   init_cls: type, 
+                   args: tuple[Any, ...] = None, 
+                   kwargs: dict[str, Any] = None) -> Expr:
+        if args is None:
+            args = ()
+        if kwargs is None:
+            kwargs = {}
+        sym = Symbol.from_id(obj)
+        inputs = [sym, init_cls] + cls.convert_args(args, kwargs)
+        sym.valid = True
         return cls(head=Head.init, args=inputs)
     
     @classmethod
-    def parse_call(cls, func: Callable, args: tuple[Any, ...], kwargs: dict[str, Any]) -> Expr:
+    def parse_call(cls, 
+                   func: Callable, 
+                   args: tuple[Any, ...] = None, 
+                   kwargs: dict[str, Any] = None) -> Expr:
         """
         Make a function call expression.
         Expression: func(*args, **kwargs)
         """
+        if args is None:
+            args = ()
+        if kwargs is None:
+            kwargs = {}
         inputs = [func] + cls.convert_args(args, kwargs)
         return cls(head=Head.call, args=inputs)
         
     @classmethod
-    def convert_args(cls, args: tuple[Any, ...], kwargs: dict[str, Any]) -> list:
+    def convert_args(cls, args: tuple[Any, ...], kwargs: dict[str|Symbol, Any]) -> list:
         inputs = []
         for a in args:
             inputs.append(a)
@@ -181,7 +233,7 @@ class Expr:
     
     @classmethod
     def parse(cls, a: Any) -> Expr:
-        return a if isinstance(a, cls) else cls(Head.value, [Symbol(a)])
+        return a if isinstance(a, cls) else cls(Head.value, [symbol(a)])
     
     def iter_args(self) -> Iterator[Symbol]:
         """
@@ -190,8 +242,22 @@ class Expr:
         for arg in self.args:
             if isinstance(arg, self.__class__):
                 yield from arg.iter_args()
-            else:
+            elif isinstance(arg, Symbol):
                 yield arg
+            else:
+                raise RuntimeError(arg)
+    
+    def iter_values(self) -> Iterator[Expr]:
+        """
+        Recursively iterate along all the values.
+        """
+        for arg in self.args:
+            if isinstance(arg, self.__class__):
+                if arg.head == Head.value:
+                    yield arg
+                else:
+                    yield from arg.iter_values()
+    
     
     def iter_expr(self) -> Iterator[Expr]:
         """
@@ -206,12 +272,27 @@ class Expr:
         
         if not yielded:
             yield self
-
-        
+    
+    def format(self, mapping: dict[Symbol, Expr], inplace: bool = False) -> Expr:
+        if not inplace:
+            self = self.copy()
+        for arg in self.iter_values():
+            try:
+                new = mapping[arg.args[0]]
+            except KeyError:
+                pass
+            else:
+                arg.args[0] = new
+        return self
+    
 class Macro(UserList):
     """
     List with pretty output customized for macro.
     """    
+    def __init__(self, iterable: Iterable = (), *, active: bool = True):
+        super().__init__(iterable)
+        self.active = active
+        
     def append(self, __object: Expr):
         if not isinstance(__object, Expr):
             raise TypeError("Cannot append objects to Macro except for MacroExpr objecs.")
@@ -232,5 +313,43 @@ class Macro(UserList):
     def __iter__(self) -> Iterator[Expr]:
         return super().__iter__()
     
-    def __repr__(self):
+    def __repr__(self) -> str:
         return ",\n".join(repr(expr) for expr in self)
+    
+    @contextmanager
+    def context(self, active: bool):
+        was_active = self.active
+        self.active = active
+        yield
+        self.active = was_active
+    
+    def record(self, function=None, *, returned_callback: Callable[[Expr], Expr]=None):
+        def wrapper(func):
+            if isinstance(func, MethodType):
+                if func.__name__ == "__init__":
+                    def make_expr(*args, **kwargs):
+                        return Expr.parse_init(args[0], args[0].__class__, args[1:], kwargs)
+                elif func.__name__ == "__call__":
+                    def make_expr(*args, **kwargs):
+                        return Expr.parse_call(Expr(Head.getattr, [args[0], func]), args[1:], kwargs)
+                else:
+                    def make_expr(*args, **kwargs):
+                        return Expr.parse_method(args[0], func, args[1:], kwargs)
+                    
+            else:
+                def make_expr(*args, **kwargs):
+                    return Expr.parse_call(func, args, kwargs)
+                    
+            @wraps(func)
+            def macro_recorder_equipped(*args, **kwargs):
+                with self.context(False):
+                    out = func(*args, **kwargs)
+                if self.active:
+                    expr = make_expr(*args, **kwargs)
+                    if returned_callback is not None:
+                        expr = out(expr)
+                    self.append(expr)
+                return out
+            return macro_recorder_equipped
+        
+        return wrapper if function is None else wrapper(function)

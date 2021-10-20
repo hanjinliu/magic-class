@@ -31,34 +31,34 @@ class BaseGui:
         self._close_on_run = close_on_run
     
     
-    def _collect_macro(self, myname: str = None) -> list[tuple[int, Expr]]:
+    def _collect_macro(self, parent_symbol: Symbol|None = None, myname: str = None) -> list[tuple[int, Expr]]:
         out = []
         macro = deepcopy(self._recorded_macro)
-        
-        for expr in macro:
-            if expr.head == Head.init:
-                # nested magic-class construction is always invisible from the parent.
-                # We should not record something like 'ui.A = A()'.
-                continue
-            
-            if myname is not None:
-                for _expr in expr.iter_expr():
-                    # if _expr.head in (Head.value, Head.getattr, Head.getitem):
-                    if _expr.args[0] == "{x}":
-                        _expr.args[0] = Expr(Head.getattr, args=["{x}", myname])
-                
-            out.append((expr.number, expr))
-        
-        if myname is not None:
-            prefix = myname + "."
-        else:
-            prefix = ""
+        self_symbol = Symbol.from_id(self)
         
         for name, attr in filter(lambda x: not x[0].startswith("__"), self.__dict__.items()):
             # Collect all the macro from child magic-classes recursively
             if not isinstance(attr, BaseGui):
                 continue
-            out += attr._collect_macro(myname=prefix+name)
+            out += attr._collect_macro(parent_symbol=self_symbol, myname=name)
+        
+        if parent_symbol is None:
+            # Root magic class
+            for expr in macro:
+                expr.format({self_symbol: myname}, inplace=True)
+                out.append((expr.number, expr))
+        else:
+            for expr in macro:
+                if expr.head == Head.init:
+                    # nested magic-class construction is always invisible from the parent.
+                    # We should not record something like 'ui.A = A()'.
+                    continue
+                
+                if parent_symbol is not None:
+                    _expr = Expr(Head.getattr, args=[parent_symbol, Symbol(myname)])
+                    expr.format({self_symbol: _expr}, inplace=True)
+                
+                out.append((expr.number, expr))
         
         return out
     
@@ -94,7 +94,8 @@ class BaseGui:
             Symbol of the instance.
         """
         # Recursively build macro from nested magic-classes
-        macro = [(0, self._recorded_macro[0])] + self._collect_macro()
+        # macro = [(0, self._recorded_macro[0])] + self._collect_macro(myname=symbol)
+        macro = self._collect_macro(myname=symbol)
 
         # Sort by the recorded order
         sorted_macro = map(lambda x: str(x[1]), sorted(macro, key=lambda x: x[0]))
@@ -114,9 +115,7 @@ class BaseGui:
             out = "\n".join(annot) + "\n" + script
         else:
             out = script
-            
-        out = out.format(x=symbol)
-        
+                    
         if show:
             win = ConsoleTextEdit(name="macro")
             win.read_only = False
@@ -262,16 +261,20 @@ class BaseGui:
             def run_function():
                 # NOTE: callback must be defined inside function. Magic class must be
                 # "compiled" otherwise function wrappings are not ready!
-                callback = _temporal_function_gui_callback(self, mgui, widget)
+                if mgui.call_count == 0:
+                    callback = _temporal_function_gui_callback(self, mgui, widget)
+                    mgui.called.connect(callback)
+                    
                 out = mgui()
-                callback()
                 return out
             
         elif n_parameters(func) == 1 and \
             isinstance(FunctionGui.from_callable(func)[0], FileEdit):
             # We don't want to open a magicgui dialog and again open a file dialog.
             def run_function():
-                callback = _temporal_function_gui_callback(self, mgui, widget)
+                if mgui.call_count == 0:
+                    callback = _temporal_function_gui_callback(self, mgui, widget)
+                    mgui.called.connect(callback)
                 
                 fdialog: FileEdit = mgui[0]
                 result = fdialog._show_file_dialog(
@@ -283,7 +286,6 @@ class BaseGui:
                 if result:
                     fdialog.value = result
                     out = mgui(result)
-                    callback()
                 else:
                     out = None
                 return out
@@ -304,12 +306,11 @@ class BaseGui:
                 if self._popup:
                     mgui.native.setParent(self.native, mgui.native.windowFlags())
                 widget.mgui.show()
-                
-                callback = _temporal_function_gui_callback(self, mgui, widget)
-                
-                if self._close_on_run:
-                    mgui.called.connect(mgui.hide)
-                mgui.called.connect(callback)
+                if mgui.call_count == 0:
+                    if self._close_on_run:
+                        mgui.called.connect(mgui.hide)
+                    callback = _temporal_function_gui_callback(self, mgui, widget)
+                    mgui.called.connect(callback)
                 
                 return None
             
@@ -347,21 +348,21 @@ def _temporal_function_gui_callback(bgui: BaseGui, fgui: FunctionGui, widget):
         
         return_type = fgui.return_annotation
         result_required = return_type is not inspect._empty
-        result = Symbol.from_str("result")
+        result = Symbol("result")
         
         # Standard button will be connected with two callbacks.
         # 1. Build FunctionGui
         # 2. Emit value changed signal.
         # But if there are more, they also have to be called.
         if len(widget.changed._slots) > 2:
-            b = Expr(head=Head.getitem, args=["{x}", widget.name])
-            ev = Expr(head=Head.getattr, args=[b, "changed"])
+            b = Expr(head=Head.getitem, args=[Symbol.from_id(bgui), Symbol(widget.name)])
+            ev = Expr(head=Head.getattr, args=[b, Symbol("changed")])
             line = Expr(head=Head.call, args=[ev])
             if result_required:
                 line = Expr(head=Head.assign, args=[result, line])
             bgui._recorded_macro.append(line)
         else:
-            line = Expr.parse_method(_function, (), inputs)
+            line = Expr.parse_method(bgui, _function, (), inputs)
             if result_required:
                 line = Expr(Head.assign, [result, line])
             root._recorded_macro.append(line)
@@ -372,8 +373,8 @@ def _temporal_function_gui_callback(bgui: BaseGui, fgui: FunctionGui, widget):
             from magicgui.type_map import _type2callback
 
             for callback in _type2callback(return_type):
-                b = Expr(head=Head.getitem, args=["{x}", widget.name])
-                _gui = Expr(head=Head.getattr, args=[b, "mgui"])
+                b = Expr(head=Head.getitem, args=[Symbol.from_id(bgui), widget.name])
+                _gui = Expr(head=Head.getattr, args=[b, Symbol("mgui")])
                 line = Expr.parse_call(callback, (_gui, result, return_type), {})
                 bgui._recorded_macro.append(line)
         

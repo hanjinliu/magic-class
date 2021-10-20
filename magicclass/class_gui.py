@@ -5,7 +5,7 @@ from magicgui.widgets import Container, MainWindow,Label, FunctionGui, Image, Ta
 from magicgui.widgets._bases import Widget, ButtonWidget, ValueWidget, ContainerWidget
 from magicgui.widgets._concrete import _LabeledWidget
 
-from .macro import Expr, Head
+from .macro import Expr, Head, Symbol
 from .utils import iter_members, extract_tooltip, get_parameters, define_callback
 from .widgets import PushButtonPlus, FrozenContainer
 from .field import MagicField
@@ -147,7 +147,7 @@ class ClassGuiBase(BaseGui):
                     self.insert(n_insert, widget)
                     n_insert += 1
         
-        # __call__
+        # convert __call__ into a button
         if hasattr(self, "__call__"):
             widget = self._create_widget_from_method(self.__call__)
             self.insert(n_insert, widget)
@@ -288,7 +288,7 @@ def _nested_function_gui_callback(cgui: ClassGuiBase, fgui: FunctionGui):
         inputs = get_parameters(fgui)
         args = [Expr(head=Head.assign, args=[k, v]) for k, v in inputs.items()]
         # args[0] is self
-        sub = Expr(head=Head.getattr, args=["{x}", fgui.name]) # {x}.func
+        sub = Expr(head=Head.getattr, args=[cgui._recorded_macro[0].args[0], fgui.name]) # {x}.func
         expr = Expr(head=Head.call, args=[sub] + args[1:]) # {x}.func(args...)
 
         if fgui._auto_call:
@@ -309,8 +309,8 @@ def _value_widget_callback(cgui: ClassGuiBase, widget: ValueWidget, name: str):
             # Thus this event should not be recorded as a macro.
             return None
         cgui.changed.emit(cgui)
-        sub = Expr(head=Head.getattr, args=[name, "value"]) # name.value
-        expr = Expr(head=Head.setattr, args=["{x}", sub, widget.value]) # {x}.name.value = value
+        sub = Expr(head=Head.getattr, args=[name, Symbol("value")]) # name.value
+        expr = Expr(head=Head.setattr, args=[Symbol.from_id(cgui), sub, widget.value]) # {x}.name.value = value
         
         last_expr = cgui._recorded_macro[-1]
         if last_expr.head == expr.head and last_expr.args[1].args[0] == expr.args[1].args[0]:

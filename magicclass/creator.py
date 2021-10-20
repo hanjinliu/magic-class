@@ -2,7 +2,7 @@ from __future__ import annotations
 from .core import magicclass, WidgetType
 from ._base import BaseGui
 from .field import field
-from .macro import Symbol
+from .macro import Symbol, symbol
 from .widgets import ConsoleTextEdit
 from enum import Enum
 from magicgui.widgets import Container
@@ -219,7 +219,7 @@ class MagicClassCreator:
             options = {}
         fld = field(value, options=options, **kwargs)
         kw = _dict_to_arguments(kwargs)
-        code = f"f{self._nfield} = field({Symbol(value)}, options={options}, {kw})"
+        code = f"f{self._nfield} = field({symbol(value)}, options={options}, {kw})"
         self._code.append([(code, self._indent)])
         self._current_container.append(fld.to_widget())
         self._create_code()

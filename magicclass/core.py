@@ -114,7 +114,7 @@ def magicclass(class_: type|None = None,
         @functools_wraps(oldclass.__init__)
         def __init__(self, *args, **kwargs):
             app = get_app() # Without "app = " Jupyter freezes after closing the window!
-            macro_init = Expr.parse_init(cls, args, kwargs)
+            macro_init = Expr.parse_init(self, cls, args, kwargs)
             class_gui.__init__(self, 
                                layout=layout,
                                parent=parent,
@@ -194,7 +194,7 @@ def magicmenu(class_: type = None,
         @functools_wraps(oldclass.__init__)
         def __init__(self, *args, **kwargs):
             app = get_app() # Without "app = " Jupyter freezes after closing the window!
-            macro_init = Expr.parse_init(cls, args, kwargs)
+            macro_init = Expr.parse_init(self, cls, args, kwargs)
             MenuGui.__init__(self, parent=parent, close_on_run=close_on_run, popup=popup)
             super(oldclass, self).__init__(*args, **kwargs)
             self._convert_attributes_into_widgets()
