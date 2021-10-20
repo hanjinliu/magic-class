@@ -146,7 +146,13 @@ class ClassGuiBase(BaseGui):
                 if not name.startswith("_"):
                     self.insert(n_insert, widget)
                     n_insert += 1
-                        
+        
+        # __call__
+        if hasattr(self, "__call__"):
+            widget = self._create_widget_from_method(self.__call__)
+            self.insert(n_insert, widget)
+            n_insert += 1
+        
         self._unify_label_widths()
 
         return None

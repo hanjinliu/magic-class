@@ -8,11 +8,14 @@ import numpy as np
 T = TypeVar("T")
 
 class Symbol(UserString):
+    
+    # Map of how to convert object into a symbol.
     _map: dict[type, Callable[[Any], str]] = {
         tuple: lambda e: e,
         list: lambda e: e,
         Enum: lambda e: repr(str(e.name))
     }
+    
     def __init__(self, obj: Any):
         self.valid = True
         if isinstance(obj, self.__class__):
@@ -45,14 +48,16 @@ class Symbol(UserString):
     
     @classmethod
     def register_type(cls, type: type[T], function: Callable[[T], str]):
+        if not callable(function):
+            raise TypeError("The second argument must be callable.")
         cls._map[type] = function
     
     @classmethod
     def from_str(cls, s: str):
         if not isinstance(s, str):
             raise TypeError(type(s))
-        self = cls("{x}")
-        self.data = self.data.format(x=s)
+        self = cls("")
+        self.data = s
         self.type = Symbol
         return self
 
@@ -191,6 +196,7 @@ class Expr:
     def iter_expr(self) -> Iterator[Expr]:
         """
         Recursively iterate over all the nested Expr, until it reached to non-nested Expr.
+        This method is useful in macro generation.
         """        
         yielded = False
         for arg in self.args:

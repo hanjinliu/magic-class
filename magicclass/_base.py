@@ -26,7 +26,6 @@ class BaseGui:
     
     def __init__(self, close_on_run = True, popup = True):
         self._recorded_macro: Macro[Expr] = Macro()
-        self._parameter_history: dict[str, dict[str, Any]] = {}
         self.__magicclass_parent__: None | BaseGui = None
         self._popup = popup
         self._close_on_run = close_on_run
@@ -63,20 +62,6 @@ class BaseGui:
         
         return out
     
-    def _record_parameter_history(self, func: str, kwargs: dict[str, Any]) -> None:
-        """
-        Record parameter inputs to history for next call.
-
-        Parameters
-        ----------
-        func : str
-            Name of function.
-        kwargs : dict[str, Any]
-            Parameter inputs.
-        """        
-        kwargs = {k: v for k, v in kwargs.items() if not isinstance(v, np.ndarray)}
-        self._parameter_history.update({func: kwargs})
-        return None
     
     @property
     def parent_viewer(self) -> "napari.Viewer" | None:
@@ -287,17 +272,12 @@ class BaseGui:
             # We don't want to open a magicgui dialog and again open a file dialog.
             def run_function():
                 callback = _temporal_function_gui_callback(self, mgui, widget)
-                params = self._parameter_history.get(func.__name__, {})
-                path = "."
-                for key, value in params.items():
-                    mgui[key].value = value
-                    path = str(value)
                 
                 fdialog: FileEdit = mgui[0]
                 result = fdialog._show_file_dialog(
                     fdialog.mode,
                     caption=fdialog._btn_text,
-                    start_path=path,
+                    start_path=str(fdialog.value),
                     filter=fdialog.filter,
                 )
                 if result:
@@ -364,8 +344,6 @@ def _temporal_function_gui_callback(bgui: BaseGui, fgui: FunctionGui, widget):
         
     def _after_run():
         inputs = get_parameters(fgui)
-        if inputs:
-            bgui._record_parameter_history(fgui._function.__name__, inputs)
         
         return_type = fgui.return_annotation
         result_required = return_type is not inspect._empty
