@@ -7,15 +7,17 @@ import numpy as np
 
 T = TypeVar("T")
 
-class Identifier(UserString):
+class Symbol(UserString):
     _map: dict[type, Callable[[Any], str]] = {
         tuple: lambda e: e,
         list: lambda e: e,
         Enum: lambda e: repr(str(e.name))
     }
-    def __init__(self, obj:Any):
+    def __init__(self, obj: Any):
         self.valid = True
-        if isinstance(obj, Path):
+        if isinstance(obj, self.__class__):
+            seq = obj.data
+        elif isinstance(obj, Path):
             seq = f"r'{obj}'"
         elif hasattr(obj, "__name__"): # class or function
             seq = obj.__name__
@@ -44,9 +46,18 @@ class Identifier(UserString):
     @classmethod
     def register_type(cls, type: type[T], function: Callable[[T], str]):
         cls._map[type] = function
+    
+    @classmethod
+    def from_str(cls, s: str):
+        if not isinstance(s, str):
+            raise TypeError(type(s))
+        self = cls("{x}")
+        self.data = self.data.format(x=s)
+        self.type = Symbol
+        return self
 
 def register_type(type: type[T], function: Callable[[T], str]):
-    return Identifier.register_type(type, function)
+    return Symbol.register_type(type, function)
         
 class Head(Enum):
     init    = auto()
@@ -101,7 +112,7 @@ class Expr:
     def __repr__(self) -> str:
         return self._repr()
     
-    def _repr(self, ind:int=0) -> str:
+    def _repr(self, ind: int = 0) -> str:
         """
         Recursively expand expressions until it reaches value/assign expression.
         """
@@ -129,7 +140,7 @@ class Expr:
     def parse_method(cls, func: Callable, args: tuple[Any, ...], kwargs: dict[str, Any]) -> Expr:
         """
         Make a method call expression.
-        Expression: {x} = func(*args, **kwargs)
+        Expression: {x}.func(*args, **kwargs)
         """
         method = cls(head=Head.getattr, args=["{x}", func]) # ui.func
         inputs = [method] + cls.convert_args(args, kwargs)
@@ -145,6 +156,15 @@ class Expr:
         return cls(head=Head.init, args=inputs)
     
     @classmethod
+    def parse_call(cls, func: Callable, args: tuple[Any, ...], kwargs: dict[str, Any]) -> Expr:
+        """
+        Make a function call expression.
+        Expression: func(*args, **kwargs)
+        """
+        inputs = [func] + cls.convert_args(args, kwargs)
+        return cls(head=Head.call, args=inputs)
+        
+    @classmethod
     def convert_args(cls, args: tuple[Any, ...], kwargs: dict[str, Any]) -> list:
         inputs = []
         for a in args:
@@ -156,9 +176,9 @@ class Expr:
     
     @classmethod
     def parse(cls, a: Any) -> Expr:
-        return a if isinstance(a, cls) else cls(Head.value, [Identifier(a)])
+        return a if isinstance(a, cls) else cls(Head.value, [Symbol(a)])
     
-    def iter_args(self) -> Iterator[Identifier]:
+    def iter_args(self) -> Iterator[Symbol]:
         """
         Recursively iterate along all the arguments.
         """
@@ -183,6 +203,9 @@ class Expr:
 
         
 class Macro(UserList):
+    """
+    List with pretty output customized for macro.
+    """    
     def append(self, __object: Expr):
         if not isinstance(__object, Expr):
             raise TypeError("Cannot append objects to Macro except for MacroExpr objecs.")
