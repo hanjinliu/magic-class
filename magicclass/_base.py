@@ -2,15 +2,14 @@ from __future__ import annotations
 from functools import wraps as functools_wraps
 from typing import Callable, Any, TYPE_CHECKING, TypeVar
 import inspect
-import warnings
 import numpy as np
 from copy import deepcopy
 from magicgui import magicgui
 from magicgui.widgets import FunctionGui, FileEdit
 
 from .macro import Macro, Expr, Head, Symbol
-from .utils import (iter_members, n_parameters, extract_tooltip, raise_error_in_msgbox,
-                    raise_error_msg, get_parameters, show_mgui)
+from .utils import (iter_members, n_parameters, extract_tooltip, raise_error_in_msgbox, 
+                    get_parameters)
 from .widgets import Separator, ConsoleTextEdit
 from .field import MagicField
 from .wrappers import upgrade_signature
@@ -310,29 +309,27 @@ class BaseGui:
                 return out
             
         else:
-            mgui.native.setParent(self.native, mgui.native.windowFlags())
+            if not self._popup:
+                # TODO: close button
+                mgui.label = ""
+                mgui.name = f"mgui-{id(mgui._function)}" # to avoid name collision
+                mgui.margins = (0, 0, 0, 0)
+                mgui.insert(0, Separator(orientation="horizontal", text=text))
+                mgui.visible = False
+                mgui.append(Separator(orientation="horizontal"))
+                parent_self = self._search_parent_magicclass()
+                parent_self.append(mgui)
+                
             def run_function():
                 if self._popup:
-                    show_mgui(widget.mgui)
-                else:
-                    parent_self = self._search_parent_magicclass()
-                    
-                    sep = Separator(orientation="horizontal", text=text)
-                    mgui.label = ""
-                    mgui.margins = (0, 0, 0, 0)
-                    mgui.insert(0, sep)
-                    parent_self.append(mgui)
+                    mgui.native.setParent(self.native, mgui.native.windowFlags())
+                widget.mgui.show()
                 
                 callback = _temporal_function_gui_callback(self, mgui, widget)
                 
                 if self._close_on_run:
-                    @mgui.called.connect
-                    def _close():
-                        if not self._popup:
-                            parent_self = self._search_parent_magicclass()
-                            parent_self.remove(mgui)
-                        mgui.hide()
-                        callback()
+                    mgui.called.connect(mgui.hide)
+                mgui.called.connect(callback)
                 
                 return None
             

@@ -69,6 +69,7 @@ class ClassGuiBase(BaseGui):
         self.tooltip = doc
         
         # Bind all the methods and annotations
+        n_insert = 0
         base_members = set(x[0] for x in iter_members(self._container_widget)) 
         base_members |= set(x[0] for x in iter_members(ClassGuiBase))
         for name, attr in filter(lambda x: x[0] not in base_members, iter_members(cls)):
@@ -143,7 +144,8 @@ class ClassGuiBase(BaseGui):
                 # of Container.
                 
                 if not name.startswith("_"):
-                    self.insert(len(self), widget)
+                    self.insert(n_insert, widget)
+                    n_insert += 1
                         
         self._unify_label_widths()
 

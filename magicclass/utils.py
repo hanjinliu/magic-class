@@ -90,10 +90,6 @@ def extract_tooltip(obj: Any) -> str:
     else:
         return doc.short_description + "\n" + doc.long_description
 
-def raise_error_msg(parent, title: str = "Error", msg: str = "error"):
-    QMessageBox.critical(parent, title, msg, QMessageBox.Ok)
-    return None
-
 def raise_error_in_msgbox(_func, parent: Widget = None):
     @wraps(_func)
     def wrapped_func(*args, **kwargs):
@@ -124,16 +120,6 @@ def define_callback(self, callback: Callable):
         return None
     return _callback
 
-def show_mgui(mgui: FunctionGui):
-    try:
-        viewer = mgui.parent.parent().qt_viewer.viewer
-    except AttributeError:
-        mgui.show()
-        mgui.native.activateWindow()
-    else:
-        viewer.window._dock_widgets[mgui.parent.objectName()].show()
-    return None
-    
 
 def gui_qt():
     """

@@ -17,14 +17,10 @@ from magicgui.widgets._bases.value_widget import UNSET
 
 # Here's some widgets that doesn't seem needed for magicgui but commonly used in magicclass.
 
-__all__ = ["raise_error_msg", "Figure", "Separator", "ListEdit", "ListWidget", 
+__all__ = ["Figure", "Separator", "ListEdit", "ListWidget", 
            "CheckButton", "PushButtonPlus"] + mgui_all
 
 _V = TypeVar("_V")
-
-def raise_error_msg(parent, title:str="Error", msg:str="error"):
-    QMessageBox.critical(parent, title, msg, QMessageBox.Ok)
-    return None
 
 class FrozenContainer(Container):
     """
