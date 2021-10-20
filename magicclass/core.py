@@ -50,7 +50,6 @@ def magicclass(class_: type|None = None,
                name: str = None,
                close_on_run: bool = True,
                popup: bool = True,
-               single_call: bool = True, 
                widget_type: WidgetType | str = WidgetType.none,
                parent = None
                ) -> ClassGui:
@@ -79,9 +78,6 @@ def magicclass(class_: type|None = None,
     popup : bool, default is True
         If True, magicgui created by every method will be poped up, else they will be appended as a
         part of the main widget.
-    single_call : bool, default is True 
-        If true, user cannot call the same function at the same time. If same button is clicked, the 
-        existing magicgui window is re-activated.
     widget_type : WidgetType or str, optional
         Widget type of container.
     parent : magicgui.widgets._base.Widget, optional
@@ -125,8 +121,7 @@ def magicclass(class_: type|None = None,
                                close_on_run=close_on_run, 
                                popup=popup,
                                labels=labels,
-                               name=name or cls.__name__.replace("_", " "), 
-                               single_call=single_call
+                               name=name or cls.__name__.replace("_", " ")
                                )
             super(oldclass, self).__init__(*args, **kwargs)
             self._convert_attributes_into_widgets()
@@ -153,7 +148,6 @@ def magicmenu(class_: type = None,
               *, 
               close_on_run: bool = True,
               popup: bool = True,
-              single_call: bool = True,
               parent=None
               ):
     """
@@ -175,9 +169,6 @@ def magicmenu(class_: type = None,
     popup : bool, default is True
         If True, magicgui created by every method will be poped up, else they will be appended as a
         part of the main widget.
-    single_call : bool, default is True 
-        If true, user cannot call the same function at the same time. If same button is clicked, the 
-        existing magicgui window is re-activated.
     parent : magicgui.widgets._base.Widget, optional
         Parent widget if exists.
     
@@ -204,8 +195,7 @@ def magicmenu(class_: type = None,
         def __init__(self, *args, **kwargs):
             app = get_app() # Without "app = " Jupyter freezes after closing the window!
             macro_init = Expr.parse_init(cls, args, kwargs)
-            MenuGui.__init__(self, parent=parent, close_on_run=close_on_run, popup=popup, 
-                             single_call=single_call)
+            MenuGui.__init__(self, parent=parent, close_on_run=close_on_run, popup=popup)
             super(oldclass, self).__init__(*args, **kwargs)
             self._convert_attributes_into_widgets()
             

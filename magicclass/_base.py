@@ -2,12 +2,13 @@ from __future__ import annotations
 from functools import wraps as functools_wraps
 from typing import Callable, Any, TYPE_CHECKING, TypeVar
 import inspect
+import warnings
 import numpy as np
 from copy import deepcopy
 from magicgui import magicgui
 from magicgui.widgets import FunctionGui, FileEdit
 
-from .macro import Macro, Expr, Head
+from .macro import Macro, Expr, Head, Symbol
 from .utils import (iter_members, n_parameters, extract_tooltip, raise_error_in_msgbox,
                     raise_error_msg, get_parameters, show_mgui)
 from .widgets import Separator, ConsoleTextEdit
@@ -24,13 +25,12 @@ if TYPE_CHECKING:
 class BaseGui:
     _component_class: type = None
     
-    def __init__(self, close_on_run = True, popup = True, single_call = True):
+    def __init__(self, close_on_run = True, popup = True):
         self._recorded_macro: Macro[Expr] = Macro()
         self._parameter_history: dict[str, dict[str, Any]] = {}
         self.__magicclass_parent__: None | BaseGui = None
         self._popup = popup
         self._close_on_run = close_on_run
-        self._single_call = single_call
     
     
     def _collect_macro(self, myname: str = None) -> list[tuple[int, Expr]]:
@@ -64,24 +64,7 @@ class BaseGui:
         
         return out
     
-    def _record_macro(self, func: Callable, args: tuple, kwargs: dict[str, Any]) -> None:
-        """
-        Record a function call as a line of macro.
-
-        Parameters
-        ----------
-        func : str
-            Name of function.
-        args : tuple
-            Arguments.
-        kwargs : dict[str, Any]
-            Keyword arguments.
-        """        
-        macro = Expr.parse_method(func, args, kwargs)
-        self._recorded_macro.append(macro)
-        return None
-    
-    def _record_parameter_history(self, func:str, kwargs:dict[str, Any]) -> None:
+    def _record_parameter_history(self, func: str, kwargs: dict[str, Any]) -> None:
         """
         Record parameter inputs to history for next call.
 
@@ -282,13 +265,21 @@ class BaseGui:
         # Prepare a button or action
         widget.tooltip = extract_tooltip(func)
         
+        # build magicgui
+        try:
+            mgui = magicgui(func)
+        except Exception as e:
+            msg = f"Exception was raised during building magicgui from method {func.__name__}.\n" \
+                  f"{e.__class__.__name__}: {e}"
+            raise type(e)(msg)
+        
         if n_parameters(func) == 0:
             # We don't want a dialog with a single widget "Run" to show up.
             def run_function():
                 # NOTE: callback must be defined inside function. Magic class must be
                 # "compiled" otherwise function wrappings are not ready!
-                callback = _temporal_function_gui_callback(self, func, widget)
-                out = func()
+                callback = _temporal_function_gui_callback(self, mgui, widget)
+                out = mgui()
                 callback()
                 return out
             
@@ -296,8 +287,6 @@ class BaseGui:
             isinstance(FunctionGui.from_callable(func)[0], FileEdit):
             # We don't want to open a magicgui dialog and again open a file dialog.
             def run_function():
-                mgui = magicgui(func)
-                
                 callback = _temporal_function_gui_callback(self, mgui, widget)
                 params = self._parameter_history.get(func.__name__, {})
                 path = "."
@@ -314,38 +303,17 @@ class BaseGui:
                 )
                 if result:
                     fdialog.value = result
-                    out = func(result)
+                    out = mgui(result)
                     callback()
                 else:
                     out = None
                 return out
             
         else:
+            mgui.native.setParent(self.native, mgui.native.windowFlags())
             def run_function():
-                if widget.mgui is not None and self._single_call:
-                    show_mgui(widget.mgui)
-                    return None
-                try:
-                    mgui = magicgui(func)
-                        
-                except Exception as e:
-                    msg = "Exception was raised during building magicgui.\n" \
-                         f"{e.__class__.__name__}: {e}"
-                    raise_error_msg(self.native, msg=msg)
-                    raise e
-                
-                # Recover last inputs if exists.
-                params = self._parameter_history.get(func.__name__, {})
-                for key, value in params.items():
-                    try:
-                        mgui[key].value = value
-                    except (ValueError, AttributeError):
-                        pass
-                    
-                mgui.native.setParent(self.native, mgui.native.windowFlags())
-                    
                 if self._popup:
-                    mgui.show()
+                    show_mgui(widget.mgui)
                 else:
                     parent_self = self._search_parent_magicclass()
                     
@@ -355,19 +323,20 @@ class BaseGui:
                     mgui.insert(0, sep)
                     parent_self.append(mgui)
                 
+                callback = _temporal_function_gui_callback(self, mgui, widget)
+                
                 if self._close_on_run:
                     @mgui.called.connect
                     def _close():
                         if not self._popup:
                             parent_self = self._search_parent_magicclass()
                             parent_self.remove(mgui)
-                        mgui.close()
+                        mgui.hide()
+                        callback()
                 
-                callback = _temporal_function_gui_callback(self, mgui, widget)
-                mgui.called.connect(callback)
-                widget.mgui = mgui
                 return None
             
+        widget.mgui = mgui
         widget.changed.connect(run_function)
         
         # If design is given, load the options.
@@ -382,11 +351,13 @@ class BaseGui:
             current_self = current_self.__magicclass_parent__
         return current_self
     
-def _temporal_function_gui_callback(bgui: BaseGui, fgui: FunctionGui|Callable, widget):
+    
+def _temporal_function_gui_callback(bgui: BaseGui, fgui: FunctionGui, widget):
     if isinstance(fgui, FunctionGui):
         _function = fgui._function
     else:
-        _function = fgui
+        raise TypeError("fgui must be FunctionGui object.")
+        
     cls_method = getattr(bgui.__class__, _function.__name__)
     if hasattr(cls_method, "__magicclass_wrapped__"):
         clsname, funcname = _function.__qualname__.split(".")
@@ -395,11 +366,13 @@ def _temporal_function_gui_callback(bgui: BaseGui, fgui: FunctionGui|Callable, w
         root = bgui
         
     def _after_run():
-        if isinstance(fgui, FunctionGui):
-            inputs = get_parameters(fgui)
+        inputs = get_parameters(fgui)
+        if inputs:
             bgui._record_parameter_history(fgui._function.__name__, inputs)
-        else:
-            inputs = {}
+        
+        return_type = fgui.return_annotation
+        result_required = return_type is not inspect._empty
+        result = Symbol.from_str("result")
         
         # Standard button will be connected with two callbacks.
         # 1. Build FunctionGui
@@ -408,10 +381,26 @@ def _temporal_function_gui_callback(bgui: BaseGui, fgui: FunctionGui|Callable, w
         if len(widget.changed._slots) > 2:
             b = Expr(head=Head.getitem, args=["{x}", widget.name])
             ev = Expr(head=Head.getattr, args=[b, "changed"])
-            macro = Expr(head=Head.call, args=[ev])
-            bgui._recorded_macro.append(macro)
+            line = Expr(head=Head.call, args=[ev])
+            if result_required:
+                line = Expr(head=Head.assign, args=[result, line])
+            bgui._recorded_macro.append(line)
         else:
-            root._record_macro(_function, (), inputs)
+            line = Expr.parse_method(_function, (), inputs)
+            if result_required:
+                line = Expr(Head.assign, [result, line])
+            root._recorded_macro.append(line)
+        
+        # Deal with return annotation
+        
+        if result_required:
+            from magicgui.type_map import _type2callback
+
+            for callback in _type2callback(return_type):
+                b = Expr(head=Head.getitem, args=["{x}", widget.name])
+                _gui = Expr(head=Head.getattr, args=[b, "mgui"])
+                line = Expr.parse_call(callback, (_gui, result, return_type), {})
+                bgui._recorded_macro.append(line)
         
     return _after_run
 

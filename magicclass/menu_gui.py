@@ -103,9 +103,8 @@ class MenuGui(BaseGui):
                  parent=None, 
                  name: str = None,
                  close_on_run: bool = True,
-                 popup: bool = True,
-                 single_call: bool = True):
-        super().__init__(close_on_run=close_on_run, popup=popup, single_call=single_call)
+                 popup: bool = True):
+        super().__init__(close_on_run=close_on_run, popup=popup)
         name = name or self.__class__.__name__
         self.native = QMenu(name, parent)
         self.native.setToolTipsVisible(True)

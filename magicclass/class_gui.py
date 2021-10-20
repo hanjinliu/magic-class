@@ -164,12 +164,10 @@ def make_gui(container: type[ContainerWidget], no_margin: bool = True):
                      popup: bool = True, 
                      labels: bool = True, 
                      name: str = None, 
-                     single_call: bool = True
                      ):
 
             container.__init__(self, layout=layout, labels=labels, name=name)
-            BaseGui.__init__(self, close_on_run=close_on_run, popup=popup, 
-                             single_call=single_call)
+            BaseGui.__init__(self, close_on_run=close_on_run, popup=popup)
             
             if parent is not None:
                 self.parent = parent
@@ -207,7 +205,7 @@ def make_gui(container: type[ContainerWidget], no_margin: bool = True):
             Show ClassGui. If any of the parent ClassGui is a dock widget in napari, then this
             will also show up as a dock widget (floating if popup=True).
             """        
-            if hasattr(self, "__magicclass_parent__") and self.parent is None:
+            if self.__magicclass_parent__ is not None and self.parent is None:
                 # If child magic class is closed before, we have to set parent again.
                 self.native.setParent(self.__magicclass_parent__.native, 
                                       self.native.windowFlags())

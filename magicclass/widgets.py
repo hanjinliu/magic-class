@@ -39,7 +39,7 @@ class FrozenContainer(Container):
     def set_widget(self, widget: QWidget):
         self.native.layout().addWidget(widget)
         self.margins = (0, 0, 0, 0)
-        return None
+        widget.setParent(self.native)
 
 class Figure(FrozenContainer):
     def __init__(self, 
@@ -88,6 +88,7 @@ class Separator(FrozenContainer):
         super().__init__(layout=orientation, labels=False, name=name)
         main = QFrame(parent=self.native)
         main.setLayout(QGridLayout())
+        main.setContentsMargins(0, 0, 0, 0)
         
         line = QFrame(parent=main)
         line.setFrameShape(QFrame.HLine)
