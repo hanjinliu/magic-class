@@ -247,26 +247,13 @@ class BaseGui:
         
         # Prepare a button or action
         widget.tooltip = extract_tooltip(func)
-        
-        def build_mgui(widget_):
-            if widget_.mgui is not None:
-                return widget_.mgui
-            try:
-                mgui = magicgui(func)
-            except Exception as e:
-                msg = f"Exception was raised during building magicgui from method {func.__name__}.\n" \
-                    f"{e.__class__.__name__}: {e}"
-                raise type(e)(msg)
-            
-            widget_.mgui = mgui
-            return mgui
-        
+                
         if n_parameters(func) == 0:
             # We don't want a dialog with a single widget "Run" to show up.
             def run_function():
                 # NOTE: callback must be defined inside function. Magic class must be
                 # "compiled" otherwise function wrappings are not ready!
-                mgui = build_mgui(widget)
+                mgui = _build_mgui(widget, func)
                 if mgui.call_count == 0:
                     callback = _temporal_function_gui_callback(self, mgui, widget)
                     mgui.called.connect(callback)
@@ -278,7 +265,7 @@ class BaseGui:
             isinstance(FunctionGui.from_callable(func)[0], FileEdit):
             # We don't want to open a magicgui dialog and again open a file dialog.
             def run_function():
-                mgui = build_mgui(widget)
+                mgui = _build_mgui(widget, func)
                 if mgui.call_count == 0:
                     callback = _temporal_function_gui_callback(self, mgui, widget)
                     mgui.called.connect(callback)
@@ -299,7 +286,7 @@ class BaseGui:
             
         else:                
             def run_function():
-                mgui = build_mgui(widget)
+                mgui = _build_mgui(widget, func)
                 if self._popup:
                     mgui.native.setParent(self.native, mgui.native.windowFlags())
                 widget.mgui.show()
@@ -399,6 +386,20 @@ def _search_wrapper(bgui: BaseGui, funcname: str, clsname: str) -> tuple[BaseGui
         current_self = current_self.__magicclass_parent__
     return current_self, getattr(current_self, funcname)
 
+
+def _build_mgui(widget_, func):
+    if widget_.mgui is not None:
+        return widget_.mgui
+    try:
+        mgui = magicgui(func)
+    except Exception as e:
+        msg = f"Exception was raised during building magicgui from method {func.__name__}.\n" \
+            f"{e.__class__.__name__}: {e}"
+        raise type(e)(msg)
+    
+    widget_.mgui = mgui
+    return mgui
+        
 _C = TypeVar("_C", Callable, type)
 
 def wraps(template: Callable | inspect.Signature) -> Callable[[_C], _C]:

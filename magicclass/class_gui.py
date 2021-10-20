@@ -82,10 +82,9 @@ class ClassGuiBase(BaseGui):
                 widget = attr()
                 setattr(self, name, widget)
             
-            elif isinstance(attr, ClassGuiBase):
+            elif isinstance(attr, BaseGui):
                 widget = attr
                 setattr(self, name, widget)
-                widget.native.setParent(self.native, widget.native.windowFlags())
             
             elif isinstance(attr, MagicField):
                 # If MagicField is given by field() function.
@@ -205,6 +204,8 @@ def make_gui(container: type[ContainerWidget], no_margin: bool = True):
             if key < 0:
                 key += len(self)
             self._widget._mgui_insert_widget(key, _widget)
+            if isinstance(_widget, BaseGui):
+                _widget.native.setParent(self.native, _widget.native.windowFlags())
             self._unify_label_widths()
 
         
