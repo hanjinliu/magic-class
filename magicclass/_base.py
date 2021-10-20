@@ -248,19 +248,25 @@ class BaseGui:
         # Prepare a button or action
         widget.tooltip = extract_tooltip(func)
         
-        # build magicgui
-        try:
-            mgui = magicgui(func)
-        except Exception as e:
-            msg = f"Exception was raised during building magicgui from method {func.__name__}.\n" \
-                  f"{e.__class__.__name__}: {e}"
-            raise type(e)(msg)
+        def build_mgui(widget_):
+            if widget_.mgui is not None:
+                return widget_.mgui
+            try:
+                mgui = magicgui(func)
+            except Exception as e:
+                msg = f"Exception was raised during building magicgui from method {func.__name__}.\n" \
+                    f"{e.__class__.__name__}: {e}"
+                raise type(e)(msg)
+            
+            widget_.mgui = mgui
+            return mgui
         
         if n_parameters(func) == 0:
             # We don't want a dialog with a single widget "Run" to show up.
             def run_function():
                 # NOTE: callback must be defined inside function. Magic class must be
                 # "compiled" otherwise function wrappings are not ready!
+                mgui = build_mgui(widget)
                 if mgui.call_count == 0:
                     callback = _temporal_function_gui_callback(self, mgui, widget)
                     mgui.called.connect(callback)
@@ -272,6 +278,7 @@ class BaseGui:
             isinstance(FunctionGui.from_callable(func)[0], FileEdit):
             # We don't want to open a magicgui dialog and again open a file dialog.
             def run_function():
+                mgui = build_mgui(widget)
                 if mgui.call_count == 0:
                     callback = _temporal_function_gui_callback(self, mgui, widget)
                     mgui.called.connect(callback)
@@ -290,23 +297,23 @@ class BaseGui:
                     out = None
                 return out
             
-        else:
-            if not self._popup:
-                # TODO: close button
-                mgui.label = ""
-                mgui.name = f"mgui-{id(mgui._function)}" # to avoid name collision
-                mgui.margins = (0, 0, 0, 0)
-                mgui.insert(0, Separator(orientation="horizontal", text=text))
-                mgui.visible = False
-                mgui.append(Separator(orientation="horizontal"))
-                parent_self = self._search_parent_magicclass()
-                parent_self.append(mgui)
-                
+        else:                
             def run_function():
+                mgui = build_mgui(widget)
                 if self._popup:
                     mgui.native.setParent(self.native, mgui.native.windowFlags())
                 widget.mgui.show()
                 if mgui.call_count == 0:
+                    if not self._popup:
+                        # TODO: close button
+                        mgui.label = ""
+                        mgui.name = f"mgui-{id(mgui._function)}" # to avoid name collision
+                        mgui.margins = (0, 0, 0, 0)
+                        mgui.insert(0, Separator(orientation="horizontal", text=text))
+                        mgui.visible = False
+                        mgui.append(Separator(orientation="horizontal"))
+                        parent_self = self._search_parent_magicclass()
+                        parent_self.append(mgui)
                     if self._close_on_run:
                         mgui.called.connect(mgui.hide)
                     callback = _temporal_function_gui_callback(self, mgui, widget)
@@ -314,7 +321,6 @@ class BaseGui:
                 
                 return None
             
-        widget.mgui = mgui
         widget.changed.connect(run_function)
         
         # If design is given, load the options.

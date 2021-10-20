@@ -1,4 +1,4 @@
-from magicclass import magicclass, field
+from magicclass import magicclass
 
 # Magic-class can be nested. There are several ways of nesting magic-classes.
 
