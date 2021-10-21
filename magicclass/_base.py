@@ -30,39 +30,27 @@ class BaseGui:
         self._popup = popup
         self._close_on_run = close_on_run
     
-    
-    def _collect_macro(self, parent_symbol: Symbol|None = None, myname: str = None) -> list[tuple[int, Expr]]:
-        out = []
-        macro = deepcopy(self._recorded_macro)
-        self_symbol = symbol(self)
+    def _collect_macro(self, parent_symbol: Symbol = None, self_symbol: Symbol = None) -> Macro:
+        if self_symbol is None:
+            self_symbol = symbol(self)
+        
+        if parent_symbol is not None:
+            self_symbol = Expr(Head.getattr, [parent_symbol, self_symbol])
+        
+        sym = symbol(self)
+        macro = Macro()
+        for expr in self._recorded_macro:
+            if parent_symbol is not None and expr.head == Head.init:
+                continue
+            macro.append(expr.format({sym: self_symbol}))
         
         for name, attr in filter(lambda x: not x[0].startswith("__"), self.__dict__.items()):
             # Collect all the macro from child magic-classes recursively
             if not isinstance(attr, BaseGui):
                 continue
-            out += attr._collect_macro(parent_symbol=self_symbol, myname=name)
-        
-        my_symbol = Symbol(myname)
-        if parent_symbol is None:
-            # Root magic class
-            for expr in macro:
-                expr.format({self_symbol: my_symbol}, inplace=True)
-                out.append((expr.number, expr))
-        else:
-            for expr in macro:
-                if expr.head == Head.init:
-                    # nested magic-class construction is always invisible from the parent.
-                    # We should not record something like 'ui.A = A()'.
-                    continue
+            macro += attr._collect_macro(self_symbol, Symbol(name))
                 
-                if parent_symbol is not None:
-                    _expr = Expr(Head.getattr, args=[parent_symbol, my_symbol])
-                    expr.format({self_symbol: _expr}, inplace=True)
-                
-                out.append((expr.number, expr))
-        
-        return out
-    
+        return macro
     
     @property
     def parent_viewer(self) -> "napari.Viewer" | None:
@@ -83,7 +71,7 @@ class BaseGui:
         """        
         return self.native.objectName()
     
-    def create_macro(self, show: bool = False, symbol: str = "ui") -> str:
+    def create_macro(self, show: bool = False, myname: str = "ui") -> str:
         """
         Create executable Python scripts from the recorded macro object.
 
@@ -95,12 +83,11 @@ class BaseGui:
             Symbol of the instance.
         """
         # Recursively build macro from nested magic-classes
-        # macro = [(0, self._recorded_macro[0])] + self._collect_macro(myname=symbol)
-        macro = self._collect_macro(myname=symbol)
-
+        macro = self._collect_macro(self_symbol=Symbol(myname))
         # Sort by the recorded order
-        sorted_macro = map(lambda x: str(x[1]), sorted(macro, key=lambda x: x[0]))
-        script = "\n".join(sorted_macro)
+        sorted_macro = Macro(sorted(macro, key=lambda x: x.number))
+        
+        script = str(sorted_macro)
         
         # type annotation for the hard-to-record types
         annot = []
@@ -110,7 +97,7 @@ class BaseGui:
                 if idt.valid or idt in idt_list:
                     continue
                 idt_list.append(idt)
-                annot.append(idt.as_annotation())
+                annot.append(f"# {idt}: {idt.type}")
         
         if annot:
             out = "\n".join(annot) + "\n" + script

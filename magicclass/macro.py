@@ -42,9 +42,6 @@ class Symbol:
         if not isinstance(other, Symbol):
             raise TypeError(f"'==' is not supported between Symbol and {type(other)}")
         return self.object_id == other.object_id
-
-    def as_annotation(self):
-        return f"# {self}: {self.type}"
     
     def as_parameter(self, default=inspect._empty):
         return inspect.Parameter(self.data, 
@@ -57,23 +54,37 @@ class Symbol:
         if not callable(function):
             raise TypeError("The second argument must be callable.")
         cls._type_map[type] = function
-    
+        
 def symbol(obj: Any) -> Symbol:
     if isinstance(obj, Symbol):
         return obj
     
     valid = True
-    
+    objtype = type(obj)
     if isinstance(obj, str):
         seq = repr(obj)
     elif np.isscalar(obj): # int, float, bool, ...
         seq = obj
     elif isinstance(obj, tuple):
         seq = "(" + ", ".join(symbol(a).data for a in obj) + ")"
+        if objtype is not tuple:
+            seq = objtype.__name__ + seq
     elif isinstance(obj, list):
         seq = "[" + ", ".join(symbol(a).data for a in obj) + "]"
-    elif type(obj) in Symbol._type_map:
-        seq = Symbol._type_map[type(obj)](obj)
+        if objtype is not list:
+            seq = f"{objtype.__name__}({seq})"
+    elif isinstance(obj, dict):
+        seq = "{" + ", ".join(f"{symbol(k)}: {symbol(v)}" for k, v in obj.items()) + "}"
+        if objtype is not dict:
+            seq = f"{objtype.__name__}({seq})"
+    elif isinstance(obj, set):
+        seq = "{" + ", ".join(symbol(a).data for a in obj) + "}"
+        if objtype is not set:
+            seq = f"{objtype.__name__}({seq})"
+    elif isinstance(obj, slice):
+        seq = f"{objtype.__name__}({obj.start}, {obj.stop}, {obj.step})"
+    elif objtype in Symbol._type_map:
+        seq = Symbol._type_map[objtype](obj)
     else:
         for k, func in Symbol._type_map.items():
             if isinstance(obj, k):
@@ -83,7 +94,7 @@ def symbol(obj: Any) -> Symbol:
             seq = f"var{hex(id(obj))}" # hexadecimals are easier to distinguish
             valid = False
             
-    sym = Symbol(seq, id(obj), type(seq))
+    sym = Symbol(seq, id(obj), type(obj))
     sym.valid = valid
     return sym
 
@@ -128,7 +139,7 @@ class Expr:
     def __init__(self, head: Head, args: Iterable[Any]):
         self.head = Head(head)
         if head == Head.value:
-            self.args = list(args)
+            self.args = [args[0]]
         else:
             self.args = list(map(self.__class__.parse, args))
             
