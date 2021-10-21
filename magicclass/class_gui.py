@@ -204,8 +204,6 @@ def make_gui(container: type[ContainerWidget], no_margin: bool = True):
             if key < 0:
                 key += len(self)
             self._widget._mgui_insert_widget(key, _widget)
-            if isinstance(_widget, BaseGui):
-                _widget.native.setParent(self.native, _widget.native.windowFlags())
             self._unify_label_widths()
 
         

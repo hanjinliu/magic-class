@@ -231,7 +231,7 @@ class Expr:
             inputs.append(a)
                 
         for k, v in kwargs.items():
-            inputs.append(cls(Head.assign, [k, v]))
+            inputs.append(cls(Head.assign, [Symbol(k), v]))
         return inputs
     
     @classmethod
