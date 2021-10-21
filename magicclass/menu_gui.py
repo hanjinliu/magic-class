@@ -8,7 +8,7 @@ from qtpy.QtWidgets import QMenu, QAction
 from .field import MagicField
 from .widgets import Separator
 from ._base import BaseGui
-from .macro import Expr, Head, Symbol
+from .macro import Expr, Head, Symbol, symbol
 from .utils import iter_members, define_callback
 
 class Action:
@@ -215,7 +215,7 @@ def _value_widget_callback(mgui: MenuGui, widget: ButtonWidget, name: str):
         if isinstance(value, Exception):
             return None
         sub = Expr(head=Head.getattr, args=[name, Symbol("value")]) # name.value
-        expr = Expr(head=Head.setattr, args=[Symbol.from_id(mgui), sub, value]) # {x}.name.value = value
+        expr = Expr(head=Head.setattr, args=[symbol(mgui), sub, value]) # {x}.name.value = value
         
         last_expr = mgui._recorded_macro[-1]
         if last_expr.head == expr.head and last_expr.args[1].args[0] == expr.args[1].args[0]:

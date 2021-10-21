@@ -3,11 +3,11 @@ from contextlib import contextmanager
 from functools import partial, wraps
 import inspect
 from copy import deepcopy
-from enum import Enum, auto
+from enum import Enum
 from collections import UserList
 from pathlib import Path
 from typing import Callable, Iterable, Iterator, Any, overload, TypeVar
-from types import FunctionType, MethodType
+from types import FunctionType, MethodType, BuiltinFunctionType
 import numpy as np
 
 T = TypeVar("T")
@@ -18,36 +18,31 @@ class Symbol:
     _type_map: dict[type, Callable[[Any], str]] = {
         type: lambda e: e.__name__,
         FunctionType: lambda e: e.__name__,
+        BuiltinFunctionType: lambda e: e.__name__,
         Enum: lambda e: repr(str(e.name)),
         Path: lambda e: f"r'{e}'",
     }
     
-    _id_map: dict[int, Symbol] = {}
-    
-    def __init__(self, seq: str, type: type = Any):
+    def __init__(self, seq: str, object_id: int = None, type: type = Any):
         self.data = str(seq)
+        self.object_id = object_id or id(seq)
         self.type = type
         self.valid = True
     
     def __repr__(self) -> str:
-        return ":" + self.data
+        return self.data
     
     def __str__(self) -> str:
         return self.data
     
     def __hash__(self) -> int:
-        return id(self)
+        return self.object_id
     
-    @classmethod
-    def from_id(cls, obj: Any):
-        _id = id(obj)
-        try:
-            out = cls._id_map[_id]
-        except KeyError:
-            out = symbol(obj)
-            cls._id_map[_id] = out
-        return out
-    
+    def __eq__(self, other: Symbol) -> bool:
+        if not isinstance(other, Symbol):
+            raise TypeError(f"'==' is not supported between Symbol and {type(other)}")
+        return self.object_id == other.object_id
+
     def as_annotation(self):
         return f"# {self}: {self.type}"
     
@@ -66,8 +61,6 @@ class Symbol:
 def symbol(obj: Any) -> Symbol:
     if isinstance(obj, Symbol):
         return obj
-    elif id(obj) in Symbol._id_map.keys():
-        return Symbol._id_map[id(obj)]
     
     valid = True
     
@@ -75,8 +68,10 @@ def symbol(obj: Any) -> Symbol:
         seq = repr(obj)
     elif np.isscalar(obj): # int, float, bool, ...
         seq = obj
-    elif isinstance(obj, (tuple, list)):
-        seq = type(obj)([symbol(a) for a in obj])
+    elif isinstance(obj, tuple):
+        seq = "(" + ", ".join(symbol(a).data for a in obj) + ")"
+    elif isinstance(obj, list):
+        seq = "[" + ", ".join(symbol(a).data for a in obj) + "]"
     elif type(obj) in Symbol._type_map:
         seq = Symbol._type_map[type(obj)](obj)
     else:
@@ -88,10 +83,8 @@ def symbol(obj: Any) -> Symbol:
             seq = f"var{hex(id(obj))}" # hexadecimals are easier to distinguish
             valid = False
             
-    sym = Symbol(seq, type(seq))
+    sym = Symbol(seq, id(obj), type(seq))
     sym.valid = valid
-    if not valid:
-        Symbol._id_map[id(obj)] = sym
     return sym
 
 def register_type(type: type[T], function: Callable[[T], str]):
@@ -108,11 +101,6 @@ class Head(Enum):
     value   = "value"
     comment = "comment"
 
-_QUOTE = "'"
-
-def sy(arg):
-    return str(arg).strip(_QUOTE)
-
 class Expr:
     """
     Python expression class. Inspired by Julia (https://docs.julialang.org/en/v1/manual/metaprogramming/),
@@ -126,13 +114,13 @@ class Expr:
     
     # a map of how to conver expression into string.
     _map: dict[Head, Callable[[Expr], str]] = {
-        Head.init   : lambda e: f"{sy(e.args[0])} = {e.args[1]}({', '.join(map(str, e.args[2:]))})",
-        Head.getattr: lambda e: f"{sy(e.args[0])}.{sy(e.args[1])}",
-        Head.setattr: lambda e: f"{sy(e.args[0])}.{sy(e.args[1])} = {e.args[2]}",
-        Head.getitem: lambda e: f"{sy(e.args[0])}[{e.args[1]}]",
-        Head.setitem: lambda e: f"{sy(e.args[0])}[{e.args[1]}] = {e.args[2]}",
-        Head.call   : lambda e: f"{sy(e.args[0])}({', '.join(map(str, e.args[1:]))})",
-        Head.assign : lambda e: f"{sy(e.args[0])}={e.args[1]}",
+        Head.init   : lambda e: f"{e.args[0]} = {e.args[1]}({', '.join(map(str, e.args[2:]))})",
+        Head.getattr: lambda e: f"{e.args[0]}.{e.args[1]}",
+        Head.setattr: lambda e: f"{e.args[0]}.{e.args[1]} = {e.args[2]}",
+        Head.getitem: lambda e: f"{e.args[0]}[{e.args[1]}]",
+        Head.setitem: lambda e: f"{e.args[0]}[{e.args[1]}] = {e.args[2]}",
+        Head.call   : lambda e: f"{e.args[0]}({', '.join(map(str, e.args[1:]))})",
+        Head.assign : lambda e: f"{e.args[0]}={e.args[1]}",
         Head.value  : lambda e: str(e.args[0]),
         Head.comment: lambda e: f"# {e.args[0]}",
     }
@@ -177,8 +165,13 @@ class Expr:
     def copy(self):
         return deepcopy(self)
     
-    def eval(self, __globals: dict[str: Any] = None, __locals: dict[str: Any] = None):
-        return eval(str(self), __globals, __locals)
+    def eval(self, _globals: dict[Symbol: Any] = {}, _locals: dict[Symbol: Any] = {}):
+        _globals = {sym.data: v for sym, v in _globals}
+        _locals = {sym.data: v for sym, v in _locals}
+        if self.head in (Head.assign, Head.setitem, Head.setattr):
+            return exec(str(self), _globals, _locals)
+        else:
+            return eval(str(self), _globals, _locals)
         
     @classmethod
     def parse_method(cls, obj: Any, func: Callable, args: tuple[Any, ...], kwargs: dict[str, Any]) -> Expr:
@@ -186,7 +179,7 @@ class Expr:
         Make a method call expression.
         Expression: obj.func(*args, **kwargs)
         """
-        method = cls(head=Head.getattr, args=[Symbol.from_id(obj), func])
+        method = cls(head=Head.getattr, args=[symbol(obj), func])
         inputs = [method] + cls.convert_args(args, kwargs)
         return cls(head=Head.call, args=inputs)
 
@@ -200,7 +193,7 @@ class Expr:
             args = ()
         if kwargs is None:
             kwargs = {}
-        sym = Symbol.from_id(obj)
+        sym = symbol(obj)
         inputs = [sym, init_cls] + cls.convert_args(args, kwargs)
         sym.valid = True
         return cls(head=Head.init, args=inputs)
@@ -273,9 +266,10 @@ class Expr:
         if not yielded:
             yield self
     
-    def format(self, mapping: dict[Symbol, Expr], inplace: bool = False) -> Expr:
+    def format(self, mapping: dict[Symbol, Symbol|Expr], inplace: bool = False) -> Expr:
         if not inplace:
             self = self.copy()
+            
         for arg in self.iter_values():
             try:
                 new = mapping[arg.args[0]]

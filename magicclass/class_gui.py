@@ -5,7 +5,7 @@ from magicgui.widgets import Container, MainWindow,Label, FunctionGui, Image, Ta
 from magicgui.widgets._bases import Widget, ButtonWidget, ValueWidget, ContainerWidget
 from magicgui.widgets._concrete import _LabeledWidget
 
-from .macro import Expr, Head, Symbol
+from .macro import Expr, Head, Symbol, symbol
 from .utils import iter_members, extract_tooltip, get_parameters, define_callback
 from .widgets import PushButtonPlus, FrozenContainer
 from .field import MagicField
@@ -311,7 +311,7 @@ def _value_widget_callback(cgui: ClassGuiBase, widget: ValueWidget, name: str):
             return None
         cgui.changed.emit(cgui)
         sub = Expr(head=Head.getattr, args=[name, Symbol("value")]) # name.value
-        expr = Expr(head=Head.setattr, args=[Symbol.from_id(cgui), sub, widget.value]) # {x}.name.value = value
+        expr = Expr(head=Head.setattr, args=[symbol(cgui), sub, widget.value]) # {x}.name.value = value
         
         last_expr = cgui._recorded_macro[-1]
         if last_expr.head == expr.head and last_expr.args[1].args[0] == expr.args[1].args[0]:

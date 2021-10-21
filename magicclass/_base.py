@@ -7,7 +7,7 @@ from copy import deepcopy
 from magicgui import magicgui
 from magicgui.widgets import FunctionGui, FileEdit
 
-from .macro import Macro, Expr, Head, Symbol
+from .macro import Macro, Expr, Head, Symbol, symbol
 from .utils import (iter_members, n_parameters, extract_tooltip, raise_error_in_msgbox, 
                     get_parameters)
 from .widgets import Separator, ConsoleTextEdit
@@ -34,7 +34,7 @@ class BaseGui:
     def _collect_macro(self, parent_symbol: Symbol|None = None, myname: str = None) -> list[tuple[int, Expr]]:
         out = []
         macro = deepcopy(self._recorded_macro)
-        self_symbol = Symbol.from_id(self)
+        self_symbol = symbol(self)
         
         for name, attr in filter(lambda x: not x[0].startswith("__"), self.__dict__.items()):
             # Collect all the macro from child magic-classes recursively
@@ -42,10 +42,11 @@ class BaseGui:
                 continue
             out += attr._collect_macro(parent_symbol=self_symbol, myname=name)
         
+        my_symbol = Symbol(myname)
         if parent_symbol is None:
             # Root magic class
             for expr in macro:
-                expr.format({self_symbol: myname}, inplace=True)
+                expr.format({self_symbol: my_symbol}, inplace=True)
                 out.append((expr.number, expr))
         else:
             for expr in macro:
@@ -55,7 +56,7 @@ class BaseGui:
                     continue
                 
                 if parent_symbol is not None:
-                    _expr = Expr(Head.getattr, args=[parent_symbol, Symbol(myname)])
+                    _expr = Expr(Head.getattr, args=[parent_symbol, my_symbol])
                     expr.format({self_symbol: _expr}, inplace=True)
                 
                 out.append((expr.number, expr))
@@ -348,7 +349,7 @@ def _temporal_function_gui_callback(bgui: BaseGui, fgui: FunctionGui, widget):
         # 2. Emit value changed signal.
         # But if there are more, they also have to be called.
         if len(widget.changed._slots) > 2:
-            b = Expr(head=Head.getitem, args=[Symbol.from_id(bgui), Symbol(widget.name)])
+            b = Expr(head=Head.getitem, args=[symbol(bgui), Symbol(widget.name)])
             ev = Expr(head=Head.getattr, args=[b, Symbol("changed")])
             line = Expr(head=Head.call, args=[ev])
             if result_required:
@@ -366,7 +367,7 @@ def _temporal_function_gui_callback(bgui: BaseGui, fgui: FunctionGui, widget):
             from magicgui.type_map import _type2callback
 
             for callback in _type2callback(return_type):
-                b = Expr(head=Head.getitem, args=[Symbol.from_id(bgui), widget.name])
+                b = Expr(head=Head.getitem, args=[symbol(bgui), widget.name])
                 _gui = Expr(head=Head.getattr, args=[b, Symbol("mgui")])
                 line = Expr.parse_call(callback, (_gui, result, return_type), {})
                 bgui._recorded_macro.append(line)
@@ -422,6 +423,7 @@ def wraps(template: Callable | inspect.Signature) -> Callable[[_C], _C]:
 
 def _wraps(template: Callable | inspect.Signature, 
            reference: Callable = None) -> Callable:
+    # BUG: template signature is not correctly copied
     def wrapper(f: _C) -> _C:
         if isinstance(f, type):
             for name, attr in iter_members(f):
