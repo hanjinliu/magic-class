@@ -15,7 +15,7 @@ setup(
     long_description_content_type="text/markdown",
     author="Hanjin Liu",
     author_email="liuhanjin-sc@g.ecc.u-tokyo.ac.jp",
-    license="GPLv2",
+    license="BSD 3-Clause",
     download_url="https://github.com/hanjinliu/magic-class",
     packages=find_packages(),
     install_requires=[
