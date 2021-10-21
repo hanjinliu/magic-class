@@ -206,7 +206,6 @@ class Expr:
             kwargs = {}
         sym = symbol(obj)
         inputs = [sym, init_cls] + cls.convert_args(args, kwargs)
-        sym.valid = True
         return cls(head=Head.init, args=inputs)
     
     @classmethod
@@ -359,13 +358,15 @@ class Macro(UserList):
         
         return wrapper if function is None else wrapper(function)
 
-class MacroRecordingFunction:
-    def __init__(self, function: Callable):
-        self.function = function
-        self.__signature__ = inspect.signature(function)
+# class MacroRecordingFunction:
+#     def __init__(self, function: Callable):
+#         self.function = function
+#         self.__signature__ = inspect.signature(function)
          
-    def __call__(self, *args, **kwargs):
-        return self.function(*args, **kwargs)
+#     def __call__(self, *args, **kwargs):
+#         return self.function(*args, **kwargs)
     
-    def __get__(self, obj: Any, objtype=None):
-        return self.__class__(partial(self.function, obj))
+#     def __get__(self, obj: Any, objtype=None):
+#         if obj is None:
+#             return self.function
+#         return self.__class__(self.function.__get__(obj))

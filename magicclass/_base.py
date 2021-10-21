@@ -88,16 +88,17 @@ class BaseGui:
         sorted_macro = Macro(sorted(macro, key=lambda x: x.number))
         
         script = str(sorted_macro)
-        
         # type annotation for the hard-to-record types
         annot = []
         idt_list = []
         for expr in self._recorded_macro:
-            for idt in expr.iter_args():
-                if idt.valid or idt in idt_list:
+            if expr.head == Head.init:
+                idt_list.append(expr.args[0].args[0])
+            for sym in expr.iter_args():
+                if sym.valid or sym in idt_list:
                     continue
-                idt_list.append(idt)
-                annot.append(f"# {idt}: {idt.type}")
+                idt_list.append(sym)
+                annot.append(f"# {sym}: {sym.type}")
         
         if annot:
             out = "\n".join(annot) + "\n" + script

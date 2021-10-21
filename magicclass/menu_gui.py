@@ -214,7 +214,7 @@ def _value_widget_callback(mgui: MenuGui, widget: ButtonWidget, name: str):
         value = widget.value
         if isinstance(value, Exception):
             return None
-        sub = Expr(head=Head.getattr, args=[name, Symbol("value")]) # name.value
+        sub = Expr(head=Head.getattr, args=[Symbol(name), Symbol("value")]) # name.value
         expr = Expr(head=Head.setattr, args=[symbol(mgui), sub, value]) # {x}.name.value = value
         
         last_expr = mgui._recorded_macro[-1]
