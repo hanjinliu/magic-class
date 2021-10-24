@@ -1,6 +1,6 @@
 from __future__ import annotations
 from contextlib import contextmanager
-from functools import partial, wraps
+from functools import wraps
 import inspect
 from copy import deepcopy
 from enum import Enum
@@ -357,16 +357,3 @@ class Macro(UserList):
             return macro_recorder_equipped
         
         return wrapper if function is None else wrapper(function)
-
-# class MacroRecordingFunction:
-#     def __init__(self, function: Callable):
-#         self.function = function
-#         self.__signature__ = inspect.signature(function)
-         
-#     def __call__(self, *args, **kwargs):
-#         return self.function(*args, **kwargs)
-    
-#     def __get__(self, obj: Any, objtype=None):
-#         if obj is None:
-#             return self.function
-#         return self.__class__(self.function.__get__(obj))

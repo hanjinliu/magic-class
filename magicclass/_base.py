@@ -318,13 +318,6 @@ def _temporal_function_gui_callback(bgui: BaseGui, fgui: FunctionGui, widget):
     else:
         raise TypeError("fgui must be FunctionGui object.")
         
-    cls_method = getattr(bgui.__class__, _function.__name__)
-    if hasattr(cls_method, "__magicclass_wrapped__"):
-        clsname, funcname = _function.__qualname__.split(".")
-        root, _function = _search_wrapper(bgui, funcname, clsname)
-    else:
-        root = bgui
-        
     def _after_run():
         inputs = get_parameters(fgui)
         
@@ -347,7 +340,7 @@ def _temporal_function_gui_callback(bgui: BaseGui, fgui: FunctionGui, widget):
             line = Expr.parse_method(bgui, _function, (), inputs)
             if result_required:
                 line = Expr(Head.assign, [result, line])
-            root._recorded_macro.append(line)
+            bgui._recorded_macro.append(line)
         
         # Deal with return annotation
         

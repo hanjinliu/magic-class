@@ -309,7 +309,7 @@ def _value_widget_callback(cgui: ClassGuiBase, widget: ValueWidget, name: str):
             return None
         cgui.changed.emit(cgui)
         sub = Expr(head=Head.getattr, args=[Symbol(name), Symbol("value")]) # name.value
-        expr = Expr(head=Head.setattr, args=[symbol(cgui), sub, widget.value]) # {x}.name.value = value
+        expr = Expr(head=Head.setattr, args=[symbol(cgui), sub, widget.value]) # x.name.value = value
         
         last_expr = cgui._recorded_macro[-1]
         if last_expr.head == expr.head and last_expr.args[1].args[0] == expr.args[1].args[0]:
