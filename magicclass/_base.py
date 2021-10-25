@@ -243,7 +243,7 @@ class BaseGui:
                 # NOTE: callback must be defined inside function. Magic class must be
                 # "compiled" otherwise function wrappings are not ready!
                 mgui = _build_mgui(widget, func)
-                if mgui.call_count == 0:
+                if mgui.call_count == 0 and len(mgui.called._slots) == 0:
                     callback = _temporal_function_gui_callback(self, mgui, widget)
                     mgui.called.connect(callback)
                     
@@ -255,7 +255,7 @@ class BaseGui:
             # We don't want to open a magicgui dialog and again open a file dialog.
             def run_function():
                 mgui = _build_mgui(widget, func)
-                if mgui.call_count == 0:
+                if mgui.call_count == 0 and len(mgui.called._slots) == 0:
                     callback = _temporal_function_gui_callback(self, mgui, widget)
                     mgui.called.connect(callback)
                 
@@ -279,7 +279,7 @@ class BaseGui:
                 if self._popup:
                     mgui.native.setParent(self.native, mgui.native.windowFlags())
                 widget.mgui.show()
-                if mgui.call_count == 0:
+                if mgui.call_count == 0 and len(mgui.called._slots) == 0:
                     if not self._popup:
                         # TODO: close button
                         mgui.label = ""
@@ -404,7 +404,6 @@ def wraps(template: Callable | inspect.Signature) -> Callable[[_C], _C]:
 
 def _wraps(template: Callable | inspect.Signature, 
            reference: Callable = None) -> Callable:
-    # BUG: template signature is not correctly copied
     def wrapper(f: _C) -> _C:
         if isinstance(f, type):
             for name, attr in iter_members(f):
