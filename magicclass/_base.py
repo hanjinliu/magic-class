@@ -2,8 +2,6 @@ from __future__ import annotations
 from functools import wraps as functools_wraps
 from typing import Callable, Any, TYPE_CHECKING, TypeVar
 import inspect
-import numpy as np
-from copy import deepcopy
 from magicgui import magicgui
 from magicgui.widgets import FunctionGui, FileEdit
 
@@ -330,7 +328,7 @@ def _temporal_function_gui_callback(bgui: BaseGui, fgui: FunctionGui, widget):
         # 2. Emit value changed signal.
         # But if there are more, they also have to be called.
         if len(widget.changed._slots) > 2:
-            b = Expr(head=Head.getitem, args=[symbol(bgui), Symbol(widget.name)])
+            b = Expr(head=Head.getitem, args=[symbol(bgui), widget.name])
             ev = Expr(head=Head.getattr, args=[b, Symbol("changed")])
             line = Expr(head=Head.call, args=[ev])
             if result_required:
