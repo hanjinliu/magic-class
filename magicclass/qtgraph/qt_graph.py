@@ -2,7 +2,7 @@ from __future__ import annotations
 import pyqtgraph as pg
 from typing import Sequence, overload
 import numpy as np
-from .graph_items import PlotDataItem, Scatter, Curve
+from .graph_items import PlotDataItem, Scatter, Curve, TextOverlay
 from ..widgets import FrozenContainer
 
 BOTTOM = "bottom"
@@ -89,8 +89,29 @@ class ImageCanvas(FrozenContainer):
         super().__init__(**kwargs)
         self.imageview = pg.ImageView()
         self.set_widget(self.imageview)
+        self._text_overlay = TextOverlay("", "gray")
+        self.imageview.view.addItem(self._text_overlay.native)
     
-    def set_image(self, image, **kwargs):
-        self.imageview.setImage(image, **kwargs)
+    @property
+    def text_overlay(self):
+        return self._text_overlay
     
+    @property
+    def image(self):
+        return self.imageview.image
+        
+    @image.setter
+    def image(self, image):
+        self.imageview.setImage(np.asarray(image).T, autoRange=False)
+        
+    @image.deleter
+    def image(self):
+        self.imageview.clear()
     
+    @property
+    def contrast_limits(self):
+        return self.imageview.levelMin, self.imageview.levelMax
+    
+    @contrast_limits.setter
+    def contrast_limits(self, value):
+        self.imageview.setLevels(*value)
