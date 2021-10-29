@@ -103,10 +103,10 @@ class TextOverlay:
         self.native.setText(value)
     
     def update(self, **kwargs):
-        for k, v in kwargs:
+        for k, v in kwargs.items():
             if k not in ["color", "text", "visible"]:
                 raise AttributeError(f"Cannot set attribute {k} to TextOverlay.")
-        for k, v in kwargs:
+        for k, v in kwargs.items():
             setattr(self, k, v)
             
         

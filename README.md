@@ -21,7 +21,7 @@ git clone https://github.com/hanjinliu/magic-class
 
 ## Dependencies
 
-`magicgui>=0.3.0`
+`magicgui>=0.3.2`
 
 `numpy>=1.20.3`
 

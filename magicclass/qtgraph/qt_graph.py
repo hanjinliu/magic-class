@@ -90,7 +90,7 @@ class ImageCanvas(FrozenContainer):
         self.imageview = pg.ImageView()
         self.set_widget(self.imageview)
         self._text_overlay = TextOverlay("", "gray")
-        self.imageview.view.addItem(self._text_overlay.native)
+        self.imageview.scene.addItem(self._text_overlay.native)
     
     @property
     def text_overlay(self):
