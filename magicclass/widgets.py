@@ -267,7 +267,7 @@ class ListWidget(FrozenContainer):
         self._contextmenu: defaultdict[type, list[_Callback]] = defaultdict(list)
         
         @self._listwidget.itemDoubleClicked.connect
-        def _(item):
+        def _(item: PyListWidgetItem):
             type_ = type(item.obj)
             callbacks = self._callbacks.get(type_, [])
             for callback in callbacks:
@@ -454,7 +454,7 @@ class PushButtonPlus(PushButton):
         font.setFamily(family)
         self.native.setFont(font)
     
-    def from_options(self, options:dict[str]|Callable):
+    def from_options(self, options: dict[str] | Callable):
         if callable(options):
             try:
                 options = options.__signature__.caller_options

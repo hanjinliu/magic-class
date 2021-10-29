@@ -117,23 +117,14 @@ class PlotData:
     class Edit: ...
 ```
 
-directly integrate `magicgui`:
+directly integrate `magicgui` and its widgets:
 
 ```python
 @magicclass
 class PlotData:
+    line = LineEdit()
     @magicgui
     def load(self, path: Path): ...
-```
-
-set design on each button:
-
-```python
-from magicclass import set_design
-@magicclass
-class PlotData:
-    @set_design(text="Clear Data")
-    def clear(self): ...
 ```
 
 ... and so on.
