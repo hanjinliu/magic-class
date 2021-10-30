@@ -17,11 +17,11 @@ class Canvas(FrozenContainer):
                
     @property
     def xlabel(self):
-        return self.plotwidget.plotItem.getLabel(BOTTOM).text
+        return self.plotwidget.plotItem.getLabel(BOTTOM).text or ""
     
     @xlabel.setter
-    def xlabel(self, label: str):
-        self.plotwidget.plotItem.getLabel(BOTTOM).setText(label)
+    def xlabel(self, label: str) -> str:
+        self.plotwidget.plotItem.setLabel(BOTTOM, label)
     
     @property
     def xlim(self):
@@ -29,15 +29,15 @@ class Canvas(FrozenContainer):
     
     @xlim.setter
     def xlim(self, value: tuple[float, float]):
-        self.plotwidget.setXRange(value)
+        self.plotwidget.setXRange(*value)
         
     @property
-    def ylabel(self):
-        return self.plotwidget.plotItem.getAxis(LEFT).text
+    def ylabel(self) -> str:
+        return self.plotwidget.plotItem.getLabel(LEFT).text or ""
         
     @ylabel.setter
     def ylabel(self, label: str):
-        self.plotwidget.plotItem.getAxis(LEFT).setText(label)
+        self.plotwidget.plotItem.setLabel(LEFT, label)
        
     @property
     def ylim(self):
@@ -45,16 +45,8 @@ class Canvas(FrozenContainer):
     
     @ylim.setter
     def ylim(self, value: tuple[float, float]):
-        self.plotwidget.setYRange(value)
-         
-    @property
-    def title(self):
-        return self.plotwidget.titleLabel.text
-    
-    @title.setter
-    def title(self, value: str):
-        self.plotwidget.titleLabel.setText(value)
-    
+        self.plotwidget.setYRange(*value)
+             
     @overload
     def add_curve(self, x: Sequence[float], **kwargs): ...
     
