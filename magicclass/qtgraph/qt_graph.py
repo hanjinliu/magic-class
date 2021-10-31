@@ -2,18 +2,52 @@ from __future__ import annotations
 import pyqtgraph as pg
 from typing import Sequence, overload
 import numpy as np
+from magicgui.events import Signal
 from .graph_items import PlotDataItem, Scatter, Curve, TextOverlay
 from ..widgets import FrozenContainer
 
 BOTTOM = "bottom"
 LEFT = "left"
+
+class SingleRegion:
+    region_changed = Signal(tuple[float, float])
+    
+    def __init__(self):
+        self.regionitem = pg.LinearRegionItem()
+        @self.regionitem.sigRegionChanged.connect
+        def _(e=None):
+            self.region_changed.emit(self.regionitem.getRegion())
+    
+    @property
+    def region(self) -> tuple[float, float]:
+        return self.regionitem.getRegion()
+    
+    @region.setter
+    def region(self, value: tuple[float, float]):
+        self.regionitem.setRegion(value)
+    
+    @property
+    def region_visible(self) -> bool:
+        return self.regionitem.isVisible()
+    
+    @region_visible.setter
+    def region_visible(self, value: bool):
+        self.regionitem.setVisible(value)
+    
+    
+class MultiRegion:
+    regionitems: list[pg.LinearRegionItem]
         
-class Canvas(FrozenContainer):
-    def __init__(self, **kwargs):
+class Canvas(FrozenContainer, SingleRegion):
+    def __init__(self, region_visible=False, **kwargs):
         super().__init__(**kwargs)
         self.plotwidget = pg.PlotWidget()
         self._items: list[PlotDataItem] = []
         self.set_widget(self.plotwidget)
+        
+        SingleRegion.__init__(self)
+        self.plotwidget.addItem(self.regionitem, ignoreBounds=True)
+        self.region_visible = region_visible
                
     @property
     def xlabel(self):
@@ -46,7 +80,7 @@ class Canvas(FrozenContainer):
     @ylim.setter
     def ylim(self, value: tuple[float, float]):
         self.plotwidget.setYRange(*value)
-             
+        
     @overload
     def add_curve(self, x: Sequence[float], **kwargs): ...
     
