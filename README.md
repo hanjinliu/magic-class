@@ -15,6 +15,7 @@ pip install magic-class
 ```
 
 - from source
+
 ```
 git clone https://github.com/hanjinliu/magic-class
 ```
@@ -115,6 +116,18 @@ class PlotData:
     class File: ...
     @magicmenu
     class Edit: ...
+```
+
+add context menu with `@magiccontext` decorator:
+
+```python
+@magicclass
+class PlotData:
+    @magiccontext
+    class context: ...
+        def Copy(self): ...
+        def Paste(self): ...
+
 ```
 
 directly integrate `magicgui` and its widgets:

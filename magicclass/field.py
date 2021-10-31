@@ -1,7 +1,6 @@
 from __future__ import annotations
 from typing import Any, TYPE_CHECKING, Callable
 import inspect
-from enum import Enum
 from dataclasses import Field, MISSING
 from magicgui.type_map import get_widget_class
 from magicgui.widgets import create_widget
@@ -177,30 +176,3 @@ def field(obj: Any = MISSING,
         f = MagicField(default=obj, metadata=metadata)
     f.name = name
     return f
-
-
-# class Settings:
-#     def __init__(self, name: str = None, param_options: dict[str: dict] = None):
-#         params = []
-#         for _name, value in self.__class__.__dict__.items():
-#             if _name.startswith("_") or callable(value):
-#                 continue
-#             params.append(
-#                 inspect.Parameter(_name, 
-#                                   kind=inspect.Parameter.POSITIONAL_OR_KEYWORD,
-#                                   default=value,
-#                                   annotation=type(value)
-#                                   )
-#                 )
-#         self._parameters = params
-        
-#         self.__signature__ = inspect.Signature(params)
-#         self.__class__.__signature__ = self.__signature__
-#         self.__doc__: str = getattr(self.__class__, "__doc__", "")
-#         self.__name__: str = self.__class__.__name__
-#         self.__qualname__: str = self.__class__.__qualname__
-        
-#     def __call__(self, *args):
-#         for name, arg in zip((a.name for a in self._parameters), args):
-#             setattr(self, name, arg)
-    

@@ -10,7 +10,6 @@ from qtpy.QtWidgets import QApplication, QMessageBox
 if TYPE_CHECKING:
     from magicgui.widgets._bases import Widget
     from magicgui.widgets import FunctionGui
-    import napari
     from .field import MagicField
 
 APPLICATION = None

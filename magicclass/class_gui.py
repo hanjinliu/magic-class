@@ -120,6 +120,7 @@ class ClassGuiBase(BaseGui):
                 self._menubar.addMenu(widget.native)
             
             elif isinstance(widget, ContextMenuGui):
+                # Add context menu to container
                 widget.__magicclass_parent__ = self
                 self.native.setContextMenuPolicy(Qt.CustomContextMenu)
                 self.native.customContextMenuRequested.connect(

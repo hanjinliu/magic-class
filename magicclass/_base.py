@@ -12,7 +12,6 @@ from .widgets import Separator, ConsoleTextEdit
 from .field import MagicField
 from .wrappers import upgrade_signature
 
-# Check if napari is available so that layers are detectable from GUIs.
 if TYPE_CHECKING:
     try:
         import napari
