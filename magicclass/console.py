@@ -94,6 +94,8 @@ class Console(FrozenContainer):
     
     @__magicclass_parent__.setter
     def __magicclass_parent__(self, parent):
+        while parent.__magicclass_parent__ is not None:
+            parent = parent.__magicclass_parent__
         self.console.connect_parent(parent)
     
     @property
