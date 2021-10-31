@@ -5,7 +5,7 @@ from qtpy import QtWidgets as QtW
 from qtpy.QtCore import Qt
 from magicgui.application import use_app
 from magicgui.widgets._bases import Widget
-from magicgui.widgets._concrete import merge_super_sigs, ContainerWidget, _LabeledWidget
+from magicgui.widgets._concrete import merge_super_sigs, ContainerWidget
 from magicgui.backends._qtpy.widgets import (
     QBaseWidget, 
     Container as ContainerBase,
@@ -224,6 +224,7 @@ class _ListContainer(ContainerBase):
             self._qwidget.setFlow(QtW.QListView.LeftToRight)
         else:
             self._qwidget.setFlow(QtW.QListView.TopToBottom)
+        self._layout = QtW.QHBoxLayout() # dummy
         
     def _mgui_insert_widget(self, position: int, widget: Widget):
         item = QtW.QListWidgetItem(self._qwidget)
@@ -327,3 +328,11 @@ class ListContainer(ContainerWidget):
                     break
             
         self._list = l
+        
+    @property
+    def current_index(self):
+        return self.native.currentRow()
+    
+    @current_index.setter
+    def current_index(self, index: int):
+        self.native.setCurrentRow(index)
