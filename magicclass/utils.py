@@ -2,10 +2,9 @@ from __future__ import annotations
 import inspect
 from dataclasses import _FIELDS
 from functools import wraps
-from typing import Callable, Iterator, Any, TYPE_CHECKING
+from typing import Callable, Any, TYPE_CHECKING
 from docstring_parser import parse
 from qtpy.QtWidgets import QApplication, QMessageBox
-
 
 if TYPE_CHECKING:
     from magicgui.widgets._bases import Widget
@@ -14,7 +13,7 @@ if TYPE_CHECKING:
 
 APPLICATION = None
 
-def iter_members(cls: type, exclude_prefix: str = "__") -> Iterator[str]:
+def iter_members(cls: type, exclude_prefix: str = "__") -> list[str]:
     """
     Iterate over all the members in the order of source code line number. 
     """    

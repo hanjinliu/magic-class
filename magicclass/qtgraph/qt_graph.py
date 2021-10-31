@@ -117,9 +117,9 @@ class Canvas(FrozenContainer, SingleRegion):
 
 
 class ImageCanvas(FrozenContainer):
-    def __init__(self, **kwargs):
+    def __init__(self, image: np.ndarray = None, **kwargs):
         super().__init__(**kwargs)
-        self.imageview = pg.ImageView()
+        self.imageview = pg.ImageView(imageItem=image)
         self.set_widget(self.imageview)
         self._text_overlay = TextOverlay("", "gray")
         self.imageview.scene.addItem(self._text_overlay.native)
@@ -147,3 +147,27 @@ class ImageCanvas(FrozenContainer):
     @contrast_limits.setter
     def contrast_limits(self, value):
         self.imageview.setLevels(*value)
+    
+    @property
+    def view_range(self) -> list[list[float, float]]:
+        return self.imageview.view.viewRange()
+    
+    @view_range.setter
+    def view_range(self, value: tuple[tuple[float, float], tuple[float, float]]):
+        yrange, xrange = value
+        self.imageview.view.setRange(xRange=xrange, yRange=yrange)
+    
+    def show_hist(self, visible: bool):
+        if visible:
+            self.imageview.ui.histogram.show()
+        else:
+            self.imageview.ui.histogram.hide()
+        
+    def show_button(self, visible: bool):
+        if visible:
+            self.imageview.ui.menuBtn.show()
+            self.imageview.ui.roiBtn.show()
+        else:
+            self.imageview.ui.menuBtn.hide()
+            self.imageview.ui.roiBtn.hide()
+        
