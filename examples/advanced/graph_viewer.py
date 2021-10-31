@@ -1,11 +1,21 @@
-from magicclass import magicclass, field, click, magicmenu
+from magicclass import magicclass, field, click, magicmenu, magiccontext
 from magicclass.qtgraph import Canvas
 from magicclass.console import Console
 
 @magicclass(labels=False, layout="horizontal")
 class Layer:
-    def __init__(self, linked_item=None):
+    @magiccontext
+    class ContextMenu:
+        def Delete_item(self): ...
+            
+    def __init__(self, linked_item=None, viewer=None):
         self.item = linked_item
+        self.viewer = viewer
+    
+    @ContextMenu.wraps
+    def Delete_item(self):
+        self.viewer.canvas.remove_item(self.item)
+        self.viewer.layerlist.remove(self)
         
     check = field(True)
     layer_name = field(str)
@@ -18,6 +28,11 @@ class LayerList:
 class Viewer:
     layerlist = LayerList()
     canvas = Canvas()
+    console = Console()
+    
+    def __post_init__(self):
+        self.layerlist.max_width = 250
+        self.layerlist.width = 250
     
     @click(visible=False)
     def add_curve(self, x, y=None, name=None, **kwargs):
@@ -30,11 +45,11 @@ class Viewer:
     def _add_plot_item(self, f, x, y, name, **kwargs):
         f(x, y, **kwargs)
         name = name or "Data"
-        layer = Layer(self.canvas._items[-1])
+        layer = Layer(self.canvas._items[-1], viewer=self)
         layer.check.text = ""
         layer.layer_name.value = name
-        layer.layer_name.max_width = 32
-        layer.layer_name.width = 32
+        layer.layer_name.max_width = 64
+        layer.layer_name.width = 64
         self.layerlist.append(layer)
         
         @layer.check.changed.connect

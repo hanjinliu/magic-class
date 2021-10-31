@@ -107,6 +107,13 @@ class Canvas(FrozenContainer, SingleRegion):
         item = Scatter(x, y, **kwargs)
         self._items.append(item)
         self.plotwidget.addItem(item.native)
+    
+    def remove_item(self, item: PlotDataItem):
+        i = self._items.index(item)
+        if i < 0:
+            raise ValueError(f"Item {item} not found")
+        item = self._items.pop(i)
+        self.plotwidget.removeItem(item.native)
 
 
 class ImageCanvas(FrozenContainer):
