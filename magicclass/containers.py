@@ -5,7 +5,7 @@ from qtpy import QtWidgets as QtW
 from qtpy.QtCore import Qt
 from magicgui.application import use_app
 from magicgui.widgets._bases import Widget
-from magicgui.widgets._concrete import merge_super_sigs, ContainerWidget
+from magicgui.widgets._concrete import merge_super_sigs, ContainerWidget, _LabeledWidget
 from magicgui.backends._qtpy.widgets import (
     QBaseWidget, 
     Container as ContainerBase,
@@ -213,6 +213,36 @@ class _CollapsibleContainer(ContainerBase):
             self._qwidget.resize(w, self._expand_btn.sizeHint().height() + h)
             self._expand_btn.setArrowType(Qt.ArrowType.DownArrow)
 
+class _ListContainer(ContainerBase):
+    _qwidget: QtW.QListWidget
+    def __init__(self, layout="vertical"):
+        QBaseWidget.__init__(self, QtW.QListWidget)
+        self._qwidget.setAcceptDrops(True)
+        self._qwidget.setDragEnabled(True)
+        self._qwidget.setDragDropMode(QtW.QAbstractItemView.DragDropMode.InternalMove)
+        if layout == "horizontal":
+            self._qwidget.setFlow(QtW.QListView.LeftToRight)
+        else:
+            self._qwidget.setFlow(QtW.QListView.TopToBottom)
+        
+    def _mgui_insert_widget(self, position: int, widget: Widget):
+        item = QtW.QListWidgetItem(self._qwidget)
+        item.setSizeHint(widget.native.sizeHint())
+        self._qwidget.insertItem(position, item)
+        self._qwidget.setItemWidget(item, widget.native)
+    
+    def _mgui_remove_widget(self, widget: Widget):
+        for i in range(self._qwidget.count()):
+            item = self._qwidget.item(i)
+            w = self._qwidget.itemWidget(item)
+            if widget.native is w:
+                self._qwidget.removeItemWidget(item)
+                self._qwidget.takeItem(i)
+                break
+        else:
+            raise ValueError(f"Widget {widget} not found in the list.")
+        
+        widget.native.setParent(None)
 
 @wrap_container(base=_Splitter)
 class SplitterContainer(ContainerWidget):
@@ -274,3 +304,26 @@ class CollapsibleContainer(ContainerWidget):
     @btn_text.setter
     def btn_text(self, text: str):
         self._widget._expand_btn.setText(text)
+
+@wrap_container(base=_ListContainer)
+class ListContainer(ContainerWidget):
+    """A Container Widget that support drag and drop."""
+    def _post_init(self):
+        self._widget._qwidget.model().rowsMoved.connect(self._drag_and_drop_happened)
+        return super()._post_init()
+    
+    def _drag_and_drop_happened(self, e=None):
+        """Sort widget list when item drag/drop happens."""
+        l = []
+        for i in range(self._widget._qwidget.count()):
+            item = self._widget._qwidget.item(i)
+            w = self._widget._qwidget.itemWidget(item)
+            
+            for widget in self._list:
+                # if widget is a _LabeledWidget, inserted widget item will
+                # be the parent of the widget in "_list".
+                if widget.native is w or widget.native.parent() is w:
+                    l.append(widget)
+                    break
+            
+        self._list = l

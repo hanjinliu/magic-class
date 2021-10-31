@@ -3,6 +3,7 @@ from functools import wraps as functools_wraps
 import inspect
 from enum import Enum
 from dataclasses import is_dataclass, _POST_INIT_NAME
+
 from .class_gui import (
     ClassGui, 
     MainWindowClassGui,
@@ -13,6 +14,7 @@ from .class_gui import (
     TabbedClassGui,
     StackedClassGui,
     ToolBoxClassGui,
+    ListClassGui,
     )
 from .menu_gui import MenuGui
 from .macro import Expr
@@ -29,6 +31,7 @@ class WidgetType(Enum):
     toolbox = "toolbox"
     tabbed = "tabbed"
     stacked = "stacked"
+    list = "list"
     mainwindow = "mainwindow"
 
 _TYPE_MAP = {
@@ -40,6 +43,7 @@ _TYPE_MAP = {
     WidgetType.toolbox: ToolBoxClassGui,
     WidgetType.tabbed: TabbedClassGui,
     WidgetType.stacked: StackedClassGui,
+    WidgetType.list: ListClassGui,
     WidgetType.mainwindow: MainWindowClassGui,
 }
 

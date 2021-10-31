@@ -12,6 +12,7 @@ from .field import MagicField
 from .menu_gui import MenuGui
 from .containers import (
     ButtonContainer,
+    ListContainer,
     ScrollableContainer,
     CollapsibleContainer,
     SplitterContainer,
@@ -278,6 +279,9 @@ class TabbedClassGui: pass
 
 @make_gui(StackedContainer, no_margin=False)
 class StackedClassGui: pass
+
+@make_gui(ListContainer, no_margin=False)
+class ListClassGui: pass
 
 @make_gui(MainWindow)
 class MainWindowClassGui: pass
