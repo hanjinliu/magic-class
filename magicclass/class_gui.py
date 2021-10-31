@@ -1,6 +1,7 @@
 from __future__ import annotations
 from inspect import signature
-from qtpy.QtWidgets import QMenuBar
+from qtpy.QtWidgets import QMenuBar, QWidget
+from qtpy.QtCore import Qt
 from magicgui.widgets import Container, MainWindow,Label, FunctionGui, Image, Table
 from magicgui.widgets._bases import Widget, ButtonWidget, ValueWidget, ContainerWidget
 from magicgui.widgets._concrete import _LabeledWidget
@@ -9,7 +10,7 @@ from .macro import Expr, Head, Symbol, symbol
 from .utils import iter_members, extract_tooltip, get_parameters, define_callback
 from .widgets import PushButtonPlus, FrozenContainer
 from .field import MagicField
-from .menu_gui import MenuGui
+from .menu_gui import MenuGui, ContextMenuGui
 from .containers import (
     ButtonContainer,
     ListContainer,
@@ -27,6 +28,7 @@ class ClassGuiBase(BaseGui):
     _component_class = PushButtonPlus
     _container_widget: type
     _remove_child_margins: bool
+    native: QWidget
     
     def _create_widget_from_field(self, name: str, fld: MagicField):
         cls = self.__class__
@@ -116,6 +118,13 @@ class ClassGuiBase(BaseGui):
                 
                 widget.native.setParent(self._menubar, widget.native.windowFlags())
                 self._menubar.addMenu(widget.native)
+            
+            elif isinstance(widget, ContextMenuGui):
+                widget.__magicclass_parent__ = self
+                self.native.setContextMenuPolicy(Qt.CustomContextMenu)
+                self.native.customContextMenuRequested.connect(
+                    _define_context_menu(widget, self.native)
+                    )
             
             elif isinstance(widget, Widget) or callable(widget):
                 if (not isinstance(widget, Widget)) and callable(widget):
@@ -322,3 +331,8 @@ def _value_widget_callback(cgui: ClassGuiBase, widget: ValueWidget, name: str):
             cgui._recorded_macro.append(expr)
         return None
     return _set_value
+
+def _define_context_menu(contextmenu, parent):
+    def rightClickContextMenu(point):
+        contextmenu.native.exec_(parent.mapToGlobal(point))
+    return rightClickContextMenu

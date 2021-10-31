@@ -96,7 +96,7 @@ class Action:
         return None
 
 
-class MenuGui(BaseGui):
+class MenuGuiBase(BaseGui):
     _component_class = Action
     
     def __init__(self, 
@@ -109,7 +109,7 @@ class MenuGui(BaseGui):
         self.native = QMenu(name, parent)
         self.native.setToolTipsVisible(True)
         self.native.setObjectName(self.__class__.__name__)
-        self._list: list[MenuGui|Action] = []
+        self._list: list[MenuGuiBase|Action] = []
         
     @property
     def parent(self):
@@ -152,7 +152,7 @@ class MenuGui(BaseGui):
             self.native.setToolTip(cls.__doc__)
             
         # Bind all the methods and annotations
-        base_members = set(x[0] for x in iter_members(MenuGui))        
+        base_members = set(x[0] for x in iter_members(MenuGuiBase))        
         for name, attr in filter(lambda x: x[0] not in base_members, iter_members(cls)):
             if isinstance(attr, type):
                 # Nested magic-menu
@@ -173,7 +173,7 @@ class MenuGui(BaseGui):
             
             if name.startswith("_"):
                 continue
-            if callable(widget) or isinstance(widget, (MenuGui, Action, Separator)):
+            if callable(widget) or isinstance(widget, (MenuGuiBase, Action, Separator)):
                 self.append(widget)
         
         return None
@@ -188,14 +188,14 @@ class MenuGui(BaseGui):
             raise KeyError(key)
         return out
     
-    def append(self, obj: Callable|MenuGui|Action|Separator):
+    def append(self, obj: Callable|MenuGuiBase|Action|Separator):
         if isinstance(obj, self._component_class):
             self.native.addAction(obj.native)
             self._list.append(obj)
         elif callable(obj):
             action = self._create_widget_from_method(obj)
             self.append(action)
-        elif isinstance(obj, MenuGui):
+        elif isinstance(obj, MenuGuiBase):
             obj.__magicclass_parent__ = self
             self.native.addMenu(obj.native)
             obj.native.setParent(self.native, obj.native.windowFlags())
@@ -205,7 +205,13 @@ class MenuGui(BaseGui):
         else:
             raise TypeError(f"{type(obj)} is not supported.")
 
-def _value_widget_callback(mgui: MenuGui, widget: ButtonWidget, name: str):
+class MenuGui(MenuGuiBase):
+    pass
+
+class ContextMenuGui(MenuGuiBase):
+    pass
+
+def _value_widget_callback(mgui: MenuGuiBase, widget: ButtonWidget, name: str):
     def _set_value():
         if not widget.enabled:
             # If widget is read only, it means that value is set in script (not manually).

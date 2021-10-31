@@ -34,7 +34,6 @@ class SingleRegion:
     def region_visible(self, value: bool):
         self.regionitem.setVisible(value)
     
-    
 class MultiRegion:
     regionitems: list[pg.LinearRegionItem]
         

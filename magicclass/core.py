@@ -16,7 +16,7 @@ from .class_gui import (
     ToolBoxClassGui,
     ListClassGui,
     )
-from .menu_gui import MenuGui
+from .menu_gui import ContextMenuGui, MenuGui, MenuGuiBase
 from .macro import Expr
 from .utils import check_collision, get_app
 
@@ -180,17 +180,34 @@ def magicmenu(class_: type = None,
     -------
     Decorated class or decorator.
     """    
-    def wrapper(cls) -> MenuGui:
+    return _call_magicmenu(class_, close_on_run, popup, parent, MenuGui)
+
+def magiccontext(class_: type = None, 
+                 *, 
+                 close_on_run: bool = True,
+                 popup: bool = True,
+                 parent=None
+                 ):
+    return _call_magicmenu(class_, close_on_run, popup, parent, ContextMenuGui)
+
+
+def _call_magicmenu(class_: type = None, 
+                    close_on_run: bool = True,
+                    popup: bool = True,
+                    parent = None,
+                    menugui_class: type[MenuGuiBase] = None,
+                    ):
+    def wrapper(cls) -> menugui_class:
         if not isinstance(cls, type):
             raise TypeError(f"magicclass can only wrap classes, not {type(cls)}")
         
-        check_collision(cls, MenuGui)
+        check_collision(cls, menugui_class)
         # get class attributes first
         doc = cls.__doc__
         sig = inspect.signature(cls)
         
         oldclass = type(cls.__name__ + _BASE_CLASS_SUFFIX, (cls,), {})
-        newclass = type(cls.__name__, (MenuGui, oldclass), {})
+        newclass = type(cls.__name__, (menugui_class, oldclass), {})
         
         newclass.__signature__ = sig
         newclass.__doc__ = doc
@@ -199,7 +216,7 @@ def magicmenu(class_: type = None,
         def __init__(self, *args, **kwargs):
             app = get_app() # Without "app = " Jupyter freezes after closing the window!
             macro_init = Expr.parse_init(self, cls, args, kwargs)
-            MenuGui.__init__(self, parent=parent, close_on_run=close_on_run, popup=popup)
+            menugui_class.__init__(self, parent=parent, close_on_run=close_on_run, popup=popup)
             super(oldclass, self).__init__(*args, **kwargs)
             self._convert_attributes_into_widgets()
             
@@ -217,4 +234,3 @@ def magicmenu(class_: type = None,
         return newclass
     
     return wrapper if class_ is None else wrapper(class_)
-

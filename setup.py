@@ -21,7 +21,8 @@ setup(
     install_requires=[
           "magicgui>=0.3.2",
           "numpy>=1.20.3",
-          "matplotlib>=3.4.2"
+          "matplotlib>=3.4.2",
+          "qtpy>=1.10.0",
     ],
     python_requires=">=3.7",
     )
