@@ -12,6 +12,7 @@ from .macro import Expr, Head, Symbol, symbol
 from .utils import iter_members, define_callback
 
 class Action:
+    """QAction encapsulated class with a similar API as magicgui Widget."""
     changed = Signal(object)
     def __init__(self, *args, name=None, text=None, gui_only=True, **kwargs):
         self.native = QAction(*args, **kwargs)
@@ -206,10 +207,10 @@ class MenuGuiBase(BaseGui):
             raise TypeError(f"{type(obj)} is not supported.")
 
 class MenuGui(MenuGuiBase):
-    pass
+    """Magic class that will be converted into a menu bar."""
 
 class ContextMenuGui(MenuGuiBase):
-    pass
+    """Magic class that will be converted into a context menu."""
 
 def _value_widget_callback(mgui: MenuGuiBase, widget: ButtonWidget, name: str):
     def _set_value():

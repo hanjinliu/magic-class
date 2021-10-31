@@ -152,17 +152,11 @@ def magicmenu(class_: type = None,
               *, 
               close_on_run: bool = True,
               popup: bool = True,
-              parent=None
+              parent = None
               ):
     """
-    Decorator that can convert a Python class into a widget.
-    
-    >>> @magicclass
-    >>> class C:
-    >>>     ...
-    >>> c = C(a=0)
-    >>> c.show()
-            
+    Decorator that can convert a Python class into a menu bar.
+                
     Parameters
     ----------
     class_ : type, optional
@@ -188,6 +182,26 @@ def magiccontext(class_: type = None,
                  popup: bool = True,
                  parent=None
                  ):
+    """
+    Decorator that can convert a Python class into a context menu.
+                
+    Parameters
+    ----------
+    class_ : type, optional
+        Class to be decorated.
+    close_on_run : bool, default is True
+        If True, magicgui created by every method will be deleted after the method is completed without
+        exceptions, i.e. magicgui is more like a dialog.
+    popup : bool, default is True
+        If True, magicgui created by every method will be poped up, else they will be appended as a
+        part of the main widget.
+    parent : magicgui.widgets._base.Widget, optional
+        Parent widget if exists.
+    
+    Returns
+    -------
+    Decorated class or decorator.
+    """    
     return _call_magicmenu(class_, close_on_run, popup, parent, ContextMenuGui)
 
 
