@@ -3,8 +3,10 @@ from functools import wraps
 from typing import Any, Callable, Iterable, TypeVar, overload
 import inspect
 from collections import defaultdict
-from qtpy.QtWidgets import (QFrame, QLabel, QGridLayout, QWidget,
-                            QListWidget, QListWidgetItem, QAbstractItemView, QMenu, QAction)
+from magicgui.events import Signal
+from qtpy.QtWidgets import (QFrame, QLabel, QWidget, QPushButton, QSizePolicy,
+                            QListWidget, QListWidgetItem, QAbstractItemView, QMenu, QAction,
+                            QHBoxLayout)
 from qtpy.QtGui import QFont, QTextOption
 from qtpy.QtCore import Qt
 import matplotlib as mpl
@@ -77,27 +79,67 @@ class Figure(FrozenContainer):
             _ax = self.figure.add_subplot(111)
         return _ax
         
+
 class Separator(FrozenContainer):
-    # TODO: not shown in napari
-    def __init__(self, orientation="horizontal", text:str="", name:str=""):
+    btn_clicked = Signal(bool)
+    def __init__(self, orientation="horizontal", text:str="", name:str="", button:bool=False):
         super().__init__(layout=orientation, labels=False, name=name)
-        main = QFrame(parent=self.native)
-        main.setLayout(QGridLayout())
-        main.setContentsMargins(0, 0, 0, 0)
+        self._qtitlebar = _QTitleBar(self.native, text, button)
+        self.set_widget(self._qtitlebar)
+        if button:
+            self._qtitlebar.button.clicked.connect(
+                lambda e: self.btn_clicked.emit(self._qtitlebar.button.isDown())
+                )
+    
+    @property
+    def btn_text(self):
+        return self._qtitlebar.button.text()
+    
+    @btn_text.setter
+    def btn_text(self, value: str):
+        self._qtitlebar.button.setText(value)
         
-        line = QFrame(parent=main)
+class _QTitleBar(QLabel):
+    """
+    See also: napari/_qt/qt_main_window.py.
+    """
+    def __init__(self, parent, text: str = "", button: bool = False):
+        super().__init__(parent)
+
+        line = QFrame(parent=self)
         line.setFrameShape(QFrame.HLine)
         line.setFrameShadow(QFrame.Sunken)
-        line.setContentsMargins(0, 0, 0, 0)
-        main.layout().addWidget(line)
+
+        layout = QHBoxLayout()
+        layout.setSpacing(4)
+        layout.setContentsMargins(8, 1, 8, 0)
+        
+        if button:
+            self.button = QPushButton(self)
+            self.button.setFixedWidth(20)
+            self.button.setStyleSheet("QPushButton {"
+                                      "border: 1px solid #555;"
+                                      "border-radius: 10px;"
+                                      "border-style: outset;"
+                                      "padding: 5px"
+                                      "}")
+            layout.addWidget(self.button)
+        
+        layout.addWidget(line)
         
         if text:
-            label = QLabel(text, parent=main)
-            label.setContentsMargins(0, 0, 0, 0)
-            label.setAlignment(Qt.AlignRight)
-            main.layout().addWidget(label)
-        
-        self.set_widget(main)
+            text = QLabel(text, self)
+            text.setSizePolicy(
+                QSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Maximum)
+            )
+            layout.addWidget(text)
+
+        self.setLayout(layout)
+
+    def sizeHint(self):
+        szh = super().sizeHint()
+        szh.setHeight(20)
+        return szh
     
 class ConsoleTextEdit(TextEdit):
     def __init__(self, *args, **kwargs):
