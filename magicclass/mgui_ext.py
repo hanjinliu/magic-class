@@ -59,7 +59,7 @@ class PushButtonPlus(PushButton):
     """
     A Qt specific PushButton widget with a magicgui bound.
     """    
-    def __init__(self, text:str|None=None, **kwargs):
+    def __init__(self, text: str|None = None, **kwargs):
         super().__init__(text=text, **kwargs)
         self.native: QPushButton
         self._icon_path = None
@@ -70,7 +70,7 @@ class PushButtonPlus(PushButton):
         return self.native.palette().button().color().getRgb()
     
     @background_color.setter
-    def background_color(self, color:str|Iterable[float]):
+    def background_color(self, color: str|Iterable[float]):
         # TODO: In napari stylesheet is somehow overwritten and all the colored button will be "flat" 
         # (not shadowed when clicked/toggled)
         stylesheet = self.native.styleSheet()

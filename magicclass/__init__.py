@@ -1,7 +1,7 @@
 __version__ = "0.5.3"
 
 from .core import magicclass, magicmenu, magiccontext, WidgetType
-from .wrappers import set_options, click, set_design
+from .wrappers import set_options, click, set_design, do_not_record
 from .field import field
 from ._base import wraps
 from . import widgets

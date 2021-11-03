@@ -26,11 +26,11 @@ def set_options(**options):
         return func
     return wrapper
 
-def set_design(width:int=None, height:int=None, min_width:int=None, min_height:int=None,
-               max_width:int=None, max_height:int=None, text:str=None, 
-               icon_path:str=None, icon_size:tuple[int,int]=None,
-               font_size:int=None, font_family:int=None, font_color:Color=None,
-               background_color:Color=None):
+def set_design(width: int = None, height: int = None, min_width: int = None, min_height: int = None,
+               max_width: int = None, max_height: int = None, text: str = None, 
+               icon_path: str = None, icon_size: tuple [ int,int]=None,
+               font_size: int = None, font_family: int = None, font_color: Color = None,
+               background_color: Color = None):
     """
     Change button/action design by calling setter when the widget is created.
 
@@ -70,8 +70,8 @@ def set_design(width:int=None, height:int=None, min_width:int=None, min_height:i
         return func
     return wrapper
 
-def click(enables:nStrings=None, disables:nStrings=None, enabled: bool=True,
-          shows:nStrings=None, hides:nStrings=None, visible: bool=True):
+def click(enables: nStrings = None, disables: nStrings = None, enabled: bool = True,
+          shows: nStrings = None, hides: nStrings = None, visible: bool = True):
     """
     Set options of push buttons related to button clickability.
     
@@ -114,6 +114,14 @@ def click(enables:nStrings=None, disables:nStrings=None, enabled: bool=True,
         upgrade_signature(f, caller_options=caller_options)
         return f
     return wrapper
+
+def do_not_record(method: Callable):
+    """
+    Wrapped method will not be recorded in macro.
+    """    
+    upgrade_signature(method, additional_options={"record": False})
+    return method
+    
 
 def _assert_iterable(obj):
     if obj is None:

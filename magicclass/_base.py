@@ -1,10 +1,12 @@
 from __future__ import annotations
 from functools import wraps as functools_wraps
-from typing import Callable, Any, TYPE_CHECKING, TypeVar
+from typing import Callable, TYPE_CHECKING, TypeVar
 import inspect
 from magicgui import magicgui
 from magicgui.signature import MagicParameter
 from magicgui.widgets import FunctionGui, FileEdit, EmptyWidget
+
+from magicclass.signature import MagicMethodSignature
 
 from .macro import Macro, Expr, Head, Symbol, symbol
 from .utils import iter_members, n_parameters, extract_tooltip, raise_error_in_msgbox
@@ -18,6 +20,10 @@ if TYPE_CHECKING:
         import napari
     except ImportError:
         pass
+    
+# TODO:
+# - "don't record macro" wrapper
+# - Prevent more than one context menu
 
 class BaseGui:
     _component_class: type = None
@@ -77,7 +83,7 @@ class BaseGui:
         ----------
         show : bool, default is False
             Launch a TextEdit window that shows recorded macro.
-        symbol : str, default is "ui"
+        myname : str, default is "ui"
             Symbol of the instance.
         """
         # Recursively build macro from nested magic-classes
@@ -207,7 +213,6 @@ class BaseGui:
         """        
         raise NotImplementedError()
     
-    
     def _create_widget_from_field(self, name: str, fld: MagicField):
         """
         This function is called when magic-class encountered a MagicField in its definition.
@@ -243,8 +248,10 @@ class BaseGui:
         n_empty = len([widget for widget in fgui if isinstance(widget, EmptyWidget)])
         nparams = n_parameters(func) - n_empty
         
-        # This block enables instance methods in "bind" method of ValueWidget.
+        record = True
+        
         if hasattr(obj, "__signature__"):
+            # This block enables instance methods in "bind" method of ValueWidget.
             for param in obj.__signature__.parameters.values():
                 if isinstance(param, MagicParameter):
                     bound_value = param.options.get("bind", None)
@@ -258,6 +265,10 @@ class BaseGui:
             func.__signature__ = func.__signature__.replace(
                 parameters=list(obj.__signature__.parameters.values())[1:]
                 )
+
+            # Check additional options
+            if isinstance(obj.__signature__, MagicMethodSignature):
+                record = obj.__signature__.additional_options.get("record", True)
                  
         if nparams == 0:
             # We don't want a dialog with a single widget "Run" to show up.
@@ -265,7 +276,7 @@ class BaseGui:
                 # NOTE: callback must be defined inside function. Magic class must be
                 # "compiled" otherwise function wrappings are not ready!
                 mgui = _build_mgui(widget, func)
-                if mgui.call_count == 0 and len(mgui.called._slots) == 0:
+                if mgui.call_count == 0 and len(mgui.called._slots) == 0 and record:
                     callback = _temporal_function_gui_callback(self, mgui, widget)
                     mgui.called.connect(callback)
 
@@ -277,7 +288,7 @@ class BaseGui:
             # We don't want to open a magicgui dialog and again open a file dialog.
             def run_function():
                 mgui = _build_mgui(widget, func)
-                if mgui.call_count == 0 and len(mgui.called._slots) == 0:
+                if mgui.call_count == 0 and len(mgui.called._slots) == 0 and record:
                     callback = _temporal_function_gui_callback(self, mgui, widget)
                     mgui.called.connect(callback)
                 
@@ -303,19 +314,21 @@ class BaseGui:
                 widget.mgui.show()
                 if mgui.call_count == 0 and len(mgui.called._slots) == 0:
                     if not self._popup:
-                        # TODO: close button
                         mgui.label = ""
                         mgui.name = f"mgui-{id(mgui._function)}" # to avoid name collision
                         mgui.margins = (0, 0, 0, 0)
-                        mgui.insert(0, Separator(orientation="horizontal", text=text))
-                        mgui.visible = False
+                        title = Separator(orientation="horizontal", text=text, button=True)
+                        title.btn_text = "-"
+                        title.btn_clicked.connect(mgui.hide)
+                        mgui.insert(0, title)
                         mgui.append(Separator(orientation="horizontal"))
                         parent_self = self._search_parent_magicclass()
                         parent_self.append(mgui)
                     if self._close_on_run:
                         mgui.called.connect(mgui.hide)
-                    callback = _temporal_function_gui_callback(self, mgui, widget)
-                    mgui.called.connect(callback)
+                    if record:
+                        callback = _temporal_function_gui_callback(self, mgui, widget)
+                        mgui.called.connect(callback)
                 
                 return None
             
