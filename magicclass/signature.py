@@ -7,6 +7,7 @@ def upgrade_signature(func, gui_options: dict = None, caller_options: dict = Non
                       additional_options: dict = None):
     gui_options = gui_options or {}
     caller_options = caller_options or {}
+    additional_options = additional_options or {}
     
     sig = get_signature(func)
     

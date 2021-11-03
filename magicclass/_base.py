@@ -21,9 +21,6 @@ if TYPE_CHECKING:
     except ImportError:
         pass
     
-# TODO:
-# - "don't record macro" wrapper
-# - Prevent more than one context menu
 
 class BaseGui:
     _component_class: type = None

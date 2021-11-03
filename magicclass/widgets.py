@@ -354,18 +354,27 @@ class ListWidget(FrozenContainer):
         self._listwidget.clear()
     
     def register_callback(self, type_: type):
+        """
+        Register a double-click callback function for items of certain type.
+        """        
         def wrapper(func: Callable):
             self._callbacks[type_].append(func)
             return func
         return wrapper
     
     def register_delegate(self, type_: type):
+        """
+        Register a custom display.
+        """        
         def wrapper(func: Callable):
             self._delegates[type_] = func
             return func
         return wrapper
     
     def register_contextmenu(self, type_:type):
+        """
+        Register a custom context menu for items of certain type.
+        """        
         def wrapper(func: Callable):
             self._contextmenu[type_].append(func)
             return func
