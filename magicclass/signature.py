@@ -1,12 +1,13 @@
 from __future__ import annotations
 from magicgui.signature import MagicSignature
 import inspect
+from .utils import get_signature
 
 def upgrade_signature(func, gui_options: dict = None, caller_options: dict = None):
     gui_options = gui_options or {}
     caller_options = caller_options or {}
     
-    sig = _get_signature(func)
+    sig = get_signature(func)
     
     new_gui_options = MagicMethodSignature.get_gui_options(sig).copy()
     new_gui_options.update(gui_options)
@@ -18,14 +19,6 @@ def upgrade_signature(func, gui_options: dict = None, caller_options: dict = Non
             sig, gui_options=new_gui_options, caller_options=new_caller_options)
 
     return func
-
-def _get_signature(func):
-    if hasattr(func, "__signature__"):
-        sig = func.__signature__
-    else:
-        sig = inspect.signature(func)
-    return sig
-
 
 class MagicMethodSignature(MagicSignature):
     """

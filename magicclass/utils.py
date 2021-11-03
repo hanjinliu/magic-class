@@ -107,6 +107,13 @@ def get_parameters(fgui: FunctionGui):
               }
     return inputs
 
+def get_signature(func):
+    if hasattr(func, "__signature__"):
+        sig = func.__signature__
+    else:
+        sig = inspect.signature(func)
+    return sig
+
 def define_callback(self, callback: Callable):
     clsname, funcname = callback.__qualname__.split(".")
     def _callback():

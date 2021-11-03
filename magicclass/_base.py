@@ -236,10 +236,30 @@ class BaseGui:
         
         # Get the number of parameters except for empty widgets.
         # With these lines, "bind" method of magicgui works inside magicclass.
-        fgui = FunctionGuiPlus.from_callable(func)
+        fgui = FunctionGuiPlus.from_callable(obj)
         n_empty = len([widget for widget in fgui if isinstance(widget, EmptyWidget)])
         nparams = n_parameters(func) - n_empty
-                
+        
+        # This block enables instance methods in "bind" method of ValueWidget.
+        if hasattr(obj, "__signature__"):
+            for arg, param in obj.__signature__.parameters.items():
+                bound_value = param.options.get("bind", None)
+                if callable(bound_value):
+                    clsname, funcname = bound_value.__qualname__.split(".")
+                    # print(obj)
+                    # if hasattr(obj, "__magicclass_wrapped__"):
+                    #     root, _ = _search_wrapper(self, func.__name__, clsname)
+                    #     print(1, root)
+                    # else:
+                    #     root = self
+                    #     print(2, root)
+                    if clsname == type(self).__name__:
+                        param.options["bind"] = bound_value.__get__(self)
+                        
+            func.__signature__ = func.__signature__.replace(
+                parameters=list(obj.__signature__.parameters.values())[1:]
+                )
+                 
         if nparams == 0:
             # We don't want a dialog with a single widget "Run" to show up.
             def run_function():
