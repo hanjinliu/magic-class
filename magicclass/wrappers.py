@@ -30,7 +30,7 @@ def set_design(width: int = None, height: int = None, min_width: int = None, min
                max_width: int = None, max_height: int = None, text: str = None, 
                icon_path: str = None, icon_size: tuple [ int,int]=None,
                font_size: int = None, font_family: int = None, font_color: Color = None,
-               background_color: Color = None):
+               background_color: Color = None, visible: bool = True):
     """
     Change button/action design by calling setter when the widget is created.
 
@@ -57,6 +57,8 @@ def set_design(width: int = None, height: int = None, min_width: int = None, min
         Icon size.
     font_size : int, optional
         Font size of the text.
+    visible : bool default is True
+        Button visibility.
     """    
     if icon_size is not None:
         if min_width is None:
