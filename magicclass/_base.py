@@ -187,6 +187,8 @@ class BaseGui:
                 predifined = getattr(cls, funcname)
                 predifined.__wrapped__ = childmethod
                 predifined.__magicclass_wrapped__ = childmethod
+                if hasattr(childmethod, "__signature__"):
+                    predifined.__signature__ = childmethod.__signature__
                 method.__doc__ = method.__doc__ or predifined.__doc__
             else:
                 setattr(cls, funcname, childmethod)
@@ -242,19 +244,13 @@ class BaseGui:
         
         # This block enables instance methods in "bind" method of ValueWidget.
         if hasattr(obj, "__signature__"):
-            for arg, param in obj.__signature__.parameters.items():
+            for param in obj.__signature__.parameters.values():
                 bound_value = param.options.get("bind", None)
-                if callable(bound_value):
-                    clsname, funcname = bound_value.__qualname__.split(".")
-                    # print(obj)
-                    # if hasattr(obj, "__magicclass_wrapped__"):
-                    #     root, _ = _search_wrapper(self, func.__name__, clsname)
-                    #     print(1, root)
-                    # else:
-                    #     root = self
-                    #     print(2, root)
-                    if clsname == type(self).__name__:
-                        param.options["bind"] = bound_value.__get__(self)
+                if callable(bound_value) and n_parameters(bound_value) == 2:
+                    clsname, _ = bound_value.__qualname__.split(".")
+                    if clsname != self.__class__.__name__:
+                        self.__class__.wraps(bound_value)
+                    param.options["bind"] = getattr(self, bound_value.__name__)
                         
             func.__signature__ = func.__signature__.replace(
                 parameters=list(obj.__signature__.parameters.values())[1:]
@@ -329,8 +325,7 @@ class BaseGui:
     
     def _search_parent_magicclass(self) -> BaseGui:
         current_self = self
-        while (hasattr(current_self, "__magicclass_parent__") 
-            and current_self.__magicclass_parent__):
+        while getattr(current_self, "__magicclass_parent__", None) is not None:
             current_self = current_self.__magicclass_parent__
         return current_self
     
