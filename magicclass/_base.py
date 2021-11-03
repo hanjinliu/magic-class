@@ -3,6 +3,7 @@ from functools import wraps as functools_wraps
 from typing import Callable, Any, TYPE_CHECKING, TypeVar
 import inspect
 from magicgui import magicgui
+from magicgui.signature import MagicParameter
 from magicgui.widgets import FunctionGui, FileEdit, EmptyWidget
 
 from .macro import Macro, Expr, Head, Symbol, symbol
@@ -245,12 +246,14 @@ class BaseGui:
         # This block enables instance methods in "bind" method of ValueWidget.
         if hasattr(obj, "__signature__"):
             for param in obj.__signature__.parameters.values():
-                bound_value = param.options.get("bind", None)
-                if callable(bound_value) and n_parameters(bound_value) == 2:
-                    clsname, _ = bound_value.__qualname__.split(".")
-                    if clsname != self.__class__.__name__:
-                        self.__class__.wraps(bound_value)
-                    param.options["bind"] = getattr(self, bound_value.__name__)
+                if isinstance(param, MagicParameter):
+                    bound_value = param.options.get("bind", None)
+                    # TODO: n_parameters(bound_value) == 2 is not elegant
+                    if callable(bound_value) and n_parameters(bound_value) == 2:
+                        clsname, _ = bound_value.__qualname__.split(".")
+                        if clsname != self.__class__.__name__:
+                            self.__class__.wraps(bound_value)
+                        param.options["bind"] = getattr(self, bound_value.__name__)
                         
             func.__signature__ = func.__signature__.replace(
                 parameters=list(obj.__signature__.parameters.values())[1:]
