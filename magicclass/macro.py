@@ -18,6 +18,7 @@ class Symbol:
     _type_map: dict[type, Callable[[Any], str]] = {
         type: lambda e: e.__name__,
         FunctionType: lambda e: e.__name__,
+        MethodType: lambda e: e.__name__,
         BuiltinFunctionType: lambda e: e.__name__,
         Enum: lambda e: repr(str(e.name)),
         Path: lambda e: f"r'{e}'",

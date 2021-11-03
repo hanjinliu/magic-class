@@ -3,14 +3,13 @@ from functools import wraps
 from typing import Any, Callable, Iterable, TypeVar, overload
 import inspect
 from collections import defaultdict
-from qtpy.QtWidgets import (QFrame, QLabel, QPushButton, QGridLayout, QWidget,
+from qtpy.QtWidgets import (QFrame, QLabel, QGridLayout, QWidget,
                             QListWidget, QListWidgetItem, QAbstractItemView, QMenu, QAction)
-from qtpy.QtGui import QIcon, QFont, QTextOption
-from qtpy.QtCore import QSize, Qt
+from qtpy.QtGui import QFont, QTextOption
+from qtpy.QtCore import Qt
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvas
-from matplotlib.colors import to_rgb
 from magicgui.widgets import create_widget, Container, PushButton, __all__ as mgui_all
 from magicgui.widgets import * # to avoid importing both magicgui.widgets and magicclass.widgets
 from magicgui.widgets._bases.value_widget import UNSET
@@ -381,108 +380,3 @@ class CheckButton(PushButton):
     def __init__(self, text:str|None=None, **kwargs):
         super().__init__(text=text, **kwargs)
         self.native.setCheckable(True)
-
-class PushButtonPlus(PushButton):
-    def __init__(self, text:str|None=None, **kwargs):
-        super().__init__(text=text, **kwargs)
-        self.native: QPushButton
-        self._icon_path = None
-        self.mgui: Container = None
-    
-    @property
-    def background_color(self):
-        return self.native.palette().button().color().getRgb()
-    
-    @background_color.setter
-    def background_color(self, color:str|Iterable[float]):
-        # TODO: In napari stylesheet is somehow overwritten and all the colored button will be "flat" 
-        # (not shadowed when clicked/toggled)
-        stylesheet = self.native.styleSheet()
-        d = _stylesheet_to_dict(stylesheet)
-        d.update({"background-color": _to_rgb(color)})
-        stylesheet = _dict_to_stylesheet(d)
-        self.native.setStyleSheet(stylesheet)
-        
-    @property
-    def icon_path(self):
-        return self._icon_path
-    
-    @icon_path.setter
-    def icon_path(self, path:str):
-        icon = QIcon(path)
-        self.native.setIcon(icon)
-    
-    @property
-    def icon_size(self):
-        qsize = self.native.iconSize()
-        return qsize.width(), qsize.height()
-        
-    @icon_size.setter
-    def icon_size(self, size:tuple[int, int]):
-        w, h = size
-        self.native.setIconSize(QSize(w, h))
-    
-    @property
-    def font_size(self):
-        return self.native.font().pointSize()
-    
-    @font_size.setter
-    def font_size(self, size:int):
-        font = self.native.font()
-        font.setPointSize(size)
-        self.native.setFont(font)
-        
-    @property
-    def font_color(self):
-        return self.native.palette().text().color().getRgb()
-    
-    @font_color.setter
-    def font_color(self, color:str|Iterable[float]):
-        stylesheet = self.native.styleSheet()
-        d = _stylesheet_to_dict(stylesheet)
-        d.update({"color": _to_rgb(color)})
-        stylesheet = _dict_to_stylesheet(d)
-        self.native.setStyleSheet(stylesheet)
-
-    @property
-    def font_family(self):
-        return self.native.font().family()
-    
-    @font_family.setter
-    def font_family(self, family:str):
-        font = self.native.font()
-        font.setFamily(family)
-        self.native.setFont(font)
-    
-    def from_options(self, options: dict[str] | Callable):
-        if callable(options):
-            try:
-                options = options.__signature__.caller_options
-            except AttributeError:
-                return None
-                
-        for k, v in options.items():
-            v = options.get(k, None)
-            if v is not None:
-                setattr(self, k, v)
-        return None
-
-def _to_rgb(color):
-    if isinstance(color, str):
-        color = to_rgb(color)
-    rgb = ",".join(str(max(min(int(c*255), 255), 0)) for c in color)
-    return f"rgb({rgb})"
-
-def _stylesheet_to_dict(stylesheet:str):
-    if stylesheet == "":
-        return {}
-    lines = stylesheet.split(";")
-    d = dict()
-    for line in lines:
-        k, v = line.split(":")
-        d[k.strip()] = v.strip()
-    return d
-
-def _dict_to_stylesheet(d:dict):
-    stylesheet = [f"{k}: {v}" for k, v in d.items()]
-    return ";".join(stylesheet)

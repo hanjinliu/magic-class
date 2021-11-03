@@ -3,12 +3,12 @@ from functools import wraps as functools_wraps
 from typing import Callable, Any, TYPE_CHECKING, TypeVar
 import inspect
 from magicgui import magicgui
-from magicgui.widgets import FunctionGui, FileEdit
+from magicgui.widgets import FunctionGui, FileEdit, EmptyWidget
 
 from .macro import Macro, Expr, Head, Symbol, symbol
-from .utils import (iter_members, n_parameters, extract_tooltip, raise_error_in_msgbox, 
-                    get_parameters)
+from .utils import iter_members, n_parameters, extract_tooltip, raise_error_in_msgbox
 from .widgets import Separator, ConsoleTextEdit
+from .mgui_ext import FunctionGuiPlus
 from .field import MagicField
 from .wrappers import upgrade_signature
 
@@ -233,8 +233,14 @@ class BaseGui:
         
         # Prepare a button or action
         widget.tooltip = extract_tooltip(func)
+        
+        # Get the number of parameters except for empty widgets.
+        # With these lines, "bind" method of magicgui works inside magicclass.
+        fgui = FunctionGuiPlus.from_callable(func)
+        n_empty = len([widget for widget in fgui if isinstance(widget, EmptyWidget)])
+        nparams = n_parameters(func) - n_empty
                 
-        if n_parameters(func) == 0:
+        if nparams == 0:
             # We don't want a dialog with a single widget "Run" to show up.
             def run_function():
                 # NOTE: callback must be defined inside function. Magic class must be
@@ -243,12 +249,12 @@ class BaseGui:
                 if mgui.call_count == 0 and len(mgui.called._slots) == 0:
                     callback = _temporal_function_gui_callback(self, mgui, widget)
                     mgui.called.connect(callback)
-                    
+
                 out = mgui()
+                
                 return out
             
-        elif n_parameters(func) == 1 and \
-            isinstance(FunctionGui.from_callable(func)[0], FileEdit):
+        elif nparams == 1 and isinstance(fgui[0], FileEdit):
             # We don't want to open a magicgui dialog and again open a file dialog.
             def run_function():
                 mgui = _build_mgui(widget, func)
@@ -309,15 +315,21 @@ class BaseGui:
         return current_self
     
     
-def _temporal_function_gui_callback(bgui: BaseGui, fgui: FunctionGui, widget):
+def _temporal_function_gui_callback(bgui: BaseGui, fgui: FunctionGuiPlus, widget):
     if isinstance(fgui, FunctionGui):
         _function = fgui._function
     else:
         raise TypeError("fgui must be FunctionGui object.")
+    
+    cls_method = getattr(bgui.__class__, _function.__name__)
+    if hasattr(cls_method, "__magicclass_wrapped__"):
+        clsname, funcname = _function.__qualname__.split(".")
+        root, _function = _search_wrapper(bgui, funcname, clsname)
+    else:
+        root = bgui
         
     def _after_run():
-        inputs = get_parameters(fgui)
-        
+        bound = fgui._previous_bound
         return_type = fgui.return_annotation
         result_required = return_type is not inspect._empty
         result = Symbol("result")
@@ -327,17 +339,17 @@ def _temporal_function_gui_callback(bgui: BaseGui, fgui: FunctionGui, widget):
         # 2. Emit value changed signal.
         # But if there are more, they also have to be called.
         if len(widget.changed._slots) > 2:
-            b = Expr(head=Head.getitem, args=[symbol(bgui), widget.name])
+            b = Expr(head=Head.getitem, args=[symbol(root), widget.name])
             ev = Expr(head=Head.getattr, args=[b, Symbol("changed")])
             line = Expr(head=Head.call, args=[ev])
             if result_required:
                 line = Expr(head=Head.assign, args=[result, line])
-            bgui._recorded_macro.append(line)
+            root._recorded_macro.append(line)
         else:
-            line = Expr.parse_method(bgui, _function, (), inputs)
+            line = Expr.parse_method(root, _function, bound.args, bound.kwargs)
             if result_required:
                 line = Expr(Head.assign, [result, line])
-            bgui._recorded_macro.append(line)
+            root._recorded_macro.append(line)
         
         # Deal with return annotation
         
@@ -370,7 +382,7 @@ def _build_mgui(widget_, func):
     if widget_.mgui is not None:
         return widget_.mgui
     try:
-        mgui = magicgui(func)
+        mgui = FunctionGuiPlus(func)
     except Exception as e:
         msg = f"Exception was raised during building magicgui from method {func.__name__}.\n" \
             f"{e.__class__.__name__}: {e}"

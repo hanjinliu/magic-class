@@ -8,7 +8,8 @@ from magicgui.widgets._concrete import _LabeledWidget
 
 from .macro import Expr, Head, Symbol, symbol
 from .utils import iter_members, extract_tooltip, get_parameters, define_callback
-from .widgets import PushButtonPlus, FrozenContainer
+from .widgets import FrozenContainer
+from .mgui_ext import PushButtonPlus
 from .field import MagicField
 from .menu_gui import MenuGui, ContextMenuGui
 from .containers import (

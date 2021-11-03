@@ -5,6 +5,7 @@ from functools import wraps
 from typing import Callable, Any, TYPE_CHECKING
 from docstring_parser import parse
 from qtpy.QtWidgets import QApplication, QMessageBox
+from magicgui.widgets._bases import ValueWidget
 
 if TYPE_CHECKING:
     from magicgui.widgets._bases import Widget

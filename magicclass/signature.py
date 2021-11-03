@@ -2,7 +2,7 @@ from __future__ import annotations
 from magicgui.signature import MagicSignature
 import inspect
 
-def upgrade_signature(func, gui_options:dict=None, caller_options:dict=None):
+def upgrade_signature(func, gui_options: dict = None, caller_options: dict = None):
     gui_options = gui_options or {}
     caller_options = caller_options or {}
     
@@ -36,7 +36,7 @@ class MagicMethodSignature(MagicSignature):
         self,
         parameters = None,
         *,
-        return_annotation=inspect.Signature.empty,
+        return_annotation = inspect.Signature.empty,
         gui_options: dict[str, dict] = None,
         caller_options: dict[str] = None
     ):
