@@ -320,6 +320,7 @@ class BaseGui:
                     mgui.native.setParent(self.native, mgui.native.windowFlags())
                 
                 if mgui.call_count == 0 and len(mgui.called._slots) == 0:
+                    
                     if self._popup_mode not in (MguiMode.popup, MguiMode.dock):
                         mgui.label = ""
                         mgui.name = f"mgui-{id(mgui._function)}" # to avoid name collision
@@ -366,9 +367,6 @@ class BaseGui:
                                 mgui, name=_get_widget_name(widget), area="right"
                                 )
                     
-                    else:
-                        raise ValueError(self._popup_mode)
-                        
                     if self._close_on_run:
                         if self._popup_mode != MguiMode.dock:
                             mgui.called.connect(mgui.hide)

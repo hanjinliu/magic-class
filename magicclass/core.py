@@ -180,7 +180,7 @@ def magicmenu(class_: type = None,
     -------
     Decorated class or decorator.
     """    
-    return _call_magicmenu(class_, close_on_run, popup_mode, parent, MenuGui)
+    return _call_magicmenu(class_, close_on_run, popup, popup_mode, parent, MenuGui)
 
 def magiccontext(class_: type = None, 
                  *, 
@@ -209,7 +209,7 @@ def magiccontext(class_: type = None,
     -------
     Decorated class or decorator.
     """    
-    return _call_magicmenu(class_, close_on_run, popup_mode, parent, ContextMenuGui)
+    return _call_magicmenu(class_, close_on_run, popup, popup_mode, parent, ContextMenuGui)
 
 
 def _call_magicmenu(class_: type = None, 

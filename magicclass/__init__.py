@@ -1,4 +1,4 @@
-__version__ = "0.5.4dev0"
+__version__ = "0.5.4dev1"
 
 from .core import magicclass, magicmenu, magiccontext, WidgetType
 from .wrappers import set_options, click, set_design, do_not_record
