@@ -17,7 +17,7 @@ from .class_gui import (
     ToolBoxClassGui,
     ListClassGui,
     )
-from ._base import MguiMode
+from ._base import PopUpMode
 from .menu_gui import ContextMenuGui, MenuGui, MenuGuiBase
 from .macro import Expr
 from .utils import check_collision, get_app
@@ -56,7 +56,7 @@ def magicclass(class_: type|None = None,
                name: str = None,
                close_on_run: bool = True,
                popup: bool = True,
-               popup_mode: str | MguiMode = MguiMode.popup,
+               popup_mode: str | PopUpMode = PopUpMode.popup,
                widget_type: WidgetType | str = WidgetType.none,
                parent = None
                ) -> ClassGui:
@@ -128,7 +128,7 @@ def magicclass(class_: type|None = None,
                                layout=layout,
                                parent=parent,
                                close_on_run=close_on_run, 
-                               popup_mode=MguiMode(popup_mode),
+                               popup_mode=PopUpMode(popup_mode),
                                labels=labels,
                                name=name or cls.__name__.replace("_", " ")
                                )
@@ -157,7 +157,7 @@ def magicmenu(class_: type = None,
               *, 
               close_on_run: bool = True,
               popup: bool = True,
-              popup_mode: str | MguiMode = MguiMode.popup,
+              popup_mode: str | PopUpMode = PopUpMode.popup,
               parent = None
               ):
     """
@@ -186,7 +186,7 @@ def magiccontext(class_: type = None,
                  *, 
                  close_on_run: bool = True,
                  popup: bool = True,
-                 popup_mode: str | MguiMode = MguiMode.popup,
+                 popup_mode: str | PopUpMode = PopUpMode.popup,
                  parent=None
                  ):
     """
@@ -215,14 +215,14 @@ def magiccontext(class_: type = None,
 def _call_magicmenu(class_: type = None, 
                     close_on_run: bool = True,
                     popup: bool = True,
-                    popup_mode: str | MguiMode = MguiMode.popup,
+                    popup_mode: str | PopUpMode = PopUpMode.popup,
                     parent = None,
                     menugui_class: type[MenuGuiBase] = None,
                     ):
     
     popup_mode = _popup_deprecation(popup, popup_mode)
         
-    if popup_mode in (MguiMode.above, MguiMode.below, MguiMode.first, MguiMode.last):
+    if popup_mode in (PopUpMode.above, PopUpMode.below, PopUpMode.first, PopUpMode.last):
         raise ValueError(f"Mode {popup_mode.value} is not compatible with Menu.")
     
     def wrapper(cls) -> menugui_class:
@@ -245,7 +245,7 @@ def _call_magicmenu(class_: type = None,
             app = get_app() # Without "app = " Jupyter freezes after closing the window!
             macro_init = Expr.parse_init(self, cls, args, kwargs)
             menugui_class.__init__(self, parent=parent, close_on_run=close_on_run,
-                                   popup_mode=MguiMode(popup_mode))
+                                   popup_mode=PopUpMode(popup_mode))
             super(oldclass, self).__init__(*args, **kwargs)
             self._convert_attributes_into_widgets()
             
@@ -266,9 +266,9 @@ def _call_magicmenu(class_: type = None,
 
 def _popup_deprecation(popup, popup_mode):
     if not popup:
-        msg = "'popup' is deprecated. You can select popup mode from 'first', 'lask', 'dock', 'above', " \
+        msg = "'popup' is deprecated. You can select popup mode from 'first', 'last', 'dock', 'above', " \
               "'below' or 'parentlast', and call this function like >>> @magicclass(popup_mode='first')"
         warnings.warn(msg, DeprecationWarning)
-        return MguiMode.parentlast
+        return PopUpMode.parentlast
     else:
         return popup_mode

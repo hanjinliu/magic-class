@@ -22,7 +22,7 @@ from .containers import (
     TabbedContainer,
     ToolBox
     )
-from ._base import BaseGui, MguiMode
+from ._base import BaseGui, PopUpMode
 
 class ClassGuiBase(BaseGui):
     # This class is always inherited by @magicclass decorator.
@@ -237,7 +237,7 @@ def make_gui(container: type[ContainerWidget], no_margin: bool = True):
                 else: 
                     dock = viewer.window.add_dock_widget(self, area="right", 
                                                          allowed_areas=["left", "right"])
-                    dock.setFloating(self._popup_mode == MguiMode.popup)
+                    dock.setFloating(self._popup_mode == PopUpMode.popup)
             else:
                 container.show(self, run=run)
                 self.native.activateWindow()

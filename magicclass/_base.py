@@ -23,7 +23,7 @@ if TYPE_CHECKING:
     except ImportError:
         pass
     
-class MguiMode(Enum):
+class PopUpMode(Enum):
     popup = "popup"
     first = "first"
     last = "last"
@@ -317,12 +317,12 @@ class BaseGui:
         else:                
             def run_function():
                 mgui = _build_mgui(widget, func)
-                if self._popup_mode == MguiMode.popup:
+                if self._popup_mode == PopUpMode.popup:
                     mgui.native.setParent(self.native, mgui.native.windowFlags())
                 
                 if mgui.call_count == 0 and len(mgui.called._slots) == 0:
                     
-                    if self._popup_mode not in (MguiMode.popup, MguiMode.dock):
+                    if self._popup_mode not in (PopUpMode.popup, PopUpMode.dock):
                         mgui.label = ""
                         mgui.name = f"mgui-{id(mgui._function)}" # to avoid name collision
                         mgui.margins = (0, 0, 0, 0)
@@ -332,23 +332,23 @@ class BaseGui:
                         mgui.insert(0, title)
                         mgui.append(Separator(orientation="horizontal"))
                         
-                        if self._popup_mode == MguiMode.parentlast:
+                        if self._popup_mode == PopUpMode.parentlast:
                             parent_self = self._search_parent_magicclass()
                             parent_self.append(mgui)
-                        elif self._popup_mode == MguiMode.first:
+                        elif self._popup_mode == PopUpMode.first:
                             self.insert(0, mgui)
-                        elif self._popup_mode == MguiMode.last:
+                        elif self._popup_mode == PopUpMode.last:
                             self.append(mgui)
-                        elif self._popup_mode == MguiMode.above:
+                        elif self._popup_mode == PopUpMode.above:
                             name = _get_widget_name(widget)
                             i = _get_index(self, name)
                             self.insert(i, mgui)
-                        elif self._popup_mode == MguiMode.below:
+                        elif self._popup_mode == PopUpMode.below:
                             name = _get_widget_name(widget)
                             i = _get_index(self, name)
                             self.insert(i+1, mgui)
                             
-                    elif self._popup_mode == MguiMode.dock:
+                    elif self._popup_mode == PopUpMode.dock:
                         parent_self = self._search_parent_magicclass()
                         viewer = parent_self.parent_viewer
                         if viewer is None:
@@ -373,7 +373,7 @@ class BaseGui:
                                 )
                     
                     if self._close_on_run:
-                        if self._popup_mode != MguiMode.dock:
+                        if self._popup_mode != PopUpMode.dock:
                             mgui.called.connect(mgui.hide)
                         else:
                             mgui.called.connect(lambda: mgui.parent.hide())
@@ -382,7 +382,7 @@ class BaseGui:
                         callback = _temporal_function_gui_callback(self, mgui, widget)
                         mgui.called.connect(callback)
                 
-                if self._popup_mode != MguiMode.dock:
+                if self._popup_mode != PopUpMode.dock:
                     widget.mgui.show()
                 else:
                     mgui.parent.show()
