@@ -2,6 +2,8 @@ from __future__ import annotations
 from functools import wraps as functools_wraps
 from typing import Callable, TYPE_CHECKING, TypeVar
 import inspect
+from enum import Enum
+import warnings
 from magicgui import magicgui
 from magicgui.signature import MagicParameter
 from magicgui.widgets import FunctionGui, FileEdit, EmptyWidget
@@ -21,14 +23,22 @@ if TYPE_CHECKING:
     except ImportError:
         pass
     
+class MguiMode(Enum):
+    popup = "popup"
+    first = "first"
+    last = "last"
+    below = "below"
+    dock = "dock"
+    parentlast = "parentlast"
+    
 
 class BaseGui:
     _component_class: type = None
     
-    def __init__(self, close_on_run = True, popup = True):
+    def __init__(self, close_on_run, popup_mode):
         self._recorded_macro: Macro[Expr] = Macro()
         self.__magicclass_parent__: None | BaseGui = None
-        self._popup = popup
+        self._popup_mode = popup_mode
         self._close_on_run = close_on_run
     
     def _collect_macro(self, parent_symbol: Symbol = None, self_symbol: Symbol = None) -> Macro:
@@ -306,11 +316,11 @@ class BaseGui:
         else:                
             def run_function():
                 mgui = _build_mgui(widget, func)
-                if self._popup:
+                if self._popup_mode == MguiMode.popup:
                     mgui.native.setParent(self.native, mgui.native.windowFlags())
-                widget.mgui.show()
+                
                 if mgui.call_count == 0 and len(mgui.called._slots) == 0:
-                    if not self._popup:
+                    if self._popup_mode not in (MguiMode.popup, MguiMode.dock):
                         mgui.label = ""
                         mgui.name = f"mgui-{id(mgui._function)}" # to avoid name collision
                         mgui.margins = (0, 0, 0, 0)
@@ -319,13 +329,58 @@ class BaseGui:
                         title.btn_clicked.connect(mgui.hide)
                         mgui.insert(0, title)
                         mgui.append(Separator(orientation="horizontal"))
+                        
+                        if self._popup_mode == MguiMode.parentlast:
+                            parent_self = self._search_parent_magicclass()
+                            parent_self.append(mgui)
+                        elif self._popup_mode == MguiMode.first:
+                            self.insert(0, mgui)
+                        elif self._popup_mode == MguiMode.last:
+                            self.append(mgui)
+                        elif self._popup_mode == MguiMode.below:
+                            name = _get_widget_name(widget)
+                            i = _get_index(self, name)
+                            self.insert(i+1, mgui)
+                            
+                    elif self._popup_mode == MguiMode.dock:
                         parent_self = self._search_parent_magicclass()
-                        parent_self.append(mgui)
+                        viewer = parent_self.parent_viewer
+                        if viewer is None:
+                            if not hasattr(parent_self.native, "addDockWidget"):
+                                msg = "Cannot add dock widget to normal container. Please use\n" \
+                                      ">>> @magicclass(widget_type='mainwindow')\n" \
+                                      "to create main window widget, or add the container as a dock "\
+                                      "widget in napari."
+                                warnings.warn(msg, UserWarning)
+                            
+                            else:    
+                                from qtpy.QtWidgets import QDockWidget
+                                from qtpy.QtCore import Qt
+                                dock = QDockWidget(_get_widget_name(widget), self.native)
+                                dock.setWidget(mgui.native)
+                                parent_self.native.addDockWidget(
+                                    Qt.DockWidgetArea.RightDockWidgetArea, dock
+                                    )
+                        else:
+                            dock = viewer.window.add_dock_widget(
+                                mgui, name=_get_widget_name(widget), area="right"
+                                )
+                    
+                    else:
+                        raise ValueError(self._popup_mode)
+                        
                     if self._close_on_run:
-                        mgui.called.connect(mgui.hide)
+                        if self._popup_mode != MguiMode.dock:
+                            mgui.called.connect(mgui.hide)
+                        else:
+                            msg = "MguiMode.dock and 'close_on_run' is not compatible yet."
+                            warnings.warn(msg, UserWarning)
+                    
                     if record:
                         callback = _temporal_function_gui_callback(self, mgui, widget)
                         mgui.called.connect(callback)
+                
+                widget.mgui.show()
                 
                 return None
             
@@ -341,7 +396,10 @@ class BaseGui:
         while getattr(current_self, "__magicclass_parent__", None) is not None:
             current_self = current_self.__magicclass_parent__
         return current_self
-    
+
+def _get_widget_name(widget):
+    # To escape reference
+    return widget.name
     
 def _temporal_function_gui_callback(bgui: BaseGui, fgui: FunctionGuiPlus, widget):
     if isinstance(fgui, FunctionGui):
@@ -397,6 +455,18 @@ def _copy_function(f):
     def out(self, *args, **kwargs):
         return f(self, *args, **kwargs)
     return out
+
+def _get_index(container, widget_or_name):
+    if isinstance(widget_or_name, str):
+        name = widget_or_name
+    else:
+        name = widget_or_name.name
+    for i, widget in enumerate(container):
+        if widget.name == name:
+            break
+    else:
+        raise ValueError
+    return i
 
 def _search_wrapper(bgui: BaseGui, funcname: str, clsname: str) -> tuple[BaseGui, Callable]:
     current_self = bgui.__magicclass_parent__

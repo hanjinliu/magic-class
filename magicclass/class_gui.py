@@ -22,7 +22,7 @@ from .containers import (
     TabbedContainer,
     ToolBox
     )
-from ._base import BaseGui
+from ._base import BaseGui, MguiMode
 
 class ClassGuiBase(BaseGui):
     # This class is always inherited by @magicclass decorator.
@@ -180,13 +180,13 @@ def make_gui(container: type[ContainerWidget], no_margin: bool = True):
                      layout: str = "vertical", 
                      parent = None, 
                      close_on_run: bool = True,
-                     popup: bool = True, 
+                     popup_mode: bool = True, 
                      labels: bool = True, 
                      name: str = None, 
                      ):
 
             container.__init__(self, layout=layout, labels=labels, name=name)
-            BaseGui.__init__(self, close_on_run=close_on_run, popup=popup)
+            BaseGui.__init__(self, close_on_run=close_on_run, popup_mode=popup_mode)
             
             if parent is not None:
                 self.parent = parent
@@ -222,7 +222,7 @@ def make_gui(container: type[ContainerWidget], no_margin: bool = True):
         def show(self: cls, run: bool = False) -> None:
             """
             Show ClassGui. If any of the parent ClassGui is a dock widget in napari, then this
-            will also show up as a dock widget (floating if popup=True).
+            will also show up as a dock widget (floating if in popup mode).
             """        
             if self.__magicclass_parent__ is not None and self.parent is None:
                 # If child magic class is closed before, we have to set parent again.
@@ -237,7 +237,7 @@ def make_gui(container: type[ContainerWidget], no_margin: bool = True):
                 else: 
                     dock = viewer.window.add_dock_widget(self, area="right", 
                                                          allowed_areas=["left", "right"])
-                    dock.setFloating(self._popup)
+                    dock.setFloating(self._popup_mode == MguiMode.popup)
             else:
                 container.show(self, run=run)
                 self.native.activateWindow()

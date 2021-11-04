@@ -3,6 +3,7 @@ from functools import wraps as functools_wraps
 import inspect
 from enum import Enum
 from dataclasses import is_dataclass, _POST_INIT_NAME
+import warnings
 
 from .class_gui import (
     ClassGui, 
@@ -16,6 +17,7 @@ from .class_gui import (
     ToolBoxClassGui,
     ListClassGui,
     )
+from ._base import MguiMode
 from .menu_gui import ContextMenuGui, MenuGui, MenuGuiBase
 from .macro import Expr
 from .utils import check_collision, get_app
@@ -54,6 +56,7 @@ def magicclass(class_: type|None = None,
                name: str = None,
                close_on_run: bool = True,
                popup: bool = True,
+               popup_mode: str | MguiMode = MguiMode.popup,
                widget_type: WidgetType | str = WidgetType.none,
                parent = None
                ) -> ClassGui:
@@ -93,6 +96,8 @@ def magicclass(class_: type|None = None,
     """    
     widget_type = WidgetType(widget_type)
     
+    popup_mode = _popup_deprecation(popup, popup_mode)
+    
     def wrapper(cls) -> ClassGui:
         if not isinstance(cls, type):
             raise TypeError(f"magicclass can only wrap classes, not {type(cls)}")
@@ -123,7 +128,7 @@ def magicclass(class_: type|None = None,
                                layout=layout,
                                parent=parent,
                                close_on_run=close_on_run, 
-                               popup=popup,
+                               popup_mode=MguiMode(popup_mode),
                                labels=labels,
                                name=name or cls.__name__.replace("_", " ")
                                )
@@ -152,6 +157,7 @@ def magicmenu(class_: type = None,
               *, 
               close_on_run: bool = True,
               popup: bool = True,
+              popup_mode: str | MguiMode = MguiMode.popup,
               parent = None
               ):
     """
@@ -174,12 +180,13 @@ def magicmenu(class_: type = None,
     -------
     Decorated class or decorator.
     """    
-    return _call_magicmenu(class_, close_on_run, popup, parent, MenuGui)
+    return _call_magicmenu(class_, close_on_run, popup_mode, parent, MenuGui)
 
 def magiccontext(class_: type = None, 
                  *, 
                  close_on_run: bool = True,
                  popup: bool = True,
+                 popup_mode: str | MguiMode = MguiMode.popup,
                  parent=None
                  ):
     """
@@ -202,15 +209,19 @@ def magiccontext(class_: type = None,
     -------
     Decorated class or decorator.
     """    
-    return _call_magicmenu(class_, close_on_run, popup, parent, ContextMenuGui)
+    return _call_magicmenu(class_, close_on_run, popup_mode, parent, ContextMenuGui)
 
 
 def _call_magicmenu(class_: type = None, 
                     close_on_run: bool = True,
                     popup: bool = True,
+                    popup_mode: str | MguiMode = MguiMode.popup,
                     parent = None,
                     menugui_class: type[MenuGuiBase] = None,
                     ):
+    
+    popup_mode = _popup_deprecation(popup, popup_mode)
+        
     def wrapper(cls) -> menugui_class:
         if not isinstance(cls, type):
             raise TypeError(f"magicclass can only wrap classes, not {type(cls)}")
@@ -230,7 +241,8 @@ def _call_magicmenu(class_: type = None,
         def __init__(self, *args, **kwargs):
             app = get_app() # Without "app = " Jupyter freezes after closing the window!
             macro_init = Expr.parse_init(self, cls, args, kwargs)
-            menugui_class.__init__(self, parent=parent, close_on_run=close_on_run, popup=popup)
+            menugui_class.__init__(self, parent=parent, close_on_run=close_on_run,
+                                   popup_mode=MguiMode(popup_mode))
             super(oldclass, self).__init__(*args, **kwargs)
             self._convert_attributes_into_widgets()
             
@@ -248,3 +260,12 @@ def _call_magicmenu(class_: type = None,
         return newclass
     
     return wrapper if class_ is None else wrapper(class_)
+
+def _popup_deprecation(popup, popup_mode):
+    if not popup:
+        msg = "'popup' is deprecated. You can select popup mode from 'first', 'lask', 'dock', 'below' " \
+              "or 'parentlast', and call this function like >>> @magicclass(popup_mode='first')"
+        warnings.warn(msg, DeprecationWarning)
+        return MguiMode.parentlast
+    else:
+        return popup_mode
