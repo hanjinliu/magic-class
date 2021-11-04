@@ -222,6 +222,9 @@ def _call_magicmenu(class_: type = None,
     
     popup_mode = _popup_deprecation(popup, popup_mode)
         
+    if popup_mode in (MguiMode.above, MguiMode.below, MguiMode.first, MguiMode.last):
+        raise ValueError(f"Mode {popup_mode.value} is not compatible with Menu.")
+    
     def wrapper(cls) -> menugui_class:
         if not isinstance(cls, type):
             raise TypeError(f"magicclass can only wrap classes, not {type(cls)}")
@@ -263,8 +266,8 @@ def _call_magicmenu(class_: type = None,
 
 def _popup_deprecation(popup, popup_mode):
     if not popup:
-        msg = "'popup' is deprecated. You can select popup mode from 'first', 'lask', 'dock', 'below' " \
-              "or 'parentlast', and call this function like >>> @magicclass(popup_mode='first')"
+        msg = "'popup' is deprecated. You can select popup mode from 'first', 'lask', 'dock', 'above', " \
+              "'below' or 'parentlast', and call this function like >>> @magicclass(popup_mode='first')"
         warnings.warn(msg, DeprecationWarning)
         return MguiMode.parentlast
     else:

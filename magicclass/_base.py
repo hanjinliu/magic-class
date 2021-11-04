@@ -27,6 +27,7 @@ class MguiMode(Enum):
     popup = "popup"
     first = "first"
     last = "last"
+    above = "above"
     below = "below"
     dock = "dock"
     parentlast = "parentlast"
@@ -338,6 +339,10 @@ class BaseGui:
                             self.insert(0, mgui)
                         elif self._popup_mode == MguiMode.last:
                             self.append(mgui)
+                        elif self._popup_mode == MguiMode.above:
+                            name = _get_widget_name(widget)
+                            i = _get_index(self, name)
+                            self.insert(i, mgui)
                         elif self._popup_mode == MguiMode.below:
                             name = _get_widget_name(widget)
                             i = _get_index(self, name)
@@ -348,7 +353,7 @@ class BaseGui:
                         viewer = parent_self.parent_viewer
                         if viewer is None:
                             if not hasattr(parent_self.native, "addDockWidget"):
-                                msg = "Cannot add dock widget to normal container. Please use\n" \
+                                msg = "Cannot add dock widget to a normal container. Please use\n" \
                                       ">>> @magicclass(widget_type='mainwindow')\n" \
                                       "to create main window widget, or add the container as a dock "\
                                       "widget in napari."
@@ -371,15 +376,17 @@ class BaseGui:
                         if self._popup_mode != MguiMode.dock:
                             mgui.called.connect(mgui.hide)
                         else:
-                            msg = "MguiMode.dock and 'close_on_run' is not compatible yet."
-                            warnings.warn(msg, UserWarning)
+                            mgui.called.connect(lambda: mgui.parent.hide())
                     
                     if record:
                         callback = _temporal_function_gui_callback(self, mgui, widget)
                         mgui.called.connect(callback)
                 
-                widget.mgui.show()
-                
+                if self._popup_mode != MguiMode.dock:
+                    widget.mgui.show()
+                else:
+                    mgui.parent.show()
+                                
                 return None
             
         widget.changed.connect(run_function)
