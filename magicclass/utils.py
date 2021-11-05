@@ -90,6 +90,9 @@ def extract_tooltip(obj: Any) -> str:
         return doc.short_description + "\n" + doc.long_description
 
 def raise_error_in_msgbox(_func: Callable, parent: Widget = None):
+    """
+    If exception happened inside function, then open a message box.
+    """    
     @wraps(_func)
     def wrapped_func(*args, **kwargs):
         try:
@@ -102,13 +105,13 @@ def raise_error_in_msgbox(_func: Callable, parent: Widget = None):
     return wrapped_func
 
 def id_wrapper(_func: Callable, parent: Widget = None):
+    """
+    Do nothing.
+    """    
     return _func
 
 def get_parameters(fgui: FunctionGui):
-    inputs = {param: fgui[param].value
-              for param in fgui.__signature__.parameters.keys()
-              }
-    return inputs
+    return {k: v.default for k, v in fgui.__signature__.parameters.items()}
 
 def get_signature(func):
     if hasattr(func, "__signature__"):

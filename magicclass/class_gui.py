@@ -22,7 +22,7 @@ from .containers import (
     TabbedContainer,
     ToolBox
     )
-from ._base import BaseGui, PopUpMode
+from ._base import BaseGui, PopUpMode, ErrorMode
 
 class ClassGuiBase(BaseGui):
     # This class is always inherited by @magicclass decorator.
@@ -179,14 +179,16 @@ def make_gui(container: type[ContainerWidget], no_margin: bool = True):
         def __init__(self: cls, 
                      layout: str = "vertical", 
                      parent = None, 
-                     close_on_run: bool = True,
-                     popup_mode: bool = True, 
+                     close_on_run: bool = None,
+                     popup_mode: str | PopUpMode = None, 
+                     error_mode: str | ErrorMode = None,
                      labels: bool = True, 
                      name: str = None, 
                      ):
 
             container.__init__(self, layout=layout, labels=labels, name=name)
-            BaseGui.__init__(self, close_on_run=close_on_run, popup_mode=popup_mode)
+            BaseGui.__init__(self, close_on_run=close_on_run, popup_mode=popup_mode, 
+                             error_mode=error_mode)
             
             if parent is not None:
                 self.parent = parent
