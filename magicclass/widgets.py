@@ -284,7 +284,7 @@ class TupleEdit(Container):
         return tuple(w.value for w in self)
 
     @value.setter
-    def value(self, vals:Iterable[_V]):
+    def value(self, vals: Iterable[_V]):
         if len(vals) != len(self):
             raise ValueError("Length of tuple does not match.")
         for w, v in zip(self, vals):

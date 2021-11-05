@@ -38,6 +38,9 @@ class MultiRegion:
     regionitems: list[pg.LinearRegionItem]
         
 class Canvas(FrozenContainer, SingleRegion):
+    """
+    A 1-D data viewer that have similar API as napari Viewer.
+    """    
     def __init__(self, region_visible=False, **kwargs):
         super().__init__(**kwargs)
         self.plotwidget = pg.PlotWidget()

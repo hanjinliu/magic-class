@@ -2,7 +2,7 @@ from __future__ import annotations
 from functools import wraps as functools_wraps
 import inspect
 from enum import Enum
-from dataclasses import is_dataclass, _POST_INIT_NAME
+from dataclasses import is_dataclass
 import warnings
 
 from .class_gui import (
@@ -112,6 +112,8 @@ def magicclass(class_: type|None = None,
     def wrapper(cls) -> ClassGui:
         if not isinstance(cls, type):
             raise TypeError(f"magicclass can only wrap classes, not {type(cls)}")
+        elif is_dataclass(cls):
+            raise TypeError("dataclass is not compatible with magicclass.")
         
         class_gui = _TYPE_MAP[widget_type]
         
@@ -147,7 +149,7 @@ def magicclass(class_: type|None = None,
             super(oldclass, self).__init__(*args, **kwargs)
             self._convert_attributes_into_widgets()
             
-            if hasattr(self, _POST_INIT_NAME) and not is_dataclass(cls):
+            if hasattr(self, "__post_init__"):
                 self.__post_init__()
             
             # Record class instance construction
@@ -234,6 +236,8 @@ def _call_magicmenu(class_: type = None,
     def wrapper(cls) -> menugui_class:
         if not isinstance(cls, type):
             raise TypeError(f"magicclass can only wrap classes, not {type(cls)}")
+        elif is_dataclass(cls):
+            raise TypeError("dataclass is not compatible with magicclass.")
         
         check_collision(cls, menugui_class)
         # get class attributes first
@@ -259,7 +263,7 @@ def _call_magicmenu(class_: type = None,
             super(oldclass, self).__init__(*args, **kwargs)
             self._convert_attributes_into_widgets()
             
-            if hasattr(self, _POST_INIT_NAME) and not is_dataclass(cls):
+            if hasattr(self, "__post_init__"):
                 self.__post_init__()
             
             # Record class instance construction

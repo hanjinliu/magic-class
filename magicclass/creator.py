@@ -1,6 +1,6 @@
 from __future__ import annotations
 from .core import magicclass, WidgetType
-from ._base import BaseGui
+from ._base import BaseGui, PopUpMode, ErrorMode
 from .field import field
 from .macro import Symbol, symbol
 from .widgets import ConsoleTextEdit
@@ -38,7 +38,8 @@ class MagicClassCreator:
             @magicclass(widget_type="collapsible")
             class Others:
                 close_on_run_ = field(True)
-                popup_ = field(True)
+                popup_mode_ = field(PopUpMode)
+                error_mode_ = field(ErrorMode)
                 
             def append_(self): ...
         
@@ -82,7 +83,7 @@ class MagicClassCreator:
                      name=parent.name_.value,
                      widget_type=parent.widget_type_.value.name,
                      close_on_run=parent.Others.close_on_run_.value,
-                     popup=parent.Others.popup_.value,
+                     popup_mode=parent.Others.popup_.value,
                      )
         
         name = parent.name_.value
