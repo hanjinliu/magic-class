@@ -11,7 +11,7 @@ from magicgui.widgets import FunctionGui, FileEdit, EmptyWidget
 from magicclass.signature import MagicMethodSignature
 
 from .macro import Macro, Expr, Head, Symbol, symbol
-from .utils import iter_members, n_parameters, extract_tooltip, raise_error_in_msgbox
+from .utils import iter_members, n_parameters, extract_tooltip, raise_error_in_msgbox, id_wrapper
 from .widgets import Separator, ConsoleTextEdit
 from .mgui_ext import FunctionGuiPlus
 from .field import MagicField
@@ -31,16 +31,25 @@ class PopUpMode(Enum):
     below = "below"
     dock = "dock"
     parentlast = "parentlast"
+
+class ErrorMode(Enum):
+    msgbox = "msgbox"
+    stderr = "stderr"
     
+defaults = {"popup_mode": PopUpMode.popup,
+            "error_mode": ErrorMode.msgbox,
+            "close_on_run": True,
+            }
 
 class BaseGui:
     _component_class: type = None
     
-    def __init__(self, close_on_run, popup_mode):
+    def __init__(self, close_on_run, popup_mode, error_mode):
         self._recorded_macro: Macro[Expr] = Macro()
         self.__magicclass_parent__: None | BaseGui = None
-        self._popup_mode = popup_mode
         self._close_on_run = close_on_run
+        self._popup_mode = popup_mode
+        self._error_mode = error_mode
     
     def _collect_macro(self, parent_symbol: Symbol = None, self_symbol: Symbol = None) -> Macro:
         if self_symbol is None:
@@ -247,8 +256,13 @@ class BaseGui:
         widget = self._component_class(name=obj.__name__, text=text, gui_only=True)
 
         # Wrap function to deal with errors in a right way.
-        wrapper = raise_error_in_msgbox
-        
+        if self._error_mode == ErrorMode.msgbox:
+            wrapper = raise_error_in_msgbox
+        elif self._error_mode == ErrorMode.stderr:
+            wrapper = id_wrapper
+        else:
+            raise ValueError(self._error_mode)
+            
         func = wrapper(obj, parent=self)
         
         # Signature must be updated like this. Otherwise, already wrapped member function
@@ -292,6 +306,7 @@ class BaseGui:
                 # NOTE: callback must be defined inside function. Magic class must be
                 # "compiled" otherwise function wrappings are not ready!
                 mgui = _build_mgui(widget, func)
+                mgui.parent = self
                 if mgui.call_count == 0 and len(mgui.called._slots) == 0 and record:
                     callback = _temporal_function_gui_callback(self, mgui, widget)
                     mgui.called.connect(callback)
@@ -304,6 +319,7 @@ class BaseGui:
             # We don't want to open a magicgui dialog and again open a file dialog.
             def run_function():
                 mgui = _build_mgui(widget, func)
+                mgui.parent = self
                 if mgui.call_count == 0 and len(mgui.called._slots) == 0 and record:
                     callback = _temporal_function_gui_callback(self, mgui, widget)
                     mgui.called.connect(callback)
@@ -325,11 +341,8 @@ class BaseGui:
         else:                
             def run_function():
                 mgui = _build_mgui(widget, func)
-                if self._popup_mode == PopUpMode.popup:
-                    mgui.native.setParent(self.native, mgui.native.windowFlags())
-                
                 if mgui.call_count == 0 and len(mgui.called._slots) == 0:
-                    
+                    mgui.native.setParent(self.native, mgui.native.windowFlags())
                     if self._popup_mode not in (PopUpMode.popup, PopUpMode.dock):
                         mgui.label = ""
                         mgui.name = f"mgui-{id(mgui._function)}" # to avoid name collision
@@ -384,6 +397,7 @@ class BaseGui:
                         if self._popup_mode != PopUpMode.dock:
                             mgui.called.connect(mgui.hide)
                         else:
+                            # If FunctioGui is docked, we should close QDockWidget.
                             mgui.called.connect(lambda: mgui.parent.hide())
                     
                     if record:

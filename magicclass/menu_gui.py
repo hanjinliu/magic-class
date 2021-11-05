@@ -7,7 +7,7 @@ from qtpy.QtWidgets import QMenu, QAction
 
 from .field import MagicField
 from .widgets import Separator
-from ._base import BaseGui, PopUpMode
+from ._base import BaseGui, PopUpMode, ErrorMode
 from .macro import Expr, Head, Symbol, symbol
 from .utils import iter_members, define_callback
 
@@ -103,9 +103,11 @@ class MenuGuiBase(BaseGui):
     def __init__(self, 
                  parent=None, 
                  name: str = None,
-                 close_on_run: bool = True,
-                 popup_mode: str|PopUpMode = PopUpMode.popup):
-        super().__init__(close_on_run=close_on_run, popup_mode=popup_mode)
+                 close_on_run: bool = None,
+                 popup_mode: str|PopUpMode = None,
+                 error_mode: str|ErrorMode = None
+                 ):
+        super().__init__(close_on_run=close_on_run, popup_mode=popup_mode, error_mode=error_mode)
         name = name or self.__class__.__name__
         self.native = QMenu(name, parent)
         self.native.setToolTipsVisible(True)

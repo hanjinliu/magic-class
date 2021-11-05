@@ -89,7 +89,7 @@ def extract_tooltip(obj: Any) -> str:
     else:
         return doc.short_description + "\n" + doc.long_description
 
-def raise_error_in_msgbox(_func, parent: Widget = None):
+def raise_error_in_msgbox(_func: Callable, parent: Widget = None):
     @wraps(_func)
     def wrapped_func(*args, **kwargs):
         try:
@@ -100,6 +100,9 @@ def raise_error_in_msgbox(_func, parent: Widget = None):
         return out
     
     return wrapped_func
+
+def id_wrapper(_func: Callable, parent: Widget = None):
+    return _func
 
 def get_parameters(fgui: FunctionGui):
     inputs = {param: fgui[param].value

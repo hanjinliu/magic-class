@@ -12,6 +12,8 @@ from magicgui.backends._qtpy.widgets import (
     MainWindow as MainWindowBase
     )
 
+# Container variations that is useful in making GUI designs better.
+
 C = TypeVar("C")
 
 def wrap_container(cls: type[C] = None, base: type = None) -> Callable | type[C]:

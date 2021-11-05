@@ -17,7 +17,7 @@ from .class_gui import (
     ToolBoxClassGui,
     ListClassGui,
     )
-from ._base import PopUpMode
+from ._base import PopUpMode, ErrorMode, defaults
 from .menu_gui import ContextMenuGui, MenuGui, MenuGuiBase
 from .macro import Expr
 from .utils import check_collision, get_app
@@ -54,9 +54,10 @@ def magicclass(class_: type|None = None,
                layout: str = "vertical", 
                labels: bool = True, 
                name: str = None,
-               close_on_run: bool = True,
+               close_on_run: bool = None,
                popup: bool = True,
-               popup_mode: str | PopUpMode = PopUpMode.popup,
+               popup_mode: str | PopUpMode = None,
+               error_mode: str | ErrorMode = None,
                widget_type: WidgetType | str = WidgetType.none,
                parent = None
                ) -> ClassGui:
@@ -83,8 +84,11 @@ def magicclass(class_: type|None = None,
         If True, magicgui created by every method will be deleted after the method is completed without
         exceptions, i.e. magicgui is more like a dialog.
     popup : bool, default is True
-        If True, magicgui created by every method will be poped up, else they will be appended as a
-        part of the main widget.
+        Deprecated.
+    popup_mode : str or PopUpMode, default is PopUpMode.popup
+        Option of how to popup FunctionGui widget when a button is clicked.
+    error_mode : str or ErrorMode, default is ErrorMode.msgbox
+        Option of how to raise errors during function calls.
     widget_type : WidgetType or str, optional
         Widget type of container.
     parent : magicgui.widgets._base.Widget, optional
@@ -94,6 +98,13 @@ def magicclass(class_: type|None = None,
     -------
     Decorated class or decorator.
     """    
+    if popup_mode is None:
+        popup_mode = defaults["popup_mode"]
+    if close_on_run is None:
+        close_on_run = defaults["close_on_run"]
+    if error_mode is None:
+        error_mode = defaults["error_mode"]
+        
     widget_type = WidgetType(widget_type)
     
     popup_mode = _popup_deprecation(popup, popup_mode)
@@ -129,6 +140,7 @@ def magicclass(class_: type|None = None,
                                parent=parent,
                                close_on_run=close_on_run, 
                                popup_mode=PopUpMode(popup_mode),
+                               error_mode=ErrorMode(error_mode),
                                labels=labels,
                                name=name or cls.__name__.replace("_", " ")
                                )
@@ -155,71 +167,65 @@ def magicclass(class_: type|None = None,
 
 def magicmenu(class_: type = None, 
               *, 
-              close_on_run: bool = True,
+              close_on_run: bool = None,
               popup: bool = True,
-              popup_mode: str | PopUpMode = PopUpMode.popup,
+              popup_mode: str | PopUpMode = None,
+              error_mode: str | ErrorMode = None,
               parent = None
               ):
     """
     Decorator that can convert a Python class into a menu bar.
-                
-    Parameters
-    ----------
-    class_ : type, optional
-        Class to be decorated.
-    close_on_run : bool, default is True
-        If True, magicgui created by every method will be deleted after the method is completed without
-        exceptions, i.e. magicgui is more like a dialog.
-    popup : bool, default is True
-        If True, magicgui created by every method will be poped up, else they will be appended as a
-        part of the main widget.
-    parent : magicgui.widgets._base.Widget, optional
-        Parent widget if exists.
-    
-    Returns
-    -------
-    Decorated class or decorator.
     """    
-    return _call_magicmenu(class_, close_on_run, popup, popup_mode, parent, MenuGui)
+    return _call_magicmenu(**locals(), menugui_class=MenuGui)
 
 def magiccontext(class_: type = None, 
                  *, 
-                 close_on_run: bool = True,
+                 close_on_run: bool = None,
                  popup: bool = True,
-                 popup_mode: str | PopUpMode = PopUpMode.popup,
+                 popup_mode: str | PopUpMode = None,
+                 error_mode: str | ErrorMode = None,
                  parent=None
                  ):
     """
     Decorator that can convert a Python class into a context menu.
-                
-    Parameters
-    ----------
-    class_ : type, optional
-        Class to be decorated.
-    close_on_run : bool, default is True
-        If True, magicgui created by every method will be deleted after the method is completed without
-        exceptions, i.e. magicgui is more like a dialog.
-    popup : bool, default is True
-        If True, magicgui created by every method will be poped up, else they will be appended as a
-        part of the main widget.
-    parent : magicgui.widgets._base.Widget, optional
-        Parent widget if exists.
-    
-    Returns
-    -------
-    Decorated class or decorator.
     """    
-    return _call_magicmenu(class_, close_on_run, popup, popup_mode, parent, ContextMenuGui)
+    return _call_magicmenu(**locals(), menugui_class=ContextMenuGui)
 
 
 def _call_magicmenu(class_: type = None, 
                     close_on_run: bool = True,
                     popup: bool = True,
-                    popup_mode: str | PopUpMode = PopUpMode.popup,
+                    popup_mode: str | PopUpMode = None,
+                    error_mode: str | ErrorMode = None,
                     parent = None,
                     menugui_class: type[MenuGuiBase] = None,
                     ):
+    """
+    Parameters
+    ----------
+    class_ : type, optional
+        Class to be decorated.
+    close_on_run : bool, default is True
+        If True, magicgui created by every method will be deleted after the method is completed without
+        exceptions, i.e. magicgui is more like a dialog.
+    popup : bool, default is True
+        If True, magicgui created by every method will be poped up, else they will be appended as a
+        part of the main widget.
+    parent : magicgui.widgets._base.Widget, optional
+        Parent widget if exists.
     
+    Returns
+    -------
+    Decorated class or decorator.
+    """    
+
+    if popup_mode is None:
+        popup_mode = defaults["popup_mode"]
+    if close_on_run is None:
+        close_on_run = defaults["close_on_run"]
+    if error_mode is None:
+        error_mode = defaults["error_mode"]
+        
     popup_mode = _popup_deprecation(popup, popup_mode)
         
     if popup_mode in (PopUpMode.above, PopUpMode.below, PopUpMode.first, PopUpMode.last):
@@ -244,8 +250,12 @@ def _call_magicmenu(class_: type = None,
         def __init__(self, *args, **kwargs):
             app = get_app() # Without "app = " Jupyter freezes after closing the window!
             macro_init = Expr.parse_init(self, cls, args, kwargs)
-            menugui_class.__init__(self, parent=parent, close_on_run=close_on_run,
-                                   popup_mode=PopUpMode(popup_mode))
+            menugui_class.__init__(self, 
+                                   parent=parent,
+                                   close_on_run=close_on_run,
+                                   popup_mode=PopUpMode(popup_mode),
+                                   error_mode=ErrorMode(error_mode),
+                                   )
             super(oldclass, self).__init__(*args, **kwargs)
             self._convert_attributes_into_widgets()
             
@@ -263,6 +273,9 @@ def _call_magicmenu(class_: type = None,
         return newclass
     
     return wrapper if class_ is None else wrapper(class_)
+
+magicmenu.__doc__ += _call_magicmenu.__doc__
+magiccontext.__doc__ += _call_magicmenu.__doc__
 
 def _popup_deprecation(popup, popup_mode):
     if not popup:
