@@ -289,3 +289,32 @@ def _popup_deprecation(popup, popup_mode):
         return PopUpMode.parentlast
     else:
         return popup_mode
+
+
+class Parameters:
+    def __init__(self):
+        sig = [inspect.Parameter(name="self", 
+                                 kind=inspect.Parameter.POSITIONAL_OR_KEYWORD)]
+        for name, attr in inspect.getmembers(self):
+            if name.startswith("__") or callable(attr):
+                continue
+            sig.append(inspect.Parameter(name=name, 
+                                         kind=inspect.Parameter.POSITIONAL_OR_KEYWORD,
+                                         default=attr)
+                           )
+        if hasattr(self.__class__, "__annotations__"):
+            annot = self.__class__.__annotations__
+            for name, t in annot.items():
+                sig.append(inspect.Parameter(name=name, 
+                                             kind=inspect.Parameter.POSITIONAL_OR_KEYWORD,
+                                             annotation=t))
+        
+        self.__signature__ = inspect.Signature(sig)
+        self.__name__ = self.__class__.__name__
+        self.__qualname__ = self.__class__.__qualname__
+    
+    def __call__(self, *args):
+        params = list(self.__signature__.parameters.keys())[1:]
+        for a, param in zip(args, params):
+            setattr(self, param, a)
+    

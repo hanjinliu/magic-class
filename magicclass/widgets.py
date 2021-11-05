@@ -39,6 +39,9 @@ class FrozenContainer(Container):
         widget.setParent(self.native)
 
 class Figure(FrozenContainer):
+    """
+    A matplotlib figure canvas.
+    """    
     def __init__(self, 
                  nrows: int = 1,
                  ncols: int = 1,
