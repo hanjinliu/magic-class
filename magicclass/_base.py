@@ -306,7 +306,7 @@ class BaseGui:
                 # NOTE: callback must be defined inside function. Magic class must be
                 # "compiled" otherwise function wrappings are not ready!
                 mgui = _build_mgui(widget, func)
-                mgui.parent = self
+                mgui.native.setParent(self.native, mgui.native.windowFlags())
                 if mgui.call_count == 0 and len(mgui.called._slots) == 0 and record:
                     callback = _temporal_function_gui_callback(self, mgui, widget)
                     mgui.called.connect(callback)
@@ -319,7 +319,7 @@ class BaseGui:
             # We don't want to open a magicgui dialog and again open a file dialog.
             def run_function():
                 mgui = _build_mgui(widget, func)
-                mgui.parent = self
+                mgui.native.setParent(self.native, mgui.native.windowFlags())
                 if mgui.call_count == 0 and len(mgui.called._slots) == 0 and record:
                     callback = _temporal_function_gui_callback(self, mgui, widget)
                     mgui.called.connect(callback)

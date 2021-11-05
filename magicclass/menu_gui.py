@@ -1,6 +1,8 @@
 from __future__ import annotations
 from typing import Callable
+import warnings
 from magicgui.events import Signal
+from magicgui.widgets import Container
 from magicgui.widgets._bases import ButtonWidget
 from qtpy.QtGui import QIcon
 from qtpy.QtWidgets import QMenu, QAction
@@ -107,6 +109,16 @@ class MenuGuiBase(BaseGui):
                  popup_mode: str|PopUpMode = None,
                  error_mode: str|ErrorMode = None
                  ):
+        if popup_mode in (PopUpMode.above, PopUpMode.below, PopUpMode.first):
+            msg = f"magicmenu does not support popup mode {popup_mode.value}."\
+                   "PopUpMode.popup is used instead"
+            warnings.warn(msg, UserWarning)
+        elif popup_mode == PopUpMode.last:
+            msg = f"magicmenu does not support popup mode {popup_mode.value}."\
+                   "PopUpMode.parentlast is used instead"
+            warnings.warn(msg, UserWarning)
+            popup_mode = PopUpMode.parentlast
+            
         super().__init__(close_on_run=close_on_run, popup_mode=popup_mode, error_mode=error_mode)
         name = name or self.__class__.__name__
         self.native = QMenu(name, parent)
@@ -176,7 +188,7 @@ class MenuGuiBase(BaseGui):
             
             if name.startswith("_"):
                 continue
-            if callable(widget) or isinstance(widget, (MenuGuiBase, Action, Separator)):
+            if callable(widget) or isinstance(widget, (MenuGuiBase, Action, Separator, Container)):
                 self.append(widget)
         
         return None
@@ -191,7 +203,7 @@ class MenuGuiBase(BaseGui):
             raise KeyError(key)
         return out
     
-    def append(self, obj: Callable|MenuGuiBase|Action|Separator):
+    def append(self, obj: Callable | MenuGuiBase | Action | Separator | Container):
         if isinstance(obj, self._component_class):
             self.native.addAction(obj.native)
             self._list.append(obj)
@@ -205,6 +217,13 @@ class MenuGuiBase(BaseGui):
             self._list.append(obj)
         elif isinstance(obj, Separator):
             self.native.addSeparator()
+        elif isinstance(obj, Container):
+            obj.__magicclass_parent__ = self
+            obj.native.setParent(self.native, obj.native.windowFlags())
+            _func = lambda: obj.show()
+            _func.__name__ = obj.name
+            action = self._create_widget_from_method(_func)
+            self.append(action)
         else:
             raise TypeError(f"{type(obj)} is not supported.")
 
