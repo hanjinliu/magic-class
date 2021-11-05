@@ -5,6 +5,26 @@ from .utils import get_signature
 
 def upgrade_signature(func, gui_options: dict = None, caller_options: dict = None,
                       additional_options: dict = None):
+    """
+    Upgrade function signature to MagicMethodSignature. The input function may have
+    a inspect.Signature or magicgui.signature.Magicsignature.
+
+    Parameters
+    ----------
+    func : callable
+        Input function.
+    gui_options : dict, optional
+        Options of FunctionGui.
+    caller_options : dict, optional
+        Options of PushButton.
+    additional_options : dict, optional
+        Additional options that will be used in magic class.
+
+    Returns
+    -------
+    callable
+        Same function with upgraded signature
+    """
     gui_options = gui_options or {}
     caller_options = caller_options or {}
     additional_options = additional_options or {}

@@ -158,44 +158,52 @@ class BaseGui:
         Callable
             Same method as input, but has updated signature to hide the button.
         """      
+            
         def wrapper(method: Callable):
             # Base function to get access to the original function
             def _childmethod(self: cls, *args, **kwargs):
-                _, parent_method = _search_wrapper(self, funcname, clsname)
-                return parent_method(*args, **kwargs)
+                _, _parent_method = _search_wrapper(self, funcname, clsname)
+                return _parent_method(*args, **kwargs)
             
+            if isinstance(method, FunctionGui):
+                fgui = method
+                parent_method = fgui._function
+            else:
+                fgui = None
+                parent_method = method
+                
             # Must be template as long as this wrapper function is called
             if template is None:
-                _wrap_func = functools_wraps(method)
+                _wrap_func = functools_wraps(parent_method)
             else:
                 def _wrap_func(f):
-                    f = _wraps(template, reference=method)(f)
-                    f.__wrapped__ = method
-                    f.__name__ = method.__name__
-                    f.__qualname__ = method.__qualname__
+                    f = _wraps(template, reference=parent_method)(f)
+                    f.__wrapped__ = parent_method
+                    f.__name__ = parent_method.__name__
+                    f.__qualname__ = parent_method.__qualname__
                     return f
                     
             # If method is defined as a member of class X, __qualname__ will be X.<method name>.
             # We can know the namespace of the wrapped function with __qualname__.
             if isinstance(method, FunctionGui):
-                clsname, funcname = method._function.__qualname__.split(".")
+                clsname, funcname = fgui._function.__qualname__.split(".")
                 options = dict(
-                    call_button=method._call_button.text if method._call_button else None,
-                    layout=method.layout,
-                    labels=method.labels,
-                    auto_call=method._auto_call,
-                    result_widget=bool(method._result_widget)
+                    call_button=fgui._call_button.text if fgui._call_button else None,
+                    layout=fgui.layout,
+                    labels=fgui.labels,
+                    auto_call=fgui._auto_call,
+                    result_widget=bool(fgui._result_widget)
                     )
-                method = method._function
+                
                 childmethod = magicgui(**options)(_wrap_func(_childmethod))
-                method = _copy_function(method)
+                parent_method = _copy_function(parent_method)
             
             else:
-                clsname, funcname = method.__qualname__.split(".")
+                clsname, funcname = parent_method.__qualname__.split(".")
                 childmethod = _wrap_func(_childmethod)
             
             # To avoid two buttons with same bound function being showed up
-            upgrade_signature(method, caller_options={"visible": False})
+            upgrade_signature(parent_method, caller_options={"visible": False})
             
             if hasattr(cls, funcname):
                 # Sometimes we want to pre-define function to arrange the order of widgets.
@@ -204,13 +212,13 @@ class BaseGui:
                 predifined.__magicclass_wrapped__ = childmethod
                 if hasattr(childmethod, "__signature__"):
                     predifined.__signature__ = childmethod.__signature__
-                method.__doc__ = method.__doc__ or predifined.__doc__
+                parent_method.__doc__ = parent_method.__doc__ or predifined.__doc__
             else:
                 setattr(cls, funcname, childmethod)
             
-            childmethod.__doc__ = method.__doc__
+            childmethod.__doc__ = parent_method.__doc__
             
-            return method
+            return parent_method
         
         return wrapper if method is None else wrapper(method)
     
