@@ -4,53 +4,50 @@ from typing import Sequence, overload
 import numpy as np
 from magicgui.events import Signal
 from .graph_items import PlotDataItem, Scatter, Curve, TextOverlay
+from .mouse_event import MouseClickEvent
 from ..widgets import FrozenContainer
 
 BOTTOM = "bottom"
 LEFT = "left"
 
-class SingleRegion:
-    region_changed = Signal(tuple[float, float])
-    
-    def __init__(self):
-        self.regionitem = pg.LinearRegionItem()
-        @self.regionitem.sigRegionChanged.connect
-        def _(e=None):
-            self.region_changed.emit(self.regionitem.getRegion())
-    
-    @property
-    def region(self) -> tuple[float, float]:
-        return self.regionitem.getRegion()
-    
-    @region.setter
-    def region(self, value: tuple[float, float]):
-        self.regionitem.setRegion(value)
-    
-    @property
-    def region_visible(self) -> bool:
-        return self.regionitem.isVisible()
-    
-    @region_visible.setter
-    def region_visible(self, value: bool):
-        self.regionitem.setVisible(value)
-    
-class MultiRegion:
-    regionitems: list[pg.LinearRegionItem]
-        
-class Canvas(FrozenContainer, SingleRegion):
+class Canvas(FrozenContainer):
     """
     A 1-D data viewer that have similar API as napari Viewer.
     """    
+    region_changed = Signal(tuple[float, float])
+    
     def __init__(self, region_visible=False, **kwargs):
         super().__init__(**kwargs)
+        
+        # prepare widget
         self.plotwidget = pg.PlotWidget()
         self._items: list[PlotDataItem] = []
         self.set_widget(self.plotwidget)
         
-        SingleRegion.__init__(self)
+        # prepare region item
+        self.regionitem = pg.LinearRegionItem()
+        @self.regionitem.sigRegionChanged.connect
+        def _(e=None):
+            self.region_changed.emit(self.regionitem.getRegion())
+            
         self.plotwidget.addItem(self.regionitem, ignoreBounds=True)
         self.region_visible = region_visible
-               
+        
+        # prepare mouse event
+        self.mouse_click_callbacks = []
+        self.plotwidget.scene().sigMouseClicked.connect(self._mouse_clicked)
+    
+    def _mouse_clicked(self, e):
+        if len(self._items) == 0:
+            return
+        e = MouseClickEvent(e, self._items[0].native)
+        for callback in self.mouse_click_callbacks:
+            callback(e)
+    
+    @property
+    def layer(self) -> list[PlotDataItem]:
+        return self._items
+    
     @property
     def xlabel(self):
         return self.plotwidget.plotItem.getLabel(BOTTOM).text or ""
@@ -82,6 +79,22 @@ class Canvas(FrozenContainer, SingleRegion):
     @ylim.setter
     def ylim(self, value: tuple[float, float]):
         self.plotwidget.setYRange(*value)
+    
+    @property
+    def region(self) -> tuple[float, float]:
+        return self.regionitem.getRegion()
+    
+    @region.setter
+    def region(self, value: tuple[float, float]):
+        self.regionitem.setRegion(value)
+    
+    @property
+    def region_visible(self) -> bool:
+        return self.regionitem.isVisible()
+    
+    @region_visible.setter
+    def region_visible(self, value: bool):
+        self.regionitem.setVisible(value)
         
     @overload
     def add_curve(self, x: Sequence[float], **kwargs): ...
@@ -89,10 +102,14 @@ class Canvas(FrozenContainer, SingleRegion):
     @overload
     def add_curve(self, x: Sequence[float], y: Sequence[float], **kwargs): ...
     
-    def add_curve(self, x, y=None, **kwargs):
+    def add_curve(self, x=None, y=None, **kwargs):
         if y is None:
-            y = x
-            x = np.arange(len(y))
+            if x is None:
+                x = []
+                y = []
+            else:
+                y = x
+                x = np.arange(len(y))
         item = Curve(x, y, **kwargs)
         self._items.append(item)
         self.plotwidget.addItem(item.native)
@@ -103,10 +120,14 @@ class Canvas(FrozenContainer, SingleRegion):
     @overload
     def add_scatter(self, x: Sequence[float], y: Sequence[float], **kwargs): ...
       
-    def add_scatter(self, x, y=None, **kwargs):
+    def add_scatter(self, x=None, y=None, **kwargs):
         if y is None:
-            y = x
-            x = np.arange(len(y))
+            if x is None:
+                x = []
+                y = []
+            else:
+                y = x
+                x = np.arange(len(y))
         item = Scatter(x, y, **kwargs)
         self._items.append(item)
         self.plotwidget.addItem(item.native)
@@ -117,18 +138,35 @@ class Canvas(FrozenContainer, SingleRegion):
             raise ValueError(f"Item {item} not found")
         item = self._items.pop(i)
         self.plotwidget.removeItem(item.native)
-
+    
 
 class ImageCanvas(FrozenContainer):
     def __init__(self, image: np.ndarray = None, **kwargs):
         super().__init__(**kwargs)
         self.imageview = pg.ImageView(imageItem=image)
         self.set_widget(self.imageview)
-        self._text_overlay = TextOverlay("", "gray")
+        
+        # prpare text overlay
+        self._text_overlay = TextOverlay(text="", color="gray")
         self.imageview.scene.addItem(self._text_overlay.native)
+        
+        # prepare mouse event
+        self.mouse_click_callbacks = []
+        self.imageview.scene.sigMouseClicked.connect(self._mouse_clicked)
+    
+    def _mouse_clicked(self, e):
+        items = self.imageview.view.addedItems
+        if len(items) == 0:
+            return
+        e = MouseClickEvent(e, items[0])
+        for callback in self.mouse_click_callbacks:
+            callback(e)
     
     @property
     def text_overlay(self):
+        """
+        Text overlay on the image.
+        """        
         return self._text_overlay
     
     @property
@@ -153,6 +191,9 @@ class ImageCanvas(FrozenContainer):
     
     @property
     def view_range(self) -> list[list[float, float]]:
+        """
+        Range of image (edge coordinates of canvas).
+        """        
         return self.imageview.view.viewRange()
     
     @view_range.setter
@@ -160,13 +201,29 @@ class ImageCanvas(FrozenContainer):
         yrange, xrange = value
         self.imageview.view.setRange(xRange=xrange, yRange=yrange)
     
-    def show_hist(self, visible: bool):
+    def show_hist(self, visible: bool = True):
+        """
+        Set visibility of intensity histogram.
+
+        Parameters
+        ----------
+        visible : bool
+            Visibility of histogram
+        """        
         if visible:
             self.imageview.ui.histogram.show()
         else:
             self.imageview.ui.histogram.hide()
         
-    def show_button(self, visible: bool):
+    def show_button(self, visible: bool = True):
+        """
+        Set visibility of ROI/Norm buttons.
+
+        Parameters
+        ----------
+        visible : bool
+            Visibility of ROI/Norm buttons
+        """        
         if visible:
             self.imageview.ui.menuBtn.show()
             self.imageview.ui.roiBtn.show()

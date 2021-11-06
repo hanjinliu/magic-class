@@ -7,28 +7,57 @@ def _convert_color_code(c):
     if not isinstance(c, str):
         c = np.asarray(c) * 255
     return c
-    
 
 class PlotDataItem:
-    base_item: type[pg.PlotDataItem]
-    def __init__(self, x, y, **kwargs):
+    base_item: type[pg.PlotCurveItem|pg.ScatterPlotItem]
+    def __init__(self, x, y, name=None, **kwargs):
+        if "color" in kwargs:
+            # alias for consistency with matplotlib
+            kwargs["pen"] = kwargs.pop("color")
+            
         self.native = self.base_item(x=x, y=y, **kwargs)
+        self.name = name
     
     @property
-    def xdata(self):
-        return self.native.xData
+    def xdata(self) -> np.ndarray:
+        return self.native.getData()[0]
     
     @xdata.setter
-    def xdata(self, value):
-        self.native.setData(value, self.native.yData)
+    def xdata(self, value: Sequence[float]):
+        self.native.setData(value, self.ydata)
     
     @property
-    def ydata(self):
-        return self.native.yData
+    def ydata(self) -> np.ndarray:
+        return self.native.getData()[1]
     
     @ydata.setter
-    def ydata(self, value):
-        self.native.setData(self.native.xData, value)
+    def ydata(self, value: Sequence[float]):
+        self.native.setData(self.xdata, value)
+    
+    @property
+    def ndata(self) -> int:
+        return self.native.getData()[0].size
+
+    def __len__(self) -> int:
+        return self.native.getData()[0].size
+        
+    def add(self, points: np.ndarray | Sequence):
+        points = np.atleast_2d(points)
+        if points.shape[1] != 2:
+            raise ValueError("Points must be of the shape (N, 2).")
+        self.native.setData(np.concatenate([self.xdata, points[:, 0]]), 
+                            np.concatenate([self.ydata, points[:, 1]])
+                            )
+        return None
+    
+    def remove(self, i: int | Sequence[int]):
+        if isinstance(i, int):
+            i = [i]
+        sl = list(set(range(self.ndata)) - set(i))
+        xdata = self.xdata[sl]
+        ydata = self.ydata[sl]
+        self.native.setData(xdata, ydata)
+        return None
     
     @property
     def visible(self):
