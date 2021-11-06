@@ -10,7 +10,75 @@ from ..widgets import FrozenContainer
 BOTTOM = "bottom"
 LEFT = "left"
 
-class Canvas(FrozenContainer):
+class HasPlotItem:
+    _items: list[PlotDataItem]
+    
+    @property
+    def _graphics(self):
+        """target widget to add graphics items."""
+        raise NotImplementedError()
+
+    @property
+    def layers(self) -> list[PlotDataItem]:
+        return self._items
+    
+    @overload
+    def add_curve(self, x: Sequence[float], **kwargs): ...
+    
+    @overload
+    def add_curve(self, x: Sequence[float], y: Sequence[float], **kwargs): ...
+    
+    def add_curve(self, x=None, y=None, **kwargs):
+        if y is None:
+            if x is None:
+                x = []
+                y = []
+            else:
+                y = x
+                x = np.arange(len(y))
+        item = Curve(x, y, **kwargs)
+        self._add_item(item)
+    
+    @overload
+    def add_scatter(self, x: Sequence[float], **kwargs): ...
+    
+    @overload
+    def add_scatter(self, x: Sequence[float], y: Sequence[float], **kwargs): ...
+      
+    def add_scatter(self, x=None, y=None, **kwargs):
+        if y is None:
+            if x is None:
+                x = []
+                y = []
+            else:
+                y = x
+                x = np.arange(len(y))
+        item = Scatter(x, y, **kwargs)
+        self._add_item(item)
+        
+    
+    def _add_item(self, item: PlotDataItem):
+        self._items.append(item)
+        self._graphics.addItem(item.native)
+    
+    def remove_item(self, item: PlotDataItem | int | str):
+        if isinstance(item, PlotDataItem):
+            i = self._items.index(item)
+        elif isinstance(item, int):
+            i = item
+        elif isinstance(item, str):
+            for i, each in enumerate(self._items):
+                if each.name == item:
+                    break
+            else:
+                raise ValueError(f"No item named {item}")
+            
+        if i < 0:
+            raise ValueError(f"Item {item} not found")
+        item = self._items.pop(i)
+        self._graphics.removeItem(item.native)
+
+class Canvas(FrozenContainer, HasPlotItem):
     """
     A 1-D data viewer that have similar API as napari Viewer.
     """    
@@ -45,8 +113,8 @@ class Canvas(FrozenContainer):
             callback(e)
     
     @property
-    def layer(self) -> list[PlotDataItem]:
-        return self._items
+    def _graphics(self):
+        return self.plotwidget
     
     @property
     def xlabel(self):
@@ -95,56 +163,15 @@ class Canvas(FrozenContainer):
     @region_visible.setter
     def region_visible(self, value: bool):
         self.regionitem.setVisible(value)
-        
-    @overload
-    def add_curve(self, x: Sequence[float], **kwargs): ...
-    
-    @overload
-    def add_curve(self, x: Sequence[float], y: Sequence[float], **kwargs): ...
-    
-    def add_curve(self, x=None, y=None, **kwargs):
-        if y is None:
-            if x is None:
-                x = []
-                y = []
-            else:
-                y = x
-                x = np.arange(len(y))
-        item = Curve(x, y, **kwargs)
-        self._items.append(item)
-        self.plotwidget.addItem(item.native)
-    
-    @overload
-    def add_scatter(self, x: Sequence[float], **kwargs): ...
-    
-    @overload
-    def add_scatter(self, x: Sequence[float], y: Sequence[float], **kwargs): ...
-      
-    def add_scatter(self, x=None, y=None, **kwargs):
-        if y is None:
-            if x is None:
-                x = []
-                y = []
-            else:
-                y = x
-                x = np.arange(len(y))
-        item = Scatter(x, y, **kwargs)
-        self._items.append(item)
-        self.plotwidget.addItem(item.native)
-    
-    def remove_item(self, item: PlotDataItem):
-        i = self._items.index(item)
-        if i < 0:
-            raise ValueError(f"Item {item} not found")
-        item = self._items.pop(i)
-        self.plotwidget.removeItem(item.native)
-    
+       
 
-class ImageCanvas(FrozenContainer):
+class ImageCanvas(FrozenContainer, HasPlotItem):
     def __init__(self, image: np.ndarray = None, **kwargs):
         super().__init__(**kwargs)
         self.imageview = pg.ImageView(imageItem=image)
         self.set_widget(self.imageview)
+        self._interactive = True
+        self._items: list[PlotDataItem] = []
         
         # prpare text overlay
         self._text_overlay = TextOverlay(text="", color="gray")
@@ -153,6 +180,7 @@ class ImageCanvas(FrozenContainer):
         # prepare mouse event
         self.mouse_click_callbacks = []
         self.imageview.scene.sigMouseClicked.connect(self._mouse_clicked)
+        
     
     def _mouse_clicked(self, e):
         items = self.imageview.view.addedItems
@@ -163,10 +191,12 @@ class ImageCanvas(FrozenContainer):
             callback(e)
     
     @property
+    def _graphics(self):
+        return self.imageview.view
+    
+    @property
     def text_overlay(self):
-        """
-        Text overlay on the image.
-        """        
+        """Text overlay on the image."""        
         return self._text_overlay
     
     @property
@@ -201,6 +231,18 @@ class ImageCanvas(FrozenContainer):
         yrange, xrange = value
         self.imageview.view.setRange(xRange=xrange, yRange=yrange)
     
+    @property
+    def interactive(self) -> bool:
+        """
+        Mouse interactivity
+        """        
+        return self._interactive
+    
+    @interactive.setter
+    def interactive(self, value: bool):
+        self.imageview.view.setMouseEnabled(value, value)
+        self._interactive = value
+            
     def show_hist(self, visible: bool = True):
         """
         Set visibility of intensity histogram.
@@ -230,4 +272,4 @@ class ImageCanvas(FrozenContainer):
         else:
             self.imageview.ui.menuBtn.hide()
             self.imageview.ui.roiBtn.hide()
-        
+    
