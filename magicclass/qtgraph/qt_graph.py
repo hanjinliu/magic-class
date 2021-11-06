@@ -118,6 +118,9 @@ class Canvas(FrozenContainer, HasPlotItem):
     
     @property
     def xlabel(self):
+        """
+        Label of X-axis.
+        """        
         return self.plotwidget.plotItem.getLabel(BOTTOM).text or ""
     
     @xlabel.setter
@@ -126,6 +129,9 @@ class Canvas(FrozenContainer, HasPlotItem):
     
     @property
     def xlim(self):
+        """
+        Range limits of X-axis.
+        """        
         return self.plotwidget.plotItem.getAxis(BOTTOM).range
     
     @xlim.setter
@@ -134,6 +140,9 @@ class Canvas(FrozenContainer, HasPlotItem):
         
     @property
     def ylabel(self) -> str:
+        """
+        Label of Y-axis.
+        """        
         return self.plotwidget.plotItem.getLabel(LEFT).text or ""
         
     @ylabel.setter
@@ -142,6 +151,9 @@ class Canvas(FrozenContainer, HasPlotItem):
        
     @property
     def ylim(self):
+        """
+        Range limits of Y-axis.
+        """        
         return self.plotwidget.plotItem.getAxis(LEFT).range
     
     @ylim.setter
@@ -150,6 +162,9 @@ class Canvas(FrozenContainer, HasPlotItem):
     
     @property
     def region(self) -> tuple[float, float]:
+        """
+        Get the limits of linear region.
+        """        
         return self.regionitem.getRegion()
     
     @region.setter
@@ -158,6 +173,9 @@ class Canvas(FrozenContainer, HasPlotItem):
     
     @property
     def region_visible(self) -> bool:
+        """
+        Linear region visibility.
+        """        
         return self.regionitem.isVisible()
     
     @region_visible.setter
@@ -195,12 +213,12 @@ class ImageCanvas(FrozenContainer, HasPlotItem):
         return self.imageview.view
     
     @property
-    def text_overlay(self):
+    def text_overlay(self) -> TextOverlay:
         """Text overlay on the image."""        
         return self._text_overlay
     
     @property
-    def image(self):
+    def image(self) -> np.ndarray:
         return self.imageview.image
         
     @image.setter
@@ -213,6 +231,9 @@ class ImageCanvas(FrozenContainer, HasPlotItem):
     
     @property
     def contrast_limits(self):
+        """
+        Contrast limits of image.
+        """        
         return self.imageview.levelMin, self.imageview.levelMax
     
     @contrast_limits.setter
