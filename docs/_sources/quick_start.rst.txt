@@ -16,8 +16,8 @@ In ``magicgui``, you can convert functions into widgets. For instance,
 
 will create a widget that is composed of a line edit (for the input argument ``text``) and a call button.
 
-Similarly, with ``magicclass`` decorator, you can convert a Python class into a widget and its methods appear as
-push buttons. When a button is clicked, the corresponding magicgui will be popped up.
+Similarly, with ``magicclass`` decorator, you can convert a Python class into a `magicgui`'s `Container` widget
+and its methods appear as push buttons. When a button is clicked, the corresponding magicgui will be popped up.
 
 .. code-block:: python
 
@@ -30,3 +30,80 @@ push buttons. When a button is clicked, the corresponding magicgui will be poppe
         
         def print_value(self):
             print(self.value)
+
+    ui = MyClass()
+    ui.show()
+
+.. image:: images/fig_1-1.png
+
+.. note::
+    Methods whose names start with "_" are considered as inner functions so that they will not be converted
+    into widgets, except for ``__call__`` method.
+
+Use Other Widgets in magic-class
+--------------------------------
+
+Magic classes can also detect other `magicgui`'s widgets.
+
+.. code-block:: python
+
+    from magicgui.widgets import LineEdit, Slider
+    from magicclass import magicclass
+
+    @magicclass
+    class MyClass:
+        s = LineEdit(label="Name:")
+        i = Slider(label="Age:", max=100)
+        def print(self):
+            print(f"{self.s.value} ({self.i.value})")
+
+    ui = MyClass()
+    ui.show()
+
+.. image:: images/fig_1-2.png
+
+.. note::
+    I highly recommend using ``field`` function to create widgets in magic classes.
+    See :doc:`use_field`.
+
+If a method is decorated with ``@magicgui``, it will directly added in the container widget, in place of a 
+push button. This is natural because decorated methods are no longer functions, but `FunctionGui` widgets.
+
+.. code-block:: python
+
+    from magicgui import magicgui
+    from magicclass import magicclass
+
+    @magicclass
+    class MyClass:
+        @magicgui
+        def input_parameters(self, s: str, i: int):
+            self.s = s
+            self.i = i
+
+        def print(self):
+            print(f"{self.s} ({self.i})")
+
+    ui = MyClass()
+    ui.show()
+
+.. image:: images/fig_1-3.png
+
+Macro Recording
+---------------
+
+Another outstanding feature of magic class is its **macro recorder functionalities**. Function calls and
+value changes in child widgets are all recorded and you can generate executable Python script at any time.
+
+You can generate Python script as string using ``create_macro`` method.
+
+.. code-block:: python
+
+    macro = ui.create_macro()
+    print(macro)
+
+or in a text editor window.
+
+.. code-block:: python
+
+    ui.create_macro(show=True)

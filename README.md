@@ -6,6 +6,10 @@ Decorate your classes with `@magicclass` and you can use the class both in GUI a
 
 `magic-class` is work in progress. Feel free to report issues and make suggestions!
 
+## Documentation
+
+Documentation is available [here](https://hanjinliu.github.io/magic-class/).
+
 ## Installation
 
 - use pip

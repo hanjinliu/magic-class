@@ -18,7 +18,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Use field in magic-class" href="use_field.html" />
+    <link rel="next" title="Nest magic-classes" href="nest.html" />
     <link rel="prev" title="Welcome to magic-class documentation!" href="index.html" /> 
 </head>
 
@@ -41,9 +41,15 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Quick Start</a></li>
-<li class="toctree-l1"><a class="reference internal" href="use_field.html">Use field in magic-class</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Quick Start</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#use-other-widgets-in-magic-class">Use Other Widgets in magic-class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#macro-recording">Macro Recording</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="nest.html">Nest magic-classes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="use_field.html">Use Fields in magic-class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="use_wraps.html">Use wraps in magic-class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="special_methods.html">Special Methods in magic-class</a></li>
 </ul>
 
         </div>
@@ -83,8 +89,8 @@
 </pre></div>
 </div>
 <p>will create a widget that is composed of a line edit (for the input argument <code class="docutils literal notranslate"><span class="pre">text</span></code>) and a call button.</p>
-<p>Similarly, with <code class="docutils literal notranslate"><span class="pre">magicclass</span></code> decorator, you can convert a Python class into a widget and its methods appear as
-push buttons. When a button is clicked, the corresponding magicgui will be popped up.</p>
+<p>Similarly, with <code class="docutils literal notranslate"><span class="pre">magicclass</span></code> decorator, you can convert a Python class into a <cite>magicgui</cite>'s <cite>Container</cite> widget
+and its methods appear as push buttons. When a button is clicked, the corresponding magicgui will be popped up.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span>
 
 <span class="nd">@magicclass</span>
@@ -94,8 +100,75 @@ push buttons. When a button is clicked, the corresponding magicgui will be poppe
 
     <span class="k">def</span> <span class="nf">print_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+<span class="n">ui</span> <span class="o">=</span> <span class="n">MyClass</span><span class="p">()</span>
+<span class="n">ui</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
+<img alt="_images/fig_1-1.png" src="_images/fig_1-1.png" />
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Methods whose names start with &quot;_&quot; are considered as inner functions so that they will not be converted
+into widgets, except for <code class="docutils literal notranslate"><span class="pre">__call__</span></code> method.</p>
+</div>
+<section id="use-other-widgets-in-magic-class">
+<h2>Use Other Widgets in magic-class<a class="headerlink" href="#use-other-widgets-in-magic-class" title="Permalink to this headline">¶</a></h2>
+<p>Magic classes can also detect other <cite>magicgui</cite>'s widgets.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">LineEdit</span><span class="p">,</span> <span class="n">Slider</span>
+<span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span>
+
+<span class="nd">@magicclass</span>
+<span class="k">class</span> <span class="nc">MyClass</span><span class="p">:</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">LineEdit</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Name:&quot;</span><span class="p">)</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="n">Slider</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Age:&quot;</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">print</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">i</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+
+<span class="n">ui</span> <span class="o">=</span> <span class="n">MyClass</span><span class="p">()</span>
+<span class="n">ui</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="_images/fig_1-2.png" src="_images/fig_1-2.png" />
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>I highly recommend using <code class="docutils literal notranslate"><span class="pre">field</span></code> function to create widgets in magic classes.
+See <a class="reference internal" href="use_field.html"><span class="doc">Use Fields in magic-class</span></a>.</p>
+</div>
+<p>If a method is decorated with <code class="docutils literal notranslate"><span class="pre">&#64;magicgui</span></code>, it will directly added in the container widget, in place of a
+push button. This is natural because decorated methods are no longer functions, but <cite>FunctionGui</cite> widgets.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicgui</span> <span class="kn">import</span> <span class="n">magicgui</span>
+<span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span>
+
+<span class="nd">@magicclass</span>
+<span class="k">class</span> <span class="nc">MyClass</span><span class="p">:</span>
+    <span class="nd">@magicgui</span>
+    <span class="k">def</span> <span class="nf">input_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">s</span> <span class="o">=</span> <span class="n">s</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="n">i</span>
+
+    <span class="k">def</span> <span class="nf">print</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">i</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+
+<span class="n">ui</span> <span class="o">=</span> <span class="n">MyClass</span><span class="p">()</span>
+<span class="n">ui</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="_images/fig_1-3.png" src="_images/fig_1-3.png" />
+</section>
+<section id="macro-recording">
+<h2>Macro Recording<a class="headerlink" href="#macro-recording" title="Permalink to this headline">¶</a></h2>
+<p>Another outstanding feature of magic class is its <strong>macro recorder functionalities</strong>. Function calls and
+value changes in child widgets are all recorded and you can generate executable Python script at any time.</p>
+<p>You can generate Python script as string using <code class="docutils literal notranslate"><span class="pre">create_macro</span></code> method.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">macro</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">create_macro</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">macro</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>or in a text editor window.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ui</span><span class="o">.</span><span class="n">create_macro</span><span class="p">(</span><span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
 </section>
 
 
@@ -103,7 +176,7 @@ push buttons. When a button is clicked, the corresponding magicgui will be poppe
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="index.html" class="btn btn-neutral float-left" title="Welcome to magic-class documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="use_field.html" class="btn btn-neutral float-right" title="Use field in magic-class" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="nest.html" class="btn btn-neutral float-right" title="Nest magic-classes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

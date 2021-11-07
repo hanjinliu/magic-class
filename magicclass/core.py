@@ -58,7 +58,7 @@ def magicclass(class_: type|None = None,
                popup: bool = True,
                popup_mode: str | PopUpMode = None,
                error_mode: str | ErrorMode = None,
-               widget_type: WidgetType | str = WidgetType.none,
+               widget_type: str | WidgetType = WidgetType.none,
                parent = None
                ) -> ClassGui:
     """
