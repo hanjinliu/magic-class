@@ -27,10 +27,12 @@ Contents
    :maxdepth: 1
 
    quick_start
+   options
    nest
    use_field
    use_wraps
    special_methods
+   containers
 
 
 Indices and tables

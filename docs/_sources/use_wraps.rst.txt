@@ -60,6 +60,10 @@ The wrapped parent method will not appear in the parent widget because they alre
 
     1. It plays as an "index" of functions. One can know what functions are implemented in the GUI, and in what
        order they will appear in widgets.
-       
+
     2. If the widget is composed of nested magic classes and other widgets or fields, the order of
        widgets will not be sorted due to different timing of widget creation.
+
+Use Template Function
+---------------------
+
