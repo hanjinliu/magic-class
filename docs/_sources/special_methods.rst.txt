@@ -1,9 +1,25 @@
-==============================
-Special Methods in magic-class
-==============================
+=================================
+Special attributes in magic-class
+=================================
 
-- ``__post_init__``
+There are some special attributes that will be recognized differently by magic classes. 
 
-- ``__call__``
+* ``__post_init__``
 
-- ``__magicclass_parent__``
+    Similar to builtin ``dataclass``, this method will be called after ``__init__`` had finished.
+    This method is necessary because widgets are created after instance construction so you cannot
+    refer to the widgets in ``__init__`` function. For instance, you can set widget geometry in
+    ``__post_init__``.
+  
+    .. code-block:: python
+    
+        @magicclass
+        class Main:
+            def __post_init__(self):
+                self["func"].min_height = 100
+    
+            def func(self): ...
+
+* ``__call__``
+
+* ``__magicclass_parent__``

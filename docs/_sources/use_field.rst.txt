@@ -3,7 +3,7 @@ Use Fields in magic-class
 =========================
 
 When widgets are directly provided in a magic class as class variables, they should be considered as "fields".
-The concept of fields was actually introduced in Python as an standard library ``dataclasses`` as a ``Field``
+The concept of fields was actually introduced in Python as an builtin library ``dataclasses`` as a ``Field``
 object. A field is in a state of "ready to be converted into a object", i.e., a new object is created for every 
 instance construction.
 

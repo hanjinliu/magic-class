@@ -64,6 +64,39 @@ The wrapped parent method will not appear in the parent widget because they alre
     2. If the widget is composed of nested magic classes and other widgets or fields, the order of
        widgets will not be sorted due to different timing of widget creation.
 
-Use Template Function
----------------------
+Use Template Functions
+----------------------
 
+Sometimes you may want to define many functions with same parameter names.
+
+A typical example is ``seaborn``. It has meny plot functions with identical arguments such as ``x``, ``y`` and
+``hue``. If you annotate all the arguments, your code will look very "noisy".
+
+``magicclass`` provides a method that can copy annotations from a template function to some target functions,
+and this function is integrated in ``wraps`` method (You might have noticed that ``functools.wraps`` does a
+similar thing. Yes, ``wraps`` method is named after ``functools.wraps``). ``magicclass`` also provides a
+non-method type ``wraps`` function for the most-parent class.
+
+.. code-block:: python
+
+    from magicclass import magicclass, wraps
+
+    def template(i: int, s: str): pass
+
+    @magicclass
+    class Main:
+        @magicclass
+        class Child:
+            def f1(self): ...
+        
+        @Child.wraps(template=template)
+        def f1(self, i, s): ...
+
+        @wraps(template=template)
+        def f2(self, i, s): ...
+
+        @wraps(template=template)
+        def f3(self, s): ... # method don't have to take all the arguments that template takes.
+    
+    ui = Main()
+    ui.show()

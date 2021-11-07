@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Special Methods in magic-class &mdash; magic-class 0.5.5dev0 documentation</title>
+  <title>Special attributes in magic-class &mdash; magic-class 0.5.5dev0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -18,7 +18,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="Use wraps in magic-class" href="use_wraps.html" /> 
+    <link rel="next" title="Container Variations" href="containers.html" />
+    <link rel="prev" title="Call Parent Methods from its Child" href="use_wraps.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -41,10 +42,12 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="quick_start.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="options.html">Options in magic-class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="nest.html">Nest magic-classes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="use_field.html">Use Fields in magic-class</a></li>
-<li class="toctree-l1"><a class="reference internal" href="use_wraps.html">Use wraps in magic-class</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Special Methods in magic-class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="use_wraps.html">Call Parent Methods from its Child</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Special attributes in magic-class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="containers.html">Container Variations</a></li>
 </ul>
 
         </div>
@@ -61,7 +64,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Special Methods in magic-class</li>
+      <li>Special attributes in magic-class</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/special_methods.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -71,10 +74,26 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="special-methods-in-magic-class">
-<h1>Special Methods in magic-class<a class="headerlink" href="#special-methods-in-magic-class" title="Permalink to this headline">¶</a></h1>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">__post_init__</span></code></p></li>
+  <section id="special-attributes-in-magic-class">
+<h1>Special attributes in magic-class<a class="headerlink" href="#special-attributes-in-magic-class" title="Permalink to this headline">¶</a></h1>
+<p>There are some special attributes that will be recognized differently by magic classes.</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">__post_init__</span></code></p>
+<blockquote>
+<div><p>Similar to builtin <code class="docutils literal notranslate"><span class="pre">dataclass</span></code>, this method will be called after <code class="docutils literal notranslate"><span class="pre">__init__</span></code> had finished.
+This method is necessary because widgets are created after instance construction so you cannot
+refer to the widgets in <code class="docutils literal notranslate"><span class="pre">__init__</span></code> function. For instance, you can set widget geometry in
+<code class="docutils literal notranslate"><span class="pre">__post_init__</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@magicclass</span>
+<span class="k">class</span> <span class="nc">Main</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;func&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">min_height</span> <span class="o">=</span> <span class="mi">100</span>
+
+    <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
 <li><p><code class="docutils literal notranslate"><span class="pre">__call__</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">__magicclass_parent__</span></code></p></li>
 </ul>
@@ -84,7 +103,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="use_wraps.html" class="btn btn-neutral float-left" title="Use wraps in magic-class" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="use_wraps.html" class="btn btn-neutral float-left" title="Call Parent Methods from its Child" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="containers.html" class="btn btn-neutral float-right" title="Container Variations" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

@@ -18,7 +18,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Special Methods in magic-class" href="special_methods.html" />
+    <link rel="next" title="Special attributes in magic-class" href="special_methods.html" />
     <link rel="prev" title="Use Fields in magic-class" href="use_field.html" /> 
 </head>
 
@@ -47,10 +47,11 @@
 <li class="toctree-l1"><a class="reference internal" href="use_field.html">Use Fields in magic-class</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Call Parent Methods from its Child</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#basic-syntax">Basic Syntax</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#use-template-function">Use Template Function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#use-template-functions">Use Template Functions</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="special_methods.html">Special Methods in magic-class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="special_methods.html">Special attributes in magic-class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="containers.html">Container Variations</a></li>
 </ul>
 
         </div>
@@ -136,8 +137,38 @@ widgets will not be sorted due to different timing of widget creation.</p></li>
 </ol>
 </div>
 </section>
-<section id="use-template-function">
-<h2>Use Template Function<a class="headerlink" href="#use-template-function" title="Permalink to this headline">¶</a></h2>
+<section id="use-template-functions">
+<h2>Use Template Functions<a class="headerlink" href="#use-template-functions" title="Permalink to this headline">¶</a></h2>
+<p>Sometimes you may want to define many functions with same parameter names.</p>
+<p>A typical example is <code class="docutils literal notranslate"><span class="pre">seaborn</span></code>. It has meny plot functions with identical arguments such as <code class="docutils literal notranslate"><span class="pre">x</span></code>, <code class="docutils literal notranslate"><span class="pre">y</span></code> and
+<code class="docutils literal notranslate"><span class="pre">hue</span></code>. If you annotate all the arguments, your code will look very &quot;noisy&quot;.</p>
+<p><code class="docutils literal notranslate"><span class="pre">magicclass</span></code> provides a method that can copy annotations from a template function to some target functions,
+and this function is integrated in <code class="docutils literal notranslate"><span class="pre">wraps</span></code> method (You might have noticed that <code class="docutils literal notranslate"><span class="pre">functools.wraps</span></code> does a
+similar thing. Yes, <code class="docutils literal notranslate"><span class="pre">wraps</span></code> method is named after <code class="docutils literal notranslate"><span class="pre">functools.wraps</span></code>). <code class="docutils literal notranslate"><span class="pre">magicclass</span></code> also provides a
+non-method type <code class="docutils literal notranslate"><span class="pre">wraps</span></code> function for the most-parent class.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">wraps</span>
+
+<span class="k">def</span> <span class="nf">template</span><span class="p">(</span><span class="n">i</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span> <span class="k">pass</span>
+
+<span class="nd">@magicclass</span>
+<span class="k">class</span> <span class="nc">Main</span><span class="p">:</span>
+    <span class="nd">@magicclass</span>
+    <span class="k">class</span> <span class="nc">Child</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">f1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
+
+    <span class="nd">@Child</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">template</span><span class="o">=</span><span class="n">template</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">f1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span> <span class="o">...</span>
+
+    <span class="nd">@wraps</span><span class="p">(</span><span class="n">template</span><span class="o">=</span><span class="n">template</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">f2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span> <span class="o">...</span>
+
+    <span class="nd">@wraps</span><span class="p">(</span><span class="n">template</span><span class="o">=</span><span class="n">template</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">f3</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span> <span class="o">...</span> <span class="c1"># method don&#39;t have to take all the arguments that template takes.</span>
+
+<span class="n">ui</span> <span class="o">=</span> <span class="n">Main</span><span class="p">()</span>
+<span class="n">ui</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
 </section>
 </section>
 
@@ -146,7 +177,7 @@ widgets will not be sorted due to different timing of widget creation.</p></li>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="use_field.html" class="btn btn-neutral float-left" title="Use Fields in magic-class" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="special_methods.html" class="btn btn-neutral float-right" title="Special Methods in magic-class" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="special_methods.html" class="btn btn-neutral float-right" title="Special attributes in magic-class" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
