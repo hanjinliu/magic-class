@@ -20,7 +20,7 @@ from .containers import (
     SplitterContainer,
     StackedContainer,
     TabbedContainer,
-    ToolBox
+    ToolBoxContainer
     )
 from ._base import BaseGui, PopUpMode, ErrorMode
 
@@ -285,7 +285,7 @@ class CollapsibleClassGui: pass
 @make_gui(ButtonContainer)
 class ButtonClassGui: pass
 
-@make_gui(ToolBox, no_margin=False)
+@make_gui(ToolBoxContainer, no_margin=False)
 class ToolBoxClassGui: pass
 
 @make_gui(TabbedContainer, no_margin=False)

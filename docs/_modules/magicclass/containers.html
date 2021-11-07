@@ -39,8 +39,12 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../quick_start.html">Quick Start</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../use_field.html">Use field in magic-class</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../use_wraps.html">Use wraps in magic-class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../options.html">Options in magic-class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../nest.html">Nest magic-classes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../use_field.html">Use Fields in magic-class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../use_wraps.html">Call Parent Methods from its Child</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../special_methods.html">Special attributes in magic-class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../containers.html">Container Variations</a></li>
 </ul>
 
         </div>
@@ -322,9 +326,17 @@
     <span class="sd">&quot;&quot;&quot;A Container equipped with splitter&quot;&quot;&quot;</span>
     
 <span class="nd">@wrap_container</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="n">_ToolBox</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">ToolBox</span><span class="p">(</span><span class="n">ContainerWidget</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">ToolBoxContainer</span><span class="p">(</span><span class="n">ContainerWidget</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A Tool box Widget.&quot;&quot;&quot;</span>
-
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">current_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">currentIndex</span><span class="p">()</span>
+    
+    <span class="nd">@current_index</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">current_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        
 <span class="nd">@wrap_container</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="n">_Tab</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">TabbedContainer</span><span class="p">(</span><span class="n">ContainerWidget</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A tab categorized Container Widget.&quot;&quot;&quot;</span>

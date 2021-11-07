@@ -180,7 +180,7 @@ value changes in child widgets are all recorded and you can generate executable 
 <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span> <span class="o">...</span>
 </pre></div>
 </div>
-<p>However, magic classes need another way to do this because <code class="docutils literal notranslate"><span class="pre">magicgui</span></code> is not called by users.
+<p>However, magic classes need another way to do this because <code class="docutils literal notranslate"><span class="pre">magicgui</span></code> will never be called by users.
 <code class="docutils literal notranslate"><span class="pre">magicclass</span></code> uses <code class="docutils literal notranslate"><span class="pre">set_options</span></code> decorator instead.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">set_options</span>
 

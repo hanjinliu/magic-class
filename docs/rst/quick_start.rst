@@ -118,7 +118,7 @@ In ``magicgui`` you can define parameter options with keyword arguments:
     @magicgui(a={"widget_type": "Slider", "step": 10})
     def f(a: int): ...
 
-However, magic classes need another way to do this because ``magicgui`` is not called by users.
+However, magic classes need another way to do this because ``magicgui`` will never be called by users.
 ``magicclass`` uses ``set_options`` decorator instead.
 
 .. code-block:: python

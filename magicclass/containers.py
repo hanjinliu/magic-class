@@ -252,9 +252,17 @@ class SplitterContainer(ContainerWidget):
     """A Container equipped with splitter"""
     
 @wrap_container(base=_ToolBox)
-class ToolBox(ContainerWidget):
+class ToolBoxContainer(ContainerWidget):
     """A Tool box Widget."""
-
+    
+    @property
+    def current_index(self):
+        return self.native.currentIndex()
+    
+    @current_index.setter
+    def current_index(self, index: int):
+        self.native.setCurrentIndex(index)
+        
 @wrap_container(base=_Tab)
 class TabbedContainer(ContainerWidget):
     """A tab categorized Container Widget."""
