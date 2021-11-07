@@ -107,3 +107,36 @@ or in a text editor window.
 .. code-block:: python
 
     ui.create_macro(show=True)
+
+Parameter Options
+-----------------
+
+In ``magicgui`` you can define parameter options with keyword arguments:
+
+.. code-block:: python
+
+    @magicgui(a={"widget_type": "Slider", "step": 10})
+    def f(a: int): ...
+
+However, magic classes need another way to do this because ``magicgui`` is not called by users.
+``magicclass`` uses ``set_options`` decorator instead.
+
+.. code-block:: python
+
+    from magicclass import magicclass, set_options
+
+    @magicclass
+    class Main:
+        @set_options(a={"widget_type": "Slider", "step": 10})
+        def f(self, a: int): ...
+    
+    ui = Main()
+    ui.show()
+
+.. image:: images/fig_1-4.png
+
+
+Change Button Designs
+---------------------
+
+✍ please wait ...

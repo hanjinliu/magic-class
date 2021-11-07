@@ -94,8 +94,34 @@ refer to the widgets in <code class="docutils literal notranslate"><span class="
 </div>
 </div></blockquote>
 </li>
-<li><p><code class="docutils literal notranslate"><span class="pre">__call__</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">__magicclass_parent__</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">__call__</span></code></p>
+<blockquote>
+<div><p>Magic classes do not convert methods into widgets if the name start with &quot;_&quot; but this is an
+exception.</p>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">__magicclass_parent__</span></code></p>
+<blockquote>
+<div><p>The parent magic class object is stored in this attribute. This parameter is needed because
+the <cite>parent</cite> property of <code class="docutils literal notranslate"><span class="pre">magicgui</span></code>'s widgets returns backend widget.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@magicclass</span>
+<span class="k">class</span> <span class="nc">Parent</span><span class="p">:</span>
+    <span class="nd">@magicclass</span>
+    <span class="k">class</span> <span class="nc">Child</span><span class="p">:</span> <span class="o">...</span>
+
+<span class="n">ui</span> <span class="o">=</span> <span class="n">Parent</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">ui</span><span class="o">.</span><span class="n">Child</span><span class="o">.</span><span class="n">parent</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">ui</span><span class="o">.</span><span class="n">Child</span><span class="o">.</span><span class="n">__magicclass_parent__</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;class &#39;PyQt5.QtWidgets.QWidget&#39;&gt;
+&lt;class &#39;abc.Parent&#39;&gt;
+</pre></div>
+</div>
+<p>Therefore, when you want to call parent methods from its children, you don't have to use <code class="docutils literal notranslate"><span class="pre">wraps</span></code>
+method in principle. Indeed, <code class="docutils literal notranslate"><span class="pre">wraps</span></code> uses <code class="docutils literal notranslate"><span class="pre">__magicclass_parent__</span></code> to find its ancestor.</p>
+</div></blockquote>
+</li>
 </ul>
 </section>
 

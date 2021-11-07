@@ -22,4 +22,30 @@ There are some special attributes that will be recognized differently by magic c
 
 * ``__call__``
 
+    Magic classes do not convert methods into widgets if the name start with "_" but this is an 
+    exception.
+
 * ``__magicclass_parent__``
+
+    The parent magic class object is stored in this attribute. This parameter is needed because
+    the `parent` property of ``magicgui``'s widgets returns backend widget.
+    
+    .. code-block:: python
+    
+        @magicclass
+        class Parent:
+            @magicclass
+            class Child: ...
+
+        ui = Parent()
+        print(type(ui.Child.parent))
+        print(type(ui.Child.__magicclass_parent__))
+    
+    .. code-block::
+        
+        <class 'PyQt5.QtWidgets.QWidget'>
+        <class 'abc.Parent'>
+    
+    Therefore, when you want to call parent methods from its children, you don't have to use ``wraps``
+    method in principle. Indeed, ``wraps`` uses ``__magicclass_parent__`` to find its ancestor.
+    

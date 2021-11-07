@@ -42,13 +42,16 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="quick_start.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="options.html">Options in magic-class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="nest.html">Nest magic-classes</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Use Fields in magic-class</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#magicfields">MagicFields</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#define-callbacks">Define Callbacks</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="use_wraps.html">Call Parent Methods from its Child</a></li>
-<li class="toctree-l1"><a class="reference internal" href="special_methods.html">Special Methods in magic-class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="special_methods.html">Special attributes in magic-class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="containers.html">Container Variations</a></li>
 </ul>
 
         </div>
@@ -77,6 +80,8 @@
              
   <section id="use-fields-in-magic-class">
 <h1>Use Fields in magic-class<a class="headerlink" href="#use-fields-in-magic-class" title="Permalink to this headline">¶</a></h1>
+<section id="magicfields">
+<h2>MagicFields<a class="headerlink" href="#magicfields" title="Permalink to this headline">¶</a></h2>
 <p>When widgets are directly provided in a magic class as class variables, they should be considered as &quot;fields&quot;.
 The concept of fields was actually introduced in Python as an standard library <code class="docutils literal notranslate"><span class="pre">dataclasses</span></code> as a <code class="docutils literal notranslate"><span class="pre">Field</span></code>
 object. A field is in a state of &quot;ready to be converted into a object&quot;, i.e., a new object is created for every
@@ -130,6 +135,7 @@ subclass of <code class="docutils literal notranslate"><span class="pre">Field</
 </pre></div>
 </div>
 <img alt="_images/fig_3-2.png" src="_images/fig_3-2.png" />
+</section>
 <section id="define-callbacks">
 <h2>Define Callbacks<a class="headerlink" href="#define-callbacks" title="Permalink to this headline">¶</a></h2>
 <p>Another feature of widgets are their ability to emit signals upon state changes. In <code class="docutils literal notranslate"><span class="pre">magicgui</span></code>, most of

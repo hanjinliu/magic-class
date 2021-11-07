@@ -18,7 +18,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Nest magic-classes" href="nest.html" />
+    <link rel="next" title="Options in magic-class" href="options.html" />
     <link rel="prev" title="Welcome to magic-class documentation!" href="index.html" /> 
 </head>
 
@@ -44,12 +44,16 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Quick Start</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#use-other-widgets-in-magic-class">Use Other Widgets in magic-class</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#macro-recording">Macro Recording</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#parameter-options">Parameter Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#change-button-designs">Change Button Designs</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="options.html">Options in magic-class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="nest.html">Nest magic-classes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="use_field.html">Use Fields in magic-class</a></li>
-<li class="toctree-l1"><a class="reference internal" href="use_wraps.html">Use wraps in magic-class</a></li>
-<li class="toctree-l1"><a class="reference internal" href="special_methods.html">Special Methods in magic-class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="use_wraps.html">Call Parent Methods from its Child</a></li>
+<li class="toctree-l1"><a class="reference internal" href="special_methods.html">Special attributes in magic-class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="containers.html">Container Variations</a></li>
 </ul>
 
         </div>
@@ -169,6 +173,32 @@ value changes in child widgets are all recorded and you can generate executable 
 </pre></div>
 </div>
 </section>
+<section id="parameter-options">
+<h2>Parameter Options<a class="headerlink" href="#parameter-options" title="Permalink to this headline">¶</a></h2>
+<p>In <code class="docutils literal notranslate"><span class="pre">magicgui</span></code> you can define parameter options with keyword arguments:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@magicgui</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;widget_type&quot;</span><span class="p">:</span> <span class="s2">&quot;Slider&quot;</span><span class="p">,</span> <span class="s2">&quot;step&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">})</span>
+<span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span> <span class="o">...</span>
+</pre></div>
+</div>
+<p>However, magic classes need another way to do this because <code class="docutils literal notranslate"><span class="pre">magicgui</span></code> is not called by users.
+<code class="docutils literal notranslate"><span class="pre">magicclass</span></code> uses <code class="docutils literal notranslate"><span class="pre">set_options</span></code> decorator instead.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">set_options</span>
+
+<span class="nd">@magicclass</span>
+<span class="k">class</span> <span class="nc">Main</span><span class="p">:</span>
+    <span class="nd">@set_options</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;widget_type&quot;</span><span class="p">:</span> <span class="s2">&quot;Slider&quot;</span><span class="p">,</span> <span class="s2">&quot;step&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">})</span>
+    <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span> <span class="o">...</span>
+
+<span class="n">ui</span> <span class="o">=</span> <span class="n">Main</span><span class="p">()</span>
+<span class="n">ui</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="_images/fig_1-4.png" src="_images/fig_1-4.png" />
+</section>
+<section id="change-button-designs">
+<h2>Change Button Designs<a class="headerlink" href="#change-button-designs" title="Permalink to this headline">¶</a></h2>
+<p>✍ please wait ...</p>
+</section>
 </section>
 
 
@@ -176,7 +206,7 @@ value changes in child widgets are all recorded and you can generate executable 
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="index.html" class="btn btn-neutral float-left" title="Welcome to magic-class documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="nest.html" class="btn btn-neutral float-right" title="Nest magic-classes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="options.html" class="btn btn-neutral float-right" title="Options in magic-class" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
