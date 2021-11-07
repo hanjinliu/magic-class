@@ -11,7 +11,7 @@ Welcome to magic-class documentation!
 Source
 ------
 
-`Jump to GitHub repository <https://github.com/hanjinliu/impy>`_
+`Jump to GitHub repository <https://github.com/hanjinliu/magic-class>`_
 
 Installation
 ------------
