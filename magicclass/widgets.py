@@ -149,6 +149,7 @@ class ConsoleTextEdit(TextEdit):
         super().__init__(*args, **kwargs)
         self.native.setFont(QFont("Consolas"))
         self.native.setWordWrapMode(QTextOption.NoWrap)
+        # TODO: copy and save button
         
 class ListEdit(Container):
     def __init__(

@@ -4,6 +4,7 @@ from typing import Callable, TYPE_CHECKING, TypeVar
 import inspect
 from enum import Enum
 import warnings
+from qtpy.QtCore import Qt
 from magicgui import magicgui
 from magicgui.signature import MagicParameter
 from magicgui.widgets import FunctionGui, FileEdit, EmptyWidget
@@ -11,7 +12,7 @@ from magicgui.widgets import FunctionGui, FileEdit, EmptyWidget
 from magicclass.signature import MagicMethodSignature
 
 from .macro import Macro, Expr, Head, Symbol, symbol
-from .utils import iter_members, n_parameters, extract_tooltip, raise_error_in_msgbox, id_wrapper
+from .utils import iter_members, n_parameters, extract_tooltip, raise_error_in_msgbox, id_wrapper, screen_center
 from .widgets import Separator, ConsoleTextEdit
 from .mgui_ext import FunctionGuiPlus
 from .field import MagicField
@@ -343,6 +344,7 @@ class BaseGui:
                 mgui = _build_mgui(widget, func)
                 if mgui.call_count == 0 and len(mgui.called._slots) == 0:
                     mgui.native.setParent(self.native, mgui.native.windowFlags())
+                    mgui.native.move(screen_center() - mgui.native.rect().center())
                     if self._popup_mode not in (PopUpMode.popup, PopUpMode.dock):
                         mgui.label = ""
                         mgui.name = f"mgui-{id(mgui._function)}" # to avoid name collision
@@ -382,7 +384,6 @@ class BaseGui:
                             
                             else:    
                                 from qtpy.QtWidgets import QDockWidget
-                                from qtpy.QtCore import Qt
                                 dock = QDockWidget(_get_widget_name(widget), self.native)
                                 dock.setWidget(mgui.native)
                                 parent_self.native.addDockWidget(
@@ -514,6 +515,7 @@ def _build_mgui(widget_, func):
         raise type(e)(msg)
     
     widget_.mgui = mgui
+    mgui.native.setWindowTitle(widget_.name)
     return mgui
         
 _C = TypeVar("_C", Callable, type)

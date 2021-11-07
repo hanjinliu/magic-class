@@ -182,6 +182,7 @@ class Canvas(FrozenContainer, HasPlotItem):
     def region_visible(self, value: bool):
         self.regionitem.setVisible(value)
        
+# TODO: colormap
 
 class ImageCanvas(FrozenContainer, HasPlotItem):
     def __init__(self, image: np.ndarray = None, **kwargs):

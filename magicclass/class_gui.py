@@ -196,6 +196,7 @@ def make_gui(container: type[ContainerWidget], no_margin: bool = True):
             self._menubar = None
             
             self.native.setObjectName(self.name)
+            self.native.setWindowTitle(self.name)
         
         def insert(self: cls, key: int, widget: Widget):
             _hide_labels = (_LabeledWidget, ButtonWidget, ClassGuiBase, FrozenContainer, Label,
