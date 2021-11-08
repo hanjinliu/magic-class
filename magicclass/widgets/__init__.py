@@ -7,15 +7,38 @@ from .separator import Separator
 from .sequence import ListEdit, TupleEdit
 from .utils import FrozenContainer
 
+class NotInstalled:
+    def __init__(self, msg):
+        self.msg = msg
+    
+    def __getattr__(self, key: str):
+        raise ModuleNotFoundError(self.msg)
+    
+    def __call__(self, *args, **kwargs):
+        raise ModuleNotFoundError(self.msg)
+
 try:
     from .console import QtConsole
 except ImportError:
-    pass
+    msg = "Module 'qtconsole' is not installed. To use QtConsole, " \
+          "you have to install it by:\n" \
+          "   $ pip install qtconsole\n" \
+          "or\n" \
+          "   $ conda install qtconsole"
+          
+    QtConsole = NotInstalled(msg)
 
 try:
     from .qtgraph import QtPlotCanvas, QtImageCanvas
 except ImportError:
-    pass
+    msg = "Module 'pyqtgraph' is not installed. To use {}, " \
+          "you have to install it by:\n" \
+          "   $ pip install pyqtgraph\n" \
+          "or\n" \
+          "   $ conda install pyqtgraph -c conda forge"
+    QtPlotCanvas = NotInstalled(msg.format("QtPlotCanvas"))
+    QtImageCanvas = NotInstalled(msg.format("QtImageCanvas"))
+    
 
 __all__ = ["ListWidget", 
            "Figure",
