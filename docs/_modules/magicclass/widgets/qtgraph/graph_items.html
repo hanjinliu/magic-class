@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="English" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>magicclass.widgets.qtgraph.graph_items &mdash; magic-class 0.5.5dev0 documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> magic-class
+          </a>
+              <div class="version">
+                0.5.5dev0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../quick_start.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../options.html">Options in magic-class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../nest.html">Nest magic-classes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../use_field.html">Use Fields in magic-class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../use_wraps.html">Call Parent Methods from its Child</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../special_methods.html">Special attributes in magic-class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../containers.html">Container Variations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api.html">API References</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">magic-class</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+      <li>magicclass.widgets.qtgraph.graph_items</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for magicclass.widgets.qtgraph.graph_items</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Any</span>
+<span class="kn">import</span> <span class="nn">pyqtgraph</span> <span class="k">as</span> <span class="nn">pg</span>
+<span class="kn">from</span> <span class="nn">qtpy.QtCore</span> <span class="kn">import</span> <span class="n">Qt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">LINE_STYLE</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;-&quot;</span><span class="p">:</span> <span class="n">Qt</span><span class="o">.</span><span class="n">SolidLine</span><span class="p">,</span>
+              <span class="s2">&quot;--&quot;</span><span class="p">:</span> <span class="n">Qt</span><span class="o">.</span><span class="n">DashLine</span><span class="p">,</span>
+              <span class="s2">&quot;:&quot;</span><span class="p">:</span> <span class="n">Qt</span><span class="o">.</span><span class="n">DotLine</span><span class="p">,</span>
+              <span class="s2">&quot;-.&quot;</span><span class="p">:</span> <span class="n">Qt</span><span class="o">.</span><span class="n">DashDotLine</span><span class="p">,</span>
+              <span class="p">}</span>
+
+<span class="k">def</span> <span class="nf">_convert_color_code</span><span class="p">(</span><span class="n">c</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">*</span> <span class="mi">255</span>
+    <span class="k">return</span> <span class="n">c</span>
+
+<span class="k">def</span> <span class="nf">_get_pen</span><span class="p">(</span><span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot;Translation from matplotlib&#39;s kwargs to pyqtgraph&#39;s&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="s2">&quot;pen&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;pen&quot;</span><span class="p">]</span>
+    
+    <span class="k">if</span> <span class="s2">&quot;c&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">color</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;c&quot;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">color</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;color&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="s2">&quot;lw&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">width</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;lw&quot;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">width</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;lw&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        
+    <span class="k">if</span> <span class="s2">&quot;ls&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">style</span> <span class="o">=</span> <span class="n">LINE_STYLE</span><span class="p">[</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;ls&quot;</span><span class="p">]]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">style</span> <span class="o">=</span> <span class="n">LINE_STYLE</span><span class="p">[</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;linestyle&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">)]</span>
+    
+    <span class="k">return</span> <span class="n">pg</span><span class="o">.</span><span class="n">mkPen</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="n">style</span><span class="p">)</span>
+
+<div class="viewcode-block" id="PlotDataItem"><a class="viewcode-back" href="../../../../magicclass.widgets.qtgraph.html#magicclass.widgets.qtgraph.graph_items.PlotDataItem">[docs]</a><span class="k">class</span> <span class="nc">PlotDataItem</span><span class="p">:</span>
+    <span class="n">base_item</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">pg</span><span class="o">.</span><span class="n">PlotCurveItem</span><span class="o">|</span><span class="n">pg</span><span class="o">.</span><span class="n">ScatterPlotItem</span><span class="p">]</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">pen</span> <span class="o">=</span> <span class="n">_get_pen</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;pen&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_item</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">pen</span><span class="o">=</span><span class="n">pen</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">xdata</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">getData</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+    
+    <span class="nd">@xdata</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">xdata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ydata</span><span class="p">)</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ydata</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">getData</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
+    
+    <span class="nd">@ydata</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">ydata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xdata</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ndata</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">getData</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">size</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">getData</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">size</span>
+        
+<div class="viewcode-block" id="PlotDataItem.add"><a class="viewcode-back" href="../../../../magicclass.widgets.qtgraph.html#magicclass.widgets.qtgraph.graph_items.PlotDataItem.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Points must be of the shape (N, 2).&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">xdata</span><span class="p">,</span> <span class="n">points</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]]),</span> 
+                            <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">ydata</span><span class="p">,</span> <span class="n">points</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]]),</span>
+                            <span class="o">**</span><span class="n">kwargs</span>
+                            <span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+    
+<div class="viewcode-block" id="PlotDataItem.remove"><a class="viewcode-back" href="../../../../magicclass.widgets.qtgraph.html#magicclass.widgets.qtgraph.graph_items.PlotDataItem.remove">[docs]</a>    <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">sl</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ndata</span><span class="p">))</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+        <span class="n">xdata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xdata</span><span class="p">[</span><span class="n">sl</span><span class="p">]</span>
+        <span class="n">ydata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ydata</span><span class="p">[</span><span class="n">sl</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="n">xdata</span><span class="p">,</span> <span class="n">ydata</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">visible</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">isVisible</span><span class="p">()</span>
+    
+    <span class="nd">@visible</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">visible</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">color</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="n">rgba</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;pen&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">color</span><span class="p">()</span><span class="o">.</span><span class="n">getRgb</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rgba</span><span class="p">)</span><span class="o">/</span><span class="mi">255</span>
+    
+    <span class="nd">@color</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">color</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">):</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">_convert_color_code</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">lw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;pen&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">width</span><span class="p">()</span>
+    
+    <span class="nd">@lw</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">lw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;pen&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setWidth</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        
+    <span class="n">linewidth</span> <span class="o">=</span> <span class="n">lw</span> <span class="c1"># alias</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ls</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;pen&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">style</span><span class="p">()</span>
+    
+    <span class="nd">@ls</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">ls</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">_ls</span> <span class="o">=</span> <span class="n">LINE_STYLE</span><span class="p">[</span><span class="n">value</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;pen&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setWidth</span><span class="p">(</span><span class="n">_ls</span><span class="p">)</span>
+    
+    <span class="n">linestyle</span> <span class="o">=</span> <span class="n">ls</span> <span class="c1"># alias</span></div>
+    
+<div class="viewcode-block" id="Curve"><a class="viewcode-back" href="../../../../magicclass.widgets.qtgraph.html#magicclass.widgets.qtgraph.graph_items.Curve">[docs]</a><span class="k">class</span> <span class="nc">Curve</span><span class="p">(</span><span class="n">PlotDataItem</span><span class="p">):</span>
+    <span class="n">base_item</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">PlotCurveItem</span></div>
+
+<div class="viewcode-block" id="Scatter"><a class="viewcode-back" href="../../../../magicclass.widgets.qtgraph.html#magicclass.widgets.qtgraph.graph_items.Scatter">[docs]</a><span class="k">class</span> <span class="nc">Scatter</span><span class="p">(</span><span class="n">PlotDataItem</span><span class="p">):</span>
+    <span class="n">base_item</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">ScatterPlotItem</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">symbol</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;symbol&quot;</span><span class="p">]</span>
+        
+    <span class="nd">@symbol</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">symbol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setSymbol</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">symbol_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;symbolSize&quot;</span><span class="p">]</span>
+        
+    <span class="nd">@symbol</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">symbol_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setSymbolSize</span><span class="p">(</span><span class="n">size</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TextOverlay"><a class="viewcode-back" href="../../../../magicclass.widgets.qtgraph.html#magicclass.widgets.qtgraph.graph_items.TextOverlay">[docs]</a><span class="k">class</span> <span class="nc">TextOverlay</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">color</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">TextItem</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">_convert_color_code</span><span class="p">(</span><span class="n">color</span><span class="p">))</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">color</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">rgba</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">color</span><span class="o">.</span><span class="n">getRgb</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rgba</span><span class="p">)</span><span class="o">/</span><span class="mi">255</span>
+    
+    <span class="nd">@color</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">color</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">_convert_color_code</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">visible</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">isVisible</span><span class="p">()</span>
+    
+    <span class="nd">@visible</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">visible</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">text</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">toPlainText</span><span class="p">()</span>
+    
+    <span class="nd">@text</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    
+<div class="viewcode-block" id="TextOverlay.update"><a class="viewcode-back" href="../../../../magicclass.widgets.qtgraph.html#magicclass.widgets.qtgraph.graph_items.TextOverlay.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;color&quot;</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="s2">&quot;visible&quot;</span><span class="p">]:</span>
+                <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot set attribute </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> to TextOverlay.&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span></div></div>
+            
+        
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Hanjin Liu.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -7,7 +7,7 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
-   magicclass.qtgraph
+   magicclass.widgets
 
 Submodules
 ----------
@@ -16,14 +16,6 @@ magicclass.class\_gui module
 ----------------------------
 
 .. automodule:: magicclass.class_gui
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-magicclass.console module
--------------------------
-
-.. automodule:: magicclass.console
    :members:
    :undoc-members:
    :show-inheritance:
@@ -96,14 +88,6 @@ magicclass.utils module
 -----------------------
 
 .. automodule:: magicclass.utils
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-magicclass.widgets module
--------------------------
-
-.. automodule:: magicclass.widgets
    :members:
    :undoc-members:
    :show-inheritance:

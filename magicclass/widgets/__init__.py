@@ -3,7 +3,6 @@ Advanced widgets for magic class GUI.
 These widgets are all compatible with the ``append`` method of Container widgets.
 """
 
-from magicgui.widgets import __all__ as mgui_all
 from magicgui.widgets import * # to avoid importing both magicgui.widgets and magicclass.widgets
 
 from .listwidget import ListWidget
@@ -57,5 +56,3 @@ __all__ = ["ListWidget",
            "QtPlotCanvas",
            "QtImageCanvas",
            ]
-
-__all__ += mgui_all
