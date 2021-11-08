@@ -1,0 +1,11 @@
+==============
+API References
+==============
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Contents:
+
+   magicclass
+   magicclass.core
+   magicclass.widgets

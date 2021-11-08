@@ -11,7 +11,7 @@ Welcome to magic-class documentation!
 Source
 ------
 
-`Jump to GitHub repository <https://github.com/hanjinliu/magic-class>`_
+`Jump to GitHub repository <https://github.com/hanjinliu/magic-class>`_.
 
 Installation
 ------------
@@ -33,6 +33,7 @@ Contents
    use_wraps
    special_methods
    containers
+   api
 
 
 Indices and tables

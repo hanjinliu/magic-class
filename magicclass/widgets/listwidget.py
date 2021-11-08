@@ -1,3 +1,35 @@
+"""
+ListWidget is a QListWidget wrapper class. This widget can contain any Python objects as list items.
+
+.. code-block:: python
+
+    from magicclass.widgets import ListWidget
+
+    listwidget = ListWidget()
+    
+    # You can add any objects
+    listwidget.add_item("abc")
+    listwidget.add_item(np.arange(5))
+
+You can dispatch double click callbacks depending on the type of contents.
+
+.. code-block:: python
+
+    @listwidget.register_callback(str)
+    def _(item, i):
+        # This function will be called when the item "abc" is double-clicked.
+        print(item)
+    
+    @listwidget.register_callback(np.ndarray)
+    def _(item, i):
+        # This function will be called when the item np.arange(5) is double-clicked.
+        print(item.tolist())
+
+In a similar way, you can dispatch display method and context menu.
+
+
+"""
+
 from __future__ import annotations
 from functools import wraps
 from typing import Callable, Any
@@ -5,7 +37,6 @@ from collections import defaultdict
 from qtpy.QtWidgets import QLabel, QListWidget, QListWidgetItem, QAbstractItemView, QMenu, QAction
 from qtpy.QtCore import Qt
 from .utils import FrozenContainer
-
 
 _Callback = Callable[[Any, int], Any]
     
@@ -56,18 +87,30 @@ class ListWidget(FrozenContainer):
         self._title.setText(text)
         
     def add_item(self, obj: Any):
+        """
+        Append any item to the list.
+        """
         self.insert_item(self.nitems, obj)
     
     def insert_item(self, i: int, obj: Any):
+        """
+        Insert any item to the list.
+        """
         name = self._delegates.get(type(obj), str)(obj)
         item = PyListWidgetItem(self._listwidget, obj=obj, name=name)
         self._listwidget.insertItem(i, item)
     
     def pop_item(self, i: int) -> Any:
+        """
+        Pop item at an index.
+        """
         self._listwidget.takeItem(i)
         return None
 
     def clear(self):
+        """
+        Clear all the items.
+        """
         self._listwidget.clear()
     
     def register_callback(self, type_: type):

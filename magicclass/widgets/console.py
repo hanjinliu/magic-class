@@ -1,3 +1,7 @@
+"""
+Jupyter QtConsole widget with callback signals.
+"""
+
 from ipykernel.connect import get_connection_file
 from ipykernel.inprocess.ipkernel import InProcessInteractiveShell
 from ipykernel.zmqshell import ZMQInteractiveShell

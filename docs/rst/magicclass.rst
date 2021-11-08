@@ -20,13 +20,6 @@ magicclass.class\_gui module
    :undoc-members:
    :show-inheritance:
 
-magicclass.console module
--------------------------
-
-.. automodule:: magicclass.console
-   :members:
-   :undoc-members:
-   :show-inheritance:
 
 magicclass.containers module
 ----------------------------

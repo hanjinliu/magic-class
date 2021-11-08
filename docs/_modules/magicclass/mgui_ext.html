@@ -39,8 +39,12 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../quick_start.html">Quick Start</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../use_field.html">Use field in magic-class</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../use_wraps.html">Use wraps in magic-class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../options.html">Options in magic-class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../nest.html">Nest magic-classes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../use_field.html">Use Fields in magic-class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../use_wraps.html">Call Parent Methods from its Child</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../special_methods.html">Special attributes in magic-class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../containers.html">Container Variations</a></li>
 </ul>
 
         </div>
@@ -141,8 +145,6 @@
     
     <span class="nd">@background_color</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">background_color</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="p">:</span> <span class="nb">str</span><span class="o">|</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">]):</span>
-        <span class="c1"># TODO: In napari stylesheet is somehow overwritten and all the colored button will be &quot;flat&quot; </span>
-        <span class="c1"># (not shadowed when clicked/toggled)</span>
         <span class="n">stylesheet</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">styleSheet</span><span class="p">()</span>
         <span class="n">d</span> <span class="o">=</span> <span class="n">_stylesheet_to_dict</span><span class="p">(</span><span class="n">stylesheet</span><span class="p">)</span>
         <span class="n">d</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;background-color&quot;</span><span class="p">:</span> <span class="n">_to_rgb</span><span class="p">(</span><span class="n">color</span><span class="p">)})</span>
