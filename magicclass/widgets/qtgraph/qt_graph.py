@@ -1,11 +1,12 @@
 from __future__ import annotations
 import pyqtgraph as pg
+from pyqtgraph import colormap as cmap
 from typing import Sequence, overload
 import numpy as np
 from magicgui.events import Signal
 from .graph_items import PlotDataItem, Scatter, Curve, TextOverlay
 from .mouse_event import MouseClickEvent
-from ..widgets import FrozenContainer
+from ..utils import FrozenContainer
 
 BOTTOM = "bottom"
 LEFT = "left"
@@ -78,7 +79,7 @@ class HasPlotItem:
         item = self._items.pop(i)
         self._graphics.removeItem(item.native)
 
-class Canvas(FrozenContainer, HasPlotItem):
+class QtPlotCanvas(FrozenContainer, HasPlotItem):
     """
     A 1-D data viewer that have similar API as napari Viewer.
     """    
@@ -182,17 +183,29 @@ class Canvas(FrozenContainer, HasPlotItem):
     def region_visible(self, value: bool):
         self.regionitem.setVisible(value)
        
-# TODO: colormap
-
-class ImageCanvas(FrozenContainer, HasPlotItem):
-    def __init__(self, image: np.ndarray = None, **kwargs):
+       
+class QtImageCanvas(FrozenContainer, HasPlotItem):
+    def __init__(self, 
+                 image: np.ndarray = None, 
+                 cmap=None, 
+                 contrast_limits: tuple[float, float] = None,
+                 **kwargs):
+        
         super().__init__(**kwargs)
-        self.imageview = pg.ImageView(imageItem=image)
+        self.imageview = pg.ImageView(parent=self.native, name=kwargs.get("name", "ImageView"))
         self.set_widget(self.imageview)
         self._interactive = True
         self._items: list[PlotDataItem] = []
         
-        # prpare text overlay
+        # set properties
+        if image is not None:
+            self.image = image
+        if cmap is not None:
+            self.cmap = cmap
+        if contrast_limits is not None:
+            self.contrast_limits = contrast_limits
+        
+        # prepare text overlay
         self._text_overlay = TextOverlay(text="", color="gray")
         self.imageview.scene.addItem(self._text_overlay.native)
         
@@ -220,6 +233,7 @@ class ImageCanvas(FrozenContainer, HasPlotItem):
     
     @property
     def image(self) -> np.ndarray:
+        """Image data"""
         return self.imageview.image
         
     @image.setter
@@ -231,21 +245,17 @@ class ImageCanvas(FrozenContainer, HasPlotItem):
         self.imageview.clear()
     
     @property
-    def contrast_limits(self):
-        """
-        Contrast limits of image.
-        """        
+    def contrast_limits(self) -> tuple[float, float]:
+        """Contrast limits of image"""        
         return self.imageview.levelMin, self.imageview.levelMax
     
     @contrast_limits.setter
-    def contrast_limits(self, value):
+    def contrast_limits(self, value: tuple[float, float]):
         self.imageview.setLevels(*value)
     
     @property
     def view_range(self) -> list[list[float, float]]:
-        """
-        Range of image (edge coordinates of canvas).
-        """        
+        """Range of image (edge coordinates of canvas)"""
         return self.imageview.view.viewRange()
     
     @view_range.setter
@@ -255,15 +265,27 @@ class ImageCanvas(FrozenContainer, HasPlotItem):
     
     @property
     def interactive(self) -> bool:
-        """
-        Mouse interactivity
-        """        
+        """Mouse interactivity"""        
         return self._interactive
     
     @interactive.setter
     def interactive(self, value: bool):
         self.imageview.view.setMouseEnabled(value, value)
         self._interactive = value
+    
+    @property
+    def cmap(self):
+        """Color map"""
+        return self._cmap
+    
+    @cmap.setter
+    def cmap(self, value):
+        if isinstance(value, str):
+            _cmap = cmap.get(value, source="matplotlib")
+        else:
+            _cmap = value
+        self.imageview.setColorMap(_cmap)
+        self._cmap = value
             
     def show_hist(self, visible: bool = True):
         """

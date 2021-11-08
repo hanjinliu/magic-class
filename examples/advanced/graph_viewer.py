@@ -1,6 +1,5 @@
 from magicclass import magicclass, field, click, magicmenu, magiccontext
-from magicclass.qtgraph import Canvas
-from magicclass.console import Console
+from magicclass.widgets import QtPlotCanvas, QtConsole
 
 @magicclass(labels=False, layout="horizontal")
 class Layer:
@@ -27,8 +26,8 @@ class LayerList:
 @magicclass(layout="horizontal")
 class Viewer:
     layerlist = LayerList()
-    canvas = Canvas()
-    console = Console()
+    canvas = QtPlotCanvas()
+    console = QtConsole()
     
     def __post_init__(self):
         self.layerlist.max_width = 250

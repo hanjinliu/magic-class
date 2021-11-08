@@ -1,21 +1,49 @@
 from __future__ import annotations
-from typing import Sequence
+from typing import Sequence, Any
 import pyqtgraph as pg
+from qtpy.QtCore import Qt
 import numpy as np
+
+LINE_STYLE = {"-": Qt.SolidLine,
+              "--": Qt.DashLine,
+              ":": Qt.DotLine,
+              "-.": Qt.DashDotLine,
+              }
 
 def _convert_color_code(c):
     if not isinstance(c, str):
         c = np.asarray(c) * 255
     return c
 
+def _get_pen(kwargs: dict[str, Any]):
+    """Translation from matplotlib's kwargs to pyqtgraph's"""
+    if "pen" in kwargs:
+        return kwargs["pen"]
+    
+    if "c" in kwargs:
+        color = kwargs["c"]
+    else:
+        color = kwargs.get("color", None)
+    
+    if "lw" in kwargs:
+        width = kwargs["lw"]
+    else:
+        width = kwargs.get("lw", 1)
+        
+    if "ls" in kwargs:
+        style = LINE_STYLE[kwargs["ls"]]
+    else:
+        style = LINE_STYLE[kwargs.get("linestyle", "-")]
+    
+    return pg.mkPen(color=color, width=width, style=style)
+
 class PlotDataItem:
     base_item: type[pg.PlotCurveItem|pg.ScatterPlotItem]
     def __init__(self, x, y, name=None, **kwargs):
-        if "color" in kwargs:
-            # alias for consistency with matplotlib
-            kwargs["pen"] = kwargs.pop("color")
+        pen = _get_pen(kwargs)
+        kwargs.pop("pen", None)
             
-        self.native = self.base_item(x=x, y=y, **kwargs)
+        self.native = self.base_item(x=x, y=y, pen=pen, **kwargs)
         self.name = name
     
     @property
@@ -41,12 +69,13 @@ class PlotDataItem:
     def __len__(self) -> int:
         return self.native.getData()[0].size
         
-    def add(self, points: np.ndarray | Sequence):
+    def add(self, points: np.ndarray | Sequence, **kwargs):
         points = np.atleast_2d(points)
         if points.shape[1] != 2:
             raise ValueError("Points must be of the shape (N, 2).")
         self.native.setData(np.concatenate([self.xdata, points[:, 0]]), 
-                            np.concatenate([self.ydata, points[:, 1]])
+                            np.concatenate([self.ydata, points[:, 1]]),
+                            **kwargs
                             )
         return None
     
@@ -77,7 +106,26 @@ class PlotDataItem:
         value = _convert_color_code(value)
         self.native.setPen(value)
             
-    # setDownsampling
+    @property
+    def lw(self):
+        return self.native.opts["pen"].width()
+    
+    @lw.setter
+    def lw(self, value: float):
+        self.native.opts["pen"].setWidth(value)
+        
+    linewidth = lw # alias
+    
+    @property
+    def ls(self):
+        return self.native.opts["pen"].style()
+    
+    @ls.setter
+    def ls(self, value: str):
+        _ls = LINE_STYLE[value]
+        self.native.opts["pen"].setWidth(_ls)
+    
+    linestyle = ls # alias
     
 class Curve(PlotDataItem):
     base_item = pg.PlotCurveItem
