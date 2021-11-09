@@ -3,9 +3,9 @@ API References
 ==============
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 1
    :caption: Contents:
 
    magicclass
-   magicclass.core
    magicclass.widgets
+   magicclass.widgets.qtgraph

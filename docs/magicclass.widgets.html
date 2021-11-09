@@ -49,26 +49,7 @@
 <li class="toctree-l1"><a class="reference internal" href="special_methods.html">Special attributes in magic-class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="containers.html">Container Variations</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="api.html">API References</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="magicclass.html">magicclass package</a><ul class="current">
-<li class="toctree-l3 current"><a class="reference internal" href="magicclass.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l4 current"><a class="current reference internal" href="#">magicclass.widgets package</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.html#submodules">Submodules</a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.html#module-magicclass.class_gui">magicclass.class_gui module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.html#module-magicclass.containers">magicclass.containers module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.html#module-magicclass.core">magicclass.core module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.html#module-magicclass.creator">magicclass.creator module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.html#module-magicclass.field">magicclass.field module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.html#module-magicclass.macro">magicclass.macro module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.html#module-magicclass.menu_gui">magicclass.menu_gui module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.html#module-magicclass.mgui_ext">magicclass.mgui_ext module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.html#module-magicclass.signature">magicclass.signature module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.html#module-magicclass.utils">magicclass.utils module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.html#module-magicclass.wrappers">magicclass.wrappers module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.html#module-magicclass">Module contents</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.html">magicclass package</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">magicclass.widgets package</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="magicclass.widgets.qtgraph.html">magicclass.widgets.qtgraph package</a></li>
@@ -84,6 +65,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#module-magicclass.widgets">Module contents</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.widgets.qtgraph.html">magicclass.widgets.qtgraph package</a></li>
 </ul>
 </li>
 </ul>
@@ -137,6 +119,31 @@
 <section id="module-magicclass.widgets.console">
 <span id="magicclass-widgets-console-module"></span><h2>magicclass.widgets.console module<a class="headerlink" href="#module-magicclass.widgets.console" title="Permalink to this headline">¶</a></h2>
 <p>Jupyter QtConsole widget with callback signals.</p>
+<p>You can embed a console widget in a magic class.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span>
+<span class="kn">from</span> <span class="nn">magicclass.widgets</span> <span class="kn">import</span> <span class="n">QtConsole</span>
+
+<span class="k">class</span> <span class="nc">Main</span><span class="p">:</span>
+    <span class="n">console</span> <span class="o">=</span> <span class="n">QtConsole</span><span class="p">()</span>
+
+<span class="n">ui</span> <span class="o">=</span> <span class="n">Main</span><span class="p">()</span>
+<span class="n">ui</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>There are some additional methods that would be very useful for developing a Python script
+executable GUI.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># programmatically add code to console.</span>
+<span class="n">ui</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="s2">&quot;a = 1&quot;</span>
+
+<span class="c1"># callback when code is executed.</span>
+<span class="nd">@console</span><span class="o">.</span><span class="n">executed</span><span class="o">.</span><span class="n">connect</span>
+<span class="k">def</span> <span class="nf">_</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;executed!&quot;</span><span class="p">)</span>
+
+<span class="c1"># programmatically execute code.</span>
+<span class="n">ui</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
+</pre></div>
+</div>
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.widgets.console.QtConsole">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.console.</span></span><span class="sig-name descname"><span class="pre">QtConsole</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/console.html#QtConsole"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.console.QtConsole" title="Permalink to this definition">¶</a></dt>
