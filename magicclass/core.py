@@ -290,9 +290,19 @@ def _popup_deprecation(popup, popup_mode):
     else:
         return popup_mode
 
-
-class Parameters:
+class _CallableClass:
     def __init__(self):
+        self.__name__ = self.__class__.__name__
+        self.__qualname__ = self.__class__.__qualname__
+    
+    def __call__(self, *args, **kwargs):
+        raise NotImplementedError()
+    
+    
+class Parameters(_CallableClass):
+    def __init__(self):
+        super().__init__()
+        
         sig = [inspect.Parameter(name="self", 
                                  kind=inspect.Parameter.POSITIONAL_OR_KEYWORD)]
         for name, attr in inspect.getmembers(self):
@@ -310,11 +320,19 @@ class Parameters:
                                              annotation=t))
         
         self.__signature__ = inspect.Signature(sig)
-        self.__name__ = self.__class__.__name__
-        self.__qualname__ = self.__class__.__qualname__
-    
+        
     def __call__(self, *args):
         params = list(self.__signature__.parameters.keys())[1:]
         for a, param in zip(args, params):
             setattr(self, param, a)
+
+class Info(_CallableClass):
+    def __call__(self):
+        from .widgets import ConsoleTextEdit
+        from .utils import extract_tooltip
+        win = ConsoleTextEdit(name="macro")
+        win.read_only = True
+        win.value = extract_tooltip(self.__class__)
+        win.show()
+        return None
     

@@ -30,6 +30,18 @@ class HasPlotItem:
     def add_curve(self, x: Sequence[float], y: Sequence[float], **kwargs): ...
     
     def add_curve(self, x=None, y=None, **kwargs):
+        """
+        Add line plot like ``plt.plot(x, y)``
+
+        Parameters
+        ----------
+        x : array-like, optional
+            X data.
+        y : array-like, optional
+            Y data.
+        kwargs :
+            color, lw (line width), ls (linestyle) is supported now.
+        """        
         if y is None:
             if x is None:
                 x = []
@@ -47,6 +59,18 @@ class HasPlotItem:
     def add_scatter(self, x: Sequence[float], y: Sequence[float], **kwargs): ...
       
     def add_scatter(self, x=None, y=None, **kwargs):
+        """
+        Add scatter plot like ``plt.scatter(x, y)``
+
+        Parameters
+        ----------
+        x : array-like, optional
+            X data.
+        y : array-like, optional
+            Y data.
+        kwargs :
+            color, lw (line width), ls (linestyle) is supported now.
+        """        
         if y is None:
             if x is None:
                 x = []
@@ -92,6 +116,7 @@ class QtPlotCanvas(FrozenContainer, HasPlotItem):
         self.plotwidget = pg.PlotWidget()
         self._items: list[PlotDataItem] = []
         self.set_widget(self.plotwidget)
+        self._interactive = True
         
         # prepare region item
         self.regionitem = pg.LinearRegionItem()
@@ -161,6 +186,17 @@ class QtPlotCanvas(FrozenContainer, HasPlotItem):
     def ylim(self, value: tuple[float, float]):
         self.plotwidget.setYRange(*value)
     
+    
+    @property
+    def interactive(self) -> bool:
+        """Mouse interactivity"""        
+        return self._interactive
+    
+    @interactive.setter
+    def interactive(self, value: bool):
+        self.plotwidget.setMouseEnabled(value, value)
+        self._interactive = value
+
     @property
     def region(self) -> tuple[float, float]:
         """

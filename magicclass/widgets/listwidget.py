@@ -27,7 +27,19 @@ You can dispatch double click callbacks depending on the type of contents.
 
 In a similar way, you can dispatch display method and context menu.
 
+.. code-block:: python
 
+    @listwidget.register_delegate(np.ndarray)
+    def _(item):
+        # This function should return how ndarray will be displayed.
+        return f"Array with shape {item.shape}"
+    
+    @listwidget.register_contextmenu(np.ndarray)
+    def Plot(item, i):
+        '''Function documentation will be the tooltip.'''
+        plt.plot(item)
+        plt.show()
+    
 """
 
 from __future__ import annotations
@@ -37,11 +49,12 @@ from collections import defaultdict
 from qtpy.QtWidgets import QLabel, QListWidget, QListWidgetItem, QAbstractItemView, QMenu, QAction
 from qtpy.QtCore import Qt
 from .utils import FrozenContainer
+from ..utils import extract_tooltip
 
 _Callback = Callable[[Any, int], Any]
     
 class ListWidget(FrozenContainer):
-    def __init__(self, dragdrop:bool=True, **kwargs):
+    def __init__(self, dragdrop: bool = True, **kwargs):
         super().__init__(labels=False, **kwargs)
         self._listwidget = PyListWidget(self.native)
         self._listwidget.setParentContainer(self)
@@ -159,6 +172,7 @@ class PyListWidget(QListWidget):
     
     def contextMenu(self, point):
         menu = QMenu(self)
+        menu.setToolTipsVisible(True)
         item = self.itemAt(point)
         type_ = type(item.obj)
         menus = self._parent._contextmenu.get(type_, [])
@@ -167,6 +181,9 @@ class PyListWidget(QListWidget):
             action = QAction(text, self)
             pfunc = partial_event(f, item.obj, self.row(item))
             action.triggered.connect(pfunc)
+            doc = extract_tooltip(f)
+            if doc:
+                action.setToolTip(doc)
             menu.addAction(action)
          
         menu.exec_(self.mapToGlobal(point))
