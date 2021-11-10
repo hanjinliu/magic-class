@@ -6,6 +6,7 @@ from magicgui.type_map import get_widget_class
 from magicgui.widgets import create_widget
 from magicgui.widgets._bases import Widget
 from magicgui.widgets._bases.value_widget import UNSET
+from .widgets import NotInstalled
 
 if TYPE_CHECKING:
     from magicgui.widgets._protocols import WidgetProtocol
@@ -49,6 +50,9 @@ class MagicField(Field):
         if self.default_factory is not MISSING and issubclass(self.default_factory, Widget):
             widget = self.default_factory(**self.options)
         else:
+            if isinstance(self.value, NotInstalled):
+                NotInstalled() # raise ModuleNotFoundError here
+                
             widget = create_widget(value=self.value, 
                                    annotation=self.annotation,
                                    **self.metadata

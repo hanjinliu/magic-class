@@ -13,7 +13,7 @@ from magicclass.signature import MagicMethodSignature
 
 from .macro import Macro, Expr, Head, Symbol, symbol
 from .utils import iter_members, n_parameters, extract_tooltip, raise_error_in_msgbox, id_wrapper, screen_center
-from .widgets import Separator, ConsoleTextEdit
+from .widgets import Separator, MacroEdit
 from .mgui_ext import FunctionGuiPlus
 from .field import MagicField
 from .wrappers import upgrade_signature
@@ -128,11 +128,8 @@ class BaseGui:
             out = script
                     
         if show:
-            win = ConsoleTextEdit(name="macro")
-            win.read_only = False
+            win = MacroEdit(name="macro")
             win.value = out
-            vbar = win.native.verticalScrollBar()
-            vbar.setValue(vbar.maximum())
             
             win.native.setParent(self.native, win.native.windowFlags())
             win.show()
