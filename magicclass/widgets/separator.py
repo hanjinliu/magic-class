@@ -4,8 +4,12 @@ from qtpy.QtWidgets import QFrame, QLabel, QPushButton, QSizePolicy, QHBoxLayout
 from .utils import FrozenContainer
 
 class Separator(FrozenContainer):
+    """
+    A Separator widget that can be used in both widgets and menus.
+    """    
     btn_clicked = Signal(bool)
-    def __init__(self, orientation="horizontal", text:str="", name:str="", button:bool=False):
+    def __init__(self, orientation: str = "horizontal", text: str = "", name: str = "", 
+                 button: bool = False):
         super().__init__(layout=orientation, labels=False, name=name)
         self._qtitlebar = _QTitleBar(self.native, text, button)
         self.set_widget(self._qtitlebar)

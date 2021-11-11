@@ -270,7 +270,7 @@ class QtImageCanvas(FrozenContainer, HasPlotItem):
     @property
     def image(self) -> np.ndarray:
         """Image data"""
-        return self.imageview.image
+        return self.imageview.image.T
         
     @image.setter
     def image(self, image):

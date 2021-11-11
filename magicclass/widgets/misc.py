@@ -58,12 +58,18 @@ class Figure(FrozenContainer):
         
 
 class ConsoleTextEdit(TextEdit):
+    """
+    A text edit with console-like setting.
+    """    
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.native.setFont(QFont("Consolas"))
         self.native.setWordWrapMode(QTextOption.NoWrap)
         
 class MacroEdit(FrozenContainer):
+    """
+    A text edit embeded with a custom menu bar.
+    """    
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.textedit = ConsoleTextEdit()
@@ -129,6 +135,9 @@ class MacroEdit(FrozenContainer):
         
 
 class CheckButton(PushButton):
+    """
+    A checkable button.
+    """    
     def __init__(self, text: str | None = None, **kwargs):
         super().__init__(text=text, **kwargs)
         self.native.setCheckable(True)
