@@ -24,14 +24,6 @@ pip install magic-class
 git clone https://github.com/hanjinliu/magic-class
 ```
 
-## Dependencies
-
-`magicgui>=0.3.2`
-
-`numpy>=1.20.3`
-
-`matplotlib>=3.4.2`
-
 ## Example
 
 Let's make a simple GUI that can load 1-D data and plot it.
