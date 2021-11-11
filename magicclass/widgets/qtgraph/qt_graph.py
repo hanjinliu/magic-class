@@ -268,9 +268,12 @@ class QtImageCanvas(FrozenContainer, HasPlotItem):
         return self._text_overlay
     
     @property
-    def image(self) -> np.ndarray:
+    def image(self) -> np.ndarray | None:
         """Image data"""
-        return self.imageview.image.T
+        if self.imageview.image is None:
+            return None
+        else:
+            return self.imageview.image.T
         
     @image.setter
     def image(self, image):

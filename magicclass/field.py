@@ -51,7 +51,7 @@ class MagicField(Field):
             widget = self.default_factory(**self.options)
         else:
             if isinstance(self.value, NotInstalled):
-                NotInstalled() # raise ModuleNotFoundError here
+                self.value() # raise ModuleNotFoundError here
                 
             widget = create_widget(value=self.value, 
                                    annotation=self.annotation,
