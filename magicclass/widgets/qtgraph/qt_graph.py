@@ -11,17 +11,42 @@ from ..utils import FrozenContainer
 BOTTOM = "bottom"
 LEFT = "left"
 
+class LayerList:
+    def __init__(self, parent: HasPlotItem):
+        self.parent = parent
+    
+    def __getitem__(self, key: int | str) -> PlotDataItem:
+        if isinstance(key, int):
+            return self.parent._items[key]
+        elif isinstance(key, str):
+            for item in self.parent._items:
+                if item.name == key:
+                    return item
+            else:
+                raise ValueError(f"Item '{key}' not found.")
+        else:
+            raise TypeError(f"Cannot use type {type(key)} as a key.")
+    
+    def __delitem__(self, key: int | str):
+        return self.parent.remove_item(key)
+    
+    def append(self, item: PlotDataItem):
+        if isinstance(item, PlotDataItem):
+            self.parent._add_item(item)
+        else:
+            raise TypeError(f"Cannot append type {type(item)}.")
+    
 class HasPlotItem:
     _items: list[PlotDataItem]
     
     @property
     def _graphics(self):
-        """target widget to add graphics items."""
+        """Target widget to add graphics items."""
         raise NotImplementedError()
 
     @property
-    def layers(self) -> list[PlotDataItem]:
-        return self._items
+    def layers(self) -> LayerList:
+        return LayerList(self)
     
     @overload
     def add_curve(self, x: Sequence[float], **kwargs): ...
