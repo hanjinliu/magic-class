@@ -1,7 +1,8 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
+from enum import Enum
 from qtpy.QtGui import QFont, QTextOption, QGuiApplication
-from qtpy.QtWidgets import QMenuBar, QMenu, QAction
+from qtpy.QtWidgets import QMenuBar, QMenu, QAction, QMessageBox
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvas
@@ -141,3 +142,27 @@ class CheckButton(PushButton):
     def __init__(self, text: str | None = None, **kwargs):
         super().__init__(text=text, **kwargs)
         self.native.setCheckable(True)
+
+class MessageBoxMode(Enum):
+    ERROR = "error"
+    WARNING = "warn"
+    INFO = "info"
+    QUESTION = "question"
+    ABOUT = "about"
+
+QMESSAGE_MODES = {
+    MessageBoxMode.ERROR: QMessageBox.critical,
+    MessageBoxMode.WARNING: QMessageBox.warning,
+    MessageBoxMode.INFO: QMessageBox.information,
+    MessageBoxMode.QUESTION: QMessageBox.question,
+    MessageBoxMode.ABOUT: QMessageBox.about,
+}
+
+def show_messagebox(mode: str | MessageBoxMode = MessageBoxMode.INFO,
+                    title: str = None,
+                    text: str = None,
+                    parent=None
+                    ) -> bool:
+    show_dialog = QMESSAGE_MODES[MessageBoxMode(mode)]
+    result = show_dialog(parent, title, text)
+    return result in (QMessageBox.Ok, QMessageBox.Yes)

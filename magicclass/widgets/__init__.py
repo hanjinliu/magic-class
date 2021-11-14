@@ -6,7 +6,7 @@ These widgets are all compatible with the ``append`` method of Container widgets
 from magicgui.widgets import * # to avoid importing both magicgui.widgets and magicclass.widgets
 
 from .listwidget import ListWidget
-from .misc import Figure, ConsoleTextEdit, MacroEdit, CheckButton
+from .misc import Figure, ConsoleTextEdit, MacroEdit, CheckButton, show_messagebox
 from .separator import Separator
 from .sequence import ListEdit, TupleEdit
 from .utils import FrozenContainer
@@ -49,6 +49,7 @@ __all__ = ["ListWidget",
            "ConsoleTextEdit", 
            "MacroEdit",
            "CheckButton",
+           "show_messagebox",
            "Separator",
            "ListEdit",
            "TupleEdit",
