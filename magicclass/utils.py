@@ -103,11 +103,14 @@ def raise_error_in_msgbox(_func: Callable, parent: Widget = None):
     
     return wrapped_func
 
-def id_wrapper(_func: Callable, parent: Widget = None):
+def identity_wrapper(_func: Callable, parent: Widget = None):
     """
     Do nothing.
     """    
-    return _func
+    @wraps(_func)
+    def wrapped_func(*args, **kwargs):
+        return _func(*args, **kwargs)
+    return wrapped_func
 
 def get_parameters(fgui: FunctionGui):
     return {k: v.default for k, v in fgui.__signature__.parameters.items()}

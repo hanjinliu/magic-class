@@ -12,7 +12,7 @@ from magicgui.widgets import FunctionGui, FileEdit, EmptyWidget
 from magicclass.signature import MagicMethodSignature
 
 from .macro import Macro, Expr, Head, Symbol, symbol
-from .utils import iter_members, n_parameters, extract_tooltip, raise_error_in_msgbox, id_wrapper, screen_center
+from .utils import iter_members, n_parameters, extract_tooltip, raise_error_in_msgbox, identity_wrapper, screen_center
 from .widgets import Separator, MacroEdit
 from .mgui_ext import FunctionGuiPlus
 from .field import MagicField
@@ -257,7 +257,7 @@ class BaseGui:
         if self._error_mode == ErrorMode.msgbox:
             wrapper = raise_error_in_msgbox
         elif self._error_mode == ErrorMode.stderr:
-            wrapper = id_wrapper
+            wrapper = identity_wrapper
         else:
             raise ValueError(self._error_mode)
             
