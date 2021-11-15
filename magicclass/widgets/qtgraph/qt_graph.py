@@ -315,7 +315,7 @@ class QtImageCanvas(FrozenContainer, HasPlotItem):
         
     @image.setter
     def image(self, image):
-        self.imageview.setImage(np.asarray(image).T, autoRange=False)
+        self.imageview.setImage(np.asarray(image).T, pos=(-0.5, -0.5), autoRange=False)
         
     @image.deleter
     def image(self):
