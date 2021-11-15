@@ -26,7 +26,7 @@ class LayerList:
                 raise ValueError(f"Item '{key}' not found.")
         else:
             raise TypeError(f"Cannot use type {type(key)} as a key.")
-    
+        
     def __delitem__(self, key: int | str):
         return self.parent.remove_item(key)
     
@@ -35,6 +35,13 @@ class LayerList:
             self.parent._add_item(item)
         else:
             raise TypeError(f"Cannot append type {type(item)}.")
+    
+    def __len__(self):
+        return len(self.parent._items)
+    
+    def clear(self):
+        for _ in range(len(self)):
+            self.parent.remove_item(-1)
     
 class HasPlotItem:
     _items: list[PlotDataItem]
@@ -115,6 +122,8 @@ class HasPlotItem:
         if isinstance(item, PlotDataItem):
             i = self._items.index(item)
         elif isinstance(item, int):
+            if item < 0:
+                item += len(self._items)
             i = item
         elif isinstance(item, str):
             for i, each in enumerate(self._items):
@@ -250,6 +259,8 @@ class QtImageCanvas(FrozenContainer, HasPlotItem):
                  image: np.ndarray = None, 
                  cmap=None, 
                  contrast_limits: tuple[float, float] = None,
+                 show_hist: bool = True,
+                 show_button: bool = True,
                  **kwargs):
         
         super().__init__(**kwargs)
@@ -257,6 +268,8 @@ class QtImageCanvas(FrozenContainer, HasPlotItem):
         self.set_widget(self.imageview)
         self._interactive = True
         self._items: list[PlotDataItem] = []
+        self.show_hist(show_hist)
+        self.show_button(show_button)
         
         # set properties
         if image is not None:
