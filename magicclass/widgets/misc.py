@@ -76,6 +76,7 @@ class MacroEdit(FrozenContainer):
         self.textedit = ConsoleTextEdit()
         self.set_widget(self.textedit.native)
         self.native: QWidget
+        self.native.setWindowTitle("Macro")
         
         self._menubar = QMenuBar(self.native)
         self.native.layout().setMenuBar(self._menubar)
