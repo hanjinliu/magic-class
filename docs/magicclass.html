@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass package &mdash; magic-class 0.5.5dev0 documentation</title>
+  <title>magicclass package &mdash; magic-class 0.5.7 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -30,7 +30,7 @@
             <a href="index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.5dev0
+                0.5.7
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -40,7 +40,7 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul class="current">
+              <ul>
 <li class="toctree-l1"><a class="reference internal" href="quick_start.html">Quick Start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="options.html">Options in magic-class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="nest.html">Nest magic-classes</a></li>
@@ -48,31 +48,7 @@
 <li class="toctree-l1"><a class="reference internal" href="use_wraps.html">Call Parent Methods from its Child</a></li>
 <li class="toctree-l1"><a class="reference internal" href="special_methods.html">Special attributes in magic-class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="containers.html">Container Variations</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="api.html">API References</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">magicclass package</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.widgets.html">magicclass.widgets package</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-magicclass.class_gui">magicclass.class_gui module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-magicclass.containers">magicclass.containers module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-magicclass.core">magicclass.core module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-magicclass.creator">magicclass.creator module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-magicclass.field">magicclass.field module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-magicclass.macro">magicclass.macro module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-magicclass.menu_gui">magicclass.menu_gui module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-magicclass.mgui_ext">magicclass.mgui_ext module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-magicclass.signature">magicclass.signature module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-magicclass.utils">magicclass.utils module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-magicclass.wrappers">magicclass.wrappers module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-magicclass">Module contents</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="magicclass.widgets.html">magicclass.widgets package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="magicclass.widgets.qtgraph.html">magicclass.widgets.qtgraph package</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API References</a></li>
 </ul>
 
         </div>
@@ -954,8 +930,8 @@ of the results. We have to sort the name in the order of line number.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="magicclass.utils.id_wrapper">
-<span class="sig-prename descclassname"><span class="pre">magicclass.utils.</span></span><span class="sig-name descname"><span class="pre">id_wrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_func</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Widget</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/utils.html#id_wrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.utils.id_wrapper" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="magicclass.utils.identity_wrapper">
+<span class="sig-prename descclassname"><span class="pre">magicclass.utils.</span></span><span class="sig-name descname"><span class="pre">identity_wrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_func</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Widget</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/utils.html#identity_wrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.utils.identity_wrapper" title="Permalink to this definition">¶</a></dt>
 <dd><p>Do nothing.</p>
 </dd></dl>
 

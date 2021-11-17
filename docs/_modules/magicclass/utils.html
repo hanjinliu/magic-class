@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.utils &mdash; magic-class 0.5.5dev0 documentation</title>
+  <title>magicclass.utils &mdash; magic-class 0.5.7 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -27,7 +27,7 @@
             <a href="../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.5dev0
+                0.5.7
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -45,6 +45,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../use_wraps.html">Call Parent Methods from its Child</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../special_methods.html">Special attributes in magic-class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../containers.html">Container Variations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API References</a></li>
 </ul>
 
         </div>
@@ -177,11 +178,14 @@
     
     <span class="k">return</span> <span class="n">wrapped_func</span></div>
 
-<div class="viewcode-block" id="id_wrapper"><a class="viewcode-back" href="../../magicclass.html#magicclass.utils.id_wrapper">[docs]</a><span class="k">def</span> <span class="nf">id_wrapper</span><span class="p">(</span><span class="n">_func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">parent</span><span class="p">:</span> <span class="n">Widget</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="identity_wrapper"><a class="viewcode-back" href="../../magicclass.html#magicclass.utils.identity_wrapper">[docs]</a><span class="k">def</span> <span class="nf">identity_wrapper</span><span class="p">(</span><span class="n">_func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">parent</span><span class="p">:</span> <span class="n">Widget</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Do nothing.</span>
 <span class="sd">    &quot;&quot;&quot;</span>    
-    <span class="k">return</span> <span class="n">_func</span></div>
+    <span class="nd">@wraps</span><span class="p">(</span><span class="n">_func</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">wrapped_func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">wrapped_func</span></div>
 
 <div class="viewcode-block" id="get_parameters"><a class="viewcode-back" href="../../magicclass.html#magicclass.utils.get_parameters">[docs]</a><span class="k">def</span> <span class="nf">get_parameters</span><span class="p">(</span><span class="n">fgui</span><span class="p">:</span> <span class="n">FunctionGui</span><span class="p">):</span>
     <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="o">.</span><span class="n">default</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">fgui</span><span class="o">.</span><span class="n">__signature__</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span></div>

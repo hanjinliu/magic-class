@@ -166,7 +166,7 @@ class _ButtonContainer(ContainerBase):
         
         self._qwidget.setText(btn_text)
         self._qwidget.clicked.connect(lambda x: self._inner_widget.show())
-        
+
 class _CollapsibleContainer(ContainerBase):
     """
     Collapsible container.

@@ -108,6 +108,24 @@ or in a text editor window.
 
     ui.create_macro(show=True)
 
+Occasionally, you may want some functions not to record macro (such as a function that only shows a help
+window). You can prevent macro recording with ``do_not_record`` decorator.
+
+
+.. code-block:: python
+
+    from magicclass import magicclass, do_not_record
+
+    @magicclass
+    class Main:
+        @do_not_record
+        def f(self):
+            """this function will never be recorded"""
+    
+    ui = Main()
+    ui.show()
+
+
 Parameter Options
 -----------------
 
@@ -139,4 +157,19 @@ However, magic classes need another way to do this because ``magicgui`` will nev
 Change Button Designs
 ---------------------
 
-✍ please wait ...
+Aside from those options of ``magicgui`` popup widget to run functions, you may also want to change
+the design of button itself. ``magicclass`` uses ``set_design`` decorator to do this.
+
+.. code-block:: python
+
+    from magicclass import magicclass, set_design
+
+    @magicclass
+    class Main:
+        @set_design(text="Click (if you want)", min_height=120)
+        def f(self): ...
+
+    ui = Main()
+    ui.show()
+
+``set_design`` can take properties of ``PushButton`` as arguments.

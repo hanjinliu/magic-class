@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.widgets.misc &mdash; magic-class 0.5.5dev0 documentation</title>
+  <title>magicclass.widgets.misc &mdash; magic-class 0.5.7 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -27,7 +27,7 @@
             <a href="../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.5dev0
+                0.5.7
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -45,6 +45,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../use_wraps.html">Call Parent Methods from its Child</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../special_methods.html">Special attributes in magic-class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../containers.html">Container Variations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API References</a></li>
 </ul>
 
         </div>
@@ -73,15 +74,21 @@
              
   <h1>Source code for magicclass.widgets.misc</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
-<span class="kn">from</span> <span class="nn">qtpy.QtGui</span> <span class="kn">import</span> <span class="n">QFont</span><span class="p">,</span> <span class="n">QTextOption</span>
-<span class="kn">from</span> <span class="nn">qtpy.QtCore</span> <span class="kn">import</span> <span class="n">Qt</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
+<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span> <span class="nn">qtpy.QtGui</span> <span class="kn">import</span> <span class="n">QFont</span><span class="p">,</span> <span class="n">QTextOption</span><span class="p">,</span> <span class="n">QGuiApplication</span>
+<span class="kn">from</span> <span class="nn">qtpy.QtWidgets</span> <span class="kn">import</span> <span class="n">QMenuBar</span><span class="p">,</span> <span class="n">QMenu</span><span class="p">,</span> <span class="n">QAction</span><span class="p">,</span> <span class="n">QMessageBox</span>
 <span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">from</span> <span class="nn">matplotlib.backends.backend_qt5agg</span> <span class="kn">import</span> <span class="n">FigureCanvas</span>
-<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">FrozenContainer</span>
-<span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">PushButton</span><span class="p">,</span> <span class="n">TextEdit</span>
+<span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">PushButton</span><span class="p">,</span> <span class="n">TextEdit</span><span class="p">,</span> <span class="n">FileEdit</span>
 
-<div class="viewcode-block" id="Figure"><a class="viewcode-back" href="../../../magicclass.html#magicclass.widgets.Figure">[docs]</a><span class="k">class</span> <span class="nc">Figure</span><span class="p">(</span><span class="n">FrozenContainer</span><span class="p">):</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">FrozenContainer</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">qtpy.QtWidgets</span> <span class="kn">import</span> <span class="n">QWidget</span>
+
+<div class="viewcode-block" id="Figure"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.misc.Figure">[docs]</a><span class="k">class</span> <span class="nc">Figure</span><span class="p">(</span><span class="n">FrozenContainer</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A matplotlib figure canvas.</span>
 <span class="sd">    &quot;&quot;&quot;</span>    
@@ -109,7 +116,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">figure</span> <span class="o">=</span> <span class="n">fig</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">min_height</span> <span class="o">=</span> <span class="mi">40</span>
         
-<div class="viewcode-block" id="Figure.draw"><a class="viewcode-back" href="../../../magicclass.html#magicclass.widgets.Figure.draw">[docs]</a>    <span class="k">def</span> <span class="nf">draw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Figure.draw"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.misc.Figure.draw">[docs]</a>    <span class="k">def</span> <span class="nf">draw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span></div>
     
@@ -126,18 +133,115 @@
         <span class="k">return</span> <span class="n">_ax</span></div>
         
 
-<div class="viewcode-block" id="ConsoleTextEdit"><a class="viewcode-back" href="../../../magicclass.html#magicclass.widgets.ConsoleTextEdit">[docs]</a><span class="k">class</span> <span class="nc">ConsoleTextEdit</span><span class="p">(</span><span class="n">TextEdit</span><span class="p">):</span>
+<div class="viewcode-block" id="ConsoleTextEdit"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.misc.ConsoleTextEdit">[docs]</a><span class="k">class</span> <span class="nc">ConsoleTextEdit</span><span class="p">(</span><span class="n">TextEdit</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A text edit with console-like setting.</span>
+<span class="sd">    &quot;&quot;&quot;</span>    
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setFont</span><span class="p">(</span><span class="n">QFont</span><span class="p">(</span><span class="s2">&quot;Consolas&quot;</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setWordWrapMode</span><span class="p">(</span><span class="n">QTextOption</span><span class="o">.</span><span class="n">NoWrap</span><span class="p">)</span></div>
-        <span class="c1"># TODO: copy, save, run actions</span>
+        
+<div class="viewcode-block" id="MacroEdit"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.misc.MacroEdit">[docs]</a><span class="k">class</span> <span class="nc">MacroEdit</span><span class="p">(</span><span class="n">FrozenContainer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A text edit embeded with a custom menu bar.</span>
+<span class="sd">    &quot;&quot;&quot;</span>    
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">textedit</span> <span class="o">=</span> <span class="n">ConsoleTextEdit</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_widget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">textedit</span><span class="o">.</span><span class="n">native</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="p">:</span> <span class="n">QWidget</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">&quot;Macro&quot;</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_menubar</span> <span class="o">=</span> <span class="n">QMenuBar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">setMenuBar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_menubar</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">textedit</span><span class="o">.</span><span class="n">read_only</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">vbar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">textedit</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">verticalScrollBar</span><span class="p">()</span>
+        <span class="n">vbar</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">vbar</span><span class="o">.</span><span class="n">maximum</span><span class="p">())</span>
+        
+        <span class="c1"># set menu</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_file_menu</span> <span class="o">=</span> <span class="n">QMenu</span><span class="p">(</span><span class="s2">&quot;File&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_menubar</span><span class="o">.</span><span class="n">addMenu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_file_menu</span><span class="p">)</span>
+        
+        <span class="c1"># Set actions to menus</span>
+        <span class="n">copy_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Copy&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file_menu</span><span class="p">)</span>
+        <span class="n">copy_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_copy</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_file_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">copy_action</span><span class="p">)</span>
+        
+        <span class="n">save_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Save&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file_menu</span><span class="p">)</span>
+        <span class="n">save_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_file_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">save_action</span><span class="p">)</span>
+        
+        <span class="n">close_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Close&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file_menu</span><span class="p">)</span>
+        <span class="n">close_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_close</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_file_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">close_action</span><span class="p">)</span>
+        
     
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">textedit</span><span class="o">.</span><span class="n">value</span>
+    
+    <span class="nd">@value</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">textedit</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
+    
+    <span class="k">def</span> <span class="nf">_copy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">e</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Copy text to clipboard&quot;&quot;&quot;</span>
+        <span class="n">clipboard</span> <span class="o">=</span> <span class="n">QGuiApplication</span><span class="o">.</span><span class="n">clipboard</span><span class="p">()</span>
+        <span class="n">clipboard</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">_save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">e</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Save text.&quot;&quot;&quot;</span>
+        <span class="n">fdialog</span> <span class="o">=</span> <span class="n">FileEdit</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="s2">&quot;*.txt;*.py&quot;</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">fdialog</span><span class="o">.</span><span class="n">_show_file_dialog</span><span class="p">(</span>
+                    <span class="n">fdialog</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span>
+                    <span class="n">caption</span><span class="o">=</span><span class="n">fdialog</span><span class="o">.</span><span class="n">_btn_text</span><span class="p">,</span>
+                    <span class="n">start_path</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">fdialog</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
+                    <span class="nb">filter</span><span class="o">=</span><span class="n">fdialog</span><span class="o">.</span><span class="n">filter</span><span class="p">,</span>
+                    <span class="p">)</span>
+        <span class="k">if</span> <span class="n">result</span><span class="p">:</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">_close</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">e</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Close widget.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">deleteLater</span><span class="p">()</span></div>
+        
 
-<div class="viewcode-block" id="CheckButton"><a class="viewcode-back" href="../../../magicclass.html#magicclass.widgets.CheckButton">[docs]</a><span class="k">class</span> <span class="nc">CheckButton</span><span class="p">(</span><span class="n">PushButton</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span><span class="nb">str</span><span class="o">|</span><span class="kc">None</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="CheckButton"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.misc.CheckButton">[docs]</a><span class="k">class</span> <span class="nc">CheckButton</span><span class="p">(</span><span class="n">PushButton</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A checkable button.</span>
+<span class="sd">    &quot;&quot;&quot;</span>    
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setCheckable</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MessageBoxMode"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.misc.MessageBoxMode">[docs]</a><span class="k">class</span> <span class="nc">MessageBoxMode</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">ERROR</span> <span class="o">=</span> <span class="s2">&quot;error&quot;</span>
+    <span class="n">WARNING</span> <span class="o">=</span> <span class="s2">&quot;warn&quot;</span>
+    <span class="n">INFO</span> <span class="o">=</span> <span class="s2">&quot;info&quot;</span>
+    <span class="n">QUESTION</span> <span class="o">=</span> <span class="s2">&quot;question&quot;</span>
+    <span class="n">ABOUT</span> <span class="o">=</span> <span class="s2">&quot;about&quot;</span></div>
+
+<span class="n">QMESSAGE_MODES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">MessageBoxMode</span><span class="o">.</span><span class="n">ERROR</span><span class="p">:</span> <span class="n">QMessageBox</span><span class="o">.</span><span class="n">critical</span><span class="p">,</span>
+    <span class="n">MessageBoxMode</span><span class="o">.</span><span class="n">WARNING</span><span class="p">:</span> <span class="n">QMessageBox</span><span class="o">.</span><span class="n">warning</span><span class="p">,</span>
+    <span class="n">MessageBoxMode</span><span class="o">.</span><span class="n">INFO</span><span class="p">:</span> <span class="n">QMessageBox</span><span class="o">.</span><span class="n">information</span><span class="p">,</span>
+    <span class="n">MessageBoxMode</span><span class="o">.</span><span class="n">QUESTION</span><span class="p">:</span> <span class="n">QMessageBox</span><span class="o">.</span><span class="n">question</span><span class="p">,</span>
+    <span class="n">MessageBoxMode</span><span class="o">.</span><span class="n">ABOUT</span><span class="p">:</span> <span class="n">QMessageBox</span><span class="o">.</span><span class="n">about</span><span class="p">,</span>
+<span class="p">}</span>
+
+<div class="viewcode-block" id="show_messagebox"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.misc.show_messagebox">[docs]</a><span class="k">def</span> <span class="nf">show_messagebox</span><span class="p">(</span><span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">MessageBoxMode</span> <span class="o">=</span> <span class="n">MessageBoxMode</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span>
+                    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                    <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                    <span class="n">parent</span><span class="o">=</span><span class="kc">None</span>
+                    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="n">show_dialog</span> <span class="o">=</span> <span class="n">QMESSAGE_MODES</span><span class="p">[</span><span class="n">MessageBoxMode</span><span class="p">(</span><span class="n">mode</span><span class="p">)]</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">show_dialog</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span> <span class="ow">in</span> <span class="p">(</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Ok</span><span class="p">,</span> <span class="n">QMessageBox</span><span class="o">.</span><span class="n">Yes</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

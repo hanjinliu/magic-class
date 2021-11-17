@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Quick Start &mdash; magic-class 0.5.5dev0 documentation</title>
+  <title>Quick Start &mdash; magic-class 0.5.7 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -30,7 +30,7 @@
             <a href="index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.5dev0
+                0.5.7
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -173,6 +173,20 @@ value changes in child widgets are all recorded and you can generate executable 
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ui</span><span class="o">.</span><span class="n">create_macro</span><span class="p">(</span><span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>Occasionally, you may want some functions not to record macro (such as a function that only shows a help
+window). You can prevent macro recording with <code class="docutils literal notranslate"><span class="pre">do_not_record</span></code> decorator.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">do_not_record</span>
+
+<span class="nd">@magicclass</span>
+<span class="k">class</span> <span class="nc">Main</span><span class="p">:</span>
+    <span class="nd">@do_not_record</span>
+    <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;this function will never be recorded&quot;&quot;&quot;</span>
+
+<span class="n">ui</span> <span class="o">=</span> <span class="n">Main</span><span class="p">()</span>
+<span class="n">ui</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
 </section>
 <section id="parameter-options">
 <h2>Parameter Options<a class="headerlink" href="#parameter-options" title="Permalink to this headline">¶</a></h2>
@@ -198,7 +212,20 @@ value changes in child widgets are all recorded and you can generate executable 
 </section>
 <section id="change-button-designs">
 <h2>Change Button Designs<a class="headerlink" href="#change-button-designs" title="Permalink to this headline">¶</a></h2>
-<p>✍ please wait ...</p>
+<p>Aside from those options of <code class="docutils literal notranslate"><span class="pre">magicgui</span></code> popup widget to run functions, you may also want to change
+the design of button itself. <code class="docutils literal notranslate"><span class="pre">magicclass</span></code> uses <code class="docutils literal notranslate"><span class="pre">set_design</span></code> decorator to do this.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">set_design</span>
+
+<span class="nd">@magicclass</span>
+<span class="k">class</span> <span class="nc">Main</span><span class="p">:</span>
+    <span class="nd">@set_design</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;Click (if you want)&quot;</span><span class="p">,</span> <span class="n">min_height</span><span class="o">=</span><span class="mi">120</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
+
+<span class="n">ui</span> <span class="o">=</span> <span class="n">Main</span><span class="p">()</span>
+<span class="n">ui</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">set_design</span></code> can take properties of <code class="docutils literal notranslate"><span class="pre">PushButton</span></code> as arguments.</p>
 </section>
 </section>
 
