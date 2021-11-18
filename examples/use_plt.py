@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from magicclass import magicclass
+from magicclass import magicclass, field
 from magicclass.widgets import Figure
 
 @magicclass
@@ -8,9 +8,7 @@ class RandomPlot:
     """
     Plot random data or clear it.
     """    
-    def __post_init__(self):
-        self.figure = Figure()
-        self.append(self.figure)
+    figure = field(Figure)
         
     def plot(self):
         """

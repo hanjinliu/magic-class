@@ -1,102 +1,17 @@
 from __future__ import annotations
 from typing import Callable
 import warnings
-from magicgui.events import Signal
 from magicgui.widgets import Container
 from magicgui.widgets._bases import ButtonWidget
-from qtpy.QtGui import QIcon
-from qtpy.QtWidgets import QMenu, QAction
+from qtpy.QtWidgets import QMenu
 
 from .field import MagicField
 from .widgets import Separator
+from .mgui_ext import Action
 from ._base import BaseGui, PopUpMode, ErrorMode
 from .macro import Expr, Head, Symbol, symbol
 from .utils import iter_members, define_callback
 
-class Action:
-    """QAction encapsulated class with a similar API as magicgui Widget."""
-    changed = Signal(object)
-    def __init__(self, *args, name=None, text=None, gui_only=True, **kwargs):
-        self.native = QAction(*args, **kwargs)
-        self.mgui = None
-        self._icon_path = None
-        if text:
-            self.text = text
-        if name:
-            self.native.setObjectName(name)
-        self._callbacks = []
-        
-        self.native.triggered.connect(lambda: self.changed.emit(self.value))
-        
-    @property
-    def name(self) -> str:
-        return self.native.objectName()
-    
-    @name.setter
-    def name(self, value: str):
-        self.native.setObjectName(value)
-    
-    @property
-    def text(self) -> str:
-        return self.native.text()
-    
-    @text.setter
-    def text(self, value: str):
-        self.native.setText(value)
-    
-    @property
-    def tooltip(self) -> str:
-        return self.native.toolTip()
-    
-    @tooltip.setter
-    def tooltip(self, value: str):
-        self.native.setToolTip(value)
-    
-    @property
-    def enabled(self):
-        return self.native.isEnabled()
-    
-    @enabled.setter
-    def enabled(self, value: bool):
-        self.native.setEnabled(value)
-    
-    @property
-    def value(self):
-        return self.native.isChecked()
-    
-    @value.setter
-    def value(self, checked: bool):
-        self.native.setChecked(checked)
-    
-    @property
-    def visible(self):
-        return self.native.isVisible()
-    
-    @visible.setter
-    def visible(self, value: bool):
-        self.native.setVisible(value)
-    
-    @property
-    def icon_path(self):
-        return self._icon_path
-    
-    @icon_path.setter
-    def icon_path(self, path:str):
-        icon = QIcon(path)
-        self.native.setIcon(icon)
-    
-    def from_options(self, options: dict[str]|Callable):
-        if callable(options):
-            try:
-                options = options.__signature__.caller_options
-            except AttributeError:
-                return None
-                
-        for k, v in options.items():
-            v = options.get(k, None)
-            if v is not None:
-                setattr(self, k, v)
-        return None
 
 
 class MenuGuiBase(BaseGui):

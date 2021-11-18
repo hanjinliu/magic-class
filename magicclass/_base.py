@@ -14,7 +14,7 @@ from magicclass.signature import MagicMethodSignature
 from .macro import Macro, Expr, Head, Symbol, symbol
 from .utils import iter_members, n_parameters, extract_tooltip, raise_error_in_msgbox, identity_wrapper, screen_center
 from .widgets import Separator, MacroEdit
-from .mgui_ext import FunctionGuiPlus
+from .mgui_ext import FunctionGuiPlus, PushButtonPlus
 from .field import MagicField
 from .wrappers import upgrade_signature
 
@@ -308,7 +308,7 @@ class BaseGui:
                 if mgui.call_count == 0 and len(mgui.called._slots) == 0 and record:
                     callback = _temporal_function_gui_callback(self, mgui, widget)
                     mgui.called.connect(callback)
-
+                
                 out = mgui()
                 
                 return out
@@ -329,6 +329,7 @@ class BaseGui:
                     start_path=str(fdialog.value),
                     filter=fdialog.filter,
                 )
+
                 if result:
                     fdialog.value = result
                     out = mgui(result)
@@ -342,6 +343,8 @@ class BaseGui:
                 if mgui.call_count == 0 and len(mgui.called._slots) == 0:
                     mgui.native.setParent(self.native, mgui.native.windowFlags())
                     mgui.native.move(screen_center() - mgui.native.rect().center())
+                    
+                    # deal with popup mode.
                     if self._popup_mode not in (PopUpMode.popup, PopUpMode.dock):
                         mgui.label = ""
                         mgui.name = f"mgui-{id(mgui._function)}" # to avoid name collision
@@ -401,7 +404,7 @@ class BaseGui:
                     if record:
                         callback = _temporal_function_gui_callback(self, mgui, widget)
                         mgui.called.connect(callback)
-                
+                                    
                 if self._popup_mode != PopUpMode.dock:
                     widget.mgui.show()
                 else:
@@ -426,7 +429,7 @@ def _get_widget_name(widget):
     # To escape reference
     return widget.name
     
-def _temporal_function_gui_callback(bgui: BaseGui, fgui: FunctionGuiPlus, widget):
+def _temporal_function_gui_callback(bgui: BaseGui, fgui: FunctionGuiPlus, widget: PushButtonPlus):
     if isinstance(fgui, FunctionGui):
         _function = fgui._function
     else:
@@ -473,6 +476,8 @@ def _temporal_function_gui_callback(bgui: BaseGui, fgui: FunctionGuiPlus, widget
                 line = Expr.parse_call(callback, (_gui, result, return_type), {})
                 bgui._recorded_macro.append(line)
         
+        return None
+    
     return _after_run
 
 def _copy_function(f):

@@ -1,9 +1,10 @@
 from __future__ import annotations
 from typing import Callable, Iterable, Any
 import re
-from qtpy.QtWidgets import QPushButton
+from qtpy.QtWidgets import QPushButton, QAction
 from qtpy.QtGui import QIcon
 from qtpy.QtCore import QSize
+from magicgui.events import Signal
 from magicgui.widgets import Container, PushButton, FunctionGui
 from magicgui.widgets._function_gui import _function_name_pointing_to_widget
 from matplotlib.colors import to_rgb
@@ -14,6 +15,7 @@ class FunctionGuiPlus(FunctionGui):
     """
     FunctionGui class with a parameter recording functionality.
     """
+        
     def __call__(self, *args: Any, **kwargs: Any):
         sig = self.__signature__
         try:
@@ -39,7 +41,11 @@ class FunctionGuiPlus(FunctionGui):
 
         self._tqdm_depth = 0  # reset the tqdm stack count
         with _function_name_pointing_to_widget(self):
-            value = self._function(*bound.args, **bound.kwargs)
+            self.running = True
+            try:
+                value = self._function(*bound.args, **bound.kwargs)
+            finally:
+                self.running = False
 
         self._call_count += 1
         if self._result_widget is not None:
@@ -63,7 +69,11 @@ class PushButtonPlus(PushButton):
         super().__init__(text=text, **kwargs)
         self.native: QPushButton
         self._icon_path = None
-        self.mgui: Container = None
+        self.mgui: Container = None # tagged function GUI
+    
+    @property
+    def running(self) -> bool:
+        return getattr(self.mgui, "running", False)
     
     @property
     def background_color(self):
@@ -140,6 +150,97 @@ class PushButtonPlus(PushButton):
             if v is not None:
                 setattr(self, k, v)
         return None
+
+class Action:
+    """QAction encapsulated class with a similar API as magicgui Widget."""
+    changed = Signal(object)
+    def __init__(self, *args, name=None, text=None, gui_only=True, **kwargs):
+        self.native = QAction(*args, **kwargs)
+        self.mgui: FunctionGuiPlus = None
+        self.running = False
+        self._icon_path = None
+        if text:
+            self.text = text
+        if name:
+            self.native.setObjectName(name)
+        self._callbacks = []
+        
+        self.native.triggered.connect(lambda: self.changed.emit(self.value))
+    
+    @property
+    def running(self) -> bool:
+        return getattr(self.mgui, "running", False)
+    
+    @property
+    def name(self) -> str:
+        return self.native.objectName()
+    
+    @name.setter
+    def name(self, value: str):
+        self.native.setObjectName(value)
+    
+    @property
+    def text(self) -> str:
+        return self.native.text()
+    
+    @text.setter
+    def text(self, value: str):
+        self.native.setText(value)
+    
+    @property
+    def tooltip(self) -> str:
+        return self.native.toolTip()
+    
+    @tooltip.setter
+    def tooltip(self, value: str):
+        self.native.setToolTip(value)
+    
+    @property
+    def enabled(self):
+        return self.native.isEnabled()
+    
+    @enabled.setter
+    def enabled(self, value: bool):
+        self.native.setEnabled(value)
+    
+    @property
+    def value(self):
+        return self.native.isChecked()
+    
+    @value.setter
+    def value(self, checked: bool):
+        self.native.setChecked(checked)
+    
+    @property
+    def visible(self):
+        return self.native.isVisible()
+    
+    @visible.setter
+    def visible(self, value: bool):
+        self.native.setVisible(value)
+    
+    @property
+    def icon_path(self):
+        return self._icon_path
+    
+    @icon_path.setter
+    def icon_path(self, path:str):
+        icon = QIcon(path)
+        self.native.setIcon(icon)
+    
+    def from_options(self, options: dict[str]|Callable):
+        if callable(options):
+            try:
+                options = options.__signature__.caller_options
+            except AttributeError:
+                return None
+                
+        for k, v in options.items():
+            v = options.get(k, None)
+            if v is not None:
+                setattr(self, k, v)
+        return None
+
 
 def _to_rgb(color):
     if isinstance(color, str):
