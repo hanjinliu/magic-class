@@ -12,8 +12,6 @@ from ._base import BaseGui, PopUpMode, ErrorMode
 from .macro import Expr, Head, Symbol, symbol
 from .utils import iter_members, define_callback
 
-
-
 class MenuGuiBase(BaseGui):
     _component_class = Action
     
@@ -149,21 +147,38 @@ class ContextMenuGui(MenuGuiBase):
     """Magic class that will be converted into a context menu."""
     # TODO: Prevent more than one context menu
 
-def _value_widget_callback(mgui: MenuGuiBase, widget: ButtonWidget, name: str):
+def _value_widget_callback(mgui: MenuGuiBase, widget: ButtonWidget, name: str, getvalue: bool = True):
     def _set_value():
         if not widget.enabled:
             # If widget is read only, it means that value is set in script (not manually).
             # Thus this event should not be recorded as a macro.
             return None
-        value = widget.value
-        if isinstance(value, Exception):
+        
+        if isinstance(widget.value, Exception):
             return None
-        sub = Expr(head=Head.getattr, args=[Symbol(name), Symbol("value")]) # name.value
-        expr = Expr(head=Head.setattr, args=[symbol(mgui), sub, value]) # {x}.name.value = value
+        
+        mgui.changed.emit(mgui)
+        
+        if getvalue:
+            sub = Expr(head=Head.getattr, args=[Symbol(name), Symbol("value")]) # name.value
+        else:
+            sub = Expr(head=Head.value, args=[Symbol(name)])
+        
+        # Make an expression of
+        # >>> x.name.value = value
+        # or
+        # >>> x.name = value
+        expr = Expr(head=Head.assign, 
+                    args=[Expr(head=Head.getattr, 
+                               args=[symbol(mgui), sub]), 
+                          widget.value])
         
         last_expr = mgui._recorded_macro[-1]
-        if last_expr.head == expr.head and last_expr.args[1].args[0] == expr.args[1].args[0]:
+        if (last_expr.head == expr.head and 
+            last_expr.args[0].args[1].head == expr.args[0].args[1].head and
+            last_expr.args[0].args[1].args[0] == expr.args[0].args[1].args[0]):
             mgui._recorded_macro[-1] = expr
         else:
             mgui._recorded_macro.append(expr)
+        return None
     return _set_value

@@ -105,11 +105,10 @@ def register_type(type: type[T], function: Callable[[T], str]):
 class Head(Enum):
     init    = "init"
     getattr = "getattr"
-    setattr = "setattr"
     getitem = "getitem"
-    setitem = "setitem"
     call    = "call"
     assign  = "assign"
+    kw      = "kw"
     value   = "value"
     comment = "comment"
 
@@ -128,11 +127,10 @@ class Expr:
     _map: dict[Head, Callable[[Expr], str]] = {
         Head.init   : lambda e: f"{e.args[0]} = {e.args[1]}({', '.join(map(str, e.args[2:]))})",
         Head.getattr: lambda e: f"{e.args[0]}.{e.args[1]}",
-        Head.setattr: lambda e: f"{e.args[0]}.{e.args[1]} = {e.args[2]}",
         Head.getitem: lambda e: f"{e.args[0]}[{e.args[1]}]",
-        Head.setitem: lambda e: f"{e.args[0]}[{e.args[1]}] = {e.args[2]}",
         Head.call   : lambda e: f"{e.args[0]}({', '.join(map(str, e.args[1:]))})",
-        Head.assign : lambda e: f"{e.args[0]}={e.args[1]}",
+        Head.assign : lambda e: f"{e.args[0]} = {e.args[1]}",
+        Head.kw     : lambda e: f"{e.args[0]}={e.args[1]}",
         Head.value  : lambda e: str(e.args[0]),
         Head.comment: lambda e: f"# {e.args[0]}",
     }
@@ -154,7 +152,7 @@ class Expr:
         """
         Recursively expand expressions until it reaches value/assign expression.
         """
-        if self.head in (Head.value, Head.assign):
+        if self.head in (Head.value, Head.kw):
             return str(self)
         out = [f"head: {self.head.name}\n{' '*ind}args:\n"]
         for i, arg in enumerate(self.args):
@@ -180,7 +178,7 @@ class Expr:
     def eval(self, _globals: dict[Symbol: Any] = {}, _locals: dict[Symbol: Any] = {}):
         _globals = {sym.data: v for sym, v in _globals}
         _locals = {sym.data: v for sym, v in _locals}
-        if self.head in (Head.assign, Head.setitem, Head.setattr):
+        if self.head == Head.assign:
             return exec(str(self), _globals, _locals)
         else:
             return eval(str(self), _globals, _locals)
@@ -232,7 +230,7 @@ class Expr:
             inputs.append(a)
                 
         for k, v in kwargs.items():
-            inputs.append(cls(Head.assign, [Symbol(k), v]))
+            inputs.append(cls(Head.kw, [Symbol(k), v]))
         return inputs
     
     @classmethod

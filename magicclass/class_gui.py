@@ -338,15 +338,21 @@ def _value_widget_callback(cgui: ClassGuiBase, widget: ValueWidget, name: str, g
         if getvalue:
             sub = Expr(head=Head.getattr, args=[Symbol(name), Symbol("value")]) # name.value
         else:
-            sub = Symbol(name)
+            sub = Expr(head=Head.value, args=[Symbol(name)])
         
-        # x.name.value = value
+        # Make an expression of
+        # >>> x.name.value = value
         # or
-        # x.name = value
-        expr = Expr(head=Head.setattr, args=[symbol(cgui), sub, widget.value])
+        # >>> x.name = value
+        expr = Expr(head=Head.assign, 
+                    args=[Expr(head=Head.getattr, 
+                               args=[symbol(cgui), sub]), 
+                          widget.value])
         
         last_expr = cgui._recorded_macro[-1]
-        if last_expr.head == expr.head and last_expr.args[1].args[0] == expr.args[1].args[0]:
+        if (last_expr.head == expr.head and 
+            last_expr.args[0].args[1].head == expr.args[0].args[1].head and
+            last_expr.args[0].args[1].args[0] == expr.args[0].args[1].args[0]):
             cgui._recorded_macro[-1] = expr
         else:
             cgui._recorded_macro.append(expr)
