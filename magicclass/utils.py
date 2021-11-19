@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 APPLICATION = None
 
-def iter_members(cls: type, exclude_prefix: str = "__") -> list[str]:
+def iter_members(cls: type, exclude_prefix: str = "__") -> list[str, Any]:
     """
     Iterate over all the members in the order of source code line number. 
     """    

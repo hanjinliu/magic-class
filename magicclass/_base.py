@@ -66,10 +66,16 @@ class BaseGui:
                 continue
             macro.append(expr.format({sym: self_symbol}))
         
-        for name, attr in filter(lambda x: not x[0].startswith("__"), self.__dict__.items()):
+        for name, clsattr in iter_members(self.__class__):
             # Collect all the macro from child magic-classes recursively
+            if not isinstance(clsattr, (BaseGui, MagicField)):
+                continue
+            
+            attr = getattr(self, name)
+            
             if not isinstance(attr, BaseGui):
                 continue
+            
             macro += attr._collect_macro(self_symbol, Symbol(name))
                 
         return macro
