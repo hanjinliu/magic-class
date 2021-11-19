@@ -13,9 +13,8 @@ from matplotlib.colors import to_rgb
 
 class FunctionGuiPlus(FunctionGui):
     """
-    FunctionGui class with a parameter recording functionality.
+    FunctionGui class with a parameter recording functionality etc.
     """
-        
     def __call__(self, *args: Any, **kwargs: Any):
         sig = self.__signature__
         try:
@@ -37,10 +36,18 @@ class FunctionGuiPlus(FunctionGui):
                 raise
 
         bound.apply_defaults()
-        self._previous_bound = bound # This is very important!!
+        
+        # 1. Parameter recording
+        # This is important when bound function set by {"bind": f} updates something.
+        # When the value is referred via "__signature__" the bound function get called
+        # and updated againg.
+        self._previous_bound = bound
 
         self._tqdm_depth = 0  # reset the tqdm stack count
         with _function_name_pointing_to_widget(self):
+            # 2. Running flag
+            # We sometimes want to know if the function is called programmatically or
+            # from GUI. The "running" argument is True only when it's called via GUI.
             self.running = True
             try:
                 value = self._function(*bound.args, **bound.kwargs)
@@ -157,7 +164,6 @@ class Action:
     def __init__(self, *args, name=None, text=None, gui_only=True, **kwargs):
         self.native = QAction(*args, **kwargs)
         self.mgui: FunctionGuiPlus = None
-        self.running = False
         self._icon_path = None
         if text:
             self.text = text

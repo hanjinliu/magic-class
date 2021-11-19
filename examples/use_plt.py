@@ -1,5 +1,4 @@
 import numpy as np
-import matplotlib.pyplot as plt
 from magicclass import magicclass, field
 from magicclass.widgets import Figure
 
