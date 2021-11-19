@@ -183,12 +183,12 @@ def field(obj: Any = MISSING,
     f.name = name
     return f
 
-def value_field(obj, 
-                *,
-                name: str = "", 
-                widget_type: str | type[WidgetProtocol] | None = None, 
-                options: WidgetOptions = {}
-                ):
+def vfield(obj, 
+           *,
+           name: str = "", 
+           widget_type: str | type[WidgetProtocol] | None = None, 
+           options: WidgetOptions = {}
+           ):
     fld = field(obj, name=name, widget_type=widget_type, options=options)
     return GuiProperty(fld)
     
@@ -214,9 +214,13 @@ class GuiProperty:
         return widget
     
     def __get__(self, obj: X, objtype=None):
+        if obj is None:
+            return self
         return self.get_widget(obj).value
     
     def __set__(self, obj: X, value) -> None:
+        if obj is None:
+            raise AttributeError("Cannot reset GuiProperty")
         self.get_widget(obj).value = value
     
 

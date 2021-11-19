@@ -1,5 +1,6 @@
 from __future__ import annotations
 from inspect import signature
+from typing import Any
 from qtpy.QtWidgets import QMenuBar, QWidget
 from qtpy.QtCore import Qt
 from magicgui.widgets import Container, MainWindow,Label, FunctionGui, Image, Table
@@ -201,6 +202,12 @@ def make_gui(container: type[ContainerWidget], no_margin: bool = True):
             self.native.setObjectName(self.name)
             self.native.setWindowTitle(self.name)
         
+        def __setattr__(self: cls, name: str, value: Any):
+            if not isinstance(getattr(self.__class__, name, None), GuiProperty):
+                container.__setattr__(self, name, value)
+            else:
+                object.__setattr__(self, name, value)
+
         def insert(self: cls, key: int, widget: Widget):
             _hide_labels = (_LabeledWidget, ButtonWidget, ClassGuiBase, FrozenContainer, Label,
                             Image, Table)
@@ -264,6 +271,7 @@ def make_gui(container: type[ContainerWidget], no_margin: bool = True):
             return None
         
         cls.__init__ = __init__
+        cls.__setattr__ = __setattr__
         cls.insert = insert
         cls.show = show
         cls.close = close
