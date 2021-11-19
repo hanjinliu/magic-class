@@ -1,17 +1,17 @@
 from __future__ import annotations
 from typing import Any, TYPE_CHECKING, Callable, TypeVar
-from functools import wraps
-import inspect
 from dataclasses import Field, MISSING
 from magicgui.type_map import get_widget_class
 from magicgui.widgets import create_widget
 from magicgui.widgets._bases import Widget
-from magicgui.widgets._bases.value_widget import UNSET, ValueWidget
+from magicgui.widgets._bases.value_widget import UNSET
 from .widgets import NotInstalled
 
 if TYPE_CHECKING:
     from magicgui.widgets._protocols import WidgetProtocol
     from magicgui.types import WidgetOptions
+    
+X = TypeVar("X")
 
 class MagicField(Field):
     """
@@ -24,10 +24,29 @@ class MagicField(Field):
         super().__init__(default=default, default_factory=default_factory, init=True, repr=True, 
                          hash=False, compare=False, metadata=metadata)
         self.callbacks: list[Callable] = []
+        self.guis: dict[int, X] = {}
     
     def __repr__(self):
-        return "Magic" + super().__repr__()
+        return self.__class__.__name__.rstrip("Field") + super().__repr__()
     
+    def get_widget(self, obj: X) -> Widget:
+        obj_id = id(obj)
+        if obj_id in self.guis.keys():
+            widget = self.guis[obj_id]
+        else:
+            widget = self.to_widget()
+            self.guis[obj_id] = widget
+                
+        return widget
+    
+    def __get__(self, obj: X, objtype=None):
+        if obj is None:
+            return self
+        return self.get_widget(obj)
+    
+    def __set__(self, obj: X, value) -> None:
+        raise AttributeError(f"Cannot set {self.__class__.__name__}.")
+        
     def ready(self) -> bool:
         return not self.not_ready()
     
@@ -79,24 +98,8 @@ class MagicField(Field):
         return None if self.default_factory is MISSING else self.default_factory
     
     @property
-    def param_kind(self) -> inspect._ParameterKind:
-        raise NotImplementedError()
-    
-    @property
     def options(self) -> dict:
         return self.metadata.get("options", {})
-    
-    @property
-    def native(self) -> Widget:
-        raise RuntimeError(f"{self!r} has not been converted to a widget yet.")
-    
-    @property
-    def enabled(self) -> bool:
-        return self.options.get("enabled", True)
-    
-    @property
-    def parent(self) -> Widget:
-        raise RuntimeError(f"{self!r} has not been converted to a widget yet.")
     
     @property
     def widget_type(self) -> str:
@@ -106,42 +109,25 @@ class MagicField(Field):
             wcls = get_widget_class(value=self.value, annotation=self.annotation)
         return wcls.__name__
 
-    @property
-    def label(self) -> str:
-        return self.options.get("label", True)
+
+class MagicValueField(MagicField):
+    def get_widget(self, obj: X):
+        widget = super().get_widget(obj)
+        if not hasattr(widget, "value"):
+            raise TypeError("Widget is not a value widget or a widget with value: "
+                           f"{type(widget)}")
+        
+        return widget
     
-    @property
-    def width(self) -> int:
-        raise RuntimeError(f"{self!r} has not been converted to a widget yet.")
+    def __get__(self, obj: X, objtype=None):
+        if obj is None:
+            return self
+        return self.get_widget(obj).value
     
-    @property
-    def min_width(self) -> int:
-        raise RuntimeError(f"{self!r} has not been converted to a widget yet.")
-
-    @property
-    def max_width(self) -> int:
-        raise RuntimeError(f"{self!r} has not been converted to a widget yet.")
-    
-    @property
-    def height(self) -> int:
-        raise RuntimeError(f"{self!r} has not been converted to a widget yet.")
-
-    @property
-    def min_height(self) -> int:
-        raise RuntimeError(f"{self!r} has not been converted to a widget yet.")
-
-    @property
-    def max_height(self) -> int:
-        raise RuntimeError(f"{self!r} has not been converted to a widget yet.")
-
-    @property
-    def tooltip(self) -> str | None:
-        raise RuntimeError(f"{self!r} has not been converted to a widget yet.")
-
-    @property
-    def visible(self) -> bool:
-        return self.options.get("visible", True)
-
+    def __set__(self, obj: X, value) -> None:
+        if obj is None:
+            raise AttributeError(f"Cannot set {self.__class__.__name__}.")
+        self.get_widget(obj).value = value
 
 def field(obj: Any = MISSING,
           *, 
@@ -172,55 +158,59 @@ def field(obj: Any = MISSING,
     -------
     MagicField
     """    
-    options = options.copy()
-    metadata = dict(widget_type=widget_type, options=options)
-    if isinstance(obj, type):
-        f = MagicField(default_factory=obj, metadata=metadata)
-    elif obj is MISSING:
-        f = MagicField(metadata=metadata)
-    else:
-        f = MagicField(default=obj, metadata=metadata)
-    f.name = name
-    return f
+    return _get_field(obj, name, widget_type, options, MagicField)
 
-def vfield(obj, 
-           *,
+def vfield(obj: Any = MISSING,
+           *, 
            name: str = "", 
            widget_type: str | type[WidgetProtocol] | None = None, 
            options: WidgetOptions = {}
-           ):
-    fld = field(obj, name=name, widget_type=widget_type, options=options)
-    return GuiProperty(fld)
+           ) -> MagicValueField:
+    """
+    Make a MagicValueField object.
     
-X = TypeVar("X")
+    >>> i = vfield(1)
+    >>> i = vfield(widget_type="Slider")
+    
+    Unlike MagicField, value itself can be accessed.
+    
+    >>> ui.i      # int is returned
+    >>> ui.i = 3  # set value to the widget.
 
-class GuiProperty:
-    def __init__(self, field: MagicField) -> None:
-        self.field = field
-        self.guis: dict[int, X] = {}
-    
-    def get_widget(self, obj: X):
-        obj_id = id(obj)
-        if obj_id in self.guis.keys():
-            widget = self.guis[obj_id]
-        else:
-            widget = self.field.to_widget()
-            self.guis[obj_id] = widget
-        
-        if not hasattr(widget, "value"):
-            raise TypeError("Widget is not a value widget or a widget with value: "
-                           f"{type(widget)}")
-        
-        return widget
-    
-    def __get__(self, obj: X, objtype=None):
-        if obj is None:
-            return self
-        return self.get_widget(obj).value
-    
-    def __set__(self, obj: X, value) -> None:
-        if obj is None:
-            raise AttributeError("Cannot reset GuiProperty")
-        self.get_widget(obj).value = value
-    
+    Parameters
+    ----------
+    obj : Any, default is MISSING
+        Reference to determine what type of widget will be created. If Widget subclass is given, 
+        it will be used as is. If other type of class is given, it will used as type annotation.
+        If an object (not type) is given, it will be assumed to be the default value.
+    name : str, default is ""
+        Name of the widget.
+    widget_type : str, optional
+        Widget type. This argument will be sent to ``create_widget`` function.
+    options : WidgetOptions, optional
+        Widget options. This parameter will always be used in ``widget(**options)`` form.
 
+    Returns
+    -------
+    MagicValueField
+    """    
+    return _get_field(obj, name, widget_type, options, MagicValueField)
+
+def _get_field(obj, 
+               name: str, 
+               widget_type: str | type[WidgetProtocol] | None, 
+               options: WidgetOptions,
+               field_class: type[MagicField]
+               ):
+    options = options.copy()
+    metadata = dict(widget_type=widget_type, options=options)
+    if isinstance(obj, type):
+        f = field_class(default_factory=obj, metadata=metadata)
+    elif obj is MISSING:
+        f = field_class(metadata=metadata)
+    else:
+        f = field_class(default=obj, metadata=metadata)
+    f.name = name
+    return f
+
+    

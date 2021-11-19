@@ -11,7 +11,7 @@ from .macro import Expr, Head, Symbol, symbol
 from .utils import iter_members, extract_tooltip, get_parameters, define_callback
 from .widgets import FrozenContainer
 from .mgui_ext import PushButtonPlus
-from .fields import GuiProperty, MagicField
+from .fields import MagicField
 from .menu_gui import MenuGui, ContextMenuGui
 from .containers import (
     ButtonContainer,
@@ -45,7 +45,7 @@ class ClassGuiBase(BaseGui):
             except (AttributeError, KeyError):
                 pass
             
-        widget = fld.to_widget()
+        widget = fld.get_widget(self)
         widget.name = widget.name or name.replace("_", " ")
             
         if isinstance(widget, (ValueWidget, Container)):
@@ -56,10 +56,9 @@ class ClassGuiBase(BaseGui):
                 
             if hasattr(widget, "value"):        
                 # By default, set value function will be connected to the widget.
-                f = _value_widget_callback(self, widget, name)
+                f = _value_widget_callback(self, widget, name, getvalue=type(fld) is MagicField)
                 widget.changed.connect(f)
                 
-        setattr(self, name, widget)
         return widget
     
     def _convert_attributes_into_widgets(self):
@@ -94,10 +93,7 @@ class ClassGuiBase(BaseGui):
             elif isinstance(attr, MagicField):
                 # If MagicField is given by field() function.
                 widget = self._create_widget_from_field(name, attr)
-            
-            elif isinstance(attr, GuiProperty):
-                widget = attr.get_widget(self)
-                
+                            
             elif isinstance(attr, FunctionGui):
                 widget = attr
                 p0 = list(signature(attr).parameters)[0]
@@ -203,7 +199,7 @@ def make_gui(container: type[ContainerWidget], no_margin: bool = True):
             self.native.setWindowTitle(self.name)
         
         def __setattr__(self: cls, name: str, value: Any):
-            if not isinstance(getattr(self.__class__, name, None), GuiProperty):
+            if not isinstance(getattr(self.__class__, name, None), MagicField):
                 container.__setattr__(self, name, value)
             else:
                 object.__setattr__(self, name, value)
@@ -330,15 +326,24 @@ def _nested_function_gui_callback(cgui: ClassGuiBase, fgui: FunctionGui):
         cgui._recorded_macro.append(expr)
     return _after_run
 
-def _value_widget_callback(cgui: ClassGuiBase, widget: ValueWidget, name: str):
+def _value_widget_callback(cgui: ClassGuiBase, widget: ValueWidget, name: str, getvalue: bool = True):
     def _set_value():
         if not widget.enabled:
             # If widget is read only, it means that value is set in script (not manually).
             # Thus this event should not be recorded as a macro.
             return None
+        
         cgui.changed.emit(cgui)
-        sub = Expr(head=Head.getattr, args=[Symbol(name), Symbol("value")]) # name.value
-        expr = Expr(head=Head.setattr, args=[symbol(cgui), sub, widget.value]) # x.name.value = value
+        
+        if getvalue:
+            sub = Expr(head=Head.getattr, args=[Symbol(name), Symbol("value")]) # name.value
+        else:
+            sub = Symbol(name)
+        
+        # x.name.value = value
+        # or
+        # x.name = value
+        expr = Expr(head=Head.setattr, args=[symbol(cgui), sub, widget.value])
         
         last_expr = cgui._recorded_macro[-1]
         if last_expr.head == expr.head and last_expr.args[1].args[0] == expr.args[1].args[0]:
