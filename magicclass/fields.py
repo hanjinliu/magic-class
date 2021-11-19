@@ -45,7 +45,7 @@ class MagicField(Field):
         return self.get_widget(obj)
     
     def __set__(self, obj: X, value) -> None:
-        raise AttributeError(f"Cannot set {self.__class__.__name__}.")
+        raise AttributeError(f"Cannot set value to {self.__class__.__name__}.")
         
     def ready(self) -> bool:
         return not self.not_ready()

@@ -17,3 +17,14 @@ class FrozenContainer(Container):
         self.native.layout().addWidget(widget)
         self.margins = (0, 0, 0, 0)
         widget.setParent(self.native)
+    
+    # Because FrozenContainer does not need any attribute access, these method should be
+    # re-initialized.
+    def __getattr__(self, name: str):
+        return object.__getattr__(self, name)
+    
+    def __setattr__(self, name: str, value):
+        return object.__setattr__(self, name, value)
+    
+    def __delattr__(self, name: str):
+        return object.__delattr__(self, name)

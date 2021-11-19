@@ -495,7 +495,7 @@ def _get_index(container, widget_or_name):
         if widget.name == name:
             break
     else:
-        raise ValueError
+        raise ValueError(f"{widget_or_name} not found in {container}")
     return i
 
 def _search_wrapper(bgui: BaseGui, funcname: str, clsname: str) -> tuple[BaseGui, Callable]:

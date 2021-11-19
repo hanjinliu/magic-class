@@ -69,7 +69,6 @@ class MenuGuiBase(BaseGui):
             # By default, set value function will be connected to the widget.
             widget.changed.connect(_value_widget_callback(self, widget, name))
                 
-        setattr(self, name, widget)
         return widget
     
     def _convert_attributes_into_widgets(self):
