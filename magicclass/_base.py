@@ -15,7 +15,7 @@ from .macro import Macro, Expr, Head, Symbol, symbol
 from .utils import iter_members, n_parameters, extract_tooltip, raise_error_in_msgbox, identity_wrapper, screen_center
 from .widgets import Separator, MacroEdit
 from .mgui_ext import FunctionGuiPlus, PushButtonPlus
-from .field import MagicField
+from .fields import MagicField
 from .wrappers import upgrade_signature
 
 if TYPE_CHECKING:

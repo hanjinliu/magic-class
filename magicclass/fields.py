@@ -1,11 +1,12 @@
 from __future__ import annotations
-from typing import Any, TYPE_CHECKING, Callable
+from typing import Any, TYPE_CHECKING, Callable, TypeVar
+from functools import wraps
 import inspect
 from dataclasses import Field, MISSING
 from magicgui.type_map import get_widget_class
 from magicgui.widgets import create_widget
 from magicgui.widgets._bases import Widget
-from magicgui.widgets._bases.value_widget import UNSET
+from magicgui.widgets._bases.value_widget import UNSET, ValueWidget
 from .widgets import NotInstalled
 
 if TYPE_CHECKING:
@@ -141,6 +142,7 @@ class MagicField(Field):
     def visible(self) -> bool:
         return self.options.get("visible", True)
 
+
 def field(obj: Any = MISSING,
           *, 
           name: str = "", 
@@ -180,3 +182,41 @@ def field(obj: Any = MISSING,
         f = MagicField(default=obj, metadata=metadata)
     f.name = name
     return f
+
+def value_field(obj, 
+                *,
+                name: str = "", 
+                widget_type: str | type[WidgetProtocol] | None = None, 
+                options: WidgetOptions = {}
+                ):
+    fld = field(obj, name=name, widget_type=widget_type, options=options)
+    return GuiProperty(fld)
+    
+X = TypeVar("X")
+
+class GuiProperty:
+    def __init__(self, field: MagicField) -> None:
+        self.field = field
+        self.guis: dict[int, X] = {}
+    
+    def get_widget(self, obj: X):
+        obj_id = id(obj)
+        if obj_id in self.guis.keys():
+            widget = self.guis[obj_id]
+        else:
+            widget = self.field.to_widget()
+            self.guis[obj_id] = widget
+        
+        if not hasattr(widget, "value"):
+            raise TypeError("Widget is not a value widget or a widget with value: "
+                           f"{type(widget)}")
+        
+        return widget
+    
+    def __get__(self, obj: X, objtype=None):
+        return self.get_widget(obj).value
+    
+    def __set__(self, obj: X, value) -> None:
+        self.get_widget(obj).value = value
+    
+

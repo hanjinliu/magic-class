@@ -10,7 +10,7 @@ from .macro import Expr, Head, Symbol, symbol
 from .utils import iter_members, extract_tooltip, get_parameters, define_callback
 from .widgets import FrozenContainer
 from .mgui_ext import PushButtonPlus
-from .field import MagicField
+from .fields import GuiProperty, MagicField
 from .menu_gui import MenuGui, ContextMenuGui
 from .containers import (
     ButtonContainer,
@@ -94,6 +94,9 @@ class ClassGuiBase(BaseGui):
                 # If MagicField is given by field() function.
                 widget = self._create_widget_from_field(name, attr)
             
+            elif isinstance(attr, GuiProperty):
+                widget = attr.get_widget(self)
+                
             elif isinstance(attr, FunctionGui):
                 widget = attr
                 p0 = list(signature(attr).parameters)[0]

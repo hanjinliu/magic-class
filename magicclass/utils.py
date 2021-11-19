@@ -9,7 +9,7 @@ from qtpy.QtWidgets import QApplication, QMessageBox
 if TYPE_CHECKING:
     from magicgui.widgets._bases import Widget
     from magicgui.widgets import FunctionGui
-    from .field import MagicField
+    from .fields import MagicField
 
 APPLICATION = None
 

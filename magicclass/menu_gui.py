@@ -5,7 +5,7 @@ from magicgui.widgets import Container
 from magicgui.widgets._bases import ButtonWidget
 from qtpy.QtWidgets import QMenu
 
-from .field import MagicField
+from .fields import MagicField
 from .widgets import Separator
 from .mgui_ext import Action
 from ._base import BaseGui, PopUpMode, ErrorMode

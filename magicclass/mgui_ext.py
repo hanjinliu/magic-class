@@ -128,7 +128,7 @@ class PushButtonPlus(PushButton):
         return self.native.palette().text().color().getRgb()
     
     @font_color.setter
-    def font_color(self, color:str|Iterable[float]):
+    def font_color(self, color: str | Iterable[float]):
         stylesheet = self.native.styleSheet()
         d = _stylesheet_to_dict(stylesheet)
         d.update({"color": _to_rgb(color)})
@@ -140,7 +140,7 @@ class PushButtonPlus(PushButton):
         return self.native.font().family()
     
     @font_family.setter
-    def font_family(self, family:str):
+    def font_family(self, family: str):
         font = self.native.font()
         font.setFamily(family)
         self.native.setFont(font)
@@ -161,7 +161,8 @@ class PushButtonPlus(PushButton):
 class Action:
     """QAction encapsulated class with a similar API as magicgui Widget."""
     changed = Signal(object)
-    def __init__(self, *args, name=None, text=None, gui_only=True, **kwargs):
+    
+    def __init__(self, *args, name: str = None, text: str = None, gui_only: bool = True, **kwargs):
         self.native = QAction(*args, **kwargs)
         self.mgui: FunctionGuiPlus = None
         self._icon_path = None
@@ -230,11 +231,11 @@ class Action:
         return self._icon_path
     
     @icon_path.setter
-    def icon_path(self, path:str):
+    def icon_path(self, path: str):
         icon = QIcon(path)
         self.native.setIcon(icon)
     
-    def from_options(self, options: dict[str]|Callable):
+    def from_options(self, options: dict[str] | Callable):
         if callable(options):
             try:
                 options = options.__signature__.caller_options

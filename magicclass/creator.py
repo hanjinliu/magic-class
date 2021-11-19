@@ -1,7 +1,7 @@
 from __future__ import annotations
 from .core import magicclass, WidgetType
 from ._base import BaseGui, PopUpMode, ErrorMode
-from .field import field
+from .fields import field
 from .macro import Symbol, symbol
 from .widgets import ConsoleTextEdit
 from enum import Enum
