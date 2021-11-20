@@ -9,7 +9,7 @@ from .listwidget import ListWidget
 from .misc import Figure, ConsoleTextEdit, MacroEdit, CheckButton, show_messagebox
 from .separator import Separator
 from .sequence import ListEdit, TupleEdit
-from .utils import FrozenContainer
+from .utils import FreeWidget
 
 class NotInstalled:
     def __init__(self, msg):
@@ -53,7 +53,7 @@ __all__ = ["ListWidget",
            "Separator",
            "ListEdit",
            "TupleEdit",
-           "FrozenContainer",
+           "FreeWidget",
            "QtConsole",
            "QtPlotCanvas",
            "QtImageCanvas",

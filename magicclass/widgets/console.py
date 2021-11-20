@@ -42,7 +42,7 @@ from qtconsole.inprocess import QtInProcessKernelManager
 from magicgui.events import Signal
 from qtconsole.rich_jupyter_widget import RichJupyterWidget
 from magicgui.widgets import Widget
-from .utils import FrozenContainer
+from .utils import FreeWidget
 
 # See napari_console
 # https://github.com/napari/napari-console
@@ -114,7 +114,7 @@ class _Console(RichJupyterWidget):
         self.shell.push({"ui": ui})
 
         
-class QtConsole(FrozenContainer):
+class QtConsole(FreeWidget):
     executed = Signal(str)
     def __init__(self, **kwargs):
         super().__init__(labels=False, **kwargs)

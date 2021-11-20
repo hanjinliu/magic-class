@@ -6,7 +6,7 @@ import numpy as np
 from magicgui.events import Signal
 from .graph_items import PlotDataItem, Scatter, Curve, TextOverlay
 from .mouse_event import MouseClickEvent
-from ..utils import FrozenContainer
+from ..utils import FreeWidget
 
 BOTTOM = "bottom"
 LEFT = "left"
@@ -137,7 +137,7 @@ class HasPlotItem:
         item = self._items.pop(i)
         self._graphics.removeItem(item.native)
 
-class QtPlotCanvas(FrozenContainer, HasPlotItem):
+class QtPlotCanvas(FreeWidget, HasPlotItem):
     """
     A 1-D data viewer that have similar API as napari Viewer.
     """    
@@ -220,7 +220,6 @@ class QtPlotCanvas(FrozenContainer, HasPlotItem):
     def ylim(self, value: tuple[float, float]):
         self.plotwidget.setYRange(*value)
     
-    
     @property
     def interactive(self) -> bool:
         """Mouse interactivity"""        
@@ -254,7 +253,7 @@ class QtPlotCanvas(FrozenContainer, HasPlotItem):
         self.regionitem.setVisible(value)
        
        
-class QtImageCanvas(FrozenContainer, HasPlotItem):
+class QtImageCanvas(FreeWidget, HasPlotItem):
     def __init__(self, 
                  image: np.ndarray = None, 
                  cmap=None, 

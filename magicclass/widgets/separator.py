@@ -1,9 +1,9 @@
 from __future__ import annotations
 from magicgui.events import Signal
 from qtpy.QtWidgets import QFrame, QLabel, QPushButton, QSizePolicy, QHBoxLayout
-from .utils import FrozenContainer
+from .utils import FreeWidget
 
-class Separator(FrozenContainer):
+class Separator(FreeWidget):
     """
     A Separator widget that can be used in both widgets and menus.
     """    

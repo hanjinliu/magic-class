@@ -48,12 +48,12 @@ from typing import Callable, Any
 from collections import defaultdict
 from qtpy.QtWidgets import QLabel, QListWidget, QListWidgetItem, QAbstractItemView, QMenu, QAction
 from qtpy.QtCore import Qt
-from .utils import FrozenContainer
+from .utils import FreeWidget
 from ..utils import extract_tooltip
 
 _Callback = Callable[[Any, int], Any]
     
-class ListWidget(FrozenContainer):
+class ListWidget(FreeWidget):
     def __init__(self, dragdrop: bool = True, **kwargs):
         super().__init__(labels=False, **kwargs)
         self._listwidget = PyListWidget(self.native)
@@ -87,14 +87,13 @@ class ListWidget(FrozenContainer):
             self._listwidget.setAcceptDrops(True)
             self._listwidget.setDragEnabled(True)
             self._listwidget.setDragDropMode(QAbstractItemView.DragDropMode.InternalMove)
-    
-    @property
-    def nitems(self) -> int:
+        
+    def __len__(self) -> int:
         return self._listwidget.count()
     
     @property
     def value(self) -> list[Any]:
-        return [self._listwidget.item(i).obj for i in range(self.nitems)]
+        return [self._listwidget.item(i).obj for i in range(len(self))]
     
     @property
     def title(self) -> str:
@@ -104,13 +103,13 @@ class ListWidget(FrozenContainer):
     def title(self, text: str):
         self._title.setText(text)
         
-    def add_item(self, obj: Any):
+    def append(self, obj: Any):
         """
         Append any item to the list.
         """
-        self.insert_item(self.nitems, obj)
+        self.insert(len(self), obj)
     
-    def insert_item(self, i: int, obj: Any):
+    def insert(self, i: int, obj: Any):
         """
         Insert any item to the list.
         """
@@ -118,12 +117,18 @@ class ListWidget(FrozenContainer):
         item = PyListWidgetItem(self._listwidget, obj=obj, name=name)
         self._listwidget.insertItem(i, item)
     
-    def pop_item(self, i: int) -> Any:
+    def pop(self, i: int) -> Any:
         """
         Pop item at an index.
         """
         self._listwidget.takeItem(i)
         return None
+    
+    def __getitem__(self, i: int) -> Any:
+        """
+        Get i-th python object.
+        """        
+        return self._listwidget.item(i).obj
 
     def clear(self):
         """

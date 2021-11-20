@@ -8,12 +8,12 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvas
 from magicgui.widgets import PushButton, TextEdit, FileEdit
 
-from .utils import FrozenContainer
+from .utils import FreeWidget
 
 if TYPE_CHECKING:
     from qtpy.QtWidgets import QWidget
 
-class Figure(FrozenContainer):
+class Figure(FreeWidget):
     """
     A matplotlib figure canvas.
     """    
@@ -21,8 +21,7 @@ class Figure(FrozenContainer):
                  nrows: int = 1,
                  ncols: int = 1,
                  figsize: tuple[int, int] = (4, 3),
-                 style = None,
-                 layout: str = "vertical", 
+                 style = None, 
                  **kwargs):
         backend = mpl.get_backend()
         try:
@@ -35,7 +34,7 @@ class Figure(FrozenContainer):
         finally:
             mpl.use(backend)
         
-        super().__init__(layout=layout, labels=False, **kwargs)
+        super().__init__(**kwargs)
         canvas = FigureCanvas(fig)
         self.set_widget(canvas)
         self.figure = fig
@@ -67,7 +66,7 @@ class ConsoleTextEdit(TextEdit):
         self.native.setFont(QFont("Consolas"))
         self.native.setWordWrapMode(QTextOption.NoWrap)
         
-class MacroEdit(FrozenContainer):
+class MacroEdit(FreeWidget):
     """
     A text edit embeded with a custom menu bar.
     """    
