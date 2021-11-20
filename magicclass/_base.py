@@ -1,22 +1,22 @@
 from __future__ import annotations
 from functools import wraps as functools_wraps
 from typing import Callable, TYPE_CHECKING, TypeVar
+from typing_extensions import _AnnotatedAlias
 import inspect
 from enum import Enum
 import warnings
-from qtpy.QtCore import Qt
+
 from magicgui import magicgui
 from magicgui.signature import MagicParameter
 from magicgui.widgets import FunctionGui, FileEdit, EmptyWidget
 from magicgui.widgets._bases import ValueWidget
-
-from magicclass.signature import MagicMethodSignature
 
 from .macro import Macro, Expr, Head, Symbol, symbol
 from .utils import iter_members, n_parameters, extract_tooltip, raise_error_in_msgbox, identity_wrapper, screen_center
 from .widgets import Separator, MacroEdit
 from .mgui_ext import FunctionGuiPlus, PushButtonPlus
 from .fields import MagicField
+from .signature import MagicMethodSignature
 from .wrappers import upgrade_signature
 
 if TYPE_CHECKING:
@@ -285,44 +285,48 @@ class BaseGui:
         
         record = True
         
-        if hasattr(obj, "__signature__"):
-            # This block enables instance methods in "bind" method of ValueWidget.
-            for param in obj.__signature__.parameters.values():
-                if isinstance(param, MagicParameter):
-                    bound_value = param.options.get("bind", None)
-                    
-                    # If bound method is a class method, use self.method(widget) as the value.
-                    # TODO: n_parameters(bound_value) == 2 is not elegant
-                    if callable(bound_value) and n_parameters(bound_value) == 2:
-                        clsname, *_ = bound_value.__qualname__.split(".")
-                        if clsname != self.__class__.__name__:
-                            self.__class__.wraps(bound_value)
-                        param.options["bind"] = getattr(self, bound_value.__name__)
-                    
-                    # If a MagicFiled is bound, bind the value of the connected widget.
-                    elif isinstance(bound_value, MagicField):
-                        clsnames = bound_value.parent_class.__qualname__.split(".")
-                        ins = self
-                        for clsname in clsnames:
-                            ins = getattr(ins, clsname, ins)
-                            
-                        _field_widget = bound_value.get_widget(ins)
-                        if not hasattr(_field_widget, "value"):
-                            raise TypeError(f"MagicField {bound_value.name} does not return ValueWidget "
-                                            "thus cannot be used as a bound value.")
-                        param.options["bind"] = bound_value.as_getter(ins)
-                    
-                    # If a value widget is bound, bind the value.
-                    elif isinstance(bound_value, ValueWidget):
-                        param.options["bind"] = _one_more_arg(bound_value.get_value)
+        # This block enables instance methods in "bind" method of ValueWidget.
+        all_params = []
+        for param in func.__signature__.parameters.values():
+            if isinstance(param.annotation, _AnnotatedAlias):
+                param = MagicParameter.from_parameter(param)
+            if isinstance(param, MagicParameter):
+                bound_value = param.options.get("bind", None)
+                
+                # If bound method is a class method, use self.method(widget) as the value.
+                # TODO: n_parameters(bound_value) == 2 is not elegant
+                if callable(bound_value) and n_parameters(bound_value) == 2:
+                    clsname, *_ = bound_value.__qualname__.split(".")
+                    if clsname != self.__class__.__name__:
+                        self.__class__.wraps(bound_value)
+                    param.options["bind"] = getattr(self, bound_value.__name__)
+                
+                # If a MagicFiled is bound, bind the value of the connected widget.
+                elif isinstance(bound_value, MagicField):
+                    clsnames = bound_value.parent_class.__qualname__.split(".")
+                    ins = self
+                    for clsname in clsnames:
+                        ins = getattr(ins, clsname, ins)
                         
-            func.__signature__ = func.__signature__.replace(
-                parameters=list(obj.__signature__.parameters.values())[1:]
-                )
+                    _field_widget = bound_value.get_widget(ins)
+                    if not hasattr(_field_widget, "value"):
+                        raise TypeError(f"MagicField {bound_value.name} does not return ValueWidget "
+                                        "thus cannot be used as a bound value.")
+                    param.options["bind"] = bound_value.as_getter(ins)
+                
+                # If a value widget is bound, bind the value.
+                elif isinstance(bound_value, ValueWidget):
+                    param.options["bind"] = _one_more_arg(bound_value.get_value)
+            
+            all_params.append(param)
+                    
+        func.__signature__ = func.__signature__.replace(
+            parameters=all_params
+            )
 
-            # Check additional options
-            if isinstance(obj.__signature__, MagicMethodSignature):
-                record = obj.__signature__.additional_options.get("record", True)
+        # Check additional options
+        if isinstance(func.__signature__, MagicMethodSignature):
+            record = func.__signature__.additional_options.get("record", True)
                  
         if nparams == 0:
             # We don't want a dialog with a single widget "Run" to show up.
@@ -410,6 +414,7 @@ class BaseGui:
                             
                             else:    
                                 from qtpy.QtWidgets import QDockWidget
+                                from qtpy.QtCore import Qt
                                 dock = QDockWidget(_get_widget_name(widget), self.native)
                                 dock.setWidget(mgui.native)
                                 parent_self.native.addDockWidget(
