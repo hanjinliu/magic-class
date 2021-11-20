@@ -46,6 +46,7 @@ from __future__ import annotations
 from functools import wraps
 from typing import Callable, Any
 from collections import defaultdict
+from _collections_abc import MutableSequence
 from qtpy.QtWidgets import QLabel, QListWidget, QListWidgetItem, QAbstractItemView, QMenu, QAction
 from qtpy.QtCore import Qt
 from .utils import FreeWidget
@@ -53,9 +54,9 @@ from ..utils import extract_tooltip
 
 _Callback = Callable[[Any, int], Any]
     
-class ListWidget(FreeWidget):
+class ListWidget(FreeWidget, MutableSequence):
     def __init__(self, dragdrop: bool = True, **kwargs):
-        super().__init__(labels=False, **kwargs)
+        super().__init__(**kwargs)
         self._listwidget = PyListWidget(self.native)
         self._listwidget.setParentContainer(self)
         self._title = QLabel(self.native)
@@ -121,14 +122,22 @@ class ListWidget(FreeWidget):
         """
         Pop item at an index.
         """
+        obj = self[i]
         self._listwidget.takeItem(i)
-        return None
+        return obj
     
     def __getitem__(self, i: int) -> Any:
         """
         Get i-th python object.
         """        
         return self._listwidget.item(i).obj
+    
+    def __setitem__(self, i: int, obj: Any):
+        self._listwidget.takeItem(i)
+        self.insert(i, obj)
+    
+    def __delitem__(self, i: int):
+        self._listwidget.takeItem(i)
 
     def clear(self):
         """

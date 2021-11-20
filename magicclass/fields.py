@@ -33,6 +33,10 @@ class MagicField(Field):
         return self.__class__.__name__.rstrip("Field") + super().__repr__()
     
     def get_widget(self, obj: X) -> Widget:
+        """
+        Get widget from ``obj``. This function will be called every time MagicField is referred
+        by ``obj.field``.
+        """        
         obj_id = id(obj)
         if obj_id in self.guis.keys():
             widget = self.guis[obj_id]
