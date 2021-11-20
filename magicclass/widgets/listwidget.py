@@ -61,6 +61,7 @@ class ListWidget(FrozenContainer):
         self._title = QLabel(self.native)
         self._title.setText(self.name)
         self._title.setAlignment(Qt.AlignCenter)
+        self.running = False
         self.set_widget(self._title)
         self.set_widget(self._listwidget)
         
@@ -72,11 +73,15 @@ class ListWidget(FrozenContainer):
         def _(item: PyListWidgetItem):
             type_ = type(item.obj)
             callbacks = self._callbacks.get(type_, [])
-            for callback in callbacks:
-                try:
-                    callback(item.obj, self._listwidget.row(item))
-                except TypeError:
-                    callback(item.obj)
+            self.running = True
+            try:
+                for callback in callbacks:
+                    try:
+                        callback(item.obj, self._listwidget.row(item))
+                    except TypeError:
+                        callback(item.obj)
+            finally:
+                self.running = False
         
         if dragdrop:
             self._listwidget.setAcceptDrops(True)

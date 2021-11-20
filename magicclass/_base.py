@@ -215,7 +215,7 @@ class BaseGui:
                 clsname, funcname = parent_method.__qualname__.split(".")
                 childmethod = _wrap_func(_childmethod)
             
-            # To avoid two buttons with same bound function being showed up
+            # To avoid two buttons with same bound function being shown up
             upgrade_signature(parent_method, caller_options={"visible": False})
             
             if hasattr(cls, funcname):

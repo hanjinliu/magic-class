@@ -2,6 +2,12 @@
 from __future__ import annotations
 from qtpy.QtWidgets import QWidget
 from magicgui.widgets import Container
+from magicgui.widgets._bases import Widget
+
+class FreeWidget(Widget):
+    def set_widget(self, widget: QWidget):
+        self.native.layout().addWidget(widget)
+        widget.setParent(self.native)
 
 class FrozenContainer(Container):
     """

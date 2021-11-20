@@ -107,7 +107,7 @@ class ClassGuiBase(BaseGui):
 
                 else:
                     # If the method is redefined, the newer one should be used instead, while the
-                    # order of widgets should be follow the place of the older method.
+                    # order of widgets should follow the place of the older method.
                     widget = attr.__magicclass_wrapped__.__get__(self)
             
             if isinstance(widget, MenuGui):
@@ -147,9 +147,9 @@ class ClassGuiBase(BaseGui):
                     
                 else:
                     if not widget.name:
-                        widget.name = name.replace("_", " ")
+                        widget.name = name
                     if hasattr(widget, "text") and not widget.text:
-                        widget.text = widget.name
+                        widget.text = widget.name.replace("_", " ")
                 
                 # Now, "widget" is a Widget object. Add widget in a way similar to "insert" method 
                 # of Container.

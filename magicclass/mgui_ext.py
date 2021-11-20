@@ -11,6 +11,8 @@ from matplotlib.colors import to_rgb
 
 # magicgui widgets that need to be extended to fit into magicclass
 
+# TODO: The "running" properties are not compatible with @wraps.
+
 class FunctionGuiPlus(FunctionGui):
     """
     FunctionGui class with a parameter recording functionality etc.
