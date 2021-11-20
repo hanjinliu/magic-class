@@ -6,8 +6,11 @@ from qtpy.QtGui import QIcon
 from qtpy.QtCore import QSize
 from magicgui.events import Signal
 from magicgui.widgets import Container, PushButton, FunctionGui
+from magicgui.widgets._bases import Widget, ValueWidget, ButtonWidget
 from magicgui.widgets._function_gui import _function_name_pointing_to_widget
+from magicgui.application import use_app
 from matplotlib.colors import to_rgb
+from .widgets import Separator
 
 # magicgui widgets that need to be extended to fit into magicclass
 
@@ -69,6 +72,29 @@ class FunctionGuiPlus(FunctionGui):
                 callback(self, value, return_type)
         self.called.emit(value)
         return value
+    
+    def insert(self, key: int, widget: Widget):
+        """Insert widget at ``key``."""
+        if isinstance(widget, ValueWidget):
+            widget.changed.connect(lambda: self.changed.emit(self))
+        _widget = widget
+
+        if self.labels:
+            from magicgui.widgets._concrete import _LabeledWidget
+
+            # no labels for button widgets (push buttons, checkboxes, have their own)
+            if not isinstance(widget, (_LabeledWidget, ButtonWidget, Separator)):
+                _widget = _LabeledWidget(widget)
+                widget.label_changed.connect(self._unify_label_widths)
+
+        self._list.insert(key, widget)
+        if key < 0:
+            key += len(self)
+        # NOTE: if someone has manually mucked around with self.native.layout()
+        # it's possible that indices will be off.
+        self._widget._mgui_insert_widget(key, _widget)
+        self._unify_label_widths()
+
 
 class PushButtonPlus(PushButton):
     """
