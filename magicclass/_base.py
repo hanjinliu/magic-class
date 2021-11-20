@@ -8,6 +8,7 @@ from qtpy.QtCore import Qt
 from magicgui import magicgui
 from magicgui.signature import MagicParameter
 from magicgui.widgets import FunctionGui, FileEdit, EmptyWidget
+from magicgui.widgets._bases import ValueWidget
 
 from magicclass.signature import MagicMethodSignature
 
@@ -293,18 +294,27 @@ class BaseGui:
                     # If bound method is a class method, use self.method(widget) as the value.
                     # TODO: n_parameters(bound_value) == 2 is not elegant
                     if callable(bound_value) and n_parameters(bound_value) == 2:
-                        clsname, _ = bound_value.__qualname__.split(".")
+                        clsname, *_ = bound_value.__qualname__.split(".")
                         if clsname != self.__class__.__name__:
                             self.__class__.wraps(bound_value)
                         param.options["bind"] = getattr(self, bound_value.__name__)
                     
                     # If a MagicFiled is bound, bind the value of the connected widget.
                     elif isinstance(bound_value, MagicField):
-                        widget = bound_value.get_widget(self)
-                        if not hasattr(widget, "value"):
+                        clsnames = bound_value.parent_class.__qualname__.split(".")
+                        ins = self
+                        for clsname in clsnames:
+                            ins = getattr(ins, clsname, ins)
+                            
+                        _field_widget = bound_value.get_widget(ins)
+                        if not hasattr(_field_widget, "value"):
                             raise TypeError(f"MagicField {bound_value.name} does not return ValueWidget "
                                             "thus cannot be used as a bound value.")
-                        param.options["bind"] = bound_value.as_getter(self)
+                        param.options["bind"] = bound_value.as_getter(ins)
+                    
+                    # If a value widget is bound, bind the value.
+                    elif isinstance(bound_value, ValueWidget):
+                        param.options["bind"] = _one_more_arg(bound_value.get_value)
                         
             func.__signature__ = func.__signature__.replace(
                 parameters=list(obj.__signature__.parameters.values())[1:]
@@ -500,6 +510,11 @@ def _copy_function(f):
     @functools_wraps(f)
     def out(self, *args, **kwargs):
         return f(self, *args, **kwargs)
+    return out
+
+def _one_more_arg(f):
+    def out(e):
+        return f()
     return out
 
 def _get_index(container, widget_or_name):

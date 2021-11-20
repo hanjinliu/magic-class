@@ -28,6 +28,7 @@ class MagicField(Field):
         self.guis: dict[int, X] = {}
         self.name = name
         self.record = record
+        self.parent_class = None
     
     def __repr__(self):
         return self.__class__.__name__.rstrip("Field") + super().__repr__()
@@ -38,11 +39,15 @@ class MagicField(Field):
         by ``obj.field``.
         """        
         obj_id = id(obj)
+        objtype = type(obj)
         if obj_id in self.guis.keys():
             widget = self.guis[obj_id]
-        else:
+        elif self.parent_class is None or self.parent_class is objtype:    
             widget = self.to_widget()
             self.guis[obj_id] = widget
+            self.parent_class = objtype
+        else:
+            raise TypeError(f"Cannot refer MagicField {self.name} from object of type {objtype}")
                 
         return widget
     
