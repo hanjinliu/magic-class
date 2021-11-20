@@ -3,7 +3,11 @@ from functools import wraps as functools_wraps
 import inspect
 from enum import Enum
 from dataclasses import is_dataclass
+from typing import Any
 import warnings
+from typing_extensions import Annotated
+
+from magicclass.fields import MagicField, MISSING
 
 from .class_gui import (
     ClassGui, 
@@ -48,6 +52,16 @@ _TYPE_MAP = {
     WidgetType.list: ListClassGui,
     WidgetType.mainwindow: MainWindowClassGui,
 }
+
+def Bind(value):
+    if isinstance(value, MagicField):
+        annot = Any if value.default_factory is MISSING else value.default_factory
+    elif callable(value):
+        annot = inspect.signature(value).return_annotation
+    else:
+        annot = type(value)
+    
+    return Annotated[annot, {"bind": value}]
 
 def magicclass(class_: type|None = None,
                *,
