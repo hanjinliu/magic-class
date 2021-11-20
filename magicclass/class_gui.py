@@ -9,7 +9,7 @@ from magicgui.widgets._concrete import _LabeledWidget
 
 from .macro import Expr, Head, Symbol, symbol
 from .utils import iter_members, extract_tooltip, get_parameters, define_callback
-from .widgets import FrozenContainer
+from .widgets import FreeWidget
 from .mgui_ext import PushButtonPlus
 from .fields import MagicField
 from .menu_gui import MenuGui, ContextMenuGui
@@ -205,7 +205,7 @@ def make_gui(container: type[ContainerWidget], no_margin: bool = True):
                 object.__setattr__(self, name, value)
 
         def insert(self: cls, key: int, widget: Widget):
-            _hide_labels = (_LabeledWidget, ButtonWidget, ClassGuiBase, FrozenContainer, Label,
+            _hide_labels = (_LabeledWidget, ButtonWidget, ClassGuiBase, FreeWidget, Label,
                             Image, Table)
                 
             if isinstance(widget, ValueWidget):
@@ -310,9 +310,9 @@ class MainWindowClassGui: pass
 def _nested_function_gui_callback(cgui: ClassGuiBase, fgui: FunctionGui):
     def _after_run():
         inputs = get_parameters(fgui)
-        args = [Expr(head=Head.assign, args=[k, v]) for k, v in inputs.items()]
+        args = [Expr(head=Head.kw, args=[Symbol(k), v]) for k, v in inputs.items()]
         # args[0] is self
-        sub = Expr(head=Head.getattr, args=[cgui._recorded_macro[0].args[0], fgui.name]) # {x}.func
+        sub = Expr(head=Head.getattr, args=[cgui._recorded_macro[0].args[0], Symbol(fgui.name)]) # {x}.func
         expr = Expr(head=Head.call, args=[sub] + args[1:]) # {x}.func(args...)
 
         if fgui._auto_call:

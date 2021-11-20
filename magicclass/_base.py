@@ -68,7 +68,7 @@ class BaseGui:
         
         for name, clsattr in iter_members(self.__class__):
             # Collect all the macro from child magic-classes recursively
-            if not isinstance(clsattr, (BaseGui, MagicField)):
+            if not isinstance(clsattr, (BaseGui, type, MagicField)):
                 continue
             
             attr = getattr(self, name)
