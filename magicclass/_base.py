@@ -280,7 +280,7 @@ class BaseGui:
         # Get the number of parameters except for empty widgets.
         # With these lines, "bind" method of magicgui works inside magicclass.
         fgui = FunctionGuiPlus.from_callable(obj)
-        n_empty = len([widget for widget in fgui if isinstance(widget, EmptyWidget)])
+        n_empty = len([widget for widget in fgui if isinstance(widget, EmptyWidget) or not widget.visible])
         nparams = n_parameters(func) - n_empty
         
         record = True

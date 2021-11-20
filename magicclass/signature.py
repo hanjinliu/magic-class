@@ -64,8 +64,8 @@ class MagicMethodSignature(MagicSignature):
         additional_options: dict[str] = None,
     ):
         super().__init__(parameters=parameters, return_annotation=return_annotation, gui_options=gui_options)
-        self.caller_options = caller_options
-        self.additional_options = additional_options
+        self.caller_options = caller_options or {}
+        self.additional_options = additional_options or {}
     
     @classmethod
     def from_signature(cls, sig: inspect.Signature, gui_options=None, caller_options=None,
