@@ -67,7 +67,8 @@ class MenuGuiBase(BaseGui):
                 widget.changed.connect(define_callback(self, callback))
                      
             # By default, set value function will be connected to the widget.
-            widget.changed.connect(_value_widget_callback(self, widget, name))
+            if fld.record:
+                widget.changed.connect(_value_widget_callback(self, widget, name))
                 
         return widget
     

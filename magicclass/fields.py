@@ -4,7 +4,7 @@ from dataclasses import Field, MISSING
 from magicgui.type_map import get_widget_class
 from magicgui.widgets import create_widget
 from magicgui.widgets._bases import Widget
-from magicgui.widgets._bases.value_widget import UNSET
+from magicgui.widgets._bases.value_widget import UNSET, ValueWidget
 from .widgets import NotInstalled
 
 if TYPE_CHECKING:
@@ -17,7 +17,8 @@ class MagicField(Field):
     """
     Field class for magicgui construction. This object is compatible with dataclass.
     """    
-    def __init__(self, default=MISSING, default_factory=MISSING, metadata: dict = {}):
+    def __init__(self, default=MISSING, default_factory=MISSING, metadata: dict = {}, 
+                 name: str = None, record: bool = True):
         metadata = metadata.copy()
         if default is MISSING:
             default = metadata.pop("value", MISSING)
@@ -25,6 +26,8 @@ class MagicField(Field):
                          hash=False, compare=False, metadata=metadata)
         self.callbacks: list[Callable] = []
         self.guis: dict[int, X] = {}
+        self.name = name
+        self.record = record
     
     def __repr__(self):
         return self.__class__.__name__.rstrip("Field") + super().__repr__()
@@ -38,6 +41,12 @@ class MagicField(Field):
             self.guis[obj_id] = widget
                 
         return widget
+    
+    def as_getter(self, obj: X):
+        """
+        Make a function that get the value of Widget.
+        """        
+        return lambda widget: self.get_widget(obj).value
     
     def __get__(self, obj: X, objtype=None):
         if obj is None:
@@ -111,7 +120,7 @@ class MagicField(Field):
 
 
 class MagicValueField(MagicField):
-    def get_widget(self, obj: X):
+    def get_widget(self, obj: X) -> ValueWidget:
         widget = super().get_widget(obj)
         if not hasattr(widget, "value"):
             raise TypeError("Widget is not a value widget or a widget with value: "
@@ -133,7 +142,8 @@ def field(obj: Any = MISSING,
           *, 
           name: str = "", 
           widget_type: str | type[WidgetProtocol] | None = None, 
-          options: WidgetOptions = {}
+          options: WidgetOptions = {},
+          record: bool = True
           ) -> MagicField:
     """
     Make a MagicField object.
@@ -153,18 +163,21 @@ def field(obj: Any = MISSING,
         Widget type. This argument will be sent to ``create_widget`` function.
     options : WidgetOptions, optional
         Widget options. This parameter will always be used in ``widget(**options)`` form.
+    record : bool, default is True
+        Record value changes as macro.
 
     Returns
     -------
     MagicField
     """    
-    return _get_field(obj, name, widget_type, options, MagicField)
+    return _get_field(obj, name, widget_type, options, record, MagicField)
 
 def vfield(obj: Any = MISSING,
            *, 
            name: str = "", 
            widget_type: str | type[WidgetProtocol] | None = None, 
-           options: WidgetOptions = {}
+           options: WidgetOptions = {},
+           record: bool = True,
            ) -> MagicValueField:
     """
     Make a MagicValueField object.
@@ -194,23 +207,25 @@ def vfield(obj: Any = MISSING,
     -------
     MagicValueField
     """    
-    return _get_field(obj, name, widget_type, options, MagicValueField)
+    return _get_field(obj, name, widget_type, options, record, MagicValueField)
 
 def _get_field(obj, 
                name: str, 
                widget_type: str | type[WidgetProtocol] | None, 
                options: WidgetOptions,
+               record: bool,
                field_class: type[MagicField]
                ):
     options = options.copy()
     metadata = dict(widget_type=widget_type, options=options)
+    
     if isinstance(obj, type):
-        f = field_class(default_factory=obj, metadata=metadata)
+        f = field_class(default_factory=obj, metadata=metadata, name=name, record=record)
     elif obj is MISSING:
-        f = field_class(metadata=metadata)
+        f = field_class(metadata=metadata, name=name, record=record)
     else:
-        f = field_class(default=obj, metadata=metadata)
-    f.name = name
+        f = field_class(default=obj, metadata=metadata, name=name, record=record)
+    
     return f
 
     
