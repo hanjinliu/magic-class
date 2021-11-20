@@ -9,6 +9,7 @@ from .listwidget import ListWidget
 from .misc import Figure, ConsoleTextEdit, MacroEdit, CheckButton, show_messagebox
 from .separator import Separator
 from .sequence import ListEdit, TupleEdit
+from .threading import ProgressWidget, progress
 from .utils import FreeWidget
 
 class NotInstalled:
@@ -53,6 +54,8 @@ __all__ = ["ListWidget",
            "Separator",
            "ListEdit",
            "TupleEdit",
+           "ProgressWidget",
+           "progress",
            "FreeWidget",
            "QtConsole",
            "QtPlotCanvas",

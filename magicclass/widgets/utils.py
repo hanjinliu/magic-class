@@ -6,10 +6,7 @@ from magicgui.backends._qtpy.widgets import QBaseWidget
 
 class FreeWidget(Widget):
     """
-    Non-editable container. 
-    This class is useful to add QWidget into Container. If a QWidget is added via 
-    Container.layout(), it will be invisible from Container. We can solve this
-    problem by "wrapping" a QWidget with a Container.
+    A Widget class with any QWidget as a child.
     """    
     def __init__(self, **kwargs):
         super().__init__(widget_type=QBaseWidget, backend_kwargs={"qwidg": QWidget}, **kwargs)
