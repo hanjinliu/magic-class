@@ -2,7 +2,7 @@ from __future__ import annotations
 import inspect
 from dataclasses import _FIELDS
 from functools import wraps
-from typing import Callable, Any, TYPE_CHECKING
+from typing import Callable, Any, TYPE_CHECKING, Iterable
 from docstring_parser import parse
 from qtpy.QtWidgets import QApplication, QMessageBox
 
@@ -134,7 +134,6 @@ def define_callback(self, callback: Callable):
         return None
     return _callback
 
-
 def gui_qt():
     """
     Call "%gui qt" magic,
@@ -167,3 +166,8 @@ def screen_center():
     Get the center coordinate of the screen.
     """    
     return QApplication.desktop().screen().rect().center()
+
+class InvalidMagicClassError(Exception):
+    """
+    This exception will be raised when class definition is not a valid magic-class.
+    """    

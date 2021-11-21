@@ -10,7 +10,7 @@ from .widgets import Separator
 from .mgui_ext import Action
 from ._base import BaseGui, PopUpMode, ErrorMode
 from .macro import Expr, Head, Symbol, symbol
-from .utils import iter_members, define_callback
+from .utils import iter_members, define_callback, InvalidMagicClassError
 
 class MenuGuiBase(BaseGui):
     _component_class = Action
@@ -81,28 +81,45 @@ class MenuGuiBase(BaseGui):
             
         # Bind all the methods and annotations
         base_members = set(x[0] for x in iter_members(MenuGuiBase))        
+        
+        _hist: list[tuple[str, str, str]] = [] # for traceback
+        
         for name, attr in filter(lambda x: x[0] not in base_members, iter_members(cls)):
-            if isinstance(attr, type):
-                # Nested magic-menu
-                widget = attr()
-                setattr(self, name, widget)
-            
-            elif isinstance(attr, MagicField):
-                widget = self._create_widget_from_field(name, attr)
+            try:
+                if isinstance(attr, type):
+                    # Nested magic-menu
+                    widget = attr()
+                    setattr(self, name, widget)
                 
-            else:
-                # convert class method into instance method
-                if not hasattr(attr, "__magicclass_wrapped__"):
-                    widget = getattr(self, name, None)
+                elif isinstance(attr, MagicField):
+                    widget = self._create_widget_from_field(name, attr)
+                    
                 else:
-                    # If the method is redefined, the newer one should be used instead, while the
-                    # order of widgets should be follow the place of the older method.
-                    widget = attr.__magicclass_wrapped__.__get__(self)
+                    # convert class method into instance method
+                    if not hasattr(attr, "__magicclass_wrapped__"):
+                        widget = getattr(self, name, None)
+                    else:
+                        # If the method is redefined, the newer one should be used instead, while the
+                        # order of widgets should be follow the place of the older method.
+                        widget = attr.__magicclass_wrapped__.__get__(self)
+                
+                if name.startswith("_"):
+                    continue
+                if callable(widget) or isinstance(widget, (MenuGuiBase, Action, Separator, Container)):
+                    self.append(widget)
+                    _hist.append((name, str(type(attr)), type(widget).__name__))
             
-            if name.startswith("_"):
-                continue
-            if callable(widget) or isinstance(widget, (MenuGuiBase, Action, Separator, Container)):
-                self.append(widget)
+            except Exception as e:
+                hist_str = "\n\t" + "\n\t".join(map(
+                    lambda x: f"{x[0]} {x[1]} -> {x[2]}",
+                    _hist
+                    )) + f"\n\t\t{name} ({type(attr).__name__}) <--- Error"
+                
+                if isinstance(e, InvalidMagicClassError):
+                    e.args = (f"\n{hist_str}\n{e}",)
+                    raise e
+                else:
+                    raise InvalidMagicClassError(f"{hist_str}\n\n{type(e).__name__}: {e}")
         
         return None
     
