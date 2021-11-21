@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.widgets.qtgraph package &mdash; magic-class 0.5.7 documentation</title>
+  <title>magicclass.widgets.qtgraph package &mdash; magic-class 0.5.8 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -29,7 +29,7 @@
             <a href="index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.7
+                0.5.8
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -45,6 +45,8 @@
 <li class="toctree-l1"><a class="reference internal" href="nest.html">Nest magic-classes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="use_field.html">Use Fields in magic-class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="use_wraps.html">Call Parent Methods from its Child</a></li>
+<li class="toctree-l1"><a class="reference internal" href="use_bind.html">Binding Values to Arguments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="customize_macro.html">Customize Macro Recording</a></li>
 <li class="toctree-l1"><a class="reference internal" href="special_methods.html">Special attributes in magic-class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="containers.html">Container Variations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API References</a></li>
@@ -370,7 +372,7 @@ that the event was delivered to.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.widgets.qtgraph.qt_graph.QtImageCanvas">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.qtgraph.qt_graph.</span></span><span class="sig-name descname"><span class="pre">QtImageCanvas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contrast_limits</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_hist</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_button</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/qtgraph/qt_graph.html#QtImageCanvas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.qtgraph.qt_graph.QtImageCanvas" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.widget.Widget</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.mixins._OrientationMixin</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">MutableSequence</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.widget.Widget</span></code>]</p>
+<dd><p>Bases: <a class="reference internal" href="magicclass.widgets.html#magicclass.widgets.utils.FreeWidget" title="magicclass.widgets.utils.FreeWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.widgets.utils.FreeWidget</span></code></a>, <a class="reference internal" href="#magicclass.widgets.qtgraph.qt_graph.HasPlotItem" title="magicclass.widgets.qtgraph.qt_graph.HasPlotItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.widgets.qtgraph.qt_graph.HasPlotItem</span></code></a></p>
 <dl class="py property">
 <dt class="sig sig-object py" id="magicclass.widgets.qtgraph.qt_graph.QtImageCanvas.cmap">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">cmap</span></span><a class="headerlink" href="#magicclass.widgets.qtgraph.qt_graph.QtImageCanvas.cmap" title="Permalink to this definition">¶</a></dt>
@@ -434,7 +436,7 @@ that the event was delivered to.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.widgets.qtgraph.qt_graph.QtPlotCanvas">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.qtgraph.qt_graph.</span></span><span class="sig-name descname"><span class="pre">QtPlotCanvas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">region_visible</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/qtgraph/qt_graph.html#QtPlotCanvas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.qtgraph.qt_graph.QtPlotCanvas" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.widget.Widget</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.mixins._OrientationMixin</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">MutableSequence</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.widget.Widget</span></code>]</p>
+<dd><p>Bases: <a class="reference internal" href="magicclass.widgets.html#magicclass.widgets.utils.FreeWidget" title="magicclass.widgets.utils.FreeWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.widgets.utils.FreeWidget</span></code></a>, <a class="reference internal" href="#magicclass.widgets.qtgraph.qt_graph.HasPlotItem" title="magicclass.widgets.qtgraph.qt_graph.HasPlotItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.widgets.qtgraph.qt_graph.HasPlotItem</span></code></a></p>
 <p>A 1-D data viewer that have similar API as napari Viewer.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="magicclass.widgets.qtgraph.qt_graph.QtPlotCanvas.interactive">

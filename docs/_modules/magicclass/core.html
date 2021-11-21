@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.core &mdash; magic-class 0.5.5dev0 documentation</title>
+  <title>magicclass.core &mdash; magic-class 0.5.8 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -27,7 +27,7 @@
             <a href="../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.5dev0
+                0.5.8
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -43,6 +43,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../nest.html">Nest magic-classes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../use_field.html">Use Fields in magic-class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../use_wraps.html">Call Parent Methods from its Child</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../use_bind.html">Binding Values to Arguments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../customize_macro.html">Customize Macro Recording</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../special_methods.html">Special attributes in magic-class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../containers.html">Container Variations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api.html">API References</a></li>
@@ -78,7 +80,11 @@
 <span class="kn">import</span> <span class="nn">inspect</span>
 <span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">is_dataclass</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Annotated</span><span class="p">,</span> <span class="n">_AnnotatedAlias</span>
+
+<span class="kn">from</span> <span class="nn">magicclass.fields</span> <span class="kn">import</span> <span class="n">MagicField</span><span class="p">,</span> <span class="n">MISSING</span>
 
 <span class="kn">from</span> <span class="nn">.class_gui</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">ClassGui</span><span class="p">,</span> 
@@ -123,6 +129,19 @@
     <span class="n">WidgetType</span><span class="o">.</span><span class="n">list</span><span class="p">:</span> <span class="n">ListClassGui</span><span class="p">,</span>
     <span class="n">WidgetType</span><span class="o">.</span><span class="n">mainwindow</span><span class="p">:</span> <span class="n">MainWindowClassGui</span><span class="p">,</span>
 <span class="p">}</span>
+
+<div class="viewcode-block" id="Bound"><a class="viewcode-back" href="../../magicclass.html#magicclass.core.Bound">[docs]</a><span class="k">def</span> <span class="nf">Bound</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_AnnotatedAlias</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">MagicField</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">default_factory</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">MISSING</span><span class="p">:</span>
+            <span class="n">annot</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">default_factory</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">annot</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">default</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">callable</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+        <span class="n">annot</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">return_annotation</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">annot</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">annot</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;bind&quot;</span><span class="p">:</span> <span class="n">value</span><span class="p">}]</span></div>
 
 <div class="viewcode-block" id="magicclass"><a class="viewcode-back" href="../../magicclass.html#magicclass.core.magicclass">[docs]</a><span class="k">def</span> <span class="nf">magicclass</span><span class="p">(</span><span class="n">class_</span><span class="p">:</span> <span class="nb">type</span><span class="o">|</span><span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                <span class="o">*</span><span class="p">,</span>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.widgets.misc &mdash; magic-class 0.5.7 documentation</title>
+  <title>magicclass.widgets.misc &mdash; magic-class 0.5.8 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -27,7 +27,7 @@
             <a href="../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.7
+                0.5.8
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -43,6 +43,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../nest.html">Nest magic-classes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../use_field.html">Use Fields in magic-class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../use_wraps.html">Call Parent Methods from its Child</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../use_bind.html">Binding Values to Arguments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../customize_macro.html">Customize Macro Recording</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../special_methods.html">Special attributes in magic-class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../containers.html">Container Variations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api.html">API References</a></li>
@@ -83,12 +85,12 @@
 <span class="kn">from</span> <span class="nn">matplotlib.backends.backend_qt5agg</span> <span class="kn">import</span> <span class="n">FigureCanvas</span>
 <span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">PushButton</span><span class="p">,</span> <span class="n">TextEdit</span><span class="p">,</span> <span class="n">FileEdit</span>
 
-<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">FrozenContainer</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">FreeWidget</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">qtpy.QtWidgets</span> <span class="kn">import</span> <span class="n">QWidget</span>
 
-<div class="viewcode-block" id="Figure"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.misc.Figure">[docs]</a><span class="k">class</span> <span class="nc">Figure</span><span class="p">(</span><span class="n">FrozenContainer</span><span class="p">):</span>
+<div class="viewcode-block" id="Figure"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.misc.Figure">[docs]</a><span class="k">class</span> <span class="nc">Figure</span><span class="p">(</span><span class="n">FreeWidget</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A matplotlib figure canvas.</span>
 <span class="sd">    &quot;&quot;&quot;</span>    
@@ -96,8 +98,7 @@
                  <span class="n">nrows</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
                  <span class="n">ncols</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
                  <span class="n">figsize</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
-                 <span class="n">style</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                 <span class="n">layout</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;vertical&quot;</span><span class="p">,</span> 
+                 <span class="n">style</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
                  <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">backend</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">get_backend</span><span class="p">()</span>
         <span class="k">try</span><span class="p">:</span>
@@ -110,7 +111,7 @@
         <span class="k">finally</span><span class="p">:</span>
             <span class="n">mpl</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">backend</span><span class="p">)</span>
         
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">layout</span><span class="o">=</span><span class="n">layout</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">canvas</span> <span class="o">=</span> <span class="n">FigureCanvas</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_widget</span><span class="p">(</span><span class="n">canvas</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">figure</span> <span class="o">=</span> <span class="n">fig</span>
@@ -142,7 +143,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setFont</span><span class="p">(</span><span class="n">QFont</span><span class="p">(</span><span class="s2">&quot;Consolas&quot;</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setWordWrapMode</span><span class="p">(</span><span class="n">QTextOption</span><span class="o">.</span><span class="n">NoWrap</span><span class="p">)</span></div>
         
-<div class="viewcode-block" id="MacroEdit"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.misc.MacroEdit">[docs]</a><span class="k">class</span> <span class="nc">MacroEdit</span><span class="p">(</span><span class="n">FrozenContainer</span><span class="p">):</span>
+<div class="viewcode-block" id="MacroEdit"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.misc.MacroEdit">[docs]</a><span class="k">class</span> <span class="nc">MacroEdit</span><span class="p">(</span><span class="n">FreeWidget</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A text edit embeded with a custom menu bar.</span>
 <span class="sd">    &quot;&quot;&quot;</span>    

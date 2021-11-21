@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.widgets.listwidget &mdash; magic-class 0.5.5dev0 documentation</title>
+  <title>magicclass.widgets.listwidget &mdash; magic-class 0.5.8 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -27,7 +27,7 @@
             <a href="../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.5dev0
+                0.5.8
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -43,6 +43,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../nest.html">Nest magic-classes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../use_field.html">Use Fields in magic-class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../use_wraps.html">Call Parent Methods from its Child</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../use_bind.html">Binding Values to Arguments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../customize_macro.html">Customize Macro Recording</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../special_methods.html">Special attributes in magic-class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../containers.html">Container Variations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api.html">API References</a></li>
@@ -121,21 +123,23 @@
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Any</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span> <span class="nn">_collections_abc</span> <span class="kn">import</span> <span class="n">MutableSequence</span>
 <span class="kn">from</span> <span class="nn">qtpy.QtWidgets</span> <span class="kn">import</span> <span class="n">QLabel</span><span class="p">,</span> <span class="n">QListWidget</span><span class="p">,</span> <span class="n">QListWidgetItem</span><span class="p">,</span> <span class="n">QAbstractItemView</span><span class="p">,</span> <span class="n">QMenu</span><span class="p">,</span> <span class="n">QAction</span>
 <span class="kn">from</span> <span class="nn">qtpy.QtCore</span> <span class="kn">import</span> <span class="n">Qt</span>
-<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">FrozenContainer</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">FreeWidget</span>
 <span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">extract_tooltip</span>
 
 <span class="n">_Callback</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="n">Any</span><span class="p">]</span>
     
-<div class="viewcode-block" id="ListWidget"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.listwidget.ListWidget">[docs]</a><span class="k">class</span> <span class="nc">ListWidget</span><span class="p">(</span><span class="n">FrozenContainer</span><span class="p">):</span>
+<div class="viewcode-block" id="ListWidget"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.listwidget.ListWidget">[docs]</a><span class="k">class</span> <span class="nc">ListWidget</span><span class="p">(</span><span class="n">FreeWidget</span><span class="p">,</span> <span class="n">MutableSequence</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dragdrop</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_listwidget</span> <span class="o">=</span> <span class="n">PyListWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_listwidget</span><span class="o">.</span><span class="n">setParentContainer</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_title</span> <span class="o">=</span> <span class="n">QLabel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_title</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_title</span><span class="o">.</span><span class="n">setAlignment</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignCenter</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">running</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_widget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_title</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_widget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_listwidget</span><span class="p">)</span>
         
@@ -147,24 +151,27 @@
         <span class="k">def</span> <span class="nf">_</span><span class="p">(</span><span class="n">item</span><span class="p">:</span> <span class="n">PyListWidgetItem</span><span class="p">):</span>
             <span class="n">type_</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">obj</span><span class="p">)</span>
             <span class="n">callbacks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_callbacks</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">type_</span><span class="p">,</span> <span class="p">[])</span>
-            <span class="k">for</span> <span class="n">callback</span> <span class="ow">in</span> <span class="n">callbacks</span><span class="p">:</span>
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="n">callback</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">obj</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_listwidget</span><span class="o">.</span><span class="n">row</span><span class="p">(</span><span class="n">item</span><span class="p">))</span>
-                <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
-                    <span class="n">callback</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">obj</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">running</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">callback</span> <span class="ow">in</span> <span class="n">callbacks</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">callback</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">obj</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_listwidget</span><span class="o">.</span><span class="n">row</span><span class="p">(</span><span class="n">item</span><span class="p">))</span>
+                    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+                        <span class="n">callback</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">obj</span><span class="p">)</span>
+            <span class="k">finally</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">running</span> <span class="o">=</span> <span class="kc">False</span>
         
         <span class="k">if</span> <span class="n">dragdrop</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_listwidget</span><span class="o">.</span><span class="n">setAcceptDrops</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_listwidget</span><span class="o">.</span><span class="n">setDragEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_listwidget</span><span class="o">.</span><span class="n">setDragDropMode</span><span class="p">(</span><span class="n">QAbstractItemView</span><span class="o">.</span><span class="n">DragDropMode</span><span class="o">.</span><span class="n">InternalMove</span><span class="p">)</span>
-    
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">nitems</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_listwidget</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
     
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
-        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_listwidget</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">obj</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nitems</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_listwidget</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">obj</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">))]</span>
     
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">title</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -174,13 +181,13 @@
     <span class="k">def</span> <span class="nf">title</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_title</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
         
-<div class="viewcode-block" id="ListWidget.add_item"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.listwidget.ListWidget.add_item">[docs]</a>    <span class="k">def</span> <span class="nf">add_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+<div class="viewcode-block" id="ListWidget.append"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.listwidget.ListWidget.append">[docs]</a>    <span class="k">def</span> <span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Append any item to the list.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">insert_item</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nitems</span><span class="p">,</span> <span class="n">obj</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="n">obj</span><span class="p">)</span></div>
     
-<div class="viewcode-block" id="ListWidget.insert_item"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.listwidget.ListWidget.insert_item">[docs]</a>    <span class="k">def</span> <span class="nf">insert_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+<div class="viewcode-block" id="ListWidget.insert"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.listwidget.ListWidget.insert">[docs]</a>    <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Insert any item to the list.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -188,12 +195,26 @@
         <span class="n">item</span> <span class="o">=</span> <span class="n">PyListWidgetItem</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_listwidget</span><span class="p">,</span> <span class="n">obj</span><span class="o">=</span><span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_listwidget</span><span class="o">.</span><span class="n">insertItem</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span></div>
     
-<div class="viewcode-block" id="ListWidget.pop_item"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.listwidget.ListWidget.pop_item">[docs]</a>    <span class="k">def</span> <span class="nf">pop_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<div class="viewcode-block" id="ListWidget.pop"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.listwidget.ListWidget.pop">[docs]</a>    <span class="k">def</span> <span class="nf">pop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Pop item at an index.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_listwidget</span><span class="o">.</span><span class="n">takeItem</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-        <span class="k">return</span> <span class="kc">None</span></div>
+        <span class="k">return</span> <span class="n">obj</span></div>
+    
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get i-th python object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>        
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_listwidget</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">obj</span>
+    
+    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_listwidget</span><span class="o">.</span><span class="n">takeItem</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">obj</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_listwidget</span><span class="o">.</span><span class="n">takeItem</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ListWidget.clear"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.listwidget.ListWidget.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>

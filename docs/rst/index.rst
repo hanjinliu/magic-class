@@ -31,6 +31,7 @@ Contents
    nest
    use_field
    use_wraps
+   use_bind
    customize_macro
    special_methods
    containers

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.widgets.utils &mdash; magic-class 0.5.5dev0 documentation</title>
+  <title>magicclass.widgets.utils &mdash; magic-class 0.5.8 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -27,7 +27,7 @@
             <a href="../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.5dev0
+                0.5.8
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -43,8 +43,11 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../nest.html">Nest magic-classes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../use_field.html">Use Fields in magic-class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../use_wraps.html">Call Parent Methods from its Child</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../use_bind.html">Binding Values to Arguments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../customize_macro.html">Customize Macro Recording</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../special_methods.html">Special attributes in magic-class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../containers.html">Container Variations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API References</a></li>
 </ul>
 
         </div>
@@ -74,22 +77,22 @@
   <h1>Source code for magicclass.widgets.utils</h1><div class="highlight"><pre>
 <span></span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
-<span class="kn">from</span> <span class="nn">qtpy.QtWidgets</span> <span class="kn">import</span> <span class="n">QWidget</span>
-<span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">Container</span>
+<span class="kn">from</span> <span class="nn">qtpy.QtWidgets</span> <span class="kn">import</span> <span class="n">QWidget</span><span class="p">,</span> <span class="n">QVBoxLayout</span>
+<span class="kn">from</span> <span class="nn">magicgui.widgets._bases</span> <span class="kn">import</span> <span class="n">Widget</span>
+<span class="kn">from</span> <span class="nn">magicgui.backends._qtpy.widgets</span> <span class="kn">import</span> <span class="n">QBaseWidget</span>
 
-<div class="viewcode-block" id="FrozenContainer"><a class="viewcode-back" href="../../../magicclass.html#magicclass.widgets.FrozenContainer">[docs]</a><span class="k">class</span> <span class="nc">FrozenContainer</span><span class="p">(</span><span class="n">Container</span><span class="p">):</span>
+<div class="viewcode-block" id="FreeWidget"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.utils.FreeWidget">[docs]</a><span class="k">class</span> <span class="nc">FreeWidget</span><span class="p">(</span><span class="n">Widget</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Non-editable container. </span>
-<span class="sd">    This class is useful to add QWidget into Container. If a QWidget is added via </span>
-<span class="sd">    Container.layout(), it will be invisible from Container. We can solve this</span>
-<span class="sd">    problem by &quot;wrapping&quot; a QWidget with a Container.</span>
+<span class="sd">    A Widget class with any QWidget as a child.</span>
 <span class="sd">    &quot;&quot;&quot;</span>    
-<div class="viewcode-block" id="FrozenContainer.insert"><a class="viewcode-back" href="../../../magicclass.html#magicclass.widgets.FrozenContainer.insert">[docs]</a>    <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot insert widget to </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
-    
-<div class="viewcode-block" id="FrozenContainer.set_widget"><a class="viewcode-back" href="../../../magicclass.html#magicclass.widgets.FrozenContainer.set_widget">[docs]</a>    <span class="k">def</span> <span class="nf">set_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">:</span> <span class="n">QWidget</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">widget_type</span><span class="o">=</span><span class="n">QBaseWidget</span><span class="p">,</span> <span class="n">backend_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;qwidg&quot;</span><span class="p">:</span> <span class="n">QWidget</span><span class="p">},</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="p">:</span> <span class="n">QWidget</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">QVBoxLayout</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setContentsMargins</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        
+<div class="viewcode-block" id="FreeWidget.set_widget"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.utils.FreeWidget.set_widget">[docs]</a>    <span class="k">def</span> <span class="nf">set_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">:</span> <span class="n">QWidget</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">margins</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="n">widget</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="p">)</span></div></div>
 </pre></div>
 

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Index &mdash; magic-class 0.5.7 documentation</title>
+  <title>Index &mdash; magic-class 0.5.8 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -27,7 +27,7 @@
             <a href="index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.7
+                0.5.8
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -43,6 +43,8 @@
 <li class="toctree-l1"><a class="reference internal" href="nest.html">Nest magic-classes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="use_field.html">Use Fields in magic-class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="use_wraps.html">Call Parent Methods from its Child</a></li>
+<li class="toctree-l1"><a class="reference internal" href="use_bind.html">Binding Values to Arguments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="customize_macro.html">Customize Macro Recording</a></li>
 <li class="toctree-l1"><a class="reference internal" href="special_methods.html">Special attributes in magic-class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="containers.html">Container Variations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API References</a></li>
@@ -84,6 +86,7 @@
  | <a href="#G"><strong>G</strong></a>
  | <a href="#H"><strong>H</strong></a>
  | <a href="#I"><strong>I</strong></a>
+ | <a href="#K"><strong>K</strong></a>
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
  | <a href="#N"><strong>N</strong></a>
@@ -105,28 +108,26 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="magicclass.widgets.html#magicclass.widgets.misc.MessageBoxMode.ABOUT">ABOUT (magicclass.widgets.misc.MessageBoxMode attribute)</a>
 </li>
-      <li><a href="magicclass.html#magicclass.menu_gui.Action">Action (class in magicclass.menu_gui)</a>
+      <li><a href="magicclass.html#magicclass.mgui_ext.Action">Action (class in magicclass.mgui_ext)</a>
 </li>
       <li><a href="magicclass.widgets.qtgraph.html#magicclass.widgets.qtgraph.graph_items.PlotDataItem.add">add() (magicclass.widgets.qtgraph.graph_items.PlotDataItem method)</a>
 </li>
       <li><a href="magicclass.widgets.qtgraph.html#magicclass.widgets.qtgraph.qt_graph.HasPlotItem.add_curve">add_curve() (magicclass.widgets.qtgraph.qt_graph.HasPlotItem method)</a>
 </li>
-      <li><a href="magicclass.widgets.html#magicclass.widgets.ListWidget.add_item">add_item() (magicclass.widgets.ListWidget method)</a>
-
-      <ul>
-        <li><a href="magicclass.widgets.html#magicclass.widgets.listwidget.ListWidget.add_item">(magicclass.widgets.listwidget.ListWidget method)</a>
-</li>
-      </ul></li>
       <li><a href="magicclass.widgets.qtgraph.html#magicclass.widgets.qtgraph.qt_graph.HasPlotItem.add_scatter">add_scatter() (magicclass.widgets.qtgraph.qt_graph.HasPlotItem method)</a>
 </li>
       <li><a href="magicclass.widgets.qtgraph.html#magicclass.widgets.qtgraph.mouse_event.Modifier.alt">alt (magicclass.widgets.qtgraph.mouse_event.Modifier attribute)</a>
 </li>
-      <li><a href="magicclass.html#magicclass.field.MagicField.annotation">annotation (magicclass.field.MagicField property)</a>
+      <li><a href="magicclass.html#magicclass.fields.MagicField.annotation">annotation (magicclass.fields.MagicField property)</a>
 </li>
       <li><a href="magicclass.html#magicclass.macro.Macro.append">append() (magicclass.macro.Macro method)</a>
 
       <ul>
         <li><a href="magicclass.html#magicclass.menu_gui.MenuGuiBase.append">(magicclass.menu_gui.MenuGuiBase method)</a>
+</li>
+        <li><a href="magicclass.widgets.html#magicclass.widgets.ListWidget.append">(magicclass.widgets.ListWidget method)</a>
+</li>
+        <li><a href="magicclass.widgets.html#magicclass.widgets.listwidget.ListWidget.append">(magicclass.widgets.listwidget.ListWidget method)</a>
 </li>
         <li><a href="magicclass.widgets.qtgraph.html#magicclass.widgets.qtgraph.qt_graph.LayerList.append">(magicclass.widgets.qtgraph.qt_graph.LayerList method)</a>
 </li>
@@ -143,6 +144,8 @@
         <li><a href="magicclass.widgets.html#magicclass.widgets.TupleEdit.append_new">(magicclass.widgets.TupleEdit method)</a>
 </li>
       </ul></li>
+      <li><a href="magicclass.html#magicclass.fields.MagicField.as_getter">as_getter() (magicclass.fields.MagicField method)</a>
+</li>
       <li><a href="magicclass.html#magicclass.macro.Symbol.as_parameter">as_parameter() (magicclass.macro.Symbol method)</a>
 </li>
       <li><a href="magicclass.html#magicclass.macro.Head.assign">assign (magicclass.macro.Head attribute)</a>
@@ -175,6 +178,8 @@
         <li><a href="magicclass.widgets.qtgraph.html#magicclass.widgets.qtgraph.graph_items.Scatter.base_item">(magicclass.widgets.qtgraph.graph_items.Scatter attribute)</a>
 </li>
       </ul></li>
+      <li><a href="magicclass.html#magicclass.core.Bound">Bound() (in module magicclass.core)</a>
+</li>
       <li><a href="magicclass.widgets.html#magicclass.widgets.Separator.btn_clicked">btn_clicked (magicclass.widgets.Separator attribute)</a>
 
       <ul>
@@ -203,7 +208,9 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="magicclass.html#magicclass.macro.Head.call">call (magicclass.macro.Head attribute)</a>
 </li>
-      <li><a href="magicclass.html#magicclass.menu_gui.Action.changed">changed (magicclass.menu_gui.Action attribute)</a>
+      <li><a href="magicclass.html#magicclass.fields.MagicValueField.callbacks">callbacks (magicclass.fields.MagicValueField attribute)</a>
+</li>
+      <li><a href="magicclass.html#magicclass.mgui_ext.Action.changed">changed (magicclass.mgui_ext.Action attribute)</a>
 </li>
       <li><a href="magicclass.html#magicclass.utils.check_collision">check_collision() (in module magicclass.utils)</a>
 </li>
@@ -243,9 +250,13 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="magicclass.html#magicclass.macro.Head.comment">comment (magicclass.macro.Head attribute)</a>
 </li>
-      <li><a href="magicclass.html#magicclass.field.MagicField.compare">compare (magicclass.field.MagicField attribute)</a>
+      <li><a href="magicclass.html#magicclass.fields.MagicField.compare">compare (magicclass.fields.MagicField attribute)</a>
+
+      <ul>
+        <li><a href="magicclass.html#magicclass.fields.MagicValueField.compare">(magicclass.fields.MagicValueField attribute)</a>
 </li>
-      <li><a href="magicclass.html#magicclass.field.MagicField.connect">connect() (magicclass.field.MagicField method)</a>
+      </ul></li>
+      <li><a href="magicclass.html#magicclass.fields.MagicField.connect">connect() (magicclass.fields.MagicField method)</a>
 </li>
       <li><a href="magicclass.widgets.html#magicclass.widgets.ConsoleTextEdit">ConsoleTextEdit (class in magicclass.widgets)</a>
 
@@ -279,20 +290,28 @@
 <h2 id="D">D</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="magicclass.html#magicclass.field.MagicField.default">default (magicclass.field.MagicField attribute)</a>
+      <li><a href="magicclass.html#magicclass.fields.MagicField.default">default (magicclass.fields.MagicField attribute)</a>
+
+      <ul>
+        <li><a href="magicclass.html#magicclass.fields.MagicValueField.default">(magicclass.fields.MagicValueField attribute)</a>
 </li>
-      <li><a href="magicclass.html#magicclass.field.MagicField.default_factory">default_factory (magicclass.field.MagicField attribute)</a>
+      </ul></li>
+      <li><a href="magicclass.html#magicclass.fields.MagicField.default_factory">default_factory (magicclass.fields.MagicField attribute)</a>
+
+      <ul>
+        <li><a href="magicclass.html#magicclass.fields.MagicValueField.default_factory">(magicclass.fields.MagicValueField attribute)</a>
 </li>
+      </ul></li>
       <li><a href="magicclass.html#magicclass.utils.define_callback">define_callback() (in module magicclass.utils)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="magicclass.widgets.html#magicclass.widgets.ListEdit.delete_last">delete_last() (magicclass.widgets.ListEdit method)</a>
 
       <ul>
         <li><a href="magicclass.widgets.html#magicclass.widgets.sequence.ListEdit.delete_last">(magicclass.widgets.sequence.ListEdit method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="magicclass.html#magicclass.wrappers.do_not_record">do_not_record() (in module magicclass.wrappers)</a>
 </li>
       <li><a href="magicclass.widgets.html#magicclass.widgets.Figure.draw">draw() (magicclass.widgets.Figure method)</a>
@@ -307,12 +326,8 @@
 <h2 id="E">E</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="magicclass.html#magicclass.field.MagicField.enabled">enabled (magicclass.field.MagicField property)</a>
-
-      <ul>
-        <li><a href="magicclass.html#magicclass.menu_gui.Action.enabled">(magicclass.menu_gui.Action property)</a>
+      <li><a href="magicclass.html#magicclass.mgui_ext.Action.enabled">enabled (magicclass.mgui_ext.Action property)</a>
 </li>
-      </ul></li>
       <li><a href="magicclass.widgets.html#magicclass.widgets.misc.MessageBoxMode.ERROR">ERROR (magicclass.widgets.misc.MessageBoxMode attribute)</a>
 </li>
       <li><a href="magicclass.html#magicclass.macro.Expr.eval">eval() (magicclass.macro.Expr method)</a>
@@ -341,7 +356,7 @@
 <h2 id="F">F</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="magicclass.html#magicclass.field.field">field() (in module magicclass.field)</a>
+      <li><a href="magicclass.html#magicclass.fields.field">field() (in module magicclass.fields)</a>
 </li>
       <li><a href="magicclass.widgets.html#magicclass.widgets.Figure">Figure (class in magicclass.widgets)</a>
 
@@ -355,11 +370,17 @@
 </li>
       <li><a href="magicclass.html#magicclass.mgui_ext.PushButtonPlus.font_size">font_size (magicclass.mgui_ext.PushButtonPlus property)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="magicclass.html#magicclass.macro.Expr.format">format() (magicclass.macro.Expr method)</a>
 </li>
-      <li><a href="magicclass.html#magicclass.menu_gui.Action.from_options">from_options() (magicclass.menu_gui.Action method)</a>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="magicclass.widgets.html#magicclass.widgets.FreeWidget">FreeWidget (class in magicclass.widgets)</a>
+
+      <ul>
+        <li><a href="magicclass.widgets.html#magicclass.widgets.utils.FreeWidget">(class in magicclass.widgets.utils)</a>
+</li>
+      </ul></li>
+      <li><a href="magicclass.html#magicclass.mgui_ext.Action.from_options">from_options() (magicclass.mgui_ext.Action method)</a>
 
       <ul>
         <li><a href="magicclass.html#magicclass.mgui_ext.PushButtonPlus.from_options">(magicclass.mgui_ext.PushButtonPlus method)</a>
@@ -367,10 +388,10 @@
       </ul></li>
       <li><a href="magicclass.html#magicclass.signature.MagicMethodSignature.from_signature">from_signature() (magicclass.signature.MagicMethodSignature class method)</a>
 </li>
-      <li><a href="magicclass.widgets.html#magicclass.widgets.FrozenContainer">FrozenContainer (class in magicclass.widgets)</a>
+      <li><a href="magicclass.widgets.html#magicclass.widgets.progress.function">function (magicclass.widgets.progress property)</a>
 
       <ul>
-        <li><a href="magicclass.widgets.html#magicclass.widgets.utils.FrozenContainer">(class in magicclass.widgets.utils)</a>
+        <li><a href="magicclass.widgets.html#magicclass.widgets.threading.progress.function">(magicclass.widgets.threading.progress property)</a>
 </li>
       </ul></li>
       <li><a href="magicclass.html#magicclass.mgui_ext.FunctionGuiPlus">FunctionGuiPlus (class in magicclass.mgui_ext)</a>
@@ -389,6 +410,12 @@
 </li>
       <li><a href="magicclass.html#magicclass.utils.get_signature">get_signature() (in module magicclass.utils)</a>
 </li>
+      <li><a href="magicclass.html#magicclass.fields.MagicField.get_widget">get_widget() (magicclass.fields.MagicField method)</a>
+
+      <ul>
+        <li><a href="magicclass.html#magicclass.fields.MagicValueField.get_widget">(magicclass.fields.MagicValueField method)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="magicclass.html#magicclass.macro.Head.getattr">getattr (magicclass.macro.Head attribute)</a>
@@ -399,21 +426,25 @@
 </li>
       <li><a href="magicclass.html#magicclass.utils.gui_qt">gui_qt() (in module magicclass.utils)</a>
 </li>
+      <li><a href="magicclass.html#magicclass.fields.MagicValueField.guis">guis (magicclass.fields.MagicValueField attribute)</a>
+</li>
   </ul></td>
 </tr></table>
 
 <h2 id="H">H</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="magicclass.html#magicclass.field.MagicField.hash">hash (magicclass.field.MagicField attribute)</a>
+      <li><a href="magicclass.html#magicclass.fields.MagicField.hash">hash (magicclass.fields.MagicField attribute)</a>
+
+      <ul>
+        <li><a href="magicclass.html#magicclass.fields.MagicValueField.hash">(magicclass.fields.MagicValueField attribute)</a>
 </li>
-      <li><a href="magicclass.widgets.qtgraph.html#magicclass.widgets.qtgraph.qt_graph.HasPlotItem">HasPlotItem (class in magicclass.widgets.qtgraph.qt_graph)</a>
-</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="magicclass.html#magicclass.macro.Head">Head (class in magicclass.macro)</a>
+      <li><a href="magicclass.widgets.qtgraph.html#magicclass.widgets.qtgraph.qt_graph.HasPlotItem">HasPlotItem (class in magicclass.widgets.qtgraph.qt_graph)</a>
 </li>
-      <li><a href="magicclass.html#magicclass.field.MagicField.height">height (magicclass.field.MagicField property)</a>
+      <li><a href="magicclass.html#magicclass.macro.Head">Head (class in magicclass.macro)</a>
 </li>
       <li><a href="magicclass.html#magicclass.creator.Layout.horizontal">horizontal (magicclass.creator.Layout attribute)</a>
 </li>
@@ -423,7 +454,7 @@
 <h2 id="I">I</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="magicclass.html#magicclass.menu_gui.Action.icon_path">icon_path (magicclass.menu_gui.Action property)</a>
+      <li><a href="magicclass.html#magicclass.mgui_ext.Action.icon_path">icon_path (magicclass.mgui_ext.Action property)</a>
 
       <ul>
         <li><a href="magicclass.html#magicclass.mgui_ext.PushButtonPlus.icon_path">(magicclass.mgui_ext.PushButtonPlus property)</a>
@@ -443,26 +474,24 @@
 </li>
       <li><a href="magicclass.widgets.html#magicclass.widgets.misc.MessageBoxMode.INFO">INFO (magicclass.widgets.misc.MessageBoxMode attribute)</a>
 </li>
-      <li><a href="magicclass.html#magicclass.field.MagicField.init">init (magicclass.field.MagicField attribute)</a>
+      <li><a href="magicclass.html#magicclass.fields.MagicField.init">init (magicclass.fields.MagicField attribute)</a>
 
       <ul>
+        <li><a href="magicclass.html#magicclass.fields.MagicValueField.init">(magicclass.fields.MagicValueField attribute)</a>
+</li>
         <li><a href="magicclass.html#magicclass.macro.Head.init">(magicclass.macro.Head attribute)</a>
 </li>
       </ul></li>
-      <li><a href="magicclass.widgets.html#magicclass.widgets.FrozenContainer.insert">insert() (magicclass.widgets.FrozenContainer method)</a>
+      <li><a href="magicclass.html#magicclass.mgui_ext.FunctionGuiPlus.insert">insert() (magicclass.mgui_ext.FunctionGuiPlus method)</a>
 
       <ul>
-        <li><a href="magicclass.widgets.html#magicclass.widgets.utils.FrozenContainer.insert">(magicclass.widgets.utils.FrozenContainer method)</a>
+        <li><a href="magicclass.widgets.html#magicclass.widgets.ListWidget.insert">(magicclass.widgets.ListWidget method)</a>
+</li>
+        <li><a href="magicclass.widgets.html#magicclass.widgets.listwidget.ListWidget.insert">(magicclass.widgets.listwidget.ListWidget method)</a>
 </li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="magicclass.widgets.html#magicclass.widgets.ListWidget.insert_item">insert_item() (magicclass.widgets.ListWidget method)</a>
-
-      <ul>
-        <li><a href="magicclass.widgets.html#magicclass.widgets.listwidget.ListWidget.insert_item">(magicclass.widgets.listwidget.ListWidget method)</a>
-</li>
-      </ul></li>
       <li><a href="magicclass.widgets.qtgraph.html#magicclass.widgets.qtgraph.qt_graph.QtImageCanvas.interactive">interactive (magicclass.widgets.qtgraph.qt_graph.QtImageCanvas property)</a>
 
       <ul>
@@ -488,11 +517,17 @@
   </ul></td>
 </tr></table>
 
+<h2 id="K">K</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="magicclass.html#magicclass.macro.Head.kw">kw (magicclass.macro.Head attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
 <h2 id="L">L</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="magicclass.html#magicclass.field.MagicField.label">label (magicclass.field.MagicField property)</a>
-</li>
       <li><a href="magicclass.widgets.qtgraph.html#magicclass.widgets.qtgraph.mouse_event.MouseClickEvent.lastPos">lastPos() (magicclass.widgets.qtgraph.mouse_event.MouseClickEvent method)</a>
 </li>
       <li><a href="magicclass.widgets.qtgraph.html#magicclass.widgets.qtgraph.qt_graph.LayerList">LayerList (class in magicclass.widgets.qtgraph.qt_graph)</a>
@@ -581,10 +616,10 @@
 </li>
       </ul></li>
       <li>
-    magicclass.field
+    magicclass.fields
 
       <ul>
-        <li><a href="magicclass.html#module-magicclass.field">module</a>
+        <li><a href="magicclass.html#module-magicclass.fields">module</a>
 </li>
       </ul></li>
       <li>
@@ -695,6 +730,13 @@
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li>
+    magicclass.widgets.threading
+
+      <ul>
+        <li><a href="magicclass.widgets.html#module-magicclass.widgets.threading">module</a>
+</li>
+      </ul></li>
+      <li>
     magicclass.widgets.utils
 
       <ul>
@@ -710,19 +752,17 @@
       </ul></li>
       <li><a href="magicclass.html#magicclass.core.magiccontext">magiccontext() (in module magicclass.core)</a>
 </li>
-      <li><a href="magicclass.html#magicclass.field.MagicField">MagicField (class in magicclass.field)</a>
+      <li><a href="magicclass.html#magicclass.fields.MagicField">MagicField (class in magicclass.fields)</a>
 </li>
       <li><a href="magicclass.html#magicclass.core.magicmenu">magicmenu() (in module magicclass.core)</a>
 </li>
       <li><a href="magicclass.html#magicclass.signature.MagicMethodSignature">MagicMethodSignature (class in magicclass.signature)</a>
 </li>
+      <li><a href="magicclass.html#magicclass.fields.MagicValueField">MagicValueField (class in magicclass.fields)</a>
+</li>
       <li><a href="magicclass.html#magicclass.core.WidgetType.mainwindow">mainwindow (magicclass.core.WidgetType attribute)</a>
 </li>
       <li><a href="magicclass.html#magicclass.class_gui.make_gui">make_gui() (in module magicclass.class_gui)</a>
-</li>
-      <li><a href="magicclass.html#magicclass.field.MagicField.max_height">max_height (magicclass.field.MagicField property)</a>
-</li>
-      <li><a href="magicclass.html#magicclass.field.MagicField.max_width">max_width (magicclass.field.MagicField property)</a>
 </li>
       <li><a href="magicclass.html#magicclass.menu_gui.MenuGui">MenuGui (class in magicclass.menu_gui)</a>
 </li>
@@ -730,13 +770,13 @@
 </li>
       <li><a href="magicclass.widgets.html#magicclass.widgets.misc.MessageBoxMode">MessageBoxMode (class in magicclass.widgets.misc)</a>
 </li>
-      <li><a href="magicclass.html#magicclass.field.MagicField.metadata">metadata (magicclass.field.MagicField attribute)</a>
+      <li><a href="magicclass.html#magicclass.fields.MagicField.metadata">metadata (magicclass.fields.MagicField attribute)</a>
+
+      <ul>
+        <li><a href="magicclass.html#magicclass.fields.MagicValueField.metadata">(magicclass.fields.MagicValueField attribute)</a>
 </li>
+      </ul></li>
       <li><a href="magicclass.widgets.qtgraph.html#magicclass.widgets.qtgraph.mouse_event.Button.middle">middle (magicclass.widgets.qtgraph.mouse_event.Button attribute)</a>
-</li>
-      <li><a href="magicclass.html#magicclass.field.MagicField.min_height">min_height (magicclass.field.MagicField property)</a>
-</li>
-      <li><a href="magicclass.html#magicclass.field.MagicField.min_width">min_width (magicclass.field.MagicField property)</a>
 </li>
       <li><a href="magicclass.widgets.qtgraph.html#magicclass.widgets.qtgraph.mouse_event.Modifier">Modifier (class in magicclass.widgets.qtgraph.mouse_event)</a>
 </li>
@@ -756,7 +796,7 @@
 </li>
         <li><a href="magicclass.html#module-magicclass.creator">magicclass.creator</a>
 </li>
-        <li><a href="magicclass.html#module-magicclass.field">magicclass.field</a>
+        <li><a href="magicclass.html#module-magicclass.fields">magicclass.fields</a>
 </li>
         <li><a href="magicclass.html#module-magicclass.macro">magicclass.macro</a>
 </li>
@@ -788,6 +828,8 @@
 </li>
         <li><a href="magicclass.widgets.html#module-magicclass.widgets.sequence">magicclass.widgets.sequence</a>
 </li>
+        <li><a href="magicclass.widgets.html#module-magicclass.widgets.threading">magicclass.widgets.threading</a>
+</li>
         <li><a href="magicclass.widgets.html#module-magicclass.widgets.utils">magicclass.widgets.utils</a>
 </li>
         <li><a href="magicclass.html#module-magicclass.wrappers">magicclass.wrappers</a>
@@ -805,10 +847,12 @@
 </li>
       <li><a href="magicclass.html#magicclass.utils.n_parameters">n_parameters() (in module magicclass.utils)</a>
 </li>
-      <li><a href="magicclass.html#magicclass.field.MagicField.name">name (magicclass.field.MagicField attribute)</a>
+      <li><a href="magicclass.html#magicclass.fields.MagicField.name">name (magicclass.fields.MagicField attribute)</a>
 
       <ul>
-        <li><a href="magicclass.html#magicclass.menu_gui.Action.name">(magicclass.menu_gui.Action property)</a>
+        <li><a href="magicclass.html#magicclass.fields.MagicValueField.name">(magicclass.fields.MagicValueField attribute)</a>
+</li>
+        <li><a href="magicclass.html#magicclass.mgui_ext.Action.name">(magicclass.mgui_ext.Action property)</a>
 </li>
         <li><a href="magicclass.widgets.html#magicclass.widgets.QtConsole.name">(magicclass.widgets.QtConsole attribute)</a>
 </li>
@@ -820,22 +864,12 @@
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="magicclass.html#magicclass.class_gui.ClassGuiBase.native">native (magicclass.class_gui.ClassGuiBase attribute)</a>
-
-      <ul>
-        <li><a href="magicclass.html#magicclass.field.MagicField.native">(magicclass.field.MagicField property)</a>
 </li>
-      </ul></li>
       <li><a href="magicclass.widgets.qtgraph.html#magicclass.widgets.qtgraph.graph_items.PlotDataItem.ndata">ndata (magicclass.widgets.qtgraph.graph_items.PlotDataItem property)</a>
 </li>
-      <li><a href="magicclass.widgets.html#magicclass.widgets.ListWidget.nitems">nitems (magicclass.widgets.ListWidget property)</a>
-
-      <ul>
-        <li><a href="magicclass.widgets.html#magicclass.widgets.listwidget.ListWidget.nitems">(magicclass.widgets.listwidget.ListWidget property)</a>
-</li>
-      </ul></li>
       <li><a href="magicclass.html#magicclass.core.WidgetType.none">none (magicclass.core.WidgetType attribute)</a>
 </li>
-      <li><a href="magicclass.html#magicclass.field.MagicField.not_ready">not_ready() (magicclass.field.MagicField method)</a>
+      <li><a href="magicclass.html#magicclass.fields.MagicField.not_ready">not_ready() (magicclass.fields.MagicField method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -843,7 +877,7 @@
 <h2 id="O">O</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="magicclass.html#magicclass.field.MagicField.options">options (magicclass.field.MagicField property)</a>
+      <li><a href="magicclass.html#magicclass.fields.MagicField.options">options (magicclass.fields.MagicField property)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -851,16 +885,10 @@
 <h2 id="P">P</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="magicclass.html#magicclass.field.MagicField.param_kind">param_kind (magicclass.field.MagicField property)</a>
-</li>
       <li><a href="magicclass.html#magicclass.core.Parameters">Parameters (class in magicclass.core)</a>
 </li>
-      <li><a href="magicclass.html#magicclass.field.MagicField.parent">parent (magicclass.field.MagicField property)</a>
-
-      <ul>
-        <li><a href="magicclass.html#magicclass.menu_gui.MenuGuiBase.parent">(magicclass.menu_gui.MenuGuiBase property)</a>
+      <li><a href="magicclass.html#magicclass.menu_gui.MenuGuiBase.parent">parent (magicclass.menu_gui.MenuGuiBase property)</a>
 </li>
-      </ul></li>
       <li><a href="magicclass.html#magicclass.macro.Expr.parse">parse() (magicclass.macro.Expr class method)</a>
 </li>
       <li><a href="magicclass.html#magicclass.macro.Expr.parse_call">parse_call() (magicclass.macro.Expr class method)</a>
@@ -869,20 +897,32 @@
 </li>
       <li><a href="magicclass.html#magicclass.macro.Expr.parse_method">parse_method() (magicclass.macro.Expr class method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="magicclass.widgets.html#magicclass.widgets.listwidget.partial_event">partial_event() (in module magicclass.widgets.listwidget)</a>
 </li>
       <li><a href="magicclass.widgets.qtgraph.html#magicclass.widgets.qtgraph.graph_items.PlotDataItem">PlotDataItem (class in magicclass.widgets.qtgraph.graph_items)</a>
 </li>
-      <li><a href="magicclass.widgets.html#magicclass.widgets.ListWidget.pop_item">pop_item() (magicclass.widgets.ListWidget method)</a>
+      <li><a href="magicclass.widgets.html#magicclass.widgets.ListWidget.pop">pop() (magicclass.widgets.ListWidget method)</a>
 
       <ul>
-        <li><a href="magicclass.widgets.html#magicclass.widgets.listwidget.ListWidget.pop_item">(magicclass.widgets.listwidget.ListWidget method)</a>
+        <li><a href="magicclass.widgets.html#magicclass.widgets.listwidget.ListWidget.pop">(magicclass.widgets.listwidget.ListWidget method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="magicclass.widgets.qtgraph.html#magicclass.widgets.qtgraph.mouse_event.MouseClickEvent.pos">pos() (magicclass.widgets.qtgraph.mouse_event.MouseClickEvent method)</a>
 </li>
+      <li><a href="magicclass.widgets.html#magicclass.widgets.progress">progress (class in magicclass.widgets)</a>
+
+      <ul>
+        <li><a href="magicclass.widgets.html#magicclass.widgets.threading.progress">(class in magicclass.widgets.threading)</a>
+</li>
+      </ul></li>
+      <li><a href="magicclass.widgets.html#magicclass.widgets.ProgressWidget">ProgressWidget (class in magicclass.widgets)</a>
+
+      <ul>
+        <li><a href="magicclass.widgets.html#magicclass.widgets.threading.ProgressWidget">(class in magicclass.widgets.threading)</a>
+</li>
+      </ul></li>
       <li><a href="magicclass.html#magicclass.mgui_ext.PushButtonPlus">PushButtonPlus (class in magicclass.mgui_ext)</a>
 </li>
       <li><a href="magicclass.widgets.html#magicclass.widgets.listwidget.PyListWidget">PyListWidget (class in magicclass.widgets.listwidget)</a>
@@ -925,7 +965,13 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="magicclass.html#magicclass.utils.raise_error_in_msgbox">raise_error_in_msgbox() (in module magicclass.utils)</a>
 </li>
-      <li><a href="magicclass.html#magicclass.field.MagicField.ready">ready() (magicclass.field.MagicField method)</a>
+      <li><a href="magicclass.widgets.html#magicclass.widgets.ProgressWidget.range">range() (magicclass.widgets.ProgressWidget method)</a>
+
+      <ul>
+        <li><a href="magicclass.widgets.html#magicclass.widgets.threading.ProgressWidget.range">(magicclass.widgets.threading.ProgressWidget method)</a>
+</li>
+      </ul></li>
+      <li><a href="magicclass.html#magicclass.fields.MagicField.ready">ready() (magicclass.fields.MagicField method)</a>
 </li>
       <li><a href="magicclass.html#magicclass.macro.Macro.record">record() (magicclass.macro.Macro method)</a>
 </li>
@@ -953,14 +999,14 @@
         <li><a href="magicclass.widgets.html#magicclass.widgets.listwidget.ListWidget.register_callback">(magicclass.widgets.listwidget.ListWidget method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="magicclass.widgets.html#magicclass.widgets.ListWidget.register_contextmenu">register_contextmenu() (magicclass.widgets.ListWidget method)</a>
 
       <ul>
         <li><a href="magicclass.widgets.html#magicclass.widgets.listwidget.ListWidget.register_contextmenu">(magicclass.widgets.listwidget.ListWidget method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="magicclass.widgets.html#magicclass.widgets.ListWidget.register_delegate">register_delegate() (magicclass.widgets.ListWidget method)</a>
 
       <ul>
@@ -977,10 +1023,26 @@
 </li>
       <li><a href="magicclass.widgets.qtgraph.html#magicclass.widgets.qtgraph.qt_graph.HasPlotItem.remove_item">remove_item() (magicclass.widgets.qtgraph.qt_graph.HasPlotItem method)</a>
 </li>
-      <li><a href="magicclass.html#magicclass.field.MagicField.repr">repr (magicclass.field.MagicField attribute)</a>
+      <li><a href="magicclass.html#magicclass.fields.MagicField.repr">repr (magicclass.fields.MagicField attribute)</a>
+
+      <ul>
+        <li><a href="magicclass.html#magicclass.fields.MagicValueField.repr">(magicclass.fields.MagicValueField attribute)</a>
 </li>
+      </ul></li>
       <li><a href="magicclass.widgets.qtgraph.html#magicclass.widgets.qtgraph.mouse_event.Button.right">right (magicclass.widgets.qtgraph.mouse_event.Button attribute)</a>
 </li>
+      <li><a href="magicclass.widgets.html#magicclass.widgets.ProgressWidget.run">run() (magicclass.widgets.ProgressWidget method)</a>
+
+      <ul>
+        <li><a href="magicclass.widgets.html#magicclass.widgets.threading.ProgressWidget.run">(magicclass.widgets.threading.ProgressWidget method)</a>
+</li>
+      </ul></li>
+      <li><a href="magicclass.html#magicclass.mgui_ext.Action.running">running (magicclass.mgui_ext.Action property)</a>
+
+      <ul>
+        <li><a href="magicclass.html#magicclass.mgui_ext.PushButtonPlus.running">(magicclass.mgui_ext.PushButtonPlus property)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -1003,28 +1065,24 @@
 </li>
       <li><a href="magicclass.html#magicclass.wrappers.set_options">set_options() (in module magicclass.wrappers)</a>
 </li>
-      <li><a href="magicclass.widgets.html#magicclass.widgets.FrozenContainer.set_widget">set_widget() (magicclass.widgets.FrozenContainer method)</a>
+      <li><a href="magicclass.widgets.html#magicclass.widgets.FreeWidget.set_widget">set_widget() (magicclass.widgets.FreeWidget method)</a>
 
       <ul>
-        <li><a href="magicclass.widgets.html#magicclass.widgets.utils.FrozenContainer.set_widget">(magicclass.widgets.utils.FrozenContainer method)</a>
+        <li><a href="magicclass.widgets.html#magicclass.widgets.utils.FreeWidget.set_widget">(magicclass.widgets.utils.FreeWidget method)</a>
 </li>
       </ul></li>
-      <li><a href="magicclass.html#magicclass.macro.Head.setattr">setattr (magicclass.macro.Head attribute)</a>
-</li>
-      <li><a href="magicclass.html#magicclass.macro.Head.setitem">setitem (magicclass.macro.Head attribute)</a>
-</li>
       <li><a href="magicclass.widgets.html#magicclass.widgets.listwidget.PyListWidget.setParentContainer">setParentContainer() (magicclass.widgets.listwidget.PyListWidget method)</a>
 </li>
       <li><a href="magicclass.widgets.qtgraph.html#magicclass.widgets.qtgraph.mouse_event.Modifier.shift">shift (magicclass.widgets.qtgraph.mouse_event.Modifier attribute)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="magicclass.widgets.qtgraph.html#magicclass.widgets.qtgraph.qt_graph.QtImageCanvas.show_button">show_button() (magicclass.widgets.qtgraph.qt_graph.QtImageCanvas method)</a>
 
       <ul>
         <li><a href="magicclass.widgets.html#magicclass.widgets.QtImageCanvas.show_button">(magicclass.widgets.QtImageCanvas method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="magicclass.widgets.qtgraph.html#magicclass.widgets.qtgraph.qt_graph.QtImageCanvas.show_hist">show_hist() (magicclass.widgets.qtgraph.qt_graph.QtImageCanvas method)</a>
 
       <ul>
@@ -1035,6 +1093,12 @@
 
       <ul>
         <li><a href="magicclass.widgets.html#magicclass.widgets.misc.show_messagebox">(in module magicclass.widgets.misc)</a>
+</li>
+      </ul></li>
+      <li><a href="magicclass.widgets.html#magicclass.widgets.ProgressWidget.show_progress">show_progress() (magicclass.widgets.ProgressWidget method)</a>
+
+      <ul>
+        <li><a href="magicclass.widgets.html#magicclass.widgets.threading.ProgressWidget.show_progress">(magicclass.widgets.threading.ProgressWidget method)</a>
 </li>
       </ul></li>
       <li><a href="magicclass.html#magicclass.core.WidgetType.split">split (magicclass.core.WidgetType attribute)</a>
@@ -1059,10 +1123,14 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="magicclass.html#magicclass.core.WidgetType.tabbed">tabbed (magicclass.core.WidgetType attribute)</a>
 </li>
-      <li><a href="magicclass.html#magicclass.menu_gui.Action.text">text (magicclass.menu_gui.Action property)</a>
+      <li><a href="magicclass.html#magicclass.mgui_ext.Action.text">text (magicclass.mgui_ext.Action property)</a>
 
       <ul>
+        <li><a href="magicclass.widgets.html#magicclass.widgets.ProgressWidget.text">(magicclass.widgets.ProgressWidget property)</a>
+</li>
         <li><a href="magicclass.widgets.qtgraph.html#magicclass.widgets.qtgraph.graph_items.TextOverlay.text">(magicclass.widgets.qtgraph.graph_items.TextOverlay property)</a>
+</li>
+        <li><a href="magicclass.widgets.html#magicclass.widgets.threading.ProgressWidget.text">(magicclass.widgets.threading.ProgressWidget property)</a>
 </li>
       </ul></li>
       <li><a href="magicclass.widgets.qtgraph.html#magicclass.widgets.qtgraph.qt_graph.QtImageCanvas.text_overlay">text_overlay (magicclass.widgets.qtgraph.qt_graph.QtImageCanvas property)</a>
@@ -1073,32 +1141,32 @@
       </ul></li>
       <li><a href="magicclass.widgets.qtgraph.html#magicclass.widgets.qtgraph.graph_items.TextOverlay">TextOverlay (class in magicclass.widgets.qtgraph.graph_items)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="magicclass.widgets.html#magicclass.widgets.ListWidget.title">title (magicclass.widgets.ListWidget property)</a>
 
       <ul>
         <li><a href="magicclass.widgets.html#magicclass.widgets.listwidget.ListWidget.title">(magicclass.widgets.listwidget.ListWidget property)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="magicclass.html#magicclass.field.MagicField.to_widget">to_widget() (magicclass.field.MagicField method)</a>
+      <li><a href="magicclass.html#magicclass.fields.MagicField.to_widget">to_widget() (magicclass.fields.MagicField method)</a>
 </li>
       <li><a href="magicclass.html#magicclass.core.WidgetType.toolbox">toolbox (magicclass.core.WidgetType attribute)</a>
 </li>
-      <li><a href="magicclass.html#magicclass.field.MagicField.tooltip">tooltip (magicclass.field.MagicField property)</a>
-
-      <ul>
-        <li><a href="magicclass.html#magicclass.menu_gui.Action.tooltip">(magicclass.menu_gui.Action property)</a>
+      <li><a href="magicclass.html#magicclass.mgui_ext.Action.tooltip">tooltip (magicclass.mgui_ext.Action property)</a>
 </li>
-      </ul></li>
       <li><a href="magicclass.widgets.html#magicclass.widgets.TupleEdit">TupleEdit (class in magicclass.widgets)</a>
 
       <ul>
         <li><a href="magicclass.widgets.html#magicclass.widgets.sequence.TupleEdit">(class in magicclass.widgets.sequence)</a>
 </li>
       </ul></li>
-      <li><a href="magicclass.html#magicclass.field.MagicField.type">type (magicclass.field.MagicField attribute)</a>
+      <li><a href="magicclass.html#magicclass.fields.MagicField.type">type (magicclass.fields.MagicField attribute)</a>
+
+      <ul>
+        <li><a href="magicclass.html#magicclass.fields.MagicValueField.type">(magicclass.fields.MagicValueField attribute)</a>
 </li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -1117,12 +1185,12 @@
 <h2 id="V">V</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="magicclass.html#magicclass.field.MagicField.value">value (magicclass.field.MagicField property)</a>
+      <li><a href="magicclass.html#magicclass.fields.MagicField.value">value (magicclass.fields.MagicField property)</a>
 
       <ul>
         <li><a href="magicclass.html#magicclass.macro.Head.value">(magicclass.macro.Head attribute)</a>
 </li>
-        <li><a href="magicclass.html#magicclass.menu_gui.Action.value">(magicclass.menu_gui.Action property)</a>
+        <li><a href="magicclass.html#magicclass.mgui_ext.Action.value">(magicclass.mgui_ext.Action property)</a>
 </li>
         <li><a href="magicclass.widgets.html#magicclass.widgets.console.QtConsole.value">(magicclass.widgets.console.QtConsole property)</a>
 </li>
@@ -1136,11 +1204,15 @@
 </li>
         <li><a href="magicclass.widgets.html#magicclass.widgets.misc.MacroEdit.value">(magicclass.widgets.misc.MacroEdit property)</a>
 </li>
+        <li><a href="magicclass.widgets.html#magicclass.widgets.ProgressWidget.value">(magicclass.widgets.ProgressWidget property)</a>
+</li>
         <li><a href="magicclass.widgets.html#magicclass.widgets.QtConsole.value">(magicclass.widgets.QtConsole property)</a>
 </li>
         <li><a href="magicclass.widgets.html#magicclass.widgets.sequence.ListEdit.value">(magicclass.widgets.sequence.ListEdit property)</a>
 </li>
         <li><a href="magicclass.widgets.html#magicclass.widgets.sequence.TupleEdit.value">(magicclass.widgets.sequence.TupleEdit property)</a>
+</li>
+        <li><a href="magicclass.widgets.html#magicclass.widgets.threading.ProgressWidget.value">(magicclass.widgets.threading.ProgressWidget property)</a>
 </li>
         <li><a href="magicclass.widgets.html#magicclass.widgets.TupleEdit.value">(magicclass.widgets.TupleEdit property)</a>
 </li>
@@ -1149,17 +1221,17 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="magicclass.html#magicclass.creator.Layout.vertical">vertical (magicclass.creator.Layout attribute)</a>
 </li>
+      <li><a href="magicclass.html#magicclass.fields.vfield">vfield() (in module magicclass.fields)</a>
+</li>
       <li><a href="magicclass.widgets.qtgraph.html#magicclass.widgets.qtgraph.qt_graph.QtImageCanvas.view_range">view_range (magicclass.widgets.qtgraph.qt_graph.QtImageCanvas property)</a>
 
       <ul>
         <li><a href="magicclass.widgets.html#magicclass.widgets.QtImageCanvas.view_range">(magicclass.widgets.QtImageCanvas property)</a>
 </li>
       </ul></li>
-      <li><a href="magicclass.html#magicclass.field.MagicField.visible">visible (magicclass.field.MagicField property)</a>
+      <li><a href="magicclass.html#magicclass.mgui_ext.Action.visible">visible (magicclass.mgui_ext.Action property)</a>
 
       <ul>
-        <li><a href="magicclass.html#magicclass.menu_gui.Action.visible">(magicclass.menu_gui.Action property)</a>
-</li>
         <li><a href="magicclass.widgets.qtgraph.html#magicclass.widgets.qtgraph.graph_items.PlotDataItem.visible">(magicclass.widgets.qtgraph.graph_items.PlotDataItem property)</a>
 </li>
         <li><a href="magicclass.widgets.qtgraph.html#magicclass.widgets.qtgraph.graph_items.TextOverlay.visible">(magicclass.widgets.qtgraph.graph_items.TextOverlay property)</a>
@@ -1173,13 +1245,11 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="magicclass.widgets.html#magicclass.widgets.misc.MessageBoxMode.WARNING">WARNING (magicclass.widgets.misc.MessageBoxMode attribute)</a>
 </li>
-      <li><a href="magicclass.html#magicclass.field.MagicField.widget_type">widget_type (magicclass.field.MagicField property)</a>
+      <li><a href="magicclass.html#magicclass.fields.MagicField.widget_type">widget_type (magicclass.fields.MagicField property)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="magicclass.html#magicclass.core.WidgetType">WidgetType (class in magicclass.core)</a>
-</li>
-      <li><a href="magicclass.html#magicclass.field.MagicField.width">width (magicclass.field.MagicField property)</a>
 </li>
       <li><a href="magicclass.html#magicclass.containers.wrap_container">wrap_container() (in module magicclass.containers)</a>
 </li>

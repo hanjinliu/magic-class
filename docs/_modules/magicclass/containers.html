@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.containers &mdash; magic-class 0.5.5dev0 documentation</title>
+  <title>magicclass.containers &mdash; magic-class 0.5.8 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -27,7 +27,7 @@
             <a href="../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.5dev0
+                0.5.8
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -43,8 +43,11 @@
 <li class="toctree-l1"><a class="reference internal" href="../../nest.html">Nest magic-classes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../use_field.html">Use Fields in magic-class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../use_wraps.html">Call Parent Methods from its Child</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../use_bind.html">Binding Values to Arguments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../customize_macro.html">Customize Macro Recording</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../special_methods.html">Special attributes in magic-class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../containers.html">Container Variations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API References</a></li>
 </ul>
 
         </div>
@@ -240,7 +243,7 @@
         
         <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">btn_text</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inner_widget</span><span class="o">.</span><span class="n">show</span><span class="p">())</span>
-        
+
 <span class="k">class</span> <span class="nc">_CollapsibleContainer</span><span class="p">(</span><span class="n">ContainerBase</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Collapsible container.</span>

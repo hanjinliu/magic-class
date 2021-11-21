@@ -89,3 +89,29 @@ can be safely bound to ``MagicField`` with ``connect`` method.
         @a.connect
         def _callback(self):
             print("value changed!")
+
+Make Fields More Property-like
+------------------------------
+
+In many cases, you don't need all the controls of a widget. If you only need the value of a field, you
+might not want to get the value via ``self.widget.value`` all the way.
+
+Magic-class provides another field class called ``MagicValueField``, which returns the value itself when
+the field get accessed. You can create ``MagicValueField`` object using ``vfield`` function. You can also
+defined callbacks similar to ``MagicField``.
+
+.. code-block:: python
+
+    from magicclass import magicclass, vfield
+
+    @magicclass
+    class MyClass:
+        a = vfield(int)
+
+        @a.connect
+        def _callback(self):
+            print("value changed!")
+        
+        def print_value(self):
+            print(f"a = {self.a}") # instead of "self.a.value"!
+

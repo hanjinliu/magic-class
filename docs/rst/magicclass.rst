@@ -44,10 +44,10 @@ magicclass.creator module
    :undoc-members:
    :show-inheritance:
 
-magicclass.field module
------------------------
+magicclass.fields module
+------------------------
 
-.. automodule:: magicclass.field
+.. automodule:: magicclass.fields
    :members:
    :undoc-members:
    :show-inheritance:
