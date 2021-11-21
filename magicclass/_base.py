@@ -295,11 +295,8 @@ class BaseGui:
                 
                 # If bound method is a class method, use self.method(widget) as the value.
                 # TODO: n_parameters(bound_value) == 2 is not elegant
-                if callable(bound_value) and n_parameters(bound_value) == 2:
-                    clsname, *_ = bound_value.__qualname__.split(".")
-                    if clsname != self.__class__.__name__:
-                        self.__class__.wraps(bound_value)
-                    param.options["bind"] = getattr(self, bound_value.__name__)
+                if isinstance(bound_value, Callable) and n_parameters(bound_value) == 2:
+                    param.options["bind"] = _method_as_getter(self, bound_value)
                 
                 # If a MagicFiled is bound, bind the value of the connected widget.
                 elif isinstance(bound_value, MagicField):
@@ -627,4 +624,15 @@ def _wraps(template: Callable | inspect.Signature,
             )
         return f
     return wrapper
+
+def _method_as_getter(self, bound_value: Callable):
+    *clsnames, funcname = bound_value.__qualname__.split(".")
+    if clsnames[0] != self.__class__.__name__:
+        raise ValueError
     
+    def _func(w):
+        ins = self
+        for clsname in clsnames[1:]:
+            ins = getattr(ins, clsname)
+        return getattr(ins, funcname)(w)
+    return _func
