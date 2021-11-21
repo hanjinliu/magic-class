@@ -631,12 +631,11 @@ def _method_as_getter(self, bound_value: Callable):
     return _func
 
 def _field_as_getter(self, bound_value: MagicField):
-    namespace = bound_value.parent_class.__qualname__
-    clsnames = namespace.split(".")
     def _func(w):
+        namespace = bound_value.parent_class.__qualname__
+        clsnames = namespace.split(".")
         ins = self
         while type(ins).__name__ not in clsnames:
-            print(type(ins).__name__)
             ins = getattr(ins, "__magicclass_parent__", None)
             if ins is None:
                 raise ValueError(f"MagicField {namespace}.{bound_value.name} is invisible"
