@@ -56,8 +56,8 @@ class MenuGuiBase(BaseGui):
             except (AttributeError, KeyError):
                 pass
             
+        fld.name = fld.name or name.replace("_", " ")
         widget = fld.to_widget()
-        widget.name = widget.name or name
             
         if isinstance(widget, ButtonWidget):
             # If the field has callbacks, connect it to the newly generated widget.
@@ -110,11 +110,12 @@ class MenuGuiBase(BaseGui):
                     _hist.append((name, str(type(attr)), type(widget).__name__))
             
             except Exception as e:
-                hist_str = "\n\t" + "\n\t".join(map(
+                hist_str = "\n\t".join(map(
                     lambda x: f"{x[0]} {x[1]} -> {x[2]}",
                     _hist
                     )) + f"\n\t\t{name} ({type(attr).__name__}) <--- Error"
-                
+                if not hist_str.startswith("\n\t"):
+                    hist_str += "\n\t"
                 if isinstance(e, InvalidMagicClassError):
                     e.args = (f"\n{hist_str}\n{e}",)
                     raise e

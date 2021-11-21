@@ -136,6 +136,8 @@ def magicclass(class_: type|None = None,
         doc = cls.__doc__
         sig = inspect.signature(cls)
         annot = cls.__dict__.get("__annotations__", {})
+        mod = cls.__module__
+        qualname = cls.__qualname__
         
         oldclass = type(cls.__name__ + _BASE_CLASS_SUFFIX, (cls,), {})
         newclass = type(cls.__name__, (class_gui, oldclass), {})
@@ -146,6 +148,8 @@ def magicclass(class_: type|None = None,
         # concatenate annotations
         newclass.__annotations__ = class_gui.__annotations__.copy()
         newclass.__annotations__.update(annot)
+        newclass.__module__ = mod
+        newclass.__qualname__ = qualname
         
         @functools_wraps(oldclass.__init__)
         def __init__(self, *args, **kwargs):

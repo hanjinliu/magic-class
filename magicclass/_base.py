@@ -194,7 +194,6 @@ class BaseGui:
                     f = _wraps(template, reference=parent_method)(f)
                     f.__wrapped__ = parent_method
                     f.__name__ = parent_method.__name__
-                    f.__qualname__ = parent_method.__qualname__
                     return f
                     
             # If method is defined as a member of class X, __qualname__ will be X.<method name>.
@@ -298,16 +297,7 @@ class BaseGui:
                 
                 # If a MagicFiled is bound, bind the value of the connected widget.
                 elif isinstance(bound_value, MagicField):
-                    clsnames = bound_value.parent_class.__qualname__.split(".")
-                    ins = self
-                    for clsname in clsnames:
-                        ins = getattr(ins, clsname, ins)
-                        
-                    _field_widget = bound_value.get_widget(ins)
-                    if not hasattr(_field_widget, "value"):
-                        raise TypeError(f"MagicField {bound_value.name} does not return ValueWidget "
-                                        "thus cannot be used as a bound value.")
-                    param.options["bind"] = bound_value.as_getter(ins)
+                    param.options["bind"] = _field_as_getter(self, bound_value)
                 
                 # If a value widget is bound, bind the value.
                 elif isinstance(bound_value, ValueWidget):
@@ -628,16 +618,38 @@ def _method_as_getter(self, bound_value: Callable):
     *clsnames, funcname = bound_value.__qualname__.split(".")
     
     def _func(w):
-        current_self = self
-        while clsnames[0] != current_self.__class__.__name__:
-            current_self = getattr(current_self, "__magicclass_parent__", None)
-            if current_self is None:    
-                raise ValueError(f"Cannot access {bound_value.__qualname__} from namespace "
-                                f"{self.__class__.__name__}")
-        ins = current_self
+        ins = self
+        while clsnames[0] != ins.__class__.__name__:
+            ins = getattr(ins, "__magicclass_parent__", None)
+            if ins is None:
+                raise ValueError(f"Method {bound_value.__qualname__} is invisible"
+                                 f"from magicclass {self.__class__.__qualname__}")
+        
         for clsname in clsnames[1:]:
             ins = getattr(ins, clsname)
         return getattr(ins, funcname)(w)
+    return _func
+
+def _field_as_getter(self, bound_value: MagicField):
+    namespace = bound_value.parent_class.__qualname__
+    clsnames = namespace.split(".")
+    def _func(w):
+        ins = self
+        while type(ins).__name__ not in clsnames:
+            print(type(ins).__name__)
+            ins = getattr(ins, "__magicclass_parent__", None)
+            if ins is None:
+                raise ValueError(f"MagicField {namespace}.{bound_value.name} is invisible"
+                                 f"from magicclass {self.__class__.__qualname__}")
+        i = clsnames.index(type(ins).__name__)
+        for clsname in clsnames[i:]:
+            ins = getattr(ins, clsname, ins)
+            
+        _field_widget = bound_value.get_widget(ins)
+        if not hasattr(_field_widget, "value"):
+            raise TypeError(f"MagicField {bound_value.name} does not return ValueWidget "
+                            "thus cannot be used as a bound value.")
+        return bound_value.as_getter(ins)(w)
     return _func
 
 def _need_record(func: Callable):
