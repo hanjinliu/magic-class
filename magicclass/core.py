@@ -5,7 +5,7 @@ from enum import Enum
 from dataclasses import is_dataclass
 from typing import Any
 import warnings
-from typing_extensions import Annotated
+from typing_extensions import Annotated, _AnnotatedAlias
 
 from magicclass.fields import MagicField, MISSING
 
@@ -53,11 +53,19 @@ _TYPE_MAP = {
     WidgetType.mainwindow: MainWindowClassGui,
 }
 
-def Bind(value):
+def Bound(value: Any) -> _AnnotatedAlias:
+    """
+    Make Annotated type from a MagicField or a method.
+    """    
     if isinstance(value, MagicField):
-        annot = Any if value.default_factory is MISSING else value.default_factory
+        if value.default_factory is not MISSING:
+            annot = value.default_factory
+        else:
+            annot = type(value.default)
     elif callable(value):
         annot = inspect.signature(value).return_annotation
+        if annot is inspect._empty:
+            annot = Any
     else:
         annot = type(value)
     
