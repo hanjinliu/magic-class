@@ -272,7 +272,8 @@ class BaseGui:
         
         # Signature must be updated like this. Otherwise, already wrapped member function
         # will have signature with "self".
-        func.__signature__ = inspect.signature(obj)
+        obj_sig = inspect.signature(obj)
+        func.__signature__ = obj_sig
         
         # Prepare a button or action
         widget.tooltip = extract_tooltip(func)
@@ -280,7 +281,7 @@ class BaseGui:
         # Get the number of parameters except for empty widgets.
         # With these lines, "bind" method of magicgui works inside magicclass.
         fgui = FunctionGuiPlus.from_callable(obj)
-        n_empty = len([widget for widget in fgui if isinstance(widget, EmptyWidget) or not widget.visible])
+        n_empty = len([widget for widget in fgui if isinstance(widget, EmptyWidget)])
         nparams = n_parameters(func) - n_empty
         
         # This block enables instance methods in "bind" method of ValueWidget.
@@ -321,7 +322,7 @@ class BaseGui:
         
         if isinstance(func.__signature__, MagicMethodSignature):
             # TODO: I don't know the reason why "additional_options" is lost. 
-            func.__signature__.additional_options = obj.__signature__.additional_options
+            func.__signature__.additional_options = getattr(obj_sig, "additional_options", {})
             
         if nparams == 0:
             # We don't want a dialog with a single widget "Run" to show up.
