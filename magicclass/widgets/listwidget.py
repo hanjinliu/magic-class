@@ -46,7 +46,7 @@ from __future__ import annotations
 from functools import wraps
 from typing import Callable, Any
 from collections import defaultdict
-from _collections_abc import MutableSequence
+from collections.abc import MutableSequence
 from qtpy.QtWidgets import QLabel, QListWidget, QListWidgetItem, QAbstractItemView, QMenu, QAction
 from qtpy.QtCore import Qt
 from .utils import FreeWidget
@@ -58,7 +58,7 @@ class ListWidget(FreeWidget, MutableSequence):
     def __init__(self, dragdrop: bool = True, **kwargs):
         super().__init__(**kwargs)
         self._listwidget = PyListWidget(self.native)
-        self._listwidget.setParentContainer(self)
+        self._listwidget.setParentWidget(self)
         self._title = QLabel(self.native)
         self._title.setText(self.name)
         self._title.setAlignment(Qt.AlignCenter)
@@ -185,8 +185,8 @@ class PyListWidget(QListWidget):
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self.contextMenu)
         
-    def setParentContainer(self, container: ListWidget) -> None:
-        self._parent = container
+    def setParentWidget(self, listwidget: ListWidget) -> None:
+        self._parent = listwidget
         return None
     
     def contextMenu(self, point):
@@ -214,7 +214,7 @@ def partial_event(f, *args):
     return _func
 
 class PyListWidgetItem(QListWidgetItem):
-    def __init__(self, parent:QListWidget=None, obj=None, name=None):
+    def __init__(self, parent: QListWidget=None, obj=None, name=None):
         super().__init__(parent)
         if obj is not None:
             self.obj = obj

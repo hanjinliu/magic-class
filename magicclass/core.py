@@ -7,10 +7,9 @@ from typing import Any
 import warnings
 from typing_extensions import Annotated, _AnnotatedAlias
 
-from magicclass.fields import MagicField, MISSING
-
 from .class_gui import (
-    ClassGui, 
+    ClassGui,
+    ClassGuiBase, 
     MainWindowClassGui,
     ScrollableClassGui,
     ButtonClassGui, 
@@ -144,12 +143,12 @@ def magicclass(class_: type|None = None,
         
         newclass.__signature__ = sig
         newclass.__doc__ = doc
+        newclass.__module__ = mod
+        newclass.__qualname__ = qualname
         
         # concatenate annotations
         newclass.__annotations__ = class_gui.__annotations__.copy()
         newclass.__annotations__.update(annot)
-        newclass.__module__ = mod
-        newclass.__qualname__ = qualname
         
         @functools_wraps(oldclass.__init__)
         def __init__(self, *args, **kwargs):
@@ -211,6 +210,47 @@ def magiccontext(class_: type = None,
     """    
     return _call_magicmenu(**locals(), menugui_class=ContextMenuGui)
 
+class MagicClassFactory:
+    def __init__(self, 
+                 name: str,
+                 layout: str = "vertical", 
+                 labels: bool = True, 
+                 close_on_run: bool = None,
+                 popup_mode: str | PopUpMode = None,
+                 error_mode: str | ErrorMode = None,
+                 widget_type: str | WidgetType = WidgetType.none,
+                 parent = None,
+                 attrs: dict[str] = None
+                 ):
+        self.name = name
+        self.layout = layout
+        self.labels = labels
+        self.close_on_run = close_on_run
+        self.popup_mode = popup_mode
+        self.error_mode = error_mode
+        self.widget_type = widget_type
+        self.parent = parent
+        self.attrs = attrs
+    
+    def as_magicclass(self) -> ClassGuiBase:
+        _cls = type(self.name, (), self.attrs)
+        cls = magicclass(_cls, layout=self.layout, labels=self.labels, close_on_run=self.close_on_run, 
+                         name=self.name, popup_mode=self.popup_mode, error_mode=self.error_mode,
+                         widget_type=self.widget_type, parent=self.parent)
+        return cls
+    
+    def as_magicmenu(self) -> MenuGui:
+        _cls = type(self.name, (), self.attrs)
+        cls = magicmenu(_cls, close_on_run=self.close_on_run, popup_mode=self.popup_mode, 
+                        error_mode=self.error_mode, parent=self.parent)
+        return cls
+    
+    def as_magiccontext(self) -> ContextMenuGui:
+        _cls = type(self.name, (), self.attrs)
+        cls = magiccontext(_cls, close_on_run=self.close_on_run, popup_mode=self.popup_mode, 
+                           error_mode=self.error_mode, parent=self.parent)
+        return cls
+
 
 def _call_magicmenu(class_: type = None, 
                     close_on_run: bool = True,
@@ -261,12 +301,16 @@ def _call_magicmenu(class_: type = None,
         # get class attributes first
         doc = cls.__doc__
         sig = inspect.signature(cls)
+        mod = cls.__module__
+        qualname = cls.__qualname__
         
         oldclass = type(cls.__name__ + _BASE_CLASS_SUFFIX, (cls,), {})
         newclass = type(cls.__name__, (menugui_class, oldclass), {})
         
         newclass.__signature__ = sig
         newclass.__doc__ = doc
+        newclass.__module__ = mod
+        newclass.__qualname__ = qualname
                 
         @functools_wraps(oldclass.__init__)
         def __init__(self, *args, **kwargs):

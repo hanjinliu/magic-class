@@ -2,7 +2,7 @@ from __future__ import annotations
 import inspect
 from dataclasses import _FIELDS
 from functools import wraps
-from typing import Callable, Any, TYPE_CHECKING, Iterable
+from typing import Callable, Any, TYPE_CHECKING
 from docstring_parser import parse
 from qtpy.QtWidgets import QApplication, QMessageBox
 
