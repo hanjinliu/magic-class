@@ -12,7 +12,7 @@ from magicgui.widgets import FunctionGui, FileEdit, EmptyWidget
 from magicgui.widgets._bases import ValueWidget
 
 from .macro import Macro, Expr, Head, Symbol, symbol
-from .utils import iter_members, n_parameters, extract_tooltip, raise_error_in_msgbox, identity_wrapper, screen_center
+from .utils import get_signature, iter_members, n_parameters, extract_tooltip, raise_error_in_msgbox, identity_wrapper, screen_center
 from .widgets import Separator, MacroEdit
 from .mgui_ext import FunctionGuiPlus, PushButtonPlus
 from .fields import MagicField
@@ -272,8 +272,7 @@ class BaseGui:
         
         # Signature must be updated like this. Otherwise, already wrapped member function
         # will have signature with "self".
-        obj_sig = inspect.signature(obj)
-        func.__signature__ = obj_sig
+        func.__signature__ = inspect.signature(obj)
         
         # Prepare a button or action
         widget.tooltip = extract_tooltip(func)
@@ -320,6 +319,7 @@ class BaseGui:
             parameters=all_params
             )
         
+        obj_sig = get_signature(obj)
         if isinstance(func.__signature__, MagicMethodSignature):
             # TODO: I don't know the reason why "additional_options" is lost. 
             func.__signature__.additional_options = getattr(obj_sig, "additional_options", {})
