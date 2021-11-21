@@ -57,19 +57,22 @@ def Bound(value: Any) -> _AnnotatedAlias:
     """
     Make Annotated type from a MagicField or a method.
     """    
-    if isinstance(value, MagicField):
-        if value.default_factory is not MISSING:
-            annot = value.default_factory
-        else:
-            annot = type(value.default)
-    elif callable(value):
-        annot = inspect.signature(value).return_annotation
-        if annot is inspect._empty:
-            annot = Any
-    else:
-        annot = type(value)
+    # It is better to annotate like Annotated[int, {...}] but some widgets does not
+    # support bind.
     
-    return Annotated[annot, {"bind": value}]
+    # if isinstance(value, MagicField):
+    #     if value.default_factory is not MISSING:
+    #         annot = value.default_factory
+    #     else:
+    #         annot = type(value.default)
+    # elif callable(value):
+    #     annot = inspect.signature(value).return_annotation
+    #     if annot is inspect._empty:
+    #         annot = Any
+    # else:
+    #     annot = type(value)
+    
+    return Annotated[Any, {"bind": value}]
 
 def magicclass(class_: type|None = None,
                *,

@@ -283,8 +283,6 @@ class BaseGui:
         n_empty = len([widget for widget in fgui if isinstance(widget, EmptyWidget) or not widget.visible])
         nparams = n_parameters(func) - n_empty
         
-        record = True
-        
         # This block enables instance methods in "bind" method of ValueWidget.
         all_params = []
         for param in func.__signature__.parameters.values():
@@ -316,15 +314,15 @@ class BaseGui:
                     param.options["bind"] = _one_more_arg(bound_value.get_value)
             
             all_params.append(param)
-                    
+        
         func.__signature__ = func.__signature__.replace(
             parameters=all_params
             )
-
-        # Check additional options
+        
         if isinstance(func.__signature__, MagicMethodSignature):
-            record = func.__signature__.additional_options.get("record", True)
-                 
+            # TODO: I don't know the reason why "additional_options" is lost. 
+            func.__signature__.additional_options = obj.__signature__.additional_options
+            
         if nparams == 0:
             # We don't want a dialog with a single widget "Run" to show up.
             def run_function():
@@ -332,7 +330,7 @@ class BaseGui:
                 # "compiled" otherwise function wrappings are not ready!
                 mgui = _build_mgui(widget, func)
                 mgui.native.setParent(self.native, mgui.native.windowFlags())
-                if mgui.call_count == 0 and len(mgui.called._slots) == 0 and record:
+                if mgui.call_count == 0 and len(mgui.called._slots) == 0 and _need_record(func):
                     callback = _temporal_function_gui_callback(self, mgui, widget)
                     mgui.called.connect(callback)
                 
@@ -345,7 +343,7 @@ class BaseGui:
             def run_function():
                 mgui = _build_mgui(widget, func)
                 mgui.native.setParent(self.native, mgui.native.windowFlags())
-                if mgui.call_count == 0 and len(mgui.called._slots) == 0 and record:
+                if mgui.call_count == 0 and len(mgui.called._slots) == 0 and _need_record(func):
                     callback = _temporal_function_gui_callback(self, mgui, widget)
                     mgui.called.connect(callback)
                 
@@ -429,7 +427,7 @@ class BaseGui:
                             # If FunctioGui is docked, we should close QDockWidget.
                             mgui.called.connect(lambda: mgui.parent.hide())
                     
-                    if record:
+                    if _need_record(func):
                         callback = _temporal_function_gui_callback(self, mgui, widget)
                         mgui.called.connect(callback)
                                     
@@ -627,12 +625,23 @@ def _wraps(template: Callable | inspect.Signature,
 
 def _method_as_getter(self, bound_value: Callable):
     *clsnames, funcname = bound_value.__qualname__.split(".")
-    if clsnames[0] != self.__class__.__name__:
-        raise ValueError
     
     def _func(w):
-        ins = self
+        current_self = self
+        while clsnames[0] != current_self.__class__.__name__:
+            current_self = getattr(current_self, "__magicclass_parent__", None)
+            if current_self is None:    
+                raise ValueError(f"Cannot access {bound_value.__qualname__} from namespace "
+                                f"{self.__class__.__name__}")
+        ins = current_self
         for clsname in clsnames[1:]:
             ins = getattr(ins, clsname)
         return getattr(ins, funcname)(w)
     return _func
+
+def _need_record(func: Callable):
+    if isinstance(func.__signature__, MagicMethodSignature):
+        record = func.__signature__.additional_options.get("record", True)
+    else:
+        record = True
+    return record

@@ -10,7 +10,7 @@ class Separator(FreeWidget):
     btn_clicked = Signal(bool)
     def __init__(self, orientation: str = "horizontal", text: str = "", name: str = "", 
                  button: bool = False):
-        super().__init__(layout=orientation, labels=False, name=name)
+        super().__init__(name=name)
         self._qtitlebar = _QTitleBar(self.native, text, button)
         self.set_widget(self._qtitlebar)
         if button:
