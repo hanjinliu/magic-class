@@ -8,4 +8,5 @@ API References
 
    magicclass
    magicclass.widgets
+   magicclass.widgets.pywidgets
    magicclass.widgets.qtgraph

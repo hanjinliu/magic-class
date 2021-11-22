@@ -175,7 +175,7 @@ class Expr:
     def copy(self):
         return deepcopy(self)
     
-    def eval(self, _globals: dict[Symbol: Any] = {}, _locals: dict[Symbol: Any] = {}):
+    def eval(self, _globals: dict[Symbol, Any] = {}, _locals: dict[Symbol, Any] = {}):
         _globals = {sym.data: v for sym, v in _globals}
         _locals = {sym.data: v for sym, v in _locals}
         if self.head == Head.assign:

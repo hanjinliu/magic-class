@@ -29,3 +29,5 @@ visualization.
 """
 
 from .qt_graph import QtPlotCanvas, QtImageCanvas
+
+__all__ = ["QtPlotCanvas", "QtImageCanvas"]

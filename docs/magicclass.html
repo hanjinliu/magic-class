@@ -40,7 +40,7 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul>
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="quick_start.html">Quick Start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="options.html">Options in magic-class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="nest.html">Nest magic-classes</a></li>
@@ -50,7 +50,32 @@
 <li class="toctree-l1"><a class="reference internal" href="customize_macro.html">Customize Macro Recording</a></li>
 <li class="toctree-l1"><a class="reference internal" href="special_methods.html">Special attributes in magic-class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="containers.html">Container Variations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api.html">API References</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="api.html">API References</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">magicclass package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.widgets.html">magicclass.widgets package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-magicclass.class_gui">magicclass.class_gui module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-magicclass.containers">magicclass.containers module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-magicclass.core">magicclass.core module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-magicclass.creator">magicclass.creator module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-magicclass.fields">magicclass.fields module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-magicclass.macro">magicclass.macro module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-magicclass.menu_gui">magicclass.menu_gui module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-magicclass.mgui_ext">magicclass.mgui_ext module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-magicclass.signature">magicclass.signature module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-magicclass.utils">magicclass.utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-magicclass.wrappers">magicclass.wrappers module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-magicclass">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.widgets.html">magicclass.widgets package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.widgets.pywidgets.html">magicclass.widgets.pywidgets package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.widgets.qtgraph.html">magicclass.widgets.qtgraph package</a></li>
+</ul>
+</li>
 </ul>
 
         </div>
@@ -156,7 +181,17 @@ here, not in ClassGuiBase.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="magicclass.core.Bound">
 <span class="sig-prename descclassname"><span class="pre">magicclass.core.</span></span><span class="sig-name descname"><span class="pre">Bound</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">_AnnotatedAlias</span></span></span><a class="reference internal" href="_modules/magicclass/core.html#Bound"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.core.Bound" title="Permalink to this definition">¶</a></dt>
-<dd><p>Make Annotated type from a MagicField or a method.</p>
+<dd><p>Make Annotated type from a MagicField or a method, such as:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">field</span>
+
+<span class="nd">@magicclass</span>
+<span class="k">class</span> <span class="nc">MyClass</span><span class="p">:</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n">Bound</span><span class="p">(</span><span class="n">i</span><span class="p">)):</span>
+        <span class="o">...</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Bound(value)</span></code> is identical to <code class="docutils literal notranslate"><span class="pre">Annotated[Any,</span> <span class="pre">{&quot;bind&quot;:</span> <span class="pre">value}]</span></code>.</p>
 </dd></dl>
 
 <dl class="py class">
@@ -253,13 +288,16 @@ here, not in ClassGuiBase.</p>
 <dt class="sig sig-object py" id="magicclass.core.magicclass">
 <span class="sig-prename descclassname"><span class="pre">magicclass.core.</span></span><span class="sig-name descname"><span class="pre">magicclass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">class_</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">type</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'vertical'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">close_on_run</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">popup</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">popup_mode</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">PopUpMode</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_mode</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">ErrorMode</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">widget_type</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <a class="reference internal" href="#magicclass.core.WidgetType" title="magicclass.core.WidgetType"><span class="pre">WidgetType</span></a></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">WidgetType.none</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ClassGui</span></span></span><a class="reference internal" href="_modules/magicclass/core.html#magicclass"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.core.magicclass" title="Permalink to this definition">¶</a></dt>
 <dd><p>Decorator that can convert a Python class into a widget.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nd">@magicclass</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">C</span><span class="p">:</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="o">...</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">C</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-</div>
+<p>..code-block:: python</p>
+<blockquote>
+<div><p>&#64;magicclass
+class C:</p>
+<blockquote>
+<div><p>...</p>
+</div></blockquote>
+<p>c = C(a=0)
+c.show()</p>
+</div></blockquote>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -634,7 +672,7 @@ necessary as a Expr object but it is useful to create executable codes.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="magicclass.macro.Expr.eval">
-<span class="sig-name descname"><span class="pre">eval</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/macro.html#Expr.eval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.macro.Expr.eval" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">eval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_globals</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#magicclass.macro.Symbol" title="magicclass.macro.Symbol"><span class="pre">magicclass.macro.Symbol</span></a><span class="p"><span class="pre">,</span> </span><span class="pre">typing.Any</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_locals</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#magicclass.macro.Symbol" title="magicclass.macro.Symbol"><span class="pre">magicclass.macro.Symbol</span></a><span class="p"><span class="pre">,</span> </span><span class="pre">typing.Any</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/macro.html#Expr.eval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.macro.Expr.eval" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">

@@ -54,7 +54,19 @@ _TYPE_MAP = {
 
 def Bound(value: Any) -> _AnnotatedAlias:
     """
-    Make Annotated type from a MagicField or a method.
+    Make Annotated type from a MagicField or a method, such as:
+    
+    .. code-block:: python
+        
+        from magicclass import magicclass, field
+        
+        @magicclass
+        class MyClass:
+            i = field(int)
+            def func(self, v: Bound(i)):
+                ...
+    
+    ``Bound(value)`` is identical to ``Annotated[Any, {"bind": value}]``.    
     """    
     # It is better to annotate like Annotated[int, {...}] but some widgets does not
     # support bind. Also, we must ensure that parameters annotated with "bind" creates
@@ -77,11 +89,13 @@ def magicclass(class_: type|None = None,
     """
     Decorator that can convert a Python class into a widget.
     
-    >>> @magicclass
-    >>> class C:
-    >>>     ...
-    >>> c = C(a=0)
-    >>> c.show()
+    ..code-block:: python
+    
+        @magicclass
+        class C:
+            ...
+        c = C(a=0)
+        c.show()
             
     Parameters
     ----------

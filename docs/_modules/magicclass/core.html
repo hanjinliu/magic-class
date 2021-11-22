@@ -131,7 +131,19 @@
 
 <div class="viewcode-block" id="Bound"><a class="viewcode-back" href="../../magicclass.html#magicclass.core.Bound">[docs]</a><span class="k">def</span> <span class="nf">Bound</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_AnnotatedAlias</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Make Annotated type from a MagicField or a method.</span>
+<span class="sd">    Make Annotated type from a MagicField or a method, such as:</span>
+<span class="sd">    </span>
+<span class="sd">    .. code-block:: python</span>
+<span class="sd">        </span>
+<span class="sd">        from magicclass import magicclass, field</span>
+<span class="sd">        </span>
+<span class="sd">        @magicclass</span>
+<span class="sd">        class MyClass:</span>
+<span class="sd">            i = field(int)</span>
+<span class="sd">            def func(self, v: Bound(i)):</span>
+<span class="sd">                ...</span>
+<span class="sd">    </span>
+<span class="sd">    ``Bound(value)`` is identical to ``Annotated[Any, {&quot;bind&quot;: value}]``.    </span>
 <span class="sd">    &quot;&quot;&quot;</span>    
     <span class="c1"># It is better to annotate like Annotated[int, {...}] but some widgets does not</span>
     <span class="c1"># support bind. Also, we must ensure that parameters annotated with &quot;bind&quot; creates</span>
@@ -154,11 +166,13 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Decorator that can convert a Python class into a widget.</span>
 <span class="sd">    </span>
-<span class="sd">    &gt;&gt;&gt; @magicclass</span>
-<span class="sd">    &gt;&gt;&gt; class C:</span>
-<span class="sd">    &gt;&gt;&gt;     ...</span>
-<span class="sd">    &gt;&gt;&gt; c = C(a=0)</span>
-<span class="sd">    &gt;&gt;&gt; c.show()</span>
+<span class="sd">    ..code-block:: python</span>
+<span class="sd">    </span>
+<span class="sd">        @magicclass</span>
+<span class="sd">        class C:</span>
+<span class="sd">            ...</span>
+<span class="sd">        c = C(a=0)</span>
+<span class="sd">        c.show()</span>
 <span class="sd">            </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>

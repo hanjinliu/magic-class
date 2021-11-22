@@ -40,7 +40,7 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul>
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="quick_start.html">Quick Start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="options.html">Options in magic-class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="nest.html">Nest magic-classes</a></li>
@@ -50,7 +50,28 @@
 <li class="toctree-l1"><a class="reference internal" href="customize_macro.html">Customize Macro Recording</a></li>
 <li class="toctree-l1"><a class="reference internal" href="special_methods.html">Special attributes in magic-class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="containers.html">Container Variations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api.html">API References</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="api.html">API References</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="magicclass.html">magicclass package</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">magicclass.widgets package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.widgets.pywidgets.html">magicclass.widgets.pywidgets package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.widgets.qtgraph.html">magicclass.widgets.qtgraph package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-magicclass.widgets.console">magicclass.widgets.console module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-magicclass.widgets.misc">magicclass.widgets.misc module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-magicclass.widgets.separator">magicclass.widgets.separator module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-magicclass.widgets.sequence">magicclass.widgets.sequence module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-magicclass.widgets.threading">magicclass.widgets.threading module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-magicclass.widgets.utils">magicclass.widgets.utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-magicclass.widgets">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.widgets.pywidgets.html">magicclass.widgets.pywidgets package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.widgets.qtgraph.html">magicclass.widgets.qtgraph package</a></li>
+</ul>
+</li>
 </ul>
 
         </div>
@@ -90,7 +111,11 @@
 <li class="toctree-l2"><a class="reference internal" href="magicclass.widgets.pywidgets.html#module-magicclass.widgets.pywidgets.dict">magicclass.widgets.pywidgets.dict module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="magicclass.widgets.pywidgets.html#module-magicclass.widgets.pywidgets.list">magicclass.widgets.pywidgets.list module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="magicclass.widgets.pywidgets.html#module-magicclass.widgets.pywidgets.object">magicclass.widgets.pywidgets.object module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="magicclass.widgets.pywidgets.html#module-magicclass.widgets.pywidgets">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.widgets.pywidgets.html#module-magicclass.widgets.pywidgets">Module contents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.widgets.pywidgets.html#listwidget">ListWidget</a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.widgets.pywidgets.html#dictwidget">DictWidget</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="magicclass.widgets.qtgraph.html">magicclass.widgets.qtgraph package</a><ul>
@@ -318,7 +343,7 @@ executable GUI.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.widgets.threading.ProgressWidget">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.threading.</span></span><span class="sig-name descname"><span class="pre">ProgressWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">visible</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/threading.html#ProgressWidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.threading.ProgressWidget" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.widget.Widget</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.mixins._OrientationMixin</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">MutableSequence</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.widget.Widget</span></code>]</p>
+<dd><p>Bases: <a class="reference internal" href="#magicclass.widgets.utils.FreeWidget" title="magicclass.widgets.utils.FreeWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.widgets.utils.FreeWidget</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="magicclass.widgets.threading.ProgressWidget.range">
 <span class="sig-name descname"><span class="pre">range</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/threading.html#ProgressWidget.range"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.threading.ProgressWidget.range" title="Permalink to this definition">¶</a></dt>
@@ -326,12 +351,21 @@ executable GUI.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="magicclass.widgets.threading.ProgressWidget.run">
-<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">infinite</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/threading.html#ProgressWidget.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.threading.ProgressWidget.run" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#magicclass.widgets.threading.progress" title="magicclass.widgets.threading.progress"><span class="pre">magicclass.widgets.threading.progress</span></a></span></span><a class="reference internal" href="_modules/magicclass/widgets/threading.html#ProgressWidget.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.threading.ProgressWidget.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build a context that progress bar will be displayed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Context manager for progress bar.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#magicclass.widgets.threading.progress" title="magicclass.widgets.threading.progress">progress</a></p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="magicclass.widgets.threading.ProgressWidget.show_progress">
-<span class="sig-name descname"><span class="pre">show_progress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/threading.html#ProgressWidget.show_progress"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.threading.ProgressWidget.show_progress" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">show_progress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span></span></span><a class="reference internal" href="_modules/magicclass/widgets/threading.html#ProgressWidget.show_progress"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.threading.ProgressWidget.show_progress" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
@@ -348,7 +382,7 @@ executable GUI.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.widgets.threading.progress">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.threading.</span></span><span class="sig-name descname"><span class="pre">progress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">infinite</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">progress</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#magicclass.widgets.threading.ProgressWidget" title="magicclass.widgets.threading.ProgressWidget"><span class="pre">magicclass.widgets.threading.ProgressWidget</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/threading.html#progress"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.threading.progress" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.threading.</span></span><span class="sig-name descname"><span class="pre">progress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">progress</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#magicclass.widgets.threading.ProgressWidget" title="magicclass.widgets.threading.ProgressWidget"><span class="pre">magicclass.widgets.threading.ProgressWidget</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/threading.html#progress"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.threading.progress" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py property">
 <dt class="sig sig-object py" id="magicclass.widgets.threading.progress.function">
@@ -493,7 +527,7 @@ In either case, this is followed by: for k, v in F.items(): D[k] = v</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.widgets.ListWidget">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.</span></span><span class="sig-name descname"><span class="pre">ListWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dragdrop</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/pywidgets/list.html#ListWidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.ListWidget" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.</span></span><span class="sig-name descname"><span class="pre">ListWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dragdrop</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/pywidgets/list.html#ListWidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.ListWidget" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.object.BaseWidget" title="magicclass.widgets.pywidgets.object.BaseWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.widgets.pywidgets.object.BaseWidget</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">collections.abc.MutableSequence</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="magicclass.widgets.ListWidget.clear">
@@ -502,15 +536,49 @@ In either case, this is followed by: for k, v in F.items(): D[k] = v</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.ListWidget.index">
+<span class="sig-name descname"><span class="pre">index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="_modules/magicclass/widgets/pywidgets/list.html#ListWidget.index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.ListWidget.index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find object or list widget item from the list widget.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obj</strong> (<em>Any</em>) -- Object to find. If a PyListWidgetItem is given, the index of the item
+(not the tagged object) is searched for.</p></li>
+<li><p><strong>start</strong> (<em>int</em><em>, </em><em>optional</em>) -- Starting index, by default 0</p></li>
+<li><p><strong>stop</strong> (<em>int</em><em>, </em><em>optional</em>) -- Index to stop searching.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Index of object.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> -- If object was not found.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="magicclass.widgets.ListWidget.insert">
 <span class="sig-name descname"><span class="pre">insert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/pywidgets/list.html#ListWidget.insert"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.ListWidget.insert" title="Permalink to this definition">¶</a></dt>
-<dd><p>Insert any item to the list.</p>
+<dd><p>Insert object of any type to the list.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="magicclass.widgets.ListWidget.value">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">value</span></span><em class="property"><span class="pre">:</span> <span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">typing.Any</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#magicclass.widgets.ListWidget.value" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Get all the contents as a Python list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Contents of the list widget.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -529,7 +597,7 @@ In either case, this is followed by: for k, v in F.items(): D[k] = v</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.widgets.ProgressWidget">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.</span></span><span class="sig-name descname"><span class="pre">ProgressWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">visible</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/threading.html#ProgressWidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.ProgressWidget" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.widget.Widget</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.mixins._OrientationMixin</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">MutableSequence</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.widget.Widget</span></code>]</p>
+<dd><p>Bases: <a class="reference internal" href="#magicclass.widgets.utils.FreeWidget" title="magicclass.widgets.utils.FreeWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.widgets.utils.FreeWidget</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="magicclass.widgets.ProgressWidget.range">
 <span class="sig-name descname"><span class="pre">range</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/threading.html#ProgressWidget.range"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.ProgressWidget.range" title="Permalink to this definition">¶</a></dt>
@@ -537,12 +605,21 @@ In either case, this is followed by: for k, v in F.items(): D[k] = v</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="magicclass.widgets.ProgressWidget.run">
-<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">infinite</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/threading.html#ProgressWidget.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.ProgressWidget.run" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#magicclass.widgets.threading.progress" title="magicclass.widgets.threading.progress"><span class="pre">magicclass.widgets.threading.progress</span></a></span></span><a class="reference internal" href="_modules/magicclass/widgets/threading.html#ProgressWidget.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.ProgressWidget.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build a context that progress bar will be displayed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Context manager for progress bar.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#magicclass.widgets.progress" title="magicclass.widgets.progress">progress</a></p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="magicclass.widgets.ProgressWidget.show_progress">
-<span class="sig-name descname"><span class="pre">show_progress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/threading.html#ProgressWidget.show_progress"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.ProgressWidget.show_progress" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">show_progress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span></span></span><a class="reference internal" href="_modules/magicclass/widgets/threading.html#ProgressWidget.show_progress"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.ProgressWidget.show_progress" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
@@ -743,7 +820,7 @@ In either case, this is followed by: for k, v in F.items(): D[k] = v</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.widgets.progress">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.</span></span><span class="sig-name descname"><span class="pre">progress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">infinite</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">progress</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#magicclass.widgets.threading.ProgressWidget" title="magicclass.widgets.threading.ProgressWidget"><span class="pre">magicclass.widgets.threading.ProgressWidget</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/threading.html#progress"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.progress" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.</span></span><span class="sig-name descname"><span class="pre">progress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">progress</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#magicclass.widgets.threading.ProgressWidget" title="magicclass.widgets.threading.ProgressWidget"><span class="pre">magicclass.widgets.threading.ProgressWidget</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/threading.html#progress"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.progress" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py property">
 <dt class="sig sig-object py" id="magicclass.widgets.progress.function">

@@ -1,20 +1,3 @@
-"""
-DictWidget is a single column QTableWidget. This widget can contain any Python objects 
-as table items and keys as row names..
-
-.. code-block:: python
-
-    from magicclass.widgets import DictWidget
-
-    dictwidget = DictWidget()
-    
-    # You can add any objects
-    dictwidget["name-1"] = 10
-    dictwidget["data"] = np.arange(5)
-
-The dispatching feature is shared with ListWidget.
-    
-"""
 from __future__ import annotations
 from typing import Any, Iterable
 from collections.abc import MutableMapping

@@ -75,24 +75,7 @@
            <div itemprop="articleBody">
              
   <h1>Source code for magicclass.widgets.pywidgets.dict</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">DictWidget is a single column QTableWidget. This widget can contain any Python objects </span>
-<span class="sd">as table items and keys as row names..</span>
-
-<span class="sd">.. code-block:: python</span>
-
-<span class="sd">    from magicclass.widgets import DictWidget</span>
-
-<span class="sd">    dictwidget = DictWidget()</span>
-<span class="sd">    </span>
-<span class="sd">    # You can add any objects</span>
-<span class="sd">    dictwidget[&quot;name-1&quot;] = 10</span>
-<span class="sd">    dictwidget[&quot;data&quot;] = np.arange(5)</span>
-
-<span class="sd">The dispatching feature is shared with ListWidget.</span>
-<span class="sd">    </span>
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Iterable</span>
 <span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">MutableMapping</span>
 <span class="kn">from</span> <span class="nn">qtpy.QtWidgets</span> <span class="kn">import</span> <span class="n">QTableWidget</span><span class="p">,</span> <span class="n">QTableWidgetItem</span>
