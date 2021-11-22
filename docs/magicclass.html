@@ -86,6 +86,14 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="magicclass.widgets.html">magicclass.widgets package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="magicclass.widgets.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.widgets.pywidgets.html">magicclass.widgets.pywidgets package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.widgets.pywidgets.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.widgets.pywidgets.html#module-magicclass.widgets.pywidgets.dict">magicclass.widgets.pywidgets.dict module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.widgets.pywidgets.html#module-magicclass.widgets.pywidgets.list">magicclass.widgets.pywidgets.list module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.widgets.pywidgets.html#module-magicclass.widgets.pywidgets.object">magicclass.widgets.pywidgets.object module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.widgets.pywidgets.html#module-magicclass.widgets.pywidgets">Module contents</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="magicclass.widgets.qtgraph.html">magicclass.widgets.qtgraph package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="magicclass.widgets.qtgraph.html#submodules">Submodules</a></li>
 <li class="toctree-l4"><a class="reference internal" href="magicclass.widgets.qtgraph.html#module-magicclass.widgets.qtgraph.graph_items">magicclass.widgets.qtgraph.graph_items module</a></li>
@@ -98,7 +106,6 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="magicclass.widgets.html#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="magicclass.widgets.html#module-magicclass.widgets.console">magicclass.widgets.console module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="magicclass.widgets.html#module-magicclass.widgets.listwidget">magicclass.widgets.listwidget module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="magicclass.widgets.html#module-magicclass.widgets.misc">magicclass.widgets.misc module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="magicclass.widgets.html#module-magicclass.widgets.separator">magicclass.widgets.separator module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="magicclass.widgets.html#module-magicclass.widgets.sequence">magicclass.widgets.sequence module</a></li>
@@ -149,12 +156,34 @@ here, not in ClassGuiBase.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="magicclass.core.Bound">
 <span class="sig-prename descclassname"><span class="pre">magicclass.core.</span></span><span class="sig-name descname"><span class="pre">Bound</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">_AnnotatedAlias</span></span></span><a class="reference internal" href="_modules/magicclass/core.html#Bound"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.core.Bound" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Make Annotated type from a MagicField or a method.</p>
+</dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.core.Info">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.core.</span></span><span class="sig-name descname"><span class="pre">Info</span></span><a class="reference internal" href="_modules/magicclass/core.html#Info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.core.Info" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.core._CallableClass</span></code></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.core.MagicClassFactory">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.core.</span></span><span class="sig-name descname"><span class="pre">MagicClassFactory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'vertical'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">close_on_run</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">popup_mode</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">PopUpMode</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_mode</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">ErrorMode</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">widget_type</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <a class="reference internal" href="#magicclass.core.WidgetType" title="magicclass.core.WidgetType"><span class="pre">WidgetType</span></a></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">WidgetType.none</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attrs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/core.html#MagicClassFactory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.core.MagicClassFactory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.core.MagicClassFactory.as_magicclass">
+<span class="sig-name descname"><span class="pre">as_magicclass</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#magicclass.class_gui.ClassGuiBase" title="magicclass.class_gui.ClassGuiBase"><span class="pre">magicclass.class_gui.ClassGuiBase</span></a></span></span><a class="reference internal" href="_modules/magicclass/core.html#MagicClassFactory.as_magicclass"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.core.MagicClassFactory.as_magicclass" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.core.MagicClassFactory.as_magiccontext">
+<span class="sig-name descname"><span class="pre">as_magiccontext</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#magicclass.menu_gui.ContextMenuGui" title="magicclass.menu_gui.ContextMenuGui"><span class="pre">magicclass.menu_gui.ContextMenuGui</span></a></span></span><a class="reference internal" href="_modules/magicclass/core.html#MagicClassFactory.as_magiccontext"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.core.MagicClassFactory.as_magiccontext" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.core.MagicClassFactory.as_magicmenu">
+<span class="sig-name descname"><span class="pre">as_magicmenu</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#magicclass.menu_gui.MenuGui" title="magicclass.menu_gui.MenuGui"><span class="pre">magicclass.menu_gui.MenuGui</span></a></span></span><a class="reference internal" href="_modules/magicclass/core.html#MagicClassFactory.as_magicmenu"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.core.MagicClassFactory.as_magicmenu" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -322,6 +351,12 @@ part of the main widget.</p></li>
 <span class="sig-name descname"><span class="pre">vertical</span></span><em class="property"> <span class="pre">=</span> <span class="pre">0</span></em><a class="headerlink" href="#magicclass.creator.Layout.vertical" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.creator.MagicClassCreator">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.creator.</span></span><span class="sig-name descname"><span class="pre">MagicClassCreator</span></span><a class="reference internal" href="_modules/magicclass/creator.html#MagicClassCreator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.creator.MagicClassCreator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.widget.Widget</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.mixins._OrientationMixin</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">MutableSequence</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.widget.Widget</span></code>]</p>
 </dd></dl>
 
 </section>
@@ -953,6 +988,13 @@ a inspect.Signature or magicgui.signature.Magicsignature.</p>
 </section>
 <section id="module-magicclass.utils">
 <span id="magicclass-utils-module"></span><h2>magicclass.utils module<a class="headerlink" href="#module-magicclass.utils" title="Permalink to this headline">¶</a></h2>
+<dl class="py exception">
+<dt class="sig sig-object py" id="magicclass.utils.InvalidMagicClassError">
+<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.utils.</span></span><span class="sig-name descname"><span class="pre">InvalidMagicClassError</span></span><a class="reference internal" href="_modules/magicclass/utils.html#InvalidMagicClassError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.utils.InvalidMagicClassError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>This exception will be raised when class definition is not a valid magic-class.</p>
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="magicclass.utils.check_collision">
 <span class="sig-prename descclassname"><span class="pre">magicclass.utils.</span></span><span class="sig-name descname"><span class="pre">check_collision</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cls0</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cls1</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/utils.html#check_collision"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.utils.check_collision" title="Permalink to this definition">¶</a></dt>

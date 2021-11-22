@@ -87,7 +87,7 @@
 <span class="kn">from</span> <span class="nn">.mgui_ext</span> <span class="kn">import</span> <span class="n">Action</span>
 <span class="kn">from</span> <span class="nn">._base</span> <span class="kn">import</span> <span class="n">BaseGui</span><span class="p">,</span> <span class="n">PopUpMode</span><span class="p">,</span> <span class="n">ErrorMode</span>
 <span class="kn">from</span> <span class="nn">.macro</span> <span class="kn">import</span> <span class="n">Expr</span><span class="p">,</span> <span class="n">Head</span><span class="p">,</span> <span class="n">Symbol</span><span class="p">,</span> <span class="n">symbol</span>
-<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">iter_members</span><span class="p">,</span> <span class="n">define_callback</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">iter_members</span><span class="p">,</span> <span class="n">define_callback</span><span class="p">,</span> <span class="n">InvalidMagicClassError</span>
 
 <div class="viewcode-block" id="MenuGuiBase"><a class="viewcode-back" href="../../magicclass.html#magicclass.menu_gui.MenuGuiBase">[docs]</a><span class="k">class</span> <span class="nc">MenuGuiBase</span><span class="p">(</span><span class="n">BaseGui</span><span class="p">):</span>
     <span class="n">_component_class</span> <span class="o">=</span> <span class="n">Action</span>
@@ -133,8 +133,8 @@
             <span class="k">except</span> <span class="p">(</span><span class="ne">AttributeError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">):</span>
                 <span class="k">pass</span>
             
+        <span class="n">fld</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">fld</span><span class="o">.</span><span class="n">name</span> <span class="ow">or</span> <span class="n">name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
         <span class="n">widget</span> <span class="o">=</span> <span class="n">fld</span><span class="o">.</span><span class="n">to_widget</span><span class="p">()</span>
-        <span class="n">widget</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">name</span> <span class="ow">or</span> <span class="n">name</span>
             
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="n">ButtonWidget</span><span class="p">):</span>
             <span class="c1"># If the field has callbacks, connect it to the newly generated widget.</span>
@@ -158,28 +158,46 @@
             
         <span class="c1"># Bind all the methods and annotations</span>
         <span class="n">base_members</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">iter_members</span><span class="p">(</span><span class="n">MenuGuiBase</span><span class="p">))</span>        
+        
+        <span class="n">_hist</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># for traceback</span>
+        
         <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">attr</span> <span class="ow">in</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">base_members</span><span class="p">,</span> <span class="n">iter_members</span><span class="p">(</span><span class="bp">cls</span><span class="p">)):</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
-                <span class="c1"># Nested magic-menu</span>
-                <span class="n">widget</span> <span class="o">=</span> <span class="n">attr</span><span class="p">()</span>
-                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">widget</span><span class="p">)</span>
-            
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">MagicField</span><span class="p">):</span>
-                <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_widget_from_field</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
+                    <span class="c1"># Nested magic-menu</span>
+                    <span class="n">widget</span> <span class="o">=</span> <span class="n">attr</span><span class="p">()</span>
+                    <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">widget</span><span class="p">)</span>
                 
-            <span class="k">else</span><span class="p">:</span>
-                <span class="c1"># convert class method into instance method</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="s2">&quot;__magicclass_wrapped__&quot;</span><span class="p">):</span>
-                    <span class="n">widget</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">MagicField</span><span class="p">):</span>
+                    <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_widget_from_field</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+                    
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="c1"># If the method is redefined, the newer one should be used instead, while the</span>
-                    <span class="c1"># order of widgets should be follow the place of the older method.</span>
-                    <span class="n">widget</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">__magicclass_wrapped__</span><span class="o">.</span><span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+                    <span class="c1"># convert class method into instance method</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="s2">&quot;__magicclass_wrapped__&quot;</span><span class="p">):</span>
+                        <span class="n">widget</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="c1"># If the method is redefined, the newer one should be used instead, while the</span>
+                        <span class="c1"># order of widgets should be follow the place of the older method.</span>
+                        <span class="n">widget</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">__magicclass_wrapped__</span><span class="o">.</span><span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+                
+                <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">):</span>
+                    <span class="k">continue</span>
+                <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="p">(</span><span class="n">MenuGuiBase</span><span class="p">,</span> <span class="n">Action</span><span class="p">,</span> <span class="n">Separator</span><span class="p">,</span> <span class="n">Container</span><span class="p">)):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
+                    <span class="n">_hist</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">attr</span><span class="p">)),</span> <span class="nb">type</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
             
-            <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">):</span>
-                <span class="k">continue</span>
-            <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="p">(</span><span class="n">MenuGuiBase</span><span class="p">,</span> <span class="n">Action</span><span class="p">,</span> <span class="n">Separator</span><span class="p">,</span> <span class="n">Container</span><span class="p">)):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">hist_str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span>
+                    <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> -&gt; </span><span class="si">{</span><span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="n">_hist</span>
+                    <span class="p">))</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n\t\t</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">) &lt;--- Error&quot;</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">hist_str</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">&quot;</span><span class="p">):</span>
+                    <span class="n">hist_str</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">&quot;</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">InvalidMagicClassError</span><span class="p">):</span>
+                    <span class="n">e</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="n">hist_str</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,)</span>
+                    <span class="k">raise</span> <span class="n">e</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">InvalidMagicClassError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">hist_str</span><span class="si">}</span><span class="se">\n\n</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         
         <span class="k">return</span> <span class="kc">None</span>
     

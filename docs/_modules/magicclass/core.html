@@ -84,10 +84,9 @@
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Annotated</span><span class="p">,</span> <span class="n">_AnnotatedAlias</span>
 
-<span class="kn">from</span> <span class="nn">magicclass.fields</span> <span class="kn">import</span> <span class="n">MagicField</span><span class="p">,</span> <span class="n">MISSING</span>
-
 <span class="kn">from</span> <span class="nn">.class_gui</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">ClassGui</span><span class="p">,</span> 
+    <span class="n">ClassGui</span><span class="p">,</span>
+    <span class="n">ClassGuiBase</span><span class="p">,</span> 
     <span class="n">MainWindowClassGui</span><span class="p">,</span>
     <span class="n">ScrollableClassGui</span><span class="p">,</span>
     <span class="n">ButtonClassGui</span><span class="p">,</span> 
@@ -131,17 +130,14 @@
 <span class="p">}</span>
 
 <div class="viewcode-block" id="Bound"><a class="viewcode-back" href="../../magicclass.html#magicclass.core.Bound">[docs]</a><span class="k">def</span> <span class="nf">Bound</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_AnnotatedAlias</span><span class="p">:</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">MagicField</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">default_factory</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">MISSING</span><span class="p">:</span>
-            <span class="n">annot</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">default_factory</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">annot</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">default</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">callable</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
-        <span class="n">annot</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">return_annotation</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">annot</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Make Annotated type from a MagicField or a method.</span>
+<span class="sd">    &quot;&quot;&quot;</span>    
+    <span class="c1"># It is better to annotate like Annotated[int, {...}] but some widgets does not</span>
+    <span class="c1"># support bind. Also, we must ensure that parameters annotated with &quot;bind&quot; creates</span>
+    <span class="c1"># EmptyWidget.</span>
     
-    <span class="k">return</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">annot</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;bind&quot;</span><span class="p">:</span> <span class="n">value</span><span class="p">}]</span></div>
+    <span class="k">return</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;bind&quot;</span><span class="p">:</span> <span class="n">value</span><span class="p">}]</span></div>
 
 <div class="viewcode-block" id="magicclass"><a class="viewcode-back" href="../../magicclass.html#magicclass.core.magicclass">[docs]</a><span class="k">def</span> <span class="nf">magicclass</span><span class="p">(</span><span class="n">class_</span><span class="p">:</span> <span class="nb">type</span><span class="o">|</span><span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                <span class="o">*</span><span class="p">,</span>
@@ -216,12 +212,16 @@
         <span class="n">doc</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__doc__</span>
         <span class="n">sig</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
         <span class="n">annot</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;__annotations__&quot;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">mod</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__module__</span>
+        <span class="n">qualname</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__qualname__</span>
         
         <span class="n">oldclass</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="n">_BASE_CLASS_SUFFIX</span><span class="p">,</span> <span class="p">(</span><span class="bp">cls</span><span class="p">,),</span> <span class="p">{})</span>
         <span class="n">newclass</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="p">(</span><span class="n">class_gui</span><span class="p">,</span> <span class="n">oldclass</span><span class="p">),</span> <span class="p">{})</span>
         
         <span class="n">newclass</span><span class="o">.</span><span class="n">__signature__</span> <span class="o">=</span> <span class="n">sig</span>
         <span class="n">newclass</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">doc</span>
+        <span class="n">newclass</span><span class="o">.</span><span class="vm">__module__</span> <span class="o">=</span> <span class="n">mod</span>
+        <span class="n">newclass</span><span class="o">.</span><span class="vm">__qualname__</span> <span class="o">=</span> <span class="n">qualname</span>
         
         <span class="c1"># concatenate annotations</span>
         <span class="n">newclass</span><span class="o">.</span><span class="vm">__annotations__</span> <span class="o">=</span> <span class="n">class_gui</span><span class="o">.</span><span class="vm">__annotations__</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
@@ -287,6 +287,47 @@
 <span class="sd">    &quot;&quot;&quot;</span>    
     <span class="k">return</span> <span class="n">_call_magicmenu</span><span class="p">(</span><span class="o">**</span><span class="nb">locals</span><span class="p">(),</span> <span class="n">menugui_class</span><span class="o">=</span><span class="n">ContextMenuGui</span><span class="p">)</span></div>
 
+<div class="viewcode-block" id="MagicClassFactory"><a class="viewcode-back" href="../../magicclass.html#magicclass.core.MagicClassFactory">[docs]</a><span class="k">class</span> <span class="nc">MagicClassFactory</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+                 <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                 <span class="n">layout</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;vertical&quot;</span><span class="p">,</span> 
+                 <span class="n">labels</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
+                 <span class="n">close_on_run</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">popup_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">PopUpMode</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">error_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">ErrorMode</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">widget_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">WidgetType</span> <span class="o">=</span> <span class="n">WidgetType</span><span class="o">.</span><span class="n">none</span><span class="p">,</span>
+                 <span class="n">parent</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">attrs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+                 <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layout</span> <span class="o">=</span> <span class="n">layout</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="n">labels</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">close_on_run</span> <span class="o">=</span> <span class="n">close_on_run</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">popup_mode</span> <span class="o">=</span> <span class="n">popup_mode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">error_mode</span> <span class="o">=</span> <span class="n">error_mode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget_type</span> <span class="o">=</span> <span class="n">widget_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">parent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attrs</span> <span class="o">=</span> <span class="n">attrs</span>
+    
+<div class="viewcode-block" id="MagicClassFactory.as_magicclass"><a class="viewcode-back" href="../../magicclass.html#magicclass.core.MagicClassFactory.as_magicclass">[docs]</a>    <span class="k">def</span> <span class="nf">as_magicclass</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ClassGuiBase</span><span class="p">:</span>
+        <span class="n">_cls</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">attrs</span><span class="p">)</span>
+        <span class="bp">cls</span> <span class="o">=</span> <span class="n">magicclass</span><span class="p">(</span><span class="n">_cls</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">,</span> <span class="n">close_on_run</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">close_on_run</span><span class="p">,</span> 
+                         <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">popup_mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">popup_mode</span><span class="p">,</span> <span class="n">error_mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">error_mode</span><span class="p">,</span>
+                         <span class="n">widget_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">widget_type</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span></div>
+    
+<div class="viewcode-block" id="MagicClassFactory.as_magicmenu"><a class="viewcode-back" href="../../magicclass.html#magicclass.core.MagicClassFactory.as_magicmenu">[docs]</a>    <span class="k">def</span> <span class="nf">as_magicmenu</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MenuGui</span><span class="p">:</span>
+        <span class="n">_cls</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">attrs</span><span class="p">)</span>
+        <span class="bp">cls</span> <span class="o">=</span> <span class="n">magicmenu</span><span class="p">(</span><span class="n">_cls</span><span class="p">,</span> <span class="n">close_on_run</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">close_on_run</span><span class="p">,</span> <span class="n">popup_mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">popup_mode</span><span class="p">,</span> 
+                        <span class="n">error_mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">error_mode</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span></div>
+    
+<div class="viewcode-block" id="MagicClassFactory.as_magiccontext"><a class="viewcode-back" href="../../magicclass.html#magicclass.core.MagicClassFactory.as_magiccontext">[docs]</a>    <span class="k">def</span> <span class="nf">as_magiccontext</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ContextMenuGui</span><span class="p">:</span>
+        <span class="n">_cls</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">attrs</span><span class="p">)</span>
+        <span class="bp">cls</span> <span class="o">=</span> <span class="n">magiccontext</span><span class="p">(</span><span class="n">_cls</span><span class="p">,</span> <span class="n">close_on_run</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">close_on_run</span><span class="p">,</span> <span class="n">popup_mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">popup_mode</span><span class="p">,</span> 
+                           <span class="n">error_mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">error_mode</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span></div></div>
+
 
 <span class="k">def</span> <span class="nf">_call_magicmenu</span><span class="p">(</span><span class="n">class_</span><span class="p">:</span> <span class="nb">type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
                     <span class="n">close_on_run</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -337,12 +378,16 @@
         <span class="c1"># get class attributes first</span>
         <span class="n">doc</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__doc__</span>
         <span class="n">sig</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+        <span class="n">mod</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__module__</span>
+        <span class="n">qualname</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__qualname__</span>
         
         <span class="n">oldclass</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="n">_BASE_CLASS_SUFFIX</span><span class="p">,</span> <span class="p">(</span><span class="bp">cls</span><span class="p">,),</span> <span class="p">{})</span>
         <span class="n">newclass</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="p">(</span><span class="n">menugui_class</span><span class="p">,</span> <span class="n">oldclass</span><span class="p">),</span> <span class="p">{})</span>
         
         <span class="n">newclass</span><span class="o">.</span><span class="n">__signature__</span> <span class="o">=</span> <span class="n">sig</span>
         <span class="n">newclass</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">doc</span>
+        <span class="n">newclass</span><span class="o">.</span><span class="vm">__module__</span> <span class="o">=</span> <span class="n">mod</span>
+        <span class="n">newclass</span><span class="o">.</span><span class="vm">__qualname__</span> <span class="o">=</span> <span class="n">qualname</span>
                 
         <span class="nd">@functools_wraps</span><span class="p">(</span><span class="n">oldclass</span><span class="o">.</span><span class="fm">__init__</span><span class="p">)</span>
         <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>

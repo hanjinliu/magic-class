@@ -8,8 +8,8 @@ ListWidget is a QListWidget wrapper class. This widget can contain any Python ob
     listwidget = ListWidget()
     
     # You can add any objects
-    listwidget.add_item("abc")
-    listwidget.add_item(np.arange(5))
+    listwidget.append("abc")
+    listwidget.append(np.arange(5))
 
 You can dispatch double click callbacks depending on the type of contents.
 
@@ -43,32 +43,18 @@ In a similar way, you can dispatch display method and context menu.
 """
 
 from __future__ import annotations
-from functools import wraps
-from typing import Callable, Any
-from collections import defaultdict
+from typing import Any
 from collections.abc import MutableSequence
-from qtpy.QtWidgets import QLabel, QListWidget, QListWidgetItem, QAbstractItemView, QMenu, QAction
-from qtpy.QtCore import Qt
-from .utils import FreeWidget
-from ..utils import extract_tooltip
+from qtpy.QtWidgets import QListWidget, QListWidgetItem, QAbstractItemView
 
-_Callback = Callable[[Any, int], Any]
+from .object import BaseWidget, ContextMenuMixin, PyObjectBound
     
-class ListWidget(FreeWidget, MutableSequence):
-    def __init__(self, dragdrop: bool = True, **kwargs):
+class ListWidget(BaseWidget, MutableSequence):
+    def __init__(self, value=None, dragdrop: bool = True, **kwargs):
         super().__init__(**kwargs)
         self._listwidget = PyListWidget(self.native)
         self._listwidget.setParentWidget(self)
-        self._title = QLabel(self.native)
-        self._title.setText(self.name)
-        self._title.setAlignment(Qt.AlignCenter)
-        self.running = False
-        self.set_widget(self._title)
         self.set_widget(self._listwidget)
-        
-        self._callbacks: defaultdict[type, list[_Callback]] = defaultdict(list)
-        self._delegates: dict[type, Callable[[Any], str]] = dict()
-        self._contextmenu: defaultdict[type, list[_Callback]] = defaultdict(list)
         
         @self._listwidget.itemDoubleClicked.connect
         def _(item: PyListWidgetItem):
@@ -89,27 +75,17 @@ class ListWidget(FreeWidget, MutableSequence):
             self._listwidget.setDragEnabled(True)
             self._listwidget.setDragDropMode(QAbstractItemView.DragDropMode.InternalMove)
         
+        if value is not None:
+            for v in value:
+                self.append(v)
+        
     def __len__(self) -> int:
         return self._listwidget.count()
     
     @property
     def value(self) -> list[Any]:
         return [self._listwidget.item(i).obj for i in range(len(self))]
-    
-    @property
-    def title(self) -> str:
-        return self._title.text()
-    
-    @title.setter
-    def title(self, text: str):
-        self._title.setText(text)
-        
-    def append(self, obj: Any):
-        """
-        Append any item to the list.
-        """
-        self.insert(len(self), obj)
-    
+            
     def insert(self, i: int, obj: Any):
         """
         Insert any item to the list.
@@ -117,15 +93,7 @@ class ListWidget(FreeWidget, MutableSequence):
         name = self._delegates.get(type(obj), str)(obj)
         item = PyListWidgetItem(self._listwidget, obj=obj, name=name)
         self._listwidget.insertItem(i, item)
-    
-    def pop(self, i: int) -> Any:
-        """
-        Pop item at an index.
-        """
-        obj = self[i]
-        self._listwidget.takeItem(i)
-        return obj
-    
+        
     def __getitem__(self, i: int) -> Any:
         """
         Get i-th python object.
@@ -145,35 +113,9 @@ class ListWidget(FreeWidget, MutableSequence):
         """
         self._listwidget.clear()
     
-    def register_callback(self, type_: type):
-        """
-        Register a double-click callback function for items of certain type.
-        """        
-        def wrapper(func: Callable):
-            self._callbacks[type_].append(func)
-            return func
-        return wrapper
-    
-    def register_delegate(self, type_: type):
-        """
-        Register a custom display.
-        """        
-        def wrapper(func: Callable):
-            self._delegates[type_] = func
-            return func
-        return wrapper
-    
-    def register_contextmenu(self, type_:type):
-        """
-        Register a custom context menu for items of certain type.
-        """        
-        def wrapper(func: Callable):
-            self._contextmenu[type_].append(func)
-            return func
-        return wrapper
 
 
-class PyListWidget(QListWidget):
+class PyListWidget(ContextMenuMixin, QListWidget):
     def item(self, row: int) -> PyListWidgetItem:
         return super().item(row)
     
@@ -182,43 +124,10 @@ class PyListWidget(QListWidget):
         
     def __init__(self, parent: None) -> None:
         super().__init__(parent=parent)
-        self.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.customContextMenuRequested.connect(self.contextMenu)
+        self.setContextMenu()
         
-    def setParentWidget(self, listwidget: ListWidget) -> None:
-        self._parent = listwidget
-        return None
-    
-    def contextMenu(self, point):
-        menu = QMenu(self)
-        menu.setToolTipsVisible(True)
-        item = self.itemAt(point)
-        type_ = type(item.obj)
-        menus = self._parent._contextmenu.get(type_, [])
-        for f in menus:
-            text = f.__name__.replace("_", " ")
-            action = QAction(text, self)
-            pfunc = partial_event(f, item.obj, self.row(item))
-            action.triggered.connect(pfunc)
-            doc = extract_tooltip(f)
-            if doc:
-                action.setToolTip(doc)
-            menu.addAction(action)
-         
-        menu.exec_(self.mapToGlobal(point))
 
-def partial_event(f, *args):
-    @wraps(f)
-    def _func(e):
-        return f(*args)
-    return _func
-
-class PyListWidgetItem(QListWidgetItem):
+class PyListWidgetItem(PyObjectBound, QListWidgetItem):
     def __init__(self, parent: QListWidget=None, obj=None, name=None):
         super().__init__(parent)
-        if obj is not None:
-            self.obj = obj
-        if name is None:
-            self.setText(str(obj))
-        else:
-            self.setText(name)
+        self.setObject(obj, name)

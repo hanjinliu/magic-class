@@ -7,6 +7,7 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
+   magicclass.widgets.pywidgets
    magicclass.widgets.qtgraph
 
 Submodules
@@ -16,14 +17,6 @@ magicclass.widgets.console module
 ---------------------------------
 
 .. automodule:: magicclass.widgets.console
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-magicclass.widgets.listwidget module
-------------------------------------
-
-.. automodule:: magicclass.widgets.listwidget
    :members:
    :undoc-members:
    :show-inheritance:

@@ -1,17 +1,28 @@
+"""
+DictWidget is a single column QTableWidget. This widget can contain any Python objects 
+as table items and keys as row names..
+
+.. code-block:: python
+
+    from magicclass.widgets import DictWidget
+
+    dictwidget = DictWidget()
+    
+    # You can add any objects
+    dictwidget["name-1"] = 10
+    dictwidget["data"] = np.arange(5)
+
+The dispatching feature is shared with ListWidget.
+    
+"""
 from __future__ import annotations
-from functools import wraps
-from typing import Callable, Any, Iterable
-from collections import defaultdict
+from typing import Any, Iterable
 from collections.abc import MutableMapping
-from qtpy.QtWidgets import QLabel, QTableWidget, QTableWidgetItem, QMenu, QAction
-from qtpy.QtCore import Qt
-from .utils import FreeWidget
-from ..utils import extract_tooltip
+from qtpy.QtWidgets import QTableWidget, QTableWidgetItem
 
+from .object import BaseWidget, ContextMenuMixin, PyObjectBound
 
-_Callback = Callable[[Any, int], Any]
-
-class DictWidget(FreeWidget, MutableMapping):
+class DictWidget(BaseWidget, MutableMapping):
     def __init__(self, value=None, **kwargs):
         super().__init__(**kwargs)
         
@@ -20,17 +31,8 @@ class DictWidget(FreeWidget, MutableMapping):
         self._tablewidget.setEditTriggers(QTableWidget.NoEditTriggers)
         self._tablewidget.verticalHeader().setDefaultSectionSize(30)
         self._dict: dict[str, int] = {} # mapping from key to row
-        self._title = QLabel(self.native)
-        self._title.setText(self.name)
-        self._title.setAlignment(Qt.AlignCenter)
-        self.running = False
-        self.set_widget(self._title)
+        
         self.set_widget(self._tablewidget)
-        
-        self._callbacks: defaultdict[type, list[_Callback]] = defaultdict(list)
-        self._delegates: dict[type, Callable[[Any], str]] = dict()
-        self._contextmenu: defaultdict[type, list[_Callback]] = defaultdict(list)
-        
         
         @self._tablewidget.itemDoubleClicked.connect
         def _(item: PyTableWidgetItem):
@@ -55,19 +57,7 @@ class DictWidget(FreeWidget, MutableMapping):
     @property
     def value(self) -> list[Any]:
         return {k: self._tablewidget.item(row, 0) for k, row in self._dict}
-    
-    @property
-    def title(self) -> str:
-        return self._title.text()
-    
-    @title.setter
-    def title(self, text: str):
-        self._title.setText(text)
-        if text:
-            self._title.hide()
-        else:
-            self._title.show()
-    
+        
     def __getitem__(self, k: str) -> Any:
         row = self._dict[k]
         return self._tablewidget.item(row, 0).obj
@@ -89,7 +79,7 @@ class DictWidget(FreeWidget, MutableMapping):
             self._tablewidget.setVerticalHeaderItem(row, key_item)
             
         name = self._delegates.get(type(obj), str)(obj)
-        value_item = PyTableWidgetItem(self._tablewidget, obj, name)
+        value_item = PyTableWidgetItem(obj, name)
         self._tablewidget.setItem(row, 0, value_item)
 
     def __delitem__(self, k: str) -> None:
@@ -121,35 +111,8 @@ class DictWidget(FreeWidget, MutableMapping):
         out = self._tablewidget.item(row, 0).obj
         self._tablewidget.removeRow(row)
         return out
-    
-    def register_callback(self, type_: type):
-        """
-        Register a double-click callback function for items of certain type.
-        """        
-        def wrapper(func: Callable):
-            self._callbacks[type_].append(func)
-            return func
-        return wrapper
-    
-    def register_delegate(self, type_: type):
-        """
-        Register a custom display.
-        """        
-        def wrapper(func: Callable):
-            self._delegates[type_] = func
-            return func
-        return wrapper
-    
-    def register_contextmenu(self, type_:type):
-        """
-        Register a custom context menu for items of certain type.
-        """        
-        def wrapper(func: Callable):
-            self._contextmenu[type_].append(func)
-            return func
-        return wrapper
 
-class PyTableWidget(QTableWidget):
+class PyTableWidget(ContextMenuMixin, QTableWidget):
     def item(self, row: int, column: int) -> PyTableWidgetItem:
         return super().item(row, column)
     
@@ -158,49 +121,12 @@ class PyTableWidget(QTableWidget):
         
     def __init__(self, parent: None) -> None:
         super().__init__(parent=parent)
-        self.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.customContextMenuRequested.connect(self.contextMenu)
-
-    
-    def setParentWidget(self, listwidget: DictWidget) -> None:
-        self._parent = listwidget
-        return None
-    
-    def contextMenu(self, point):
-        item = self.itemAt(point)
-        if item.column() == 0:
-            return
-        menu = QMenu(self)
-        menu.setToolTipsVisible(True)
-        type_ = type(item.obj)
-        menus = self._parent._contextmenu.get(type_, [])
-        for f in menus:
-            text = f.__name__.replace("_", " ")
-            action = QAction(text, self)
-            pfunc = partial_event(f, item.obj, self.row(item))
-            action.triggered.connect(pfunc)
-            doc = extract_tooltip(f)
-            if doc:
-                action.setToolTip(doc)
-            menu.addAction(action)
-         
-        menu.exec_(self.mapToGlobal(point))
-
-def partial_event(f, *args):
-    @wraps(f)
-    def _func(e):
-        return f(*args)
-    return _func
-
-class PyTableWidgetItem(QTableWidgetItem):
-    def __init__(self, parent: QTableWidget=None, obj=None, name=None):
+        self.setContextMenu()
+        
+class PyTableWidgetItem(PyObjectBound, QTableWidgetItem):
+    def __init__(self, obj=None, name=None):
         super().__init__()
-        if obj is not None:
-            self.obj = obj
-        if name is None:
-            self.setText(str(obj))
-        else:
-            self.setText(name)
+        self.setObject(obj, name)
     
 class DictValueView:
     def __init__(self, widget: PyTableWidget):
