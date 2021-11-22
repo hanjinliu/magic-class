@@ -117,7 +117,7 @@ class _Console(RichJupyterWidget):
 class QtConsole(FreeWidget):
     executed = Signal(str)
     def __init__(self, **kwargs):
-        super().__init__(labels=False, **kwargs)
+        super().__init__(**kwargs)
         
         self.console = _Console()
         self.set_widget(self.console)
