@@ -3,8 +3,7 @@ from functools import wraps as functools_wraps
 import inspect
 from enum import Enum
 from dataclasses import is_dataclass
-from typing import Any
-import warnings
+from typing import Any, Callable
 from typing_extensions import Annotated, _AnnotatedAlias
 
 from .class_gui import (
@@ -23,7 +22,7 @@ from .class_gui import (
 from ._base import PopUpMode, ErrorMode, defaults
 from .menu_gui import ContextMenuGui, MenuGui, MenuGuiBase
 from .macro import Expr
-from .utils import check_collision, get_app
+from .utils import check_collision, get_app, get_signature
 
 _BASE_CLASS_SUFFIX = "_Base"
 
@@ -80,7 +79,6 @@ def magicclass(class_: type|None = None,
                labels: bool = True, 
                name: str = None,
                close_on_run: bool = None,
-               popup: bool = True,
                popup_mode: str | PopUpMode = None,
                error_mode: str | ErrorMode = None,
                widget_type: str | WidgetType = WidgetType.none,
@@ -133,8 +131,6 @@ def magicclass(class_: type|None = None,
         error_mode = defaults["error_mode"]
         
     widget_type = WidgetType(widget_type)
-    
-    popup_mode = _popup_deprecation(popup, popup_mode)
     
     def wrapper(cls) -> ClassGui:
         if not isinstance(cls, type):
@@ -201,7 +197,6 @@ def magicclass(class_: type|None = None,
 def magicmenu(class_: type = None, 
               *, 
               close_on_run: bool = None,
-              popup: bool = True,
               popup_mode: str | PopUpMode = None,
               error_mode: str | ErrorMode = None,
               parent = None
@@ -214,7 +209,6 @@ def magicmenu(class_: type = None,
 def magiccontext(class_: type = None, 
                  *, 
                  close_on_run: bool = None,
-                 popup: bool = True,
                  popup_mode: str | PopUpMode = None,
                  error_mode: str | ErrorMode = None,
                  parent=None
@@ -268,7 +262,6 @@ class MagicClassFactory:
 
 def _call_magicmenu(class_: type = None, 
                     close_on_run: bool = True,
-                    popup: bool = True,
                     popup_mode: str | PopUpMode = None,
                     error_mode: str | ErrorMode = None,
                     parent = None,
@@ -299,8 +292,6 @@ def _call_magicmenu(class_: type = None,
         close_on_run = defaults["close_on_run"]
     if error_mode is None:
         error_mode = defaults["error_mode"]
-        
-    popup_mode = _popup_deprecation(popup, popup_mode)
         
     if popup_mode in (PopUpMode.above, PopUpMode.below, PopUpMode.first, PopUpMode.last):
         raise ValueError(f"Mode {popup_mode.value} is not compatible with Menu.")
@@ -357,15 +348,6 @@ def _call_magicmenu(class_: type = None,
 magicmenu.__doc__ += _call_magicmenu.__doc__
 magiccontext.__doc__ += _call_magicmenu.__doc__
 
-def _popup_deprecation(popup, popup_mode):
-    if not popup:
-        msg = "'popup' is deprecated. You can select popup mode from 'first', 'last', 'dock', 'above', " \
-              "'below' or 'parentlast', and call this function like >>> @magicclass(popup_mode='first')"
-        warnings.warn(msg, DeprecationWarning)
-        return PopUpMode.parentlast
-    else:
-        return popup_mode
-
 class _CallableClass:
     def __init__(self):
         self.__name__ = self.__class__.__name__
@@ -397,18 +379,26 @@ class Parameters(_CallableClass):
         
         self.__signature__ = inspect.Signature(sig)
         
-    def __call__(self, *args):
+    def __call__(self, *args) -> None:
         params = list(self.__signature__.parameters.keys())[1:]
         for a, param in zip(args, params):
             setattr(self, param, a)
 
-class Info(_CallableClass):
-    def __call__(self):
-        from .widgets import ConsoleTextEdit
-        from .utils import extract_tooltip
-        win = ConsoleTextEdit(name="macro")
-        win.read_only = True
-        win.value = extract_tooltip(self.__class__)
-        win.show()
-        return None
+    def as_dict(self) -> dict[str, Any]:
+        """
+        Convert parameter fields into a dictionary.
+        
+        .. code-block:: python
+        
+            class params(Parameters):
+                i = 1
+                j = 2
+            
+            p = params()
+            p.as_dict() # {"i": 1, "j": 2}
+            
+        """        
+        params = list(self.__signature__.parameters.keys())[1:]
+        return {param: getattr(self, param) for param in params}
+    
     

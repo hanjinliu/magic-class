@@ -291,7 +291,9 @@ class BaseGui:
                 bound_value = param.options.get("bind", None)
                 
                 # If bound method is a class method, use self.method(widget) as the value.
-                # TODO: n_parameters(bound_value) == 2 is not elegant
+                # "n_parameters(bound_value) == 2" seems a indirect way to determine that
+                # "bound_value" is a class method but "_method_as_getter" raises ValueError
+                # if "bound_value" is defined in a wrong namespace.
                 if isinstance(bound_value, Callable) and n_parameters(bound_value) == 2:
                     param.options["bind"] = _method_as_getter(self, bound_value)
                 
@@ -311,7 +313,7 @@ class BaseGui:
         
         obj_sig = get_signature(obj)
         if isinstance(func.__signature__, MagicMethodSignature):
-            # TODO: I don't know the reason why "additional_options" is lost. 
+            # NOTE: I don't know the reason why "additional_options" is lost. 
             func.__signature__.additional_options = getattr(obj_sig, "additional_options", {})
             
         if nparams == 0:

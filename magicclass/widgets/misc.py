@@ -163,6 +163,38 @@ def show_messagebox(mode: str | MessageBoxMode = MessageBoxMode.INFO,
                     text: str = None,
                     parent=None
                     ) -> bool:
+    """
+    Freeze the GUI and open a messagebox dialog.
+
+    Parameters
+    ----------
+    mode : str or MessageBoxMode, default is MessageBoxMode.INFO
+        Mode of message box. Must be "error", "warn", "info", "question" or "about".
+    title : str, optional
+        Title of messagebox.
+    text : str, optional
+        Text in messagebox.
+    parent : QWidget, optional
+        Parent widget.
+
+    Returns
+    -------
+    bool
+        If "OK" or "Yes" is clicked, return True. Otherwise return False.
+    """    
     show_dialog = QMESSAGE_MODES[MessageBoxMode(mode)]
     result = show_dialog(parent, title, text)
     return result in (QMessageBox.Ok, QMessageBox.Yes)
+
+def show_url(link: str) -> None:
+    """
+    Open the link with the default browser.
+
+    Parameters
+    ----------
+    link : str
+        Link to the home page.
+    """    
+    from qtpy.QtGui import QDesktopServices
+    from qtpy.QtCore import QUrl
+    QDesktopServices.openUrl(QUrl(link))
