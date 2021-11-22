@@ -3,20 +3,22 @@ from functools import partial, wraps
 import time
 import threading
 from typing import Callable, Iterable, TypeVar
+from .utils import FreeWidget
+from ..utils import get_signature
 
-from magicgui.widgets import Container, Label, ProgressBar
+from magicgui.widgets import Label, ProgressBar
 
 T = TypeVar("T")
 
-class ProgressWidget(Container):
+class ProgressWidget(FreeWidget):
     def __init__(self, text: str = None, visible: bool = False):
         if text is None:
             text = "Running ..."
         self._description = Label(value=text)
         self._pbar = ProgressBar()
-        super().__init__(widgets=[self._description, self._pbar], 
-                         labels=False, 
-                         visible=visible)
+        super().__init__(visible=visible)
+        self.set_widget(self._description.native)
+        self.set_widget(self._pbar.native)
     
     def __call__(self, iterable: Iterable[T]) -> Iterable[T]:
         if hasattr(iterable, "__len__"):
@@ -44,17 +46,7 @@ class ProgressWidget(Container):
         return progress(progress=self)
     
     def show_progress(self, f: Callable = None) -> Callable:
-        @wraps(f)
-        def function_with_progressbar(*args, **kwargs):
-            with self.run():
-                out = f(*args, **kwargs)
-            return out
-        return function_with_progressbar
-    
-    def _show_all(self):
-        self.visible = True
-        self._pbar.visible = True
-        self._description.visible = True
+        return progress(f, progress=self)
             
     @property
     def text(self) -> str:
@@ -73,15 +65,11 @@ class ProgressWidget(Container):
         self._pbar.value = min(v, self._pbar.max)
 
 _progress_widget = ProgressWidget()
-_progress_widget.visible = False
 
 class progress:
     def __init__(self, obj: Callable = None, *, progress: ProgressWidget = None):
         if progress is None:
-            self.close_on_finish = True
             progress = _progress_widget
-        else:
-            self.close_on_finish = False
         
         self.progress = progress
         self.thread = None
@@ -105,7 +93,7 @@ class progress:
         
     @property
     def __signature__(self):
-        return self.function.__signature__
+        return get_signature(self._function)
         
     def __call__(self, *args, **kwargs):
         if self.function is None:
@@ -117,7 +105,12 @@ class progress:
             return self.function(*args, **kwargs)
     
     def __get__(self, obj, objtype=None):
+        """
+        This method enables wrapping class method.
+        """        
         f = partial(self.function, obj)
+        f.__name__ = self.function.__name__
+        f.__qualname__ = self.function.__qualname__
         return self.__class__(f, progress=self.progress)
         
     def _wrap_function(self, function: Callable):
@@ -130,7 +123,6 @@ class progress:
     
     def _run(self):
         self.running = True
-        
         while self.running:
             time.sleep(0.01)
         
@@ -140,17 +132,15 @@ class progress:
     
     def __enter__(self) -> ProgressWidget:
         self.pbar_was_visible = self.progress.visible
-        self.progress._show_all()
+        self.progress.visible = True
         self.progress.value = 0
         self.thread = threading.Thread(target=self._run)
         self.thread.start()
-        
         return self.progress
 
     def __exit__(self, exc_type, exc_value, traceback) -> None:
         self.running = False
-        if self.thread is not None:
-            self.thread.join()
+        self.thread.join()
         
         self.progress._pbar.min = 0
         self.progress._pbar.max = 1000
