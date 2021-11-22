@@ -17,6 +17,8 @@ class DictWidget(FreeWidget, MutableMapping):
         
         self._tablewidget = PyTableWidget(self.native)
         self._tablewidget.setParentWidget(self)
+        self._tablewidget.setEditTriggers(QTableWidget.NoEditTriggers)
+        self._tablewidget.verticalHeader().setDefaultSectionSize(30)
         self._dict: dict[str, int] = {} # mapping from key to row
         self._title = QLabel(self.native)
         self._title.setText(self.name)
@@ -38,7 +40,7 @@ class DictWidget(FreeWidget, MutableMapping):
             try:
                 for callback in callbacks:
                     try:
-                        callback(item.obj, self._tablewidget.row(1, item))
+                        callback(item.obj, self._tablewidget.row(item))
                     except TypeError:
                         callback(item.obj)
             finally:
@@ -52,7 +54,7 @@ class DictWidget(FreeWidget, MutableMapping):
     
     @property
     def value(self) -> list[Any]:
-        return {k: self._tablewidget.item(row, 1) for k, row in self._dict}
+        return {k: self._tablewidget.item(row, 0) for k, row in self._dict}
     
     @property
     def title(self) -> str:
@@ -61,10 +63,14 @@ class DictWidget(FreeWidget, MutableMapping):
     @title.setter
     def title(self, text: str):
         self._title.setText(text)
+        if text:
+            self._title.hide()
+        else:
+            self._title.show()
     
     def __getitem__(self, k: str) -> Any:
         row = self._dict[k]
-        return self._tablewidget.item(row, 1).obj
+        return self._tablewidget.item(row, 0).obj
     
     def __setitem__(self, k: str, obj: Any) -> None:
         if not isinstance(k, str):
@@ -78,15 +84,13 @@ class DictWidget(FreeWidget, MutableMapping):
             self._tablewidget.insertRow(row)
             if row == 0:
                 self._tablewidget.insertColumn(0)
-                self._tablewidget.setHorizontalHeaderItem(0, QTableWidgetItem("key"))
-                self._tablewidget.insertColumn(1)
-                self._tablewidget.setHorizontalHeaderItem(1, QTableWidgetItem("value"))
-            key_item = PyTableWidgetItem(self._tablewidget, k, k)
-            self._tablewidget.setItem(row, 0, key_item)
+                self._tablewidget.setHorizontalHeaderItem(0, QTableWidgetItem("value"))
+            key_item = QTableWidgetItem(k)
+            self._tablewidget.setVerticalHeaderItem(row, key_item)
             
         name = self._delegates.get(type(obj), str)(obj)
         value_item = PyTableWidgetItem(self._tablewidget, obj, name)
-        self._tablewidget.setItem(row, 1, value_item)
+        self._tablewidget.setItem(row, 0, value_item)
 
     def __delitem__(self, k: str) -> None:
         row = self._dict.pop(k)
@@ -114,7 +118,7 @@ class DictWidget(FreeWidget, MutableMapping):
     
     def pop(self, k: str):
         row = self._dict.pop(k)
-        out = self._tablewidget.item(row, 1).obj
+        out = self._tablewidget.item(row, 0).obj
         self._tablewidget.removeRow(row)
         return out
     
@@ -146,10 +150,6 @@ class DictWidget(FreeWidget, MutableMapping):
         return wrapper
 
 class PyTableWidget(QTableWidget):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.setEditTriggers(QTableWidget.NoEditTriggers)
-        
     def item(self, row: int, column: int) -> PyTableWidgetItem:
         return super().item(row, column)
     
@@ -208,7 +208,7 @@ class DictValueView:
     
     def __iter__(self):
         for row in range(self.widget.rowCount()):
-            yield self.widget.item(row, 1).obj
+            yield self.widget.item(row, 0).obj
 
 class DictItemView:
     def __init__(self, widget: PyTableWidget):
@@ -216,6 +216,6 @@ class DictItemView:
     
     def __iter__(self):
         for row in range(self.widget.rowCount()):
-            key = self.widget.item(row, 0).text()
-            value = self.widget.item(row, 1).obj
+            key = self.widget.verticalHeaderItem(row).text()
+            value = self.widget.item(row, 0).obj
             yield key, value
