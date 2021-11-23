@@ -172,7 +172,7 @@ class ClassGuiBase(BaseGui):
                     _hist
                     )) + f"\n\t\t{name} ({type(attr).__name__}) <--- Error"
                 if not hist_str.startswith("\n\t"):
-                    hist_str += "\n\t"
+                    hist_str = "\n\t" + hist_str
                 if isinstance(e, InvalidMagicClassError):
                     e.args = (f"\n{hist_str}\n{e}",)
                     raise e

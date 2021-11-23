@@ -1,11 +1,12 @@
 from __future__ import annotations
 from typing import Callable, Iterable, Any
 import re
-from qtpy.QtWidgets import QPushButton, QAction, QWidgetAction, QHBoxLayout
+from qtpy.QtWidgets import QPushButton, QAction, QWidgetAction
 from qtpy.QtGui import QIcon
 from qtpy.QtCore import QSize
 from magicgui.events import Signal
 from magicgui.widgets import Container, PushButton, FunctionGui
+from magicgui.widgets._concrete import _LabeledWidget
 from magicgui.widgets._bases import Widget, ValueWidget, ButtonWidget
 from magicgui.widgets._function_gui import _function_name_pointing_to_widget
 from matplotlib.colors import to_rgb
@@ -79,8 +80,6 @@ class FunctionGuiPlus(FunctionGui):
         _widget = widget
 
         if self.labels:
-            from magicgui.widgets._concrete import _LabeledWidget
-
             # no labels for button widgets (push buttons, checkboxes, have their own)
             if not isinstance(widget, (_LabeledWidget, ButtonWidget, Separator)):
                 _widget = _LabeledWidget(widget)
@@ -221,6 +220,14 @@ class AbstractAction:
     @visible.setter
     def visible(self, value: bool):
         self.native.setVisible(value)
+    
+    @property
+    def parent(self):
+        return self.native.parent()
+
+    @parent.setter
+    def parent(self, widget: Widget):
+        return self.native.setParent(widget.native if widget else None)
         
 
 class Action(AbstractAction):
@@ -284,11 +291,12 @@ class Action(AbstractAction):
 
 class WidgetAction(AbstractAction):
     
-    def __init__(self, widget: Widget, name: str = None, label: str = None, gui_only: bool = True):
+    def __init__(self, widget: Widget, name: str = None, label: str = None, gui_only: bool = True,
+                 parent=None):
         if not isinstance(widget, Widget):
             raise TypeError(f"The first argument must be a Widget, got {type(widget)}")
         
-        self.native = QWidgetAction(None)
+        self.native = QWidgetAction(parent)
         name = name or ""
         self.native.setObjectName(name)
         self.label = label or name.replace("_", " ")
@@ -318,7 +326,35 @@ class WidgetAction(AbstractAction):
                    "widget, which does not have value property."
             raise AttributeError(msg)
     
-    # Methods similar to magicgui's Widget
+    @property
+    def width(self) -> int:
+        return self.widget.width
+    
+    @width.setter
+    def width(self, value: int):
+        self.widget.width = value
+    
+    @property
+    def max_width(self) -> int:
+        return self.widget.max_width
+    
+    @max_width.setter
+    def max_width(self, value: int):
+        self.widget.max_width = value
+    
+    @property
+    def min_width(self) -> int:
+        return self.widget.min_width
+    
+    @min_width.setter
+    def min_width(self, value: int):
+        self.widget.min_width = value
+    
+    def _labeled_widget(self) -> _LabeledWidget | None:
+        """Return _LabeledWidget container, if applicable."""
+        return self.widget._labeled_widget()
+    
+    # repr methods similar to magicgui's Widget
     
     def render(self):
         try:
@@ -364,6 +400,35 @@ class WidgetAction(AbstractAction):
             file_obj.seek(0)
             return file_obj.read()
 
+class _LabeledWidgetAction(WidgetAction):
+    def __init__(self, widget: Widget, name: str = None, label: str = None, gui_only: bool = True):
+        if not isinstance(widget, Widget):
+            raise TypeError(f"The first argument must be a Widget, got {type(widget)}")
+        
+        _labeled_widget =  _LabeledWidget(widget, label)
+        super().__init__(_labeled_widget, name)
+        self.widget: _LabeledWidget
+        
+        # Strangely, visible.setter does not work for sliders.
+        widget.native.setVisible(True)
+    
+    @classmethod
+    def from_action(cls, action: WidgetAction):
+        """
+        Construct a labeled action using another action.
+        """        
+        self = cls(action.widget, action.name, action.label)
+        action.parent = self
+        return self
+
+    @property
+    def label_width(self):
+        return self.widget._label_widget.width
+
+    @label_width.setter
+    def label_width(self, width):
+        self.widget._label_widget.min_width = width
+            
 def _to_rgb(color):
     if isinstance(color, str):
         color = to_rgb(color)

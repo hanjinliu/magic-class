@@ -1,18 +1,20 @@
 from __future__ import annotations
-from typing import Callable
+from typing import Callable, Iterable
 import warnings
+from inspect import signature
 from magicgui.events import Signal
-from magicgui.widgets import Container
+from magicgui.widgets import Container, Image, Table, Label, FunctionGui
+from magicgui.application import use_app
 from magicgui.widgets._bases import ButtonWidget
 from magicgui.widgets._bases.widget import Widget
 from qtpy.QtWidgets import QMenu
 
 from .fields import MagicField
-from .widgets import Separator
-from .mgui_ext import AbstractAction, Action, WidgetAction
+from .widgets import Separator, FreeWidget
+from .mgui_ext import AbstractAction, Action, WidgetAction, _LabeledWidgetAction
 from ._base import BaseGui, PopUpMode, ErrorMode
 from .macro import Expr, Head, Symbol, symbol
-from .utils import iter_members, define_callback, InvalidMagicClassError
+from .utils import get_parameters, iter_members, define_callback, InvalidMagicClassError
 
 class MenuGuiBase(BaseGui):
     _component_class = Action
@@ -23,7 +25,8 @@ class MenuGuiBase(BaseGui):
                  name: str = None,
                  close_on_run: bool = None,
                  popup_mode: str|PopUpMode = None,
-                 error_mode: str|ErrorMode = None
+                 error_mode: str|ErrorMode = None,
+                 labels: bool = True
                  ):
         if popup_mode in (PopUpMode.above, PopUpMode.below, PopUpMode.first):
             msg = f"magicmenu does not support popup mode {popup_mode.value}."\
@@ -40,7 +43,8 @@ class MenuGuiBase(BaseGui):
         self.native = QMenu(name, parent)
         self.native.setToolTipsVisible(True)
         self.native.setObjectName(self.__class__.__name__)
-        self._list: list[MenuGuiBase|Action] = []
+        self._list: list[MenuGuiBase | AbstractAction] = []
+        self.labels = labels
         
     @property
     def parent(self):
@@ -109,11 +113,20 @@ class MenuGuiBase(BaseGui):
                 if name.startswith("_"):
                     continue
                 elif isinstance(widget, Widget):
-                    waction = WidgetAction(name=name, text=name)
-                    waction.set_widget(widget)
+                    if isinstance(attr, FunctionGui):
+                        widget = attr
+                        p0 = list(signature(attr).parameters)[0]
+                        getattr(widget, p0).bind(self) # set self to the first argument
+                        # magic-class has to know when the nested FunctionGui is called.
+                        f = _nested_function_gui_callback(self, widget)
+                        widget.called.connect(f)
+                    waction = WidgetAction(widget, name=name, parent=self.native)
                     widget = waction
                     
-                if callable(widget) or isinstance(widget, (MenuGuiBase, AbstractAction, Separator, Container)):
+                if isinstance(widget, (MenuGuiBase, AbstractAction, Separator, Container, Callable)):
+                    if (not isinstance(widget, Widget)) and callable(widget):
+                        widget = self._create_widget_from_method(widget)
+                                            
                     self.append(widget)
                     _hist.append((name, str(type(attr)), type(widget).__name__))
             
@@ -123,7 +136,7 @@ class MenuGuiBase(BaseGui):
                     _hist
                     )) + f"\n\t\t{name} ({type(attr).__name__}) <--- Error"
                 if not hist_str.startswith("\n\t"):
-                    hist_str += "\n\t"
+                    hist_str = "\n\t" + hist_str
                 if isinstance(e, InvalidMagicClassError):
                     e.args = (f"\n{hist_str}\n{e}",)
                     raise e
@@ -132,7 +145,10 @@ class MenuGuiBase(BaseGui):
         
         return None
     
-    def __getitem__(self, key):
+    def __getitem__(self, key: int|str) -> MenuGuiBase | AbstractAction:
+        if isinstance(key, int):
+            return self._list[key]
+        
         out = None
         for obj in self._list:
             if obj.name == key:
@@ -142,13 +158,23 @@ class MenuGuiBase(BaseGui):
             raise KeyError(key)
         return out
     
+    def __iter__(self) -> Iterable[MenuGuiBase | AbstractAction]:
+        return iter(self._list)
+    
     def append(self, obj: Callable | MenuGuiBase | AbstractAction | Separator | Container):
-        if isinstance(obj, (self._component_class, WidgetAction)):
+        if isinstance(obj, self._component_class):
             self.native.addAction(obj.native)
             self._list.append(obj)
-        elif callable(obj):
-            action = self._create_widget_from_method(obj)
-            self.append(action)
+        elif isinstance(obj, WidgetAction):
+            _hide_labels = (_LabeledWidgetAction, ButtonWidget, FreeWidget, Label, FunctionGui,
+                            Image, Table)
+            _obj = obj
+            if not isinstance(obj.widget, _hide_labels):
+                _obj = _LabeledWidgetAction.from_action(obj)
+            _obj.parent = self
+            self.native.addAction(_obj.native)
+            self._list.append(obj)
+            self._unify_label_widths()
         elif isinstance(obj, MenuGuiBase):
             obj.__magicclass_parent__ = self
             self.native.addMenu(obj.native)
@@ -165,6 +191,19 @@ class MenuGuiBase(BaseGui):
             self.append(action)
         else:
             raise TypeError(f"{type(obj)} is not supported.")
+    
+    def _unify_label_widths(self):
+        _hide_labels = (_LabeledWidgetAction, ButtonWidget, FreeWidget, Label, FunctionGui,
+                        Image, Table, Action)
+        need_labels = [w for w in self if not isinstance(w, _hide_labels)]
+        
+        if self.labels and need_labels:
+            measure = use_app().get_obj("get_text_width")
+            widest_label = max(measure(w.label) for w in need_labels)
+            for w in need_labels:
+                labeled_widget = w._labeled_widget()
+                if labeled_widget:
+                    labeled_widget.label_width = widest_label
 
 class MenuGui(MenuGuiBase):
     """Magic class that will be converted into a menu bar."""
@@ -172,6 +211,25 @@ class MenuGui(MenuGuiBase):
 class ContextMenuGui(MenuGuiBase):
     """Magic class that will be converted into a context menu."""
     # TODO: Prevent more than one context menu
+
+def _nested_function_gui_callback(menugui: MenuGuiBase, fgui: FunctionGui):
+    def _after_run():
+        inputs = get_parameters(fgui)
+        args = [Expr(head=Head.kw, args=[Symbol(k), v]) for k, v in inputs.items()]
+        # args[0] is self
+        sub = Expr(head=Head.getattr, args=[menugui._recorded_macro[0].args[0], Symbol(fgui.name)]) # {x}.func
+        expr = Expr(head=Head.call, args=[sub] + args[1:]) # {x}.func(args...)
+
+        if fgui._auto_call:
+            # Auto-call will cause many redundant macros. To avoid this, only the last input
+            # will be recorded in magic-class.
+            last_expr = menugui._recorded_macro[-1]
+            if last_expr.head == Head.call and last_expr.args[0].head == Head.getattr and \
+                last_expr.args[0].args[1] == expr.args[0].args[1]:
+                menugui._recorded_macro.pop()
+
+        menugui._recorded_macro.append(expr)
+    return _after_run
 
 def _value_widget_callback(menugui: MenuGuiBase, action: AbstractAction, name: str, getvalue: bool = True):
     def _set_value():

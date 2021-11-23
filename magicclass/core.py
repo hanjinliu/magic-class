@@ -199,6 +199,7 @@ def magicmenu(class_: type = None,
               close_on_run: bool = None,
               popup_mode: str | PopUpMode = None,
               error_mode: str | ErrorMode = None,
+              labels: bool = True, 
               parent = None
               ):
     """
@@ -211,6 +212,7 @@ def magiccontext(class_: type = None,
                  close_on_run: bool = None,
                  popup_mode: str | PopUpMode = None,
                  error_mode: str | ErrorMode = None,
+                 labels: bool = True, 
                  parent=None
                  ):
     """
@@ -250,13 +252,13 @@ class MagicClassFactory:
     def as_magicmenu(self) -> MenuGui:
         _cls = type(self.name, (), self.attrs)
         cls = magicmenu(_cls, close_on_run=self.close_on_run, popup_mode=self.popup_mode, 
-                        error_mode=self.error_mode, parent=self.parent)
+                        error_mode=self.error_mode, labels=self.labels, parent=self.parent)
         return cls
     
     def as_magiccontext(self) -> ContextMenuGui:
         _cls = type(self.name, (), self.attrs)
         cls = magiccontext(_cls, close_on_run=self.close_on_run, popup_mode=self.popup_mode, 
-                           error_mode=self.error_mode, parent=self.parent)
+                           error_mode=self.error_mode, labels=self.labels, parent=self.parent)
         return cls
 
 
@@ -264,6 +266,7 @@ def _call_magicmenu(class_: type = None,
                     close_on_run: bool = True,
                     popup_mode: str | PopUpMode = None,
                     error_mode: str | ErrorMode = None,
+                    labels: bool = True, 
                     parent = None,
                     menugui_class: type[MenuGuiBase] = None,
                     ):
@@ -326,6 +329,7 @@ def _call_magicmenu(class_: type = None,
                                    close_on_run=close_on_run,
                                    popup_mode=PopUpMode(popup_mode),
                                    error_mode=ErrorMode(error_mode),
+                                   labels=labels, 
                                    )
             super(oldclass, self).__init__(*args, **kwargs)
             self._convert_attributes_into_widgets()
