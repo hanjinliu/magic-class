@@ -163,7 +163,7 @@ def magicclass(class_: type|None = None,
         newclass.__annotations__.update(annot)
         
         @functools_wraps(oldclass.__init__)
-        def __init__(self, *args, **kwargs):
+        def __init__(self: MagicTemplate, *args, **kwargs):
             app = get_app() # Without "app = " Jupyter freezes after closing the window!
             macro_init = Expr.parse_init(self, cls, args, kwargs)
             class_gui.__init__(self, 
@@ -223,6 +223,9 @@ def magiccontext(class_: type = None,
     return _call_magicmenu(**locals(), menugui_class=ContextMenuGui)
 
 class MagicClassFactory:
+    """
+    Factory class that can make any magic-class.
+    """    
     def __init__(self, 
                  name: str,
                  layout: str = "vertical", 
@@ -325,7 +328,7 @@ def _call_magicmenu(class_: type = None,
         newclass.__qualname__ = qualname
                 
         @functools_wraps(oldclass.__init__)
-        def __init__(self, *args, **kwargs):
+        def __init__(self: MagicTemplate, *args, **kwargs):
             app = get_app() # Without "app = " Jupyter freezes after closing the window!
             macro_init = Expr.parse_init(self, cls, args, kwargs)
             menugui_class.__init__(self, 

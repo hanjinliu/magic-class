@@ -63,6 +63,7 @@ Magic classes can also detect other `magicgui`'s widgets.
 .. image:: images/fig_1-2.png
 
 .. note::
+
     I highly recommend using ``field`` function to create widgets in magic classes.
     See :doc:`use_field`.
 
@@ -173,3 +174,21 @@ the design of button itself. ``magicclass`` uses ``set_design`` decorator to do 
     ui.show()
 
 ``set_design`` can take properties of ``PushButton`` as arguments.
+
+Code Completion
+---------------
+
+A problem of using decorators to overwrite classes is code completion. When you are coding, the classes
+do not inherits magic classes yet, so IDE and console don't know they will have attributes such as 
+``self.parent_viewer`` or ``self.name``.
+
+All the magic classes inherits ``MagicTemplate`` class. This class is designed in a way which does not
+interfere with magic class decorators, while provides enough information of typings and annotations.
+
+.. code-block:: python
+
+    from magicclass import magicclass, MagicTemplate
+
+    @magicclass
+    class MyClass(MagicTemplate): # inherit here
+        ...

@@ -1,14 +1,16 @@
 from __future__ import annotations
 from functools import wraps as functools_wraps
-from typing import Callable, TYPE_CHECKING, TypeVar
+from typing import Any, Callable, TYPE_CHECKING, TypeVar, overload
 from typing_extensions import _AnnotatedAlias
 import inspect
 from enum import Enum
 import warnings
+from collections.abc import MutableSequence
 
 from magicgui import magicgui
+from magicgui.events import Signal
 from magicgui.signature import MagicParameter
-from magicgui.widgets import FunctionGui, FileEdit, EmptyWidget
+from magicgui.widgets import FunctionGui, FileEdit, EmptyWidget, Widget
 from magicgui.widgets._bases import ValueWidget
 
 from .macro import Macro, Expr, Head, Symbol, symbol
@@ -49,6 +51,59 @@ class MagicTemplate:
     _close_on_run: bool
     _popup_mode: PopUpMode
     _error_mode: ErrorMode
+    name: str
+    width: int
+    max_width: int
+    min_width: int
+    height: int
+    max_height: int
+    min_height: int
+    parent_changed: Signal
+    label_changed: Signal
+    changed: Signal
+    tooltip: str
+    enabled: bool
+    annotation: Any
+    gui_only: bool
+    param_kind: inspect._ParameterKind
+    visible: bool
+    options: dict
+    parent: Widget
+    widget_type: str
+    label: str
+    margin: tuple[int, int, int, int]
+    layout: str
+    labels: bool
+    
+    def show(self) -> None:
+        raise NotImplementedError()
+    
+    def hide(self) -> None:
+        raise NotImplementedError()
+    
+    def close(self) -> None:
+        raise NotImplementedError()
+    
+    @overload
+    def __getitem__(self, key: int | str) -> Widget: ...
+
+    @overload
+    def __getitem__(self, key: slice) -> MutableSequence[Widget]: ...
+
+    def __getitem__(self, key):
+        raise NotImplementedError()
+    
+    def index(self, value: Any, start: int, stop: int) -> int:
+        raise NotImplementedError()
+    
+    def remove(self, value: Widget | str):
+        raise NotImplementedError()
+    
+    def append(self, widget: Widget) -> None:
+        raise NotImplementedError()
+        
+    def insert(self, key: int, widget: Widget) -> None:
+        raise NotImplementedError()
     
     def _collect_macro(self, parent_symbol: Symbol = None, self_symbol: Symbol = None) -> Macro:
         if self_symbol is None:
