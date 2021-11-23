@@ -43,7 +43,16 @@ except ImportError:
           "   $ conda install pyqtgraph -c conda forge"
     QtPlotCanvas = NotInstalled(msg.format("QtPlotCanvas"))
     QtImageCanvas = NotInstalled(msg.format("QtImageCanvas"))
-    
+
+try:
+    from .napari import NapariCanvas
+except ImportError:
+    msg = "Module 'napari' is not installed. To use NapariCanvas, " \
+          "you have to install it by:\n" \
+          "   $ pip install napari[all]\n" \
+          "or\n" \
+          "   $ conda install napari -c conda-forge"
+    NapariCanvas = NotInstalled(msg)
 
 __all__ = ["ListWidget", 
            "Figure",
@@ -62,4 +71,5 @@ __all__ = ["ListWidget",
            "QtConsole",
            "QtPlotCanvas",
            "QtImageCanvas",
+           "NapariCanvas",
            ]
