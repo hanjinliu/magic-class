@@ -43,15 +43,12 @@ defaults = {"popup_mode": PopUpMode.popup,
             "close_on_run": True,
             }
 
-class BaseGui:
-    _component_class: type = None
-    
-    def __init__(self, close_on_run, popup_mode, error_mode):
-        self._recorded_macro: Macro[Expr] = Macro()
-        self.__magicclass_parent__: None | BaseGui = None
-        self._close_on_run = close_on_run
-        self._popup_mode = popup_mode
-        self._error_mode = error_mode
+class MagicTemplate:    
+    _recorded_macro: Macro[Expr] = Macro()
+    __magicclass_parent__: None | BaseGui
+    _close_on_run: bool
+    _popup_mode: PopUpMode
+    _error_mode: ErrorMode
     
     def _collect_macro(self, parent_symbol: Symbol = None, self_symbol: Symbol = None) -> Macro:
         if self_symbol is None:
@@ -69,12 +66,12 @@ class BaseGui:
         
         for name, clsattr in iter_members(self.__class__):
             # Collect all the macro from child magic-classes recursively
-            if not isinstance(clsattr, (BaseGui, type, MagicField)):
+            if not isinstance(clsattr, (MagicTemplate, type, MagicField)):
                 continue
             
             attr = getattr(self, name)
             
-            if not isinstance(attr, BaseGui):
+            if not isinstance(attr, MagicTemplate):
                 continue
             
             macro += attr._collect_macro(self_symbol, Symbol(name))
@@ -439,17 +436,25 @@ class BaseGui:
             
         return widget
     
-    def _search_parent_magicclass(self) -> BaseGui:
+    def _search_parent_magicclass(self) -> MagicTemplate:
         current_self = self
         while getattr(current_self, "__magicclass_parent__", None) is not None:
             current_self = current_self.__magicclass_parent__
         return current_self
+    
+class BaseGui(MagicTemplate):
+    def __init__(self, close_on_run, popup_mode, error_mode):
+        self._recorded_macro: Macro[Expr] = Macro()
+        self.__magicclass_parent__: None | BaseGui = None
+        self._close_on_run = close_on_run
+        self._popup_mode = popup_mode
+        self._error_mode = error_mode
 
 def _get_widget_name(widget):
     # To escape reference
     return widget.name
     
-def _temporal_function_gui_callback(bgui: BaseGui, fgui: FunctionGuiPlus, widget: PushButtonPlus):
+def _temporal_function_gui_callback(bgui: MagicTemplate, fgui: FunctionGuiPlus, widget: PushButtonPlus):
     if isinstance(fgui, FunctionGui):
         _function = fgui._function
     else:
@@ -523,7 +528,7 @@ def _get_index(container, widget_or_name):
         raise ValueError(f"{widget_or_name} not found in {container}")
     return i
 
-def _search_wrapper(bgui: BaseGui, funcname: str, clsname: str) -> tuple[BaseGui, Callable]:
+def _search_wrapper(bgui: MagicTemplate, funcname: str, clsname: str) -> tuple[MagicTemplate, Callable]:
     current_self = bgui.__magicclass_parent__
     while not (hasattr(current_self, funcname) and 
                 current_self.__class__.__name__ == clsname):
