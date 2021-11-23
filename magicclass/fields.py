@@ -3,9 +3,11 @@ from typing import Any, TYPE_CHECKING, Callable, TypeVar
 from dataclasses import Field, MISSING
 from magicgui.type_map import get_widget_class
 from magicgui.widgets import create_widget
-from magicgui.widgets._bases import Widget
-from magicgui.widgets._bases.value_widget import UNSET, ValueWidget
+from magicgui.widgets._bases import Widget, ValueWidget
+from magicgui.widgets._bases.value_widget import UNSET 
+
 from .widgets import NotInstalled
+from .mgui_ext import AbstractAction, Action, WidgetAction
 
 if TYPE_CHECKING:
     from magicgui.widgets._protocols import WidgetProtocol
@@ -35,9 +37,9 @@ class MagicField(Field):
     
     def get_widget(self, obj: X) -> Widget:
         """
-        Get widget from ``obj``. This function will be called every time MagicField is referred
+        Get a widget from ``obj``. This function will be called every time MagicField is referred
         by ``obj.field``.
-        """        
+        """
         obj_id = id(obj)
         objtype = type(obj)
         if obj_id in self.guis.keys():
@@ -51,11 +53,30 @@ class MagicField(Field):
                 
         return widget
     
+    def get_action(self, obj: X) -> AbstractAction:
+        """
+        Get an action from ``obj``. This function will be called every time MagicField is referred
+        by ``obj.field``.
+        """
+        obj_id = id(obj)
+        objtype = type(obj)
+        if obj_id in self.guis.keys():
+            action = self.guis[obj_id]
+        elif self.parent_class is None or self.parent_class is objtype:    
+            action = self.to_action()
+            self.guis[obj_id] = action
+            self.parent_class = objtype
+        else:
+            raise TypeError(f"Cannot refer MagicField {self.name} from object of type {objtype}")
+                
+        return action
+    
     def as_getter(self, obj: X):
         """
-        Make a function that get the value of Widget.
+        Make a function that get the value of Widget or Action.
         """        
-        return lambda widget: self.get_widget(obj).value
+        # return lambda widget: self.get_widget(obj).value
+        return lambda w: self.guis[id(obj)].value
     
     def __get__(self, obj: X, objtype=None):
         if obj is None:
@@ -97,6 +118,27 @@ class MagicField(Field):
                                    )
         widget.name = self.name
         return widget
+    
+    def to_action(self) -> Action | WidgetAction:
+        """
+        Create a menu action or a menu widget action from the field.
+
+        Returns
+        -------
+        Action or WidgetAction
+            Object that can be added to menu.
+
+        Raises
+        ------
+        ValueError
+            If there is not enough information to build an action.
+        """                
+        if type(self.default) is bool or self.default_factory is bool:
+            action = Action(checkable=True, checked=self.value, text=self.name, name=self.name)
+        else:
+            widget = self.to_widget()
+            action = WidgetAction(widget)
+        return action
         
     def connect(self, func: Callable) -> Callable:
         """

@@ -1,19 +1,22 @@
 from __future__ import annotations
 from typing import Callable
 import warnings
+from magicgui.events import Signal
 from magicgui.widgets import Container
 from magicgui.widgets._bases import ButtonWidget
+from magicgui.widgets._bases.widget import Widget
 from qtpy.QtWidgets import QMenu
 
 from .fields import MagicField
 from .widgets import Separator
-from .mgui_ext import Action
+from .mgui_ext import AbstractAction, Action, WidgetAction
 from ._base import BaseGui, PopUpMode, ErrorMode
 from .macro import Expr, Head, Symbol, symbol
 from .utils import iter_members, define_callback, InvalidMagicClassError
 
 class MenuGuiBase(BaseGui):
     _component_class = Action
+    changed = Signal(object)
     
     def __init__(self, 
                  parent=None, 
@@ -57,20 +60,20 @@ class MenuGuiBase(BaseGui):
                 pass
             
         fld.name = fld.name or name.replace("_", " ")
-        widget = fld.to_widget()
+        action = fld.get_action(self)
             
-        if isinstance(widget, ButtonWidget):
+        if action.support_value:
             # If the field has callbacks, connect it to the newly generated widget.
-            widget = Action(checkable=True, checked=widget.value, text=widget.name, name=widget.name)
             for callback in fld.callbacks:
                 # funcname = callback.__name__
-                widget.changed.connect(define_callback(self, callback))
+                action.changed.connect(define_callback(self, callback))
                      
             # By default, set value function will be connected to the widget.
             if fld.record:
-                widget.changed.connect(_value_widget_callback(self, widget, name))
+                f = _value_widget_callback(self, action, name, getvalue=type(fld) is MagicField)
+                action.changed.connect(f)
                 
-        return widget
+        return action
     
     def _convert_attributes_into_widgets(self):
         cls = self.__class__
@@ -105,7 +108,12 @@ class MenuGuiBase(BaseGui):
                 
                 if name.startswith("_"):
                     continue
-                if callable(widget) or isinstance(widget, (MenuGuiBase, Action, Separator, Container)):
+                elif isinstance(widget, Widget):
+                    waction = WidgetAction(name=name, text=name)
+                    waction.set_widget(widget)
+                    widget = waction
+                    
+                if callable(widget) or isinstance(widget, (MenuGuiBase, AbstractAction, Separator, Container)):
                     self.append(widget)
                     _hist.append((name, str(type(attr)), type(widget).__name__))
             
@@ -134,8 +142,8 @@ class MenuGuiBase(BaseGui):
             raise KeyError(key)
         return out
     
-    def append(self, obj: Callable | MenuGuiBase | Action | Separator | Container):
-        if isinstance(obj, self._component_class):
+    def append(self, obj: Callable | MenuGuiBase | AbstractAction | Separator | Container):
+        if isinstance(obj, (self._component_class, WidgetAction)):
             self.native.addAction(obj.native)
             self._list.append(obj)
         elif callable(obj):
@@ -165,17 +173,17 @@ class ContextMenuGui(MenuGuiBase):
     """Magic class that will be converted into a context menu."""
     # TODO: Prevent more than one context menu
 
-def _value_widget_callback(mgui: MenuGuiBase, widget: ButtonWidget, name: str, getvalue: bool = True):
+def _value_widget_callback(menugui: MenuGuiBase, action: AbstractAction, name: str, getvalue: bool = True):
     def _set_value():
-        if not widget.enabled:
+        if not action.enabled:
             # If widget is read only, it means that value is set in script (not manually).
             # Thus this event should not be recorded as a macro.
             return None
         
-        if isinstance(widget.value, Exception):
+        if isinstance(action.value, Exception):
             return None
         
-        mgui.changed.emit(mgui)
+        menugui.changed.emit(menugui)
         
         if getvalue:
             sub = Expr(head=Head.getattr, args=[Symbol(name), Symbol("value")]) # name.value
@@ -188,15 +196,15 @@ def _value_widget_callback(mgui: MenuGuiBase, widget: ButtonWidget, name: str, g
         # >>> x.name = value
         expr = Expr(head=Head.assign, 
                     args=[Expr(head=Head.getattr, 
-                               args=[symbol(mgui), sub]), 
-                          widget.value])
+                               args=[symbol(menugui), sub]), 
+                          action.value])
         
-        last_expr = mgui._recorded_macro[-1]
+        last_expr = menugui._recorded_macro[-1]
         if (last_expr.head == expr.head and 
             last_expr.args[0].args[1].head == expr.args[0].args[1].head and
             last_expr.args[0].args[1].args[0] == expr.args[0].args[1].args[0]):
-            mgui._recorded_macro[-1] = expr
+            menugui._recorded_macro[-1] = expr
         else:
-            mgui._recorded_macro.append(expr)
+            menugui._recorded_macro.append(expr)
         return None
     return _set_value

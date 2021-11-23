@@ -139,6 +139,7 @@ class BaseGui:
             win.value = out
             
             win.native.setParent(self.native, win.native.windowFlags())
+            win.native.move(screen_center() - win.native.rect().center())
             win.show()
             
         return out

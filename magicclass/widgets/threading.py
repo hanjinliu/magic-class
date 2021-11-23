@@ -11,6 +11,7 @@ from magicgui.widgets import Label, ProgressBar
 T = TypeVar("T")
 
 # BUG: function wrapped by @progress does not show the contents of progress bar after the second run.
+# TODO: generator functions
 
 class ProgressWidget(FreeWidget):
     def __init__(self, text: str = None, visible: bool = False):

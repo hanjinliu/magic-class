@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import Callable, Iterable, Any
 import re
-from qtpy.QtWidgets import QPushButton, QAction
+from qtpy.QtWidgets import QPushButton, QAction, QWidgetAction, QHBoxLayout
 from qtpy.QtGui import QIcon
 from qtpy.QtCore import QSize
 from magicgui.events import Signal
@@ -184,26 +184,11 @@ class PushButtonPlus(PushButton):
             if v is not None:
                 setattr(self, k, v)
         return None
-
-class Action:
-    """QAction encapsulated class with a similar API as magicgui Widget."""
+    
+class AbstractAction:
     changed = Signal(object)
-    
-    def __init__(self, *args, name: str = None, text: str = None, gui_only: bool = True, **kwargs):
-        self.native = QAction(*args, **kwargs)
-        self.mgui: FunctionGuiPlus = None
-        self._icon_path = None
-        if text:
-            self.text = text
-        if name:
-            self.native.setObjectName(name)
-        self._callbacks = []
-        
-        self.native.triggered.connect(lambda: self.changed.emit(self.value))
-    
-    @property
-    def running(self) -> bool:
-        return getattr(self.mgui, "running", False)
+    support_value: bool
+    native: QAction | QWidgetAction
     
     @property
     def name(self) -> str:
@@ -212,14 +197,6 @@ class Action:
     @name.setter
     def name(self, value: str):
         self.native.setObjectName(value)
-    
-    @property
-    def text(self) -> str:
-        return self.native.text()
-    
-    @text.setter
-    def text(self, value: str):
-        self.native.setText(value)
     
     @property
     def tooltip(self) -> str:
@@ -238,20 +215,50 @@ class Action:
         self.native.setEnabled(value)
     
     @property
-    def value(self):
-        return self.native.isChecked()
-    
-    @value.setter
-    def value(self, checked: bool):
-        self.native.setChecked(checked)
-    
-    @property
     def visible(self):
         return self.native.isVisible()
     
     @visible.setter
     def visible(self, value: bool):
         self.native.setVisible(value)
+        
+
+class Action(AbstractAction):
+    """QAction encapsulated class with a similar API as magicgui Widget."""
+    support_value = True
+    
+    def __init__(self, *args, name: str = None, text: str = None, gui_only: bool = True, **kwargs):
+        self.native = QAction(*args, **kwargs)
+        self.mgui: FunctionGuiPlus = None
+        
+        self._icon_path = None
+        if text:
+            self.text = text
+        if name:
+            self.native.setObjectName(name)
+        self._callbacks = []
+        
+        self.native.triggered.connect(lambda: self.changed.emit(self.value))
+    
+    @property
+    def running(self) -> bool:
+        return getattr(self.mgui, "running", False)
+    
+    @property
+    def text(self) -> str:
+        return self.native.text()
+    
+    @text.setter
+    def text(self, value: str):
+        self.native.setText(value)
+    
+    @property
+    def value(self):
+        return self.native.isChecked()
+    
+    @value.setter
+    def value(self, checked: bool):
+        self.native.setChecked(checked)
     
     @property
     def icon_path(self):
@@ -275,6 +282,87 @@ class Action:
                 setattr(self, k, v)
         return None
 
+class WidgetAction(AbstractAction):
+    
+    def __init__(self, widget: Widget, name: str = None, label: str = None, gui_only: bool = True):
+        if not isinstance(widget, Widget):
+            raise TypeError(f"The first argument must be a Widget, got {type(widget)}")
+        
+        self.native = QWidgetAction(None)
+        name = name or ""
+        self.native.setObjectName(name)
+        self.label = label or name.replace("_", " ")
+        
+        self.widget = widget
+        self.native.setDefaultWidget(widget.native)
+        self.support_value = hasattr(widget, "value")
+        self.widget_type = widget.widget_type
+        if self.support_value:
+            self.widget.changed.connect(lambda: self.changed.emit(self.value))
+    
+    @property
+    def value(self):
+        if self.support_value:
+            return self.widget.value
+        else:
+            msg = f"WidgetAction {self.name} has {type(self.widget)} as the default " \
+                   "widget, which does not have value property."
+            raise AttributeError(msg)
+    
+    @value.setter
+    def value(self, v):
+        if self.support_value:
+            self.widget.value = v
+        else:
+            msg = f"WidgetAction {self.name} has {type(self.widget)} as the default " \
+                   "widget, which does not have value property."
+            raise AttributeError(msg)
+    
+    # Methods similar to magicgui's Widget
+    
+    def render(self):
+        try:
+            import numpy as np
+        except ImportError:
+            raise ModuleNotFoundError(
+                "could not find module 'numpy'. "
+                "Please `pip install numpy` to render widgets."
+            ) from None
+        
+        import qtpy
+        
+        img = self.widget.native.grab().toImage()
+        bits = img.constBits()
+        h, w, c = img.height(), img.width(), 4
+        if qtpy.API_NAME == "PySide2":
+            arr = np.array(bits).reshape(h, w, c)
+        else:
+            bits.setsize(h * w * c)
+            arr = np.frombuffer(bits, np.uint8).reshape(h, w, c)
+
+        return arr[:, :, [2, 1, 0, 3]]
+    
+    def __repr__(self) -> str:
+        """Return representation of widget of instsance."""
+        return f"{self.widget_type}(name={self.name!r}, widget={self.widget!r})"
+
+    def _repr_png_(self):
+        """Return PNG representation of the widget for QtConsole."""
+        from io import BytesIO
+
+        try:
+            from imageio import imsave
+        except ImportError:
+            print(
+                "(For a nicer magicgui widget representation in "
+                "Jupyter, please `pip install imageio`)"
+            )
+            return None
+
+        with BytesIO() as file_obj:
+            imsave(file_obj, self.render(), format="png")
+            file_obj.seek(0)
+            return file_obj.read()
 
 def _to_rgb(color):
     if isinstance(color, str):

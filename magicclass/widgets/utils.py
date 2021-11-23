@@ -1,7 +1,7 @@
 
 from __future__ import annotations
 from qtpy.QtWidgets import QWidget, QVBoxLayout
-from magicgui.widgets._bases import Widget
+from magicgui.widgets import Widget
 from magicgui.backends._qtpy.widgets import QBaseWidget
 
 class FreeWidget(Widget):
