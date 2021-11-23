@@ -120,8 +120,10 @@ class MenuGuiBase(BaseGui):
                         # magic-class has to know when the nested FunctionGui is called.
                         f = _nested_function_gui_callback(self, widget)
                         widget.called.connect(f)
-                    waction = WidgetAction(widget, name=name, parent=self.native)
-                    widget = waction
+                    
+                    if not isinstance(attr, Separator):
+                        waction = WidgetAction(widget, name=name, parent=self.native)
+                        widget = waction
                     
                 if isinstance(widget, (MenuGuiBase, AbstractAction, Separator, Container, Callable)):
                     if (not isinstance(widget, Widget)) and callable(widget):
@@ -165,6 +167,8 @@ class MenuGuiBase(BaseGui):
         if isinstance(obj, self._component_class):
             self.native.addAction(obj.native)
             self._list.append(obj)
+        elif isinstance(obj, Separator):
+            self.native.addSeparator()
         elif isinstance(obj, WidgetAction):
             _hide_labels = (_LabeledWidgetAction, ButtonWidget, FreeWidget, Label, FunctionGui,
                             Image, Table)
@@ -180,8 +184,6 @@ class MenuGuiBase(BaseGui):
             self.native.addMenu(obj.native)
             obj.native.setParent(self.native, obj.native.windowFlags())
             self._list.append(obj)
-        elif isinstance(obj, Separator):
-            self.native.addSeparator()
         elif isinstance(obj, Container):
             obj.__magicclass_parent__ = self
             obj.native.setParent(self.native, obj.native.windowFlags())
