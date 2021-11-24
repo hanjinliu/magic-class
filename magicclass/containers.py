@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import TypeVar, Callable
 import warnings
+from PyQt5.QtWidgets import QVBoxLayout
 from qtpy import QtWidgets as QtW
 from qtpy.QtCore import Qt
 from magicgui.application import use_app
@@ -216,35 +217,61 @@ class _CollapsibleContainer(ContainerBase):
             self._expand_btn.setArrowType(Qt.ArrowType.DownArrow)
 
 class _ListContainer(ContainerBase):
-    _qwidget: QtW.QListWidget
     def __init__(self, layout="vertical"):
-        QBaseWidget.__init__(self, QtW.QListWidget)
-        self._qwidget.setAcceptDrops(True)
-        self._qwidget.setDragEnabled(True)
-        self._qwidget.setDragDropMode(QtW.QAbstractItemView.DragDropMode.InternalMove)
+        QBaseWidget.__init__(self, QtW.QWidget)
+        self._listwidget = QtW.QListWidget(self._qwidget)
         if layout == "horizontal":
-            self._qwidget.setFlow(QtW.QListView.LeftToRight)
+            self._layout: QtW.QLayout = QtW.QHBoxLayout()
         else:
-            self._qwidget.setFlow(QtW.QListView.TopToBottom)
-        self._layout = QtW.QHBoxLayout() # dummy
+            self._layout = QtW.QVBoxLayout()
+        self._layout.setContentsMargins(0, 0, 0, 0)
+        self._layout.addWidget(self._listwidget)
+        self._qwidget.setLayout(self._layout)
+        
+        self._listwidget.setAcceptDrops(True)
+        self._listwidget.setDragEnabled(True)
+        self._listwidget.setDragDropMode(QtW.QAbstractItemView.DragDropMode.InternalMove)
+        if layout == "horizontal":
+            self._listwidget.setFlow(QtW.QListView.LeftToRight)
+        else:
+            self._listwidget.setFlow(QtW.QListView.TopToBottom)
         
     def _mgui_insert_widget(self, position: int, widget: Widget):
-        item = QtW.QListWidgetItem(self._qwidget)
+        item = QtW.QListWidgetItem(self._listwidget)
         item.setSizeHint(widget.native.sizeHint())
-        self._qwidget.insertItem(position, item)
-        self._qwidget.setItemWidget(item, widget.native)
+        self._listwidget.insertItem(position, item)
+        self._listwidget.setItemWidget(item, widget.native)
     
     def _mgui_remove_widget(self, widget: Widget):
-        for i in range(self._qwidget.count()):
-            item = self._qwidget.item(i)
-            w = self._qwidget.itemWidget(item)
+        for i in range(self._listwidget.count()):
+            item = self._listwidget.item(i)
+            w = self._listwidget.itemWidget(item)
             if widget.native is w:
-                self._qwidget.removeItemWidget(item)
-                self._qwidget.takeItem(i)
+                self._listwidget.removeItemWidget(item)
+                self._listwidget.takeItem(i)
                 break
         else:
             raise ValueError(f"Widget {widget} not found in the list.")
         
+        widget.native.setParent(None)
+
+class _MdiAreaContainer(ContainerBase):
+    def __init__(self, layout="vertical"):
+        QBaseWidget.__init__(self, QtW.QWidget)
+        self._mdiarea = QtW.QMdiArea(self._qwidget)
+        if layout == "horizontal":
+            self._layout: QtW.QLayout = QtW.QHBoxLayout()
+        else:
+            self._layout = QtW.QVBoxLayout()
+        
+        self._layout.addWidget(self._mdiarea)
+        self._qwidget.setLayout(self._layout)
+    
+    def _mgui_insert_widget(self, position: int, widget: Widget):
+        self._mdiarea.addSubWindow(widget.native, widget.native.windowFlags())
+    
+    def _mgui_remove_widget(self, widget: Widget):
+        self._mdiarea.removeSubWindow(widget.native)
         widget.native.setParent(None)
 
 @wrap_container(base=_Splitter)
@@ -320,15 +347,15 @@ class CollapsibleContainer(ContainerWidget):
 class ListContainer(ContainerWidget):
     """A Container Widget that support drag and drop."""
     def _post_init(self):
-        self._widget._qwidget.model().rowsMoved.connect(self._drag_and_drop_happened)
+        self._widget._listwidget.model().rowsMoved.connect(self._drag_and_drop_happened)
         return super()._post_init()
     
     def _drag_and_drop_happened(self, e=None):
         """Sort widget list when item drag/drop happens."""
         l = []
-        for i in range(self._widget._qwidget.count()):
-            item = self._widget._qwidget.item(i)
-            w = self._widget._qwidget.itemWidget(item)
+        for i in range(self._widget._listwidget.count()):
+            item = self._widget._listwidget.item(i)
+            w = self._widget._listwidget.itemWidget(item)
             
             for widget in self._list:
                 # if widget is a _LabeledWidget, inserted widget item will
@@ -346,3 +373,7 @@ class ListContainer(ContainerWidget):
     @current_index.setter
     def current_index(self, index: int):
         self.native.setCurrentRow(index)
+
+@wrap_container(base=_MdiAreaContainer)
+class MdiAreaContainer(ContainerWidget):
+    """A window-in-window container"""
