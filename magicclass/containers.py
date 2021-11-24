@@ -1,7 +1,6 @@
 from __future__ import annotations
 from typing import TypeVar, Callable
 import warnings
-from PyQt5.QtWidgets import QVBoxLayout
 from qtpy import QtWidgets as QtW
 from qtpy.QtCore import Qt
 from magicgui.application import use_app
@@ -256,6 +255,11 @@ class _ListContainer(ContainerBase):
         widget.native.setParent(None)
 
 class _MdiAreaContainer(ContainerBase):
+    
+    # The close button in QMdiArea completely deletes the sub window widget. This accident
+    # can be avoided by defining a custom window flag.
+    _NoCloseButtonFlag = Qt.CustomizeWindowHint | Qt.WindowTitleHint | Qt.WindowMinMaxButtonsHint
+    
     def __init__(self, layout="vertical"):
         QBaseWidget.__init__(self, QtW.QWidget)
         self._mdiarea = QtW.QMdiArea(self._qwidget)
@@ -268,7 +272,7 @@ class _MdiAreaContainer(ContainerBase):
         self._qwidget.setLayout(self._layout)
     
     def _mgui_insert_widget(self, position: int, widget: Widget):
-        self._mdiarea.addSubWindow(widget.native, widget.native.windowFlags())
+        self._mdiarea.addSubWindow(widget.native, self._NoCloseButtonFlag)
     
     def _mgui_remove_widget(self, widget: Widget):
         self._mdiarea.removeSubWindow(widget.native)
