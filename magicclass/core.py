@@ -10,7 +10,7 @@ from .class_gui import (
     ClassGuiBase, 
     ClassGui,
     MainWindowClassGui,
-    MdiClassGui,
+    SubWindowsClassGui,
     ScrollableClassGui,
     ButtonClassGui, 
     CollapsibleClassGui,
@@ -37,7 +37,7 @@ class WidgetType(Enum):
     tabbed = "tabbed"
     stacked = "stacked"
     list = "list"
-    mdiarea = "mdiarea"
+    subwindows = "subwindows"
     mainwindow = "mainwindow"
 
 _TYPE_MAP = {
@@ -50,7 +50,7 @@ _TYPE_MAP = {
     WidgetType.tabbed: TabbedClassGui,
     WidgetType.stacked: StackedClassGui,
     WidgetType.list: ListClassGui,
-    WidgetType.mdiarea: MdiClassGui,
+    WidgetType.subwindows: SubWindowsClassGui,
     WidgetType.mainwindow: MainWindowClassGui,
 }
 

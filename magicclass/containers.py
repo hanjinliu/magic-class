@@ -254,7 +254,7 @@ class _ListContainer(ContainerBase):
         
         widget.native.setParent(None)
 
-class _MdiAreaContainer(ContainerBase):
+class _SubWindowsContainer(ContainerBase):
     
     # The close button in QMdiArea completely deletes the sub window widget. This accident
     # can be avoided by defining a custom window flag.
@@ -378,6 +378,6 @@ class ListContainer(ContainerWidget):
     def current_index(self, index: int):
         self.native.setCurrentRow(index)
 
-@wrap_container(base=_MdiAreaContainer)
-class MdiAreaContainer(ContainerWidget):
+@wrap_container(base=_SubWindowsContainer)
+class SubWindowsContainer(ContainerWidget):
     """A window-in-window container"""

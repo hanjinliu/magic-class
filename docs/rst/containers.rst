@@ -41,6 +41,14 @@ Available Containers
     + *appearance*
         Drag-and-droppable list widget.
 
+* ``SubWindowsContainer``
+    + *base Qt class* 
+        QMdiArea
+    + *additional properties*
+        None
+    + *appearance*
+        All the child widgets are displayed as subwindows in this container.
+
 * ``ScrollableContainer``
     + *base Qt class* 
         QScrollArea
@@ -126,5 +134,6 @@ toolbox     ToolBoxContainer
 tabbed      TabbedContainer
 stacked     StackedContainer
 list        ListContainer
+subwindows  SubWindowsContainer
 mainwindow  MainWindow
 =========== ====================

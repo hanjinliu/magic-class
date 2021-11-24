@@ -16,7 +16,7 @@ from .menu_gui import MenuGui, ContextMenuGui
 from .containers import (
     ButtonContainer,
     ListContainer,
-    MdiAreaContainer,
+    SubWindowsContainer,
     ScrollableContainer,
     CollapsibleContainer,
     SplitterContainer,
@@ -327,8 +327,8 @@ class StackedClassGui: pass
 @make_gui(ListContainer, no_margin=False)
 class ListClassGui: pass
 
-@make_gui(MdiAreaContainer, no_margin=False)
-class MdiClassGui: pass
+@make_gui(SubWindowsContainer, no_margin=False)
+class SubWindowsClassGui: pass
 
 @make_gui(MainWindow)
 class MainWindowClassGui: pass
