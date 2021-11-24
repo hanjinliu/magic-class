@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Callable, Any
+from typing import Callable, Any, Iterable
 from functools import wraps
 from collections import defaultdict
 from qtpy.QtWidgets import QLabel, QMenu, QAction
@@ -23,6 +23,7 @@ class BaseWidget(FreeWidget):
         self._callbacks: defaultdict[type, list[_Callback]] = defaultdict(list)
         self._delegates: dict[type, Callable[[Any], str]] = dict()
         self._contextmenu: defaultdict[type, list[_Callback]] = defaultdict(list)
+        self._tooltip: dict[type, Callable[[Any], str]] = dict()
         
     @property
     def value(self):
@@ -58,7 +59,7 @@ class BaseWidget(FreeWidget):
             return func
         return wrapper
     
-    def register_contextmenu(self, type_:type):
+    def register_contextmenu(self, type_: type):
         """
         Register a custom context menu for items of certain type.
         """        
@@ -66,6 +67,18 @@ class BaseWidget(FreeWidget):
             self._contextmenu[type_].append(func)
             return func
         return wrapper
+    
+    def register_tooltip(self, type_: type):
+        """
+        Register a custom tooltipfor items of certain type.
+        """
+        def wrapper(func: Callable | str):
+            if isinstance(func, str):
+                func = lambda x: func
+            self._tooltip[type_] = func
+            return func
+        return wrapper
+        
 
 class ContextMenuMixin:
     """

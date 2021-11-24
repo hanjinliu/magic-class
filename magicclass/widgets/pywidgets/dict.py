@@ -38,7 +38,7 @@ class DictWidget(BaseWidget, MutableMapping):
         return self._tablewidget.rowCount()
     
     @property
-    def value(self) -> list[Any]:
+    def value(self) -> dict[str, Any]:
         return {k: self._tablewidget.item(row, 0) for k, row in self._dict}
         
     def __getitem__(self, k: str) -> Any:
@@ -63,6 +63,8 @@ class DictWidget(BaseWidget, MutableMapping):
             
         name = self._delegates.get(type(obj), str)(obj)
         value_item = PyTableWidgetItem(obj, name)
+        tooltip = self._tooltip.get(type(obj), str)(obj)
+        value_item.setToolTip(tooltip)
         self._tablewidget.setItem(row, 0, value_item)
 
     def __delitem__(self, k: str) -> None:
@@ -73,27 +75,48 @@ class DictWidget(BaseWidget, MutableMapping):
         return iter(self._dict)
     
     def keys(self):
+        """
+        Return the view of dictionary keys.
+        """        
         return self._dict.keys()
     
     def values(self) -> DictValueView:
+        """
+        Return the view of dictionary values as Python objects.
+        """        
         return DictValueView(self._tablewidget)
     
     def items(self) -> DictItemView:
+        """
+        Return the view of dictionary keys and values as strings and Python objects.
+        """        
         return DictItemView(self._tablewidget)
     
     def update(self, d: dict[str, Any]):
+        """
+        Update the dictionary contents.
+        """        
         for k, v in d.items():
             self[k] = v
             
     def clear(self) -> None:
+        """
+        Clear dictionary contents.
+        """        
         self._tablewidget.clear()
         self._dict.clear()
     
     def pop(self, k: str):
+        """
+        Pop a dictionary content.
+        """        
         row = self._dict.pop(k)
         out = self._tablewidget.item(row, 0).obj
         self._tablewidget.removeRow(row)
         return out
+    
+    def get(self, k: str, default=None):
+        self._dict.get(k, default)
 
 class PyTableWidget(ContextMenuMixin, QTableWidget):
     def item(self, row: int, column: int) -> PyTableWidgetItem:

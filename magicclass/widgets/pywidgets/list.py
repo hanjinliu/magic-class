@@ -70,7 +70,9 @@ class ListWidget(BaseWidget, MutableSequence):
         Insert object of any type to the list.
         """
         name = self._delegates.get(type(obj), str)(obj)
+        tooltip = self._tooltip.get(type(obj), str)(obj)
         item = PyListWidgetItem(self._listwidget, obj=obj, name=name)
+        item.setToolTip(tooltip)
         self._listwidget.insertItem(i, item)
         
     def __getitem__(self, i: int) -> Any:
