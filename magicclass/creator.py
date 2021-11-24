@@ -1,5 +1,5 @@
 from __future__ import annotations
-from .core import magicclass, WidgetType
+from .core import magicclass, WidgetType, MagicTemplate
 from ._base import BaseGui, PopUpMode, ErrorMode
 from .fields import field
 from .macro import Symbol, symbol
@@ -14,7 +14,7 @@ class Layout(Enum):
     horizontal = 1
 
 @magicclass(labels=False, layout="horizontal", widget_type=WidgetType.split)
-class MagicClassCreator:
+class MagicClassCreator(MagicTemplate):
     def __post_init__(self):
         self.code_block = self.ViewPanel.Panels.Code.txt
         self.Reset()
@@ -26,9 +26,9 @@ class MagicClassCreator:
         return self.ViewPanel.Panels.GUI[0]
         
     @magicclass(widget_type=WidgetType.tabbed)
-    class Tools:
+    class Tools(MagicTemplate):
         @magicclass
-        class Add_Container:
+        class Add_Container(MagicTemplate):
             layout_ = field(Layout)
             labels_ = field(True)
             name_ = field("Gui")
@@ -36,7 +36,7 @@ class MagicClassCreator:
             widget_type_ = field(WidgetType)
             
             @magicclass(widget_type="collapsible")
-            class Others:
+            class Others(MagicTemplate):
                 close_on_run_ = field(True)
                 popup_mode_ = field(PopUpMode)
                 error_mode_ = field(ErrorMode)
@@ -44,7 +44,7 @@ class MagicClassCreator:
             def append_(self): ...
         
         @magicclass
-        class Add_basic_widget:
+        class Add_basic_widget(MagicTemplate):
             def append_PushButton(self): ...
             def append_LineEdit(self): ...
             def append_CheckBox(self): ...
@@ -56,16 +56,16 @@ class MagicClassCreator:
     
     
     @magicclass
-    class ViewPanel:
+    class ViewPanel(MagicTemplate):
         @magicclass(labels=False, widget_type="tabbed")
-        class Panels:
+        class Panels(MagicTemplate):
             @magicclass(labels=False)
-            class GUI:
+            class GUI(MagicTemplate):
                 """
                 Your GUI looks like this!
                 """
             @magicclass(labels=False)
-            class Code:
+            class Code(MagicTemplate):
                 """
                 A template of Python code is available here!
                 """                
