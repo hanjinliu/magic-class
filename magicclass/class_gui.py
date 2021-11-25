@@ -1,5 +1,6 @@
 from __future__ import annotations
 from inspect import signature
+import inspect
 from typing import Any
 from qtpy.QtWidgets import QMenuBar, QWidget
 from qtpy.QtCore import Qt
@@ -7,8 +8,11 @@ from magicgui.widgets import Container, MainWindow,Label, FunctionGui, Image, Ta
 from magicgui.widgets._bases import Widget, ButtonWidget, ValueWidget, ContainerWidget
 from magicgui.widgets._concrete import _LabeledWidget
 
+from magicclass.signature import MagicMethodSignature, get_additional_option
+
 from .macro import Expr, Head, Symbol, symbol
-from .utils import iter_members, extract_tooltip, get_parameters, define_callback, InvalidMagicClassError
+from .utils import (get_signature, iter_members, extract_tooltip, get_parameters, 
+                    define_callback, InvalidMagicClassError, get_index)
 from .widgets import FreeWidget
 from .mgui_ext import PushButtonPlus
 from .fields import MagicField
@@ -86,15 +90,16 @@ class ClassGuiBase(BaseGui):
                 continue
             
             try:
-                # First make sure none of them is type object nor MagicField object.
                 if isinstance(attr, type):
                     # Nested magic-class
                     widget = attr()
                     setattr(self, name, widget)
+                    self.__magicclass_children__.append(widget)
                 
                 elif isinstance(attr, BaseGui):
                     widget = attr
                     setattr(self, name, widget)
+                    self.__magicclass_children__.append(widget)
                 
                 elif isinstance(attr, MagicField):
                     # If MagicField is given by field() function.
@@ -107,14 +112,7 @@ class ClassGuiBase(BaseGui):
                     
                 else:
                     # convert class method into instance method
-                    if not hasattr(attr, "__magicclass_wrapped__"):
-                        # Standard method definition
-                        widget = getattr(self, name, None)
-
-                    else:
-                        # If the method is redefined, the newer one should be used instead, while the
-                        # order of widgets should follow the place of the older method.
-                        widget = attr.__magicclass_wrapped__.__get__(self)
+                    widget = getattr(self, name, None)
                 
                 if isinstance(widget, MenuGui):
                     # Add menubar to container
@@ -158,14 +156,20 @@ class ClassGuiBase(BaseGui):
                             widget.name = name
                         if hasattr(widget, "text") and not widget.text:
                             widget.text = widget.name.replace("_", " ")
-                    
+                        
                     # Now, "widget" is a Widget object. Add widget in a way similar to "insert" method 
                     # of Container.
-                    
-                    if not name.startswith("_"):
+                    if name.startswith("_"):
+                        continue
+                
+                    clsname = get_additional_option(attr, "into")
+                    if clsname is not None:
+                        self._unwrap_method(clsname, name, widget)
+                    else:
                         self.insert(n_insert, widget)
                         n_insert += 1
-                        _hist.append((name, str(type(attr)), type(widget).__name__))
+                    
+                    _hist.append((name, str(type(attr)), type(widget).__name__))
             
             except Exception as e:
                 hist_str = "\n\t".join(map(
@@ -228,8 +232,10 @@ def make_gui(container: type[ContainerWidget], no_margin: bool = True):
                 object.__setattr__(self, name, value)
 
         def insert(self: cls, key: int, widget: Widget):
+            # _hide_labels should not contain Container because some ValueWidget like widgets
+            # are Containers.
             _hide_labels = (_LabeledWidget, ButtonWidget, ClassGuiBase, FreeWidget, Label,
-                            Image, Table)
+                            Image, Table, FunctionGui)
                 
             if isinstance(widget, ValueWidget):
                 widget.changed.connect(lambda: self.changed.emit(self))

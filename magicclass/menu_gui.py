@@ -2,21 +2,23 @@ from __future__ import annotations
 from typing import Callable, Iterable
 import warnings
 from inspect import signature
+from collections.abc import MutableSequence
 from magicgui.events import Signal
-from magicgui.widgets import Container, Image, Table, Label, FunctionGui
+from magicgui.widgets import Image, Table, Label, FunctionGui
 from magicgui.application import use_app
 from magicgui.widgets._bases import ButtonWidget
 from magicgui.widgets._bases.widget import Widget
 from qtpy.QtWidgets import QMenu
 
+from .signature import get_additional_option
 from .fields import MagicField
 from .widgets import Separator, FreeWidget
 from .mgui_ext import AbstractAction, Action, WidgetAction, _LabeledWidgetAction
 from ._base import BaseGui, PopUpMode, ErrorMode
 from .macro import Expr, Head, Symbol, symbol
-from .utils import get_parameters, iter_members, define_callback, InvalidMagicClassError
+from .utils import get_parameters, iter_members, define_callback, InvalidMagicClassError, get_index
 
-class MenuGuiBase(BaseGui):
+class MenuGuiBase(BaseGui, MutableSequence):
     _component_class = Action
     changed = Signal(object)
     
@@ -43,6 +45,7 @@ class MenuGuiBase(BaseGui):
         self.native = QMenu(name, parent)
         self.native.setToolTipsVisible(True)
         self.native.setObjectName(self.__class__.__name__)
+        self.name = name
         self._list: list[MenuGuiBase | AbstractAction] = []
         self.labels = labels
         
@@ -103,33 +106,28 @@ class MenuGuiBase(BaseGui):
                     
                 else:
                     # convert class method into instance method
-                    if not hasattr(attr, "__magicclass_wrapped__"):
-                        widget = getattr(self, name, None)
-                    else:
-                        # If the method is redefined, the newer one should be used instead, while the
-                        # order of widgets should be follow the place of the older method.
-                        widget = attr.__magicclass_wrapped__.__get__(self)
-                
+                    widget = getattr(self, name, None)
+                    
                 if name.startswith("_"):
                     continue
-                elif isinstance(widget, Widget):
-                    if isinstance(attr, FunctionGui):
-                        widget = attr
-                        p0 = list(signature(attr).parameters)[0]
-                        getattr(widget, p0).bind(self) # set self to the first argument
-                        # magic-class has to know when the nested FunctionGui is called.
-                        f = _nested_function_gui_callback(self, widget)
-                        widget.called.connect(f)
+                
+                if isinstance(widget, FunctionGui):
+                    p0 = list(signature(attr).parameters)[0]
+                    getattr(widget, p0).bind(self) # set self to the first argument
+                    # magic-class has to know when the nested FunctionGui is called.
+                    f = _nested_function_gui_callback(self, widget)
+                    widget.called.connect(f)
                     
-                    if not isinstance(attr, Separator):
-                        waction = WidgetAction(widget, name=name, parent=self.native)
-                        widget = waction
-                    
-                if isinstance(widget, (MenuGuiBase, AbstractAction, Separator, Container, Callable)):
+                if isinstance(widget, (MenuGuiBase, AbstractAction, Widget, Callable)):
                     if (not isinstance(widget, Widget)) and callable(widget):
                         widget = self._create_widget_from_method(widget)
-                                            
-                    self.append(widget)
+                    
+                    clsname = get_additional_option(attr, "into")
+                    if clsname is not None:
+                        self._unwrap_method(clsname, name, widget)
+                    else:           
+                        self.append(widget)
+                    
                     _hist.append((name, str(type(attr)), type(widget).__name__))
             
             except Exception as e:
@@ -160,37 +158,62 @@ class MenuGuiBase(BaseGui):
             raise KeyError(key)
         return out
     
+    def __setitem__(self, key, value):
+        raise NotImplementedError()
+    
+    def __delitem__(self, key: int | str) -> None:
+        self.native.removeAction(self[key].native)
+    
     def __iter__(self) -> Iterable[MenuGuiBase | AbstractAction]:
         return iter(self._list)
     
-    def append(self, obj: Callable | MenuGuiBase | AbstractAction | Separator | Container):
+    def __len__(self) -> int:
+        return len(self._list)
+    
+    def append(self, obj: Callable | MenuGuiBase | AbstractAction | Widget) -> None:
+        return self.insert(len(self._list), obj)
+    
+    def insert(self, key: int, obj: Callable | MenuGuiBase | AbstractAction | Widget) -> None:
+        """
+        Insert object into the menu. Could be widget or callable.
+
+        Parameters
+        ----------
+        key : int
+            Position to insert.
+        obj : Callable | MenuGuiBase | AbstractAction | Widget
+            Object to insert.
+        """        
         if isinstance(obj, self._component_class):
-            self.native.addAction(obj.native)
-            self._list.append(obj)
+            _insert(self.native, key, obj.native)
+            self._list.insert(key, obj)
         elif isinstance(obj, Separator):
-            self.native.addSeparator()
+            _insert(self.native, key, "sep")
+            self._list.insert(key, obj)
+        elif isinstance(obj, Widget):
+            waction = WidgetAction(obj, name=obj.name, parent=self.native)
+            if isinstance(obj, BaseGui):
+                obj.__magicclass_parent__ = self
+            self.insert(key, waction)
         elif isinstance(obj, WidgetAction):
-            _hide_labels = (_LabeledWidgetAction, ButtonWidget, FreeWidget, Label, FunctionGui,
-                            Image, Table)
-            _obj = obj
-            if not isinstance(obj.widget, _hide_labels):
-                _obj = _LabeledWidgetAction.from_action(obj)
-            _obj.parent = self
-            self.native.addAction(_obj.native)
-            self._list.append(obj)
-            self._unify_label_widths()
+            if isinstance(obj.widget, Separator):
+                self.insert(key, obj.widget)
+            else:
+                _hide_labels = (_LabeledWidgetAction, ButtonWidget, FreeWidget, Label, 
+                                FunctionGui, Image, Table)
+                _obj = obj
+                if not isinstance(obj.widget, _hide_labels):
+                    _obj = _LabeledWidgetAction.from_action(obj)
+                _obj.parent = self
+                _insert(self.native, key, _obj.native)
+                self._unify_label_widths()
+                self._list.insert(key, obj)
         elif isinstance(obj, MenuGuiBase):
             obj.__magicclass_parent__ = self
-            self.native.addMenu(obj.native)
+            _insert(self.native, key, obj.native)
+            self._list.insert(key, obj)
+            self.__magicclass_children__.insert(key, obj)
             obj.native.setParent(self.native, obj.native.windowFlags())
-            self._list.append(obj)
-        elif isinstance(obj, Container):
-            obj.__magicclass_parent__ = self
-            obj.native.setParent(self.native, obj.native.windowFlags())
-            _func = lambda: obj.show()
-            _func.__name__ = obj.name
-            action = self._create_widget_from_method(_func)
-            self.append(action)
         else:
             raise TypeError(f"{type(obj)} is not supported.")
     
@@ -207,6 +230,41 @@ class MenuGuiBase(BaseGui):
                 if labeled_widget:
                     labeled_widget.label_width = widest_label
 
+def _insert(qmenu: QMenu, key: int, obj):
+    """
+    Insert a QObject into a QMenu in a Pythonic way, like qmenu.insert(key, obj).
+
+    Parameters
+    ----------
+    qmenu : QMenu
+        QMenu object to which object will be inserted.
+    key : int
+        Position to insert.
+    obj : QMenu or QAction or "sep"
+        Object to be inserted.
+    """    
+    actions = qmenu.actions()
+    l = len(actions)
+    if key < 0:
+        key = key + l
+    if key == l:
+        if isinstance(obj, QMenu):
+            qmenu.addMenu(obj)
+        elif obj == "sep":
+            qmenu.addSeparator()
+        else:
+            qmenu.addAction(obj)
+    else:
+        new_action = actions[key]
+        before = new_action
+        if isinstance(obj, QMenu):
+            qmenu.insertMenu(before, obj)
+        elif obj == "sep":
+            qmenu.insertSeparator(before)
+        else:
+            qmenu.insertAction(before, obj)
+        
+    
 class MenuGui(MenuGuiBase):
     """Magic class that will be converted into a menu bar."""
 

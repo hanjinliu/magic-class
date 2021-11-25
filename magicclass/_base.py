@@ -1,20 +1,20 @@
 from __future__ import annotations
 from functools import wraps as functools_wraps
-from typing import Any, Callable, TYPE_CHECKING, TypeVar, overload
+from typing import Any, Callable, TYPE_CHECKING, Iterable, TypeVar, overload
 from typing_extensions import _AnnotatedAlias
 import inspect
 from enum import Enum
 import warnings
 from collections.abc import MutableSequence
 
-from magicgui import magicgui
 from magicgui.events import Signal
 from magicgui.signature import MagicParameter
 from magicgui.widgets import FunctionGui, FileEdit, EmptyWidget, Widget
 from magicgui.widgets._bases import ValueWidget
 
 from .macro import Macro, Expr, Head, Symbol, symbol
-from .utils import get_signature, iter_members, n_parameters, extract_tooltip, raise_error_in_msgbox, identity_wrapper, screen_center
+from .utils import (get_signature, iter_members, n_parameters, extract_tooltip, raise_error_in_msgbox, 
+                    identity_wrapper, screen_center, get_index)
 from .widgets import Separator, MacroEdit
 from .mgui_ext import FunctionGuiPlus, PushButtonPlus
 from .fields import MagicField
@@ -47,7 +47,8 @@ defaults = {"popup_mode": PopUpMode.popup,
 
 class MagicTemplate:    
     _recorded_macro: Macro[Expr] = Macro()
-    __magicclass_parent__: None | BaseGui
+    __magicclass_parent__: None | MagicTemplate
+    __magicclass_children__: list[MagicTemplate]
     _close_on_run: bool
     _popup_mode: PopUpMode
     _error_mode: ErrorMode
@@ -228,65 +229,48 @@ class MagicTemplate:
             
         def wrapper(method: Callable):
             # Base function to get access to the original function
-            def _childmethod(self: cls, *args, **kwargs):
-                _, _parent_method = _search_wrapper(self, funcname, clsname)
-                return _parent_method(*args, **kwargs)
-            
             if isinstance(method, FunctionGui):
-                fgui = method
-                parent_method = fgui._function
+                func = method._function
             else:
-                fgui = None
-                parent_method = method
-                
-            # Must be template as long as this wrapper function is called
-            if template is None:
-                _wrap_func = functools_wraps(parent_method)
-            else:
-                def _wrap_func(f):
-                    f = _wraps(template, reference=parent_method)(f)
-                    f.__wrapped__ = parent_method
-                    f.__name__ = parent_method.__name__
-                    return f
-                    
-            # If method is defined as a member of class X, __qualname__ will be X.<method name>.
-            # We can know the namespace of the wrapped function with __qualname__.
-            if isinstance(method, FunctionGui):
-                clsname, funcname = fgui._function.__qualname__.split(".")
-                options = dict(
-                    call_button=fgui._call_button.text if fgui._call_button else None,
-                    layout=fgui.layout,
-                    labels=fgui.labels,
-                    auto_call=fgui._auto_call,
-                    result_widget=bool(fgui._result_widget)
-                    )
-                
-                childmethod = magicgui(**options)(_wrap_func(_childmethod))
-                parent_method = _copy_function(parent_method)
-            
-            else:
-                clsname, funcname = parent_method.__qualname__.split(".")
-                childmethod = _wrap_func(_childmethod)
-            
-            # To avoid two buttons with same bound function being shown up
-            upgrade_signature(parent_method, caller_options={"visible": False})
-            
-            if hasattr(cls, funcname):
-                # Sometimes we want to pre-define function to arrange the order of widgets.
-                predifined = getattr(cls, funcname)
-                predifined.__wrapped__ = childmethod
-                predifined.__magicclass_wrapped__ = childmethod
-                if hasattr(childmethod, "__signature__"):
-                    predifined.__signature__ = childmethod.__signature__
-                parent_method.__doc__ = parent_method.__doc__ or predifined.__doc__
-            else:
-                setattr(cls, funcname, childmethod)
-            
-            childmethod.__doc__ = parent_method.__doc__
-            
-            return parent_method
+                func = method
+            if template is not None:
+                func = _wraps(template)(func)
+            upgrade_signature(func, additional_options={"into": cls.__name__})
+            return method
         
         return wrapper if method is None else wrapper(method)
+    
+    def _unwrap_method(self, child_clsname: str, name: str, widget: FunctionGui | PushButtonPlus):
+        for child_instance in self._iter_child_magicclasses():
+            if child_instance.__class__.__name__ == child_clsname:
+                # get the position of predefined child widget
+                try:
+                    index = get_index(child_instance, name)
+                    new = False
+                except ValueError:
+                    index = len(child_instance)
+                    new = True
+                
+                self.append(widget)
+                
+                if isinstance(widget, FunctionGui):
+                    if new:
+                        child_instance.append(widget)
+                    else:
+                        del child_instance[index]
+                        child_instance.insert(index, widget)
+                else:
+                    widget.visible = False
+                    if new:
+                        widget = child_instance._create_widget_from_method(lambda x: None)
+                        child_instance.append(widget)
+                    else:
+                        child_widget: PushButtonPlus = child_instance[index]
+                        child_widget.changed.disconnect()
+                        child_widget.changed.connect(widget.changed)
+                break
+        else:
+            raise RuntimeError(f"{child_clsname} not found in class {self.__class__.__name__}")
     
     def _convert_attributes_into_widgets(self):
         """
@@ -435,11 +419,11 @@ class MagicTemplate:
                             self.append(mgui)
                         elif self._popup_mode == PopUpMode.above:
                             name = _get_widget_name(widget)
-                            i = _get_index(self, name)
+                            i = get_index(self, name)
                             self.insert(i, mgui)
                         elif self._popup_mode == PopUpMode.below:
                             name = _get_widget_name(widget)
-                            i = _get_index(self, name)
+                            i = get_index(self, name)
                             self.insert(i+1, mgui)
                             
                     elif self._popup_mode == PopUpMode.dock:
@@ -497,10 +481,16 @@ class MagicTemplate:
             current_self = current_self.__magicclass_parent__
         return current_self
     
+    def _iter_child_magicclasses(self) -> Iterable[MagicTemplate]:
+        for child in self.__magicclass_children__:
+            yield child
+            yield from child.__magicclass_children__
+    
 class BaseGui(MagicTemplate):
     def __init__(self, close_on_run, popup_mode, error_mode):
         self._recorded_macro: Macro[Expr] = Macro()
         self.__magicclass_parent__: None | BaseGui = None
+        self.__magicclass_children__: list[MagicTemplate] = []
         self._close_on_run = close_on_run
         self._popup_mode = popup_mode
         self._error_mode = error_mode
@@ -514,13 +504,6 @@ def _temporal_function_gui_callback(bgui: MagicTemplate, fgui: FunctionGuiPlus, 
         _function = fgui._function
     else:
         raise TypeError("fgui must be FunctionGui object.")
-    
-    cls_method = getattr(bgui.__class__, _function.__name__)
-    if hasattr(cls_method, "__magicclass_wrapped__"):
-        clsname, funcname = _function.__qualname__.split(".")
-        root, _function = _search_wrapper(bgui, funcname, clsname)
-    else:
-        root = bgui
         
     def _after_run():
         bound = fgui._previous_bound
@@ -533,17 +516,17 @@ def _temporal_function_gui_callback(bgui: MagicTemplate, fgui: FunctionGuiPlus, 
         # 2. Emit value changed signal.
         # But if there are more, they also have to be called.
         if len(widget.changed._slots) > 2:
-            b = Expr(head=Head.getitem, args=[symbol(root), widget.name])
+            b = Expr(head=Head.getitem, args=[symbol(bgui), widget.name])
             ev = Expr(head=Head.getattr, args=[b, Symbol("changed")])
             line = Expr(head=Head.call, args=[ev])
             if result_required:
                 line = Expr(head=Head.assign, args=[result, line])
-            root._recorded_macro.append(line)
+            bgui._recorded_macro.append(line)
         else:
-            line = Expr.parse_method(root, _function, bound.args, bound.kwargs)
+            line = Expr.parse_method(bgui, _function, bound.args, bound.kwargs)
             if result_required:
                 line = Expr(Head.assign, [result, line])
-            root._recorded_macro.append(line)
+            bgui._recorded_macro.append(line)
         
         # Deal with return annotation
         
@@ -560,36 +543,10 @@ def _temporal_function_gui_callback(bgui: MagicTemplate, fgui: FunctionGuiPlus, 
     
     return _after_run
 
-def _copy_function(f):
-    @functools_wraps(f)
-    def out(self, *args, **kwargs):
-        return f(self, *args, **kwargs)
-    return out
-
 def _one_more_arg(f):
     def out(e):
         return f()
     return out
-
-def _get_index(container, widget_or_name):
-    if isinstance(widget_or_name, str):
-        name = widget_or_name
-    else:
-        name = widget_or_name.name
-    for i, widget in enumerate(container):
-        if widget.name == name:
-            break
-    else:
-        raise ValueError(f"{widget_or_name} not found in {container}")
-    return i
-
-def _search_wrapper(bgui: MagicTemplate, funcname: str, clsname: str) -> tuple[MagicTemplate, Callable]:
-    current_self = bgui.__magicclass_parent__
-    while not (hasattr(current_self, funcname) and 
-                current_self.__class__.__name__ == clsname):
-        current_self = current_self.__magicclass_parent__
-    return current_self, getattr(current_self, funcname)
-
 
 def _build_mgui(widget_, func):
     if widget_.mgui is not None:
