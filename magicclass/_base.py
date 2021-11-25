@@ -235,8 +235,11 @@ class MagicTemplate:
                 func = method
             if template is not None:
                 func = _wraps(template)(func)
+            if hasattr(cls, method.__name__):
+                getattr(cls, method.__name__).__signature__ = get_signature(func)
+            
             upgrade_signature(func, additional_options={"into": cls.__name__})
-            return method
+            return func
         
         return wrapper if method is None else wrapper(method)
     
