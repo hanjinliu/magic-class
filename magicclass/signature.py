@@ -1,5 +1,7 @@
 from __future__ import annotations
+from typing import Any
 from magicgui.signature import MagicSignature
+from magicgui.widgets import FunctionGui
 import inspect
 from .utils import get_signature
 
@@ -48,6 +50,18 @@ def upgrade_signature(func, gui_options: dict = None, caller_options: dict = Non
             )
 
     return func
+
+def get_additional_option(obj: Any, option: str, default = None):
+    if isinstance(obj, FunctionGui):
+        sig = getattr(obj._function, "__signature__", None)
+    else:
+        sig = getattr(obj, "__signature__", None)
+    if isinstance(sig, MagicMethodSignature):
+        opt = sig.additional_options
+        return opt.get(option, default)
+    else:
+        return default
+    
 
 class MagicMethodSignature(MagicSignature):
     """

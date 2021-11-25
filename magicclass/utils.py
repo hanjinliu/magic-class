@@ -8,7 +8,7 @@ from qtpy.QtWidgets import QApplication, QMessageBox
 
 if TYPE_CHECKING:
     from magicgui.widgets._bases import Widget
-    from magicgui.widgets import FunctionGui
+    from magicgui.widgets import FunctionGui, Container
     from .fields import MagicField
 
 APPLICATION = None
@@ -121,6 +121,23 @@ def get_signature(func):
     else:
         sig = inspect.signature(func)
     return sig
+
+
+def get_index(container: "Container", widget_or_name: "Widget" | str):
+    """
+    Identical to container[widget_or_name], which sometimes doesn't work
+    in magic-class.
+    """    
+    if isinstance(widget_or_name, str):
+        name = widget_or_name
+    else:
+        name = widget_or_name.name
+    for i, widget in enumerate(container):
+        if widget.name == name:
+            break
+    else:
+        raise ValueError(f"{widget_or_name} not found in {container}")
+    return i
 
 def define_callback(self, callback: Callable):
     clsname, funcname = callback.__qualname__.split(".")
