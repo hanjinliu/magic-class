@@ -1,6 +1,5 @@
 from __future__ import annotations
 from inspect import signature
-import inspect
 from typing import Any
 from qtpy.QtWidgets import QMenuBar, QWidget
 from qtpy.QtCore import Qt
@@ -8,11 +7,10 @@ from magicgui.widgets import Container, MainWindow,Label, FunctionGui, Image, Ta
 from magicgui.widgets._bases import Widget, ButtonWidget, ValueWidget, ContainerWidget
 from magicgui.widgets._concrete import _LabeledWidget
 
-from magicclass.signature import MagicMethodSignature, get_additional_option
+from magicclass.signature import get_additional_option
 
 from .macro import Expr, Head, Symbol, symbol
-from .utils import (get_signature, iter_members, extract_tooltip, get_parameters, 
-                    define_callback, InvalidMagicClassError, get_index)
+from .utils import iter_members, extract_tooltip, get_parameters, define_callback, InvalidMagicClassError
 from .widgets import FreeWidget
 from .mgui_ext import PushButtonPlus
 from .fields import MagicField
@@ -344,7 +342,8 @@ def _nested_function_gui_callback(cgui: ClassGuiBase, fgui: FunctionGui):
         inputs = get_parameters(fgui)
         args = [Expr(head=Head.kw, args=[Symbol(k), v]) for k, v in inputs.items()]
         # args[0] is self
-        sub = Expr(head=Head.getattr, args=[cgui._recorded_macro[0].args[0], Symbol(fgui.name)]) # {x}.func
+        sub = Expr(head=Head.getattr, 
+                   args=[cgui._recorded_macro[0].args[0], Symbol(fgui.name)]) # {x}.func
         expr = Expr(head=Head.call, args=[sub] + args[1:]) # {x}.func(args...)
 
         if fgui._auto_call:

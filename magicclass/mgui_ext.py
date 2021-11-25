@@ -14,8 +14,6 @@ from .widgets import Separator
 
 # magicgui widgets that need to be extended to fit into magicclass
 
-# TODO: The "running" properties are not compatible with @wraps.
-
 class FunctionGuiPlus(FunctionGui):
     """
     FunctionGui class with a parameter recording functionality etc.
@@ -185,6 +183,10 @@ class PushButtonPlus(PushButton):
         return None
     
 class AbstractAction:
+    """
+    QAction encapsulated class with a similar API as magicgui Widget.
+    This class makes it easier to combine QMenu to magicgui.
+    """
     changed = Signal(object)
     support_value: bool
     native: QAction | QWidgetAction
@@ -231,7 +233,6 @@ class AbstractAction:
         
 
 class Action(AbstractAction):
-    """QAction encapsulated class with a similar API as magicgui Widget."""
     support_value = True
     
     def __init__(self, *args, name: str = None, text: str = None, gui_only: bool = True, **kwargs):

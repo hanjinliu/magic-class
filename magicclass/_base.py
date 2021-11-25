@@ -203,16 +203,19 @@ class MagicTemplate:
               *, 
               template: Callable | None = None) -> Callable:
         """
-        Wrap a parent method in a child magic-class.
+        Wrap a parent method in a child magic-class. Wrapped method will appear in the
+        child widget but behaves as if it is in the parent widget.
         
         Basically, this function is used as a wrapper like below.
         
-        >>> @magicclass
-        >>> class C:
-        >>>     @magicclass
-        >>>     class D: ...
-        >>>     @D.wraps
-        >>>     def func(self, ...): ...
+        .. code-block:: python
+        @magicclass
+        class C:
+            @magicclass
+            class D: 
+                def func(self, ...): ... # pre-definition
+            @D.wraps
+            def func(self, ...): ...
 
         Parameters
         ----------
@@ -244,6 +247,26 @@ class MagicTemplate:
         return wrapper if method is None else wrapper(method)
     
     def _unwrap_method(self, child_clsname: str, name: str, widget: FunctionGui | PushButtonPlus):
+        """
+        This private method converts class methods that are wrapped by its child widget class
+        into widget in child widget. Practically same widget is shared between parent and child,
+        but only visible in the child side.
+
+        Parameters
+        ----------
+        child_clsname : str
+            Name of child widget class name.
+        name : str
+            Name of method.
+        widget : FunctionGui
+            Widget to be added.
+
+        Raises
+        ------
+        RuntimeError
+            If ``child_clsname`` was not found in child widget list. This error will NEVER be raised
+            in the user's side.
+        """        
         for child_instance in self._iter_child_magicclasses():
             if child_instance.__class__.__name__ == child_clsname:
                 # get the position of predefined child widget
