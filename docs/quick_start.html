@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Quick Start &mdash; magic-class 0.5.8 documentation</title>
+  <title>Quick Start &mdash; magic-class 0.5.9 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -30,7 +30,7 @@
             <a href="index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.8
+                0.5.9
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -46,6 +46,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#macro-recording">Macro Recording</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#parameter-options">Parameter Options</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#change-button-designs">Change Button Designs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#code-completion">Code Completion</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="options.html">Options in magic-class</a></li>
@@ -228,6 +229,21 @@ the design of button itself. <code class="docutils literal notranslate"><span cl
 </pre></div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">set_design</span></code> can take properties of <code class="docutils literal notranslate"><span class="pre">PushButton</span></code> as arguments.</p>
+</section>
+<section id="code-completion">
+<h2>Code Completion<a class="headerlink" href="#code-completion" title="Permalink to this headline">¶</a></h2>
+<p>A problem of using decorators to overwrite classes is code completion. When you are coding, the classes
+do not inherits magic classes yet, so IDE and console don't know they will have attributes such as
+<code class="docutils literal notranslate"><span class="pre">self.parent_viewer</span></code> or <code class="docutils literal notranslate"><span class="pre">self.name</span></code>.</p>
+<p>All the magic classes inherits <code class="docutils literal notranslate"><span class="pre">MagicTemplate</span></code> class. This class is designed in a way which does not
+interfere with magic class decorators, while provides enough information of typings and annotations.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">MagicTemplate</span>
+
+<span class="nd">@magicclass</span>
+<span class="k">class</span> <span class="nc">MyClass</span><span class="p">(</span><span class="n">MagicTemplate</span><span class="p">):</span> <span class="c1"># inherit here</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
 </section>
 </section>
 

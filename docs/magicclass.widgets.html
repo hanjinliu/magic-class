@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.widgets package &mdash; magic-class 0.5.8 documentation</title>
+  <title>magicclass.widgets package &mdash; magic-class 0.5.9 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -18,7 +18,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="magicclass.widgets.pywidgets package" href="magicclass.widgets.pywidgets.html" />
+    <link rel="next" title="magicclass.widgets.napari package" href="magicclass.widgets.napari.html" />
     <link rel="prev" title="magicclass package" href="magicclass.html" /> 
 </head>
 
@@ -30,7 +30,7 @@
             <a href="index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.8
+                0.5.9
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -40,7 +40,7 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul class="current">
+              <ul>
 <li class="toctree-l1"><a class="reference internal" href="quick_start.html">Quick Start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="options.html">Options in magic-class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="nest.html">Nest magic-classes</a></li>
@@ -50,28 +50,7 @@
 <li class="toctree-l1"><a class="reference internal" href="customize_macro.html">Customize Macro Recording</a></li>
 <li class="toctree-l1"><a class="reference internal" href="special_methods.html">Special attributes in magic-class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="containers.html">Container Variations</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="api.html">API References</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="magicclass.html">magicclass package</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">magicclass.widgets package</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.widgets.pywidgets.html">magicclass.widgets.pywidgets package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.widgets.qtgraph.html">magicclass.widgets.qtgraph package</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-magicclass.widgets.console">magicclass.widgets.console module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-magicclass.widgets.misc">magicclass.widgets.misc module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-magicclass.widgets.separator">magicclass.widgets.separator module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-magicclass.widgets.sequence">magicclass.widgets.sequence module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-magicclass.widgets.threading">magicclass.widgets.threading module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-magicclass.widgets.utils">magicclass.widgets.utils module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-magicclass.widgets">Module contents</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="magicclass.widgets.pywidgets.html">magicclass.widgets.pywidgets package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="magicclass.widgets.qtgraph.html">magicclass.widgets.qtgraph package</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API References</a></li>
 </ul>
 
         </div>
@@ -106,6 +85,12 @@
 <h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="magicclass.widgets.napari.html">magicclass.widgets.napari package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.widgets.napari.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.widgets.napari.html#module-magicclass.widgets.napari.canvas">magicclass.widgets.napari.canvas module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.widgets.napari.html#module-magicclass.widgets.napari">Module contents</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="magicclass.widgets.pywidgets.html">magicclass.widgets.pywidgets package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="magicclass.widgets.pywidgets.html#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="magicclass.widgets.pywidgets.html#module-magicclass.widgets.pywidgets.dict">magicclass.widgets.pywidgets.dict module</a></li>
@@ -269,7 +254,35 @@ executable GUI.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="magicclass.widgets.misc.show_messagebox">
 <span class="sig-prename descclassname"><span class="pre">magicclass.widgets.misc.</span></span><span class="sig-name descname"><span class="pre">show_messagebox</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <a class="reference internal" href="#magicclass.widgets.misc.MessageBoxMode" title="magicclass.widgets.misc.MessageBoxMode"><span class="pre">MessageBoxMode</span></a></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">MessageBoxMode.INFO</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/magicclass/widgets/misc.html#show_messagebox"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.misc.show_messagebox" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Freeze the GUI and open a messagebox dialog.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mode</strong> (<em>str</em><em> or </em><a class="reference internal" href="#magicclass.widgets.misc.MessageBoxMode" title="magicclass.widgets.misc.MessageBoxMode"><em>MessageBoxMode</em></a><em>, </em><em>default is MessageBoxMode.INFO</em>) -- Mode of message box. Must be &quot;error&quot;, &quot;warn&quot;, &quot;info&quot;, &quot;question&quot; or &quot;about&quot;.</p></li>
+<li><p><strong>title</strong> (<em>str</em><em>, </em><em>optional</em>) -- Title of messagebox.</p></li>
+<li><p><strong>text</strong> (<em>str</em><em>, </em><em>optional</em>) -- Text in messagebox.</p></li>
+<li><p><strong>parent</strong> (<em>QWidget</em><em>, </em><em>optional</em>) -- Parent widget.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>If &quot;OK&quot; or &quot;Yes&quot; is clicked, return True. Otherwise return False.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="magicclass.widgets.misc.show_url">
+<span class="sig-prename descclassname"><span class="pre">magicclass.widgets.misc.</span></span><span class="sig-name descname"><span class="pre">show_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">link</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/magicclass/widgets/misc.html#show_url"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.misc.show_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Open the link with the default browser.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>link</strong> (<em>str</em>) -- Link to the home page.</p>
+</dd>
+</dl>
+</dd></dl>
 
 </section>
 <section id="module-magicclass.widgets.separator">
@@ -396,12 +409,12 @@ executable GUI.</p>
 <span id="magicclass-widgets-utils-module"></span><h2>magicclass.widgets.utils module<a class="headerlink" href="#module-magicclass.widgets.utils" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.widgets.utils.FreeWidget">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.utils.</span></span><span class="sig-name descname"><span class="pre">FreeWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/utils.html#FreeWidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.utils.FreeWidget" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.utils.</span></span><span class="sig-name descname"><span class="pre">FreeWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'vertical'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/utils.html#FreeWidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.utils.FreeWidget" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.widget.Widget</span></code></p>
 <p>A Widget class with any QWidget as a child.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="magicclass.widgets.utils.FreeWidget.set_widget">
-<span class="sig-name descname"><span class="pre">set_widget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">widget</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">PyQt5.QtWidgets.QWidget</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/utils.html#FreeWidget.set_widget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.utils.FreeWidget.set_widget" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">set_widget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">widget</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">PyQt5.QtWidgets.QWidget</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/utils.html#FreeWidget.set_widget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.utils.FreeWidget.set_widget" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -431,42 +444,49 @@ These widgets are all compatible with the <code class="docutils literal notransl
 <dd><p>Bases: <a class="reference internal" href="magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.object.BaseWidget" title="magicclass.widgets.pywidgets.object.BaseWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.widgets.pywidgets.object.BaseWidget</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">collections.abc.MutableMapping</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="magicclass.widgets.DictWidget.clear">
-<span class="sig-name descname"><span class="pre">clear</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None.</span>&#160; <span class="pre">Remove</span> <span class="pre">all</span> <span class="pre">items</span> <span class="pre">from</span> <span class="pre">D.</span></span></span><a class="reference internal" href="_modules/magicclass/widgets/pywidgets/dict.html#DictWidget.clear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.DictWidget.clear" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">clear</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/magicclass/widgets/pywidgets/dict.html#DictWidget.clear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.DictWidget.clear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clear dictionary contents.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.DictWidget.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">k</span></em><span class="optional">[</span>, <em class="sig-param"><span class="pre">d</span></em><span class="optional">]</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">D[k]</span> <span class="pre">if</span> <span class="pre">k</span> <span class="pre">in</span> <span class="pre">D,</span> <span class="pre">else</span> <span class="pre">d.</span>&#160; <span class="pre">d</span> <span class="pre">defaults</span> <span class="pre">to</span> <span class="pre">None.</span></span></span><a class="reference internal" href="_modules/magicclass/widgets/pywidgets/dict.html#DictWidget.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.DictWidget.get" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="magicclass.widgets.DictWidget.items">
-<span class="sig-name descname"><span class="pre">items</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">a</span> <span class="pre">set-like</span> <span class="pre">object</span> <span class="pre">providing</span> <span class="pre">a</span> <span class="pre">view</span> <span class="pre">on</span> <span class="pre">D's</span> <span class="pre">items</span></span></span><a class="reference internal" href="_modules/magicclass/widgets/pywidgets/dict.html#DictWidget.items"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.DictWidget.items" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">items</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.dict.DictItemView" title="magicclass.widgets.pywidgets.dict.DictItemView"><span class="pre">magicclass.widgets.pywidgets.dict.DictItemView</span></a></span></span><a class="reference internal" href="_modules/magicclass/widgets/pywidgets/dict.html#DictWidget.items"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.DictWidget.items" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the view of dictionary keys and values as strings and Python objects.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="magicclass.widgets.DictWidget.keys">
-<span class="sig-name descname"><span class="pre">keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">a</span> <span class="pre">set-like</span> <span class="pre">object</span> <span class="pre">providing</span> <span class="pre">a</span> <span class="pre">view</span> <span class="pre">on</span> <span class="pre">D's</span> <span class="pre">keys</span></span></span><a class="reference internal" href="_modules/magicclass/widgets/pywidgets/dict.html#DictWidget.keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.DictWidget.keys" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/pywidgets/dict.html#DictWidget.keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.DictWidget.keys" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the view of dictionary keys.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="magicclass.widgets.DictWidget.pop">
-<span class="sig-name descname"><span class="pre">pop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">k</span></em><span class="optional">[</span>, <em class="sig-param"><span class="pre">d</span></em><span class="optional">]</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">v,</span> <span class="pre">remove</span> <span class="pre">specified</span> <span class="pre">key</span> <span class="pre">and</span> <span class="pre">return</span> <span class="pre">the</span> <span class="pre">corresponding</span> <span class="pre">value.</span></span></span><a class="reference internal" href="_modules/magicclass/widgets/pywidgets/dict.html#DictWidget.pop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.DictWidget.pop" title="Permalink to this definition">¶</a></dt>
-<dd><p>If key is not found, d is returned if given, otherwise KeyError is raised.</p>
+<span class="sig-name descname"><span class="pre">pop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/pywidgets/dict.html#DictWidget.pop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.DictWidget.pop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pop a dictionary content.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="magicclass.widgets.DictWidget.update">
-<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><span class="optional">[</span><em class="sig-param"><span class="pre">E</span></em>, <span class="optional">]</span><em class="sig-param"><span class="pre">**F</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None.</span>&#160; <span class="pre">Update</span> <span class="pre">D</span> <span class="pre">from</span> <span class="pre">mapping/iterable</span> <span class="pre">E</span> <span class="pre">and</span> <span class="pre">F.</span></span></span><a class="reference internal" href="_modules/magicclass/widgets/pywidgets/dict.html#DictWidget.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.DictWidget.update" title="Permalink to this definition">¶</a></dt>
-<dd><p>If E present and has a .keys() method, does:     for k in E: D[k] = E[k]
-If E present and lacks .keys() method, does:     for (k, v) in E: D[k] = v
-In either case, this is followed by: for k, v in F.items(): D[k] = v</p>
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">typing.Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/pywidgets/dict.html#DictWidget.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.DictWidget.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the dictionary contents.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="magicclass.widgets.DictWidget.value">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">value</span></span><em class="property"><span class="pre">:</span> <span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">typing.Any</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#magicclass.widgets.DictWidget.value" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">value</span></span><em class="property"><span class="pre">:</span> <span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">typing.Any</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#magicclass.widgets.DictWidget.value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="magicclass.widgets.DictWidget.values">
-<span class="sig-name descname"><span class="pre">values</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">an</span> <span class="pre">object</span> <span class="pre">providing</span> <span class="pre">a</span> <span class="pre">view</span> <span class="pre">on</span> <span class="pre">D's</span> <span class="pre">values</span></span></span><a class="reference internal" href="_modules/magicclass/widgets/pywidgets/dict.html#DictWidget.values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.DictWidget.values" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">values</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.dict.DictValueView" title="magicclass.widgets.pywidgets.dict.DictValueView"><span class="pre">magicclass.widgets.pywidgets.dict.DictValueView</span></a></span></span><a class="reference internal" href="_modules/magicclass/widgets/pywidgets/dict.html#DictWidget.values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.DictWidget.values" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the view of dictionary values as Python objects.</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -494,12 +514,12 @@ In either case, this is followed by: for k, v in F.items(): D[k] = v</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.widgets.FreeWidget">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.</span></span><span class="sig-name descname"><span class="pre">FreeWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/utils.html#FreeWidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.FreeWidget" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.</span></span><span class="sig-name descname"><span class="pre">FreeWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'vertical'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/utils.html#FreeWidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.FreeWidget" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.widget.Widget</span></code></p>
 <p>A Widget class with any QWidget as a child.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="magicclass.widgets.FreeWidget.set_widget">
-<span class="sig-name descname"><span class="pre">set_widget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">widget</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">PyQt5.QtWidgets.QWidget</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/utils.html#FreeWidget.set_widget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.FreeWidget.set_widget" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">set_widget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">widget</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">PyQt5.QtWidgets.QWidget</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/utils.html#FreeWidget.set_widget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.FreeWidget.set_widget" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -592,6 +612,12 @@ In either case, this is followed by: for k, v in F.items(): D[k] = v</p>
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">value</span></span><a class="headerlink" href="#magicclass.widgets.MacroEdit.value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.widgets.NapariCanvas">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.</span></span><span class="sig-name descname"><span class="pre">NapariCanvas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ndisplay</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis_labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/napari/canvas.html#NapariCanvas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.NapariCanvas" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#magicclass.widgets.utils.FreeWidget" title="magicclass.widgets.utils.FreeWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.widgets.utils.FreeWidget</span></code></a></p>
 </dd></dl>
 
 <dl class="py class">
@@ -832,7 +858,35 @@ In either case, this is followed by: for k, v in F.items(): D[k] = v</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="magicclass.widgets.show_messagebox">
 <span class="sig-prename descclassname"><span class="pre">magicclass.widgets.</span></span><span class="sig-name descname"><span class="pre">show_messagebox</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">MessageBoxMode</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">MessageBoxMode.INFO</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/magicclass/widgets/misc.html#show_messagebox"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.show_messagebox" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Freeze the GUI and open a messagebox dialog.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mode</strong> (<em>str</em><em> or </em><a class="reference internal" href="#magicclass.widgets.misc.MessageBoxMode" title="magicclass.widgets.misc.MessageBoxMode"><em>MessageBoxMode</em></a><em>, </em><em>default is MessageBoxMode.INFO</em>) -- Mode of message box. Must be &quot;error&quot;, &quot;warn&quot;, &quot;info&quot;, &quot;question&quot; or &quot;about&quot;.</p></li>
+<li><p><strong>title</strong> (<em>str</em><em>, </em><em>optional</em>) -- Title of messagebox.</p></li>
+<li><p><strong>text</strong> (<em>str</em><em>, </em><em>optional</em>) -- Text in messagebox.</p></li>
+<li><p><strong>parent</strong> (<em>QWidget</em><em>, </em><em>optional</em>) -- Parent widget.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>If &quot;OK&quot; or &quot;Yes&quot; is clicked, return True. Otherwise return False.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="magicclass.widgets.show_url">
+<span class="sig-prename descclassname"><span class="pre">magicclass.widgets.</span></span><span class="sig-name descname"><span class="pre">show_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">link</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/magicclass/widgets/misc.html#show_url"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.show_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Open the link with the default browser.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>link</strong> (<em>str</em>) -- Link to the home page.</p>
+</dd>
+</dl>
+</dd></dl>
 
 </section>
 </section>
@@ -842,7 +896,7 @@ In either case, this is followed by: for k, v in F.items(): D[k] = v</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="magicclass.html" class="btn btn-neutral float-left" title="magicclass package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="magicclass.widgets.pywidgets.html" class="btn btn-neutral float-right" title="magicclass.widgets.pywidgets package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="magicclass.widgets.napari.html" class="btn btn-neutral float-right" title="magicclass.widgets.napari package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

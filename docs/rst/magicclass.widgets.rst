@@ -7,6 +7,7 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
+   magicclass.widgets.napari
    magicclass.widgets.pywidgets
    magicclass.widgets.qtgraph
 

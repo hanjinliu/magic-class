@@ -47,5 +47,9 @@ There are some special attributes that will be recognized differently by magic c
         <class 'abc.Parent'>
     
     Therefore, when you want to call parent methods from its children, you don't have to use ``wraps``
-    method in principle. Indeed, ``wraps`` uses ``__magicclass_parent__`` to find its ancestor.
+    method in principle.
+
+* ``__magicclass_children__``
+
+    The child widgets are all stored in this list.
     

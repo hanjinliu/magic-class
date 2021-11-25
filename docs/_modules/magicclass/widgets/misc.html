@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.widgets.misc &mdash; magic-class 0.5.8 documentation</title>
+  <title>magicclass.widgets.misc &mdash; magic-class 0.5.9 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -27,7 +27,7 @@
             <a href="../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.8
+                0.5.9
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -240,9 +240,41 @@
                     <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                     <span class="n">parent</span><span class="o">=</span><span class="kc">None</span>
                     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Freeze the GUI and open a messagebox dialog.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mode : str or MessageBoxMode, default is MessageBoxMode.INFO</span>
+<span class="sd">        Mode of message box. Must be &quot;error&quot;, &quot;warn&quot;, &quot;info&quot;, &quot;question&quot; or &quot;about&quot;.</span>
+<span class="sd">    title : str, optional</span>
+<span class="sd">        Title of messagebox.</span>
+<span class="sd">    text : str, optional</span>
+<span class="sd">        Text in messagebox.</span>
+<span class="sd">    parent : QWidget, optional</span>
+<span class="sd">        Parent widget.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+<span class="sd">        If &quot;OK&quot; or &quot;Yes&quot; is clicked, return True. Otherwise return False.</span>
+<span class="sd">    &quot;&quot;&quot;</span>    
     <span class="n">show_dialog</span> <span class="o">=</span> <span class="n">QMESSAGE_MODES</span><span class="p">[</span><span class="n">MessageBoxMode</span><span class="p">(</span><span class="n">mode</span><span class="p">)]</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">show_dialog</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">result</span> <span class="ow">in</span> <span class="p">(</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Ok</span><span class="p">,</span> <span class="n">QMessageBox</span><span class="o">.</span><span class="n">Yes</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="show_url"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.misc.show_url">[docs]</a><span class="k">def</span> <span class="nf">show_url</span><span class="p">(</span><span class="n">link</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Open the link with the default browser.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    link : str</span>
+<span class="sd">        Link to the home page.</span>
+<span class="sd">    &quot;&quot;&quot;</span>    
+    <span class="kn">from</span> <span class="nn">qtpy.QtGui</span> <span class="kn">import</span> <span class="n">QDesktopServices</span>
+    <span class="kn">from</span> <span class="nn">qtpy.QtCore</span> <span class="kn">import</span> <span class="n">QUrl</span>
+    <span class="n">QDesktopServices</span><span class="o">.</span><span class="n">openUrl</span><span class="p">(</span><span class="n">QUrl</span><span class="p">(</span><span class="n">link</span><span class="p">))</span></div>
 </pre></div>
 
            </div>

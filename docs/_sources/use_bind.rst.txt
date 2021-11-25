@@ -105,7 +105,7 @@ Most programmers should prefer:
 
 An option to solve this problem is to define getter methods like ``get_a_value`` and ``get_b_value``
 and bind them to the ``call`` method. But there is a way that is much simpler: bind field objects
-directly.
+directly (See also :doc:`use_field`).
 
 .. code-block:: python
 

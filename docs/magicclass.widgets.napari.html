@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>API References &mdash; magic-class 0.5.9 documentation</title>
+  <title>magicclass.widgets.napari package &mdash; magic-class 0.5.9 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -18,8 +18,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="magicclass package" href="magicclass.html" />
-    <link rel="prev" title="Container Variations" href="containers.html" /> 
+    <link rel="next" title="magicclass.widgets.pywidgets package" href="magicclass.widgets.pywidgets.html" />
+    <link rel="prev" title="magicclass.widgets package" href="magicclass.widgets.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -40,7 +40,7 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul class="current">
+              <ul>
 <li class="toctree-l1"><a class="reference internal" href="quick_start.html">Quick Start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="options.html">Options in magic-class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="nest.html">Nest magic-classes</a></li>
@@ -50,13 +50,7 @@
 <li class="toctree-l1"><a class="reference internal" href="customize_macro.html">Customize Macro Recording</a></li>
 <li class="toctree-l1"><a class="reference internal" href="special_methods.html">Special attributes in magic-class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="containers.html">Container Variations</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">API References</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="magicclass.html">magicclass package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="magicclass.widgets.html">magicclass.widgets package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="magicclass.widgets.pywidgets.html">magicclass.widgets.pywidgets package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="magicclass.widgets.qtgraph.html">magicclass.widgets.qtgraph package</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API References</a></li>
 </ul>
 
         </div>
@@ -73,9 +67,12 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>API References</li>
+          <li><a href="api.html">API References</a> &raquo;</li>
+          <li><a href="magicclass.html">magicclass package</a> &raquo;</li>
+          <li><a href="magicclass.widgets.html">magicclass.widgets package</a> &raquo;</li>
+      <li>magicclass.widgets.napari package</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="_sources/api.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/magicclass.widgets.napari.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -83,25 +80,31 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="api-references">
-<h1>API References<a class="headerlink" href="#api-references" title="Permalink to this headline">¶</a></h1>
-<div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="magicclass.html">magicclass package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="magicclass.widgets.html">magicclass.widgets package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="magicclass.widgets.pywidgets.html">magicclass.widgets.pywidgets package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="magicclass.widgets.qtgraph.html">magicclass.widgets.qtgraph package</a></li>
-</ul>
-</div>
+  <section id="magicclass-widgets-napari-package">
+<h1>magicclass.widgets.napari package<a class="headerlink" href="#magicclass-widgets-napari-package" title="Permalink to this headline">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="module-magicclass.widgets.napari.canvas">
+<span id="magicclass-widgets-napari-canvas-module"></span><h2>magicclass.widgets.napari.canvas module<a class="headerlink" href="#module-magicclass.widgets.napari.canvas" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.widgets.napari.canvas.NapariCanvas">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.napari.canvas.</span></span><span class="sig-name descname"><span class="pre">NapariCanvas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ndisplay</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis_labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/napari/canvas.html#NapariCanvas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.napari.canvas.NapariCanvas" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="magicclass.widgets.html#magicclass.widgets.utils.FreeWidget" title="magicclass.widgets.utils.FreeWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.widgets.utils.FreeWidget</span></code></a></p>
+</dd></dl>
+
+</section>
+<section id="module-magicclass.widgets.napari">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-magicclass.widgets.napari" title="Permalink to this headline">¶</a></h2>
+</section>
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="containers.html" class="btn btn-neutral float-left" title="Container Variations" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="magicclass.html" class="btn btn-neutral float-right" title="magicclass package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="magicclass.widgets.html" class="btn btn-neutral float-left" title="magicclass.widgets package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="magicclass.widgets.pywidgets.html" class="btn btn-neutral float-right" title="magicclass.widgets.pywidgets package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
