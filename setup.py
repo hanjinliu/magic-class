@@ -17,7 +17,7 @@ setup(
     author_email="liuhanjin-sc@g.ecc.u-tokyo.ac.jp",
     license="BSD 3-Clause",
     download_url="https://github.com/hanjinliu/magic-class",
-    packages=find_packages(exclude=["docs", "examples"]),
+    packages=find_packages(exclude=["docs", "examples", "rst"]),
     install_requires=[
           "magicgui>=0.3.2",
           "numpy>=1.20.3",
