@@ -51,29 +51,29 @@ class MagicTemplate:
     _close_on_run: bool
     _popup_mode: PopUpMode
     _error_mode: ErrorMode
-    name: str
-    width: int
-    max_width: int
-    min_width: int
-    height: int
-    max_height: int
-    min_height: int
-    parent_changed: Signal
-    label_changed: Signal
-    changed: Signal
-    tooltip: str
-    enabled: bool
     annotation: Any
+    changed: Signal
+    enabled: bool
     gui_only: bool
-    param_kind: inspect._ParameterKind
-    visible: bool
-    options: dict
-    parent: Widget
-    widget_type: str
+    height: int
+    label_changed: Signal
     label: str
-    margin: tuple[int, int, int, int]
     layout: str
     labels: bool
+    margins: tuple[int, int, int, int]
+    max_height: int
+    max_width: int
+    min_height: int
+    min_width: int
+    name: str
+    options: dict
+    param_kind: inspect._ParameterKind
+    parent: Widget
+    parent_changed: Signal
+    tooltip: str
+    visible: bool
+    widget_type: str
+    width: int
     
     def show(self) -> None:
         raise NotImplementedError()
