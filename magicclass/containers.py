@@ -277,15 +277,27 @@ class _SubWindowsContainer(ContainerBase):
         widget.native.setParent(None)
         
 class _GroupBoxContainer(ContainerBase):
-    _qwidget: QtW.QGroupBox
     def __init__(self, layout="vertical"):
-        QBaseWidget.__init__(self, QtW.QGroupBox)
+        QBaseWidget.__init__(self, QtW.QWidget)
         
+        # To precisely control margins, _layout should not be set to the QGroupBox widget.
+        self._groupbox = QtW.QGroupBox(self._qwidget)
         if layout == "horizontal":
             self._layout: QtW.QLayout = QtW.QHBoxLayout()
         else:
             self._layout = QtW.QVBoxLayout()
-        self._qwidget.setLayout(self._layout)
+        
+        self._inner_widget = QtW.QWidget(self._groupbox)
+        self._inner_widget.setLayout(self._layout)
+        self._groupbox.setLayout(QtW.QHBoxLayout())
+        self._groupbox.layout().addWidget(self._inner_widget)
+        
+        self._qwidget.setLayout(QtW.QHBoxLayout())
+        self._qwidget.layout().addWidget(self._groupbox)
+        self._qwidget.layout().setContentsMargins(0, 0, 0, 0)
+    
+    def _set_title(self, title: str):
+        self._groupbox.setTitle(title)
 
 @wrap_container(base=_Splitter)
 class SplitterContainer(ContainerWidget):
@@ -401,4 +413,4 @@ class GroupBoxContainer(ContainerWidget):
     @name.setter
     def name(self, value: str):
         self._name = value
-        self.native.setTitle(value.replace("_", " "))
+        self._widget._set_title(value.replace("_", " "))
