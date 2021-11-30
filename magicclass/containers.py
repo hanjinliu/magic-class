@@ -109,7 +109,6 @@ class _Tab(ContainerBase):
 
 
 class _Stack(ContainerBase):
-    _qwidget: QtW.QWidget
     def __init__(self, layout="vertical"):
         QBaseWidget.__init__(self, QtW.QWidget)
         
@@ -255,7 +254,6 @@ class _ListContainer(ContainerBase):
         widget.native.setParent(None)
 
 class _SubWindowsContainer(ContainerBase):
-    
     # The close button in QMdiArea completely deletes the sub window widget. This accident
     # can be avoided by defining a custom window flag.
     _NoCloseButtonFlag = Qt.CustomizeWindowHint | Qt.WindowTitleHint | Qt.WindowMinMaxButtonsHint
@@ -277,6 +275,17 @@ class _SubWindowsContainer(ContainerBase):
     def _mgui_remove_widget(self, widget: Widget):
         self._mdiarea.removeSubWindow(widget.native)
         widget.native.setParent(None)
+        
+class _GroupBoxContainer(ContainerBase):
+    _qwidget: QtW.QGroupBox
+    def __init__(self, layout="vertical"):
+        QBaseWidget.__init__(self, QtW.QGroupBox)
+        
+        if layout == "horizontal":
+            self._layout: QtW.QLayout = QtW.QHBoxLayout()
+        else:
+            self._layout = QtW.QVBoxLayout()
+        self._qwidget.setLayout(self._layout)
 
 @wrap_container(base=_Splitter)
 class SplitterContainer(ContainerWidget):
@@ -381,3 +390,15 @@ class ListContainer(ContainerWidget):
 @wrap_container(base=_SubWindowsContainer)
 class SubWindowsContainer(ContainerWidget):
     """A window-in-window container"""
+
+@wrap_container(base=_GroupBoxContainer)
+class GroupBoxContainer(ContainerWidget):
+    """A QGroupBox like container"""
+    @property
+    def name(self):
+        return self._name
+    
+    @name.setter
+    def name(self, value: str):
+        self._name = value
+        self.native.setTitle(value.replace("_", " "))

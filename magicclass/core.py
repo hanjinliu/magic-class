@@ -3,12 +3,13 @@ from functools import wraps as functools_wraps
 import inspect
 from enum import Enum
 from dataclasses import is_dataclass
-from typing import Any
+from typing import Any, Callable
 from typing_extensions import Annotated, _AnnotatedAlias
 
 from .class_gui import (
     ClassGuiBase, 
     ClassGui,
+    GroupBoxClassGui,
     MainWindowClassGui,
     SubWindowsClassGui,
     ScrollableClassGui,
@@ -38,6 +39,7 @@ class WidgetType(Enum):
     stacked = "stacked"
     list = "list"
     subwindows = "subwindows"
+    groupbox = "groupbox"
     mainwindow = "mainwindow"
 
 _TYPE_MAP = {
@@ -50,6 +52,7 @@ _TYPE_MAP = {
     WidgetType.tabbed: TabbedClassGui,
     WidgetType.stacked: StackedClassGui,
     WidgetType.list: ListClassGui,
+    WidgetType.groupbox: GroupBoxClassGui,
     WidgetType.subwindows: SubWindowsClassGui,
     WidgetType.mainwindow: MainWindowClassGui,
 }
@@ -86,7 +89,7 @@ def magicclass(class_: type|None = None,
                error_mode: str | ErrorMode = None,
                widget_type: str | WidgetType = WidgetType.none,
                parent = None
-               ):
+               ) -> ClassGui | Callable[[type], ClassGui]:
     """
     Decorator that can convert a Python class into a widget.
     
@@ -206,7 +209,7 @@ def magicmenu(class_: type = None,
               error_mode: str | ErrorMode = None,
               labels: bool = True, 
               parent = None
-              ):
+              ) -> MenuGui | Callable[[type], MenuGui]:
     """
     Decorator that can convert a Python class into a menu bar.
     """    
@@ -219,7 +222,7 @@ def magiccontext(class_: type = None,
                  error_mode: str | ErrorMode = None,
                  labels: bool = True, 
                  parent=None
-                 ):
+                 ) -> ContextMenuGui | Callable[[type], ContextMenuGui]:
     """
     Decorator that can convert a Python class into a context menu.
     """    

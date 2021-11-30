@@ -17,6 +17,7 @@ from .fields import MagicField
 from .menu_gui import MenuGui, ContextMenuGui
 from .containers import (
     ButtonContainer,
+    GroupBoxContainer,
     ListContainer,
     SubWindowsContainer,
     ScrollableContainer,
@@ -333,6 +334,9 @@ class ListClassGui: pass
 
 @make_gui(SubWindowsContainer, no_margin=False)
 class SubWindowsClassGui: pass
+
+@make_gui(GroupBoxContainer, no_margin=False)
+class GroupBoxClassGui: pass
 
 @make_gui(MainWindow)
 class MainWindowClassGui: pass
