@@ -126,14 +126,14 @@ def do_not_record(method: Callable[[Args], Returns]) -> Callable[[Args], Returns
     upgrade_signature(method, additional_options={"record": False})
     return method
 
-# def bind_key(key) -> Callable[[Callable[[Args], Returns]], Callable[[Args], Returns]]:
-#     """
-#     Define a keybinding callback.
-#     """    
-#     def wrapper(method: Callable[[Args], Returns], ) -> Callable[[Args], Returns]:
-#         upgrade_signature(method, additional_options={"keybinding": key})
-#         return method
-#     return wrapper
+def bind_key(*key) -> Callable[[Callable[[Args], Returns]], Callable[[Args], Returns]]:
+    """
+    Define a keybinding callback.
+    """    
+    def wrapper(method: Callable[[Args], Returns], ) -> Callable[[Args], Returns]:
+        upgrade_signature(method, additional_options={"keybinding": key})
+        return method
+    return wrapper
 
 def _assert_iterable(obj):
     if obj is None:

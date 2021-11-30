@@ -106,6 +106,9 @@ class PushButtonPlus(PushButton):
     def running(self) -> bool:
         return getattr(self.mgui, "running", False)
     
+    def set_shortcut(self, key):
+        self.native.setShortcut(key)
+        
     @property
     def background_color(self):
         return self.native.palette().button().color().getRgb()
@@ -191,6 +194,9 @@ class AbstractAction:
     support_value: bool
     native: QAction | QWidgetAction
     
+    def set_shortcut(self, key):
+        self.native.setShortcut(key)
+        
     @property
     def name(self) -> str:
         return self.native.objectName()
@@ -230,7 +236,9 @@ class AbstractAction:
     @parent.setter
     def parent(self, widget: Widget):
         return self.native.setParent(widget.native if widget else None)
-        
+    
+    def from_options(self, options):
+        raise NotImplementedError()
 
 class Action(AbstractAction):
     support_value = True

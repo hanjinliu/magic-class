@@ -11,7 +11,7 @@ from magicgui.events import Signal
 from magicgui.signature import MagicParameter
 from magicgui.widgets import FunctionGui, FileEdit, EmptyWidget, Widget, Container
 
-from .keybinding import QtKeyMap
+from .keybinding import as_shortcut
 from .mgui_ext import AbstractAction, FunctionGuiPlus, PushButtonPlus
 
 from ..macro import Macro, Expr, Head, Symbol, symbol
@@ -49,9 +49,8 @@ class MagicTemplate:
     __magicclass_parent__: None | MagicTemplate
     __magicclass_children__: list[MagicTemplate]
     _close_on_run: bool
-    _component_class: AbstractAction | Widget
+    _component_class: type[AbstractAction | Widget]
     _error_mode: ErrorMode
-    _keymap_object: QtKeyMap
     _popup_mode: PopUpMode
     _recorded_macro: Macro[Expr]
     annotation: Any
@@ -344,7 +343,7 @@ class MagicTemplate:
         # Get the number of parameters except for empty widgets.
         # With these lines, "bind" method of magicgui works inside magicclass.
         fgui = FunctionGuiPlus.from_callable(obj)
-        n_empty = len([widget for widget in fgui if isinstance(widget, EmptyWidget)])
+        n_empty = len([_widget for _widget in fgui if isinstance(_widget, EmptyWidget)])
         nparams = _n_parameters(func) - n_empty
         
         # This block enables instance methods in "bind" method of ValueWidget.
@@ -497,6 +496,12 @@ class MagicTemplate:
         
         # If design is given, load the options.
         widget.from_options(obj)
+        
+        # keybinding
+        keybinding = get_additional_option(func, "keybinding", None)
+        if keybinding is not None:
+            shortcut = as_shortcut(keybinding)
+            widget.set_shortcut(shortcut)
             
         return widget
     
@@ -514,7 +519,6 @@ class MagicTemplate:
 class BaseGui(MagicTemplate):
     def __init__(self, close_on_run, popup_mode, error_mode):
         self._recorded_macro: Macro[Expr] = Macro()
-        self._keymap_object = QtKeyMap()
         self.__magicclass_parent__: None | BaseGui = None
         self.__magicclass_children__: list[MagicTemplate] = []
         self._close_on_run = close_on_run
