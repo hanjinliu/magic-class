@@ -10,15 +10,15 @@ from collections.abc import MutableSequence
 from magicgui.events import Signal
 from magicgui.signature import MagicParameter
 from magicgui.widgets import FunctionGui, FileEdit, EmptyWidget, Widget, Container
-from magicgui.widgets._bases import ValueWidget
 
-from .mgui_ext import FunctionGuiPlus, PushButtonPlus
+from .keybinding import QtKeyMap
+from .mgui_ext import AbstractAction, FunctionGuiPlus, PushButtonPlus
 
 from ..macro import Macro, Expr, Head, Symbol, symbol
 from ..utils import get_signature, iter_members, extract_tooltip, screen_center
 from ..widgets import Separator, MacroEdit
 from ..fields import MagicField
-from ..signature import MagicMethodSignature
+from ..signature import MagicMethodSignature, get_additional_option
 from ..wrappers import upgrade_signature
 
 if TYPE_CHECKING:
@@ -46,12 +46,14 @@ defaults = {"popup_mode": PopUpMode.popup,
             }
 
 class MagicTemplate:    
-    _recorded_macro: Macro[Expr] = Macro()
     __magicclass_parent__: None | MagicTemplate
     __magicclass_children__: list[MagicTemplate]
     _close_on_run: bool
-    _popup_mode: PopUpMode
+    _component_class: AbstractAction | Widget
     _error_mode: ErrorMode
+    _keymap_object: QtKeyMap
+    _popup_mode: PopUpMode
+    _recorded_macro: Macro[Expr]
     annotation: Any
     changed: Signal
     enabled: bool
@@ -364,9 +366,6 @@ class MagicTemplate:
                 elif isinstance(bound_value, MagicField):
                     param.options["bind"] = _field_as_getter(self, bound_value)
                 
-                # If a value widget is bound, bind the value.
-                elif isinstance(bound_value, ValueWidget):
-                    param.options["bind"] = _one_more_arg(bound_value.get_value)
             
             all_params.append(param)
         
@@ -515,6 +514,7 @@ class MagicTemplate:
 class BaseGui(MagicTemplate):
     def __init__(self, close_on_run, popup_mode, error_mode):
         self._recorded_macro: Macro[Expr] = Macro()
+        self._keymap_object = QtKeyMap()
         self.__magicclass_parent__: None | BaseGui = None
         self.__magicclass_children__: list[MagicTemplate] = []
         self._close_on_run = close_on_run
@@ -569,11 +569,6 @@ def _temporal_function_gui_callback(bgui: MagicTemplate, fgui: FunctionGuiPlus, 
         return None
     
     return _after_run
-
-def _one_more_arg(f):
-    def out(e):
-        return f()
-    return out
 
 def _build_mgui(widget_, func):
     if widget_.mgui is not None:
@@ -746,8 +741,4 @@ def _field_as_getter(self, bound_value: MagicField):
     return _func
 
 def _need_record(func: Callable):
-    if isinstance(func.__signature__, MagicMethodSignature):
-        record = func.__signature__.additional_options.get("record", True)
-    else:
-        record = True
-    return record
+    return get_additional_option(func, "record", True)
