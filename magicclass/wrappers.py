@@ -5,8 +5,8 @@ from magicgui.widgets._bases import ButtonWidget
 from .signature import upgrade_signature
 
 if TYPE_CHECKING:
-    from ._base import BaseGui
-    from magicclass.menu_gui import Action
+    from .gui import BaseGui
+    from .gui.mgui_ext import Action
 
 Color = Union[str, Iterable[float]]
 nStrings = Union[str, Iterable[str]]
@@ -126,14 +126,14 @@ def do_not_record(method: Callable[[Args], Returns]) -> Callable[[Args], Returns
     upgrade_signature(method, additional_options={"record": False})
     return method
 
-def bind_key(key) -> Callable[[Callable[[Args], Returns]], Callable[[Args], Returns]]:
-    """
-    Define a keybinding callback.
-    """    
-    def wrapper(method: Callable[[Args], Returns], ) -> Callable[[Args], Returns]:
-        upgrade_signature(method, additional_options={"keybinding": key})
-        return method
-    return wrapper
+# def bind_key(key) -> Callable[[Callable[[Args], Returns]], Callable[[Args], Returns]]:
+#     """
+#     Define a keybinding callback.
+#     """    
+#     def wrapper(method: Callable[[Args], Returns], ) -> Callable[[Args], Returns]:
+#         upgrade_signature(method, additional_options={"keybinding": key})
+#         return method
+#     return wrapper
 
 def _assert_iterable(obj):
     if obj is None:

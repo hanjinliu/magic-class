@@ -1,6 +1,6 @@
 from __future__ import annotations
 from .core import magicclass, WidgetType, MagicTemplate
-from ._base import BaseGui, PopUpMode, ErrorMode
+from .gui._base import BaseGui, PopUpMode, ErrorMode
 from .fields import field
 from .macro import Symbol, symbol
 from .widgets import ConsoleTextEdit

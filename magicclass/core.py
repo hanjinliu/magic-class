@@ -6,7 +6,7 @@ from dataclasses import is_dataclass
 from typing import Any, Callable
 from typing_extensions import Annotated, _AnnotatedAlias
 
-from .class_gui import (
+from .gui.class_gui import (
     ClassGuiBase, 
     ClassGui,
     GroupBoxClassGui,
@@ -21,8 +21,8 @@ from .class_gui import (
     ToolBoxClassGui,
     ListClassGui,
     )
-from ._base import PopUpMode, ErrorMode, defaults, MagicTemplate
-from .menu_gui import ContextMenuGui, MenuGui, MenuGuiBase
+from .gui._base import PopUpMode, ErrorMode, defaults, MagicTemplate
+from .gui import ContextMenuGui, MenuGui, MenuGuiBase
 from .macro import Expr
 from .utils import iter_members
 from ._app import get_app

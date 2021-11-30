@@ -12,13 +12,14 @@ from magicgui.signature import MagicParameter
 from magicgui.widgets import FunctionGui, FileEdit, EmptyWidget, Widget, Container
 from magicgui.widgets._bases import ValueWidget
 
-from .macro import Macro, Expr, Head, Symbol, symbol
-from .utils import get_signature, iter_members, extract_tooltip, screen_center
-from .widgets import Separator, MacroEdit
 from .mgui_ext import FunctionGuiPlus, PushButtonPlus
-from .fields import MagicField
-from .signature import MagicMethodSignature
-from .wrappers import upgrade_signature
+
+from ..macro import Macro, Expr, Head, Symbol, symbol
+from ..utils import get_signature, iter_members, extract_tooltip, screen_center
+from ..widgets import Separator, MacroEdit
+from ..fields import MagicField
+from ..signature import MagicMethodSignature
+from ..wrappers import upgrade_signature
 
 if TYPE_CHECKING:
     try:

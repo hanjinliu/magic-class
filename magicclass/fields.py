@@ -7,7 +7,7 @@ from magicgui.widgets._bases import Widget, ValueWidget
 from magicgui.widgets._bases.value_widget import UNSET 
 
 from .widgets import NotInstalled
-from .mgui_ext import AbstractAction, Action, WidgetAction
+from .gui.mgui_ext import AbstractAction, Action, WidgetAction
 
 if TYPE_CHECKING:
     from magicgui.widgets._protocols import WidgetProtocol

@@ -2,11 +2,19 @@ from __future__ import annotations
 from typing import Any
 from magicgui.signature import MagicSignature
 from magicgui.widgets import FunctionGui
+from magicgui.types import WidgetOptions
 import inspect
+from typing import TypedDict
 from .utils import get_signature
 
-def upgrade_signature(func, gui_options: dict = None, caller_options: dict = None,
-                      additional_options: dict = None):
+class AdditionalOptions(TypedDict):
+    record: bool
+    keybinding: str
+    into: str
+
+def upgrade_signature(func, gui_options: dict = None, 
+                      caller_options: WidgetOptions = None,
+                      additional_options: AdditionalOptions = None):
     """
     Upgrade function signature to MagicMethodSignature. The input function may have
     a inspect.Signature or magicgui.signature.Magicsignature.
@@ -17,9 +25,9 @@ def upgrade_signature(func, gui_options: dict = None, caller_options: dict = Non
         Input function.
     gui_options : dict, optional
         Options of FunctionGui.
-    caller_options : dict, optional
+    caller_options : WidgetOptions, optional
         Options of PushButton.
-    additional_options : dict, optional
+    additional_options : AdditionalOptions, optional
         Additional options that will be used in magic class.
 
     Returns

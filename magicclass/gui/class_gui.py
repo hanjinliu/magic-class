@@ -7,15 +7,13 @@ from magicgui.widgets import Container, MainWindow,Label, FunctionGui, Image, Ta
 from magicgui.widgets._bases import Widget, ButtonWidget, ValueWidget, ContainerWidget
 from magicgui.widgets._concrete import _LabeledWidget
 
-from magicclass.signature import get_additional_option
+from ..signature import get_additional_option
 
-from .macro import Expr, Head, Symbol, symbol
-from .utils import iter_members, extract_tooltip, get_parameters, define_callback, MagicClassConstructionError
-from .widgets import FreeWidget
 from .mgui_ext import PushButtonPlus
-from .fields import MagicField
 from .menu_gui import MenuGui, ContextMenuGui
-from .containers import (
+from ._base import BaseGui, PopUpMode, ErrorMode
+from .utils import get_parameters, define_callback, MagicClassConstructionError
+from ._containers import (
     ButtonContainer,
     GroupBoxContainer,
     ListContainer,
@@ -27,8 +25,11 @@ from .containers import (
     TabbedContainer,
     ToolBoxContainer
     )
-from ._base import BaseGui, PopUpMode, ErrorMode
 
+from ..macro import Expr, Head, Symbol, symbol
+from ..utils import iter_members, extract_tooltip
+from ..widgets import FreeWidget
+from ..fields import MagicField
 
 class ClassGuiBase(BaseGui):
     # This class is always inherited by @magicclass decorator.

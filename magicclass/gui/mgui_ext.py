@@ -10,7 +10,7 @@ from magicgui.widgets._concrete import _LabeledWidget
 from magicgui.widgets._bases import Widget, ValueWidget, ButtonWidget
 from magicgui.widgets._function_gui import _function_name_pointing_to_widget
 from matplotlib.colors import to_rgb
-from .widgets import Separator
+from ..widgets import Separator
 
 # magicgui widgets that need to be extended to fit into magicclass
 
