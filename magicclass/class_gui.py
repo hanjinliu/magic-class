@@ -10,7 +10,7 @@ from magicgui.widgets._concrete import _LabeledWidget
 from magicclass.signature import get_additional_option
 
 from .macro import Expr, Head, Symbol, symbol
-from .utils import iter_members, extract_tooltip, get_parameters, define_callback, InvalidMagicClassError
+from .utils import iter_members, extract_tooltip, get_parameters, define_callback, MagicClassConstructionError
 from .widgets import FreeWidget
 from .mgui_ext import PushButtonPlus
 from .fields import MagicField
@@ -177,11 +177,11 @@ class ClassGuiBase(BaseGui):
                     )) + f"\n\t\t{name} ({type(attr).__name__}) <--- Error"
                 if not hist_str.startswith("\n\t"):
                     hist_str = "\n\t" + hist_str
-                if isinstance(e, InvalidMagicClassError):
+                if isinstance(e, MagicClassConstructionError):
                     e.args = (f"\n{hist_str}\n{e}",)
                     raise e
                 else:
-                    raise InvalidMagicClassError(f"\n{hist_str}\n\n{type(e).__name__}: {e}")
+                    raise MagicClassConstructionError(f"\n{hist_str}\n\n{type(e).__name__}: {e}") from e
             
         
         # convert __call__ into a button

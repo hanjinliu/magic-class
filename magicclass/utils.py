@@ -86,7 +86,7 @@ def define_callback(self, callback: Callable):
     return _callback
 
 
-class InvalidMagicClassError(Exception):
+class MagicClassConstructionError(Exception):
     """
     This exception will be raised when class definition is not a valid magic-class.
     """    

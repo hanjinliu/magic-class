@@ -16,7 +16,7 @@ from .widgets import Separator, FreeWidget
 from .mgui_ext import AbstractAction, Action, WidgetAction, _LabeledWidgetAction
 from ._base import BaseGui, PopUpMode, ErrorMode
 from .macro import Expr, Head, Symbol, symbol
-from .utils import get_parameters, iter_members, define_callback, InvalidMagicClassError
+from .utils import get_parameters, iter_members, define_callback, MagicClassConstructionError
 
 class MenuGuiBase(BaseGui, MutableSequence):
     _component_class = Action
@@ -137,11 +137,11 @@ class MenuGuiBase(BaseGui, MutableSequence):
                     )) + f"\n\t\t{name} ({type(attr).__name__}) <--- Error"
                 if not hist_str.startswith("\n\t"):
                     hist_str = "\n\t" + hist_str
-                if isinstance(e, InvalidMagicClassError):
+                if isinstance(e, MagicClassConstructionError):
                     e.args = (f"\n{hist_str}\n{e}",)
                     raise e
                 else:
-                    raise InvalidMagicClassError(f"{hist_str}\n\n{type(e).__name__}: {e}")
+                    raise MagicClassConstructionError(f"{hist_str}\n\n{type(e).__name__}: {e}") from e
         
         return None
     
