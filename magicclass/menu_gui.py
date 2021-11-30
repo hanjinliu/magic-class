@@ -16,7 +16,7 @@ from .widgets import Separator, FreeWidget
 from .mgui_ext import AbstractAction, Action, WidgetAction, _LabeledWidgetAction
 from ._base import BaseGui, PopUpMode, ErrorMode
 from .macro import Expr, Head, Symbol, symbol
-from .utils import get_parameters, iter_members, define_callback, InvalidMagicClassError, get_index
+from .utils import get_parameters, iter_members, define_callback, InvalidMagicClassError
 
 class MenuGuiBase(BaseGui, MutableSequence):
     _component_class = Action

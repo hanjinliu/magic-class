@@ -1,7 +1,6 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 from enum import Enum
-from qtpy.QtGui import QFont, QTextOption, QGuiApplication
 from qtpy.QtWidgets import QMenuBar, QMenu, QAction, QMessageBox
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -9,6 +8,7 @@ from matplotlib.backends.backend_qt5agg import FigureCanvas
 from magicgui.widgets import PushButton, TextEdit, FileEdit
 
 from .utils import FreeWidget
+from ..utils import to_clipboard
 
 if TYPE_CHECKING:
     from qtpy.QtWidgets import QWidget
@@ -63,6 +63,7 @@ class ConsoleTextEdit(TextEdit):
     """    
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        from qtpy.QtGui import QFont, QTextOption
         self.native.setFont(QFont("Consolas"))
         self.native.setWordWrapMode(QTextOption.NoWrap)
         
@@ -112,8 +113,7 @@ class MacroEdit(FreeWidget):
     
     def _copy(self, e=None):
         """Copy text to clipboard"""
-        clipboard = QGuiApplication.clipboard()
-        clipboard.setText(self.value)
+        to_clipboard(self.value)
     
     def _save(self, e=None):
         """Save text."""
@@ -142,59 +142,3 @@ class CheckButton(PushButton):
     def __init__(self, text: str | None = None, **kwargs):
         super().__init__(text=text, **kwargs)
         self.native.setCheckable(True)
-
-class MessageBoxMode(Enum):
-    ERROR = "error"
-    WARNING = "warn"
-    INFO = "info"
-    QUESTION = "question"
-    ABOUT = "about"
-
-QMESSAGE_MODES = {
-    MessageBoxMode.ERROR: QMessageBox.critical,
-    MessageBoxMode.WARNING: QMessageBox.warning,
-    MessageBoxMode.INFO: QMessageBox.information,
-    MessageBoxMode.QUESTION: QMessageBox.question,
-    MessageBoxMode.ABOUT: QMessageBox.about,
-}
-
-def show_messagebox(mode: str | MessageBoxMode = MessageBoxMode.INFO,
-                    title: str = None,
-                    text: str = None,
-                    parent=None
-                    ) -> bool:
-    """
-    Freeze the GUI and open a messagebox dialog.
-
-    Parameters
-    ----------
-    mode : str or MessageBoxMode, default is MessageBoxMode.INFO
-        Mode of message box. Must be "error", "warn", "info", "question" or "about".
-    title : str, optional
-        Title of messagebox.
-    text : str, optional
-        Text in messagebox.
-    parent : QWidget, optional
-        Parent widget.
-
-    Returns
-    -------
-    bool
-        If "OK" or "Yes" is clicked, return True. Otherwise return False.
-    """    
-    show_dialog = QMESSAGE_MODES[MessageBoxMode(mode)]
-    result = show_dialog(parent, title, text)
-    return result in (QMessageBox.Ok, QMessageBox.Yes)
-
-def show_url(link: str) -> None:
-    """
-    Open the link with the default browser.
-
-    Parameters
-    ----------
-    link : str
-        Link to the home page.
-    """    
-    from qtpy.QtGui import QDesktopServices
-    from qtpy.QtCore import QUrl
-    QDesktopServices.openUrl(QUrl(link))

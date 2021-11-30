@@ -9,12 +9,11 @@ from collections.abc import MutableSequence
 
 from magicgui.events import Signal
 from magicgui.signature import MagicParameter
-from magicgui.widgets import FunctionGui, FileEdit, EmptyWidget, Widget
+from magicgui.widgets import FunctionGui, FileEdit, EmptyWidget, Widget, Container
 from magicgui.widgets._bases import ValueWidget
 
 from .macro import Macro, Expr, Head, Symbol, symbol
-from .utils import (get_signature, iter_members, n_parameters, extract_tooltip, raise_error_in_msgbox, 
-                    identity_wrapper, screen_center, get_index)
+from .utils import get_signature, iter_members, extract_tooltip, screen_center
 from .widgets import Separator, MacroEdit
 from .mgui_ext import FunctionGuiPlus, PushButtonPlus
 from .fields import MagicField
@@ -26,7 +25,7 @@ if TYPE_CHECKING:
         import napari
     except ImportError:
         pass
-    
+
 class PopUpMode(Enum):
     popup = "popup"
     first = "first"
@@ -271,7 +270,7 @@ class MagicTemplate:
             if child_instance.__class__.__name__ == child_clsname:
                 # get the position of predefined child widget
                 try:
-                    index = get_index(child_instance, name)
+                    index = _get_index(child_instance, name)
                     new = False
                 except ValueError:
                     index = len(child_instance)
@@ -324,9 +323,9 @@ class MagicTemplate:
 
         # Wrap function to deal with errors in a right way.
         if self._error_mode == ErrorMode.msgbox:
-            wrapper = raise_error_in_msgbox
+            wrapper = _raise_error_in_msgbox
         elif self._error_mode == ErrorMode.stderr:
-            wrapper = identity_wrapper
+            wrapper = _identity_wrapper
         else:
             raise ValueError(self._error_mode)
             
@@ -343,7 +342,7 @@ class MagicTemplate:
         # With these lines, "bind" method of magicgui works inside magicclass.
         fgui = FunctionGuiPlus.from_callable(obj)
         n_empty = len([widget for widget in fgui if isinstance(widget, EmptyWidget)])
-        nparams = n_parameters(func) - n_empty
+        nparams = _n_parameters(func) - n_empty
         
         # This block enables instance methods in "bind" method of ValueWidget.
         all_params = []
@@ -354,10 +353,10 @@ class MagicTemplate:
                 bound_value = param.options.get("bind", None)
                 
                 # If bound method is a class method, use self.method(widget) as the value.
-                # "n_parameters(bound_value) == 2" seems a indirect way to determine that
+                # "_n_parameters(bound_value) == 2" seems a indirect way to determine that
                 # "bound_value" is a class method but "_method_as_getter" raises ValueError
                 # if "bound_value" is defined in a wrong namespace.
-                if isinstance(bound_value, Callable) and n_parameters(bound_value) == 2:
+                if isinstance(bound_value, Callable) and _n_parameters(bound_value) == 2:
                     param.options["bind"] = _method_as_getter(self, bound_value)
                 
                 # If a MagicFiled is bound, bind the value of the connected widget.
@@ -445,11 +444,11 @@ class MagicTemplate:
                             self.append(mgui)
                         elif self._popup_mode == PopUpMode.above:
                             name = _get_widget_name(widget)
-                            i = get_index(self, name)
+                            i = _get_index(self, name)
                             self.insert(i, mgui)
                         elif self._popup_mode == PopUpMode.below:
                             name = _get_widget_name(widget)
-                            i = get_index(self, name)
+                            i = _get_index(self, name)
                             self.insert(i+1, mgui)
                             
                     elif self._popup_mode == PopUpMode.dock:
@@ -549,7 +548,8 @@ def _temporal_function_gui_callback(bgui: MagicTemplate, fgui: FunctionGuiPlus, 
                 line = Expr(head=Head.assign, args=[result, line])
             bgui._recorded_macro.append(line)
         else:
-            line = Expr.parse_method(bgui, _function, bound.args, bound.kwargs)
+            kwargs = {k: v for k, v in bound.arguments.items()}
+            line = Expr.parse_method(bgui, _function, (), kwargs)
             if result_required:
                 line = Expr(Head.assign, [result, line])
             bgui._recorded_macro.append(line)
@@ -659,6 +659,53 @@ def _wraps(template: Callable | inspect.Signature,
             )
         return f
     return wrapper
+
+def _raise_error_in_msgbox(_func: Callable, parent: Widget = None):
+    """
+    If exception happened inside function, then open a message box.
+    """    
+    @functools_wraps(_func)
+    def wrapped_func(*args, **kwargs):
+        from qtpy.QtWidgets import QMessageBox
+        try:
+            out = _func(*args, **kwargs)
+        except Exception as e:
+            QMessageBox.critical(parent.native, e.__class__.__name__, str(e), QMessageBox.Ok)
+            out = e
+        return out
+    
+    return wrapped_func
+
+def _identity_wrapper(_func: Callable, parent: Widget = None):
+    """
+    Do nothing.
+    """    
+    @functools_wraps(_func)
+    def wrapped_func(*args, **kwargs):
+        return _func(*args, **kwargs)
+    return wrapped_func
+
+def _n_parameters(func: Callable):
+    """
+    Count the number of parameters of a callable object.
+    """    
+    return len(inspect.signature(func).parameters)
+
+def _get_index(container: Container, widget_or_name: Widget | str):
+    """
+    Identical to container[widget_or_name], which sometimes doesn't work
+    in magic-class.
+    """    
+    if isinstance(widget_or_name, str):
+        name = widget_or_name
+    else:
+        name = widget_or_name.name
+    for i, widget in enumerate(container):
+        if widget.name == name:
+            break
+    else:
+        raise ValueError(f"{widget_or_name} not found in {container}")
+    return i
 
 def _method_as_getter(self, bound_value: Callable):
     *clsnames, funcname = bound_value.__qualname__.split(".")

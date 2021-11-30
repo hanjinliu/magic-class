@@ -1,6 +1,6 @@
 from __future__ import annotations
 from functools import wraps
-from typing import Callable, Iterable, Iterator, Union, TYPE_CHECKING
+from typing import Callable, Iterable, Iterator, Union, TYPE_CHECKING, TypeVar
 from magicgui.widgets._bases import ButtonWidget
 from .signature import upgrade_signature
 
@@ -10,6 +10,8 @@ if TYPE_CHECKING:
 
 Color = Union[str, Iterable[float]]
 nStrings = Union[str, Iterable[str]]
+Args = TypeVar("Args")
+Returns = TypeVar("Returns")
 
 def set_options(**options):
     """
@@ -21,7 +23,7 @@ def set_options(**options):
     
     then magicgui knows what widget it should be converted to. 
     """    
-    def wrapper(func):
+    def wrapper(func: Callable[[Args], Returns]) -> Callable[[Args], Returns]:
         upgrade_signature(func, gui_options=options)
         return func
     return wrapper
@@ -67,7 +69,7 @@ def set_design(width: int = None, height: int = None, min_width: int = None, min
             min_height = icon_size[1]
             
     caller_options = locals()
-    def wrapper(func):
+    def wrapper(func: Callable[[Args], Returns]) -> Callable[[Args], Returns]:
         upgrade_signature(func, caller_options=caller_options)
         return func
     return wrapper
@@ -117,13 +119,21 @@ def click(enables: nStrings = None, disables: nStrings = None, enabled: bool = T
         return f
     return wrapper
 
-def do_not_record(method: Callable):
+def do_not_record(method: Callable[[Args], Returns]) -> Callable[[Args], Returns]:
     """
     Wrapped method will not be recorded in macro.
     """    
     upgrade_signature(method, additional_options={"record": False})
     return method
-    
+
+def bind_key(key) -> Callable[[Callable[[Args], Returns]], Callable[[Args], Returns]]:
+    """
+    Define a keybinding callback.
+    """    
+    def wrapper(method: Callable[[Args], Returns], ) -> Callable[[Args], Returns]:
+        upgrade_signature(method, additional_options={"keybinding": key})
+        return method
+    return wrapper
 
 def _assert_iterable(obj):
     if obj is None:

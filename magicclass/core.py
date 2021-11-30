@@ -24,7 +24,8 @@ from .class_gui import (
 from ._base import PopUpMode, ErrorMode, defaults, MagicTemplate
 from .menu_gui import ContextMenuGui, MenuGui, MenuGuiBase
 from .macro import Expr
-from .utils import check_collision, get_app
+from .utils import iter_members
+from ._app import get_app
 
 _BASE_CLASS_SUFFIX = "_Base"
 
@@ -147,7 +148,7 @@ def magicclass(class_: type|None = None,
         class_gui = _TYPE_MAP[widget_type]
         
         if not issubclass(cls, MagicTemplate):
-            check_collision(cls, class_gui)
+            _check_collision(cls, class_gui)
             
         # get class attributes first
         doc = cls.__doc__
@@ -317,7 +318,7 @@ def _call_magicmenu(class_: type = None,
             raise TypeError("dataclass is not compatible with magicclass.")
         
         if not issubclass(cls, MagicTemplate):
-            check_collision(cls, menugui_class)
+            _check_collision(cls, menugui_class)
         
         # get class attributes first
         doc = cls.__doc__
@@ -364,6 +365,17 @@ def _call_magicmenu(class_: type = None,
 
 magicmenu.__doc__ += _call_magicmenu.__doc__
 magiccontext.__doc__ += _call_magicmenu.__doc__
+
+
+def _check_collision(cls0: type, cls1: type):
+    """
+    Check if two classes have name collisions.
+    """    
+    mem0 = set(x[0] for x in iter_members(cls0))
+    mem1 = set(x[0] for x in iter_members(cls1))
+    collision = mem0 & mem1
+    if collision:
+        raise AttributeError(f"Collision between {cls0.__name__} and {cls1.__name__}: {collision}")
 
 class _CallableClass:
     def __init__(self):
