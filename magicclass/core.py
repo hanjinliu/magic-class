@@ -94,7 +94,7 @@ def magicclass(class_: type|None = None,
     """
     Decorator that can convert a Python class into a widget.
     
-    ..code-block:: python
+    .. code-block:: python
     
         @magicclass
         class C:

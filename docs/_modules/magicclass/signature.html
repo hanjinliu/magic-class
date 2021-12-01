@@ -44,6 +44,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../use_field.html">Use Fields in magic-class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../use_wraps.html">Call Parent Methods from its Child</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../use_bind.html">Binding Values to Arguments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../keybinding.html">Define Custom Keybindings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../customize_macro.html">Customize Macro Recording</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../special_methods.html">Special attributes in magic-class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../containers.html">Container Variations</a></li>
@@ -79,11 +80,19 @@
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
 <span class="kn">from</span> <span class="nn">magicgui.signature</span> <span class="kn">import</span> <span class="n">MagicSignature</span>
 <span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">FunctionGui</span>
+<span class="kn">from</span> <span class="nn">magicgui.types</span> <span class="kn">import</span> <span class="n">WidgetOptions</span>
 <span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TypedDict</span>
 <span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">get_signature</span>
 
-<div class="viewcode-block" id="upgrade_signature"><a class="viewcode-back" href="../../magicclass.html#magicclass.signature.upgrade_signature">[docs]</a><span class="k">def</span> <span class="nf">upgrade_signature</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">gui_options</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">caller_options</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                      <span class="n">additional_options</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="AdditionalOptions"><a class="viewcode-back" href="../../magicclass.html#magicclass.signature.AdditionalOptions">[docs]</a><span class="k">class</span> <span class="nc">AdditionalOptions</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+    <span class="n">record</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="n">keybinding</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">into</span><span class="p">:</span> <span class="nb">str</span></div>
+
+<div class="viewcode-block" id="upgrade_signature"><a class="viewcode-back" href="../../magicclass.html#magicclass.signature.upgrade_signature">[docs]</a><span class="k">def</span> <span class="nf">upgrade_signature</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">gui_options</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+                      <span class="n">caller_options</span><span class="p">:</span> <span class="n">WidgetOptions</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                      <span class="n">additional_options</span><span class="p">:</span> <span class="n">AdditionalOptions</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Upgrade function signature to MagicMethodSignature. The input function may have</span>
 <span class="sd">    a inspect.Signature or magicgui.signature.Magicsignature.</span>
@@ -94,9 +103,9 @@
 <span class="sd">        Input function.</span>
 <span class="sd">    gui_options : dict, optional</span>
 <span class="sd">        Options of FunctionGui.</span>
-<span class="sd">    caller_options : dict, optional</span>
+<span class="sd">    caller_options : WidgetOptions, optional</span>
 <span class="sd">        Options of PushButton.</span>
-<span class="sd">    additional_options : dict, optional</span>
+<span class="sd">    additional_options : AdditionalOptions, optional</span>
 <span class="sd">        Additional options that will be used in magic class.</span>
 
 <span class="sd">    Returns</span>

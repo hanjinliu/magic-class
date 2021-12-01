@@ -7,6 +7,7 @@ API References
    :caption: Contents:
 
    magicclass
+   magicclass.utils
    magicclass.widgets
    magicclass.widgets.pywidgets
    magicclass.widgets.qtgraph

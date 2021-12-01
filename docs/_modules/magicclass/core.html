@@ -44,6 +44,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../use_field.html">Use Fields in magic-class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../use_wraps.html">Call Parent Methods from its Child</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../use_bind.html">Binding Values to Arguments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../keybinding.html">Define Custom Keybindings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../customize_macro.html">Customize Macro Recording</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../special_methods.html">Special attributes in magic-class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../containers.html">Container Variations</a></li>
@@ -80,12 +81,13 @@
 <span class="kn">import</span> <span class="nn">inspect</span>
 <span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">is_dataclass</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span>
 <span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Annotated</span><span class="p">,</span> <span class="n">_AnnotatedAlias</span>
 
-<span class="kn">from</span> <span class="nn">.class_gui</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span> <span class="nn">.gui.class_gui</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">ClassGuiBase</span><span class="p">,</span> 
     <span class="n">ClassGui</span><span class="p">,</span>
+    <span class="n">GroupBoxClassGui</span><span class="p">,</span>
     <span class="n">MainWindowClassGui</span><span class="p">,</span>
     <span class="n">SubWindowsClassGui</span><span class="p">,</span>
     <span class="n">ScrollableClassGui</span><span class="p">,</span>
@@ -97,10 +99,11 @@
     <span class="n">ToolBoxClassGui</span><span class="p">,</span>
     <span class="n">ListClassGui</span><span class="p">,</span>
     <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">._base</span> <span class="kn">import</span> <span class="n">PopUpMode</span><span class="p">,</span> <span class="n">ErrorMode</span><span class="p">,</span> <span class="n">defaults</span><span class="p">,</span> <span class="n">MagicTemplate</span>
-<span class="kn">from</span> <span class="nn">.menu_gui</span> <span class="kn">import</span> <span class="n">ContextMenuGui</span><span class="p">,</span> <span class="n">MenuGui</span><span class="p">,</span> <span class="n">MenuGuiBase</span>
+<span class="kn">from</span> <span class="nn">.gui._base</span> <span class="kn">import</span> <span class="n">PopUpMode</span><span class="p">,</span> <span class="n">ErrorMode</span><span class="p">,</span> <span class="n">defaults</span><span class="p">,</span> <span class="n">MagicTemplate</span>
+<span class="kn">from</span> <span class="nn">.gui</span> <span class="kn">import</span> <span class="n">ContextMenuGui</span><span class="p">,</span> <span class="n">MenuGui</span><span class="p">,</span> <span class="n">MenuGuiBase</span>
 <span class="kn">from</span> <span class="nn">.macro</span> <span class="kn">import</span> <span class="n">Expr</span>
-<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">check_collision</span><span class="p">,</span> <span class="n">get_app</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">iter_members</span>
+<span class="kn">from</span> <span class="nn">._app</span> <span class="kn">import</span> <span class="n">get_app</span>
 
 <span class="n">_BASE_CLASS_SUFFIX</span> <span class="o">=</span> <span class="s2">&quot;_Base&quot;</span>
 
@@ -115,6 +118,7 @@
     <span class="n">stacked</span> <span class="o">=</span> <span class="s2">&quot;stacked&quot;</span>
     <span class="nb">list</span> <span class="o">=</span> <span class="s2">&quot;list&quot;</span>
     <span class="n">subwindows</span> <span class="o">=</span> <span class="s2">&quot;subwindows&quot;</span>
+    <span class="n">groupbox</span> <span class="o">=</span> <span class="s2">&quot;groupbox&quot;</span>
     <span class="n">mainwindow</span> <span class="o">=</span> <span class="s2">&quot;mainwindow&quot;</span></div>
 
 <span class="n">_TYPE_MAP</span> <span class="o">=</span> <span class="p">{</span>
@@ -127,6 +131,7 @@
     <span class="n">WidgetType</span><span class="o">.</span><span class="n">tabbed</span><span class="p">:</span> <span class="n">TabbedClassGui</span><span class="p">,</span>
     <span class="n">WidgetType</span><span class="o">.</span><span class="n">stacked</span><span class="p">:</span> <span class="n">StackedClassGui</span><span class="p">,</span>
     <span class="n">WidgetType</span><span class="o">.</span><span class="n">list</span><span class="p">:</span> <span class="n">ListClassGui</span><span class="p">,</span>
+    <span class="n">WidgetType</span><span class="o">.</span><span class="n">groupbox</span><span class="p">:</span> <span class="n">GroupBoxClassGui</span><span class="p">,</span>
     <span class="n">WidgetType</span><span class="o">.</span><span class="n">subwindows</span><span class="p">:</span> <span class="n">SubWindowsClassGui</span><span class="p">,</span>
     <span class="n">WidgetType</span><span class="o">.</span><span class="n">mainwindow</span><span class="p">:</span> <span class="n">MainWindowClassGui</span><span class="p">,</span>
 <span class="p">}</span>
@@ -163,11 +168,11 @@
                <span class="n">error_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">ErrorMode</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                <span class="n">widget_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">WidgetType</span> <span class="o">=</span> <span class="n">WidgetType</span><span class="o">.</span><span class="n">none</span><span class="p">,</span>
                <span class="n">parent</span> <span class="o">=</span> <span class="kc">None</span>
-               <span class="p">):</span>
+               <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ClassGui</span> <span class="o">|</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">type</span><span class="p">],</span> <span class="n">ClassGui</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Decorator that can convert a Python class into a widget.</span>
 <span class="sd">    </span>
-<span class="sd">    ..code-block:: python</span>
+<span class="sd">    .. code-block:: python</span>
 <span class="sd">    </span>
 <span class="sd">        @magicclass</span>
 <span class="sd">        class C:</span>
@@ -221,7 +226,7 @@
         <span class="n">class_gui</span> <span class="o">=</span> <span class="n">_TYPE_MAP</span><span class="p">[</span><span class="n">widget_type</span><span class="p">]</span>
         
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">MagicTemplate</span><span class="p">):</span>
-            <span class="n">check_collision</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">class_gui</span><span class="p">)</span>
+            <span class="n">_check_collision</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">class_gui</span><span class="p">)</span>
             
         <span class="c1"># get class attributes first</span>
         <span class="n">doc</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__doc__</span>
@@ -283,7 +288,7 @@
               <span class="n">error_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">ErrorMode</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
               <span class="n">labels</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
               <span class="n">parent</span> <span class="o">=</span> <span class="kc">None</span>
-              <span class="p">):</span>
+              <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MenuGui</span> <span class="o">|</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">type</span><span class="p">],</span> <span class="n">MenuGui</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Decorator that can convert a Python class into a menu bar.</span>
 <span class="sd">    &quot;&quot;&quot;</span>    
@@ -296,7 +301,7 @@
                  <span class="n">error_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">ErrorMode</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">labels</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
                  <span class="n">parent</span><span class="o">=</span><span class="kc">None</span>
-                 <span class="p">):</span>
+                 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ContextMenuGui</span> <span class="o">|</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">type</span><span class="p">],</span> <span class="n">ContextMenuGui</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Decorator that can convert a Python class into a context menu.</span>
 <span class="sd">    &quot;&quot;&quot;</span>    
@@ -391,7 +396,7 @@
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;dataclass is not compatible with magicclass.&quot;</span><span class="p">)</span>
         
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">MagicTemplate</span><span class="p">):</span>
-            <span class="n">check_collision</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">menugui_class</span><span class="p">)</span>
+            <span class="n">_check_collision</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">menugui_class</span><span class="p">)</span>
         
         <span class="c1"># get class attributes first</span>
         <span class="n">doc</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__doc__</span>
@@ -438,6 +443,17 @@
 
 <span class="n">magicmenu</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">+=</span> <span class="n">_call_magicmenu</span><span class="o">.</span><span class="vm">__doc__</span>
 <span class="n">magiccontext</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">+=</span> <span class="n">_call_magicmenu</span><span class="o">.</span><span class="vm">__doc__</span>
+
+
+<span class="k">def</span> <span class="nf">_check_collision</span><span class="p">(</span><span class="n">cls0</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="n">cls1</span><span class="p">:</span> <span class="nb">type</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if two classes have name collisions.</span>
+<span class="sd">    &quot;&quot;&quot;</span>    
+    <span class="n">mem0</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">iter_members</span><span class="p">(</span><span class="n">cls0</span><span class="p">))</span>
+    <span class="n">mem1</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">iter_members</span><span class="p">(</span><span class="n">cls1</span><span class="p">))</span>
+    <span class="n">collision</span> <span class="o">=</span> <span class="n">mem0</span> <span class="o">&amp;</span> <span class="n">mem1</span>
+    <span class="k">if</span> <span class="n">collision</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Collision between </span><span class="si">{</span><span class="n">cls0</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">cls1</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">collision</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
 <span class="k">class</span> <span class="nc">_CallableClass</span><span class="p">:</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

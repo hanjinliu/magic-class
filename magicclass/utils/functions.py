@@ -1,14 +1,12 @@
 from __future__ import annotations
 import inspect
 from enum import Enum
-from typing import Any, TYPE_CHECKING
+from typing import Any
 from docstring_parser import parse
 from qtpy.QtWidgets import QApplication, QMessageBox
 
-if TYPE_CHECKING:
-    from magicgui.widgets import FunctionGui
-
-__all__ = ["MessageBoxMode", "show_messagebox", "open_url", "screen_center"]
+__all__ = ["MessageBoxMode", "show_messagebox", "open_url", "screen_center", "to_clipboard",
+           "iter_members", "extract_tooltip", "get_signature"]
 
 def iter_members(cls: type, exclude_prefix: str = "__") -> list[str, Any]:
     """

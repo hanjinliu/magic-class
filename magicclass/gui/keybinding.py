@@ -55,6 +55,8 @@ class Key(Enum):
     Greater = ">"
     Question = "?"
     At = "@"
+    
+    # alphabets
     A = "a"
     B = "b"
     C = "c"
@@ -81,6 +83,8 @@ class Key(Enum):
     X = "x"
     Y = "y"
     Z = "z"
+    
+    # numbers
     _0 = "0"
     _1 = "1"
     _2 = "2"
@@ -122,7 +126,7 @@ class Key(Enum):
             raise TypeError(f"Unsupported type for a modifier: {type(key)}.")
         return getattr(Qt, key.name.upper())
     
-    # Add method enables expression like ``Key.Ctrl + Key.A``.
+    # Add method enables expressions like ``Key.Ctrl + Key.A``.
     def __add__(self, other: str | Key) -> tuple[Key, Key]:
         cls = self.__class__
         if isinstance(other, str):
@@ -167,8 +171,6 @@ def as_shortcut(key_combo: tuple) -> QKeySequence:
     if not isinstance(key_combo, tuple):
         raise TypeError("Unsupported key combo.")
     
-    # Here key combo could be tuple[Key, ...], tuple[str, ...] or tuple[int, ...]
-    qtkeycombo = None
     key0 = key_combo[0]
     if (len(key_combo) == 1 and 
         isinstance(key0, str) and

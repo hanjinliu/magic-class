@@ -19,7 +19,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="magicclass.widgets.napari package" href="magicclass.widgets.napari.html" />
-    <link rel="prev" title="magicclass package" href="magicclass.html" /> 
+    <link rel="prev" title="magicclass.utils package" href="magicclass.utils.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -40,17 +40,57 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul>
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="quick_start.html">Quick Start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="options.html">Options in magic-class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="nest.html">Nest magic-classes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="use_field.html">Use Fields in magic-class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="use_wraps.html">Call Parent Methods from its Child</a></li>
 <li class="toctree-l1"><a class="reference internal" href="use_bind.html">Binding Values to Arguments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="keybinding.html">Define Custom Keybindings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="customize_macro.html">Customize Macro Recording</a></li>
 <li class="toctree-l1"><a class="reference internal" href="special_methods.html">Special attributes in magic-class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="containers.html">Container Variations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api.html">API References</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="api.html">API References</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="magicclass.html">magicclass package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="magicclass.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="magicclass.gui.html">magicclass.gui package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.utils.html">magicclass.utils package</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">magicclass.widgets package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#module-magicclass.core">magicclass.core module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#module-magicclass.creator">magicclass.creator module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#module-magicclass.fields">magicclass.fields module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#module-magicclass.macro">magicclass.macro module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#module-magicclass.signature">magicclass.signature module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#module-magicclass.wrappers">magicclass.wrappers module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html#module-magicclass">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.utils.html">magicclass.utils package</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">magicclass.widgets package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.widgets.napari.html">magicclass.widgets.napari package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.widgets.pywidgets.html">magicclass.widgets.pywidgets package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.widgets.qtgraph.html">magicclass.widgets.qtgraph package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-magicclass.widgets.console">magicclass.widgets.console module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-magicclass.widgets.misc">magicclass.widgets.misc module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-magicclass.widgets.separator">magicclass.widgets.separator module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-magicclass.widgets.sequence">magicclass.widgets.sequence module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-magicclass.widgets.threading">magicclass.widgets.threading module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-magicclass.widgets.utils">magicclass.widgets.utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-magicclass.widgets">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.widgets.pywidgets.html">magicclass.widgets.pywidgets package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.widgets.qtgraph.html">magicclass.widgets.qtgraph package</a></li>
+</ul>
+</li>
 </ul>
 
         </div>
@@ -217,71 +257,6 @@ executable GUI.</p>
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">value</span></span><a class="headerlink" href="#magicclass.widgets.misc.MacroEdit.value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="magicclass.widgets.misc.MessageBoxMode">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.misc.</span></span><span class="sig-name descname"><span class="pre">MessageBoxMode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/misc.html#MessageBoxMode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.misc.MessageBoxMode" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
-<p>An enumeration.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.widgets.misc.MessageBoxMode.ABOUT">
-<span class="sig-name descname"><span class="pre">ABOUT</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'about'</span></em><a class="headerlink" href="#magicclass.widgets.misc.MessageBoxMode.ABOUT" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.widgets.misc.MessageBoxMode.ERROR">
-<span class="sig-name descname"><span class="pre">ERROR</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'error'</span></em><a class="headerlink" href="#magicclass.widgets.misc.MessageBoxMode.ERROR" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.widgets.misc.MessageBoxMode.INFO">
-<span class="sig-name descname"><span class="pre">INFO</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'info'</span></em><a class="headerlink" href="#magicclass.widgets.misc.MessageBoxMode.INFO" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.widgets.misc.MessageBoxMode.QUESTION">
-<span class="sig-name descname"><span class="pre">QUESTION</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'question'</span></em><a class="headerlink" href="#magicclass.widgets.misc.MessageBoxMode.QUESTION" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.widgets.misc.MessageBoxMode.WARNING">
-<span class="sig-name descname"><span class="pre">WARNING</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'warn'</span></em><a class="headerlink" href="#magicclass.widgets.misc.MessageBoxMode.WARNING" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="magicclass.widgets.misc.show_messagebox">
-<span class="sig-prename descclassname"><span class="pre">magicclass.widgets.misc.</span></span><span class="sig-name descname"><span class="pre">show_messagebox</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <a class="reference internal" href="#magicclass.widgets.misc.MessageBoxMode" title="magicclass.widgets.misc.MessageBoxMode"><span class="pre">MessageBoxMode</span></a></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">MessageBoxMode.INFO</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/magicclass/widgets/misc.html#show_messagebox"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.misc.show_messagebox" title="Permalink to this definition">¶</a></dt>
-<dd><p>Freeze the GUI and open a messagebox dialog.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>mode</strong> (<em>str</em><em> or </em><a class="reference internal" href="#magicclass.widgets.misc.MessageBoxMode" title="magicclass.widgets.misc.MessageBoxMode"><em>MessageBoxMode</em></a><em>, </em><em>default is MessageBoxMode.INFO</em>) -- Mode of message box. Must be &quot;error&quot;, &quot;warn&quot;, &quot;info&quot;, &quot;question&quot; or &quot;about&quot;.</p></li>
-<li><p><strong>title</strong> (<em>str</em><em>, </em><em>optional</em>) -- Title of messagebox.</p></li>
-<li><p><strong>text</strong> (<em>str</em><em>, </em><em>optional</em>) -- Text in messagebox.</p></li>
-<li><p><strong>parent</strong> (<em>QWidget</em><em>, </em><em>optional</em>) -- Parent widget.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>If &quot;OK&quot; or &quot;Yes&quot; is clicked, return True. Otherwise return False.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>bool</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="magicclass.widgets.misc.show_url">
-<span class="sig-prename descclassname"><span class="pre">magicclass.widgets.misc.</span></span><span class="sig-name descname"><span class="pre">show_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">link</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/magicclass/widgets/misc.html#show_url"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.misc.show_url" title="Permalink to this definition">¶</a></dt>
-<dd><p>Open the link with the default browser.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>link</strong> (<em>str</em>) -- Link to the home page.</p>
-</dd>
-</dl>
 </dd></dl>
 
 </section>
@@ -855,39 +830,6 @@ These widgets are all compatible with the <code class="docutils literal notransl
 
 </dd></dl>
 
-<dl class="py function">
-<dt class="sig sig-object py" id="magicclass.widgets.show_messagebox">
-<span class="sig-prename descclassname"><span class="pre">magicclass.widgets.</span></span><span class="sig-name descname"><span class="pre">show_messagebox</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">MessageBoxMode</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">MessageBoxMode.INFO</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/magicclass/widgets/misc.html#show_messagebox"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.show_messagebox" title="Permalink to this definition">¶</a></dt>
-<dd><p>Freeze the GUI and open a messagebox dialog.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>mode</strong> (<em>str</em><em> or </em><a class="reference internal" href="#magicclass.widgets.misc.MessageBoxMode" title="magicclass.widgets.misc.MessageBoxMode"><em>MessageBoxMode</em></a><em>, </em><em>default is MessageBoxMode.INFO</em>) -- Mode of message box. Must be &quot;error&quot;, &quot;warn&quot;, &quot;info&quot;, &quot;question&quot; or &quot;about&quot;.</p></li>
-<li><p><strong>title</strong> (<em>str</em><em>, </em><em>optional</em>) -- Title of messagebox.</p></li>
-<li><p><strong>text</strong> (<em>str</em><em>, </em><em>optional</em>) -- Text in messagebox.</p></li>
-<li><p><strong>parent</strong> (<em>QWidget</em><em>, </em><em>optional</em>) -- Parent widget.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>If &quot;OK&quot; or &quot;Yes&quot; is clicked, return True. Otherwise return False.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>bool</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="magicclass.widgets.show_url">
-<span class="sig-prename descclassname"><span class="pre">magicclass.widgets.</span></span><span class="sig-name descname"><span class="pre">show_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">link</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/magicclass/widgets/misc.html#show_url"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.show_url" title="Permalink to this definition">¶</a></dt>
-<dd><p>Open the link with the default browser.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>link</strong> (<em>str</em>) -- Link to the home page.</p>
-</dd>
-</dl>
-</dd></dl>
-
 </section>
 </section>
 
@@ -895,7 +837,7 @@ These widgets are all compatible with the <code class="docutils literal notransl
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="magicclass.html" class="btn btn-neutral float-left" title="magicclass package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="magicclass.utils.html" class="btn btn-neutral float-left" title="magicclass.utils package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="magicclass.widgets.napari.html" class="btn btn-neutral float-right" title="magicclass.widgets.napari package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

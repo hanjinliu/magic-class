@@ -7,26 +7,12 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
+   magicclass.gui
+   magicclass.utils
    magicclass.widgets
 
 Submodules
 ----------
-
-magicclass.class\_gui module
-----------------------------
-
-.. automodule:: magicclass.class_gui
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-magicclass.containers module
-----------------------------
-
-.. automodule:: magicclass.containers
-   :members:
-   :undoc-members:
-   :show-inheritance:
 
 magicclass.core module
 ----------------------
@@ -60,34 +46,10 @@ magicclass.macro module
    :undoc-members:
    :show-inheritance:
 
-magicclass.menu\_gui module
----------------------------
-
-.. automodule:: magicclass.menu_gui
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-magicclass.mgui\_ext module
----------------------------
-
-.. automodule:: magicclass.mgui_ext
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 magicclass.signature module
 ---------------------------
 
 .. automodule:: magicclass.signature
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-magicclass.utils module
------------------------
-
-.. automodule:: magicclass.utils
    :members:
    :undoc-members:
    :show-inheritance:

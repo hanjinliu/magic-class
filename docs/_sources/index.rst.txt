@@ -32,6 +32,7 @@ Contents
    use_field
    use_wraps
    use_bind
+   keybinding
    customize_macro
    special_methods
    containers
