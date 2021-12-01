@@ -133,16 +133,25 @@ def to_clipboard(obj: Any) -> None:
     obj : Any
         Object to be copied.
     """    
-    from qtpy.QtGui import QGuiApplication, QImage
+    from qtpy.QtGui import QGuiApplication, QImage, qRgb
     import numpy as np
     import pandas as pd
     clipboard = QGuiApplication.clipboard()
+    
     if isinstance(obj, str):
         clipboard.setText(obj)
     elif isinstance(obj, np.ndarray):
-        clipboard.setImage(QImage(obj))
+        if obj.dtype != np.uint8:
+            raise ValueError(f"Cannot copy an array of dtype {obj.dtype} to clipboard.")
+        # See https://gist.github.com/smex/5287589
+        qimg_format = QImage.Format_RGB888 if obj.ndim == 3 else QImage.Format_Indexed8
+        *_, h, w = obj.shape
+        qimg = QImage(obj.data, w, h, obj.strides[0], qimg_format)
+        gray_color_table = [qRgb(i, i, i) for i in range(256)]
+        qimg.setColorTable(gray_color_table)
+        clipboard.setImage(qimg)
     elif isinstance(obj, pd.DataFrame):
-        clipboard.setText(obj.to_csv())
+        clipboard.setText(obj.to_csv(sep="\t"))
     else:
         clipboard.setText(str(obj))
         
