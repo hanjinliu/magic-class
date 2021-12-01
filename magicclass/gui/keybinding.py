@@ -1,12 +1,19 @@
+from __future__ import annotations
 from qtpy.QtCore import Qt
 from qtpy.QtGui import QKeySequence
 from enum import Enum
-from typing import Callable, NewType
+from typing import NewType, Union
 import re
 
 QtKey = NewType("QtKey", int)
+QtModifier = NewType("QtModifier", int)
+KeyCombo = Union[tuple[QtKey], 
+                 tuple[QtModifier, QtKey], 
+                 tuple[QtModifier, QtModifier, QtKey]
+                ]
 
 class Key(Enum):
+    # keys
     Tab = "tab"
     Backspace = "backspace"
     Delete = "delete"
@@ -16,10 +23,6 @@ class Key(Enum):
     Down = "down"
     PageUp = "pageup"
     PageDown = "pagedown"
-    Shift = "shift"
-    Control = "control"
-    Meta = "meta"
-    Alt = "alt"
     F1 = "f1"
     F2 = "f2"
     F3 = "f3"
@@ -78,29 +81,100 @@ class Key(Enum):
     X = "x"
     Y = "y"
     Z = "z"
+    _0 = "0"
+    _1 = "1"
+    _2 = "2"
+    _3 = "3"
+    _4 = "4"
+    _5 = "5"
+    _6 = "6"
+    _7 = "7"
+    _8 = "8"
+    _9 = "9"
     
-# TODO: modifiers not working
+    # modifiers
+    Meta = "meta"
+    Shift = "shift"
+    Ctrl = "ctrl"
+    Alt = "alt"
+    
+    @classmethod
+    def to_qtkey(cls, key: str | int | Key) -> QtKey:
+        if isinstance(key, str):
+            key = cls(key.lower())
+        elif isinstance(key, int):
+            key = str(key)
+        elif isinstance(key, cls):
+            pass
+        else:
+            raise TypeError(f"Unsupported type for a key: {type(key)}.")
+        return getattr(Qt, f"Key_{key.name.lstrip('_')}")
 
+    @classmethod
+    def to_qtmodifier(cls, key: str | Key) -> QtModifier:
+        if key == "control":
+            key = cls.Ctrl
+        elif isinstance(key, str):
+            key = cls(key.lower())
+        elif isinstance(key, cls):
+            pass
+        else:
+            raise TypeError(f"Unsupported type for a modifier: {type(key)}.")
+        return getattr(Qt, key.name.upper())
+    
+    # Add method enables expression like ``Key.Ctrl + Key.A``.
+    def __add__(self, other: str | Key) -> tuple[Key, Key]:
+        cls = self.__class__
+        if isinstance(other, str):
+            other = cls(other.lower())
+        elif not isinstance(other, cls):
+            raise TypeError(f"Cannot add type {type(other)} to Key object.")
+        return (self, other)
+    
+    def __radd__(self, other: str | Key | tuple[str|Key, ...]) -> tuple[Key, ...]:
+        cls = self.__class__
+        if isinstance(other, str):
+            other = cls(other.lower())
+            return (self, other)
+        elif isinstance(other, cls):
+            return (other, self)
+        elif isinstance(other, tuple):
+            return other + (self,)
+        else:
+            raise TypeError(f"Cannot add Key object to type {type(other)}.")
+
+MODIFIERS = (Key.Meta, Key.Shift, Key.Ctrl, Key.Alt)
+
+def ismodifier(s: str) -> bool:
+    s = s.lower()
+    if s == "control":
+        return True
+    else:
+        return Key(s) in MODIFIERS
+    
 def parse_key_combo(key_combo: str) -> QtKey:
     # For compatibility with napari
     parsed = re.split("-(?=.+)", key_combo)
-    return get_qt_key_enum(*parsed)
+    return strs2keycombo(*parsed)
 
-def str2qtkey(s: str) -> QtKey:
-    s = s.lower()
-    if s == "ctrl":
-        s = "control"
-    return getattr(Qt, f"Key_{Key(s).name}")
+def strs2keycombo(*args: tuple[str|Key, ...]) -> KeyCombo:
+    *modifiers, key = args
+    if len(modifiers) > 2:
+        raise ValueError("More than two modifiers found.")
+    return tuple(Key.to_qtmodifier(m) for m in modifiers) + (Key.to_qtkey(key),)
 
-def get_qt_key_enum(*args: tuple[str, ...]) -> QtKey:
-    return sum(map(str2qtkey, args))
-
-def as_shortcut(key_combo: tuple):
-    try:
-        qtkey = get_qt_key_enum(*key_combo)
-    except ValueError as e:
-        print(e)
-        if len(key_combo) != 1:
-            raise e
-        qtkey = parse_key_combo(key_combo[0])
-    return QKeySequence(qtkey)
+def as_shortcut(key_combo: tuple) -> QKeySequence:
+    if not isinstance(key_combo, tuple):
+        raise TypeError("Unsupported key combo.")
+    
+    # Here key combo could be tuple[Key, ...], tuple[str, ...] or tuple[int, ...]
+    qtkeycombo = None
+    key0 = key_combo[0]
+    if (len(key_combo) == 1 and 
+        isinstance(key0, str) and
+        not hasattr(Key, key0.lower())
+        ):
+        qtkeycombo = parse_key_combo(*key_combo)
+    else:
+        qtkeycombo = strs2keycombo(*key_combo)
+    return QKeySequence(sum(qtkeycombo))

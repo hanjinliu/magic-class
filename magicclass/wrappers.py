@@ -128,8 +128,17 @@ def do_not_record(method: Callable[[Args], Returns]) -> Callable[[Args], Returns
 
 def bind_key(*key) -> Callable[[Callable[[Args], Returns]], Callable[[Args], Returns]]:
     """
-    Define a keybinding callback.
+    Define a keybinding to a button or an action.
+    This function accepts several styles of shortcut expression.
+    
+    >>> @bind_key("Ctrl-A")         # napari style
+    >>> @bind_key("Ctrl", "A")      # separately
+    >>> @bind_key(Key.Ctrl + Key.A) # use Key class
+    >>> @bind_key(Key.Ctrl, Key.A)  # use Key class separately
+    
     """    
+    if isinstance(key[0], tuple):
+        key = key[0]
     def wrapper(method: Callable[[Args], Returns], ) -> Callable[[Args], Returns]:
         upgrade_signature(method, additional_options={"keybinding": key})
         return method
