@@ -102,7 +102,7 @@ class MagicTemplate:
         raise NotImplementedError()
     
     def append(self, widget: Widget) -> None:
-        raise NotImplementedError()
+        return self.insert(len(self, widget))
         
     def insert(self, key: int, widget: Widget) -> None:
         raise NotImplementedError()
@@ -238,7 +238,7 @@ class MagicTemplate:
             else:
                 func = method
             if template is not None:
-                func = _wraps(template)(func)
+                func = wraps(template)(func)
             if hasattr(cls, method.__name__):
                 getattr(cls, method.__name__).__signature__ = get_signature(func)
             
@@ -606,10 +606,6 @@ def wraps(template: Callable | inspect.Signature) -> Callable[[_C], _C]:
         A wrapper which take a function or class as an input and returns same
         function or class with updated signature(s).
     """    
-    return _wraps(template)
-
-def _wraps(template: Callable | inspect.Signature, 
-           reference: Callable = None) -> Callable:
     def wrapper(f: _C) -> _C:
         if isinstance(f, type):
             for name, attr in iter_members(f):
@@ -618,10 +614,7 @@ def _wraps(template: Callable | inspect.Signature,
             return f
         
         Param = inspect.Parameter
-        if reference is None:
-            old_signature = inspect.signature(f)
-        else:
-            old_signature = inspect.signature(reference)
+        old_signature = inspect.signature(f)
             
         old_params = old_signature.parameters
         
