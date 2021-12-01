@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Container Variations &mdash; magic-class 0.5.10dev0 documentation</title>
+  <title>Container Variations &mdash; magic-class 0.5.10 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -30,7 +30,7 @@
             <a href="index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.10dev0
+                0.5.10
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -47,6 +47,7 @@
 <li class="toctree-l1"><a class="reference internal" href="use_field.html">Use Fields in magic-class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="use_wraps.html">Call Parent Methods from its Child</a></li>
 <li class="toctree-l1"><a class="reference internal" href="use_bind.html">Binding Values to Arguments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="keybinding.html">Define Custom Keybindings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="customize_macro.html">Customize Macro Recording</a></li>
 <li class="toctree-l1"><a class="reference internal" href="special_methods.html">Special attributes in magic-class</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Container Variations</a><ul>
@@ -118,6 +119,27 @@ You can use them by importing from <code class="docutils literal notranslate"><s
 </li>
 <li><dl class="simple">
 <dt><em>appearance</em></dt><dd><p>A button widget. The inner container appears when the button is clicked.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">GroupBoxContainer</span></code></dt><dd><ul>
+<li><dl class="simple">
+<dt><em>base Qt class</em></dt><dd><p>QGroupBox</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><em>additional properties</em></dt><dd><p>None</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><em>appearance</em></dt><dd><p>Container is enclosed by a line.</p>
 </dd>
 </dl>
 </li>
@@ -356,7 +378,10 @@ You can use them by importing from <code class="docutils literal notranslate"><s
 <tr class="row-odd"><td><p>subwindows</p></td>
 <td><p>SubWindowsContainer</p></td>
 </tr>
-<tr class="row-even"><td><p>mainwindow</p></td>
+<tr class="row-even"><td><p>groupbox</p></td>
+<td><p>GroupBoxContainer</p></td>
+</tr>
+<tr class="row-odd"><td><p>mainwindow</p></td>
 <td><p>MainWindow</p></td>
 </tr>
 </tbody>

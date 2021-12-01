@@ -33,6 +33,14 @@ Available Containers
     + *appearance*
         A button widget. The inner container appears when the button is clicked.
 
+* ``GroupBoxContainer``
+    + *base Qt class* 
+        QGroupBox
+    + *additional properties*
+        None
+    + *appearance*
+        Container is enclosed by a line.
+
 * ``ListContainer``
     + *base Qt class* 
         QListWidget
@@ -135,5 +143,6 @@ tabbed      TabbedContainer
 stacked     StackedContainer
 list        ListContainer
 subwindows  SubWindowsContainer
+groupbox    GroupBoxContainer
 mainwindow  MainWindow
 =========== ====================
