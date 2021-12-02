@@ -292,9 +292,10 @@ class MagicTemplate:
                         widget = child_instance._create_widget_from_method(lambda x: None)
                         child_instance.append(widget)
                     else:
-                        child_widget: PushButtonPlus = child_instance[index]
+                        child_widget: PushButtonPlus | AbstractAction = child_instance[index]
                         child_widget.changed.disconnect()
                         child_widget.changed.connect(widget.changed)
+                        child_widget.tooltip = widget.tooltip
                 break
         else:
             raise RuntimeError(f"{child_clsname} not found in class {self.__class__.__name__}")
