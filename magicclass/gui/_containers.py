@@ -393,11 +393,11 @@ class ListContainer(ContainerWidget):
         
     @property
     def current_index(self):
-        return self.native.currentRow()
+        return self._widget._listwidget.currentRow()
     
     @current_index.setter
     def current_index(self, index: int):
-        self.native.setCurrentRow(index)
+        self._widget._listwidget.setCurrentRow(index)
 
 @wrap_container(base=_SubWindowsContainer)
 class SubWindowsContainer(ContainerWidget):
