@@ -1,6 +1,6 @@
 from __future__ import annotations
 from inspect import signature
-from typing import Any
+from typing import Any, Callable
 from qtpy.QtWidgets import QMenuBar, QWidget
 from qtpy.QtCore import Qt
 from magicgui.widgets import Container, MainWindow,Label, FunctionGui, Image, Table
@@ -134,8 +134,8 @@ class ClassGuiBase(BaseGui):
                         )
                     _hist.append((name, type(attr), "ContextMenuGui"))
                 
-                elif isinstance(widget, Widget) or callable(widget):
-                    if (not isinstance(widget, Widget)) and callable(widget):
+                elif isinstance(widget, (Widget, Callable)):
+                    if (not isinstance(widget, Widget)) and isinstance(widget, Callable):
                         # Methods (FunctionGui not included)
                         widget = self._create_widget_from_method(widget)
                     
@@ -363,6 +363,9 @@ def _nested_function_gui_callback(cgui: ClassGuiBase, fgui: FunctionGui):
     return _after_run
 
 def _value_widget_callback(cgui: ClassGuiBase, widget: ValueWidget, name: str, getvalue: bool = True):
+    sym_name = Symbol(name)
+    sym_value = Symbol("value")
+    sym_cgui = symbol(cgui)
     def _set_value():
         if not widget.enabled:
             # If widget is read only, it means that value is set in script (not manually).
@@ -372,9 +375,9 @@ def _value_widget_callback(cgui: ClassGuiBase, widget: ValueWidget, name: str, g
         cgui.changed.emit(cgui)
         
         if getvalue:
-            sub = Expr(head=Head.getattr, args=[Symbol(name), Symbol("value")]) # name.value
+            sub = Expr(head=Head.getattr, args=[sym_name, sym_value]) # name.value
         else:
-            sub = Expr(head=Head.value, args=[Symbol(name)])
+            sub = Expr(head=Head.value, args=[sym_name])
         
         # Make an expression of
         # >>> x.name.value = value
@@ -382,7 +385,7 @@ def _value_widget_callback(cgui: ClassGuiBase, widget: ValueWidget, name: str, g
         # >>> x.name = value
         expr = Expr(head=Head.assign, 
                     args=[Expr(head=Head.getattr, 
-                               args=[symbol(cgui), sub]), 
+                               args=[sym_cgui, sub]), 
                           widget.value])
         
         last_expr = cgui._recorded_macro[-1]

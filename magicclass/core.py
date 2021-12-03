@@ -136,6 +136,9 @@ def magicclass(class_: type|None = None,
         close_on_run = defaults["close_on_run"]
     if error_mode is None:
         error_mode = defaults["error_mode"]
+    
+    if isinstance(widget_type, str):
+        widget_type = widget_type.lower()
         
     widget_type = WidgetType(widget_type)
     

@@ -501,8 +501,13 @@ class MagicTemplate:
         # keybinding
         keybinding = get_additional_option(func, "keybinding", None)
         if keybinding is not None:
-            shortcut = as_shortcut(keybinding)
-            widget.set_shortcut(shortcut)
+            if obj.__name__.startswith("_"):
+                from qtpy.QtWidgets import QShortcut
+                shortcut = QShortcut(as_shortcut(keybinding), self.native)
+                shortcut.activated.connect(widget.changed)
+            else:
+                shortcut = as_shortcut(keybinding)
+                widget.set_shortcut(shortcut)
             
         return widget
     
