@@ -241,6 +241,10 @@ def make_gui(container: type[ContainerWidget], no_margin: bool = True):
                 widget.changed.connect(lambda: self.changed.emit(self))
             if isinstance(widget, ClassGuiBase) and self._remove_child_margins:
                 widget.margins = (0, 0, 0, 0)
+            
+            if hasattr(widget, "__magicclass_parent__") or \
+                hasattr(widget.__class__, "__magicclass_parent__"):
+                widget.__magicclass_parent__ = self
                 
             _widget = widget
 
