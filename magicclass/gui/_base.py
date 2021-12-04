@@ -24,6 +24,7 @@ from ..wrappers import upgrade_signature
 if TYPE_CHECKING:
     try:
         import napari
+        from napari._qt.widgets.qt_viewer_dock_widget import QtViewerDockWidget
     except ImportError:
         pass
 
@@ -44,6 +45,21 @@ defaults = {"popup_mode": PopUpMode.popup,
             "error_mode": ErrorMode.msgbox,
             "close_on_run": True,
             }
+
+_RESERVED = {"__magicclass_parent__", "__magicclass_children__", "_close_on_run", 
+             "_error_mode", "_popup_mode", "_recorded_macro", "annotation", "enabled", 
+             "gui_only", "height", "label_changed", "label", "layout", "labels", "margins", 
+             "max_height", "max_width", "min_height", "min_width", "name", "options", "param_kind",
+             "parent_changed", "tooltip", "visible", "widget_type", "width", "_collect_macro", 
+             "parent_viewer", "parent_dock_widget", "objectName", "create_macro", "wraps",
+             "_unwrap_method", "_search_parent_magicclass", "_iter_child_magicclasses",
+             }
+
+def check_override(cls: type):
+    subclass_members = set(cls.__dict__.keys())
+    collision = subclass_members & _RESERVED
+    if collision:
+        raise AttributeError(f"Cannot override magic class reserved attributes: {collision}")
 
 class MagicTemplate:    
     __magicclass_parent__: None | MagicTemplate
@@ -76,6 +92,8 @@ class MagicTemplate:
     visible: bool
     widget_type: str
     width: int
+    
+    __init_subclass__ = check_override
     
     def show(self) -> None:
         raise NotImplementedError()
@@ -138,7 +156,7 @@ class MagicTemplate:
     @property
     def parent_viewer(self) -> "napari.Viewer" | None:
         """
-        Return napari.Viewer if self is a dock widget of a viewer.
+        Return napari.Viewer if magic class is a dock widget of a viewer.
         """
         parent_self = self._search_parent_magicclass()
         try:
@@ -146,6 +164,18 @@ class MagicTemplate:
         except AttributeError:
             viewer = None
         return viewer
+    
+    @property
+    def parent_dock_widget(self) -> "QtViewerDockWidget" | None:
+        """
+        Return dock widget object if magic class is a dock widget of a viewer.
+        """
+        parent_self = self._search_parent_magicclass()
+        try:
+            dock = parent_self.native.parent()
+        except AttributeError:
+            dock = None
+        return dock
     
     def objectName(self) -> str:
         """

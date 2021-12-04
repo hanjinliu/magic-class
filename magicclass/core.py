@@ -3,7 +3,7 @@ from functools import wraps as functools_wraps
 import inspect
 from enum import Enum
 from dataclasses import is_dataclass
-from typing import Any, Callable
+from typing import Any
 from typing_extensions import Annotated, _AnnotatedAlias
 
 from .gui.class_gui import (
@@ -21,7 +21,7 @@ from .gui.class_gui import (
     ToolBoxClassGui,
     ListClassGui,
     )
-from .gui._base import PopUpMode, ErrorMode, defaults, MagicTemplate
+from .gui._base import PopUpMode, ErrorMode, defaults, MagicTemplate, check_override
 from .gui import ContextMenuGui, MenuGui, MenuGuiBase
 from .macro import Expr
 from .utils import iter_members
@@ -90,7 +90,7 @@ def magicclass(class_: type|None = None,
                error_mode: str | ErrorMode = None,
                widget_type: str | WidgetType = WidgetType.none,
                parent = None
-               ) -> ClassGui | Callable[[type], ClassGui]:
+               ):
     """
     Decorator that can convert a Python class into a widget.
     
@@ -152,6 +152,7 @@ def magicclass(class_: type|None = None,
         
         if not issubclass(cls, MagicTemplate):
             _check_collision(cls, class_gui)
+            check_override(cls)
             
         # get class attributes first
         doc = cls.__doc__
@@ -213,7 +214,7 @@ def magicmenu(class_: type = None,
               error_mode: str | ErrorMode = None,
               labels: bool = True, 
               parent = None
-              ) -> MenuGui | Callable[[type], MenuGui]:
+              ):
     """
     Decorator that can convert a Python class into a menu bar.
     """    
@@ -226,7 +227,7 @@ def magiccontext(class_: type = None,
                  error_mode: str | ErrorMode = None,
                  labels: bool = True, 
                  parent=None
-                 ) -> ContextMenuGui | Callable[[type], ContextMenuGui]:
+                 ):
     """
     Decorator that can convert a Python class into a context menu.
     """    
@@ -322,6 +323,7 @@ def _call_magicmenu(class_: type = None,
         
         if not issubclass(cls, MagicTemplate):
             _check_collision(cls, menugui_class)
+            check_override(cls)
         
         # get class attributes first
         doc = cls.__doc__
