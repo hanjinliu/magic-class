@@ -136,8 +136,14 @@ class ClassGuiBase(BaseGui):
                 
                 elif isinstance(widget, (Widget, Callable)):
                     if (not isinstance(widget, Widget)) and isinstance(widget, Callable):
-                        # Methods (FunctionGui not included)
-                        widget = self._create_widget_from_method(widget)
+                        # Methods or any callable objects, but FunctionGui is not included.
+                        # NOTE: Here any custom callable objects could be given. Some callable
+                        # objects can be incompatible (like "Signal" object in magicgui) but
+                        # useful. Those callable objects should be passed from widget construction.
+                        try:
+                            widget = self._create_widget_from_method(widget)
+                        except Exception:
+                            continue
                     
                     elif hasattr(widget, "__magicclass_parent__") or \
                         hasattr(widget.__class__, "__magicclass_parent__"):
