@@ -24,7 +24,7 @@ from ..wrappers import upgrade_signature
 if TYPE_CHECKING:
     try:
         import napari
-        from napari._qt.widgets.qt_viewer_dock_widget import QtViewerDockWidget
+        from qtpy.QtWidgets import QDockWidget
     except ImportError:
         pass
 
@@ -166,9 +166,10 @@ class MagicTemplate:
         return viewer
     
     @property
-    def parent_dock_widget(self) -> "QtViewerDockWidget" | None:
+    def parent_dock_widget(self) -> "QDockWidget" | None:
         """
-        Return dock widget object if magic class is a dock widget of a viewer.
+        Return dock widget object if magic class is a dock widget of a main window widget,
+        such as a napari Viewer.
         """
         parent_self = self._search_parent_magicclass()
         try:
