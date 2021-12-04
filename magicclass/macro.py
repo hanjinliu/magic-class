@@ -320,39 +320,11 @@ class Macro(UserList):
         return ",\n".join(repr(expr) for expr in self)
     
     @contextmanager
-    def context(self, active: bool):
+    def blocked(self):
         was_active = self.active
-        self.active = active
-        yield
-        self.active = was_active
+        self.active = False
+        try:
+            yield
+        finally:
+            self.active = was_active
     
-    def record(self, function=None, *, returned_callback: Callable[[Expr], Expr]=None):
-        def wrapper(func):
-            if isinstance(func, MethodType):
-                if func.__name__ == "__init__":
-                    def make_expr(*args, **kwargs):
-                        return Expr.parse_init(args[0], args[0].__class__, args[1:], kwargs)
-                elif func.__name__ == "__call__":
-                    def make_expr(*args, **kwargs):
-                        return Expr.parse_call(Expr(Head.getattr, [args[0], func]), args[1:], kwargs)
-                else:
-                    def make_expr(*args, **kwargs):
-                        return Expr.parse_method(args[0], func, args[1:], kwargs)
-                    
-            else:
-                def make_expr(*args, **kwargs):
-                    return Expr.parse_call(func, args, kwargs)
-                    
-            @wraps(func)
-            def macro_recorder_equipped(*args, **kwargs):
-                with self.context(False):
-                    out = func(*args, **kwargs)
-                if self.active:
-                    expr = make_expr(*args, **kwargs)
-                    if returned_callback is not None:
-                        expr = out(expr)
-                    self.append(expr)
-                return out
-            return macro_recorder_equipped
-        
-        return wrapper if function is None else wrapper(function)
