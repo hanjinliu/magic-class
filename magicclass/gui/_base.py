@@ -10,11 +10,11 @@ from collections.abc import MutableSequence
 from magicgui.events import Signal
 from magicgui.signature import MagicParameter
 from magicgui.widgets import FunctionGui, FileEdit, EmptyWidget, Widget, Container
+from macrokit import Macro, Expr, Head, Symbol, symbol
 
 from .keybinding import as_shortcut
 from .mgui_ext import AbstractAction, FunctionGuiPlus, PushButtonPlus
 
-from ..macro import Macro, Expr, Head, Symbol, symbol
 from ..utils import get_signature, iter_members, extract_tooltip, screen_center
 from ..widgets import Separator, MacroEdit
 from ..fields import MagicField
@@ -47,13 +47,15 @@ defaults = {"popup_mode": PopUpMode.popup,
             }
 
 _RESERVED = {"__magicclass_parent__", "__magicclass_children__", "_close_on_run", 
-             "_error_mode", "_popup_mode", "_recorded_macro", "annotation", "enabled", 
-             "gui_only", "height", "label_changed", "label", "layout", "labels", "margins", 
-             "max_height", "max_width", "min_height", "min_width", "name", "options", "param_kind",
-             "parent_changed", "tooltip", "visible", "widget_type", "width", "_collect_macro", 
-             "parent_viewer", "parent_dock_widget", "objectName", "create_macro", "wraps",
+             "_error_mode", "_popup_mode", "_recorded_macro", "_my_symbol", "_macro_instance", 
+             "annotation", "enabled", "gui_only", "height", "label_changed", "label", "layout",
+             "labels", "margins", "max_height", "max_width", "min_height", "min_width", "name",
+             "options", "param_kind", "parent_changed", "tooltip", "visible", "widget_type", 
+             "width", "parent_viewer", "parent_dock_widget", "objectName", "create_macro", "wraps",
              "_unwrap_method", "_search_parent_magicclass", "_iter_child_magicclasses",
              }
+
+UI = Symbol("ui")
 
 def check_override(cls: type):
     subclass_members = set(cls.__dict__.keys())
@@ -67,8 +69,9 @@ class MagicTemplate:
     _close_on_run: bool
     _component_class: type[AbstractAction | Widget]
     _error_mode: ErrorMode
+    _macro_instance: Macro
+    _my_symbol: Symbol
     _popup_mode: PopUpMode
-    _recorded_macro: Macro[Expr]
     annotation: Any
     changed: Signal
     enabled: bool
@@ -125,33 +128,12 @@ class MagicTemplate:
     def insert(self, key: int, widget: Widget) -> None:
         raise NotImplementedError()
     
-    def _collect_macro(self, parent_symbol: Symbol = None, self_symbol: Symbol = None) -> Macro:
-        if self_symbol is None:
-            self_symbol = symbol(self)
-        
-        if parent_symbol is not None:
-            self_symbol = Expr(Head.getattr, [parent_symbol, self_symbol])
-        
-        sym = symbol(self)
-        macro = Macro()
-        for expr in self._recorded_macro:
-            if parent_symbol is not None and expr.head == Head.init:
-                continue
-            macro.append(expr.format({sym: self_symbol}))
-        
-        for name, clsattr in iter_members(self.__class__):
-            # Collect all the macro from child magic-classes recursively
-            if not isinstance(clsattr, (MagicTemplate, type, MagicField)):
-                continue
-            
-            attr = getattr(self, name)
-            
-            if not isinstance(attr, MagicTemplate):
-                continue
-            
-            macro += attr._collect_macro(self_symbol, Symbol(name))
-                
-        return macro
+    @property
+    def _recorded_macro(self):
+        if self.__magicclass_parent__ is None:
+            return self._macro_instance
+        else:
+            return self.__magicclass_parent__._recorded_macro
     
     @property
     def parent_viewer(self) -> "napari.Viewer" | None:
@@ -185,7 +167,7 @@ class MagicTemplate:
         """        
         return self.native.objectName()
     
-    def create_macro(self, show: bool = False, myname: str = "ui") -> str:
+    def create_macro(self, show: bool = False) -> str:
         """
         Create executable Python scripts from the recorded macro object.
 
@@ -193,31 +175,9 @@ class MagicTemplate:
         ----------
         show : bool, default is False
             Launch a TextEdit window that shows recorded macro.
-        myname : str, default is "ui"
-            Symbol of the instance.
         """
-        # Recursively build macro from nested magic-classes
-        macro = self._collect_macro(self_symbol=Symbol(myname))
-        # Sort by the recorded order
-        sorted_macro = Macro(sorted(macro, key=lambda x: x.number))
         
-        script = str(sorted_macro)
-        # type annotation for the hard-to-record types
-        annot = []
-        idt_list = []
-        for expr in self._recorded_macro:
-            if expr.head == Head.init:
-                idt_list.append(expr.args[0].args[0])
-            for sym in expr.iter_args():
-                if sym.valid or sym in idt_list:
-                    continue
-                idt_list.append(sym)
-                annot.append(f"# {sym}: {sym.type}")
-        
-        if annot:
-            out = "\n".join(annot) + "\n" + script
-        else:
-            out = script
+        out = str(self._recorded_macro)
                     
         if show:
             win = MacroEdit(name="macro")
@@ -362,8 +322,19 @@ class MagicTemplate:
             wrapper = _identity_wrapper
         else:
             raise ValueError(self._error_mode)
-            
-        func = wrapper(obj, parent=self)
+        
+        # Wrap function to block macro recording.
+        _inner_func = wrapper(obj, parent=self)
+        if _need_record(obj):
+            @functools_wraps(obj)
+            def func(*args, **kwargs):
+                with self._recorded_macro.blocked():
+                    out = _inner_func(*args, **kwargs)
+                return out
+        else:
+            @functools_wraps(obj)
+            def func(*args, **kwargs):
+                return _inner_func(*args, **kwargs)
         
         # Signature must be updated like this. Otherwise, already wrapped member function
         # will have signature with "self".
@@ -555,14 +526,15 @@ class MagicTemplate:
     
 class BaseGui(MagicTemplate):
     def __init__(self, close_on_run, popup_mode, error_mode):
-        self._recorded_macro: Macro[Expr] = Macro()
+        self._macro_instance = Macro(flags={"Get": False, "Return": False})
         self.__magicclass_parent__: None | BaseGui = None
         self.__magicclass_children__: list[MagicTemplate] = []
         self._close_on_run = close_on_run
         self._popup_mode = popup_mode
         self._error_mode = error_mode
+        self._my_symbol = UI
 
-def _get_widget_name(widget):
+def _get_widget_name(widget: Widget):
     # To escape reference
     return widget.name
     
@@ -577,7 +549,6 @@ def _temporal_function_gui_callback(bgui: MagicTemplate, fgui: FunctionGuiPlus, 
         return_type = fgui.return_annotation
         result_required = return_type is not inspect._empty
         result = Symbol("result")
-        
         # Standard button will be connected with two callbacks.
         # 1. Build FunctionGui
         # 2. Emit value changed signal.
@@ -694,7 +665,6 @@ def _raise_error_in_msgbox(_func: Callable, parent: Widget = None):
     """
     If exception happened inside function, then open a message box.
     """    
-    @functools_wraps(_func)
     def wrapped_func(*args, **kwargs):
         from qtpy.QtWidgets import QMessageBox
         try:
@@ -710,7 +680,6 @@ def _identity_wrapper(_func: Callable, parent: Widget = None):
     """
     Do nothing.
     """    
-    @functools_wraps(_func)
     def wrapped_func(*args, **kwargs):
         return _func(*args, **kwargs)
     return wrapped_func
