@@ -8,12 +8,12 @@ from magicgui.widgets import Image, Table, Label, FunctionGui
 from magicgui.application import use_app
 from magicgui.widgets._bases import ButtonWidget
 from magicgui.widgets._bases.widget import Widget
-from macrokit import Expr, Head, Symbol, symbol
+from macrokit import Symbol
 from qtpy.QtWidgets import QMenu
 
 from .mgui_ext import AbstractAction, Action, WidgetAction, _LabeledWidgetAction
-from ._base import BaseGui, PopUpMode, ErrorMode
-from .utils import get_parameters, define_callback, MagicClassConstructionError
+from ._base import BaseGui, PopUpMode, ErrorMode, value_widget_callback, nested_function_gui_callback
+from .utils import define_callback, MagicClassConstructionError
 
 from ..signature import get_additional_option
 from ..fields import MagicField
@@ -79,7 +79,7 @@ class MenuGuiBase(BaseGui, MutableSequence):
                      
             # By default, set value function will be connected to the widget.
             if fld.record:
-                f = _value_widget_callback(self, action, name, getvalue=type(fld) is MagicField)
+                f = value_widget_callback(self, action, name, getvalue=type(fld) is MagicField)
                 action.changed.connect(f)
                 
         return action
@@ -117,7 +117,7 @@ class MenuGuiBase(BaseGui, MutableSequence):
                     p0 = list(signature(attr).parameters)[0]
                     getattr(widget, p0).bind(self) # set self to the first argument
                     # magic-class has to know when the nested FunctionGui is called.
-                    f = _nested_function_gui_callback(self, widget)
+                    f = nested_function_gui_callback(self, widget)
                     widget.called.connect(f)
                     
                 if isinstance(widget, (MenuGuiBase, AbstractAction, Widget, Callable)):
@@ -282,59 +282,3 @@ class MenuGui(MenuGuiBase):
 class ContextMenuGui(MenuGuiBase):
     """Magic class that will be converted into a context menu."""
     # TODO: Prevent more than one context menu
-
-def _nested_function_gui_callback(menugui: MenuGuiBase, fgui: FunctionGui):
-    def _after_run():
-        inputs = get_parameters(fgui)
-        args = [Expr(head=Head.kw, args=[Symbol(k), v]) for k, v in inputs.items()]
-        # args[0] is self
-        sub = Expr(head=Head.getattr, args=[menugui._recorded_macro[0].args[0], Symbol(fgui.name)]) # {x}.func
-        expr = Expr(head=Head.call, args=[sub] + args[1:]) # {x}.func(args...)
-
-        if fgui._auto_call:
-            # Auto-call will cause many redundant macros. To avoid this, only the last input
-            # will be recorded in magic-class.
-            last_expr = menugui._recorded_macro[-1]
-            if last_expr.head == Head.call and last_expr.args[0].head == Head.getattr and \
-                last_expr.args[0].args[1] == expr.args[0].args[1]:
-                menugui._recorded_macro.pop()
-
-        menugui._recorded_macro.append(expr)
-    return _after_run
-
-def _value_widget_callback(menugui: MenuGuiBase, action: AbstractAction, name: str, getvalue: bool = True):
-    def _set_value():
-        if not action.enabled:
-            # If widget is read only, it means that value is set in script (not manually).
-            # Thus this event should not be recorded as a macro.
-            return None
-        
-        if isinstance(action.value, Exception):
-            return None
-        
-        menugui.changed.emit(menugui)
-        
-        if getvalue:
-            sub = Expr(head=Head.getattr, args=[Symbol(name), Symbol("value")]) # name.value
-        else:
-            sub = Expr(head=Head.value, args=[Symbol(name)])
-        
-        # Make an expression of
-        # >>> x.name.value = value
-        # or
-        # >>> x.name = value
-        expr = Expr(head=Head.assign, 
-                    args=[Expr(head=Head.getattr, 
-                               args=[symbol(menugui), sub]), 
-                          action.value])
-        
-        last_expr = menugui._recorded_macro[-1]
-        if (len(menugui._recorded_macro) > 1 and 
-            last_expr.head == expr.head and 
-            last_expr.args[0].args[1].head == expr.args[0].args[1].head and
-            last_expr.args[0].args[1].args[0] == expr.args[0].args[1].args[0]):
-            menugui._recorded_macro[-1] = expr
-        else:
-            menugui._recorded_macro.append(expr)
-        return None
-    return _set_value

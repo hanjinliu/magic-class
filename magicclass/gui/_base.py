@@ -10,10 +10,12 @@ from collections.abc import MutableSequence
 from magicgui.events import Signal
 from magicgui.signature import MagicParameter
 from magicgui.widgets import FunctionGui, FileEdit, EmptyWidget, Widget, Container
+from magicgui.widgets._bases import ValueWidget
 from macrokit import Macro, Expr, Head, Symbol, symbol
 
 from .keybinding import as_shortcut
 from .mgui_ext import AbstractAction, FunctionGuiPlus, PushButtonPlus
+from .utils import get_parameters
 
 from ..utils import get_signature, iter_members, extract_tooltip, screen_center
 from ..widgets import Separator, MacroEdit
@@ -22,11 +24,8 @@ from ..signature import MagicMethodSignature, get_additional_option
 from ..wrappers import upgrade_signature
 
 if TYPE_CHECKING:
-    try:
-        import napari
-        from qtpy.QtWidgets import QDockWidget
-    except ImportError:
-        pass
+    import napari
+    from qtpy.QtWidgets import QDockWidget
 
 class PopUpMode(Enum):
     popup = "popup"
@@ -745,3 +744,59 @@ def _field_as_getter(self, bound_value: MagicField):
 
 def _need_record(func: Callable):
     return get_additional_option(func, "record", True)
+
+def value_widget_callback(gui: MagicTemplate, widget: ValueWidget, name: str, getvalue: bool = True):
+    sym_name = Symbol(name)
+    sym_value = Symbol("value")
+    def _set_value():
+        if not widget.enabled:
+            # If widget is read only, it means that value is set in script (not manually).
+            # Thus this event should not be recorded as a macro.
+            return None
+        
+        gui.changed.emit(gui)
+        
+        if getvalue:
+            sub = Expr(head=Head.getattr, args=[sym_name, sym_value]) # name.value
+        else:
+            sub = Expr(head=Head.value, args=[sym_name])
+        
+        # Make an expression of
+        # >>> x.name.value = value
+        # or
+        # >>> x.name = value
+        expr = Expr(head=Head.assign, 
+                    args=[Expr(head=Head.getattr, 
+                               args=[symbol(gui), sub]), 
+                          widget.value])
+        
+        last_expr = gui._recorded_macro[-1]
+        if (len(gui._recorded_macro) > 1 and 
+            last_expr.head == expr.head and 
+            last_expr.args[0].args[1].head == expr.args[0].args[1].head and
+            last_expr.args[0].args[1].args[0] == expr.args[0].args[1].args[0]):
+            gui._recorded_macro[-1] = expr
+        else:
+            gui._recorded_macro.append(expr)
+        return None
+    return _set_value
+
+def nested_function_gui_callback(gui: MagicTemplate, fgui: FunctionGui):
+    fgui_name = Symbol(fgui.name)
+    def _after_run():
+        inputs = get_parameters(fgui)
+        args = [Expr(head=Head.kw, args=[Symbol(k), v]) for k, v in inputs.items()]
+        # args[0] is self
+        sub = Expr(head=Head.getattr, args=[symbol(gui), fgui_name]) # {x}.func
+        expr = Expr(head=Head.call, args=[sub] + args[1:]) # {x}.func(args...)
+
+        if fgui._auto_call:
+            # Auto-call will cause many redundant macros. To avoid this, only the last input
+            # will be recorded in magic-class.
+            last_expr = gui._recorded_macro[-1]
+            if last_expr.head == Head.call and last_expr.args[0].head == Head.getattr and \
+                last_expr.args[0].args[1] == expr.args[0].args[1]:
+                gui._recorded_macro.pop()
+
+        gui._recorded_macro.append(expr)
+    return _after_run

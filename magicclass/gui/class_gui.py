@@ -6,14 +6,12 @@ from qtpy.QtCore import Qt
 from magicgui.widgets import Container, MainWindow,Label, FunctionGui, Image, Table
 from magicgui.widgets._bases import Widget, ButtonWidget, ValueWidget, ContainerWidget
 from magicgui.widgets._concrete import _LabeledWidget
-from macrokit import Expr, Head, Symbol, symbol
-
-from ..signature import get_additional_option
+from macrokit import Symbol
 
 from .mgui_ext import PushButtonPlus
 from .menu_gui import MenuGui, ContextMenuGui
-from ._base import BaseGui, PopUpMode, ErrorMode
-from .utils import get_parameters, define_callback, MagicClassConstructionError
+from ._base import BaseGui, PopUpMode, ErrorMode, value_widget_callback, nested_function_gui_callback
+from .utils import define_callback, MagicClassConstructionError
 from ._containers import (
     ButtonContainer,
     GroupBoxContainer,
@@ -30,6 +28,7 @@ from ._containers import (
 from ..utils import iter_members, extract_tooltip
 from ..widgets import FreeWidget
 from ..fields import MagicField
+from ..signature import get_additional_option
 
 class ClassGuiBase(BaseGui):
     # This class is always inherited by @magicclass decorator.
@@ -62,7 +61,7 @@ class ClassGuiBase(BaseGui):
                 
             if hasattr(widget, "value") and fld.record:
                 # By default, set value function will be connected to the widget.
-                f = _value_widget_callback(self, widget, name, getvalue=type(fld) is MagicField)
+                f = value_widget_callback(self, widget, name, getvalue=type(fld) is MagicField)
                 widget.changed.connect(f)
                 
         return widget
@@ -157,7 +156,7 @@ class ClassGuiBase(BaseGui):
 
                     elif isinstance(widget, FunctionGui):
                         # magic-class has to know when the nested FunctionGui is called.
-                        f = _nested_function_gui_callback(self, widget)
+                        f = nested_function_gui_callback(self, widget)
                         widget.called.connect(f)
                         
                     else:
@@ -354,63 +353,6 @@ class GroupBoxClassGui: pass
 
 @make_gui(MainWindow)
 class MainWindowClassGui: pass
-
-def _nested_function_gui_callback(cgui: ClassGuiBase, fgui: FunctionGui):
-    def _after_run():
-        inputs = get_parameters(fgui)
-        args = [Expr(head=Head.kw, args=[Symbol(k), v]) for k, v in inputs.items()]
-        # args[0] is self
-        sub = Expr(head=Head.getattr, 
-                   args=[cgui._recorded_macro[0].args[0], Symbol(fgui.name)]) # {x}.func
-        expr = Expr(head=Head.call, args=[sub] + args[1:]) # {x}.func(args...)
-
-        if fgui._auto_call:
-            # Auto-call will cause many redundant macros. To avoid this, only the last input
-            # will be recorded in magic-class.
-            last_expr = cgui._recorded_macro[-1]
-            if last_expr.head == Head.call and last_expr.args[0].head == Head.getattr and \
-                last_expr.args[0].args[1] == expr.args[0].args[1]:
-                cgui._recorded_macro.pop()
-
-        cgui._recorded_macro.append(expr)
-    return _after_run
-
-def _value_widget_callback(cgui: ClassGuiBase, widget: ValueWidget, name: str, getvalue: bool = True):
-    sym_name = Symbol(name)
-    sym_value = Symbol("value")
-    sym_cgui = symbol(cgui)
-    def _set_value():
-        if not widget.enabled:
-            # If widget is read only, it means that value is set in script (not manually).
-            # Thus this event should not be recorded as a macro.
-            return None
-        
-        cgui.changed.emit(cgui)
-        
-        if getvalue:
-            sub = Expr(head=Head.getattr, args=[sym_name, sym_value]) # name.value
-        else:
-            sub = Expr(head=Head.value, args=[sym_name])
-        
-        # Make an expression of
-        # >>> x.name.value = value
-        # or
-        # >>> x.name = value
-        expr = Expr(head=Head.assign, 
-                    args=[Expr(head=Head.getattr, 
-                               args=[sym_cgui, sub]), 
-                          widget.value])
-        
-        last_expr = cgui._recorded_macro[-1]
-        if (len(cgui._recorded_macro) > 1 and 
-            last_expr.head == expr.head and 
-            last_expr.args[0].args[1].head == expr.args[0].args[1].head and
-            last_expr.args[0].args[1].args[0] == expr.args[0].args[1].args[0]):
-            cgui._recorded_macro[-1] = expr
-        else:
-            cgui._recorded_macro.append(expr)
-        return None
-    return _set_value
 
 def _define_context_menu(contextmenu, parent):
     def rightClickContextMenu(point):

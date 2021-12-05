@@ -22,6 +22,7 @@ setup(
           "magicgui>=0.3.2",
           "numpy>=1.20.3",
           "matplotlib>=3.4.2",
+          "qtpy>=1.10.0",
           "macro-kit>=0.3.0",
     ],
     python_requires=">=3.7",
