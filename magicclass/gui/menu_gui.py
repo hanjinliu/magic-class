@@ -8,6 +8,7 @@ from magicgui.widgets import Image, Table, Label, FunctionGui
 from magicgui.application import use_app
 from magicgui.widgets._bases import ButtonWidget
 from magicgui.widgets._bases.widget import Widget
+from macrokit import Expr, Head, Symbol, symbol
 from qtpy.QtWidgets import QMenu
 
 from .mgui_ext import AbstractAction, Action, WidgetAction, _LabeledWidgetAction
@@ -17,7 +18,6 @@ from .utils import get_parameters, define_callback, MagicClassConstructionError
 from ..signature import get_additional_option
 from ..fields import MagicField
 from ..widgets import Separator, FreeWidget
-from ..macro import Expr, Head, Symbol, symbol
 from ..utils import iter_members
 
 class MenuGuiBase(BaseGui, MutableSequence):
@@ -124,6 +124,15 @@ class MenuGuiBase(BaseGui, MutableSequence):
                     if (not isinstance(widget, Widget)) and callable(widget):
                         widget = self._create_widget_from_method(widget)
                     
+                    elif hasattr(widget, "__magicclass_parent__") or \
+                        hasattr(widget.__class__, "__magicclass_parent__"):
+                        if isinstance(widget, BaseGui):
+                            widget._my_symbol = Symbol(name)
+                        # magic-class has to know its parent.
+                        # if __magicclass_parent__ is defined as a property, hasattr must be called
+                        # with a type object (not instance).
+                        widget.__magicclass_parent__ = self
+                        
                     clsname = get_additional_option(attr, "into")
                     if clsname is not None:
                         self._unwrap_method(clsname, name, widget)
@@ -320,7 +329,8 @@ def _value_widget_callback(menugui: MenuGuiBase, action: AbstractAction, name: s
                           action.value])
         
         last_expr = menugui._recorded_macro[-1]
-        if (last_expr.head == expr.head and 
+        if (len(menugui._recorded_macro) > 1 and 
+            last_expr.head == expr.head and 
             last_expr.args[0].args[1].head == expr.args[0].args[1].head and
             last_expr.args[0].args[1].args[0] == expr.args[0].args[1].args[0]):
             menugui._recorded_macro[-1] = expr

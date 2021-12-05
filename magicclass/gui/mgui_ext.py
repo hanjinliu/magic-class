@@ -206,6 +206,10 @@ class AbstractAction:
         self.native.setObjectName(value)
     
     @property
+    def value(self):
+        raise NotImplementedError()
+    
+    @property
     def tooltip(self) -> str:
         return self.native.toolTip()
     

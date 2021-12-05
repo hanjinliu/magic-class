@@ -6,6 +6,7 @@ from qtpy.QtCore import Qt
 from magicgui.widgets import Container, MainWindow,Label, FunctionGui, Image, Table
 from magicgui.widgets._bases import Widget, ButtonWidget, ValueWidget, ContainerWidget
 from magicgui.widgets._concrete import _LabeledWidget
+from macrokit import Expr, Head, Symbol, symbol
 
 from ..signature import get_additional_option
 
@@ -26,7 +27,6 @@ from ._containers import (
     ToolBoxContainer
     )
 
-from ..macro import Expr, Head, Symbol, symbol
 from ..utils import iter_members, extract_tooltip
 from ..widgets import FreeWidget
 from ..fields import MagicField
@@ -114,6 +114,9 @@ class ClassGuiBase(BaseGui):
                     # convert class method into instance method
                     widget = getattr(self, name, None)
                 
+                if isinstance(widget, BaseGui):
+                    widget._my_symbol = Symbol(name)
+                            
                 if isinstance(widget, MenuGui):
                     # Add menubar to container
                     widget.__magicclass_parent__ = self
@@ -245,11 +248,11 @@ def make_gui(container: type[ContainerWidget], no_margin: bool = True):
                 
             if isinstance(widget, ValueWidget):
                 widget.changed.connect(lambda: self.changed.emit(self))
-            if isinstance(widget, ClassGuiBase) and self._remove_child_margins:
-                widget.margins = (0, 0, 0, 0)
             
             if hasattr(widget, "__magicclass_parent__") or \
                 hasattr(widget.__class__, "__magicclass_parent__"):
+                if isinstance(widget, ClassGuiBase) and self._remove_child_margins:
+                    widget.margins = (0, 0, 0, 0)
                 widget.__magicclass_parent__ = self
                 
             _widget = widget
@@ -399,7 +402,8 @@ def _value_widget_callback(cgui: ClassGuiBase, widget: ValueWidget, name: str, g
                           widget.value])
         
         last_expr = cgui._recorded_macro[-1]
-        if (last_expr.head == expr.head and 
+        if (len(cgui._recorded_macro) > 1 and 
+            last_expr.head == expr.head and 
             last_expr.args[0].args[1].head == expr.args[0].args[1].head and
             last_expr.args[0].args[1].args[0] == expr.args[0].args[1].args[0]):
             cgui._recorded_macro[-1] = expr

@@ -2,9 +2,11 @@ from __future__ import annotations
 from functools import wraps as functools_wraps
 import inspect
 from enum import Enum
+from pathlib import Path
 from dataclasses import is_dataclass
 from typing import Any
 from typing_extensions import Annotated, _AnnotatedAlias
+from macrokit import Expr, register_type, symbol, Head
 
 from .gui.class_gui import (
     ClassGuiBase, 
@@ -23,9 +25,20 @@ from .gui.class_gui import (
     )
 from .gui._base import PopUpMode, ErrorMode, defaults, MagicTemplate, check_override
 from .gui import ContextMenuGui, MenuGui, MenuGuiBase
-from .macro import Expr
 from .utils import iter_members
 from ._app import get_app
+
+register_type(Enum, lambda e: repr(str(e.name)))
+register_type(Path, lambda e: f"r'{e}'")
+
+def find_myname(gui: MagicTemplate):
+    parent = gui.__magicclass_parent__
+    if parent is None:
+        return gui._my_symbol
+    else:
+        return Expr(Head.getattr, [find_myname(parent), gui._my_symbol])
+
+register_type(MagicTemplate, find_myname)
 
 _BASE_CLASS_SUFFIX = "_Base"
 
@@ -176,7 +189,7 @@ def magicclass(class_: type|None = None,
         @functools_wraps(oldclass.__init__)
         def __init__(self: MagicTemplate, *args, **kwargs):
             app = get_app() # Without "app = " Jupyter freezes after closing the window!
-            macro_init = Expr.parse_init(self, cls, args, kwargs)
+            
             class_gui.__init__(self, 
                                layout=layout,
                                parent=parent,
@@ -193,7 +206,9 @@ def magicclass(class_: type|None = None,
                 self.__post_init__()
             
             # Record class instance construction
+            macro_init = Expr.parse_init(self, cls, args, kwargs)
             self._recorded_macro.append(macro_init)
+            
             if widget_type in (WidgetType.collapsible, WidgetType.button):
                 self.btn_text = self.name
 
@@ -342,7 +357,7 @@ def _call_magicmenu(class_: type = None,
         @functools_wraps(oldclass.__init__)
         def __init__(self: MagicTemplate, *args, **kwargs):
             app = get_app() # Without "app = " Jupyter freezes after closing the window!
-            macro_init = Expr.parse_init(self, cls, args, kwargs)
+
             menugui_class.__init__(self, 
                                    parent=parent,
                                    close_on_run=close_on_run,
@@ -357,6 +372,7 @@ def _call_magicmenu(class_: type = None,
                 self.__post_init__()
             
             # Record class instance construction
+            macro_init = Expr.parse_init(self, cls, args, kwargs)
             self._recorded_macro.append(macro_init)
 
         newclass.__init__ = __init__

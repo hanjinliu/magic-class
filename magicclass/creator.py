@@ -2,11 +2,11 @@ from __future__ import annotations
 from .core import magicclass, WidgetType, MagicTemplate
 from .gui._base import BaseGui, PopUpMode, ErrorMode
 from .fields import field
-from .macro import Symbol, symbol
 from .widgets import ConsoleTextEdit
 from enum import Enum
 from magicgui.widgets import Container
 from magicgui.types import FileDialogMode
+from macrokit import Symbol, symbol
 import numpy as np
 
 class Layout(Enum):
