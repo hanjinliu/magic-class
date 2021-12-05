@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Define Custom Keybindings &mdash; magic-class 0.5.10 documentation</title>
+  <title>Define Custom Keybindings &mdash; magic-class 0.5.11 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -30,7 +30,7 @@
             <a href="index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.10
+                0.5.11
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -49,6 +49,7 @@
 <li class="toctree-l1"><a class="reference internal" href="use_bind.html">Binding Values to Arguments</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Define Custom Keybindings</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#how-to-define-keybindings">How to Define Keybindings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#decorate-private-functions">Decorate Private Functions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#compatibility-with-other-features">Compatibility with Other Features</a></li>
 </ul>
 </li>
@@ -119,6 +120,31 @@ describe keybindings.</p>
 <p>If you are going to use magic class as a dock widget in <code class="docutils literal notranslate"><span class="pre">napari</span></code>, make sure there is no
 collision between your keybindings and those in <code class="docutils literal notranslate"><span class="pre">napari</span></code>.</p>
 </div>
+</section>
+<section id="decorate-private-functions">
+<h2>Decorate Private Functions<a class="headerlink" href="#decorate-private-functions" title="Permalink to this headline">¶</a></h2>
+<p>Although private functions (functions whose names start with &quot;_&quot;) will not be converted into
+widgets, it is very useful to define &quot;invisible&quot; shortcuts. A typical case is when you want
+to change widget values with shortcut.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">bind_key</span><span class="p">,</span> <span class="n">do_not_record</span>
+
+<span class="nd">@magicclass</span>
+<span class="k">class</span> <span class="nc">Main</span><span class="p">:</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+
+    <span class="nd">@bind_key</span><span class="p">(</span><span class="s2">&quot;Up&quot;</span><span class="p">)</span>
+    <span class="nd">@do_not_record</span>
+    <span class="k">def</span> <span class="nf">_increment</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">value</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">max</span><span class="p">)</span>
+
+    <span class="nd">@bind_key</span><span class="p">(</span><span class="s2">&quot;Down&quot;</span><span class="p">)</span>
+    <span class="nd">@do_not_record</span>
+    <span class="k">def</span> <span class="nf">_decrement</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">value</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">min</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Widget defined by this class is equipped with shortcuts that can change the value of <code class="docutils literal notranslate"><span class="pre">a</span></code>
+without clicking the spin box.</p>
 </section>
 <section id="compatibility-with-other-features">
 <h2>Compatibility with Other Features<a class="headerlink" href="#compatibility-with-other-features" title="Permalink to this headline">¶</a></h2>

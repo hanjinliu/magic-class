@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.core &mdash; magic-class 0.5.10dev0 documentation</title>
+  <title>magicclass.core &mdash; magic-class 0.5.11 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -27,7 +27,7 @@
             <a href="../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.10dev0
+                0.5.11
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -80,9 +80,11 @@
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span> <span class="k">as</span> <span class="n">functools_wraps</span>
 <span class="kn">import</span> <span class="nn">inspect</span>
 <span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">is_dataclass</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
 <span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Annotated</span><span class="p">,</span> <span class="n">_AnnotatedAlias</span>
+<span class="kn">from</span> <span class="nn">macrokit</span> <span class="kn">import</span> <span class="n">Expr</span><span class="p">,</span> <span class="n">register_type</span><span class="p">,</span> <span class="n">symbol</span><span class="p">,</span> <span class="n">Head</span>
 
 <span class="kn">from</span> <span class="nn">.gui.class_gui</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">ClassGuiBase</span><span class="p">,</span> 
@@ -99,11 +101,22 @@
     <span class="n">ToolBoxClassGui</span><span class="p">,</span>
     <span class="n">ListClassGui</span><span class="p">,</span>
     <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">.gui._base</span> <span class="kn">import</span> <span class="n">PopUpMode</span><span class="p">,</span> <span class="n">ErrorMode</span><span class="p">,</span> <span class="n">defaults</span><span class="p">,</span> <span class="n">MagicTemplate</span>
+<span class="kn">from</span> <span class="nn">.gui._base</span> <span class="kn">import</span> <span class="n">PopUpMode</span><span class="p">,</span> <span class="n">ErrorMode</span><span class="p">,</span> <span class="n">defaults</span><span class="p">,</span> <span class="n">MagicTemplate</span><span class="p">,</span> <span class="n">check_override</span>
 <span class="kn">from</span> <span class="nn">.gui</span> <span class="kn">import</span> <span class="n">ContextMenuGui</span><span class="p">,</span> <span class="n">MenuGui</span><span class="p">,</span> <span class="n">MenuGuiBase</span>
-<span class="kn">from</span> <span class="nn">.macro</span> <span class="kn">import</span> <span class="n">Expr</span>
 <span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">iter_members</span>
 <span class="kn">from</span> <span class="nn">._app</span> <span class="kn">import</span> <span class="n">get_app</span>
+
+<span class="n">register_type</span><span class="p">(</span><span class="n">Enum</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">e</span><span class="p">:</span> <span class="nb">repr</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">name</span><span class="p">)))</span>
+<span class="n">register_type</span><span class="p">(</span><span class="n">Path</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">e</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;r&#39;</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="find_myname"><a class="viewcode-back" href="../../magicclass.html#magicclass.core.find_myname">[docs]</a><span class="k">def</span> <span class="nf">find_myname</span><span class="p">(</span><span class="n">gui</span><span class="p">:</span> <span class="n">MagicTemplate</span><span class="p">):</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">gui</span><span class="o">.</span><span class="n">__magicclass_parent__</span>
+    <span class="k">if</span> <span class="n">parent</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">gui</span><span class="o">.</span><span class="n">_my_symbol</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Expr</span><span class="p">(</span><span class="n">Head</span><span class="o">.</span><span class="n">getattr</span><span class="p">,</span> <span class="p">[</span><span class="n">find_myname</span><span class="p">(</span><span class="n">parent</span><span class="p">),</span> <span class="n">gui</span><span class="o">.</span><span class="n">_my_symbol</span><span class="p">])</span></div>
+
+<span class="n">register_type</span><span class="p">(</span><span class="n">MagicTemplate</span><span class="p">,</span> <span class="n">find_myname</span><span class="p">)</span>
 
 <span class="n">_BASE_CLASS_SUFFIX</span> <span class="o">=</span> <span class="s2">&quot;_Base&quot;</span>
 
@@ -168,7 +181,7 @@
                <span class="n">error_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">ErrorMode</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                <span class="n">widget_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">WidgetType</span> <span class="o">=</span> <span class="n">WidgetType</span><span class="o">.</span><span class="n">none</span><span class="p">,</span>
                <span class="n">parent</span> <span class="o">=</span> <span class="kc">None</span>
-               <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ClassGui</span> <span class="o">|</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">type</span><span class="p">],</span> <span class="n">ClassGui</span><span class="p">]:</span>
+               <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Decorator that can convert a Python class into a widget.</span>
 <span class="sd">    </span>
@@ -214,6 +227,9 @@
         <span class="n">close_on_run</span> <span class="o">=</span> <span class="n">defaults</span><span class="p">[</span><span class="s2">&quot;close_on_run&quot;</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">error_mode</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">error_mode</span> <span class="o">=</span> <span class="n">defaults</span><span class="p">[</span><span class="s2">&quot;error_mode&quot;</span><span class="p">]</span>
+    
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">widget_type</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">widget_type</span> <span class="o">=</span> <span class="n">widget_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
         
     <span class="n">widget_type</span> <span class="o">=</span> <span class="n">WidgetType</span><span class="p">(</span><span class="n">widget_type</span><span class="p">)</span>
     
@@ -227,6 +243,7 @@
         
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">MagicTemplate</span><span class="p">):</span>
             <span class="n">_check_collision</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">class_gui</span><span class="p">)</span>
+            <span class="n">check_override</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
             
         <span class="c1"># get class attributes first</span>
         <span class="n">doc</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__doc__</span>
@@ -250,7 +267,7 @@
         <span class="nd">@functools_wraps</span><span class="p">(</span><span class="n">oldclass</span><span class="o">.</span><span class="fm">__init__</span><span class="p">)</span>
         <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">MagicTemplate</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
             <span class="n">app</span> <span class="o">=</span> <span class="n">get_app</span><span class="p">()</span> <span class="c1"># Without &quot;app = &quot; Jupyter freezes after closing the window!</span>
-            <span class="n">macro_init</span> <span class="o">=</span> <span class="n">Expr</span><span class="o">.</span><span class="n">parse_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+            
             <span class="n">class_gui</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
                                <span class="n">layout</span><span class="o">=</span><span class="n">layout</span><span class="p">,</span>
                                <span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">,</span>
@@ -267,7 +284,9 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">__post_init__</span><span class="p">()</span>
             
             <span class="c1"># Record class instance construction</span>
+            <span class="n">macro_init</span> <span class="o">=</span> <span class="n">Expr</span><span class="o">.</span><span class="n">parse_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_recorded_macro</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">macro_init</span><span class="p">)</span>
+            
             <span class="k">if</span> <span class="n">widget_type</span> <span class="ow">in</span> <span class="p">(</span><span class="n">WidgetType</span><span class="o">.</span><span class="n">collapsible</span><span class="p">,</span> <span class="n">WidgetType</span><span class="o">.</span><span class="n">button</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">btn_text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
 
@@ -288,7 +307,7 @@
               <span class="n">error_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">ErrorMode</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
               <span class="n">labels</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
               <span class="n">parent</span> <span class="o">=</span> <span class="kc">None</span>
-              <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MenuGui</span> <span class="o">|</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">type</span><span class="p">],</span> <span class="n">MenuGui</span><span class="p">]:</span>
+              <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Decorator that can convert a Python class into a menu bar.</span>
 <span class="sd">    &quot;&quot;&quot;</span>    
@@ -301,7 +320,7 @@
                  <span class="n">error_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">ErrorMode</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">labels</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
                  <span class="n">parent</span><span class="o">=</span><span class="kc">None</span>
-                 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ContextMenuGui</span> <span class="o">|</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">type</span><span class="p">],</span> <span class="n">ContextMenuGui</span><span class="p">]:</span>
+                 <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Decorator that can convert a Python class into a context menu.</span>
 <span class="sd">    &quot;&quot;&quot;</span>    
@@ -397,6 +416,7 @@
         
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">MagicTemplate</span><span class="p">):</span>
             <span class="n">_check_collision</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">menugui_class</span><span class="p">)</span>
+            <span class="n">check_override</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
         
         <span class="c1"># get class attributes first</span>
         <span class="n">doc</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__doc__</span>
@@ -415,7 +435,7 @@
         <span class="nd">@functools_wraps</span><span class="p">(</span><span class="n">oldclass</span><span class="o">.</span><span class="fm">__init__</span><span class="p">)</span>
         <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">MagicTemplate</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
             <span class="n">app</span> <span class="o">=</span> <span class="n">get_app</span><span class="p">()</span> <span class="c1"># Without &quot;app = &quot; Jupyter freezes after closing the window!</span>
-            <span class="n">macro_init</span> <span class="o">=</span> <span class="n">Expr</span><span class="o">.</span><span class="n">parse_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+
             <span class="n">menugui_class</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
                                    <span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">,</span>
                                    <span class="n">close_on_run</span><span class="o">=</span><span class="n">close_on_run</span><span class="p">,</span>
@@ -430,6 +450,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">__post_init__</span><span class="p">()</span>
             
             <span class="c1"># Record class instance construction</span>
+            <span class="n">macro_init</span> <span class="o">=</span> <span class="n">Expr</span><span class="o">.</span><span class="n">parse_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_recorded_macro</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">macro_init</span><span class="p">)</span>
 
         <span class="n">newclass</span><span class="o">.</span><span class="fm">__init__</span> <span class="o">=</span> <span class="fm">__init__</span>

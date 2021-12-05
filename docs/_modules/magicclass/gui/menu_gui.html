@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.gui.menu_gui &mdash; magic-class 0.5.10dev0 documentation</title>
+  <title>magicclass.gui.menu_gui &mdash; magic-class 0.5.11 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -27,7 +27,7 @@
             <a href="../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.10dev0
+                0.5.11
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -86,16 +86,16 @@
 <span class="kn">from</span> <span class="nn">magicgui.application</span> <span class="kn">import</span> <span class="n">use_app</span>
 <span class="kn">from</span> <span class="nn">magicgui.widgets._bases</span> <span class="kn">import</span> <span class="n">ButtonWidget</span>
 <span class="kn">from</span> <span class="nn">magicgui.widgets._bases.widget</span> <span class="kn">import</span> <span class="n">Widget</span>
+<span class="kn">from</span> <span class="nn">macrokit</span> <span class="kn">import</span> <span class="n">Symbol</span>
 <span class="kn">from</span> <span class="nn">qtpy.QtWidgets</span> <span class="kn">import</span> <span class="n">QMenu</span>
 
 <span class="kn">from</span> <span class="nn">.mgui_ext</span> <span class="kn">import</span> <span class="n">AbstractAction</span><span class="p">,</span> <span class="n">Action</span><span class="p">,</span> <span class="n">WidgetAction</span><span class="p">,</span> <span class="n">_LabeledWidgetAction</span>
-<span class="kn">from</span> <span class="nn">._base</span> <span class="kn">import</span> <span class="n">BaseGui</span><span class="p">,</span> <span class="n">PopUpMode</span><span class="p">,</span> <span class="n">ErrorMode</span>
-<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">get_parameters</span><span class="p">,</span> <span class="n">define_callback</span><span class="p">,</span> <span class="n">MagicClassConstructionError</span>
+<span class="kn">from</span> <span class="nn">._base</span> <span class="kn">import</span> <span class="n">BaseGui</span><span class="p">,</span> <span class="n">PopUpMode</span><span class="p">,</span> <span class="n">ErrorMode</span><span class="p">,</span> <span class="n">value_widget_callback</span><span class="p">,</span> <span class="n">nested_function_gui_callback</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">define_callback</span><span class="p">,</span> <span class="n">MagicClassConstructionError</span>
 
 <span class="kn">from</span> <span class="nn">..signature</span> <span class="kn">import</span> <span class="n">get_additional_option</span>
 <span class="kn">from</span> <span class="nn">..fields</span> <span class="kn">import</span> <span class="n">MagicField</span>
 <span class="kn">from</span> <span class="nn">..widgets</span> <span class="kn">import</span> <span class="n">Separator</span><span class="p">,</span> <span class="n">FreeWidget</span>
-<span class="kn">from</span> <span class="nn">..macro</span> <span class="kn">import</span> <span class="n">Expr</span><span class="p">,</span> <span class="n">Head</span><span class="p">,</span> <span class="n">Symbol</span><span class="p">,</span> <span class="n">symbol</span>
 <span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">iter_members</span>
 
 <div class="viewcode-block" id="MenuGuiBase"><a class="viewcode-back" href="../../../magicclass.gui.html#magicclass.gui.menu_gui.MenuGuiBase">[docs]</a><span class="k">class</span> <span class="nc">MenuGuiBase</span><span class="p">(</span><span class="n">BaseGui</span><span class="p">,</span> <span class="n">MutableSequence</span><span class="p">):</span>
@@ -157,7 +157,7 @@
                      
             <span class="c1"># By default, set value function will be connected to the widget.</span>
             <span class="k">if</span> <span class="n">fld</span><span class="o">.</span><span class="n">record</span><span class="p">:</span>
-                <span class="n">f</span> <span class="o">=</span> <span class="n">_value_widget_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">getvalue</span><span class="o">=</span><span class="nb">type</span><span class="p">(</span><span class="n">fld</span><span class="p">)</span> <span class="ow">is</span> <span class="n">MagicField</span><span class="p">)</span>
+                <span class="n">f</span> <span class="o">=</span> <span class="n">value_widget_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">getvalue</span><span class="o">=</span><span class="nb">type</span><span class="p">(</span><span class="n">fld</span><span class="p">)</span> <span class="ow">is</span> <span class="n">MagicField</span><span class="p">)</span>
                 <span class="n">action</span><span class="o">.</span><span class="n">changed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
                 
         <span class="k">return</span> <span class="n">action</span>
@@ -195,13 +195,22 @@
                     <span class="n">p0</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">signature</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span><span class="o">.</span><span class="n">parameters</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
                     <span class="nb">getattr</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="n">p0</span><span class="p">)</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="c1"># set self to the first argument</span>
                     <span class="c1"># magic-class has to know when the nested FunctionGui is called.</span>
-                    <span class="n">f</span> <span class="o">=</span> <span class="n">_nested_function_gui_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">)</span>
+                    <span class="n">f</span> <span class="o">=</span> <span class="n">nested_function_gui_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">)</span>
                     <span class="n">widget</span><span class="o">.</span><span class="n">called</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
                     
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="p">(</span><span class="n">MenuGuiBase</span><span class="p">,</span> <span class="n">AbstractAction</span><span class="p">,</span> <span class="n">Widget</span><span class="p">,</span> <span class="n">Callable</span><span class="p">)):</span>
                     <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="n">Widget</span><span class="p">))</span> <span class="ow">and</span> <span class="n">callable</span><span class="p">(</span><span class="n">widget</span><span class="p">):</span>
                         <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_widget_from_method</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
                     
+                    <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="s2">&quot;__magicclass_parent__&quot;</span><span class="p">)</span> <span class="ow">or</span> \
+                        <span class="nb">hasattr</span><span class="p">(</span><span class="n">widget</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span> <span class="s2">&quot;__magicclass_parent__&quot;</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="n">BaseGui</span><span class="p">):</span>
+                            <span class="n">widget</span><span class="o">.</span><span class="n">_my_symbol</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+                        <span class="c1"># magic-class has to know its parent.</span>
+                        <span class="c1"># if __magicclass_parent__ is defined as a property, hasattr must be called</span>
+                        <span class="c1"># with a type object (not instance).</span>
+                        <span class="n">widget</span><span class="o">.</span><span class="n">__magicclass_parent__</span> <span class="o">=</span> <span class="bp">self</span>
+                        
                     <span class="n">clsname</span> <span class="o">=</span> <span class="n">get_additional_option</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="s2">&quot;into&quot;</span><span class="p">)</span>
                     <span class="k">if</span> <span class="n">clsname</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">_unwrap_method</span><span class="p">(</span><span class="n">clsname</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">widget</span><span class="p">)</span>
@@ -351,61 +360,6 @@
 <div class="viewcode-block" id="ContextMenuGui"><a class="viewcode-back" href="../../../magicclass.gui.html#magicclass.gui.menu_gui.ContextMenuGui">[docs]</a><span class="k">class</span> <span class="nc">ContextMenuGui</span><span class="p">(</span><span class="n">MenuGuiBase</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Magic class that will be converted into a context menu.&quot;&quot;&quot;</span></div>
     <span class="c1"># TODO: Prevent more than one context menu</span>
-
-<span class="k">def</span> <span class="nf">_nested_function_gui_callback</span><span class="p">(</span><span class="n">menugui</span><span class="p">:</span> <span class="n">MenuGuiBase</span><span class="p">,</span> <span class="n">fgui</span><span class="p">:</span> <span class="n">FunctionGui</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">_after_run</span><span class="p">():</span>
-        <span class="n">inputs</span> <span class="o">=</span> <span class="n">get_parameters</span><span class="p">(</span><span class="n">fgui</span><span class="p">)</span>
-        <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="n">Expr</span><span class="p">(</span><span class="n">head</span><span class="o">=</span><span class="n">Head</span><span class="o">.</span><span class="n">kw</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="n">Symbol</span><span class="p">(</span><span class="n">k</span><span class="p">),</span> <span class="n">v</span><span class="p">])</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">inputs</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
-        <span class="c1"># args[0] is self</span>
-        <span class="n">sub</span> <span class="o">=</span> <span class="n">Expr</span><span class="p">(</span><span class="n">head</span><span class="o">=</span><span class="n">Head</span><span class="o">.</span><span class="n">getattr</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="n">menugui</span><span class="o">.</span><span class="n">_recorded_macro</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Symbol</span><span class="p">(</span><span class="n">fgui</span><span class="o">.</span><span class="n">name</span><span class="p">)])</span> <span class="c1"># {x}.func</span>
-        <span class="n">expr</span> <span class="o">=</span> <span class="n">Expr</span><span class="p">(</span><span class="n">head</span><span class="o">=</span><span class="n">Head</span><span class="o">.</span><span class="n">call</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="n">sub</span><span class="p">]</span> <span class="o">+</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span> <span class="c1"># {x}.func(args...)</span>
-
-        <span class="k">if</span> <span class="n">fgui</span><span class="o">.</span><span class="n">_auto_call</span><span class="p">:</span>
-            <span class="c1"># Auto-call will cause many redundant macros. To avoid this, only the last input</span>
-            <span class="c1"># will be recorded in magic-class.</span>
-            <span class="n">last_expr</span> <span class="o">=</span> <span class="n">menugui</span><span class="o">.</span><span class="n">_recorded_macro</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-            <span class="k">if</span> <span class="n">last_expr</span><span class="o">.</span><span class="n">head</span> <span class="o">==</span> <span class="n">Head</span><span class="o">.</span><span class="n">call</span> <span class="ow">and</span> <span class="n">last_expr</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">head</span> <span class="o">==</span> <span class="n">Head</span><span class="o">.</span><span class="n">getattr</span> <span class="ow">and</span> \
-                <span class="n">last_expr</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">expr</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
-                <span class="n">menugui</span><span class="o">.</span><span class="n">_recorded_macro</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
-
-        <span class="n">menugui</span><span class="o">.</span><span class="n">_recorded_macro</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">expr</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">_after_run</span>
-
-<span class="k">def</span> <span class="nf">_value_widget_callback</span><span class="p">(</span><span class="n">menugui</span><span class="p">:</span> <span class="n">MenuGuiBase</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">AbstractAction</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">getvalue</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">_set_value</span><span class="p">():</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">action</span><span class="o">.</span><span class="n">enabled</span><span class="p">:</span>
-            <span class="c1"># If widget is read only, it means that value is set in script (not manually).</span>
-            <span class="c1"># Thus this event should not be recorded as a macro.</span>
-            <span class="k">return</span> <span class="kc">None</span>
-        
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">action</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="ne">Exception</span><span class="p">):</span>
-            <span class="k">return</span> <span class="kc">None</span>
-        
-        <span class="n">menugui</span><span class="o">.</span><span class="n">changed</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">menugui</span><span class="p">)</span>
-        
-        <span class="k">if</span> <span class="n">getvalue</span><span class="p">:</span>
-            <span class="n">sub</span> <span class="o">=</span> <span class="n">Expr</span><span class="p">(</span><span class="n">head</span><span class="o">=</span><span class="n">Head</span><span class="o">.</span><span class="n">getattr</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="n">Symbol</span><span class="p">(</span><span class="n">name</span><span class="p">),</span> <span class="n">Symbol</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">)])</span> <span class="c1"># name.value</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">sub</span> <span class="o">=</span> <span class="n">Expr</span><span class="p">(</span><span class="n">head</span><span class="o">=</span><span class="n">Head</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="n">Symbol</span><span class="p">(</span><span class="n">name</span><span class="p">)])</span>
-        
-        <span class="c1"># Make an expression of</span>
-        <span class="c1"># &gt;&gt;&gt; x.name.value = value</span>
-        <span class="c1"># or</span>
-        <span class="c1"># &gt;&gt;&gt; x.name = value</span>
-        <span class="n">expr</span> <span class="o">=</span> <span class="n">Expr</span><span class="p">(</span><span class="n">head</span><span class="o">=</span><span class="n">Head</span><span class="o">.</span><span class="n">assign</span><span class="p">,</span> 
-                    <span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="n">Expr</span><span class="p">(</span><span class="n">head</span><span class="o">=</span><span class="n">Head</span><span class="o">.</span><span class="n">getattr</span><span class="p">,</span> 
-                               <span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="n">symbol</span><span class="p">(</span><span class="n">menugui</span><span class="p">),</span> <span class="n">sub</span><span class="p">]),</span> 
-                          <span class="n">action</span><span class="o">.</span><span class="n">value</span><span class="p">])</span>
-        
-        <span class="n">last_expr</span> <span class="o">=</span> <span class="n">menugui</span><span class="o">.</span><span class="n">_recorded_macro</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">last_expr</span><span class="o">.</span><span class="n">head</span> <span class="o">==</span> <span class="n">expr</span><span class="o">.</span><span class="n">head</span> <span class="ow">and</span> 
-            <span class="n">last_expr</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">head</span> <span class="o">==</span> <span class="n">expr</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">head</span> <span class="ow">and</span>
-            <span class="n">last_expr</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">expr</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
-            <span class="n">menugui</span><span class="o">.</span><span class="n">_recorded_macro</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">expr</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">menugui</span><span class="o">.</span><span class="n">_recorded_macro</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">expr</span><span class="p">)</span>
-        <span class="k">return</span> <span class="kc">None</span>
-    <span class="k">return</span> <span class="n">_set_value</span>
 </pre></div>
 
            </div>
