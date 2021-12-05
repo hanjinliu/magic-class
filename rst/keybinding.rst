@@ -42,6 +42,33 @@ describe keybindings.
     If you are going to use magic class as a dock widget in ``napari``, make sure there is no
     collision between your keybindings and those in ``napari``.
 
+Decorate Private Functions
+--------------------------
+
+Although private functions (functions whose names start with "_") will not be converted into
+widgets, it is very useful to define "invisible" shortcuts. A typical case is when you want
+to change widget values with shortcut.
+
+.. code-block:: python
+
+    from magicclass import magicclass, field, bind_key, do_not_record
+
+    @magicclass
+    class Main:
+        a = field(int)
+
+        @bind_key("Up")
+        @do_not_record
+        def _increment(self):
+            self.a.value = min(self.a.value + 1, self.a.max)
+        
+        @bind_key("Down")
+        @do_not_record
+        def _decrement(self):
+            self.a.value = max(self.a.value - 1, self.a.min)
+
+Widget defined by this class is equipped with shortcuts that can change the value of ``a``
+without clicking the spin box.
 
 Compatibility with Other Features
 ---------------------------------
