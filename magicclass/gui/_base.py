@@ -139,6 +139,7 @@ class MagicTemplate:
         """
         Return napari.Viewer if magic class is a dock widget of a viewer.
         """
+        # TODO: https://github.com/napari/napari/pull/3748
         parent_self = self._search_parent_magicclass()
         try:
             viewer = parent_self.parent.parent().qt_viewer.viewer
@@ -378,7 +379,9 @@ class MagicTemplate:
         if isinstance(func.__signature__, MagicMethodSignature):
             # NOTE: I don't know the reason why "additional_options" is lost. 
             func.__signature__.additional_options = getattr(obj_sig, "additional_options", {})
-            
+        
+        # TODO: "update_widget" argument is useful.
+        # see https://github.com/napari/magicgui/pull/309
         if nparams == 0:
             # We don't want a dialog with a single widget "Run" to show up.
             def run_function():
@@ -765,19 +768,14 @@ def value_widget_callback(gui: MagicTemplate, widget: ValueWidget, name: str, ge
         # >>> x.name.value = value
         # or
         # >>> x.name = value
-        expr = Expr(head=Head.assign, 
-                    args=[Expr(head=Head.getattr, 
-                               args=[symbol(gui), sub]), 
-                          widget.value])
+        target = Expr(Head.getattr, [symbol(gui), sub])
+        expr = Expr(Head.assign, [target, widget.value])
         
-        last_expr = gui._recorded_macro[-1]
-        if (len(gui._recorded_macro) > 1 and 
-            last_expr.head == expr.head and 
-            last_expr.args[0].args[1].head == expr.args[0].args[1].head and
-            last_expr.args[0].args[1].args[0] == expr.args[0].args[1].args[0]):
+        if gui._recorded_macro._last_setval == target:
             gui._recorded_macro[-1] = expr
         else:
             gui._recorded_macro.append(expr)
+            gui._recorded_macro._last_setval = target
         return None
     return _set_value
 
