@@ -11,14 +11,15 @@ from magicgui.events import Signal
 from magicgui.signature import MagicParameter
 from magicgui.widgets import FunctionGui, FileEdit, EmptyWidget, Widget, Container
 from magicgui.widgets._bases import ValueWidget
-from macrokit import Macro, Expr, Head, Symbol, symbol
+from macrokit import Expr, Head, Symbol, symbol
 
 from .keybinding import as_shortcut
 from .mgui_ext import AbstractAction, FunctionGuiPlus, PushButtonPlus
 from .utils import get_parameters
+from ._macro import GuiMacro
 
 from ..utils import get_signature, iter_members, extract_tooltip, screen_center
-from ..widgets import Separator, MacroEdit
+from ..widgets import Separator
 from ..fields import MagicField
 from ..signature import MagicMethodSignature, get_additional_option
 from ..wrappers import upgrade_signature
@@ -59,20 +60,7 @@ def check_override(cls: type):
     collision = subclass_members & _RESERVED
     if collision:
         raise AttributeError(f"Cannot override magic class reserved attributes: {collision}")
-
-class GuiMacro(Macro):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self._widget = MacroEdit(name="Macro")
-        self.callbacks.append(self._update_widget)
-    
-    @property
-    def widget(self):
-        return self._widget
-    
-    def _update_widget(self, e=None):
-        self._widget.addText(str(self.args[-1]))
-           
+          
 
 class MagicTemplate:    
     __magicclass_parent__: None | MagicTemplate
@@ -212,13 +200,14 @@ class MagicTemplate:
         Basically, this function is used as a wrapper like below.
         
         .. code-block:: python
-        @magicclass
-        class C:
+        
             @magicclass
-            class D: 
-                def func(self, ...): ... # pre-definition
-            @D.wraps
-            def func(self, ...): ...
+            class C:
+                @magicclass
+                class D: 
+                    def func(self, ...): ... # pre-definition
+                @D.wraps
+                def func(self, ...): ...
 
         Parameters
         ----------
@@ -364,6 +353,7 @@ class MagicTemplate:
         all_params = []
         for param in func.__signature__.parameters.values():
             if isinstance(param.annotation, _AnnotatedAlias):
+                # TODO: pydantic
                 param = MagicParameter.from_parameter(param)
             if isinstance(param, MagicParameter):
                 bound_value = param.options.get("bind", None)
@@ -785,7 +775,7 @@ def value_widget_callback(gui: MagicTemplate, widget: ValueWidget, name: str, ge
         
         if gui.macro._last_setval == target:
             gui.macro.pop()
-            gui.macro.widget.erase_last_line()
+            gui.macro.widget.textedit.erase_last()
         else:
             gui.macro._last_setval = target
         gui.macro.append(expr)
@@ -808,7 +798,7 @@ def nested_function_gui_callback(gui: MagicTemplate, fgui: FunctionGui):
             if last_expr.head == Head.call and last_expr.args[0].head == Head.getattr and \
                 last_expr.args[0].args[1] == expr.args[0].args[1]:
                 gui.macro.pop()
-                gui.macro.widget.erase_last_line()
+                gui.macro.widget.textedit.erase_last()
 
         gui.macro.append(expr)
         gui.macro._last_setval = None

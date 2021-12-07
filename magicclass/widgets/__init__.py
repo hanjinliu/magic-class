@@ -6,7 +6,7 @@ These widgets are all compatible with the ``append`` method of Container widgets
 from magicgui.widgets import * # to avoid importing both magicgui.widgets and magicclass.widgets
 
 from .pywidgets import ListWidget, DictWidget
-from .misc import Figure, ConsoleTextEdit, MacroEdit, CheckButton
+from .misc import Figure, ConsoleTextEdit, CheckButton
 from .separator import Separator
 from .sequence import ListEdit, TupleEdit
 from .threading import ProgressWidget, progress

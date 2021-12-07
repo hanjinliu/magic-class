@@ -1,18 +1,15 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
-from enum import Enum
 from qtpy.QtGui import QTextCursor
-from qtpy.QtWidgets import QMenuBar, QMenu, QAction
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvas
-from magicgui.widgets import PushButton, TextEdit, FileEdit
+from magicgui.widgets import PushButton, TextEdit
 
 from .utils import FreeWidget
-from ..utils import to_clipboard
 
 if TYPE_CHECKING:
-    from qtpy.QtWidgets import QWidget
+    from qtpy.QtWidgets import QTextEdit
 
 class Figure(FreeWidget):
     """
@@ -65,85 +62,20 @@ class ConsoleTextEdit(TextEdit):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         from qtpy.QtGui import QFont, QTextOption
+        self.native: QTextEdit
         self.native.setFont(QFont("Consolas"))
         self.native.setWordWrapMode(QTextOption.NoWrap)
-        
-class MacroEdit(FreeWidget):
-    """
-    A text edit embeded with a custom menu bar.
-    """    
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.textedit = ConsoleTextEdit()
-        self.set_widget(self.textedit.native)
-        self.native: QWidget
-        self.native.setWindowTitle("Macro")
-        
-        self._menubar = QMenuBar(self.native)
-        self.native.layout().setMenuBar(self._menubar)
-        
-        self.textedit.read_only = False
-        vbar = self.textedit.native.verticalScrollBar()
-        vbar.setValue(vbar.maximum())
-        
-        # set menu
-        self._file_menu = QMenu("File", self.native)
-        self._menubar.addMenu(self._file_menu)
-        
-        # Set actions to menus
-        copy_action = QAction("Copy", self._file_menu)
-        copy_action.triggered.connect(self._copy)
-        self._file_menu.addAction(copy_action)
-        
-        save_action = QAction("Save", self._file_menu)
-        save_action.triggered.connect(self._save)
-        self._file_menu.addAction(save_action)
-        
-        close_action = QAction("Close", self._file_menu)
-        close_action.triggered.connect(self._close)
-        self._file_menu.addAction(close_action)
     
-    def addText(self, text: str):
-        self.textedit.native.append(text)
+    def append(self, text: str):
+        self.native.append(text)
     
-    def erase_last_line(self):
-        cursor = self.textedit.native.textCursor()
+    def erase_last(self):
+        cursor = self.native.textCursor()
         cursor.movePosition(QTextCursor.End)
         cursor.select(QTextCursor.LineUnderCursor)
         cursor.removeSelectedText()
         cursor.deletePreviousChar()
-        self.textedit.native.setTextCursor(cursor)
-    
-    @property
-    def value(self):
-        return self.textedit.value
-    
-    @value.setter
-    def value(self, value: str):
-        self.textedit.value = value
-    
-    def _copy(self, e=None):
-        """Copy text to clipboard"""
-        to_clipboard(self.value)
-    
-    def _save(self, e=None):
-        """Save text."""
-        fdialog = FileEdit(mode="w", filter="*.txt;*.py")
-        result = fdialog._show_file_dialog(
-                    fdialog.mode,
-                    caption=fdialog._btn_text,
-                    start_path=str(fdialog.value),
-                    filter=fdialog.filter,
-                    )
-        if result:
-            path = str(result)
-            with open(path, mode="w") as f:
-                f.write(self.value)
-    
-    def _close(self, e=None):
-        """Close widget."""
-        self.native.close()
-        self.native.deleteLater()
+        self.native.setTextCursor(cursor)
         
 
 class CheckButton(PushButton):

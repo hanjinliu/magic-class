@@ -205,12 +205,13 @@ def magicclass(class_: type|None = None,
             if hasattr(self, "__post_init__"):
                 self.__post_init__()
             
-            # Record class instance construction
-            macro_init = Expr.parse_init(self, cls, args, kwargs)
-            self.macro.append(macro_init)
-            
             if widget_type in (WidgetType.collapsible, WidgetType.button):
                 self.btn_text = self.name
+            
+            if self.__magicclass_parent__ is None:
+                macrowidget = self.macro.widget.native
+                macrowidget.setParent(self.native, macrowidget.windowFlags())
+                self.macro.widget.__magicclass_parent__ = self
 
         newclass.__init__ = __init__
         
@@ -370,10 +371,6 @@ def _call_magicmenu(class_: type = None,
             
             if hasattr(self, "__post_init__"):
                 self.__post_init__()
-            
-            # Record class instance construction
-            macro_init = Expr.parse_init(self, cls, args, kwargs)
-            self.macro.append(macro_init)
 
         newclass.__init__ = __init__
         
