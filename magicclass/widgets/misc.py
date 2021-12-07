@@ -1,7 +1,8 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 from enum import Enum
-from qtpy.QtWidgets import QMenuBar, QMenu, QAction, QMessageBox
+from qtpy.QtGui import QTextCursor
+from qtpy.QtWidgets import QMenuBar, QMenu, QAction
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvas
@@ -101,7 +102,17 @@ class MacroEdit(FreeWidget):
         close_action = QAction("Close", self._file_menu)
         close_action.triggered.connect(self._close)
         self._file_menu.addAction(close_action)
-        
+    
+    def addText(self, text: str):
+        self.textedit.native.append(text)
+    
+    def erase_last_line(self):
+        cursor = self.textedit.native.textCursor()
+        cursor.movePosition(QTextCursor.End)
+        cursor.select(QTextCursor.LineUnderCursor)
+        cursor.removeSelectedText()
+        cursor.deletePreviousChar()
+        self.textedit.native.setTextCursor(cursor)
     
     @property
     def value(self):

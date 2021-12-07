@@ -207,7 +207,7 @@ def magicclass(class_: type|None = None,
             
             # Record class instance construction
             macro_init = Expr.parse_init(self, cls, args, kwargs)
-            self._recorded_macro.append(macro_init)
+            self.macro.append(macro_init)
             
             if widget_type in (WidgetType.collapsible, WidgetType.button):
                 self.btn_text = self.name
@@ -373,7 +373,7 @@ def _call_magicmenu(class_: type = None,
             
             # Record class instance construction
             macro_init = Expr.parse_init(self, cls, args, kwargs)
-            self._recorded_macro.append(macro_init)
+            self.macro.append(macro_init)
 
         newclass.__init__ = __init__
         

@@ -46,15 +46,13 @@ defaults = {"popup_mode": PopUpMode.popup,
             }
 
 _RESERVED = {"__magicclass_parent__", "__magicclass_children__", "_close_on_run", 
-             "_error_mode", "_popup_mode", "_recorded_macro", "_my_symbol", "_macro_instance", 
+             "_error_mode", "_popup_mode", "_my_symbol", "_macro_instance", "macro",
              "annotation", "enabled", "gui_only", "height", "label_changed", "label", "layout",
              "labels", "margins", "max_height", "max_width", "min_height", "min_width", "name",
              "options", "param_kind", "parent_changed", "tooltip", "visible", "widget_type", 
-             "width", "parent_viewer", "parent_dock_widget", "objectName", "create_macro", "wraps",
-             "_unwrap_method", "_search_parent_magicclass", "_iter_child_magicclasses",
+             "width", "wraps", "_unwrap_method", "_search_parent_magicclass", 
+             "_iter_child_magicclasses",
              }
-
-UI = Symbol("ui")
 
 def check_override(cls: type):
     subclass_members = set(cls.__dict__.keys())
@@ -62,13 +60,27 @@ def check_override(cls: type):
     if collision:
         raise AttributeError(f"Cannot override magic class reserved attributes: {collision}")
 
+class GuiMacro(Macro):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._widget = MacroEdit(name="Macro")
+        self.callbacks.append(self._update_widget)
+    
+    @property
+    def widget(self):
+        return self._widget
+    
+    def _update_widget(self, e=None):
+        self._widget.addText(str(self.args[-1]))
+           
+
 class MagicTemplate:    
     __magicclass_parent__: None | MagicTemplate
     __magicclass_children__: list[MagicTemplate]
     _close_on_run: bool
     _component_class: type[AbstractAction | Widget]
     _error_mode: ErrorMode
-    _macro_instance: Macro
+    _macro_instance: GuiMacro
     _my_symbol: Symbol
     _popup_mode: PopUpMode
     annotation: Any
@@ -128,11 +140,11 @@ class MagicTemplate:
         raise NotImplementedError()
     
     @property
-    def _recorded_macro(self):
+    def macro(self) -> GuiMacro:
         if self.__magicclass_parent__ is None:
             return self._macro_instance
         else:
-            return self.__magicclass_parent__._recorded_macro
+            return self.__magicclass_parent__.macro
     
     @property
     def parent_viewer(self) -> "napari.Viewer" | None:
@@ -176,16 +188,15 @@ class MagicTemplate:
         show : bool, default is False
             Launch a TextEdit window that shows recorded macro.
         """
+        msg = "Method 'create_macro' is deprecated and will be removed soon."\
+              "Macro object is available via 'self.macro' property, and the widget is"\
+              "available at 'self.macro.widget'."
+        warnings.warn(msg, UserWarning)
         
-        out = str(self._recorded_macro)
+        out = str(self.macro)
                     
         if show:
-            win = MacroEdit(name="macro")
-            win.value = out
-            
-            win.native.setParent(self.native, win.native.windowFlags())
-            win.native.move(screen_center() - win.native.rect().center())
-            win.show()
+            self.macro.widget.show()
             
         return out
     
@@ -328,7 +339,7 @@ class MagicTemplate:
         if _need_record(obj):
             @functools_wraps(obj)
             def func(*args, **kwargs):
-                with self._recorded_macro.blocked():
+                with self.macro.blocked():
                     out = _inner_func(*args, **kwargs)
                 return out
         else:
@@ -528,13 +539,13 @@ class MagicTemplate:
     
 class BaseGui(MagicTemplate):
     def __init__(self, close_on_run, popup_mode, error_mode):
-        self._macro_instance = Macro(flags={"Get": False, "Return": False})
+        self._macro_instance = GuiMacro(flags={"Get": False, "Return": False})
         self.__magicclass_parent__: None | BaseGui = None
         self.__magicclass_children__: list[MagicTemplate] = []
         self._close_on_run = close_on_run
         self._popup_mode = popup_mode
         self._error_mode = error_mode
-        self._my_symbol = UI
+        self._my_symbol = Symbol.var("ui")
 
 def _get_widget_name(widget: Widget):
     # To escape reference
@@ -546,10 +557,11 @@ def _temporal_function_gui_callback(bgui: MagicTemplate, fgui: FunctionGuiPlus, 
     else:
         raise TypeError("fgui must be FunctionGui object.")
         
+    return_type = fgui.return_annotation
+    result_required = return_type is not inspect._empty
+    
     def _after_run():
         bound = fgui._previous_bound
-        return_type = fgui.return_annotation
-        result_required = return_type is not inspect._empty
         result = Symbol("result")
         # Standard button will be connected with two callbacks.
         # 1. Build FunctionGui
@@ -561,13 +573,13 @@ def _temporal_function_gui_callback(bgui: MagicTemplate, fgui: FunctionGuiPlus, 
             line = Expr(head=Head.call, args=[ev])
             if result_required:
                 line = Expr(head=Head.assign, args=[result, line])
-            bgui._recorded_macro.append(line)
+            bgui.macro.append(line)
         else:
             kwargs = {k: v for k, v in bound.arguments.items()}
             line = Expr.parse_method(bgui, _function, (), kwargs)
             if result_required:
                 line = Expr(Head.assign, [result, line])
-            bgui._recorded_macro.append(line)
+            bgui.macro.append(line)
         
         # Deal with return annotation
         
@@ -578,8 +590,8 @@ def _temporal_function_gui_callback(bgui: MagicTemplate, fgui: FunctionGuiPlus, 
                 b = Expr(head=Head.getitem, args=[symbol(bgui), widget.name])
                 _gui = Expr(head=Head.getattr, args=[b, Symbol("mgui")])
                 line = Expr.parse_call(callback, (_gui, result, return_type), {})
-                bgui._recorded_macro.append(line)
-        
+                bgui.macro.append(line)
+        bgui.macro._last_setval = None
         return None
     
     return _after_run
@@ -771,11 +783,12 @@ def value_widget_callback(gui: MagicTemplate, widget: ValueWidget, name: str, ge
         target = Expr(Head.getattr, [symbol(gui), sub])
         expr = Expr(Head.assign, [target, widget.value])
         
-        if gui._recorded_macro._last_setval == target:
-            gui._recorded_macro[-1] = expr
+        if gui.macro._last_setval == target:
+            gui.macro.pop()
+            gui.macro.widget.erase_last_line()
         else:
-            gui._recorded_macro.append(expr)
-            gui._recorded_macro._last_setval = target
+            gui.macro._last_setval = target
+        gui.macro.append(expr)
         return None
     return _set_value
 
@@ -791,10 +804,12 @@ def nested_function_gui_callback(gui: MagicTemplate, fgui: FunctionGui):
         if fgui._auto_call:
             # Auto-call will cause many redundant macros. To avoid this, only the last input
             # will be recorded in magic-class.
-            last_expr = gui._recorded_macro[-1]
+            last_expr = gui.macro[-1]
             if last_expr.head == Head.call and last_expr.args[0].head == Head.getattr and \
                 last_expr.args[0].args[1] == expr.args[0].args[1]:
-                gui._recorded_macro.pop()
+                gui.macro.pop()
+                gui.macro.widget.erase_last_line()
 
-        gui._recorded_macro.append(expr)
+        gui.macro.append(expr)
+        gui.macro._last_setval = None
     return _after_run
