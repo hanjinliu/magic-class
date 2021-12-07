@@ -121,6 +121,7 @@ class MacroEdit(FreeWidget):
     def _open_in_new_window(self, e=None):
         m = self.__class__(name="Generated Macro")
         m.value = self.value
+        m.__magicclass_parent__ = self.__magicclass_parent__
         m.show()
     
     def show(self):

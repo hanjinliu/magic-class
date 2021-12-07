@@ -754,7 +754,7 @@ def value_widget_callback(gui: MagicTemplate, widget: ValueWidget, name: str, ge
     sym_name = Symbol(name)
     sym_value = Symbol("value")
     def _set_value():
-        if not widget.enabled:
+        if not widget.enabled or not gui.macro.active:
             # If widget is read only, it means that value is set in script (not manually).
             # Thus this event should not be recorded as a macro.
             return None
@@ -785,6 +785,10 @@ def value_widget_callback(gui: MagicTemplate, widget: ValueWidget, name: str, ge
 def nested_function_gui_callback(gui: MagicTemplate, fgui: FunctionGui):
     fgui_name = Symbol(fgui.name)
     def _after_run():
+        if not fgui.enabled or not gui.macro.active:
+            # If widget is read only, it means that value is set in script (not manually).
+            # Thus this event should not be recorded as a macro.
+            return None
         inputs = get_parameters(fgui)
         args = [Expr(head=Head.kw, args=[Symbol(k), v]) for k, v in inputs.items()]
         # args[0] is self

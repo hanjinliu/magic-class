@@ -6,7 +6,7 @@ from pathlib import Path
 from dataclasses import is_dataclass
 from typing import Any
 from typing_extensions import Annotated, _AnnotatedAlias
-from macrokit import Expr, register_type, symbol, Head
+from macrokit import Expr, register_type, Head
 
 from .gui.class_gui import (
     ClassGuiBase, 
@@ -28,19 +28,21 @@ from .gui import ContextMenuGui, MenuGui, MenuGuiBase
 from .utils import iter_members
 from ._app import get_app
 
+# magicgui-style input
 register_type(Enum, lambda e: repr(str(e.name)))
 register_type(Path, lambda e: f"r'{e}'")
 
+@register_type(MagicTemplate)
 def find_myname(gui: MagicTemplate):
+    """This function is the essential part of macro recording"""
     parent = gui.__magicclass_parent__
     if parent is None:
         return gui._my_symbol
     else:
         return Expr(Head.getattr, [find_myname(parent), gui._my_symbol])
 
-register_type(MagicTemplate, find_myname)
-
 _BASE_CLASS_SUFFIX = "_Base"
+_POST_INIT = "__post_init__"
 
 class WidgetType(Enum):
     none = "none"
@@ -202,7 +204,7 @@ def magicclass(class_: type|None = None,
             super(oldclass, self).__init__(*args, **kwargs)
             self._convert_attributes_into_widgets()
             
-            if hasattr(self, "__post_init__"):
+            if hasattr(self, _POST_INIT):
                 self.__post_init__()
             
             if widget_type in (WidgetType.collapsible, WidgetType.button):
@@ -369,7 +371,7 @@ def _call_magicmenu(class_: type = None,
             super(oldclass, self).__init__(*args, **kwargs)
             self._convert_attributes_into_widgets()
             
-            if hasattr(self, "__post_init__"):
+            if hasattr(self, _POST_INIT):
                 self.__post_init__()
 
         newclass.__init__ = __init__
