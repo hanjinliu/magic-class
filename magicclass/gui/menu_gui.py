@@ -20,6 +20,19 @@ from ..fields import MagicField
 from ..widgets import Separator, FreeWidget
 from ..utils import iter_members
 
+def _check_popupmode(popup_mode: PopUpMode):
+    if popup_mode in (PopUpMode.above, PopUpMode.below, PopUpMode.first):
+        msg = f"magicmenu does not support popup mode {popup_mode.value}."\
+                "PopUpMode.popup is used instead"
+        warnings.warn(msg, UserWarning)
+    elif popup_mode == PopUpMode.last:
+        msg = f"magicmenu does not support popup mode {popup_mode.value}."\
+                "PopUpMode.parentlast is used instead"
+        warnings.warn(msg, UserWarning)
+        popup_mode = PopUpMode.parentlast
+    
+    return popup_mode
+
 class MenuGuiBase(BaseGui, MutableSequence):
     _component_class = Action
     changed = Signal(object)
@@ -32,15 +45,7 @@ class MenuGuiBase(BaseGui, MutableSequence):
                  error_mode: str|ErrorMode = None,
                  labels: bool = True
                  ):
-        if popup_mode in (PopUpMode.above, PopUpMode.below, PopUpMode.first):
-            msg = f"magicmenu does not support popup mode {popup_mode.value}."\
-                   "PopUpMode.popup is used instead"
-            warnings.warn(msg, UserWarning)
-        elif popup_mode == PopUpMode.last:
-            msg = f"magicmenu does not support popup mode {popup_mode.value}."\
-                   "PopUpMode.parentlast is used instead"
-            warnings.warn(msg, UserWarning)
-            popup_mode = PopUpMode.parentlast
+        popup_mode = _check_popupmode(popup_mode)
             
         super().__init__(close_on_run=close_on_run, popup_mode=popup_mode, error_mode=error_mode)
         name = name or self.__class__.__name__

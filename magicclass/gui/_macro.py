@@ -17,7 +17,7 @@ class MacroEdit(FreeWidget):
     """
     A text edit embeded with a custom menu bar.
     """    
-    count: int = 0
+    count = 0
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.__magicclass_parent__ = None
@@ -76,8 +76,15 @@ class MacroEdit(FreeWidget):
                 show_messagebox("error", title=e.__class__.__name__,
                                 text=str(e), parent=self.native)
     
-    def _open_in_new_window(self, e=None):
+    def _create_duplicate(self, e=None):
         self.duplicate().show()
+    
+    def _get_complete(self, e=None):
+        if self.value:
+            self = self.duplicate()
+            self.show()
+        parent = self._search_parent_magicclass()
+        self.value = str(parent.macro)
     
     def new(self, name: str = None) -> MacroEdit:
         """
@@ -204,9 +211,14 @@ class MacroEdit(FreeWidget):
         run_action.triggered.connect(self._execute)
         self._macro_menu.addAction(run_action)
         
-        generate_action = QAction("Create", self._macro_menu)
-        generate_action.triggered.connect(self._open_in_new_window)
-        self._macro_menu.addAction(generate_action)
+        create_action = QAction("Create", self._macro_menu)
+        create_action.triggered.connect(self._create_duplicate)
+        self._macro_menu.addAction(create_action)
+        
+        complete_action = QAction("Get complete macro", self._macro_menu)
+        complete_action.triggered.connect(self._get_complete)
+        self._macro_menu.addAction(complete_action)
+        
         
         syn = QAction("Synchronize", self._macro_menu)
         syn.setCheckable(True)
