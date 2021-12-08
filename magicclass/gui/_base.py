@@ -168,14 +168,6 @@ class MagicTemplate:
         return self.native.objectName()
     
     def create_macro(self, show: bool = False) -> str:
-        """
-        Create executable Python scripts from the recorded macro object.
-
-        Parameters
-        ----------
-        show : bool, default is False
-            Launch a TextEdit window that shows recorded macro.
-        """
         msg = "Method 'create_macro' is deprecated and will be removed soon."\
               "Macro object is available via 'self.macro' property, and the widget is"\
               "available at 'self.macro.widget'."
@@ -751,6 +743,9 @@ def _need_record(func: Callable):
     return get_additional_option(func, "record", True)
 
 def value_widget_callback(gui: MagicTemplate, widget: ValueWidget, name: str, getvalue: bool = True):
+    """
+    Define a ValueWidget callback, including macro recording.
+    """    
     sym_name = Symbol(name)
     sym_value = Symbol("value")
     def _set_value():
@@ -764,7 +759,7 @@ def value_widget_callback(gui: MagicTemplate, widget: ValueWidget, name: str, ge
         if getvalue:
             sub = Expr(head=Head.getattr, args=[sym_name, sym_value]) # name.value
         else:
-            sub = Expr(head=Head.value, args=[sym_name])
+            sub = sym_name
         
         # Make an expression of
         # >>> x.name.value = value
@@ -783,6 +778,9 @@ def value_widget_callback(gui: MagicTemplate, widget: ValueWidget, name: str, ge
     return _set_value
 
 def nested_function_gui_callback(gui: MagicTemplate, fgui: FunctionGui):
+    """
+    Define a FunctionGui callback, including macro recording.
+    """    
     fgui_name = Symbol(fgui.name)
     def _after_run():
         if not fgui.enabled or not gui.macro.active:
