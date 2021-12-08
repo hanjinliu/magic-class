@@ -773,9 +773,9 @@ def value_widget_callback(gui: MagicTemplate, widget: ValueWidget, name: str, ge
         target = Expr(Head.getattr, [symbol(gui), sub])
         expr = Expr(Head.assign, [target, widget.value])
         
-        if gui.macro._last_setval == target:
+        if gui.macro._last_setval == target and len(gui.macro) > 0:
             gui.macro.pop()
-            gui.macro.widget.textedit.erase_last()
+            gui.macro._erase_last()
         else:
             gui.macro._last_setval = target
         gui.macro.append(expr)
@@ -799,10 +799,11 @@ def nested_function_gui_callback(gui: MagicTemplate, fgui: FunctionGui):
             # Auto-call will cause many redundant macros. To avoid this, only the last input
             # will be recorded in magic-class.
             last_expr = gui.macro[-1]
-            if last_expr.head == Head.call and last_expr.args[0].head == Head.getattr and \
-                last_expr.args[0].args[1] == expr.args[0].args[1]:
+            if (last_expr.head == Head.call and last_expr.args[0].head == Head.getattr and
+                last_expr.args[0].args[1] == expr.args[0].args[1] and
+                len(gui.macro) > 0):
                 gui.macro.pop()
-                gui.macro.widget.textedit.erase_last()
+                gui.macro._erase_last()
 
         gui.macro.append(expr)
         gui.macro._last_setval = None
