@@ -17,7 +17,7 @@ class MyMenu:
             self.parent_viewer.text_overlay.text = text
         
         def Create_macro(self):
-            self.create_macro(True)
+            self.macro.widget.show()
 
 
 if __name__ == "__main__":
