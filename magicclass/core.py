@@ -3,6 +3,7 @@ from functools import wraps as functools_wraps
 import inspect
 from enum import Enum
 from pathlib import Path
+import datetime
 from dataclasses import is_dataclass
 from typing import Any
 from typing_extensions import Annotated, _AnnotatedAlias
@@ -28,9 +29,16 @@ from .gui import ContextMenuGui, MenuGui, MenuGuiBase
 from .utils import iter_members
 from ._app import get_app
 
+_datetime = Expr(Head.getattr, [datetime, datetime.datetime])
+_date = Expr(Head.getattr, [datetime, datetime.date])
+_time = Expr(Head.getattr, [datetime, datetime.time])
+
 # magicgui-style input
 register_type(Enum, lambda e: repr(str(e.name)))
 register_type(Path, lambda e: f"r'{e}'")
+register_type(datetime.datetime, lambda e: Expr.parse_call(_datetime, (e.year, e.month, e.day, e.hour, e.minute), {}))
+register_type(datetime.date, lambda e: Expr.parse_call(_date, (e.year, e.month, e.day), {}))
+register_type(datetime.time, lambda e: Expr.parse_call(_time, (e.hour, e.minute), {}))
 
 @register_type(MagicTemplate)
 def find_myname(gui: MagicTemplate):
