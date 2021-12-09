@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.gui.menu_gui &mdash; magic-class 0.5.11 documentation</title>
+  <title>magicclass.gui.menu_gui &mdash; magic-class 0.5.12dev0 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -27,7 +27,7 @@
             <a href="../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.11
+                0.5.12dev0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -98,6 +98,19 @@
 <span class="kn">from</span> <span class="nn">..widgets</span> <span class="kn">import</span> <span class="n">Separator</span><span class="p">,</span> <span class="n">FreeWidget</span>
 <span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">iter_members</span>
 
+<span class="k">def</span> <span class="nf">_check_popupmode</span><span class="p">(</span><span class="n">popup_mode</span><span class="p">:</span> <span class="n">PopUpMode</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">popup_mode</span> <span class="ow">in</span> <span class="p">(</span><span class="n">PopUpMode</span><span class="o">.</span><span class="n">above</span><span class="p">,</span> <span class="n">PopUpMode</span><span class="o">.</span><span class="n">below</span><span class="p">,</span> <span class="n">PopUpMode</span><span class="o">.</span><span class="n">first</span><span class="p">):</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;magicmenu does not support popup mode </span><span class="si">{</span><span class="n">popup_mode</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">.&quot;</span>\
+                <span class="s2">&quot;PopUpMode.popup is used instead&quot;</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="ne">UserWarning</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">popup_mode</span> <span class="o">==</span> <span class="n">PopUpMode</span><span class="o">.</span><span class="n">last</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;magicmenu does not support popup mode </span><span class="si">{</span><span class="n">popup_mode</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">.&quot;</span>\
+                <span class="s2">&quot;PopUpMode.parentlast is used instead&quot;</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="ne">UserWarning</span><span class="p">)</span>
+        <span class="n">popup_mode</span> <span class="o">=</span> <span class="n">PopUpMode</span><span class="o">.</span><span class="n">parentlast</span>
+    
+    <span class="k">return</span> <span class="n">popup_mode</span>
+
 <div class="viewcode-block" id="MenuGuiBase"><a class="viewcode-back" href="../../../magicclass.gui.html#magicclass.gui.menu_gui.MenuGuiBase">[docs]</a><span class="k">class</span> <span class="nc">MenuGuiBase</span><span class="p">(</span><span class="n">BaseGui</span><span class="p">,</span> <span class="n">MutableSequence</span><span class="p">):</span>
     <span class="n">_component_class</span> <span class="o">=</span> <span class="n">Action</span>
     <span class="n">changed</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">(</span><span class="nb">object</span><span class="p">)</span>
@@ -110,15 +123,7 @@
                  <span class="n">error_mode</span><span class="p">:</span> <span class="nb">str</span><span class="o">|</span><span class="n">ErrorMode</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">labels</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
                  <span class="p">):</span>
-        <span class="k">if</span> <span class="n">popup_mode</span> <span class="ow">in</span> <span class="p">(</span><span class="n">PopUpMode</span><span class="o">.</span><span class="n">above</span><span class="p">,</span> <span class="n">PopUpMode</span><span class="o">.</span><span class="n">below</span><span class="p">,</span> <span class="n">PopUpMode</span><span class="o">.</span><span class="n">first</span><span class="p">):</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;magicmenu does not support popup mode </span><span class="si">{</span><span class="n">popup_mode</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">.&quot;</span>\
-                   <span class="s2">&quot;PopUpMode.popup is used instead&quot;</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="ne">UserWarning</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">popup_mode</span> <span class="o">==</span> <span class="n">PopUpMode</span><span class="o">.</span><span class="n">last</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;magicmenu does not support popup mode </span><span class="si">{</span><span class="n">popup_mode</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">.&quot;</span>\
-                   <span class="s2">&quot;PopUpMode.parentlast is used instead&quot;</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="ne">UserWarning</span><span class="p">)</span>
-            <span class="n">popup_mode</span> <span class="o">=</span> <span class="n">PopUpMode</span><span class="o">.</span><span class="n">parentlast</span>
+        <span class="n">popup_mode</span> <span class="o">=</span> <span class="n">_check_popupmode</span><span class="p">(</span><span class="n">popup_mode</span><span class="p">)</span>
             
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">close_on_run</span><span class="o">=</span><span class="n">close_on_run</span><span class="p">,</span> <span class="n">popup_mode</span><span class="o">=</span><span class="n">popup_mode</span><span class="p">,</span> <span class="n">error_mode</span><span class="o">=</span><span class="n">error_mode</span><span class="p">)</span>
         <span class="n">name</span> <span class="o">=</span> <span class="n">name</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>

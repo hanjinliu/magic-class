@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.core &mdash; magic-class 0.5.11 documentation</title>
+  <title>magicclass.core &mdash; magic-class 0.5.12dev0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -27,7 +27,7 @@
             <a href="../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.11
+                0.5.12dev0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -81,10 +81,13 @@
 <span class="kn">import</span> <span class="nn">inspect</span>
 <span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">is_dataclass</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span>
 <span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Annotated</span><span class="p">,</span> <span class="n">_AnnotatedAlias</span>
-<span class="kn">from</span> <span class="nn">macrokit</span> <span class="kn">import</span> <span class="n">Expr</span><span class="p">,</span> <span class="n">register_type</span><span class="p">,</span> <span class="n">symbol</span><span class="p">,</span> <span class="n">Head</span>
+<span class="kn">from</span> <span class="nn">macrokit</span> <span class="kn">import</span> <span class="n">Expr</span><span class="p">,</span> <span class="n">register_type</span><span class="p">,</span> <span class="n">Head</span>
+
+<span class="kn">from</span> <span class="nn">magicclass.utils.functions</span> <span class="kn">import</span> <span class="n">extract_tooltip</span><span class="p">,</span> <span class="n">get_signature</span>
 
 <span class="kn">from</span> <span class="nn">.gui.class_gui</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">ClassGuiBase</span><span class="p">,</span> 
@@ -102,23 +105,33 @@
     <span class="n">ListClassGui</span><span class="p">,</span>
     <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">.gui._base</span> <span class="kn">import</span> <span class="n">PopUpMode</span><span class="p">,</span> <span class="n">ErrorMode</span><span class="p">,</span> <span class="n">defaults</span><span class="p">,</span> <span class="n">MagicTemplate</span><span class="p">,</span> <span class="n">check_override</span>
+<span class="kn">from</span> <span class="nn">.gui.mgui_ext</span> <span class="kn">import</span> <span class="n">Action</span><span class="p">,</span> <span class="n">PushButtonPlus</span>
 <span class="kn">from</span> <span class="nn">.gui</span> <span class="kn">import</span> <span class="n">ContextMenuGui</span><span class="p">,</span> <span class="n">MenuGui</span><span class="p">,</span> <span class="n">MenuGuiBase</span>
 <span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">iter_members</span>
 <span class="kn">from</span> <span class="nn">._app</span> <span class="kn">import</span> <span class="n">get_app</span>
 
+<span class="n">_datetime</span> <span class="o">=</span> <span class="n">Expr</span><span class="p">(</span><span class="n">Head</span><span class="o">.</span><span class="n">getattr</span><span class="p">,</span> <span class="p">[</span><span class="n">datetime</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">])</span>
+<span class="n">_date</span> <span class="o">=</span> <span class="n">Expr</span><span class="p">(</span><span class="n">Head</span><span class="o">.</span><span class="n">getattr</span><span class="p">,</span> <span class="p">[</span><span class="n">datetime</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">])</span>
+<span class="n">_time</span> <span class="o">=</span> <span class="n">Expr</span><span class="p">(</span><span class="n">Head</span><span class="o">.</span><span class="n">getattr</span><span class="p">,</span> <span class="p">[</span><span class="n">datetime</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">time</span><span class="p">])</span>
+
+<span class="c1"># magicgui-style input</span>
 <span class="n">register_type</span><span class="p">(</span><span class="n">Enum</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">e</span><span class="p">:</span> <span class="nb">repr</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">name</span><span class="p">)))</span>
 <span class="n">register_type</span><span class="p">(</span><span class="n">Path</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">e</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;r&#39;</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+<span class="n">register_type</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">e</span><span class="p">:</span> <span class="n">Expr</span><span class="o">.</span><span class="n">parse_call</span><span class="p">(</span><span class="n">_datetime</span><span class="p">,</span> <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">year</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">month</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">day</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">hour</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">minute</span><span class="p">),</span> <span class="p">{}))</span>
+<span class="n">register_type</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">e</span><span class="p">:</span> <span class="n">Expr</span><span class="o">.</span><span class="n">parse_call</span><span class="p">(</span><span class="n">_date</span><span class="p">,</span> <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">year</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">month</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">day</span><span class="p">),</span> <span class="p">{}))</span>
+<span class="n">register_type</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">e</span><span class="p">:</span> <span class="n">Expr</span><span class="o">.</span><span class="n">parse_call</span><span class="p">(</span><span class="n">_time</span><span class="p">,</span> <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">hour</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">minute</span><span class="p">),</span> <span class="p">{}))</span>
 
-<div class="viewcode-block" id="find_myname"><a class="viewcode-back" href="../../magicclass.html#magicclass.core.find_myname">[docs]</a><span class="k">def</span> <span class="nf">find_myname</span><span class="p">(</span><span class="n">gui</span><span class="p">:</span> <span class="n">MagicTemplate</span><span class="p">):</span>
+<div class="viewcode-block" id="find_myname"><a class="viewcode-back" href="../../magicclass.html#magicclass.core.find_myname">[docs]</a><span class="nd">@register_type</span><span class="p">(</span><span class="n">MagicTemplate</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">find_myname</span><span class="p">(</span><span class="n">gui</span><span class="p">:</span> <span class="n">MagicTemplate</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This function is the essential part of macro recording&quot;&quot;&quot;</span>
     <span class="n">parent</span> <span class="o">=</span> <span class="n">gui</span><span class="o">.</span><span class="n">__magicclass_parent__</span>
     <span class="k">if</span> <span class="n">parent</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">gui</span><span class="o">.</span><span class="n">_my_symbol</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">Expr</span><span class="p">(</span><span class="n">Head</span><span class="o">.</span><span class="n">getattr</span><span class="p">,</span> <span class="p">[</span><span class="n">find_myname</span><span class="p">(</span><span class="n">parent</span><span class="p">),</span> <span class="n">gui</span><span class="o">.</span><span class="n">_my_symbol</span><span class="p">])</span></div>
 
-<span class="n">register_type</span><span class="p">(</span><span class="n">MagicTemplate</span><span class="p">,</span> <span class="n">find_myname</span><span class="p">)</span>
-
 <span class="n">_BASE_CLASS_SUFFIX</span> <span class="o">=</span> <span class="s2">&quot;_Base&quot;</span>
+<span class="n">_POST_INIT</span> <span class="o">=</span> <span class="s2">&quot;__post_init__&quot;</span>
 
 <div class="viewcode-block" id="WidgetType"><a class="viewcode-back" href="../../magicclass.html#magicclass.core.WidgetType">[docs]</a><span class="k">class</span> <span class="nc">WidgetType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
     <span class="n">none</span> <span class="o">=</span> <span class="s2">&quot;none&quot;</span>
@@ -280,15 +293,16 @@
             <span class="nb">super</span><span class="p">(</span><span class="n">oldclass</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_convert_attributes_into_widgets</span><span class="p">()</span>
             
-            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;__post_init__&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_POST_INIT</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">__post_init__</span><span class="p">()</span>
-            
-            <span class="c1"># Record class instance construction</span>
-            <span class="n">macro_init</span> <span class="o">=</span> <span class="n">Expr</span><span class="o">.</span><span class="n">parse_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_recorded_macro</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">macro_init</span><span class="p">)</span>
             
             <span class="k">if</span> <span class="n">widget_type</span> <span class="ow">in</span> <span class="p">(</span><span class="n">WidgetType</span><span class="o">.</span><span class="n">collapsible</span><span class="p">,</span> <span class="n">WidgetType</span><span class="o">.</span><span class="n">button</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">btn_text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+            
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__magicclass_parent__</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">macrowidget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">macro</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">native</span>
+                <span class="n">macrowidget</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="p">,</span> <span class="n">macrowidget</span><span class="o">.</span><span class="n">windowFlags</span><span class="p">())</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">macro</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">__magicclass_parent__</span> <span class="o">=</span> <span class="bp">self</span>
 
         <span class="n">newclass</span><span class="o">.</span><span class="fm">__init__</span> <span class="o">=</span> <span class="fm">__init__</span>
         
@@ -446,12 +460,8 @@
             <span class="nb">super</span><span class="p">(</span><span class="n">oldclass</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_convert_attributes_into_widgets</span><span class="p">()</span>
             
-            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;__post_init__&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_POST_INIT</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">__post_init__</span><span class="p">()</span>
-            
-            <span class="c1"># Record class instance construction</span>
-            <span class="n">macro_init</span> <span class="o">=</span> <span class="n">Expr</span><span class="o">.</span><span class="n">parse_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_recorded_macro</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">macro_init</span><span class="p">)</span>
 
         <span class="n">newclass</span><span class="o">.</span><span class="fm">__init__</span> <span class="o">=</span> <span class="fm">__init__</span>
         
@@ -529,7 +539,26 @@
         <span class="n">params</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__signature__</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">1</span><span class="p">:]</span>
         <span class="k">return</span> <span class="p">{</span><span class="n">param</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">)</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">params</span><span class="p">}</span></div></div>
     
-    
+
+<div class="viewcode-block" id="generate_keymap"><a class="viewcode-back" href="../../magicclass.html#magicclass.core.generate_keymap">[docs]</a><span class="k">def</span> <span class="nf">generate_keymap</span><span class="p">(</span><span class="n">ui</span><span class="p">:</span> <span class="n">MagicTemplate</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">.signature</span> <span class="kn">import</span> <span class="n">get_additional_option</span>
+    <span class="kn">from</span> <span class="nn">.gui.keybinding</span> <span class="kn">import</span> <span class="n">as_shortcut</span>
+    <span class="n">keymap</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">iter_members</span><span class="p">(</span><span class="n">ui</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span> <span class="n">exclude_prefix</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">):</span>
+        <span class="n">kb</span> <span class="o">=</span> <span class="n">get_additional_option</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="s2">&quot;keybinding&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">kb</span><span class="p">:</span>
+            <span class="n">keystr</span> <span class="o">=</span> <span class="n">as_shortcut</span><span class="p">(</span><span class="n">kb</span><span class="p">)</span><span class="o">.</span><span class="n">toString</span><span class="p">()</span>
+            <span class="n">keymap</span><span class="p">[</span><span class="n">keystr</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">extract_tooltip</span><span class="p">(</span><span class="n">attr</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">keymap</span></div>
+
+<div class="viewcode-block" id="generate_docs"><a class="viewcode-back" href="../../magicclass.html#magicclass.core.generate_docs">[docs]</a><span class="k">def</span> <span class="nf">generate_docs</span><span class="p">(</span><span class="n">ui</span><span class="p">:</span> <span class="n">MagicTemplate</span><span class="p">):</span>
+    <span class="n">docsmap</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">content</span> <span class="ow">in</span> <span class="n">ui</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="p">(</span><span class="n">Action</span><span class="p">,</span> <span class="n">PushButtonPlus</span><span class="p">)):</span>
+            <span class="n">get_signature</span><span class="p">(</span><span class="n">content</span><span class="o">.</span><span class="n">mgui</span><span class="o">.</span><span class="n">_function</span><span class="p">)</span>
+        <span class="n">docsmap</span>
+    <span class="k">return</span> <span class="n">docsmap</span></div>
 </pre></div>
 
            </div>

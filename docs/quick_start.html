@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Quick Start &mdash; magic-class 0.5.11 documentation</title>
+  <title>Quick Start &mdash; magic-class 0.5.12dev0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -30,7 +30,7 @@
             <a href="index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.11
+                0.5.12dev0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -97,9 +97,11 @@
 <span class="n">print_text</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>will create a widget that is composed of a line edit (for the input argument <code class="docutils literal notranslate"><span class="pre">text</span></code>) and a call button.</p>
-<p>Similarly, with <code class="docutils literal notranslate"><span class="pre">magicclass</span></code> decorator, you can convert a Python class into a <cite>magicgui</cite>'s <cite>Container</cite> widget
-and its methods appear as push buttons. When a button is clicked, the corresponding magicgui will be popped up.</p>
+<p>will create a widget that is composed of a line edit (for the input argument <code class="docutils literal notranslate"><span class="pre">text</span></code>) and a
+call button.</p>
+<p>Similarly, with <code class="docutils literal notranslate"><span class="pre">magicclass</span></code> decorator, you can convert a Python class into a <cite>magicgui</cite>'s
+<cite>Container</cite> widget and its methods appear as push buttons. When a button is clicked, the
+corresponding magicgui will be popped up.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span>
 
 <span class="nd">@magicclass</span>
@@ -117,8 +119,8 @@ and its methods appear as push buttons. When a button is clicked, the correspond
 <img alt="_images/fig_1-1.png" src="_images/fig_1-1.png" />
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Methods whose names start with &quot;_&quot; are considered as inner functions so that they will not be converted
-into widgets, except for <code class="docutils literal notranslate"><span class="pre">__call__</span></code> method.</p>
+<p>Methods whose names start with &quot;_&quot; are considered as inner functions so that they will
+not be converted into widgets, except for <code class="docutils literal notranslate"><span class="pre">__call__</span></code> method.</p>
 </div>
 <section id="use-other-widgets-in-magic-class">
 <h2>Use Other Widgets in magic-class<a class="headerlink" href="#use-other-widgets-in-magic-class" title="Permalink to this headline">¶</a></h2>
@@ -143,8 +145,9 @@ into widgets, except for <code class="docutils literal notranslate"><span class=
 <p>I highly recommend using <code class="docutils literal notranslate"><span class="pre">field</span></code> function to create widgets in magic classes.
 See <a class="reference internal" href="use_field.html"><span class="doc">Use Fields in magic-class</span></a>.</p>
 </div>
-<p>If a method is decorated with <code class="docutils literal notranslate"><span class="pre">&#64;magicgui</span></code>, it will directly added in the container widget, in place of a
-push button. This is natural because decorated methods are no longer functions, but <cite>FunctionGui</cite> widgets.</p>
+<p>If a method is decorated with <code class="docutils literal notranslate"><span class="pre">&#64;magicgui</span></code>, it will directly added in the container widget,
+in place of a push button. This is natural because decorated methods are no longer functions,
+but <cite>FunctionGui</cite> widgets.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicgui</span> <span class="kn">import</span> <span class="n">magicgui</span>
 <span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span>
 
@@ -166,19 +169,25 @@ push button. This is natural because decorated methods are no longer functions, 
 </section>
 <section id="macro-recording">
 <h2>Macro Recording<a class="headerlink" href="#macro-recording" title="Permalink to this headline">¶</a></h2>
-<p>Another outstanding feature of magic class is its <strong>macro recorder functionalities</strong>. Function calls and
-value changes in child widgets are all recorded and you can generate executable Python script at any time.</p>
-<p>You can generate Python script as string using <code class="docutils literal notranslate"><span class="pre">create_macro</span></code> method.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">macro</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">create_macro</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">macro</span><span class="p">)</span>
+<p>Another outstanding feature of magic class is its <strong>macro recorder functionalities</strong>.
+Function calls and value changes in child widgets are all recorded and you can generate
+executable Python script at any time.</p>
+<p>Recorded macro is stored in the <code class="docutils literal notranslate"><span class="pre">macro</span></code> attribute. You can generate Python script as
+string just by passing it to <code class="docutils literal notranslate"><span class="pre">str</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">macro_string</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">ui</span><span class="o">.</span><span class="n">macro</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">macro_string</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>or in a text editor window.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ui</span><span class="o">.</span><span class="n">create_macro</span><span class="p">(</span><span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<p>A macro editor widget is always tagged at <code class="docutils literal notranslate"><span class="pre">macro.widget</span></code>. It is a <code class="docutils literal notranslate"><span class="pre">magicgui</span></code> widget
+so you can open it by <code class="docutils literal notranslate"><span class="pre">show()</span></code> method or directly append it to GUI.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ui</span><span class="o">.</span><span class="n">macro</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">show</span><span class="p">()</span> <span class="c1"># show widget as a separate window.</span>
+<span class="n">ui</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ui</span><span class="o">.</span><span class="n">macro</span><span class="o">.</span><span class="n">widget</span><span class="p">)</span> <span class="c1"># append macro as a child widget.</span>
 </pre></div>
 </div>
-<p>Occasionally, you may want some functions not to record macro (such as a function that only shows a help
-window). You can prevent macro recording with <code class="docutils literal notranslate"><span class="pre">do_not_record</span></code> decorator.</p>
+<p>By default, the script shown in the macro editor is synchronized, that is, automatically
+updated whenever macro itself is updated.</p>
+<p>Occasionally, you may want some functions not to record macro (such as a function that
+only shows a help window). You can prevent macro recording with <code class="docutils literal notranslate"><span class="pre">do_not_record</span></code> decorator.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">do_not_record</span>
 
 <span class="nd">@magicclass</span>

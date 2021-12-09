@@ -5,7 +5,7 @@ from qtpy.QtWidgets import QPushButton, QAction, QWidgetAction
 from qtpy.QtGui import QIcon
 from qtpy.QtCore import QSize
 from magicgui.events import Signal
-from magicgui.widgets import Container, PushButton, FunctionGui
+from magicgui.widgets import PushButton, FunctionGui
 from magicgui.widgets._concrete import _LabeledWidget
 from magicgui.widgets._bases import Widget, ValueWidget, ButtonWidget
 from magicgui.widgets._function_gui import _function_name_pointing_to_widget
@@ -100,7 +100,7 @@ class PushButtonPlus(PushButton):
         super().__init__(text=text, **kwargs)
         self.native: QPushButton
         self._icon_path = None
-        self.mgui: Container = None # tagged function GUI
+        self.mgui: FunctionGuiPlus = None # tagged function GUI
     
     @property
     def running(self) -> bool:

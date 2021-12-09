@@ -14,10 +14,12 @@ In ``magicgui``, you can convert functions into widgets. For instance,
     
     print_text.show()
 
-will create a widget that is composed of a line edit (for the input argument ``text``) and a call button.
+will create a widget that is composed of a line edit (for the input argument ``text``) and a 
+call button.
 
-Similarly, with ``magicclass`` decorator, you can convert a Python class into a `magicgui`'s `Container` widget
-and its methods appear as push buttons. When a button is clicked, the corresponding magicgui will be popped up.
+Similarly, with ``magicclass`` decorator, you can convert a Python class into a `magicgui`'s 
+`Container` widget and its methods appear as push buttons. When a button is clicked, the 
+corresponding magicgui will be popped up.
 
 .. code-block:: python
 
@@ -37,8 +39,9 @@ and its methods appear as push buttons. When a button is clicked, the correspond
 .. image:: images/fig_1-1.png
 
 .. note::
-    Methods whose names start with "_" are considered as inner functions so that they will not be converted
-    into widgets, except for ``__call__`` method.
+
+    Methods whose names start with "_" are considered as inner functions so that they will
+    not be converted into widgets, except for ``__call__`` method.
 
 Use Other Widgets in magic-class
 --------------------------------
@@ -67,8 +70,9 @@ Magic classes can also detect other `magicgui`'s widgets.
     I highly recommend using ``field`` function to create widgets in magic classes.
     See :doc:`use_field`.
 
-If a method is decorated with ``@magicgui``, it will directly added in the container widget, in place of a 
-push button. This is natural because decorated methods are no longer functions, but `FunctionGui` widgets.
+If a method is decorated with ``@magicgui``, it will directly added in the container widget, 
+in place of a push button. This is natural because decorated methods are no longer functions, 
+but `FunctionGui` widgets.
 
 .. code-block:: python
 
@@ -93,25 +97,31 @@ push button. This is natural because decorated methods are no longer functions, 
 Macro Recording
 ---------------
 
-Another outstanding feature of magic class is its **macro recorder functionalities**. Function calls and
-value changes in child widgets are all recorded and you can generate executable Python script at any time.
+Another outstanding feature of magic class is its **macro recorder functionalities**. 
+Function calls and value changes in child widgets are all recorded and you can generate
+executable Python script at any time.
 
-You can generate Python script as string using ``create_macro`` method.
-
-.. code-block:: python
-
-    macro = ui.create_macro()
-    print(macro)
-
-or in a text editor window.
+Recorded macro is stored in the ``macro`` attribute. You can generate Python script as 
+string just by passing it to ``str``.
 
 .. code-block:: python
 
-    ui.create_macro(show=True)
+    macro_string = str(ui.macro)
+    print(macro_string)
 
-Occasionally, you may want some functions not to record macro (such as a function that only shows a help
-window). You can prevent macro recording with ``do_not_record`` decorator.
+A macro editor widget is always tagged at ``macro.widget``. It is a ``magicgui`` widget
+so you can open it by ``show()`` method or directly append it to GUI. 
 
+.. code-block:: python
+
+    ui.macro.widget.show() # show widget as a separate window.
+    ui.append(ui.macro.widget) # append macro as a child widget.
+
+By default, the script shown in the macro editor is synchronized, that is, automatically 
+updated whenever macro itself is updated.
+
+Occasionally, you may want some functions not to record macro (such as a function that 
+only shows a help window). You can prevent macro recording with ``do_not_record`` decorator.
 
 .. code-block:: python
 

@@ -171,7 +171,7 @@ class MagicTemplate:
         msg = "Method 'create_macro' is deprecated and will be removed soon."\
               "Macro object is available via 'self.macro' property, and the widget is"\
               "available at 'self.macro.widget'."
-        warnings.warn(msg, UserWarning)
+        warnings.warn(msg, DeprecationWarning)
         
         out = str(self.macro)
                     

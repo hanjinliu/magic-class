@@ -5,9 +5,11 @@ from enum import Enum
 from pathlib import Path
 import datetime
 from dataclasses import is_dataclass
-from typing import Any
+from typing import Any, Callable
 from typing_extensions import Annotated, _AnnotatedAlias
 from macrokit import Expr, register_type, Head
+
+from magicclass.utils.functions import extract_tooltip, get_signature
 
 from .gui.class_gui import (
     ClassGuiBase, 
@@ -25,6 +27,7 @@ from .gui.class_gui import (
     ListClassGui,
     )
 from .gui._base import PopUpMode, ErrorMode, defaults, MagicTemplate, check_override
+from .gui.mgui_ext import Action, PushButtonPlus
 from .gui import ContextMenuGui, MenuGui, MenuGuiBase
 from .utils import iter_members
 from ._app import get_app
@@ -458,4 +461,23 @@ class Parameters(_CallableClass):
         params = list(self.__signature__.parameters.keys())[1:]
         return {param: getattr(self, param) for param in params}
     
-    
+
+def generate_keymap(ui: MagicTemplate):
+    from .signature import get_additional_option
+    from .gui.keybinding import as_shortcut
+    keymap: dict[str, Callable] = {}
+    for name, attr in iter_members(ui.__class__, exclude_prefix=" "):
+        kb = get_additional_option(attr, "keybinding", None)
+        
+        if kb:
+            keystr = as_shortcut(kb).toString()
+            keymap[keystr] = (name, extract_tooltip(attr))
+    return keymap
+
+def generate_docs(ui: MagicTemplate):
+    docsmap = {}
+    for content in ui:
+        if isinstance(content, (Action, PushButtonPlus)):
+            get_signature(content.mgui._function)
+        docsmap
+    return docsmap

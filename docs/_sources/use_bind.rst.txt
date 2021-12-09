@@ -58,7 +58,7 @@ values will be recorded as a macro so that results are always the same.
     ui = Main()
     ui.show()
     # click button once
-    print(ui.create_macro())
+    print(ui.macro)
 
 .. code-block::
 
