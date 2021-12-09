@@ -245,7 +245,7 @@ def make_gui(container: type[ContainerWidget], no_margin: bool = True):
             _hide_labels = (_LabeledWidget, ButtonWidget, ClassGuiBase, FreeWidget, Label,
                             Image, Table, FunctionGui)
                 
-            if isinstance(widget, ValueWidget):
+            if isinstance(widget, (ValueWidget, ContainerWidget)):
                 widget.changed.connect(lambda: self.changed.emit(self))
             
             if hasattr(widget, "__magicclass_parent__") or \

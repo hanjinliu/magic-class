@@ -7,7 +7,7 @@ from qtpy.QtCore import QSize
 from magicgui.events import Signal
 from magicgui.widgets import PushButton, FunctionGui
 from magicgui.widgets._concrete import _LabeledWidget
-from magicgui.widgets._bases import Widget, ValueWidget, ButtonWidget
+from magicgui.widgets._bases import Widget, ValueWidget, ButtonWidget, ContainerWidget
 from magicgui.widgets._function_gui import _function_name_pointing_to_widget
 from matplotlib.colors import to_rgb
 from ..widgets import Separator
@@ -73,7 +73,7 @@ class FunctionGuiPlus(FunctionGui):
     
     def insert(self, key: int, widget: Widget):
         """Insert widget at ``key``."""
-        if isinstance(widget, ValueWidget):
+        if isinstance(widget, (ValueWidget, ContainerWidget)):
             widget.changed.connect(lambda: self.changed.emit(self))
         _widget = widget
 
