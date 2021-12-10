@@ -10,8 +10,6 @@ from typing_extensions import Annotated, _AnnotatedAlias
 from macrokit import Expr, register_type, Head
 from magicgui.widgets._bases.widget import Widget
 
-from magicclass.utils.functions import extract_tooltip, get_signature
-
 from .gui.class_gui import (
     ClassGuiBase, 
     ClassGui,
@@ -30,7 +28,7 @@ from .gui.class_gui import (
 from .gui._base import PopUpMode, ErrorMode, defaults, MagicTemplate, check_override
 from .gui.mgui_ext import Action, PushButtonPlus, WidgetAction
 from .gui import ContextMenuGui, MenuGui, MenuGuiBase
-from .utils import iter_members
+from .utils import iter_members, extract_tooltip, get_signature
 from ._app import get_app
 
 _datetime = Expr(Head.getattr, [datetime, datetime.datetime])
