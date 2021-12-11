@@ -11,14 +11,14 @@ from typing import Any, Callable, Iterator
 
 from .gui.mgui_ext import Action, PushButtonPlus, WidgetAction
 from .gui._base import MagicTemplate
-from .widgets.containers import DraggableContainer
+from .widgets import DraggableContainer, FreeWidget
 from .gui.class_gui import CollapsibleClassGui, DraggableClassGui, ScrollableClassGui, ButtonClassGui, TabbedClassGui
 from .utils import iter_members, extract_tooltip, get_signature
 
 # TODO: find
 # TODO: key-binding
 
-class HelpWidget(QSplitter):
+class _HelpWidget(QSplitter):
     """
     A Qt widget that will show information of a magic-class widget, built from its
     class structure, function docstrings and type annotations.
@@ -130,7 +130,13 @@ class UiBoundTreeItem(QTreeWidgetItem):
     def takeChild(self, index: int) -> UiBoundTreeItem:
         # Just for typing
         return super().takeChild(index)
-    
+
+class HelpWidget(FreeWidget):
+    def __init__(self, ui=None, parent=None):
+        super().__init__()
+        self._help_widget = _HelpWidget(ui, parent)
+        self.set_widget(self._help_widget)
+        self.native.setWindowTitle("Help")
 
 def _issubclass(child: Any, parent: Any):
     try:

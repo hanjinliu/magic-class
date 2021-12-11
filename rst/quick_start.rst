@@ -136,6 +136,29 @@ only shows a help window). You can prevent macro recording with ``do_not_record`
     ui = Main()
     ui.show()
 
+Make Document of Your Widgets Automatically
+-------------------------------------------
+
+It is usually time consuming to make a help menu of a widget all the way. You also have to keep
+it updated whenever UI changed.
+
+Magic class has a powerful help widget builder. You can create a help widget using ``build_help``
+function. The widget has a website-like layout and many information such as tooltips of widgets
+and parameter annotations of functions are summerized with rich texts.
+
+.. code-block:: python
+
+    from magicclass import magicclass, build_help
+
+    @magicclass
+    class Main:
+        # many functions and widgets here.
+        ...
+
+    help = build_help(self) # build_help returns a Widget object
+    help.show() # show widget
+
+.. image:: images/fig_1-5.png
 
 Parameter Options
 -----------------

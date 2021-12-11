@@ -23,7 +23,6 @@ class MacroEdit(FreeWidget):
         self.__magicclass_parent__ = None
         self.textedit = ConsoleTextEdit()
         self.set_widget(self.textedit.native)
-        self.native: QWidget
         self.native.setWindowTitle("Macro")
         
         self._synchronize = True
