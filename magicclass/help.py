@@ -53,24 +53,25 @@ class HelpWidget(QSplitter):
             root.setText(0, name)
             root.setExpanded(True)
             self._tree.invisibleRootItem().addChild(root)
-        
-        # TODO: If a magicclass only have one magicclass, tree should
-        # look like "X/Y".
-        # it = list(_iter_unwrapped_children(ui))
-        # if len(it) == 1 and isinstance(it[0], MagicTemplate):
-        #     ui = it[0]
-        #     root.setText(0, f"{ui.name}/{name}")
-        #     print(root.text(0))
-        #     return self.set_tree(ui, root=root)
-        
+                
         for i, widget in enumerate(_iter_unwrapped_children(ui)):
             if isinstance(widget, MagicTemplate):
                 child = UiBoundTreeItem(root, ui=widget)
                 self.set_tree(widget, root=child)
+                if child.childCount() == 1 and isinstance(child.child(0).ui, MagicTemplate):
+                    # If only one magic class is nested, we don't create redundant items
+                    grandchild = child.takeChild(0)
+                    grandchild.setText(0, f"({i+1}) {widget.name} > {grandchild.ui.name}")
+                    root.removeChild(child)
+                    child = grandchild
+                else:
+                    child.setText(0, f"({i+1}) {widget.name}")
+                    
             else:
                 child = UiBoundTreeItem(root, ui=None)
-            child.setText(0, f"({i+1}) {widget.name}")
-            root.addChild(child)            
+                child.setText(0, f"({i+1}) {widget.name}")
+            
+            root.addChild(child)
     
     def _update_ui_view(self, ui: MagicTemplate):
         img, docs = get_help_info(ui)
@@ -101,6 +102,9 @@ class UiBoundTreeItem(QTreeWidgetItem):
     def __init__(self, parent, ui=None):
         super().__init__(parent)
         self.ui = ui
+    
+    def child(self, index: int) -> UiBoundTreeItem:
+        return super().child(index)
     
 
 def _issubclass(child: Any, parent: Any):
