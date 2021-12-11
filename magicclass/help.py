@@ -104,7 +104,12 @@ class UiBoundTreeItem(QTreeWidgetItem):
         self.ui = ui
     
     def child(self, index: int) -> UiBoundTreeItem:
+        # Just for typing
         return super().child(index)
+    
+    def takeChild(self, index: int) -> UiBoundTreeItem:
+        # Just for typing
+        return super().takeChild(index)
     
 
 def _issubclass(child: Any, parent: Any):
@@ -112,8 +117,6 @@ def _issubclass(child: Any, parent: Any):
         return issubclass(child, parent)
     except TypeError:
         return False
-
-
 
 def get_help_info(ui: MagicTemplate) -> tuple[np.ndarray, dict[str, str]]:
     import matplotlib as mpl
