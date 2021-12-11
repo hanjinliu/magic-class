@@ -12,7 +12,7 @@ from .mgui_ext import PushButtonPlus
 from .menu_gui import MenuGui, ContextMenuGui
 from ._base import BaseGui, PopUpMode, ErrorMode, value_widget_callback, nested_function_gui_callback
 from .utils import define_callback, MagicClassConstructionError
-from ._containers import (
+from ..widgets import (
     ButtonContainer,
     GroupBoxContainer,
     ListContainer,
@@ -23,11 +23,11 @@ from ._containers import (
     SplitterContainer,
     StackedContainer,
     TabbedContainer,
-    ToolBoxContainer
+    ToolBoxContainer,
+    FreeWidget
     )
 
 from ..utils import iter_members, extract_tooltip
-from ..widgets import FreeWidget
 from ..fields import MagicField
 from ..signature import get_additional_option
 

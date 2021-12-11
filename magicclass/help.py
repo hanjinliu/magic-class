@@ -11,7 +11,7 @@ from typing import Any, Callable, Iterator
 
 from .gui.mgui_ext import Action, PushButtonPlus, WidgetAction
 from .gui._base import MagicTemplate
-from .gui._containers import DraggableContainer
+from .widgets.containers import DraggableContainer
 from .gui.class_gui import CollapsibleClassGui, DraggableClassGui, ScrollableClassGui, ButtonClassGui, TabbedClassGui
 from .utils import iter_members, extract_tooltip, get_signature
 

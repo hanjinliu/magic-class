@@ -25,10 +25,9 @@ in the standard ``np.array([...])`` style.
 
     import numpy as numpy
     
+    @register_type(np.ndarray)
     def numpy_to_str(arr):
         return f"np.array({arr.tolist()})"
-    
-    register_type(np.ndarray, numpy_to_str)
 
 .. tip::
 
@@ -39,7 +38,7 @@ in the standard ``np.array([...])`` style.
 
         from napari.layers import Image
         
+        @register_type(Image)
         def get_layer(layer):
             return f"viewer.layers[{layer.name!r}]"
         
-        register_type(Image, get_layer)

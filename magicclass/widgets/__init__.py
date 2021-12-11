@@ -5,6 +5,19 @@ These widgets are all compatible with the ``append`` method of Container widgets
 
 from magicgui.widgets import * # to avoid importing both magicgui.widgets and magicclass.widgets
 
+from .containers import (
+    ButtonContainer,
+    GroupBoxContainer,
+    ListContainer,
+    SubWindowsContainer,
+    ScrollableContainer,
+    DraggableContainer,
+    CollapsibleContainer,
+    SplitterContainer,
+    StackedContainer,
+    TabbedContainer,
+    ToolBoxContainer
+    )
 from .pywidgets import ListWidget, DictWidget
 from .misc import Figure, ConsoleTextEdit, CheckButton
 from .separator import Separator
@@ -66,6 +79,17 @@ __all__ = ["ListWidget",
            "ProgressWidget",
            "progress",
            "FreeWidget",
+           "ButtonContainer",
+           "GroupBoxContainer",
+           "ListContainer",
+           "SubWindowsContainer",
+           "ScrollableContainer",
+           "DraggableContainer",
+           "CollapsibleContainer",
+           "SplitterContainer",
+           "StackedContainer",
+           "TabbedContainer",
+           "ToolBoxContainer",
            "QtConsole",
            "QtPlotCanvas",
            "QtImageCanvas",
