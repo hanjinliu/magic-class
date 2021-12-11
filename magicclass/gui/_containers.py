@@ -1,6 +1,8 @@
 from __future__ import annotations
 from typing import TypeVar, Callable
 import warnings
+from PyQt5.QtCore import QSize
+from PyQt5.QtGui import QResizeEvent
 from qtpy import QtWidgets as QtW
 from qtpy.QtCore import Qt
 from magicgui.application import use_app
@@ -202,21 +204,13 @@ class _CollapsibleContainer(ContainerBase):
     
     def _mgui_change_expand(self):
         if not self._expand_btn.isChecked():
-            # collapsed
-            self._inner_widget.setMaximumHeight(0)
-            w = self._qwidget.width()
-            h = max(self._expand_btn.sizeHint().height(), 30)
-            self._qwidget.resize(w, h)
-            self._qwidget.setMaximumHeight(h)
+            # collapse
+            self._inner_widget.setVisible(False)
             self._expand_btn.setArrowType(Qt.ArrowType.RightArrow)
             
         else:
-            # expanded
-            h = self._inner_widget.sizeHint().height()
-            w = self._qwidget.width()
-            self._inner_widget.setMaximumHeight(h)
-            self._qwidget.setMaximumHeight(16777215)
-            self._qwidget.resize(w, self._expand_btn.sizeHint().height() + h)
+            # expande
+            self._inner_widget.setVisible(True)
             self._expand_btn.setArrowType(Qt.ArrowType.DownArrow)
     
 

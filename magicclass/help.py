@@ -116,9 +116,12 @@ def get_help_info(ui: MagicTemplate) -> tuple[np.ndarray, dict[str, str]]:
     import matplotlib.pyplot as plt
     backend = mpl.get_backend()
     try:
-        if isinstance(ui, (ScrollableClassGui, ButtonClassGui, CollapsibleClassGui)):
-            # TODO: collapsed GUI not working in this context
-            img = _render(ui._widget._inner_widget)
+        if isinstance(ui, (ScrollableClassGui, CollapsibleClassGui, ButtonClassGui)):
+            inner_widget = ui._widget._inner_widget
+            visible = inner_widget.isVisible()
+            inner_widget.setVisible(True)
+            img = _render(inner_widget)
+            inner_widget.setVisible(visible)
         else:
             img = ui.render()
         scale = _screen_scale()
