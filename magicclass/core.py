@@ -6,7 +6,7 @@ from pathlib import Path
 import datetime
 from dataclasses import is_dataclass
 from weakref import WeakValueDictionary
-from typing import Any
+from typing import Any, Literal, Union
 from typing_extensions import Annotated, _AnnotatedAlias
 from macrokit import Expr, register_type, Head
 
@@ -68,6 +68,16 @@ class WidgetType(Enum):
     groupbox = "groupbox"
     mainwindow = "mainwindow"
 
+WidgetTypeStr = Union[Literal["none"], Literal["scrollable"], Literal["draggable"], Literal["split"],
+                      Literal["collapsible"], Literal["button"], Literal["toolbox"], Literal["tabbed"],
+                      Literal["stacked"], Literal["list"], Literal["subwindows"], Literal["groupbox"],
+                      Literal["mainwindow"]]
+
+PopUpModeStr = Union[Literal["popup"], Literal["first"], Literal["last"], Literal["above"],
+                     Literal["below"], Literal["dock"], Literal["parentlast"]]
+
+ErrorModeStr = Union[Literal["msgbox"], Literal["stderr"]]
+
 _TYPE_MAP = {
     WidgetType.none: ClassGui,
     WidgetType.scrollable: ScrollableClassGui,
@@ -112,9 +122,9 @@ def magicclass(class_: type | None = None,
                labels: bool = True, 
                name: str = None,
                close_on_run: bool = None,
-               popup_mode: str | PopUpMode = None,
-               error_mode: str | ErrorMode = None,
-               widget_type: str | WidgetType = WidgetType.none,
+               popup_mode: PopUpModeStr | PopUpMode = None,
+               error_mode: ErrorModeStr | ErrorMode = None,
+               widget_type: WidgetTypeStr | WidgetType = WidgetType.none,
                parent = None
                ):
     """
