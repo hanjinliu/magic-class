@@ -216,6 +216,7 @@ def magicclass(class_: type | None = None,
             if widget_type in (WidgetType.collapsible, WidgetType.button):
                 self.btn_text = self.name
             
+            # TODO: does this "if" make sense?
             if self.__magicclass_parent__ is None:
                 macrowidget = self.macro.widget.native
                 macrowidget.setParent(self.native, macrowidget.windowFlags())

@@ -152,7 +152,14 @@ class Analyzer:
     
     @Tools.Plot_Control.wraps
     def set_title(self, title: str):
-        """Set title of figure"""        
+        """
+        Set title of the figure.
+
+        Parameters
+        ----------
+        title : str
+            Figure title.
+        """        
         self.canvas.ax.set_title(title)
         self.canvas.draw()
     
@@ -170,13 +177,31 @@ class Analyzer:
     
     @Tools.Plot_Control.wraps
     def set_xlim(self, xmin: str, xmax: str):
-        """Set x-limits of figure"""        
+        """
+        Set x-limits of the figure.
+
+        Parameters
+        ----------
+        xmin : str
+            Minimum value.
+        xmax : str
+            Maximum value.
+        """        
         self.canvas.ax.set_xlim(float(xmin), float(xmax))
         self.canvas.draw()
     
     @Tools.Plot_Control.wraps
     def set_ylim(self, ymin: str, ymax: str):
-        """Set y-limits of figure"""        
+        """
+        Set y-limits of the figure.
+
+        Parameters
+        ----------
+        ymin : str
+            Minimum value.
+        ymax : str
+            Maximum value.
+        """        
         self.canvas.ax.set_ylim(float(ymin), float(ymax))
         self.canvas.draw()
         
