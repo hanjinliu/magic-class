@@ -5,10 +5,9 @@ from enum import Enum
 from pathlib import Path
 import datetime
 from dataclasses import is_dataclass
-from typing import Any, Callable
+from typing import Any
 from typing_extensions import Annotated, _AnnotatedAlias
 from macrokit import Expr, register_type, Head
-from magicgui.widgets._bases.widget import Widget
 
 from .gui.class_gui import (
     ClassGuiBase, 
@@ -26,9 +25,7 @@ from .gui.class_gui import (
     ListClassGui,
     )
 from .gui._base import PopUpMode, ErrorMode, defaults, MagicTemplate, check_override
-from .gui.mgui_ext import Action, PushButtonPlus, WidgetAction
 from .gui import ContextMenuGui, MenuGui, MenuGuiBase
-from .utils import iter_members, extract_tooltip, get_signature
 from ._app import get_app
 
 _datetime = Expr(Head.getattr, [datetime, datetime.datetime])
@@ -50,12 +47,6 @@ def find_myname(gui: MagicTemplate):
         return gui._my_symbol
     else:
         return Expr(Head.getattr, [find_myname(parent), gui._my_symbol])
-
-def _issubclass(child: Any, parent: Any):
-    try:
-        return issubclass(child, parent)
-    except TypeError:
-        return False
     
 _BASE_CLASS_SUFFIX = "_Base"
 _POST_INIT = "__post_init__"
@@ -452,57 +443,3 @@ class Parameters(_CallableClass):
         """        
         params = list(self.__signature__.parameters.keys())[1:]
         return {param: getattr(self, param) for param in params}
-    
-
-def get_keymap(ui: MagicTemplate | type[MagicTemplate]):
-    from .signature import get_additional_option
-    from .gui.keybinding import as_shortcut
-    keymap: dict[str, Callable] = {}
-    
-    if isinstance(ui, MagicTemplate):
-        cls = ui.__class__
-    elif _issubclass(ui, MagicTemplate):
-        cls = ui
-    else:
-        raise TypeError("'get_keymap' can only be called with MagicTemplate input.")
-    
-    for name, attr in iter_members(cls, exclude_prefix=" "):
-        if isinstance(attr, type) and issubclass(attr, MagicTemplate):
-            child_keymap = get_keymap(attr)
-            keymap.update(child_keymap)
-        else:
-            kb = get_additional_option(attr, "keybinding", None)
-            if kb:
-                keystr = as_shortcut(kb).toString()
-                keymap[keystr] = (name, extract_tooltip(attr))
-                
-    return keymap
-
-def generate_docs(ui: MagicTemplate):
-    """
-    Auto-document-generation using docstrings.
-
-    Parameters
-    ----------
-    ui : MagicTemplate
-        UI object from which document will be generated.
-
-    Returns
-    -------
-    dict
-        Document
-    """
-    docsmap = {}
-    for content in ui:
-        if isinstance(content, MagicTemplate):
-            child_docs = generate_docs(content)
-            docsmap.update(child_docs)
-        else:
-            if isinstance(content, (Action, PushButtonPlus)):
-                tips = content.mgui._function.__doc__
-            elif isinstance(content, (Widget, WidgetAction)):
-                tips = content.tooltip
-            
-            docsmap[content.name] = tips
-    # globalPos = ui["b"].native.mapToParent(ui["b"].native.rect().topLeft())
-    return docsmap

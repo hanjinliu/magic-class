@@ -44,10 +44,7 @@ def iter_members(cls: type, exclude_prefix: str = "__") -> list[str, Any]:
         processed.add(key)
     
 
-def extract_tooltip(obj: Any) -> str:
-    if not hasattr(obj, "__doc__"):
-        return ""
-    
+def extract_tooltip(obj: Any) -> str:    
     doc = parse(obj.__doc__)
     if doc.short_description is None:
         return ""
