@@ -6,6 +6,7 @@ import inspect
 from enum import Enum
 import warnings
 from collections.abc import MutableSequence
+from docstring_parser import parse, compose
 
 from magicgui.events import Signal
 from magicgui.signature import MagicParameter
@@ -53,7 +54,7 @@ _RESERVED = {"__magicclass_parent__", "__magicclass_children__", "_close_on_run"
              "labels", "margins", "max_height", "max_width", "min_height", "min_width", "name",
              "options", "param_kind", "parent_changed", "tooltip", "visible", "widget_type", 
              "width", "wraps", "_unwrap_method", "_search_parent_magicclass", 
-             "_iter_child_magicclasses", "render",
+             "_iter_child_magicclasses", 
              }
 
 def check_override(cls: type):
@@ -63,7 +64,8 @@ def check_override(cls: type):
         raise AttributeError(f"Cannot override magic class reserved attributes: {collision}")
           
 
-class MagicTemplate:    
+class MagicTemplate: 
+    __doc__ = ""
     __magicclass_parent__: None | MagicTemplate
     __magicclass_children__: list[MagicTemplate]
     _close_on_run: bool
@@ -661,6 +663,14 @@ def wraps(template: Callable | inspect.Signature) -> Callable[[_C], _C]:
             parameters=new_params,
             return_annotation=return_annotation
             )
+        
+        fdoc = parse(f.__doc__)
+        tempdoc = parse(template.__doc__)
+        fdoc.short_description = fdoc.short_description or tempdoc.short_description
+        fdoc.long_description = fdoc.long_description or tempdoc.long_description
+        fdoc.meta = fdoc.meta or tempdoc.meta
+        f.__doc__ = compose(fdoc)
+        
         return f
     return wrapper
 
