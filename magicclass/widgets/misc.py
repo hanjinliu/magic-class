@@ -1,9 +1,6 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 from qtpy.QtGui import QTextCursor
-import matplotlib as mpl
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_qt5agg import FigureCanvas
 from magicgui.widgets import PushButton, TextEdit
 
 from .utils import FreeWidget
@@ -21,6 +18,9 @@ class Figure(FreeWidget):
                  figsize: tuple[int, int] = (4, 3),
                  style = None, 
                  **kwargs):
+        import matplotlib as mpl
+        import matplotlib.pyplot as plt
+        from matplotlib.backends.backend_qt5agg import FigureCanvas
         backend = mpl.get_backend()
         try:
             mpl.use("Agg")
