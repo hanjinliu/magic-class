@@ -246,6 +246,44 @@ class MenuGuiBase(BaseGui, MutableSequence):
                 if labeled_widget:
                     labeled_widget.label_width = widest_label
 
+    def render(self):
+        try:
+            import numpy as np
+        except ImportError:
+            raise ModuleNotFoundError(
+                "could not find module 'numpy'. "
+                "Please `pip install numpy` to render widgets."
+            ) from None
+        import qtpy
+        img = self.native.grab().toImage()
+        bits = img.constBits()
+        h, w, c = img.height(), img.width(), 4
+        if qtpy.API_NAME == "PySide2":
+            arr = np.array(bits).reshape(h, w, c)
+        else:
+            bits.setsize(h * w * c)
+            arr = np.frombuffer(bits, np.uint8).reshape(h, w, c)
+
+        return arr[:, :, [2, 1, 0, 3]]
+
+    def _repr_png_(self):
+        """Return PNG representation of the widget for QtConsole."""
+        from io import BytesIO
+
+        try:
+            from imageio import imsave
+        except ImportError:
+            print(
+                "(For a nicer magicmenu widget representation in "
+                "Jupyter, please `pip install imageio`)"
+            )
+            return None
+
+        with BytesIO() as file_obj:
+            imsave(file_obj, self.render(), format="png")
+            file_obj.seek(0)
+            return file_obj.read()
+
 def _insert(qmenu: QMenu, key: int, obj):
     """
     Insert a QObject into a QMenu in a Pythonic way, like qmenu.insert(key, obj).
