@@ -101,6 +101,8 @@ class PushButtonPlus(PushButton):
         self.native: QPushButton
         self._icon_path = None
         self.mgui: FunctionGuiPlus = None # tagged function GUI
+        self._doc = ""
+        self._unwrapped = False
     
     @property
     def running(self) -> bool:
@@ -250,6 +252,8 @@ class Action(AbstractAction):
     def __init__(self, *args, name: str = None, text: str = None, gui_only: bool = True, **kwargs):
         self.native = QAction(*args, **kwargs)
         self.mgui: FunctionGuiPlus = None
+        self._doc = ""
+        self._unwrapped = False
         
         self._icon_path = None
         if text:

@@ -14,7 +14,7 @@ from magicgui.widgets._bases import ValueWidget
 from macrokit import Expr, Head, Symbol, symbol
 
 from .keybinding import as_shortcut
-from .mgui_ext import AbstractAction, FunctionGuiPlus, PushButtonPlus
+from .mgui_ext import AbstractAction, Action, FunctionGuiPlus, PushButtonPlus
 from .utils import get_parameters
 from ._macro import GuiMacro
 
@@ -25,6 +25,7 @@ from ..signature import MagicMethodSignature, get_additional_option
 from ..wrappers import upgrade_signature
 
 if TYPE_CHECKING:
+    import numpy as np
     import napari
     from qtpy.QtWidgets import QDockWidget
 
@@ -52,7 +53,7 @@ _RESERVED = {"__magicclass_parent__", "__magicclass_children__", "_close_on_run"
              "labels", "margins", "max_height", "max_width", "min_height", "min_width", "name",
              "options", "param_kind", "parent_changed", "tooltip", "visible", "widget_type", 
              "width", "wraps", "_unwrap_method", "_search_parent_magicclass", 
-             "_iter_child_magicclasses",
+             "_iter_child_magicclasses", "render",
              }
 
 def check_override(cls: type):
@@ -66,7 +67,7 @@ class MagicTemplate:
     __magicclass_parent__: None | MagicTemplate
     __magicclass_children__: list[MagicTemplate]
     _close_on_run: bool
-    _component_class: type[AbstractAction | Widget]
+    _component_class: type[Action | Widget]
     _error_mode: ErrorMode
     _macro_instance: GuiMacro
     _my_symbol: Symbol
@@ -125,6 +126,9 @@ class MagicTemplate:
         return self.insert(len(self, widget))
         
     def insert(self, key: int, widget: Widget) -> None:
+        raise NotImplementedError()
+    
+    def render(self) -> "np.ndarray":
         raise NotImplementedError()
     
     @property
@@ -279,6 +283,8 @@ class MagicTemplate:
                         child_widget.changed.disconnect()
                         child_widget.changed.connect(widget.changed)
                         child_widget.tooltip = widget.tooltip
+                        child_widget._doc = widget._doc
+                widget._unwrapped = True
                 break
         else:
             raise RuntimeError(f"{child_clsname} not found in class {self.__class__.__name__}")
@@ -334,6 +340,7 @@ class MagicTemplate:
         
         # Prepare a button or action
         widget.tooltip = extract_tooltip(func)
+        widget._doc = func.__doc__
         
         # Get the number of parameters except for empty widgets.
         # With these lines, "bind" method of magicgui works inside magicclass.
