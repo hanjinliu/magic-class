@@ -25,6 +25,7 @@ class HelpWidget(QSplitter):
     """    
     def __init__(self, ui=None, parent=None) -> None:
         super().__init__(orientation=Qt.Horizontal, parent=parent)
+        self.setWindowFlag(Qt.Window)
         self._tree = QTreeWidget(self)
         self._tree.itemClicked.connect(self._on_treeitem_clicked)
         self._text = QTextEdit(self)
@@ -153,11 +154,12 @@ def get_help_info(ui: MagicTemplate) -> tuple[np.ndarray, dict[str, str]]:
         with plt.style.context("default"):
             fig, ax = plt.subplots(1, 1)
             ax.axis("off")
+            fig.patch.set_alpha(0)
             ax.imshow(img)
             for i, widget in enumerate(_iter_unwrapped_children(ui)):
                 x, y = _get_relative_pos(widget)
                 ax.text(x*scale, y*scale, f"({i+1})",
-                        ha="center", va="center", color="white", size="x-large",
+                        ha="center", va="center", color="white",
                         backgroundcolor="black", fontfamily="Arial")
                 docs[widget.name] = _get_doc(widget)
             fig.tight_layout()

@@ -152,7 +152,6 @@ class _ScrollableContainer(ContainerBase):
 
 class _WheelDisabledScrollArea(QtW.QScrollArea):
     def eventFilter(self, source, event: QEvent):
-        # if event.type() == QEvent.Wheel and source is self.viewport():
         if event.type() == QEvent.Wheel:
             return True
         return super().eventFilter(source, event)

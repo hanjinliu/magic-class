@@ -398,7 +398,7 @@ magiccontext.__doc__ += _call_magicmenu.__doc__
 
 _HELPS: WeakValueDictionary[int, MagicTemplate] = {}
 
-def build_help(ui: MagicTemplate):
+def build_help(ui: MagicTemplate, parent=None):
     """
     Build a widget for user guide. Once it is built, widget will be cached.
 
@@ -417,7 +417,9 @@ def build_help(ui: MagicTemplate):
         help_widget = _HELPS[ui_id]
     else:
         from .help import HelpWidget
-        help_widget = HelpWidget(ui)
+        if parent is None:
+            parent = ui.native
+        help_widget = HelpWidget(ui, parent=parent)
         _HELPS[ui_id] = help_widget
     return help_widget
         
