@@ -12,7 +12,7 @@ from typing import Any, Callable, Iterator
 from .gui.mgui_ext import Action, PushButtonPlus, WidgetAction
 from .gui._base import MagicTemplate
 from .gui._containers import DraggableContainer
-from .gui.class_gui import CollapsibleClassGui, ScrollableClassGui, ButtonClassGui
+from .gui.class_gui import CollapsibleClassGui, DraggableClassGui, ScrollableClassGui, ButtonClassGui, TabbedClassGui
 from .utils import iter_members, extract_tooltip, get_signature
 
 # TODO: find
@@ -23,6 +23,8 @@ class HelpWidget(QSplitter):
     A Qt widget that will show information of a magic-class widget, built from its
     class structure, function docstrings and type annotations.
     """    
+    _initial_image_size = 250
+    
     def __init__(self, ui=None, parent=None) -> None:
         super().__init__(orientation=Qt.Horizontal, parent=parent)
         self.setWindowFlag(Qt.Window)
@@ -33,14 +35,14 @@ class HelpWidget(QSplitter):
         self._mgui_image = Image()
         c = DraggableContainer(widgets=[self._mgui_image])
         
-        self._mgui_slider = Slider(value=250, min=50, max=1000, step=50)
+        self._mgui_slider = Slider(value=self._initial_image_size, min=50, max=1000, step=50)
         self._mgui_slider.changed.connect(self._resize_image)
         self._mgui_slider.parent = c
         self._mgui_slider.native.setGeometry(4, 4, 100, 20)
         self._mgui_slider.max_height = 20
         self._mgui_slider.max_width = 100
         c.min_height = 120
-        self._resize_image(250)
+        self._resize_image(self._initial_image_size)
         
         widget_right = QSplitter(orientation=Qt.Vertical, parent=self)
         widget_right.insertWidget(0, c.native)
@@ -113,6 +115,7 @@ class HelpWidget(QSplitter):
             item.setExpanded(True)
         else:
             self._on_treeitem_clicked(item.parent())
+        self._resize_image(self._initial_image_size)
 
     
 class UiBoundTreeItem(QTreeWidgetItem):
@@ -140,12 +143,16 @@ def get_help_info(ui: MagicTemplate) -> tuple[np.ndarray, dict[str, str]]:
     import matplotlib.pyplot as plt
     backend = mpl.get_backend()
     try:
-        if isinstance(ui, (ScrollableClassGui, CollapsibleClassGui, ButtonClassGui)):
+        _has_inner_widget = (ScrollableClassGui, DraggableClassGui, CollapsibleClassGui, 
+                             ButtonClassGui)
+        if isinstance(ui, _has_inner_widget):
             inner_widget = ui._widget._inner_widget
             visible = inner_widget.isVisible()
             inner_widget.setVisible(True)
             img = _render(inner_widget)
             inner_widget.setVisible(visible)
+        # elif isinstance(ui, TabbedClassGui):
+        # TODO: Cannot assign correct position of tabs now.
         else:
             img = ui.render()
         scale = _screen_scale()
@@ -154,7 +161,7 @@ def get_help_info(ui: MagicTemplate) -> tuple[np.ndarray, dict[str, str]]:
         with plt.style.context("default"):
             fig, ax = plt.subplots(1, 1)
             ax.axis("off")
-            fig.patch.set_alpha(0)
+            fig.patch.set_alpha(0.05)
             ax.imshow(img)
             for i, widget in enumerate(_iter_unwrapped_children(ui)):
                 x, y = _get_relative_pos(widget)
@@ -180,15 +187,18 @@ def _screen_scale() -> float:
 
 def _get_doc(widget) -> str:
     if isinstance(widget, MagicTemplate):
-        doc = widget.__doc__ or "No document found."
+        doc = widget.__doc__ or ""
     elif isinstance(widget, (Action, PushButtonPlus)):
         doc = _docstring_to_html(widget._doc)
     elif isinstance(widget, FunctionGui):
         doc = _docstring_to_html(widget._function.__doc__)
     elif isinstance(widget, (Widget, WidgetAction)):
-        doc = widget.tooltip or "No document found."
+        doc = widget.tooltip or ""
     else:
         raise TypeError(type(widget))
+    doc = doc.rstrip("<h3>Parameters</h3><ul></ul>") # If parameter info was not given
+    if doc == "":
+        doc = "(No document found)"
     return doc
 
 def _render(qwidget: QWidget) -> np.ndarray:
@@ -216,7 +226,6 @@ def _get_relative_pos(widget: Widget) -> tuple[int, int]:
         w = widget
     qpos = w.native.mapToParent(w.native.rect().topLeft())
     return qpos.x(), qpos.y()
-
 
 def get_keymap(ui: MagicTemplate | type[MagicTemplate]):
     from .signature import get_additional_option
