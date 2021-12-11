@@ -18,6 +18,7 @@ from ._containers import (
     ListContainer,
     SubWindowsContainer,
     ScrollableContainer,
+    DraggableContainer,
     CollapsibleContainer,
     SplitterContainer,
     StackedContainer,
@@ -326,6 +327,9 @@ class SplitClassGui: pass
 
 @make_gui(ScrollableContainer)
 class ScrollableClassGui: pass
+
+@make_gui(DraggableContainer)
+class DraggableClassGui: pass
 
 @make_gui(CollapsibleContainer)
 class CollapsibleClassGui: pass

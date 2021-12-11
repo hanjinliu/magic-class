@@ -5,6 +5,7 @@ from enum import Enum
 from pathlib import Path
 import datetime
 from dataclasses import is_dataclass
+from weakref import WeakValueDictionary
 from typing import Any
 from typing_extensions import Annotated, _AnnotatedAlias
 from macrokit import Expr, register_type, Head
@@ -16,6 +17,7 @@ from .gui.class_gui import (
     MainWindowClassGui,
     SubWindowsClassGui,
     ScrollableClassGui,
+    DraggableClassGui,
     ButtonClassGui, 
     CollapsibleClassGui,
     SplitClassGui,
@@ -54,6 +56,7 @@ _POST_INIT = "__post_init__"
 class WidgetType(Enum):
     none = "none"
     scrollable = "scrollable"
+    draggalbe = "draggable"
     split = "split"
     collapsible = "collapsible"
     button = "button"
@@ -68,6 +71,7 @@ class WidgetType(Enum):
 _TYPE_MAP = {
     WidgetType.none: ClassGui,
     WidgetType.scrollable: ScrollableClassGui,
+    WidgetType.draggalbe: DraggableClassGui,
     WidgetType.split: SplitClassGui,
     WidgetType.collapsible: CollapsibleClassGui,
     WidgetType.button: ButtonClassGui,
@@ -391,6 +395,32 @@ def _call_magicmenu(class_: type = None,
 
 magicmenu.__doc__ += _call_magicmenu.__doc__
 magiccontext.__doc__ += _call_magicmenu.__doc__
+
+_HELPS: WeakValueDictionary[int, MagicTemplate] = {}
+
+def build_help(ui: MagicTemplate):
+    """
+    Build a widget for user guide. Once it is built, widget will be cached.
+
+    Parameters
+    ----------
+    ui : MagicTemplate
+        Magic class UI object.
+
+    Returns
+    -------
+    HelpWidget
+        Help of the input UI.
+    """    
+    ui_id = id(ui)
+    if ui_id in _HELPS.keys():
+        help_widget = _HELPS[ui_id]
+    else:
+        from .help import HelpWidget
+        help_widget = HelpWidget(ui)
+        _HELPS[ui_id] = help_widget
+    return help_widget
+        
 
 class _CallableClass:
     def __init__(self):

@@ -1,10 +1,8 @@
 from __future__ import annotations
 from typing import TypeVar, Callable
 import warnings
-from PyQt5.QtCore import QSize
-from PyQt5.QtGui import QResizeEvent
 from qtpy import QtWidgets as QtW
-from qtpy.QtCore import Qt
+from qtpy.QtCore import Qt, QEvent
 from magicgui.application import use_app
 from magicgui.widgets._bases import Widget
 from magicgui.widgets._concrete import merge_super_sigs, ContainerWidget
@@ -152,6 +150,36 @@ class _ScrollableContainer(ContainerBase):
         self._qwidget.layout().addWidget(self._scroll_area)
         self._qwidget.layout().setContentsMargins(0, 0, 0, 0)
 
+class _WheelDisabledScrollArea(QtW.QScrollArea):
+    def eventFilter(self, source, event: QEvent):
+        # if event.type() == QEvent.Wheel and source is self.viewport():
+        if event.type() == QEvent.Wheel:
+            return True
+        return super().eventFilter(source, event)
+
+class _DraggableContainer(ContainerBase):
+    def __init__(self, layout="vertical"):
+        QBaseWidget.__init__(self, QtW.QWidget)
+        self._scroll_area = _WheelDisabledScrollArea(self._qwidget)
+        if layout == "horizontal":
+            self._layout: QtW.QLayout = QtW.QHBoxLayout()
+        else:
+            self._layout = QtW.QVBoxLayout()
+        
+        self._scroll_area.setWidgetResizable(True)
+        self._scroll_area.setContentsMargins(0, 0, 0, 0)
+        self._inner_widget = QtW.QWidget(self._scroll_area)
+        self._inner_widget.setLayout(self._layout)
+        self._scroll_area.setWidget(self._inner_widget)
+        
+        self._qwidget.setLayout(QtW.QHBoxLayout())
+        self._qwidget.layout().addWidget(self._scroll_area)
+        self._qwidget.layout().setContentsMargins(0, 0, 0, 0)
+        QtW.QScroller.grabGesture(self._scroll_area, QtW.QScroller.LeftMouseButtonGesture)
+        
+        self._scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self._scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+            
 class _ButtonContainer(ContainerBase):
     def __init__(self, layout="vertical", btn_text=""):
         QBaseWidget.__init__(self, QtW.QWidget)
@@ -343,6 +371,10 @@ class StackedContainer(ContainerWidget):
 @wrap_container(base=_ScrollableContainer)
 class ScrollableContainer(ContainerWidget):
     """A scrollable Container Widget."""
+
+@wrap_container(base=_DraggableContainer)
+class DraggableContainer(ContainerWidget):
+    """A draggable Container Widget."""
 
 @wrap_container(base=_ButtonContainer)
 class ButtonContainer(ContainerWidget):

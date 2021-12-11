@@ -1,5 +1,5 @@
 from __future__ import annotations
-from magicgui.widgets import FunctionGui, Image
+from magicgui.widgets import FunctionGui, Image, Slider
 from magicgui.widgets._bases.widget import Widget
 from magicgui.widgets._function_gui import _docstring_to_html
 import numpy as np
@@ -11,6 +11,7 @@ from typing import Any, Callable, Iterator
 
 from .gui.mgui_ext import Action, PushButtonPlus, WidgetAction
 from .gui._base import MagicTemplate
+from .gui._containers import DraggableContainer
 from .gui.class_gui import CollapsibleClassGui, ScrollableClassGui, ButtonClassGui
 from .utils import iter_members, extract_tooltip, get_signature
 
@@ -29,10 +30,19 @@ class HelpWidget(QSplitter):
         self._text = QTextEdit(self)
         self._text.setReadOnly(True)
         self._mgui_image = Image()
-        self._mgui_image.min_height = 240
+        c = DraggableContainer(widgets=[self._mgui_image])
+        
+        self._mgui_slider = Slider(value=250, min=50, max=1000, step=50)
+        self._mgui_slider.changed.connect(self._resize_image)
+        self._mgui_slider.parent = c
+        self._mgui_slider.native.setGeometry(4, 4, 100, 20)
+        self._mgui_slider.max_height = 20
+        self._mgui_slider.max_width = 100
+        c.min_height = 120
+        self._resize_image(250)
         
         widget_right = QSplitter(orientation=Qt.Vertical, parent=self)
-        widget_right.insertWidget(0, self._mgui_image.native)
+        widget_right.insertWidget(0, c.native)
         widget_right.insertWidget(1, self._text)
         
         self.insertWidget(0, self._tree)
@@ -72,6 +82,12 @@ class HelpWidget(QSplitter):
                 child.setText(0, f"({i+1}) {widget.name}")
             
             root.addChild(child)
+    
+    def _resize_image(self, v: float):
+        self._mgui_image.min_height = v
+        self._mgui_image.max_height = v
+        self._mgui_image.min_width = v
+        self._mgui_image.max_width = v
     
     def _update_ui_view(self, ui: MagicTemplate):
         img, docs = get_help_info(ui)
