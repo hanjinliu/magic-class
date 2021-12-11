@@ -87,10 +87,6 @@ The ``@magicmenu`` decorator provides a consistent API to implement a menu bar a
 
 .. image:: images/fig_2-2.png
 
-.. note::
-    Since the backend API of widgets and menu actions are not consistent, some conversions are not
-    supported in magic menu (such as using ``LineEdit`` widget insde a menu).
-
 Same strategy also works for context menu.
 
 .. code-block:: python

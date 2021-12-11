@@ -38,6 +38,14 @@ magicclass.fields module
    :undoc-members:
    :show-inheritance:
 
+magicclass.help module
+----------------------
+
+.. automodule:: magicclass.help
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 magicclass.signature module
 ---------------------------
 

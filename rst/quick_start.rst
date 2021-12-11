@@ -17,8 +17,8 @@ In ``magicgui``, you can convert functions into widgets. For instance,
 will create a widget that is composed of a line edit (for the input argument ``text``) and a 
 call button.
 
-Similarly, with ``magicclass`` decorator, you can convert a Python class into a `magicgui`'s 
-`Container` widget and its methods appear as push buttons. When a button is clicked, the 
+Similarly, with ``magicclass`` decorator, you can convert a Python class into a ``magicgui``'s 
+``Container`` widget and its methods appear as push buttons. When a button is clicked, the 
 corresponding magicgui will be popped up.
 
 .. code-block:: python
@@ -41,12 +41,12 @@ corresponding magicgui will be popped up.
 .. note::
 
     Methods whose names start with "_" are considered as inner functions so that they will
-    not be converted into widgets, except for ``__call__`` method.
+    not be converted into widgets.
 
 Use Other Widgets in magic-class
 --------------------------------
 
-Magic classes can also detect other `magicgui`'s widgets.
+Magic classes can also detect other ``magicgui``'s widgets.
 
 .. code-block:: python
 
@@ -72,7 +72,7 @@ Magic classes can also detect other `magicgui`'s widgets.
 
 If a method is decorated with ``@magicgui``, it will directly added in the container widget, 
 in place of a push button. This is natural because decorated methods are no longer functions, 
-but `FunctionGui` widgets.
+but ``FunctionGui`` widgets.
 
 .. code-block:: python
 

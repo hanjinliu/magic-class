@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Container Variations &mdash; magic-class 0.5.12dev0 documentation</title>
+  <title>Container Variations &mdash; magic-class 0.5.12 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -30,7 +30,7 @@
             <a href="index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.12dev0
+                0.5.12
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -88,9 +88,8 @@
 <section id="use-other-qt-widgets-as-container">
 <h2>Use Other Qt Widgets as Container<a class="headerlink" href="#use-other-qt-widgets-as-container" title="Permalink to this headline">¶</a></h2>
 <p>In <code class="docutils literal notranslate"><span class="pre">magic-class</span></code>, many Qt widget variations are available in a same API as <code class="docutils literal notranslate"><span class="pre">magicgui</span></code>'s <code class="docutils literal notranslate"><span class="pre">Container</span></code>.
-You can use them by importing from <code class="docutils literal notranslate"><span class="pre">magicclass.containers</span></code>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass.containers</span> <span class="kn">import</span> <span class="n">ScrollableContainer</span>
-<span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">LineEdit</span>
+You can use them by importing from <code class="docutils literal notranslate"><span class="pre">magicclass.widgets</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">LineEdit</span><span class="p">,</span> <span class="n">ScrollableContainer</span>
 
 <span class="c1"># A container with scroll area</span>
 <span class="n">c</span> <span class="o">=</span> <span class="n">ScrollableContainer</span><span class="p">()</span>
@@ -119,6 +118,48 @@ You can use them by importing from <code class="docutils literal notranslate"><s
 </li>
 <li><dl class="simple">
 <dt><em>appearance</em></dt><dd><p>A button widget. The inner container appears when the button is clicked.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">CollapsibleContainer</span></code></dt><dd><ul>
+<li><dl class="simple">
+<dt><em>base Qt class</em></dt><dd><p>QToolButton</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><em>additional properties</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">btn_text</span></code> ... Text of button.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><em>appearance</em></dt><dd><p>Collapsible/expandable widget.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">DraggableContainer</span></code></dt><dd><ul>
+<li><dl class="simple">
+<dt><em>base Qt class</em></dt><dd><p>QScrollArea</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><em>additional properties</em></dt><dd><p>None</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><em>appearance</em></dt><dd><p>Container in a scroll area. Scroll by mouse drag.</p>
 </dd>
 </dl>
 </li>
@@ -202,28 +243,7 @@ You can use them by importing from <code class="docutils literal notranslate"><s
 </dl>
 </li>
 <li><dl class="simple">
-<dt><em>appearance</em></dt><dd><p>Container in a scroll area.</p>
-</dd>
-</dl>
-</li>
-</ul>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">CollapsibleContainer</span></code></dt><dd><ul>
-<li><dl class="simple">
-<dt><em>base Qt class</em></dt><dd><p>QToolButton</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt><em>additional properties</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">btn_text</span></code> ... Text of button.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt><em>appearance</em></dt><dd><p>Collapsible/expandable widget.</p>
+<dt><em>appearance</em></dt><dd><p>Container in a scroll area. Scrll by scroll bars.</p>
 </dd>
 </dl>
 </li>
@@ -354,34 +374,37 @@ You can use them by importing from <code class="docutils literal notranslate"><s
 <tr class="row-odd"><td><p>scrollable</p></td>
 <td><p>ScrollableContainer</p></td>
 </tr>
-<tr class="row-even"><td><p>split</p></td>
+<tr class="row-even"><td><p>draggable</p></td>
+<td><p>DraggableContainer</p></td>
+</tr>
+<tr class="row-odd"><td><p>split</p></td>
 <td><p>SplitterContainer</p></td>
 </tr>
-<tr class="row-odd"><td><p>collapsible</p></td>
+<tr class="row-even"><td><p>collapsible</p></td>
 <td><p>CollapsibleContainer</p></td>
 </tr>
-<tr class="row-even"><td><p>button</p></td>
+<tr class="row-odd"><td><p>button</p></td>
 <td><p>ButtonContainer</p></td>
 </tr>
-<tr class="row-odd"><td><p>toolbox</p></td>
+<tr class="row-even"><td><p>toolbox</p></td>
 <td><p>ToolBoxContainer</p></td>
 </tr>
-<tr class="row-even"><td><p>tabbed</p></td>
+<tr class="row-odd"><td><p>tabbed</p></td>
 <td><p>TabbedContainer</p></td>
 </tr>
-<tr class="row-odd"><td><p>stacked</p></td>
+<tr class="row-even"><td><p>stacked</p></td>
 <td><p>StackedContainer</p></td>
 </tr>
-<tr class="row-even"><td><p>list</p></td>
+<tr class="row-odd"><td><p>list</p></td>
 <td><p>ListContainer</p></td>
 </tr>
-<tr class="row-odd"><td><p>subwindows</p></td>
+<tr class="row-even"><td><p>subwindows</p></td>
 <td><p>SubWindowsContainer</p></td>
 </tr>
-<tr class="row-even"><td><p>groupbox</p></td>
+<tr class="row-odd"><td><p>groupbox</p></td>
 <td><p>GroupBoxContainer</p></td>
 </tr>
-<tr class="row-odd"><td><p>mainwindow</p></td>
+<tr class="row-even"><td><p>mainwindow</p></td>
 <td><p>MainWindow</p></td>
 </tr>
 </tbody>

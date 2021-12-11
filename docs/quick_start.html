@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Quick Start &mdash; magic-class 0.5.12dev0 documentation</title>
+  <title>Quick Start &mdash; magic-class 0.5.12 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -30,7 +30,7 @@
             <a href="index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.12dev0
+                0.5.12
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -44,6 +44,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Quick Start</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#use-other-widgets-in-magic-class">Use Other Widgets in magic-class</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#macro-recording">Macro Recording</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#make-document-of-your-widgets-automatically">Make Document of Your Widgets Automatically</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#parameter-options">Parameter Options</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#change-button-designs">Change Button Designs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#code-completion">Code Completion</a></li>
@@ -99,8 +100,8 @@
 </div>
 <p>will create a widget that is composed of a line edit (for the input argument <code class="docutils literal notranslate"><span class="pre">text</span></code>) and a
 call button.</p>
-<p>Similarly, with <code class="docutils literal notranslate"><span class="pre">magicclass</span></code> decorator, you can convert a Python class into a <cite>magicgui</cite>'s
-<cite>Container</cite> widget and its methods appear as push buttons. When a button is clicked, the
+<p>Similarly, with <code class="docutils literal notranslate"><span class="pre">magicclass</span></code> decorator, you can convert a Python class into a <code class="docutils literal notranslate"><span class="pre">magicgui</span></code>'s
+<code class="docutils literal notranslate"><span class="pre">Container</span></code> widget and its methods appear as push buttons. When a button is clicked, the
 corresponding magicgui will be popped up.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span>
 
@@ -120,11 +121,11 @@ corresponding magicgui will be popped up.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Methods whose names start with &quot;_&quot; are considered as inner functions so that they will
-not be converted into widgets, except for <code class="docutils literal notranslate"><span class="pre">__call__</span></code> method.</p>
+not be converted into widgets.</p>
 </div>
 <section id="use-other-widgets-in-magic-class">
 <h2>Use Other Widgets in magic-class<a class="headerlink" href="#use-other-widgets-in-magic-class" title="Permalink to this headline">¶</a></h2>
-<p>Magic classes can also detect other <cite>magicgui</cite>'s widgets.</p>
+<p>Magic classes can also detect other <code class="docutils literal notranslate"><span class="pre">magicgui</span></code>'s widgets.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">LineEdit</span><span class="p">,</span> <span class="n">Slider</span>
 <span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span>
 
@@ -147,7 +148,7 @@ See <a class="reference internal" href="use_field.html"><span class="doc">Use Fi
 </div>
 <p>If a method is decorated with <code class="docutils literal notranslate"><span class="pre">&#64;magicgui</span></code>, it will directly added in the container widget,
 in place of a push button. This is natural because decorated methods are no longer functions,
-but <cite>FunctionGui</cite> widgets.</p>
+but <code class="docutils literal notranslate"><span class="pre">FunctionGui</span></code> widgets.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicgui</span> <span class="kn">import</span> <span class="n">magicgui</span>
 <span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span>
 
@@ -200,6 +201,26 @@ only shows a help window). You can prevent macro recording with <code class="doc
 <span class="n">ui</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
+</section>
+<section id="make-document-of-your-widgets-automatically">
+<h2>Make Document of Your Widgets Automatically<a class="headerlink" href="#make-document-of-your-widgets-automatically" title="Permalink to this headline">¶</a></h2>
+<p>It is usually time consuming to make a help menu of a widget all the way. You also have to keep
+it updated whenever UI changed.</p>
+<p>Magic class has a powerful help widget builder. You can create a help widget using <code class="docutils literal notranslate"><span class="pre">build_help</span></code>
+function. The widget has a website-like layout and many information such as tooltips of widgets
+and parameter annotations of functions are summerized with rich texts.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">build_help</span>
+
+<span class="nd">@magicclass</span>
+<span class="k">class</span> <span class="nc">Main</span><span class="p">:</span>
+    <span class="c1"># many functions and widgets here.</span>
+    <span class="o">...</span>
+
+<span class="n">help</span> <span class="o">=</span> <span class="n">build_help</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="c1"># build_help returns a Widget object</span>
+<span class="n">help</span><span class="o">.</span><span class="n">show</span><span class="p">()</span> <span class="c1"># show widget</span>
+</pre></div>
+</div>
+<img alt="_images/fig_1-5.png" src="_images/fig_1-5.png" />
 </section>
 <section id="parameter-options">
 <h2>Parameter Options<a class="headerlink" href="#parameter-options" title="Permalink to this headline">¶</a></h2>

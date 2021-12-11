@@ -121,7 +121,7 @@ class _HelpWidget(QSplitter):
 class UiBoundTreeItem(QTreeWidgetItem):
     def __init__(self, parent, ui=None):
         super().__init__(parent)
-        self.ui = ui
+        self.ui = ui # TODO: use weakref?
     
     def child(self, index: int) -> UiBoundTreeItem:
         # Just for typing

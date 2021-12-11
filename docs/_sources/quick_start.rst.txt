@@ -17,8 +17,8 @@ In ``magicgui``, you can convert functions into widgets. For instance,
 will create a widget that is composed of a line edit (for the input argument ``text``) and a 
 call button.
 
-Similarly, with ``magicclass`` decorator, you can convert a Python class into a `magicgui`'s 
-`Container` widget and its methods appear as push buttons. When a button is clicked, the 
+Similarly, with ``magicclass`` decorator, you can convert a Python class into a ``magicgui``'s 
+``Container`` widget and its methods appear as push buttons. When a button is clicked, the 
 corresponding magicgui will be popped up.
 
 .. code-block:: python
@@ -41,12 +41,12 @@ corresponding magicgui will be popped up.
 .. note::
 
     Methods whose names start with "_" are considered as inner functions so that they will
-    not be converted into widgets, except for ``__call__`` method.
+    not be converted into widgets.
 
 Use Other Widgets in magic-class
 --------------------------------
 
-Magic classes can also detect other `magicgui`'s widgets.
+Magic classes can also detect other ``magicgui``'s widgets.
 
 .. code-block:: python
 
@@ -72,7 +72,7 @@ Magic classes can also detect other `magicgui`'s widgets.
 
 If a method is decorated with ``@magicgui``, it will directly added in the container widget, 
 in place of a push button. This is natural because decorated methods are no longer functions, 
-but `FunctionGui` widgets.
+but ``FunctionGui`` widgets.
 
 .. code-block:: python
 
@@ -136,6 +136,29 @@ only shows a help window). You can prevent macro recording with ``do_not_record`
     ui = Main()
     ui.show()
 
+Make Document of Your Widgets Automatically
+-------------------------------------------
+
+It is usually time consuming to make a help menu of a widget all the way. You also have to keep
+it updated whenever UI changed.
+
+Magic class has a powerful help widget builder. You can create a help widget using ``build_help``
+function. The widget has a website-like layout and many information such as tooltips of widgets
+and parameter annotations of functions are summerized with rich texts.
+
+.. code-block:: python
+
+    from magicclass import magicclass, build_help
+
+    @magicclass
+    class Main:
+        # many functions and widgets here.
+        ...
+
+    help = build_help(self) # build_help returns a Widget object
+    help.show() # show widget
+
+.. image:: images/fig_1-5.png
 
 Parameter Options
 -----------------

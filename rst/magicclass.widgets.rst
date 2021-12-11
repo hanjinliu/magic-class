@@ -22,6 +22,14 @@ magicclass.widgets.console module
    :undoc-members:
    :show-inheritance:
 
+magicclass.widgets.containers module
+------------------------------------
+
+.. automodule:: magicclass.widgets.containers
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 magicclass.widgets.misc module
 ------------------------------
 

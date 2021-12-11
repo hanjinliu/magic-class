@@ -6,12 +6,11 @@ Use Other Qt Widgets as Container
 ---------------------------------
 
 In ``magic-class``, many Qt widget variations are available in a same API as ``magicgui``'s ``Container``.
-You can use them by importing from ``magicclass.containers``:
+You can use them by importing from ``magicclass.widgets``:
 
 .. code-block:: python
 
-    from magicclass.containers import ScrollableContainer
-    from magicgui.widgets import LineEdit
+    from magicgui.widgets import LineEdit, ScrollableContainer
 
     # A container with scroll area
     c = ScrollableContainer()
@@ -32,6 +31,22 @@ Available Containers
         ``btn_text`` ... Text of button.
     + *appearance*
         A button widget. The inner container appears when the button is clicked.
+
+* ``CollapsibleContainer``
+    + *base Qt class* 
+        QToolButton
+    + *additional properties*
+        ``btn_text`` ... Text of button.
+    + *appearance*
+        Collapsible/expandable widget.
+
+* ``DraggableContainer``
+    + *base Qt class* 
+        QScrollArea
+    + *additional properties*
+        None
+    + *appearance*
+        Container in a scroll area. Scroll by mouse drag.
 
 * ``GroupBoxContainer``
     + *base Qt class* 
@@ -63,15 +78,7 @@ Available Containers
     + *additional properties*
         None
     + *appearance*
-        Container in a scroll area.
-
-* ``CollapsibleContainer``
-    + *base Qt class* 
-        QToolButton
-    + *additional properties*
-        ``btn_text`` ... Text of button.
-    + *appearance*
-        Collapsible/expandable widget.
+        Container in a scroll area. Scrll by scroll bars.
 
 * ``SplitterContainer``
     + *base Qt class* 
@@ -135,6 +142,7 @@ WidgetType  Container
 =========== ====================
 none        Container
 scrollable  ScrollableContainer
+draggable   DraggableContainer
 split       SplitterContainer
 collapsible CollapsibleContainer
 button      ButtonContainer
