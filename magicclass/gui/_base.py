@@ -278,7 +278,7 @@ class MagicTemplate:
                     index = _get_index(child_instance, name)
                     new = False
                 except ValueError:
-                    index = len(child_instance)
+                    index = -1
                     new = True
                 
                 self.append(widget)
@@ -291,15 +291,18 @@ class MagicTemplate:
                         child_instance.insert(index, widget)
                     
                 else:
+                    widget.visible = False
                     if new:
-                        widget = child_instance._create_widget_from_method(lambda x: None)
-                        child_instance.append(widget)
+                        child_widget = child_instance._create_widget_from_method(lambda x: None)
+                        child_widget.text = widget.text
+                        child_instance.append(child_widget)
                     else:
                         child_widget: PushButtonPlus | AbstractAction = child_instance[index]
-                        child_widget.changed.disconnect()
-                        child_widget.changed.connect(widget.changed)
-                        child_widget.tooltip = widget.tooltip
-                        child_widget._doc = widget._doc
+                    
+                    child_widget.changed.disconnect()
+                    child_widget.changed.connect(widget.changed)
+                    child_widget.tooltip = widget.tooltip
+                    child_widget._doc = widget._doc
                     
                 widget._unwrapped = True
                 
