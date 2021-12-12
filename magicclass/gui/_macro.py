@@ -8,7 +8,6 @@ from ..widgets.misc import FreeWidget, ConsoleTextEdit
 from ..utils import to_clipboard, show_messagebox
 
 if TYPE_CHECKING:
-    from qtpy.QtWidgets import QWidget
     from ._base import BaseGui
 
 # TODO: Tabs

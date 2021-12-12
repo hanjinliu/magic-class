@@ -1,4 +1,4 @@
-__version__ = "0.5.12"
+__version__ = "0.5.13dev0"
 
 from .core import (magicclass, magicmenu, magiccontext, WidgetType, Parameters, Bound, 
                    MagicTemplate, build_help)

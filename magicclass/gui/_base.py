@@ -1,11 +1,10 @@
 from __future__ import annotations
 from functools import wraps as functools_wraps
-from typing import Any, Callable, TYPE_CHECKING, Iterable, TypeVar, overload
+from typing import Any, Callable, TYPE_CHECKING, Iterable, TypeVar, overload, MutableSequence
 from typing_extensions import _AnnotatedAlias
 import inspect
 from enum import Enum
 import warnings
-from collections.abc import MutableSequence
 from docstring_parser import parse, compose
 
 from magicgui.events import Signal
@@ -58,6 +57,20 @@ _RESERVED = {"__magicclass_parent__", "__magicclass_children__", "_close_on_run"
              }
 
 def check_override(cls: type):
+    """
+    Some of the methods should not be overriden because they are essential for Magic class
+    construction.
+
+    Parameters
+    ----------
+    cls : type
+        Base class to test override.
+
+    Raises
+    ------
+    AttributeError
+        If forbidden override found.
+    """    
     subclass_members = set(cls.__dict__.keys())
     collision = subclass_members & _RESERVED
     if collision:
@@ -226,13 +239,14 @@ class MagicTemplate:
                 func = method._function
             else:
                 func = method
+                
             if template is not None:
-                func = wraps(template)(func)
-            if hasattr(cls, method.__name__):
-                getattr(cls, method.__name__).__signature__ = get_signature(func)
+                wraps(template)(func)
+            if hasattr(cls, func.__name__):
+                getattr(cls, func.__name__).__signature__ = get_signature(func)
             
             upgrade_signature(func, additional_options={"into": cls.__name__})
-            return func
+            return method
         
         return wrapper if method is None else wrapper(method)
     
@@ -276,7 +290,9 @@ class MagicTemplate:
                         del child_instance[index]
                         child_instance.insert(index, widget)
                 else:
-                    widget.visible = False
+                    # widget.visible = False
+                    # TODO: is it safe to remove widget from self?
+                    self.pop()
                     if new:
                         widget = child_instance._create_widget_from_method(lambda x: None)
                         child_instance.append(widget)
@@ -286,7 +302,9 @@ class MagicTemplate:
                         child_widget.changed.connect(widget.changed)
                         child_widget.tooltip = widget.tooltip
                         child_widget._doc = widget._doc
+                
                 widget._unwrapped = True
+                
                 break
         else:
             raise RuntimeError(f"{child_clsname} not found in class {self.__class__.__name__}")
