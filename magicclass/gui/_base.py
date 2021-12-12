@@ -290,9 +290,6 @@ class MagicTemplate:
                         del child_instance[index]
                         child_instance.insert(index, widget)
                 else:
-                    # widget.visible = False
-                    # TODO: is it safe to remove widget from self?
-                    self.pop()
                     if new:
                         widget = child_instance._create_widget_from_method(lambda x: None)
                         child_instance.append(widget)
@@ -304,7 +301,7 @@ class MagicTemplate:
                         child_widget._doc = widget._doc
                 
                 widget._unwrapped = True
-                
+                self._list.pop()
                 break
         else:
             raise RuntimeError(f"{child_clsname} not found in class {self.__class__.__name__}")

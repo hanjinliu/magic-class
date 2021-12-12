@@ -56,6 +56,8 @@ def test_wraps():
             self.a = a
     
     ui = A()
+    assert len(ui) == 1
+    assert len(ui.B) == 3
     assert type(ui.B[1]) is widgets.FunctionGui
     assert ui.B[1].a.value == 0
     assert ui.B[1].b.value == "x"
