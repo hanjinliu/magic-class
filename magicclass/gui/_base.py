@@ -289,6 +289,7 @@ class MagicTemplate:
                     else:
                         del child_instance[index]
                         child_instance.insert(index, widget)
+                    self._list.pop() # unwrapped widget should not be accessed by ui[i]
                 else:
                     if new:
                         widget = child_instance._create_widget_from_method(lambda x: None)
@@ -299,9 +300,10 @@ class MagicTemplate:
                         child_widget.changed.connect(widget.changed)
                         child_widget.tooltip = widget.tooltip
                         child_widget._doc = widget._doc
+                    self.pop() # unwrapped widget should not be accessed by ui[i]
                 
                 widget._unwrapped = True
-                self._list.pop()
+                
                 break
         else:
             raise RuntimeError(f"{child_clsname} not found in class {self.__class__.__name__}")
@@ -442,8 +444,6 @@ class MagicTemplate:
             def run_function():
                 mgui = _build_mgui(widget, func)
                 if mgui.call_count == 0 and len(mgui.called._slots) == 0:
-                    mgui.native.setParent(self.native, mgui.native.windowFlags())
-                    mgui.native.move(screen_center() - mgui.native.rect().center())
                     
                     # deal with popup mode.
                     if self._popup_mode not in (PopUpMode.popup, PopUpMode.dock):
@@ -452,7 +452,7 @@ class MagicTemplate:
                         mgui.margins = (0, 0, 0, 0)
                         title = Separator(orientation="horizontal", text=text, button=True)
                         title.btn_text = "-"
-                        title.btn_clicked.connect(mgui.hide)
+                        title.btn_clicked.connect(mgui.hide) # TODO: should remove mgui from self?
                         mgui.insert(0, title)
                         mgui.append(Separator(orientation="horizontal"))
                         
@@ -460,17 +460,19 @@ class MagicTemplate:
                             parent_self = self._search_parent_magicclass()
                             parent_self.append(mgui)
                         elif self._popup_mode == PopUpMode.first:
-                            self.insert(0, mgui)
+                            child_self = _child_that_has_widget(self, obj, widget)
+                            child_self.insert(0, mgui)
                         elif self._popup_mode == PopUpMode.last:
-                            self.append(mgui)
+                            child_self = _child_that_has_widget(self, obj, widget)
+                            child_self.append(mgui)
                         elif self._popup_mode == PopUpMode.above:
-                            name = _get_widget_name(widget)
-                            i = _get_index(self, name)
-                            self.insert(i, mgui)
+                            child_self = _child_that_has_widget(self, obj, widget)
+                            i = _get_index(child_self, widget)
+                            child_self.insert(i, mgui)
                         elif self._popup_mode == PopUpMode.below:
-                            name = _get_widget_name(widget)
-                            i = _get_index(self, name)
-                            self.insert(i+1, mgui)
+                            child_self = _child_that_has_widget(self, obj, widget)
+                            i = _get_index(child_self, widget)
+                            child_self.insert(i+1, mgui)
                             
                     elif self._popup_mode == PopUpMode.dock:
                         parent_self = self._search_parent_magicclass()
@@ -495,7 +497,12 @@ class MagicTemplate:
                             dock = viewer.window.add_dock_widget(
                                 mgui, name=_get_widget_name(widget), area="right"
                                 )
-                    
+                    else:
+                        # To be popped up correctly, window flags of FunctionGui should be
+                        # "windowFlags" and should appear at the center.
+                        mgui.native.setParent(self.native, mgui.native.windowFlags())
+                        mgui.native.move(screen_center() - mgui.native.rect().center())
+                        
                     if self._close_on_run:
                         if self._popup_mode != PopUpMode.dock:
                             mgui.called.connect(mgui.hide)
@@ -718,7 +725,7 @@ def _n_parameters(func: Callable):
     """    
     return len(inspect.signature(func).parameters)
 
-def _get_index(container: Container, widget_or_name: Widget | str):
+def _get_index(container: Container, widget_or_name: Widget | str) -> int:
     """
     Identical to container[widget_or_name], which sometimes doesn't work
     in magic-class.
@@ -733,6 +740,19 @@ def _get_index(container: Container, widget_or_name: Widget | str):
     else:
         raise ValueError(f"{widget_or_name} not found in {container}")
     return i
+
+def _child_that_has_widget(self: BaseGui, method: Callable, 
+                           widget_or_name: Widget | str) -> BaseGui:
+    child_clsname = get_additional_option(method, "into")
+    if child_clsname is None:
+        return self
+    for child_instance in self._iter_child_magicclasses():
+        if child_instance.__class__.__name__ == child_clsname:
+            break
+    else:
+        raise ValueError(f"{widget_or_name} not found.")
+    return child_instance
+            
 
 def _method_as_getter(self, bound_value: Callable):
     *clsnames, funcname = bound_value.__qualname__.split(".")
