@@ -1,6 +1,5 @@
 from __future__ import annotations
-from typing import Any, Iterable
-from collections.abc import MutableSequence
+from typing import Any, Iterable, MutableSequence
 from qtpy.QtWidgets import QListWidget, QListWidgetItem, QAbstractItemView
 
 from .object import BaseWidget, ContextMenuMixin, PyObjectBound

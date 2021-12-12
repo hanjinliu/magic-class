@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Callable, Any, Iterable
+from typing import Callable, Any
 from functools import wraps
 from collections import defaultdict
 from qtpy.QtWidgets import QLabel, QMenu, QAction
