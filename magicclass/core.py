@@ -56,7 +56,7 @@ _POST_INIT = "__post_init__"
 class WidgetType(Enum):
     none = "none"
     scrollable = "scrollable"
-    draggalbe = "draggable"
+    draggable = "draggable"
     split = "split"
     collapsible = "collapsible"
     button = "button"
@@ -81,7 +81,7 @@ ErrorModeStr = Union[Literal["msgbox"], Literal["stderr"]]
 _TYPE_MAP = {
     WidgetType.none: ClassGui,
     WidgetType.scrollable: ScrollableClassGui,
-    WidgetType.draggalbe: DraggableClassGui,
+    WidgetType.draggable: DraggableClassGui,
     WidgetType.split: SplitClassGui,
     WidgetType.collapsible: CollapsibleClassGui,
     WidgetType.button: ButtonClassGui,
