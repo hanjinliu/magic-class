@@ -289,7 +289,7 @@ class MagicTemplate:
                     else:
                         del child_instance[index]
                         child_instance.insert(index, widget)
-                    self._list.pop() # unwrapped widget should not be accessed by ui[i]
+                    
                 else:
                     if new:
                         widget = child_instance._create_widget_from_method(lambda x: None)
@@ -300,8 +300,7 @@ class MagicTemplate:
                         child_widget.changed.connect(widget.changed)
                         child_widget.tooltip = widget.tooltip
                         child_widget._doc = widget._doc
-                    self.pop() # unwrapped widget should not be accessed by ui[i]
-                
+                    
                 widget._unwrapped = True
                 
                 break

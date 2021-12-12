@@ -68,9 +68,6 @@ def test_wraps():
     
     ui = A()
     
-    assert len(ui) == 1
-    assert len(ui.B) == 3
-    
     # assert the widget order is conserved
     assert ui.B[0].name == "f1"
     assert ui.B[1].name == "f2"
@@ -97,10 +94,6 @@ def test_double_wrap():
             self.new_attr = 0
     
     ui = A()
-    
-    assert len(ui) == 1
-    assert len(ui.B) == 0
-    assert len(ui.B.C) == 3
     
     # assert the widget order is conserved
     assert ui.B.C[0].name == "f1"
