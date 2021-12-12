@@ -40,3 +40,35 @@ def test_autocall_macro():
     assert str(ui.macro[-1]) == "ui.f(a=1, b='x')"
     ui[0].a.value = 2
     assert str(ui.macro[-1]) == "ui.f(a=2, b='x')"
+
+def test_wraps():
+    @magicclass
+    class A(MagicTemplate):
+        @magicclass
+        class B:
+            def f1(self): ...
+            def f2(self): ...
+            def f3(self): ...
+        
+        @B.wraps
+        @magicgui
+        def f2(self, a: int, b: str = "x"):
+            self.a = a
+    
+    ui = A()
+    assert type(ui.B[1]) is widgets.FunctionGui
+    assert ui.B[1].a.value == 0
+    assert ui.B[1].b.value == "x"
+    
+    # macro should be recorded after called
+    ui.B[1].a.value = 10
+    assert len(ui.macro) == 1
+    ui.B[1]()
+    assert len(ui.macro) == 2
+    assert str(ui.macro[-1]) == "ui.f2(a=10, b='x')"
+    assert hasattr(ui, "a")
+    ui.B[1].a.value = 20
+    ui.B[1]()
+    assert len(ui.macro) == 3
+    assert str(ui.macro[-1]) == "ui.f2(a=20, b='x')"
+    assert str(ui.macro[-2]) == "ui.f2(a=10, b='x')"
