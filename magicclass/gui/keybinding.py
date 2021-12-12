@@ -2,14 +2,14 @@ from __future__ import annotations
 from qtpy.QtCore import Qt
 from qtpy.QtGui import QKeySequence
 from enum import Enum
-from typing import NewType, Union
+from typing import NewType, Union, Tuple
 import re
 
 QtKey = NewType("QtKey", int)
 QtModifier = NewType("QtModifier", int)
-KeyCombo = Union[tuple[QtKey], 
-                 tuple[QtModifier, QtKey], 
-                 tuple[QtModifier, QtModifier, QtKey]
+KeyCombo = Union[Tuple[QtKey], 
+                 Tuple[QtModifier, QtKey], 
+                 Tuple[QtModifier, QtModifier, QtKey]
                 ]
 
 class Key(Enum):
