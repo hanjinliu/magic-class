@@ -1,4 +1,4 @@
-from magicclass import magicclass, magicmenu, field, vfield, MagicTemplate
+from magicclass import magicclass, MagicTemplate
 from magicgui import magicgui, widgets
 
 def test_magicgui():
