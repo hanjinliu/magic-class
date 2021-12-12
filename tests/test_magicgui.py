@@ -1,0 +1,42 @@
+from magicclass import magicclass, magicmenu, field, vfield, MagicTemplate
+from magicgui import magicgui, widgets
+
+def test_magicgui():
+    @magicclass
+    class A(MagicTemplate):
+        @magicgui
+        def f(self, a: int, b: str = "x"):
+            self.a = a
+    
+    ui = A()
+    assert type(ui[0]) is widgets.FunctionGui
+    assert ui[0].a.value == 0
+    assert ui[0].b.value == "x"
+    
+    # macro should be recorded after called
+    ui[0].a.value = 10
+    assert len(ui.macro) == 1
+    ui[0]()
+    assert len(ui.macro) == 2
+    assert str(ui.macro[-1]) == "ui.f(a=10, b='x')"
+    assert hasattr(ui, "a")
+    ui[0].a.value = 20
+    ui[0]()
+    assert len(ui.macro) == 3
+    assert str(ui.macro[-1]) == "ui.f(a=20, b='x')"
+    assert str(ui.macro[-2]) == "ui.f(a=10, b='x')"
+    
+
+def test_autocall_macro():
+    """Auto-called macro should be recorded once."""
+    @magicclass
+    class A(MagicTemplate):
+        @magicgui(auto_call=True)
+        def f(self, a: int, b: str = "x"):
+            self.a = a
+    
+    ui = A()
+    ui[0].a.value = 1
+    assert str(ui.macro[-1]) == "ui.f(a=1, b='x')"
+    ui[0].a.value = 2
+    assert str(ui.macro[-1]) == "ui.f(a=2, b='x')"
