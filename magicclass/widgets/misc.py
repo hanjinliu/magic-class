@@ -63,9 +63,25 @@ class ConsoleTextEdit(TextEdit):
         super().__init__(*args, **kwargs)
         from qtpy.QtGui import QFont, QTextOption
         self.native: QTextEdit
-        self.native.setFont(QFont("Consolas"))
+        font = QFont("Consolas")
+        font.setStyleHint(QFont.Monospace)
+        font.setFixedPitch(True)
+        self.native.setFont(font)
         self.native.setWordWrapMode(QTextOption.NoWrap)
+        
+        # set tab width
+        self.tab_size = 4
     
+    @property
+    def tab_size(self):
+        metrics = self.native.fontMetrics()
+        return self.native.tabStopWidth() // metrics.width(" ")
+    
+    @tab_size.setter
+    def tab_size(self, size: int):
+        metrics = self.native.fontMetrics()
+        self.native.setTabStopWidth(size*metrics.width(" "))
+        
     def append(self, text: str):
         self.native.append(text)
     
