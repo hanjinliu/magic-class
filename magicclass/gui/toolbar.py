@@ -52,7 +52,7 @@ class ToolBarGui(ContainerLikeGui):
         self.name = name
         self._list: list[MenuGuiBase | AbstractAction] = []
         self.labels = labels
-    
+        
     
     def _convert_attributes_into_widgets(self):
         cls = self.__class__

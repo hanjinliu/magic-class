@@ -1,6 +1,6 @@
 from __future__ import annotations
 from functools import wraps
-from typing import Callable, Iterable, Iterator, Union, TYPE_CHECKING, TypeVar
+from typing import Callable, Iterable, Iterator, Union, TYPE_CHECKING, TypeVar, overload
 from magicgui.widgets._bases import ButtonWidget
 from .signature import upgrade_signature
 
@@ -12,6 +12,7 @@ Color = Union[str, Iterable[float]]
 nStrings = Union[str, Iterable[str]]
 Args = TypeVar("Args")
 Returns = TypeVar("Returns")
+T = TypeVar("T")
 
 def set_options(**options):
     """
@@ -69,9 +70,25 @@ def set_design(width: int = None, height: int = None, min_width: int = None, min
             min_height = icon_size[1]
             
     caller_options = locals()
-    def wrapper(func: Callable[[Args], Returns]) -> Callable[[Args], Returns]:
-        upgrade_signature(func, caller_options=caller_options)
-        return func
+    
+    @overload
+    def wrapper(obj: type[T]) -> type[T]: ...
+    @overload
+    def wrapper(obj: Callable[[Args], Returns]) -> Callable[[Args], Returns]: ...
+    
+    def wrapper(obj):
+        if isinstance(obj, type):
+            _post_init = getattr(obj, "__post_init__", lambda self: None)
+            def __post_init__(self):
+                _post_init(self)
+                for k, v in caller_options.items():
+                    if v is not None:
+                        setattr(self, k, v)
+            obj.__post_init__ = __post_init__
+        else:
+            upgrade_signature(obj, caller_options=caller_options)
+        return obj
+    
     return wrapper
 
 def click(enables: nStrings = None, disables: nStrings = None, enabled: bool = True,
