@@ -3,9 +3,7 @@ from qtpy.QtWidgets import QApplication
 APPLICATION = None
 
 def gui_qt():
-    """
-    Call "%gui qt" magic,
-    """    
+    """Call "%gui qt" magic."""    
     try:
         from IPython import get_ipython
     except ImportError:
@@ -17,10 +15,19 @@ def gui_qt():
         shell.enable_gui("qt")
     return None
 
+def gui_qt_is_active() -> bool:
+    """True only if "%gui qt" magic is called in ipython kernel."""
+    try:
+        from IPython import get_ipython
+    except ImportError:
+        get_ipython = lambda: False
+
+    shell = get_ipython()
+    
+    return shell and shell.active_eventloop == "qt"
+
 def get_app():
-    """
-    Get QApplication. This is important when using Jupyter.
-    """    
+    """Get QApplication."""    
     gui_qt()
     app = QApplication.instance()
     if app is None:
@@ -28,3 +35,10 @@ def get_app():
     global APPLICATION
     APPLICATION = app
     return app
+
+def run():
+    """
+    Start the event loop.
+    """ 
+    if not gui_qt_is_active():
+        return get_app().exec_()

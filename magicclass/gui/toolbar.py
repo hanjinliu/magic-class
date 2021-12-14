@@ -34,6 +34,8 @@ def _check_popupmode(popup_mode: PopUpMode):
 
 
 class ToolBarGui(ContainerLikeGui):
+    """Magic class that will be converted into a toolbar"""
+    
     def __init__(self, 
                  parent=None, 
                  name: str = None,
