@@ -9,17 +9,19 @@ from docstring_parser import parse, compose
 
 from magicgui.events import Signal
 from magicgui.signature import MagicParameter
-from magicgui.widgets import FunctionGui, FileEdit, EmptyWidget, Widget, Container
-from magicgui.widgets._bases import ValueWidget
+from magicgui.widgets import FunctionGui, FileEdit, EmptyWidget, Widget, Container, Image, Table, Label
+from magicgui.application import use_app
+from magicgui.widgets._bases.widget import Widget
+from magicgui.widgets._bases import ButtonWidget, ValueWidget
 from macrokit import Expr, Head, Symbol, symbol
 
 from .keybinding import as_shortcut
-from .mgui_ext import AbstractAction, Action, FunctionGuiPlus, PushButtonPlus
-from .utils import get_parameters
+from .mgui_ext import AbstractAction, Action, FunctionGuiPlus, PushButtonPlus, _LabeledWidgetAction
+from .utils import get_parameters, define_callback
 from ._macro import GuiMacro
 
 from ..utils import get_signature, iter_members, extract_tooltip, screen_center
-from ..widgets import Separator
+from ..widgets import Separator, FreeWidget
 from ..fields import MagicField
 from ..signature import MagicMethodSignature, get_additional_option
 from ..wrappers import upgrade_signature
@@ -561,6 +563,119 @@ class BaseGui(MagicTemplate):
         self._popup_mode = popup_mode
         self._error_mode = error_mode
         self._my_symbol = Symbol.var("ui")
+
+class ContainerLikeGui(BaseGui, MutableSequence):
+    _component_class = Action
+    changed = Signal(object)
+    _list: list[AbstractAction | ContainerLikeGui]
+        
+    @property
+    def parent(self):
+        return self.native.parent()
+
+    def _create_widget_from_field(self, name: str, fld: MagicField):
+        cls = self.__class__
+        if fld.not_ready():
+            try:
+                fld.decode_string_annotation(cls.__annotations__[name])    
+            except (AttributeError, KeyError):
+                pass
+            
+        fld.name = fld.name or name.replace("_", " ")
+        action = fld.get_action(self)
+            
+        if action.support_value:
+            # If the field has callbacks, connect it to the newly generated widget.
+            for callback in fld.callbacks:
+                # funcname = callback.__name__
+                action.changed.connect(define_callback(self, callback))
+                     
+            # By default, set value function will be connected to the widget.
+            if fld.record:
+                f = value_widget_callback(self, action, name, getvalue=type(fld) is MagicField)
+                action.changed.connect(f)
+                
+        return action
+    
+    
+    def __getitem__(self, key: int | str) -> ContainerLikeGui | AbstractAction:
+        if isinstance(key, int):
+            return self._list[key]
+        
+        out = None
+        for obj in self._list:
+            if obj.name == key:
+                out = obj
+                break
+        if out is None:
+            raise KeyError(key)
+        return out
+    
+    def __setitem__(self, key, value):
+        raise NotImplementedError()
+    
+    def __delitem__(self, key: int | str) -> None:
+        self.native.removeAction(self[key].native)
+    
+    def __iter__(self) -> Iterable[ContainerLikeGui | AbstractAction]:
+        return iter(self._list)
+    
+    def __len__(self) -> int:
+        return len(self._list)
+    
+    def append(self, obj: Callable | ContainerLikeGui | AbstractAction) -> None:
+        return self.insert(len(self._list), obj)
+    
+    def _unify_label_widths(self):
+        _hide_labels = (_LabeledWidgetAction, ButtonWidget, FreeWidget, Label, FunctionGui,
+                        Image, Table, Action)
+        need_labels = [w for w in self if not isinstance(w, _hide_labels)]
+        
+        if self.labels and need_labels:
+            measure = use_app().get_obj("get_text_width")
+            widest_label = max(measure(w.label) for w in need_labels)
+            for w in need_labels:
+                labeled_widget = w._labeled_widget()
+                if labeled_widget:
+                    labeled_widget.label_width = widest_label
+
+    def render(self):
+        try:
+            import numpy as np
+        except ImportError:
+            raise ModuleNotFoundError(
+                "could not find module 'numpy'. "
+                "Please `pip install numpy` to render widgets."
+            ) from None
+        import qtpy
+        img = self.native.grab().toImage()
+        bits = img.constBits()
+        h, w, c = img.height(), img.width(), 4
+        if qtpy.API_NAME == "PySide2":
+            arr = np.array(bits).reshape(h, w, c)
+        else:
+            bits.setsize(h * w * c)
+            arr = np.frombuffer(bits, np.uint8).reshape(h, w, c)
+
+        return arr[:, :, [2, 1, 0, 3]]
+
+    def _repr_png_(self):
+        """Return PNG representation of the widget for QtConsole."""
+        from io import BytesIO
+
+        try:
+            from imageio import imsave
+        except ImportError:
+            print(
+                "(For a nicer magicmenu widget representation in "
+                "Jupyter, please `pip install imageio`)"
+            )
+            return None
+
+        with BytesIO() as file_obj:
+            imsave(file_obj, self.render(), format="png")
+            file_obj.seek(0)
+            return file_obj.read()
 
 def _get_widget_name(widget: Widget):
     # To escape reference

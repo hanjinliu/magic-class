@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import Callable, Iterable, Any
 import re
+from PyQt5.QtWidgets import QToolButton
 from qtpy.QtWidgets import QPushButton, QAction, QWidgetAction
 from qtpy.QtGui import QIcon
 from qtpy.QtCore import QSize
@@ -9,6 +10,7 @@ from magicgui.widgets import PushButton, FunctionGui
 from magicgui.widgets._concrete import _LabeledWidget
 from magicgui.widgets._bases import Widget, ValueWidget, ButtonWidget, ContainerWidget
 from magicgui.widgets._function_gui import _function_name_pointing_to_widget
+from magicgui.backends._qtpy.widgets import QBaseButtonWidget
 from matplotlib.colors import to_rgb
 from ..widgets import Separator
 
@@ -186,6 +188,22 @@ class PushButtonPlus(PushButton):
             if v is not None:
                 setattr(self, k, v)
         return None
+
+class _QToolButton(QBaseButtonWidget):
+    def __init__(self):
+        super().__init__(QToolButton)
+    
+class ToolButtonPlus(PushButtonPlus):
+    def __init__(self, text: str | None = None, **kwargs):
+        kwargs["widget_type"] = _QToolButton
+        ValueWidget.__init__(self, **kwargs)
+        self.text = text or self.name.replace("_", " ")
+        self.native: QToolButton
+    
+    def set_menu(self, qmenu):
+        self.native.setMenu(qmenu)
+        self.native.setPopupMode(QToolButton.InstantPopup)
+
     
 class AbstractAction:
     """

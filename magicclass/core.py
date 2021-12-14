@@ -10,6 +10,8 @@ from typing import Any, Literal, Union
 from typing_extensions import Annotated, _AnnotatedAlias
 from macrokit import Expr, register_type, Head
 
+from magicclass.gui.toolbar import ToolBarGui
+
 from .gui.class_gui import (
     ClassGuiBase, 
     ClassGui,
@@ -271,6 +273,19 @@ def magiccontext(class_: type = None,
     Decorator that can convert a Python class into a context menu.
     """    
     return _call_magicmenu(**locals(), menugui_class=ContextMenuGui)
+
+def magictoolbar(class_: type = None, 
+                 *, 
+                 close_on_run: bool = None,
+                 popup_mode: str | PopUpMode = None,
+                 error_mode: str | ErrorMode = None,
+                 labels: bool = True, 
+                 parent = None
+                 ):
+    """
+    Decorator that can convert a Python class into a menu bar.
+    """    
+    return _call_magicmenu(**locals(), menugui_class=ToolBarGui)
 
 class MagicClassFactory:
     """

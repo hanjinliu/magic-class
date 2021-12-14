@@ -9,6 +9,7 @@ from magicgui.widgets._concrete import _LabeledWidget
 from macrokit import Symbol
 
 from .mgui_ext import PushButtonPlus
+from .toolbar import ToolBarGui
 from .menu_gui import MenuGui, ContextMenuGui
 from ._base import BaseGui, PopUpMode, ErrorMode, value_widget_callback, nested_function_gui_callback
 from .utils import define_callback, MagicClassConstructionError
@@ -42,15 +43,10 @@ class ClassGuiBase(BaseGui):
         cls = self.__class__
         if fld.not_ready():
             try:
-                fld.default_factory = cls.__annotations__[name]
-                if isinstance(fld.default_factory, str):
-                    # Sometimes annotation is not type but str. 
-                    from pydoc import locate
-                    fld.default_factory = locate(fld.default_factory)
-                    
+                fld.decode_string_annotation(cls.__annotations__[name])    
             except (AttributeError, KeyError):
                 pass
-        
+            
         fld.name = fld.name or name.replace("_", " ")
         widget = fld.get_widget(self)
             
@@ -136,6 +132,11 @@ class ClassGuiBase(BaseGui):
                         _define_context_menu(widget, self.native)
                         )
                     _hist.append((name, type(attr), "ContextMenuGui"))
+                
+                elif isinstance(widget, ToolBarGui):
+                    widget.__magicclass_parent__ = self
+                    self.native.layout().setMenuBar(widget.native)
+                    _hist.append((name, type(attr), "ToolBarGui"))
                 
                 elif isinstance(widget, (Widget, Callable)):
                     if (not isinstance(widget, Widget)) and isinstance(widget, Callable):

@@ -3,20 +3,21 @@ from typing import Callable, Iterable, MutableSequence
 import warnings
 from inspect import signature
 from magicgui.events import Signal
-from magicgui.widgets import Image, Table, Label, FunctionGui
 from magicgui.application import use_app
-from magicgui.widgets._bases import ButtonWidget
+from magicgui.widgets import Image, Table, Label, FunctionGui
+from magicgui.widgets._bases import ButtonWidget, ValueWidget
 from magicgui.widgets._bases.widget import Widget
 from macrokit import Symbol
-from qtpy.QtWidgets import QMenu
+from qtpy.QtWidgets import QToolBar, QToolButton
 
-from .mgui_ext import AbstractAction, Action, WidgetAction, _LabeledWidgetAction
+from .mgui_ext import AbstractAction, Action, _LabeledWidgetAction, WidgetAction, ToolButtonPlus
 from ._base import BaseGui, PopUpMode, ErrorMode, ContainerLikeGui, value_widget_callback, nested_function_gui_callback
 from .utils import define_callback, MagicClassConstructionError
+from .menu_gui import MenuGui, MenuGuiBase, insert_action_like
 
 from ..signature import get_additional_option
 from ..fields import MagicField
-from ..widgets import Separator, FreeWidget
+from ..widgets import FreeWidget, Separator
 from ..utils import iter_members
 
 def _check_popupmode(popup_mode: PopUpMode):
@@ -32,27 +33,26 @@ def _check_popupmode(popup_mode: PopUpMode):
     
     return popup_mode
 
-class MenuGuiBase(ContainerLikeGui):
+class ToolBarGui(ContainerLikeGui):
     def __init__(self, 
                  parent=None, 
                  name: str = None,
                  close_on_run: bool = None,
-                 popup_mode: str|PopUpMode = None,
-                 error_mode: str|ErrorMode = None,
+                 popup_mode: str | PopUpMode = None,
+                 error_mode: str | ErrorMode = None,
                  labels: bool = True
                  ):
         popup_mode = _check_popupmode(popup_mode)
             
         super().__init__(close_on_run=close_on_run, popup_mode=popup_mode, error_mode=error_mode)
         name = name or self.__class__.__name__
-        self.native = QMenu(name, parent)
-        self.native.setToolTipsVisible(True)
+        self.native = QToolBar(name, parent)
         self.native.setObjectName(self.__class__.__name__)
         self.name = name
         self._list: list[MenuGuiBase | AbstractAction] = []
         self.labels = labels
-       
-       
+    
+    
     def _convert_attributes_into_widgets(self):
         cls = self.__class__
         
@@ -61,7 +61,7 @@ class MenuGuiBase(ContainerLikeGui):
             self.native.setToolTip(cls.__doc__)
             
         # Bind all the methods and annotations
-        base_members = set(x[0] for x in iter_members(MenuGuiBase))        
+        base_members = set(x[0] for x in iter_members(ToolBarGui))        
         
         _hist: list[tuple[str, str, str]] = [] # for traceback
         
@@ -89,18 +89,23 @@ class MenuGuiBase(ContainerLikeGui):
                     f = nested_function_gui_callback(self, widget)
                     widget.called.connect(f)
                 
-                elif isinstance(widget, MenuGuiBase):
+                elif isinstance(widget, MenuGuiBase): # TODO: contextmenu?
+                    tb = ToolButtonPlus(widget.name)
+                    tb.set_menu(widget.native)
                     widget.__magicclass_parent__ = self
-                    self.__magicclass_children__.append(widget)
-                    widget.native.setParent(self.native, widget.native.windowFlags())
-                    
+                    widget._my_symbol = Symbol(name)
+                    widget = WidgetAction(tb, tb.name)
+                
+                elif isinstance(widget, ToolBarGui):
+                    raise NotImplementedError("nested Toolbar is not implemented yet.")
+                
                 elif isinstance(widget, Separator):
                     pass
                 
                 elif isinstance(widget, Widget):
                     widget = WidgetAction(widget, widget.name)
                     
-                if isinstance(widget, (MenuGuiBase, AbstractAction, Callable)):
+                if isinstance(widget, (AbstractAction, Callable)):
                     if (not isinstance(widget, Widget)) and callable(widget):
                         widget = self._create_widget_from_method(widget)
                     
@@ -112,6 +117,7 @@ class MenuGuiBase(ContainerLikeGui):
                         # if __magicclass_parent__ is defined as a property, hasattr must be called
                         # with a type object (not instance).
                         widget.__magicclass_parent__ = self
+                    
                         
                     clsname = get_additional_option(attr, "into")
                     if clsname is not None:
@@ -137,7 +143,7 @@ class MenuGuiBase(ContainerLikeGui):
         return None
     
     
-    def insert(self, key: int, obj: Callable | MenuGuiBase | AbstractAction | Widget) -> None:
+    def insert(self, key: int, obj: AbstractAction) -> None:
         """
         Insert object into the menu. Could be widget or callable.
 
@@ -148,7 +154,9 @@ class MenuGuiBase(ContainerLikeGui):
         obj : Callable | MenuGuiBase | AbstractAction | Widget
             Object to insert.
         """        
-        if isinstance(obj, (self._component_class, MenuGuiBase)):
+        # _hide_labels should not contain Container because some ValueWidget like widgets
+        # are Containers.
+        if isinstance(obj, self._component_class):
             insert_action_like(self.native, key, obj.native)
             self._list.insert(key, obj)
         elif isinstance(obj, Separator):
@@ -169,45 +177,4 @@ class MenuGuiBase(ContainerLikeGui):
                 self._list.insert(key, obj)
         else:
             raise TypeError(f"{type(obj)} is not supported.")
-    
-def insert_action_like(qmenu: QMenu, key: int, obj):
-    """
-    Insert a QObject into a QMenu in a Pythonic way, like qmenu.insert(key, obj).
 
-    Parameters
-    ----------
-    qmenu : QMenu
-        QMenu object to which object will be inserted.
-    key : int
-        Position to insert.
-    obj : QMenu or QAction or "sep"
-        Object to be inserted.
-    """    
-    actions = qmenu.actions()
-    l = len(actions)
-    if key < 0:
-        key = key + l
-    if key == l:
-        if isinstance(obj, QMenu):
-            qmenu.addMenu(obj)
-        elif obj == "sep":
-            qmenu.addSeparator()
-        else:
-            qmenu.addAction(obj)
-    else:
-        new_action = actions[key]
-        before = new_action
-        if isinstance(obj, QMenu):
-            qmenu.insertMenu(before, obj)
-        elif obj == "sep":
-            qmenu.insertSeparator(before)
-        else:
-            qmenu.insertAction(before, obj)
-        
-    
-class MenuGui(MenuGuiBase):
-    """Magic class that will be converted into a menu bar."""
-
-class ContextMenuGui(MenuGuiBase):
-    """Magic class that will be converted into a context menu."""
-    # TODO: Prevent more than one context menu
