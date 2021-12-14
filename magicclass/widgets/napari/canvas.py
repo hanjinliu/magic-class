@@ -40,4 +40,4 @@ class NapariCanvas(FreeWidget):
                                          self.layer_list.native.windowFlags()
                                          )
         
-        
+# TODO: toggle n-display button of the original canvas is overwritten by this widget

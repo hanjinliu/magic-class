@@ -5,14 +5,17 @@ from magicgui.widgets._function_gui import _docstring_to_html
 import numpy as np
 
 import qtpy
-from qtpy.QtWidgets import QWidget, QTreeWidget, QTreeWidgetItem, QSplitter, QTextEdit
+from qtpy.QtWidgets import QWidget, QTreeWidget, QTreeWidgetItem, QSplitter
 from qtpy.QtCore import Qt
 from typing import Any, Callable, Iterator
+
+from magicclass.widgets.containers import SplitterContainer
+from magicclass.widgets.misc import ConsoleTextEdit
 
 from .gui.mgui_ext import Action, PushButtonPlus, WidgetAction
 from .gui._base import MagicTemplate
 from .widgets import DraggableContainer, FreeWidget
-from .gui.class_gui import CollapsibleClassGui, DraggableClassGui, ScrollableClassGui, ButtonClassGui, TabbedClassGui
+from .gui.class_gui import CollapsibleClassGui, DraggableClassGui, ScrollableClassGui, ButtonClassGui
 from .utils import iter_members, extract_tooltip, get_signature
 
 # TODO: find
@@ -30,8 +33,8 @@ class _HelpWidget(QSplitter):
         self.setWindowFlag(Qt.Window)
         self._tree = QTreeWidget(self)
         self._tree.itemClicked.connect(self._on_treeitem_clicked)
-        self._text = QTextEdit(self)
-        self._text.setReadOnly(True)
+        self._text = ConsoleTextEdit()
+        self._text.read_only = True
         self._mgui_image = Image()
         c = DraggableContainer(widgets=[self._mgui_image])
         
@@ -44,12 +47,10 @@ class _HelpWidget(QSplitter):
         c.min_height = 120
         self._resize_image(self._initial_image_size)
         
-        widget_right = QSplitter(orientation=Qt.Vertical, parent=self)
-        widget_right.insertWidget(0, c.native)
-        widget_right.insertWidget(1, self._text)
+        widget_right = SplitterContainer(widgets=[c, self._text])
         
         self.insertWidget(0, self._tree)
-        self.insertWidget(1, widget_right)
+        self.insertWidget(1, widget_right.native)
         
         if ui is not None:
             self.set_tree(ui)
@@ -99,7 +100,6 @@ class _HelpWidget(QSplitter):
         self._mgui_image.value = img
         
         # set text
-        self._text.clear()
         htmls = [f"<h1>{ui.name}</h1><p>{extract_tooltip(ui)}</p>"]
         
         if docs:
@@ -107,7 +107,7 @@ class _HelpWidget(QSplitter):
         
         for i, (name, doc) in enumerate(docs.items()):
             htmls.append(f"<h3>({i+1}) {name}</h3><p>{doc}</p>")
-        self._text.insertHtml("".join(htmls))
+        self._text.value = "".join(htmls)
 
     def _on_treeitem_clicked(self, item: UiBoundTreeItem, i: int = 0):
         if item.ui is not None:

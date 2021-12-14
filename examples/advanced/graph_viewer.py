@@ -1,4 +1,4 @@
-from magicclass import magicclass, field, click, magicmenu, magiccontext
+from magicclass import magicclass, field, click, magiccontext
 from magicclass.widgets import QtPlotCanvas, QtConsole
 
 @magicclass(labels=False, layout="horizontal")
