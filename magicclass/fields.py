@@ -134,7 +134,8 @@ class MagicField(Field):
             If there is not enough information to build an action.
         """                
         if type(self.default) is bool or self.default_factory is bool:
-            action = Action(checkable=True, checked=self.value, text=self.name, name=self.name)
+            value = False if self.default is MISSING else self.default
+            action = Action(checkable=True, checked=value, text=self.name, name=self.name)
         else:
             widget = self.to_widget()
             action = WidgetAction(widget)
@@ -168,9 +169,21 @@ class MagicField(Field):
         else:
             wcls = get_widget_class(value=self.value, annotation=self.annotation)
         return wcls.__name__
-
-
+    
+    def decode_string_annotation(self, annot: str) -> MagicField:
+        """Convert string type annotation into field info."""
+        self.default_factory = annot
+        # Sometimes annotation is not type but str. 
+        from pydoc import locate
+        self.default_factory = locate(self.default_factory)
+        return self
+    
+    
 class MagicValueField(MagicField):
+    """
+    Field class for magicgui construction. Unlike MagicField, object of this class always 
+    returns value itself.
+    """    
     def get_widget(self, obj: X) -> ValueWidget:
         widget = super().get_widget(obj)
         if not hasattr(widget, "value"):
