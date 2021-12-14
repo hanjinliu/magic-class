@@ -18,7 +18,7 @@ def _make_class(t: WidgetType):
 def test_all_works():
     for wtype in WidgetType._member_names_:
         ui = _make_class(wtype)()
-        ui.show()
+        ui.show(run=False)
         ui[0]
         ui[1].changed()
         ui.B[0].changed()

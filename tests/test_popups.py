@@ -20,7 +20,7 @@ def test_all_works():
         if mode == "dock":
             continue
         ui = _make_class(mode)()
-        ui.show()
+        ui.show(run=False)
         ui[1].changed()
         ui.B[0].changed()
         ui.B[1].changed()
