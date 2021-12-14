@@ -94,6 +94,7 @@ class MenuGuiBase(ContainerLikeGui):
                     widget.native.setParent(self.native, widget.native.windowFlags())
                     
                 elif isinstance(widget, Separator):
+                    # separator should not be added as a widget action
                     pass
                 
                 elif isinstance(widget, Widget):
@@ -154,20 +155,18 @@ class MenuGuiBase(ContainerLikeGui):
             insert_action_like(self.native, key, "sep")
             self._list.insert(key, obj)
         elif isinstance(obj, WidgetAction):
-            if isinstance(obj.widget, Separator):
-                self.insert(key, obj.widget)
-            else:
-                _hide_labels = (_LabeledWidgetAction, ButtonWidget, FreeWidget, Label, 
-                                FunctionGui, Image, Table)
-                _obj = obj
-                if not isinstance(obj.widget, _hide_labels):
-                    _obj = _LabeledWidgetAction.from_action(obj)
-                _obj.parent = self
-                insert_action_like(self.native, key, _obj.native)
-                self._unify_label_widths()
-                self._list.insert(key, obj)
+            _hide_labels = (_LabeledWidgetAction, ButtonWidget, FreeWidget, Label, 
+                            FunctionGui, Image, Table)
+            _obj = obj
+            if not isinstance(obj.widget, _hide_labels):
+                _obj = _LabeledWidgetAction.from_action(obj)
+            _obj.parent = self
+            insert_action_like(self.native, key, _obj.native)
+            self._unify_label_widths()
+            self._list.insert(key, obj)
         else:
             raise TypeError(f"{type(obj)} is not supported.")
+        
     
 def insert_action_like(qmenu: QMenu, key: int, obj):
     """

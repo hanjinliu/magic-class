@@ -36,7 +36,7 @@ def get_app():
     APPLICATION = app
     return app
 
-def run():
+def run_app():
     """
     Start the event loop.
     """ 

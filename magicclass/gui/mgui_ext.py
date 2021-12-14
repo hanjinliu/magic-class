@@ -209,6 +209,14 @@ class mguiLike:
     native: QWidget | QAction
     
     @property
+    def parent(self):
+        self.native.parent()
+    
+    @parent.setter
+    def parent(self, obj: mguiLike | Widget):
+        self.native.setParent(obj.native)
+    
+    @property
     def name(self) -> str:
         return self.native.objectName()
     

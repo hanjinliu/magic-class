@@ -31,7 +31,7 @@ from ..widgets import (
 from ..utils import iter_members, extract_tooltip
 from ..fields import MagicField
 from ..signature import get_additional_option
-from .._app import run
+from .._app import run_app
 
 class ClassGuiBase(BaseGui):
     # This class is always inherited by @magicclass decorator.
@@ -272,10 +272,16 @@ def make_gui(container: type[ContainerWidget], no_margin: bool = True):
             self._unify_label_widths()
 
         
-        def show(self: cls) -> None:
+        def show(self: cls, run: bool = True) -> None:
             """
             Show ClassGui. If any of the parent ClassGui is a dock widget in napari, then this
             will also show up as a dock widget (floating if in popup mode).
+            
+            Parameters
+            ----------
+            run : bool, default is True
+                *Unlike magicgui, this parameter should always be True* unless you want to close
+                the window immediately. If true, application gets executed *if needed*.
             """        
             if self.__magicclass_parent__ is not None and self.parent is None:
                 # If child magic class is closed before, we have to set parent again.
@@ -294,7 +300,8 @@ def make_gui(container: type[ContainerWidget], no_margin: bool = True):
             else:
                 container.show(self, run=False)
                 self.native.activateWindow()
-            run()
+            if run:
+                run_app()
             return None
         
         def close(self: cls):
