@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import TypeVar, Callable
+from typing import Any, TypeVar, Callable
 import warnings
 from qtpy import QtWidgets as QtW
 from qtpy.QtCore import Qt, QEvent
@@ -195,11 +195,20 @@ class _ButtonContainer(ContainerBase):
         self._qwidget.setText(btn_text)
         self._qwidget.clicked.connect(lambda x: self._inner_widget.show())
 
-class _CollapsibleContainer(ContainerBase):
-    """
-    Collapsible container.
-    See https://stackoverflow.com/questions/32476006/how-to-make-an-expandable-collapsable-section-widget-in-qt.
-    """    
+_VERTICAL_SETTING = {"expanded-arrow": Qt.ArrowType.DownArrow,
+                     "collapsed-arrow": Qt.ArrowType.RightArrow,
+                     "align": Qt.AlignTop,
+                     "layout": QtW.QVBoxLayout
+                     }
+_HORIZONTAL_SETTING = {"expanded-arrow": Qt.ArrowType.RightArrow,
+                       "collapsed-arrow": Qt.ArrowType.LeftArrow,
+                       "align": Qt.AlignLeft,
+                       "layout": QtW.QHBoxLayout
+                       }
+
+class _Collapsibles(ContainerBase):
+    _setting: dict[str, Any]
+    
     def __init__(self, layout="vertical", btn_text=""):
         QBaseWidget.__init__(self, QtW.QWidget)
         if layout == "horizontal":
@@ -207,6 +216,7 @@ class _CollapsibleContainer(ContainerBase):
         else:
             self._layout = QtW.QVBoxLayout()
         
+        self._get_setting()
         self._qwidget = QtW.QWidget()
         self._qwidget.setLayout(QtW.QVBoxLayout())
         self._inner_widget = QtW.QWidget(self._qwidget)
@@ -217,7 +227,7 @@ class _CollapsibleContainer(ContainerBase):
         
         self._expand_btn = QtW.QToolButton(self._qwidget)
         self._expand_btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        self._expand_btn.setArrowType(Qt.ArrowType.RightArrow)
+        self._expand_btn.setArrowType(self._setting["collapsed-arrow"])
         self._expand_btn.setText(btn_text)
         self._expand_btn.setCheckable(True)
         self._expand_btn.setChecked(False)
@@ -225,20 +235,37 @@ class _CollapsibleContainer(ContainerBase):
         self._expand_btn.clicked.connect(self._mgui_change_expand)
         self._mgui_change_expand()
         
-        self._qwidget.layout().addWidget(self._expand_btn, 0, Qt.AlignTop)
-        self._qwidget.layout().addWidget(self._inner_widget, 0, Qt.AlignTop)
+        self._qwidget.layout().addWidget(self._expand_btn, 0, self._setting["align"])
+        self._qwidget.layout().addWidget(self._inner_widget, 0, self._setting["align"])
         self._qwidget.layout().setContentsMargins(0, 0, 0, 0)
     
+    @property
+    def collapsed(self) -> bool:
+        return self._expand_btn.isChecked()
+    
     def _mgui_change_expand(self):
-        if not self._expand_btn.isChecked():
+        if not self.collapsed:
             # collapse
             self._inner_widget.setVisible(False)
-            self._expand_btn.setArrowType(Qt.ArrowType.RightArrow)
+            self._expand_btn.setArrowType(self._setting["collapsed-arrow"])
             
         else:
-            # expande
+            # expand
             self._inner_widget.setVisible(True)
-            self._expand_btn.setArrowType(Qt.ArrowType.DownArrow)
+            self._expand_btn.setArrowType(self._setting["expanded-arrow"])
+    
+    def _get_setting(self):
+        raise NotImplementedError()
+
+
+class _VCollapsibleContainer(_Collapsibles):
+    def _get_setting(self):
+        self._setting = _VERTICAL_SETTING
+
+
+class _HCollapsibleContainer(_Collapsibles):
+    def _get_setting(self):
+        self._setting = _HORIZONTAL_SETTING
     
 
 class _ListContainer(ContainerBase):
@@ -387,7 +414,7 @@ class ButtonContainer(ContainerWidget):
     def btn_text(self, text: str):
         self._widget._qwidget.setText(text)
 
-@wrap_container(base=_CollapsibleContainer)
+@wrap_container(base=_VCollapsibleContainer)
 class CollapsibleContainer(ContainerWidget):
     """A collapsible Container Widget."""    
     
