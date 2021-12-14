@@ -1,8 +1,7 @@
 from __future__ import annotations
 from typing import Callable, Iterable, Any
 import re
-from PyQt5.QtWidgets import QToolButton
-from qtpy.QtWidgets import QPushButton, QAction, QWidgetAction
+from qtpy.QtWidgets import QPushButton, QAction, QWidgetAction, QToolButton, QWidget
 from qtpy.QtGui import QIcon
 from qtpy.QtCore import QSize
 from magicgui.events import Signal
@@ -188,10 +187,12 @@ class PushButtonPlus(PushButton):
             if v is not None:
                 setattr(self, k, v)
         return None
+    
 
 class _QToolButton(QBaseButtonWidget):
     def __init__(self):
         super().__init__(QToolButton)
+    
     
 class ToolButtonPlus(PushButtonPlus):
     def __init__(self, text: str | None = None, **kwargs):
@@ -204,19 +205,9 @@ class ToolButtonPlus(PushButtonPlus):
         self.native.setMenu(qmenu)
         self.native.setPopupMode(QToolButton.InstantPopup)
 
+class mguiLike:
+    native: QWidget | QAction
     
-class AbstractAction:
-    """
-    QAction encapsulated class with a similar API as magicgui Widget.
-    This class makes it easier to combine QMenu to magicgui.
-    """
-    changed = Signal(object)
-    support_value: bool
-    native: QAction | QWidgetAction
-    
-    def set_shortcut(self, key):
-        self.native.setShortcut(key)
-        
     @property
     def name(self) -> str:
         return self.native.objectName()
@@ -224,10 +215,6 @@ class AbstractAction:
     @name.setter
     def name(self, value: str):
         self.native.setObjectName(value)
-    
-    @property
-    def value(self):
-        raise NotImplementedError()
     
     @property
     def tooltip(self) -> str:
@@ -253,13 +240,21 @@ class AbstractAction:
     def visible(self, value: bool):
         self.native.setVisible(value)
     
+class AbstractAction(mguiLike):
+    """
+    QAction encapsulated class with a similar API as magicgui Widget.
+    This class makes it easier to combine QMenu to magicgui.
+    """
+    changed = Signal(object)
+    support_value: bool
+    native: QAction | QWidgetAction
+    
+    def set_shortcut(self, key):
+        self.native.setShortcut(key)
+        
     @property
-    def parent(self):
-        return self.native.parent()
-
-    @parent.setter
-    def parent(self, widget: Widget):
-        return self.native.setParent(widget.native if widget else None)
+    def value(self):
+        raise NotImplementedError()
     
     def from_options(self, options):
         raise NotImplementedError()

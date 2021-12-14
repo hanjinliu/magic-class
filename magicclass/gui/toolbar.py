@@ -1,37 +1,37 @@
 from __future__ import annotations
-from typing import Callable, Iterable, MutableSequence
+from typing import Callable
 import warnings
 from inspect import signature
-from magicgui.events import Signal
-from magicgui.application import use_app
 from magicgui.widgets import Image, Table, Label, FunctionGui
-from magicgui.widgets._bases import ButtonWidget, ValueWidget
+from magicgui.widgets._bases import ButtonWidget
 from magicgui.widgets._bases.widget import Widget
 from macrokit import Symbol
-from qtpy.QtWidgets import QToolBar, QToolButton
+from qtpy.QtWidgets import QToolBar
 
-from .mgui_ext import AbstractAction, Action, _LabeledWidgetAction, WidgetAction, ToolButtonPlus
-from ._base import BaseGui, PopUpMode, ErrorMode, ContainerLikeGui, value_widget_callback, nested_function_gui_callback
-from .utils import define_callback, MagicClassConstructionError
-from .menu_gui import MenuGui, MenuGuiBase, insert_action_like
+from .mgui_ext import AbstractAction, _LabeledWidgetAction, WidgetAction, ToolButtonPlus
+from ._base import BaseGui, PopUpMode, ErrorMode, ContainerLikeGui, nested_function_gui_callback
+from .utils import MagicClassConstructionError
+from .menu_gui import MenuGuiBase, insert_action_like
 
 from ..signature import get_additional_option
 from ..fields import MagicField
 from ..widgets import FreeWidget, Separator
 from ..utils import iter_members
 
+
 def _check_popupmode(popup_mode: PopUpMode):
     if popup_mode in (PopUpMode.above, PopUpMode.below, PopUpMode.first):
-        msg = f"magicmenu does not support popup mode {popup_mode.value}."\
+        msg = f"magictoolbar does not support popup mode {popup_mode.value}."\
                 "PopUpMode.popup is used instead"
         warnings.warn(msg, UserWarning)
     elif popup_mode == PopUpMode.last:
-        msg = f"magicmenu does not support popup mode {popup_mode.value}."\
+        msg = f"magictoolbat does not support popup mode {popup_mode.value}."\
                 "PopUpMode.parentlast is used instead"
         warnings.warn(msg, UserWarning)
         popup_mode = PopUpMode.parentlast
     
     return popup_mode
+
 
 class ToolBarGui(ContainerLikeGui):
     def __init__(self, 
@@ -47,7 +47,6 @@ class ToolBarGui(ContainerLikeGui):
         super().__init__(close_on_run=close_on_run, popup_mode=popup_mode, error_mode=error_mode)
         name = name or self.__class__.__name__
         self.native = QToolBar(name, parent)
-        self.native.setObjectName(self.__class__.__name__)
         self.name = name
         self._list: list[MenuGuiBase | AbstractAction] = []
         self.labels = labels
@@ -92,6 +91,7 @@ class ToolBarGui(ContainerLikeGui):
                 elif isinstance(widget, MenuGuiBase): # TODO: contextmenu?
                     tb = ToolButtonPlus(widget.name)
                     tb.set_menu(widget.native)
+                    tb.tooltip = widget.__doc__
                     widget.__magicclass_parent__ = self
                     widget._my_symbol = Symbol(name)
                     widget = WidgetAction(tb, tb.name)

@@ -1,23 +1,22 @@
 from __future__ import annotations
-from typing import Callable, Iterable, MutableSequence
+from typing import Callable
 import warnings
 from inspect import signature
-from magicgui.events import Signal
 from magicgui.widgets import Image, Table, Label, FunctionGui
-from magicgui.application import use_app
 from magicgui.widgets._bases import ButtonWidget
 from magicgui.widgets._bases.widget import Widget
 from macrokit import Symbol
 from qtpy.QtWidgets import QMenu
 
-from .mgui_ext import AbstractAction, Action, WidgetAction, _LabeledWidgetAction
-from ._base import BaseGui, PopUpMode, ErrorMode, ContainerLikeGui, value_widget_callback, nested_function_gui_callback
-from .utils import define_callback, MagicClassConstructionError
+from .mgui_ext import AbstractAction, WidgetAction, _LabeledWidgetAction
+from ._base import BaseGui, PopUpMode, ErrorMode, ContainerLikeGui, nested_function_gui_callback
+from .utils import MagicClassConstructionError
 
 from ..signature import get_additional_option
 from ..fields import MagicField
 from ..widgets import Separator, FreeWidget
 from ..utils import iter_members
+
 
 def _check_popupmode(popup_mode: PopUpMode):
     if popup_mode in (PopUpMode.above, PopUpMode.below, PopUpMode.first):
@@ -31,6 +30,7 @@ def _check_popupmode(popup_mode: PopUpMode):
         popup_mode = PopUpMode.parentlast
     
     return popup_mode
+
 
 class MenuGuiBase(ContainerLikeGui):
     def __init__(self, 
@@ -47,7 +47,6 @@ class MenuGuiBase(ContainerLikeGui):
         name = name or self.__class__.__name__
         self.native = QMenu(name, parent)
         self.native.setToolTipsVisible(True)
-        self.native.setObjectName(self.__class__.__name__)
         self.name = name
         self._list: list[MenuGuiBase | AbstractAction] = []
         self.labels = labels

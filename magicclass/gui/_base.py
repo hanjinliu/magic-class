@@ -16,7 +16,7 @@ from magicgui.widgets._bases import ButtonWidget, ValueWidget
 from macrokit import Expr, Head, Symbol, symbol
 
 from .keybinding import as_shortcut
-from .mgui_ext import AbstractAction, Action, FunctionGuiPlus, PushButtonPlus, _LabeledWidgetAction
+from .mgui_ext import AbstractAction, Action, FunctionGuiPlus, PushButtonPlus, _LabeledWidgetAction, mguiLike
 from .utils import get_parameters, define_callback
 from ._macro import GuiMacro
 
@@ -564,7 +564,7 @@ class BaseGui(MagicTemplate):
         self._error_mode = error_mode
         self._my_symbol = Symbol.var("ui")
 
-class ContainerLikeGui(BaseGui, MutableSequence):
+class ContainerLikeGui(BaseGui, mguiLike, MutableSequence):
     _component_class = Action
     changed = Signal(object)
     _list: list[AbstractAction | ContainerLikeGui]
