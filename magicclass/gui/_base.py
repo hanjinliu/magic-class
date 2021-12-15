@@ -1,6 +1,6 @@
 from __future__ import annotations
 from functools import wraps as functools_wraps
-from typing import Any, Callable, TYPE_CHECKING, Iterable, TypeVar, overload, MutableSequence
+from typing import Any, Callable, TYPE_CHECKING, Iterable, Iterator, TypeVar, overload, MutableSequence
 from typing_extensions import _AnnotatedAlias
 import inspect
 from enum import Enum
@@ -627,7 +627,7 @@ class ContainerLikeGui(BaseGui, mguiLike, MutableSequence):
     def __delitem__(self, key: int | str) -> None:
         self.native.removeAction(self[key].native)
     
-    def __iter__(self) -> Iterable[ContainerLikeGui | AbstractAction]:
+    def __iter__(self) -> Iterator[ContainerLikeGui | AbstractAction]:
         return iter(self._list)
     
     def __len__(self) -> int:
@@ -638,7 +638,7 @@ class ContainerLikeGui(BaseGui, mguiLike, MutableSequence):
     
     def _unify_label_widths(self):
         _hide_labels = (_LabeledWidgetAction, ButtonWidget, FreeWidget, Label, FunctionGui,
-                        Image, Table, Action)
+                        BaseGui, Image, Table, Action)
         need_labels = [w for w in self if not isinstance(w, _hide_labels)]
         
         if self.labels and need_labels:
@@ -946,7 +946,6 @@ def value_widget_callback(gui: MagicTemplate, widget: ValueWidget, name: str, ge
         # >>> x.name = value
         target = Expr(Head.getattr, [symbol(gui), sub])
         expr = Expr(Head.assign, [target, widget.value])
-        
         if gui.macro._last_setval == target and len(gui.macro) > 0:
             gui.macro.pop()
             gui.macro._erase_last()
@@ -976,8 +975,9 @@ def nested_function_gui_callback(gui: MagicTemplate, fgui: FunctionGui):
             # Auto-call will cause many redundant macros. To avoid this, only the last input
             # will be recorded in magic-class.
             last_expr = gui.macro[-1]
-            if (last_expr.head == Head.call and last_expr.args[0].head == Head.getattr and
-                last_expr.args[0].args[1] == expr.args[0].args[1] and
+            if (last_expr.head == Head.call and
+                last_expr.args[0].head == Head.getattr and
+                last_expr.at(0, 1) == expr.at(0, 1) and
                 len(gui.macro) > 0):
                 gui.macro.pop()
                 gui.macro._erase_last()

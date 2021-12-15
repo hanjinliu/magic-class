@@ -1,5 +1,6 @@
-from magicclass import magicclass, magicmenu, magiccontext, field, vfield, MagicTemplate
+from magicclass import magicclass, magicmenu, magictoolbar, field, vfield, set_design
 from magicgui import widgets
+import os
 
 def test_field_types():
     @magicclass
@@ -120,18 +121,73 @@ def test_field_options():
     ui[2].value = -5 # this should work
     assert ui[3].tooltip == tooltip
 
+
 def test_fields_in_child():
+    # test field
     @magicclass
     class A:
         @magicclass
         class B:
             def f1(self): ...
             i = field(str)
+        x = field(int)
     
     ui = A()
+    ui.x.value = 10
+    assert str(ui.macro[-1]) == "ui.x.value = 10"
     ui.B.i.value = "aaa"
     assert str(ui.macro[-1]) == "ui.B.i.value = 'aaa'"
-
+    
+    # test vfield
+    @magicclass
+    class A:
+        @magicclass
+        class B:
+            def f1(self): ...
+            i = vfield(str)
+        x = vfield(int)
+    
+    ui = A()
+    ui.x = 10
+    assert str(ui.macro[-1]) == "ui.x = 10"
+    ui.B.i = "aaa"
+    assert str(ui.macro[-1]) == "ui.B.i = 'aaa'"
+    
+    # test field
+    @magicclass
+    class A:
+        @magicclass
+        class B:
+            @magictoolbar
+            class Tool:
+                a2 = field(int)
+            a1 = field(int)
+        a0 = field(int)
+    
+    ui = A()
+    ui.a0.value = 10
+    assert str(ui.macro[-1]) == "ui.a0.value = 10"
+    ui.B.Tool.a2.value = 10
+    assert str(ui.macro[-1]) == "ui.B.Tool.a2.value = 10"
+    
+    
+    # test vfield
+    @magicclass
+    class A:
+        @magicclass
+        class B:
+            @magictoolbar
+            class Tool:
+                a2 = vfield(int)
+            a1 = vfield(int)
+        a0 = vfield(int)
+    
+    ui = A()
+    ui.a0 = 10
+    assert str(ui.macro[-1]) == "ui.a0 = 10"
+    ui.B.Tool.a2 = 10
+    assert str(ui.macro[-1]) == "ui.B.Tool.a2 = 10"
+    
 
 def test_widget_actions():
     @magicclass
@@ -146,6 +202,105 @@ def test_widget_actions():
             a_bool = field(False)
     
     ui = A()
-
-
     
+    @magicclass
+    class A:
+        @magictoolbar
+        class B:
+            a_int = field(0)
+            a_float = field(0.0)
+            a_int_sl = field(0, widget_type="Slider")
+            a_float_sl = field(0, widget_type="FloatSlider")
+            a_str = field("0")
+            a_bool = field(False)
+    
+    ui = A()
+
+    @magicclass
+    class A:
+        @magicmenu
+        class B:
+            a_int = vfield(0)
+            a_float = vfield(0.0)
+            a_int_sl = vfield(0, widget_type="Slider")
+            a_float_sl = vfield(0, widget_type="FloatSlider")
+            a_str = vfield("0")
+            a_bool = vfield(False)
+    
+    ui = A()
+    
+    @magicclass
+    class A:
+        @magictoolbar
+        class B:
+            a_int = vfield(0)
+            a_float = vfield(0.0)
+            a_int_sl = vfield(0, widget_type="Slider")
+            a_float_sl = vfield(0, widget_type="FloatSlider")
+            a_str = vfield("0")
+            a_bool = vfield(False)
+    
+    ui = A()
+    
+    
+def test_dont_record():
+    @magicclass
+    class A:
+        t = field(int, record=True)
+        f = field(int, record=False)
+    
+    ui = A()
+    ui.t.value = 10
+    assert str(ui.macro[-1]) == "ui.t.value = 10"
+    ui.f.value = 10
+    assert str(ui.macro[-1]) == "ui.t.value = 10"
+    ui.t.value = 20
+    assert str(ui.macro[-2]) != "ui.t.value = 10"
+    assert str(ui.macro[-1]) == "ui.t.value = 20"
+    
+    @magicclass
+    class A:
+        t = vfield(int, record=True)
+        f = vfield(int, record=False)
+    
+    ui = A()
+    ui.t = 10
+    assert str(ui.macro[-1]) == "ui.t = 10"
+    ui.f = 10
+    assert str(ui.macro[-1]) == "ui.t = 10"
+    ui.t = 20
+    assert str(ui.macro[-2]) != "ui.t = 10"
+    assert str(ui.macro[-1]) == "ui.t = 20"
+    
+
+def test_icon():
+    def _icon_byte(a):
+        return a.native.icon().pixmap(10,10).toImage().byteCount()
+    
+    path = os.path.join(os.path.dirname(__file__), "icons", "star.png")
+    
+    @magicclass
+    class A:
+        @magicmenu
+        class Menu:
+            a = field(bool, options={"icon_path": path})
+            @set_design(icon_path=path)
+            def func(self): ...
+    
+    ui = A()
+    
+    assert _icon_byte(ui.Menu.a) > 0
+    assert _icon_byte(ui.Menu["func"]) > 0
+    
+    @magicclass
+    class A:
+        @magictoolbar
+        class Menu:
+            a = field(bool, options={"icon_path": path})
+            @set_design(icon_path=path)
+            def func(self): ...
+    
+    ui = A()
+    
+    assert _icon_byte(ui.Menu.a) > 0
+    assert _icon_byte(ui.Menu["func"]) > 0

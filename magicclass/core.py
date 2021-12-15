@@ -308,6 +308,7 @@ class MagicClassFactory:
                  popup_mode: str | PopUpMode = None,
                  error_mode: str | ErrorMode = None,
                  widget_type: str | WidgetType = WidgetType.none,
+                 icon_path: str = None,
                  parent = None,
                  attrs: dict[str] = None
                  ):
@@ -318,6 +319,7 @@ class MagicClassFactory:
         self.popup_mode = popup_mode
         self.error_mode = error_mode
         self.widget_type = widget_type
+        self.icon_path = icon_path
         self.parent = parent
         self.attrs = attrs
     
@@ -325,19 +327,28 @@ class MagicClassFactory:
         _cls = type(self.name, (), self.attrs)
         cls = magicclass(_cls, layout=self.layout, labels=self.labels, close_on_run=self.close_on_run, 
                          name=self.name, popup_mode=self.popup_mode, error_mode=self.error_mode,
-                         widget_type=self.widget_type, parent=self.parent)
+                         widget_type=self.widget_type, icon_path=self.icon_path, parent=self.parent)
         return cls
+    
+    def as_magictoolbar(self) -> ToolBarGui:
+        _cls = type(self.name, (), self.attrs)
+        cls = magictoolbar(_cls, close_on_run=self.close_on_run, popup_mode=self.popup_mode, 
+                           error_mode=self.error_mode, labels=self.labels, icon_path=self.icon_path,
+                           parent=self.parent)
+        return cls   
     
     def as_magicmenu(self) -> MenuGui:
         _cls = type(self.name, (), self.attrs)
         cls = magicmenu(_cls, close_on_run=self.close_on_run, popup_mode=self.popup_mode, 
-                        error_mode=self.error_mode, labels=self.labels, parent=self.parent)
+                        error_mode=self.error_mode, labels=self.labels, icon_path=self.icon_path,
+                        parent=self.parent)
         return cls
     
     def as_magiccontext(self) -> ContextMenuGui:
         _cls = type(self.name, (), self.attrs)
         cls = magiccontext(_cls, close_on_run=self.close_on_run, popup_mode=self.popup_mode, 
-                           error_mode=self.error_mode, labels=self.labels, parent=self.parent)
+                           error_mode=self.error_mode, labels=self.labels, icon_path=self.icon_path,
+                           parent=self.parent)
         return cls
 
 

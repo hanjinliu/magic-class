@@ -251,6 +251,7 @@ class mguiLike:
     def visible(self, value: bool):
         self.native.setVisible(value)
     
+    
 class AbstractAction(mguiLike):
     """
     QAction encapsulated class with a similar API as magicgui Widget.
@@ -379,6 +380,12 @@ class WidgetAction(AbstractAction):
     def _labeled_widget(self):
         return self.widget._labeled_widget()
     
+    
+    def render(self):
+        return self.widget.render()
+
+    def _repr_png_(self):
+        return self.widget._repr_png_()
     
 class _LabeledWidgetAction(WidgetAction):
     widget: _LabeledWidget
