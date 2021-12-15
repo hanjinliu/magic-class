@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import Any, TypeVar, Callable
 import warnings
 from qtpy import QtWidgets as QtW
-from qtpy.QtCore import Qt, QEvent
+from qtpy.QtCore import Qt, QEvent, QSize
 from magicgui.application import use_app
 from magicgui.widgets._bases import Widget
 from magicgui.widgets._concrete import merge_super_sigs, ContainerWidget
@@ -198,14 +198,23 @@ class _ButtonContainer(ContainerBase):
 _VERTICAL_SETTING = {"expanded-arrow": Qt.ArrowType.DownArrow,
                      "collapsed-arrow": Qt.ArrowType.RightArrow,
                      "align": Qt.AlignTop,
+                     "text-align": "left",
                      "layout": QtW.QVBoxLayout
                      }
 _HORIZONTAL_SETTING = {"expanded-arrow": Qt.ArrowType.RightArrow,
                        "collapsed-arrow": Qt.ArrowType.LeftArrow,
                        "align": Qt.AlignLeft,
+                       "text-align": "center",
                        "layout": QtW.QHBoxLayout
                        }
 
+class _QCollapsible(QtW.QWidget):
+    def sizeHint(self) -> QSize:
+        if self.isVisible():
+            return super().sizeHint()
+        else:
+            return QSize(0, 0)
+            
 class _Collapsibles(ContainerBase):
     _setting: dict[str, Any]
     
@@ -218,8 +227,8 @@ class _Collapsibles(ContainerBase):
         
         self._get_setting()
         self._qwidget = QtW.QWidget()
-        self._qwidget.setLayout(QtW.QVBoxLayout())
-        self._inner_widget = QtW.QWidget(self._qwidget)
+        self._qwidget.setLayout(self._setting["layout"]())
+        self._inner_widget = _QCollapsible(self._qwidget)
         self._inner_widget.setLayout(self._layout)
         
         self._qwidget.layout().setSpacing(0)
@@ -231,7 +240,7 @@ class _Collapsibles(ContainerBase):
         self._expand_btn.setText(btn_text)
         self._expand_btn.setCheckable(True)
         self._expand_btn.setChecked(False)
-        self._expand_btn.setStyleSheet("QToolButton { border: none; text-align: left;}")
+        self._expand_btn.setStyleSheet(f"QToolButton {{ border: none; text-align: {self._setting['text-align']};}}")
         self._expand_btn.clicked.connect(self._mgui_change_expand)
         self._mgui_change_expand()
         
@@ -248,7 +257,7 @@ class _Collapsibles(ContainerBase):
             # collapse
             self._inner_widget.setVisible(False)
             self._expand_btn.setArrowType(self._setting["collapsed-arrow"])
-            
+
         else:
             # expand
             self._inner_widget.setVisible(True)
@@ -425,6 +434,19 @@ class CollapsibleContainer(ContainerWidget):
     @btn_text.setter
     def btn_text(self, text: str):
         self._widget._expand_btn.setText(text)
+
+@wrap_container(base=_HCollapsibleContainer)
+class HCollapsibleContainer(ContainerWidget):
+    """A collapsible Container Widget."""    
+    
+    @property
+    def btn_text(self):
+        return self._widget._expand_btn.text()
+
+    @btn_text.setter
+    def btn_text(self, text: str):
+        self._widget._expand_btn.setText(text)
+
 
 @wrap_container(base=_ListContainer)
 class ListContainer(ContainerWidget):

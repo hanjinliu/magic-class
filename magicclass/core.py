@@ -22,6 +22,7 @@ from .gui.class_gui import (
     DraggableClassGui,
     ButtonClassGui, 
     CollapsibleClassGui,
+    HCollapsibleClassGui,
     SplitClassGui,
     TabbedClassGui,
     StackedClassGui,
@@ -61,6 +62,7 @@ class WidgetType(Enum):
     draggable = "draggable"
     split = "split"
     collapsible = "collapsible"
+    hcollapsible = "hcollapsible"
     button = "button"
     toolbox = "toolbox"
     tabbed = "tabbed"
@@ -73,7 +75,7 @@ class WidgetType(Enum):
 WidgetTypeStr = Union[Literal["none"], Literal["scrollable"], Literal["draggable"], Literal["split"],
                       Literal["collapsible"], Literal["button"], Literal["toolbox"], Literal["tabbed"],
                       Literal["stacked"], Literal["list"], Literal["subwindows"], Literal["groupbox"],
-                      Literal["mainwindow"]]
+                      Literal["mainwindow"], Literal["hcollapsible"]]
 
 PopUpModeStr = Union[Literal["popup"], Literal["first"], Literal["last"], Literal["above"],
                      Literal["below"], Literal["dock"], Literal["parentlast"]]
@@ -86,6 +88,7 @@ _TYPE_MAP = {
     WidgetType.draggable: DraggableClassGui,
     WidgetType.split: SplitClassGui,
     WidgetType.collapsible: CollapsibleClassGui,
+    WidgetType.hcollapsible: HCollapsibleClassGui,
     WidgetType.button: ButtonClassGui,
     WidgetType.toolbox: ToolBoxClassGui,
     WidgetType.tabbed: TabbedClassGui,

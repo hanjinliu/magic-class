@@ -9,6 +9,8 @@ from magicgui.widgets._bases import Widget, ButtonWidget, ValueWidget, Container
 from magicgui.widgets._concrete import _LabeledWidget
 from macrokit import Symbol
 
+from magicclass.widgets.containers import HCollapsibleContainer
+
 from .mgui_ext import PushButtonPlus
 from .toolbar import ToolBarGui
 from .menu_gui import MenuGui, ContextMenuGui
@@ -379,6 +381,9 @@ class DraggableClassGui: pass
 
 @make_gui(CollapsibleContainer)
 class CollapsibleClassGui: pass
+
+@make_gui(HCollapsibleContainer)
+class HCollapsibleClassGui: pass
 
 @make_gui(ButtonContainer)
 class ButtonClassGui: pass

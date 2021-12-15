@@ -1,11 +1,15 @@
 from __future__ import annotations
-from typing import Callable
+from typing import Callable, TYPE_CHECKING
 from magicgui.widgets import FunctionGui
+
+if TYPE_CHECKING:
+    from ._base import BaseGui
+    from .menu_gui import ContextMenuGui
 
 def get_parameters(fgui: FunctionGui):
     return {k: v.default for k, v in fgui.__signature__.parameters.items()}
 
-def define_callback(self, callback: Callable):
+def define_callback(self: BaseGui, callback: Callable):
     clsname, funcname = callback.__qualname__.split(".")
     def _callback():
         # search for parent instances that have the same name.
@@ -17,7 +21,7 @@ def define_callback(self, callback: Callable):
         return None
     return _callback
 
-def define_context_menu(contextmenu, parent):
+def define_context_menu(contextmenu: ContextMenuGui, parent):
     def rightClickContextMenu(point):
         contextmenu.native.exec_(parent.mapToGlobal(point))
     return rightClickContextMenu
