@@ -1,4 +1,4 @@
-from magicclass import magicclass, magicmenu, MagicTemplate
+from magicclass import magicclass, magictoolbar, magicmenu, MagicTemplate
 from unittest.mock import MagicMock
 from pathlib import Path
 
@@ -53,6 +53,35 @@ def test_menu():
     ui.Menu.Inner["inner1"].changed()
     assert str(ui.macro[-1]) == "ui.Menu.Inner.inner1()"
 
+def test_toolbar():
+    @magicclass
+    class A:
+        @magictoolbar
+        class Toolbar:
+            def m1(self): ...
+            def m2(self, path: Path): ...
+            @magicmenu
+            class Menu:
+                def inner1(self): ...
+                def _private(self): ...
+                def inner2(self): ...
+            def m3(self, i: int): ...
+        def f1(self): ...
+        def f2(self, path: Path): ...
+        def f3(self, i: int): ...
+    
+    ui = A()
+    assert len(ui) == 3
+    assert ui._menubar is None
+    assert len(ui.Toolbar) == 4
+    assert len(ui.Toolbar.Menu) == 2
+    
+    # test macro
+    ui["f1"].changed()
+    assert str(ui.macro[-1]) == "ui.f1()"
+    ui.Toolbar.Menu["inner1"].changed()
+    assert str(ui.macro[-1]) == "ui.Toolbar.Menu.inner1()"
+    
 
 def test_wraps():
     @magicclass
