@@ -2,6 +2,7 @@ from __future__ import annotations
 from inspect import signature
 from typing import Any, Callable
 from qtpy.QtWidgets import QMenuBar, QWidget
+from qtpy.QtGui import QIcon
 from qtpy.QtCore import Qt
 from magicgui.widgets import Container, MainWindow,Label, FunctionGui, Image, Table
 from magicgui.widgets._bases import Widget, ButtonWidget, ValueWidget, ContainerWidget
@@ -39,6 +40,17 @@ class ClassGuiBase(BaseGui):
     _container_widget: type
     _remove_child_margins: bool
     native: QWidget
+    
+    @property
+    def icon_path(self):
+        return self._icon_path
+    
+    @icon_path.setter
+    def icon_path(self, path: str):
+        path = str(path)
+        icon = QIcon(path)
+        self.native.setWindowIcon(icon)
+        self._icon_path = path
     
     def _create_widget_from_field(self, name: str, fld: MagicField):
         cls = self.__class__

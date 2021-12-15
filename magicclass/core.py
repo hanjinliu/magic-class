@@ -127,6 +127,7 @@ def magicclass(class_: type | None = None,
                popup_mode: PopUpModeStr | PopUpMode = None,
                error_mode: ErrorModeStr | ErrorMode = None,
                widget_type: WidgetTypeStr | WidgetType = WidgetType.none,
+               icon_path: str = None,
                parent = None
                ):
     """
@@ -161,6 +162,8 @@ def magicclass(class_: type | None = None,
         Option of how to raise errors during function calls.
     widget_type : WidgetType or str, optional
         Widget type of container.
+    icon_path : str, optional
+        Path to the icon image.
     parent : magicgui.widgets._base.Widget, optional
         Parent widget if exists.
     
@@ -237,6 +240,9 @@ def magicclass(class_: type | None = None,
                 macrowidget = self.macro.widget.native
                 macrowidget.setParent(self.native, macrowidget.windowFlags())
                 self.macro.widget.__magicclass_parent__ = self
+            
+            if icon_path:
+                self.icon_path = icon_path
 
         newclass.__init__ = __init__
         
@@ -254,6 +260,7 @@ def magicmenu(class_: type = None,
               popup_mode: str | PopUpMode = None,
               error_mode: str | ErrorMode = None,
               labels: bool = True, 
+              icon_path: str = None,
               parent = None
               ):
     """
@@ -267,6 +274,7 @@ def magiccontext(class_: type = None,
                  popup_mode: str | PopUpMode = None,
                  error_mode: str | ErrorMode = None,
                  labels: bool = True, 
+                 icon_path: str = None,
                  parent=None
                  ):
     """
@@ -280,6 +288,7 @@ def magictoolbar(class_: type = None,
                  popup_mode: str | PopUpMode = None,
                  error_mode: str | ErrorMode = None,
                  labels: bool = True, 
+                 icon_path: str = None,
                  parent = None
                  ):
     """
@@ -337,6 +346,7 @@ def _call_magicmenu(class_: type = None,
                     popup_mode: str | PopUpMode = None,
                     error_mode: str | ErrorMode = None,
                     labels: bool = True, 
+                    icon_path: str = None,
                     parent = None,
                     menugui_class: type[MenuGuiBase] = None,
                     ):
@@ -408,6 +418,9 @@ def _call_magicmenu(class_: type = None,
             
             if hasattr(self, _POST_INIT):
                 self.__post_init__()
+            
+            if icon_path:
+                self.icon_path = icon_path
 
         newclass.__init__ = __init__
         

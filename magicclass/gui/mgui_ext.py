@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import Callable, Iterable, Any
 import re
+from PyQt5.QtWidgets import QMenu
 from qtpy.QtWidgets import QPushButton, QAction, QWidgetAction, QToolButton, QWidget
 from qtpy.QtGui import QIcon
 from qtpy.QtCore import QSize
@@ -130,7 +131,7 @@ class PushButtonPlus(PushButton):
     
     @icon_path.setter
     def icon_path(self, path:str):
-        icon = QIcon(path)
+        icon = QIcon(str(path))
         self.native.setIcon(icon)
     
     @property
@@ -200,11 +201,14 @@ class ToolButtonPlus(PushButtonPlus):
         self.text = text or self.name.replace("_", " ")
         self.native: QToolButton
     
-    def set_menu(self, qmenu):
+    def set_menu(self, qmenu: QMenu):
         self.native.setMenu(qmenu)
         self.native.setPopupMode(QToolButton.InstantPopup)
+        self.native.setIcon(qmenu.icon()) # icon have to be copied.
 
 class mguiLike:
+    """Abstract class that provide magicgui.widgets like properties."""
+    
     native: QWidget | QAction
     
     @property
@@ -232,7 +236,7 @@ class mguiLike:
         self.native.setToolTip(value)
     
     @property
-    def enabled(self):
+    def enabled(self) -> bool:
         return self.native.isEnabled()
     
     @enabled.setter
@@ -240,7 +244,7 @@ class mguiLike:
         self.native.setEnabled(value)
     
     @property
-    def visible(self):
+    def visible(self) -> bool:
         return self.native.isVisible()
     
     @visible.setter
@@ -310,8 +314,10 @@ class Action(AbstractAction):
     
     @icon_path.setter
     def icon_path(self, path: str):
+        path = str(path)
         icon = QIcon(path)
         self.native.setIcon(icon)
+        self._icon_path = path
     
     def from_options(self, options: dict[str] | Callable):
         if callable(options):

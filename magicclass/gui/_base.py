@@ -6,6 +6,7 @@ import inspect
 from enum import Enum
 import warnings
 from docstring_parser import parse, compose
+from qtpy.QtGui import QIcon
 
 from magicgui.events import Signal
 from magicgui.signature import MagicParameter
@@ -94,6 +95,7 @@ class MagicTemplate:
     enabled: bool
     gui_only: bool
     height: int
+    icon_path: str
     label_changed: Signal
     label: str
     layout: str
@@ -563,6 +565,7 @@ class BaseGui(MagicTemplate):
         self._popup_mode = popup_mode
         self._error_mode = error_mode
         self._my_symbol = Symbol.var("ui")
+        self._icon_path = None
 
 class ContainerLikeGui(BaseGui, mguiLike, MutableSequence):
     _component_class = Action
@@ -570,9 +573,16 @@ class ContainerLikeGui(BaseGui, mguiLike, MutableSequence):
     _list: list[AbstractAction | ContainerLikeGui]
         
     @property
-    def parent(self):
-        return self.native.parent()
-
+    def icon_path(self):
+        return self._icon_path
+    
+    @icon_path.setter
+    def icon_path(self, path: str):
+        path = str(path)
+        icon = QIcon(path)
+        self.native.setIcon(icon)
+        self._icon_path = path
+        
     def _create_widget_from_field(self, name: str, fld: MagicField):
         cls = self.__class__
         if fld.not_ready():
