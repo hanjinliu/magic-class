@@ -13,7 +13,7 @@ from .mgui_ext import PushButtonPlus
 from .toolbar import ToolBarGui
 from .menu_gui import MenuGui, ContextMenuGui
 from ._base import BaseGui, PopUpMode, ErrorMode, value_widget_callback, nested_function_gui_callback
-from .utils import define_callback, MagicClassConstructionError
+from .utils import define_callback, MagicClassConstructionError, define_context_menu
 from ..widgets import (
     ButtonContainer,
     GroupBoxContainer,
@@ -154,7 +154,7 @@ class ClassGuiBase(BaseGui):
                     widget.__magicclass_parent__ = self
                     self.native.setContextMenuPolicy(Qt.CustomContextMenu)
                     self.native.customContextMenuRequested.connect(
-                        _define_context_menu(widget, self.native)
+                        define_context_menu(widget, self.native)
                         )
                     _hist.append((name, type(attr), "ContextMenuGui"))
                 
@@ -403,8 +403,3 @@ class GroupBoxClassGui: pass
 
 @make_gui(MainWindow)
 class MainWindowClassGui: pass
-
-def _define_context_menu(contextmenu, parent):
-    def rightClickContextMenu(point):
-        contextmenu.native.exec_(parent.mapToGlobal(point))
-    return rightClickContextMenu

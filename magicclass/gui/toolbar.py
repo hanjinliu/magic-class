@@ -7,11 +7,12 @@ from magicgui.widgets._bases import ButtonWidget
 from magicgui.widgets._bases.widget import Widget
 from macrokit import Symbol
 from qtpy.QtWidgets import QToolBar
+from qtpy.QtCore import Qt
 
 from .mgui_ext import AbstractAction, _LabeledWidgetAction, WidgetAction, ToolButtonPlus
 from ._base import BaseGui, PopUpMode, ErrorMode, ContainerLikeGui, nested_function_gui_callback
-from .utils import MagicClassConstructionError
-from .menu_gui import MenuGuiBase, insert_action_like
+from .utils import MagicClassConstructionError, define_context_menu
+from .menu_gui import ContextMenuGui, MenuGui, MenuGuiBase, insert_action_like
 
 from ..signature import get_additional_option
 from ..fields import MagicField
@@ -90,13 +91,22 @@ class ToolBarGui(ContainerLikeGui):
                     f = nested_function_gui_callback(self, widget)
                     widget.called.connect(f)
                 
-                elif isinstance(widget, MenuGuiBase): # TODO: contextmenu?
+                elif isinstance(widget, MenuGui):
                     tb = ToolButtonPlus(widget.name)
                     tb.set_menu(widget.native)
                     tb.tooltip = widget.__doc__
                     widget.__magicclass_parent__ = self
                     widget._my_symbol = Symbol(name)
                     widget = WidgetAction(tb)
+                
+                elif isinstance(widget, ContextMenuGui):
+                    # Add context menu to toolbar
+                    widget.__magicclass_parent__ = self
+                    self.native.setContextMenuPolicy(Qt.CustomContextMenu)
+                    self.native.customContextMenuRequested.connect(
+                        define_context_menu(widget, self.native)
+                        )
+                    _hist.append((name, type(attr), "ContextMenuGui"))
                 
                 elif isinstance(widget, ToolBarGui):
                     raise NotImplementedError("nested Toolbar is not implemented yet.")

@@ -17,6 +17,10 @@ def define_callback(self, callback: Callable):
         return None
     return _callback
 
+def define_context_menu(contextmenu, parent):
+    def rightClickContextMenu(point):
+        contextmenu.native.exec_(parent.mapToGlobal(point))
+    return rightClickContextMenu
 
 class MagicClassConstructionError(Exception):
     """

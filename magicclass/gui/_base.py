@@ -61,7 +61,7 @@ _RESERVED = {"__magicclass_parent__", "__magicclass_children__", "_close_on_run"
 
 def check_override(cls: type):
     """
-    Some of the methods should not be overriden because they are essential for Magic class
+    Some of the methods should not be overriden because they are essential for magic class
     construction.
 
     Parameters
