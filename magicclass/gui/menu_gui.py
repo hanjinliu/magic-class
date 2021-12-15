@@ -98,7 +98,7 @@ class MenuGuiBase(ContainerLikeGui):
                     pass
                 
                 elif isinstance(widget, Widget):
-                    widget = WidgetAction(widget, widget.name)
+                    widget = WidgetAction(widget)
                     
                 if isinstance(widget, (MenuGuiBase, AbstractAction, Callable)):
                     if (not isinstance(widget, Widget)) and callable(widget):

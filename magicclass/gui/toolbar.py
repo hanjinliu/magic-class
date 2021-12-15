@@ -96,7 +96,7 @@ class ToolBarGui(ContainerLikeGui):
                     tb.tooltip = widget.__doc__
                     widget.__magicclass_parent__ = self
                     widget._my_symbol = Symbol(name)
-                    widget = WidgetAction(tb, tb.name)
+                    widget = WidgetAction(tb)
                 
                 elif isinstance(widget, ToolBarGui):
                     raise NotImplementedError("nested Toolbar is not implemented yet.")
@@ -106,7 +106,7 @@ class ToolBarGui(ContainerLikeGui):
                     pass
                 
                 elif isinstance(widget, Widget):
-                    widget = WidgetAction(widget, widget.name)
+                    widget = WidgetAction(widget)
                     
                 if isinstance(widget, (AbstractAction, Callable)):
                     if (not isinstance(widget, Widget)) and callable(widget):

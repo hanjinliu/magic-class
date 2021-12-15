@@ -134,8 +134,14 @@ class MagicField(Field):
             If there is not enough information to build an action.
         """                
         if type(self.default) is bool or self.default_factory is bool:
+            # we should not use "isinstance" or "issubclass" because subclass may be mapped
+            # to different widget by users.
             value = False if self.default is MISSING else self.default
-            action = Action(checkable=True, checked=value, text=self.name, name=self.name)
+            action = Action(checkable=True, checked=value, 
+                            text=self.name.replace("_", " "), name=self.name)
+            options = self.metadata.get("options", {})
+            for k, v in options.items():
+                setattr(action, k, v)
         else:
             widget = self.to_widget()
             action = WidgetAction(widget)

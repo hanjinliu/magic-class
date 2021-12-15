@@ -327,15 +327,15 @@ class Action(AbstractAction):
 
 class WidgetAction(AbstractAction):
     
-    def __init__(self, widget: Widget, name: str = None, label: str = None, gui_only: bool = True,
-                 parent=None):
+    def __init__(self, widget: Widget, label: str = None, parent=None):
         if not isinstance(widget, Widget):
             raise TypeError(f"The first argument must be a Widget, got {type(widget)}")
         
         self.native = QWidgetAction(parent)
-        name = name or ""
+        name = widget.name
         self.native.setObjectName(name)
         self.label = label or name.replace("_", " ")
+        self.text = getattr(widget, "text", self.label)
         
         self.widget = widget
         self.native.setDefaultWidget(widget.native)
@@ -363,87 +363,27 @@ class WidgetAction(AbstractAction):
             raise AttributeError(msg)
     
     @property
-    def width(self) -> int:
-        return self.widget.width
+    def text(self) -> str:
+        return self.native.text()
     
-    @width.setter
-    def width(self, value: int):
-        self.widget.width = value
+    @text.setter
+    def text(self, value: str):
+        self.native.setText(value)
     
-    @property
-    def max_width(self) -> int:
-        return self.widget.max_width
-    
-    @max_width.setter
-    def max_width(self, value: int):
-        self.widget.max_width = value
-    
-    @property
-    def min_width(self) -> int:
-        return self.widget.min_width
-    
-    @min_width.setter
-    def min_width(self, value: int):
-        self.widget.min_width = value
-    
-    def _labeled_widget(self) -> _LabeledWidget | None:
-        """Return _LabeledWidget container, if applicable."""
+    def _labeled_widget(self):
         return self.widget._labeled_widget()
     
-    # repr methods similar to magicgui's Widget
     
-    def render(self):
-        try:
-            import numpy as np
-        except ImportError:
-            raise ModuleNotFoundError(
-                "could not find module 'numpy'. "
-                "Please `pip install numpy` to render widgets."
-            ) from None
-        
-        import qtpy
-        
-        img = self.widget.native.grab().toImage()
-        bits = img.constBits()
-        h, w, c = img.height(), img.width(), 4
-        if qtpy.API_NAME == "PySide2":
-            arr = np.array(bits).reshape(h, w, c)
-        else:
-            bits.setsize(h * w * c)
-            arr = np.frombuffer(bits, np.uint8).reshape(h, w, c)
-
-        return arr[:, :, [2, 1, 0, 3]]
-    
-    def __repr__(self) -> str:
-        """Return representation of widget of instsance."""
-        return f"{self.widget_type}(name={self.name!r}, widget={self.widget!r})"
-
-    def _repr_png_(self):
-        """Return PNG representation of the widget for QtConsole."""
-        from io import BytesIO
-
-        try:
-            from imageio import imsave
-        except ImportError:
-            print(
-                "(For a nicer magicgui widget representation in "
-                "Jupyter, please `pip install imageio`)"
-            )
-            return None
-
-        with BytesIO() as file_obj:
-            imsave(file_obj, self.render(), format="png")
-            file_obj.seek(0)
-            return file_obj.read()
-
 class _LabeledWidgetAction(WidgetAction):
-    def __init__(self, widget: Widget, name: str = None, label: str = None, gui_only: bool = True):
+    widget: _LabeledWidget
+    
+    def __init__(self, widget: Widget, label: str = None):
         if not isinstance(widget, Widget):
             raise TypeError(f"The first argument must be a Widget, got {type(widget)}")
         
         _labeled_widget =  _LabeledWidget(widget, label)
-        super().__init__(_labeled_widget, name)
-        self.widget: _LabeledWidget
+        super().__init__(_labeled_widget)
+        self.name = widget.name
         
         # Strangely, visible.setter does not work for sliders.
         widget.native.setVisible(True)
@@ -453,7 +393,7 @@ class _LabeledWidgetAction(WidgetAction):
         """
         Construct a labeled action using another action.
         """        
-        self = cls(action.widget, action.name, action.label)
+        self = cls(action.widget, action.label)
         action.parent = self
         return self
 
@@ -464,6 +404,7 @@ class _LabeledWidgetAction(WidgetAction):
     @label_width.setter
     def label_width(self, width):
         self.widget._label_widget.min_width = width
+    
             
 def _to_rgb(color):
     if isinstance(color, str):
