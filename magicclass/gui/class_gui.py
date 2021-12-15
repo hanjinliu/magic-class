@@ -1,7 +1,7 @@
 from __future__ import annotations
 from inspect import signature
 from typing import Any, Callable
-from qtpy.QtWidgets import QMenuBar, QWidget
+from qtpy.QtWidgets import QMenuBar, QWidget, QMainWindow, QBoxLayout
 from qtpy.QtGui import QIcon
 from qtpy.QtCore import Qt
 from magicgui.widgets import Container, MainWindow,Label, FunctionGui, Image, Table
@@ -130,8 +130,20 @@ class ClassGuiBase(BaseGui):
                     # Add menubar to container
                     widget.__magicclass_parent__ = self
                     if self._menubar is None:
+                        # if widget has no menubar, a new one should be created.
                         self._menubar = QMenuBar(parent=self.native)
-                        self.native.layout().setMenuBar(self._menubar)
+                        if issubclass(self.__class__, MainWindow):
+                            self.native: QMainWindow
+                            self.native.setMenuBar(self._menubar)
+                        else:
+                            _layout: QBoxLayout = self.native.layout()
+                            if _layout.menuBar() is None:
+                                _layout.setMenuBar(self._menubar)
+                            else:
+                                raise RuntimeError(
+                                    "Cannot add both toolbar and menubar to a non-main window."
+                                    "Use maigcclass(widget_type='mainwindow') instead."
+                                    )
                     
                     widget.native.setParent(self._menubar, widget.native.windowFlags())
                     self._menubar.addMenu(widget.native)
@@ -148,7 +160,19 @@ class ClassGuiBase(BaseGui):
                 
                 elif isinstance(widget, ToolBarGui):
                     widget.__magicclass_parent__ = self
-                    self.native.layout().setMenuBar(widget.native)
+                    if issubclass(self.__class__, MainWindow):
+                        self.native: QMainWindow
+                        self.native.addToolBar(widget.native)
+                    else:
+                        # self is not a main window object
+                        _layout: QBoxLayout = self.native.layout()
+                        if _layout.menuBar() is None:
+                            _layout.setMenuBar(widget.native)
+                        else:
+                            raise RuntimeError(
+                                "Cannot add two or more toolbars and/or menubars to a non-main"
+                                "window. Use maigcclass(widget_type='mainwindow') instead."
+                                )
                     _hist.append((name, type(attr), "ToolBarGui"))
                 
                 elif isinstance(widget, (Widget, Callable)):
