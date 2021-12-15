@@ -3,6 +3,8 @@ from functools import wraps as functools_wraps
 from typing import Any, Callable, TYPE_CHECKING, Iterable, Iterator, TypeVar, overload, MutableSequence
 from typing_extensions import _AnnotatedAlias
 import inspect
+import warnings
+import os
 from enum import Enum
 import warnings
 from docstring_parser import parse, compose
@@ -579,9 +581,15 @@ class ContainerLikeGui(BaseGui, mguiLike, MutableSequence):
     @icon_path.setter
     def icon_path(self, path: str):
         path = str(path)
-        icon = QIcon(path)
-        self.native.setIcon(icon)
-        self._icon_path = path
+        if os.path.exists(path):
+            icon = QIcon(path)
+            self.native.setIcon(icon)
+            self._icon_path = path
+        else:
+            warnings.warn(
+                f"Path {path} does not exists. Could not set icon.",
+                UserWarning
+            )
         
     def _create_widget_from_field(self, name: str, fld: MagicField):
         cls = self.__class__

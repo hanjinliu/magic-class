@@ -1,6 +1,8 @@
 from __future__ import annotations
 from inspect import signature
 from typing import Any, Callable
+import os
+import warnings
 from qtpy.QtWidgets import QMenuBar, QWidget, QMainWindow, QBoxLayout
 from qtpy.QtGui import QIcon
 from qtpy.QtCore import Qt
@@ -50,10 +52,16 @@ class ClassGuiBase(BaseGui):
     @icon_path.setter
     def icon_path(self, path: str):
         path = str(path)
-        icon = QIcon(path)
-        self.native.setWindowIcon(icon)
-        self._icon_path = path
-    
+        if os.path.exists(path):
+            icon = QIcon(path)
+            self.native.setIcon(icon)
+            self._icon_path = path
+        else:
+            warnings.warn(
+                f"Path {path} does not exists. Could not set icon.",
+                UserWarning
+            )
+            
     def _create_widget_from_field(self, name: str, fld: MagicField):
         cls = self.__class__
         if fld.not_ready():

@@ -1,6 +1,6 @@
 from magicclass import magicclass, magicmenu, magictoolbar, field, vfield, set_design
 from magicgui import widgets
-import os
+from pathlib import Path
 
 def test_field_types():
     @magicclass
@@ -276,8 +276,7 @@ def test_dont_record():
 def test_icon():
     def _icon_byte(a):
         return a.native.icon().pixmap(10,10).toImage().byteCount()
-    
-    path = os.path.join(os.path.dirname(__file__), "icons", "star.png")
+    path = Path(__file__).parent / "icons" / "star.png"
     
     @magicclass
     class A:

@@ -1,4 +1,4 @@
-from magicclass.widgets import FreeWidget
+from ..misc import FreeWidget
 
 # BUG: If this canvas is used in napari.Viewer, its behavior becomes very unstable.
 

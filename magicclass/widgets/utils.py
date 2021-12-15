@@ -1,7 +1,7 @@
 
 from __future__ import annotations
-from PyQt5.QtWidgets import QGridLayout, QHBoxLayout
-from qtpy.QtWidgets import QWidget, QVBoxLayout
+from functools import wraps
+from qtpy.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QHBoxLayout
 from magicgui.widgets import Widget
 from magicgui.backends._qtpy.widgets import QBaseWidget
 
@@ -25,3 +25,14 @@ class FreeWidget(Widget):
     def set_widget(self, widget: QWidget, *args):
         self.native.layout().addWidget(widget, *args)
         widget.setParent(self.native)
+
+def magicwidget(qcls: type[QWidget]):
+    @wraps(qcls.__init__)
+    def __init__(self: FreeWidget, *args, **kwargs):
+        FreeWidget.__init__(self)
+        self._qwidget = qcls.__init__(*args, **kwargs)
+        self.set_widget(self._qwidget)
+    
+    new_class = type(qcls.__name__, (FreeWidget,), {})
+    new_class.__init__ = __init__
+    return new_class

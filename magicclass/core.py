@@ -10,8 +10,6 @@ from typing import Any, Literal, Union
 from typing_extensions import Annotated, _AnnotatedAlias
 from macrokit import Expr, register_type, Head
 
-from magicclass.gui.toolbar import ToolBarGui
-
 from .gui.class_gui import (
     ClassGuiBase, 
     ClassGui,
@@ -30,6 +28,7 @@ from .gui.class_gui import (
     ListClassGui,
     )
 from .gui._base import PopUpMode, ErrorMode, defaults, MagicTemplate, check_override
+from .gui.toolbar import ToolBarGui
 from .gui import ContextMenuGui, MenuGui, MenuGuiBase
 from ._app import get_app
 
