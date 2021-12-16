@@ -890,14 +890,18 @@ def _child_that_has_widget(self: BaseGui, method: Callable,
             
 
 def _method_as_getter(self, bound_value: Callable):
-    *clsnames, funcname = bound_value.__qualname__.split(".")
+    qualname = bound_value.__qualname__
+    _locals = "<locals>."
+    if _locals in qualname:
+        qualname = qualname.split(_locals)[-1]
+    *clsnames, funcname = qualname.split(".")
     
     def _func(w):
         ins = self
         while clsnames[0] != ins.__class__.__name__:
             ins = getattr(ins, "__magicclass_parent__", None)
             if ins is None:
-                raise ValueError(f"Method {bound_value.__qualname__} is invisible"
+                raise ValueError(f"Method {qualname} is invisible"
                                  f"from magicclass {self.__class__.__qualname__}")
         
         for clsname in clsnames[1:]:
