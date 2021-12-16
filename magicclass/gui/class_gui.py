@@ -11,8 +11,6 @@ from magicgui.widgets._bases import Widget, ButtonWidget, ValueWidget, Container
 from magicgui.widgets._concrete import _LabeledWidget
 from macrokit import Symbol
 
-from magicclass.widgets.containers import HCollapsibleContainer
-
 from .mgui_ext import PushButtonPlus
 from .toolbar import ToolBarGui
 from .menu_gui import MenuGui, ContextMenuGui
@@ -26,6 +24,7 @@ from ..widgets import (
     ScrollableContainer,
     DraggableContainer,
     CollapsibleContainer,
+    HCollapsibleContainer,
     SplitterContainer,
     StackedContainer,
     TabbedContainer,
