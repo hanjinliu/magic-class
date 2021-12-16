@@ -237,11 +237,9 @@ def magicclass(class_: type | None = None,
             if widget_type in (WidgetType.collapsible, WidgetType.button):
                 self.btn_text = self.name
             
-            # TODO: does this "if" make sense?
-            if self.__magicclass_parent__ is None:
-                macrowidget = self.macro.widget.native
-                macrowidget.setParent(self.native, macrowidget.windowFlags())
-                self.macro.widget.__magicclass_parent__ = self
+            macrowidget = self.macro.widget.native
+            macrowidget.setParent(self.native, macrowidget.windowFlags())
+            self.macro.widget.__magicclass_parent__ = self
             
             if icon_path:
                 self.icon_path = icon_path
@@ -434,6 +432,10 @@ def _call_magicmenu(class_: type = None,
             
             if icon_path:
                 self.icon_path = icon_path
+            
+            macrowidget = self.macro.widget.native
+            macrowidget.setParent(self.native, macrowidget.windowFlags())
+            self.macro.widget.__magicclass_parent__ = self
 
         newclass.__init__ = __init__
         
