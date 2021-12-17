@@ -583,7 +583,10 @@ class ContainerLikeGui(BaseGui, mguiLike, MutableSequence):
         path = str(path)
         if os.path.exists(path):
             icon = QIcon(path)
-            self.native.setIcon(icon)
+            if hasattr(self.native, "setIcon"):
+                self.native.setIcon(icon)
+            else:
+                self.native.setWindowIcon(icon)
             self._icon_path = path
         else:
             warnings.warn(

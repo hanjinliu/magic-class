@@ -6,7 +6,7 @@ from magicgui.widgets import Image, Table, Label, FunctionGui
 from magicgui.widgets._bases import ButtonWidget
 from magicgui.widgets._bases.widget import Widget
 from macrokit import Symbol
-from qtpy.QtWidgets import QMenu
+from qtpy.QtWidgets import QMenu, QWidgetAction
 
 from .mgui_ext import AbstractAction, WidgetAction, _LabeledWidgetAction
 from ._base import BaseGui, PopUpMode, ErrorMode, ContainerLikeGui, nested_function_gui_callback
@@ -50,7 +50,6 @@ class MenuGuiBase(ContainerLikeGui):
         self.name = name
         self._list: list[MenuGuiBase | AbstractAction] = []
         self.labels = labels
-
        
     def _convert_attributes_into_widgets(self):
         cls = self.__class__
@@ -88,11 +87,17 @@ class MenuGuiBase(ContainerLikeGui):
                     f = nested_function_gui_callback(self, widget)
                     widget.called.connect(f)
                 
-                elif isinstance(widget, MenuGuiBase):
+                elif isinstance(widget, BaseGui):
                     widget.__magicclass_parent__ = self
                     self.__magicclass_children__.append(widget)
-                    widget.native.setParent(self.native, widget.native.windowFlags())
+                    widget._my_symbol = Symbol(name)
                     
+                    if isinstance(widget, MenuGuiBase):
+                        widget.native.setParent(self.native, widget.native.windowFlags())
+                    
+                    else:
+                        widget = WidgetAction(widget)
+                        
                 elif isinstance(widget, Widget):
                     widget = WidgetAction(widget)
 
@@ -149,9 +154,17 @@ class MenuGuiBase(ContainerLikeGui):
             self._list.insert(key, obj)
         
         elif isinstance(obj, WidgetAction):
+            from .toolbar import ToolBarGui
             if isinstance(obj.widget, Separator):
                 insert_action_like(self.native, key, "sep")
             
+            elif isinstance(obj.widget, ToolBarGui):
+                qmenu = QMenu(obj.widget.name, self.native)
+                qmenu.addAction(obj.native)
+                if obj.widget._icon_path is not None:
+                    qmenu.setIcon(obj.widget.native.windowIcon())
+                insert_action_like(self.native, key, qmenu)
+                
             else:
                 _hide_labels = (_LabeledWidgetAction, ButtonWidget, FreeWidget, Label, 
                                 FunctionGui, Image, Table)

@@ -251,6 +251,9 @@ class mguiLike:
     def visible(self, value: bool):
         self.native.setVisible(value)
     
+    @property
+    def widget_type(self):
+        return self.__class__.__name__
     
 class AbstractAction(mguiLike):
     """
@@ -335,8 +338,8 @@ class Action(AbstractAction):
 class WidgetAction(AbstractAction):
     
     def __init__(self, widget: Widget, label: str = None, parent=None):
-        if not isinstance(widget, Widget):
-            raise TypeError(f"The first argument must be a Widget, got {type(widget)}")
+        if not isinstance(widget, (Widget, mguiLike)):
+            raise TypeError(f"The first argument must be a magicgui-like widget, got {type(widget)}")
         
         self.native = QWidgetAction(parent)
         name = widget.name
@@ -347,9 +350,14 @@ class WidgetAction(AbstractAction):
         self.widget = widget
         self.native.setDefaultWidget(widget.native)
         self.support_value = hasattr(widget, "value")
-        self.widget_type = widget.widget_type
+        
         if self.support_value:
             self.widget.changed.connect(lambda: self.changed.emit(self.value))
+    
+    
+    @property
+    def widget_type(self):
+        return self.widget.widget_type
     
     @property
     def value(self):

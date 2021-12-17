@@ -44,23 +44,6 @@ class ClassGuiBase(BaseGui):
     _remove_child_margins: bool
     native: QWidget
     
-    @property
-    def icon_path(self):
-        return self._icon_path
-    
-    @icon_path.setter
-    def icon_path(self, path: str):
-        path = str(path)
-        if os.path.exists(path):
-            icon = QIcon(path)
-            self.native.setIcon(icon)
-            self._icon_path = path
-        else:
-            warnings.warn(
-                f"Path {path} does not exists. Could not set icon.",
-                UserWarning
-            )
-            
     def _create_widget_from_field(self, name: str, fld: MagicField):
         cls = self.__class__
         if fld.not_ready():
@@ -112,12 +95,10 @@ class ClassGuiBase(BaseGui):
                     # Nested magic-class
                     widget = attr()
                     setattr(self, name, widget)
-                    self.__magicclass_children__.append(widget)
                 
                 elif isinstance(attr, BaseGui):
                     widget = attr
                     setattr(self, name, widget)
-                    self.__magicclass_children__.append(widget)
                 
                 elif isinstance(attr, MagicField):
                     # If MagicField is given by field() function.
@@ -133,6 +114,8 @@ class ClassGuiBase(BaseGui):
                     widget = getattr(self, name, None)
                 
                 if isinstance(widget, BaseGui):
+                    widget.__magicclass_parent__ = self
+                    self.__magicclass_children__.append(widget)
                     widget._my_symbol = Symbol(name)
                             
                 if isinstance(widget, MenuGui):

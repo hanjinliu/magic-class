@@ -6,7 +6,7 @@ from magicgui.widgets import Image, Table, Label, FunctionGui
 from magicgui.widgets._bases import ButtonWidget
 from magicgui.widgets._bases.widget import Widget
 from macrokit import Symbol
-from qtpy.QtWidgets import QToolBar
+from qtpy.QtWidgets import QToolBar, QMenu, QWidgetAction
 from qtpy.QtCore import Qt
 
 from .mgui_ext import AbstractAction, _LabeledWidgetAction, WidgetAction, ToolButtonPlus
@@ -53,7 +53,7 @@ class ToolBarGui(ContainerLikeGui):
         self.name = name
         self._list: list[MenuGuiBase | AbstractAction] = []
         self.labels = labels
-        
+    
     
     def _convert_attributes_into_widgets(self):
         cls = self.__class__
@@ -91,29 +91,37 @@ class ToolBarGui(ContainerLikeGui):
                     f = nested_function_gui_callback(self, widget)
                     widget.called.connect(f)
                 
-                elif isinstance(widget, MenuGui):
-                    tb = ToolButtonPlus(widget.name)
-                    tb.set_menu(widget.native)
-                    tb.tooltip = widget.__doc__
+                elif isinstance(widget, BaseGui):
                     widget.__magicclass_parent__ = self
+                    self.__magicclass_children__.append(widget)
                     widget._my_symbol = Symbol(name)
-                    widget = WidgetAction(tb)
-                
-                elif isinstance(widget, ContextMenuGui):
-                    # Add context menu to toolbar
-                    widget.__magicclass_parent__ = self
-                    self.native.setContextMenuPolicy(Qt.CustomContextMenu)
-                    self.native.customContextMenuRequested.connect(
-                        define_context_menu(widget, self.native)
-                        )
-                    _hist.append((name, type(attr), "ContextMenuGui"))
-                
-                elif isinstance(widget, ToolBarGui):
-                    raise NotImplementedError("nested Toolbar is not implemented yet.")
-                
-                elif isinstance(widget, Separator):
-                    # separator should not be added as a widget action
-                    pass
+                    
+                    if isinstance(widget, MenuGui):
+                        tb = ToolButtonPlus(widget.name)
+                        tb.set_menu(widget.native)
+                        tb.tooltip = widget.__doc__
+                        widget = WidgetAction(tb)
+                    
+                    elif isinstance(widget, ContextMenuGui):
+                        # Add context menu to toolbar
+                        self.native.setContextMenuPolicy(Qt.CustomContextMenu)
+                        self.native.customContextMenuRequested.connect(
+                            define_context_menu(widget, self.native)
+                            )
+                        _hist.append((name, type(attr), "ContextMenuGui"))
+                    
+                    elif isinstance(widget, ToolBarGui):
+                        tb = ToolButtonPlus(widget.name)
+                        tb.tooltip = widget.__doc__
+                        qmenu = QMenu(self.native)
+                        waction = QWidgetAction(qmenu)
+                        waction.setDefaultWidget(widget.native)
+                        qmenu.addAction(waction)
+                        tb.set_menu(qmenu)
+                        widget = WidgetAction(tb)
+                    
+                    else:
+                        widget = WidgetAction(widget)
                 
                 elif isinstance(widget, Widget):
                     widget = WidgetAction(widget)
@@ -176,7 +184,7 @@ class ToolBarGui(ContainerLikeGui):
         elif isinstance(obj, WidgetAction):
             if isinstance(obj.widget, Separator):
                 insert_action_like(self.native, key, "sep")
-                
+            
             else:
                 _hide_labels = (_LabeledWidgetAction, ButtonWidget, FreeWidget, Label, 
                                 FunctionGui, Image, Table)

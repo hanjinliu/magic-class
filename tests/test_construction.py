@@ -142,24 +142,26 @@ def test_separator():
         @magicmenu
         class Menu:
             def m1(self): ...
-            sep = field(Separator)
+            sep0 = field(Separator)
             i = field(int)
+            sep1 = Separator()
             def m2(self, path: Path): ...
     
     ui = A()
     assert type(ui.Menu[1].widget) is Separator
-    assert ui.Menu.sep.native is not ui.Menu[1].native
+    assert type(ui.Menu[3].widget) is Separator
     
     @magicclass
     class A:
         @magictoolbar
         class Menu:
             def m1(self): ...
-            sep = field(Separator)
+            sep0 = field(Separator)
             i = field(int)
+            sep1 = Separator()
             def m2(self, path: Path): ...
     
     ui = A()
     assert type(ui.Menu[1].widget) is Separator
-    assert ui.Menu.sep.native is not ui.i[1].native
+    assert type(ui.Menu[3].widget) is Separator
     
