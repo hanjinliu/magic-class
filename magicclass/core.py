@@ -185,7 +185,7 @@ def magicclass(class_: type | None = None,
         
     widget_type = WidgetType(widget_type)
     
-    def wrapper(cls) -> ClassGui:
+    def wrapper(cls) -> type[ClassGui]:
         if not isinstance(cls, type):
             raise TypeError(f"magicclass can only wrap classes, not {type(cls)}")
         elif is_dataclass(cls):
@@ -250,8 +250,11 @@ def magicclass(class_: type | None = None,
         newclass.__repr__ = oldclass.__repr__
         
         return newclass
-    
-    return wrapper if class_ is None else wrapper(class_)
+
+    if class_ is None:
+        return wrapper
+    else:
+        return wrapper(class_)
 
 
 def magicmenu(class_: type = None, 
@@ -390,7 +393,7 @@ def _call_magicmenu(class_: type = None,
     if popup_mode in (PopUpMode.above, PopUpMode.below, PopUpMode.first, PopUpMode.last):
         raise ValueError(f"Mode {popup_mode.value} is not compatible with Menu.")
     
-    def wrapper(cls) -> menugui_class:
+    def wrapper(cls) -> type[menugui_class]:
         if not isinstance(cls, type):
             raise TypeError(f"magicclass can only wrap classes, not {type(cls)}")
         elif is_dataclass(cls):
