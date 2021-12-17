@@ -493,7 +493,7 @@ class MagicTemplate:
                                       "widget in napari."
                                 warnings.warn(msg, UserWarning)
                             
-                            else:    
+                            else:
                                 from qtpy.QtWidgets import QDockWidget
                                 from qtpy.QtCore import Qt
                                 dock = QDockWidget(_get_widget_name(widget), self.native)

@@ -2,6 +2,8 @@ from magicclass import magicclass, magictoolbar, magicmenu, MagicTemplate
 from unittest.mock import MagicMock
 from pathlib import Path
 
+from magicclass.fields import field
+
 def test_basic():
     @magicclass
     class A(MagicTemplate):
@@ -131,3 +133,33 @@ def test_double_wrap():
     
     ui.B.C["f2"].changed()
     assert hasattr(ui, "new_attr")
+
+
+def test_separator():
+    from magicclass.widgets import Separator
+    @magicclass
+    class A:
+        @magicmenu
+        class Menu:
+            def m1(self): ...
+            sep = field(Separator)
+            i = field(int)
+            def m2(self, path: Path): ...
+    
+    ui = A()
+    assert type(ui.Menu[1].widget) is Separator
+    assert ui.Menu.sep.native is not ui.Menu[1].native
+    
+    @magicclass
+    class A:
+        @magictoolbar
+        class Menu:
+            def m1(self): ...
+            sep = field(Separator)
+            i = field(int)
+            def m2(self, path: Path): ...
+    
+    ui = A()
+    assert type(ui.Menu[1].widget) is Separator
+    assert ui.Menu.sep.native is not ui.i[1].native
+    

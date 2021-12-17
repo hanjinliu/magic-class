@@ -93,14 +93,10 @@ class MenuGuiBase(ContainerLikeGui):
                     self.__magicclass_children__.append(widget)
                     widget.native.setParent(self.native, widget.native.windowFlags())
                     
-                elif isinstance(widget, Separator):
-                    # separator should not be added as a widget action
-                    pass
-                
                 elif isinstance(widget, Widget):
                     widget = WidgetAction(widget)
-                    
-                if isinstance(widget, (MenuGuiBase, AbstractAction, Callable)):
+
+                if isinstance(widget, (MenuGuiBase, AbstractAction, Callable, Widget)):
                     if (not isinstance(widget, Widget)) and callable(widget):
                         widget = self._create_widget_from_method(widget)
                     
@@ -137,7 +133,7 @@ class MenuGuiBase(ContainerLikeGui):
         return None
     
     
-    def insert(self, key: int, obj: Callable | MenuGuiBase | AbstractAction | Widget) -> None:
+    def insert(self, key: int, obj: Callable | MenuGuiBase | AbstractAction) -> None:
         """
         Insert object into the menu. Could be widget or callable.
 
@@ -147,22 +143,24 @@ class MenuGuiBase(ContainerLikeGui):
             Position to insert.
         obj : Callable | MenuGuiBase | AbstractAction | Widget
             Object to insert.
-        """        
+        """
         if isinstance(obj, (self._component_class, MenuGuiBase)):
             insert_action_like(self.native, key, obj.native)
             self._list.insert(key, obj)
-        elif isinstance(obj, Separator):
-            insert_action_like(self.native, key, "sep")
-            self._list.insert(key, obj)
+        
         elif isinstance(obj, WidgetAction):
-            _hide_labels = (_LabeledWidgetAction, ButtonWidget, FreeWidget, Label, 
-                            FunctionGui, Image, Table)
-            _obj = obj
-            if not isinstance(obj.widget, _hide_labels):
-                _obj = _LabeledWidgetAction.from_action(obj)
-            _obj.parent = self
-            insert_action_like(self.native, key, _obj.native)
-            self._unify_label_widths()
+            if isinstance(obj.widget, Separator):
+                insert_action_like(self.native, key, "sep")
+            
+            else:
+                _hide_labels = (_LabeledWidgetAction, ButtonWidget, FreeWidget, Label, 
+                                FunctionGui, Image, Table)
+                _obj = obj
+                if not isinstance(obj.widget, _hide_labels):
+                    _obj = _LabeledWidgetAction.from_action(obj)
+                _obj.parent = self
+                insert_action_like(self.native, key, _obj.native)
+                self._unify_label_widths()
             self._list.insert(key, obj)
         else:
             raise TypeError(f"{type(obj)} is not supported.")

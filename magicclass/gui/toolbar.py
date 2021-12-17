@@ -118,7 +118,7 @@ class ToolBarGui(ContainerLikeGui):
                 elif isinstance(widget, Widget):
                     widget = WidgetAction(widget)
                     
-                if isinstance(widget, (AbstractAction, Callable)):
+                if isinstance(widget, (AbstractAction, Callable, Widget)):
                     if (not isinstance(widget, Widget)) and callable(widget):
                         widget = self._create_widget_from_method(widget)
                     
@@ -172,18 +172,20 @@ class ToolBarGui(ContainerLikeGui):
         if isinstance(obj, self._component_class):
             insert_action_like(self.native, key, obj.native)
             self._list.insert(key, obj)
-        elif isinstance(obj, Separator):
-            insert_action_like(self.native, key, "sep")
-            self._list.insert(key, obj)
+        
         elif isinstance(obj, WidgetAction):
-            _hide_labels = (_LabeledWidgetAction, ButtonWidget, FreeWidget, Label, 
-                            FunctionGui, Image, Table)
-            _obj = obj
-            if not isinstance(obj.widget, _hide_labels):
-                _obj = _LabeledWidgetAction.from_action(obj)
-            _obj.parent = self
-            insert_action_like(self.native, key, _obj.native)
-            self._unify_label_widths()
+            if isinstance(obj.widget, Separator):
+                insert_action_like(self.native, key, "sep")
+                
+            else:
+                _hide_labels = (_LabeledWidgetAction, ButtonWidget, FreeWidget, Label, 
+                                FunctionGui, Image, Table)
+                _obj = obj
+                if not isinstance(obj.widget, _hide_labels):
+                    _obj = _LabeledWidgetAction.from_action(obj)
+                _obj.parent = self
+                insert_action_like(self.native, key, _obj.native)
+                self._unify_label_widths()
             self._list.insert(key, obj)
         else:
             raise TypeError(f"{type(obj)} is not supported.")
