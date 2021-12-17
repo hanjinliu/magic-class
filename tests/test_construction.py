@@ -164,4 +164,62 @@ def test_separator():
     ui = A()
     assert type(ui.Menu[1].widget) is Separator
     assert type(ui.Menu[3].widget) is Separator
+
+
+def test_tooltip():
+    @magicclass(widget_type="mainwindow")
+    class A:
+        @magicmenu
+        class Menu:
+            def func(self, a: int):
+                """
+                Test tooltip.
+
+                Parameters
+                ----------
+                a : int
+                    Tooltip of a.
+                """
+                
+        @magictoolbar
+        class Tool:
+            def func(self, a: int):
+                """
+                Test tooltip.
+
+                Parameters
+                ----------
+                a : int
+                    Tooltip of a.
+                """
+                
+        def func(self, a: int):
+            """
+            Test tooltip.
+
+            Parameters
+            ----------
+            a : int
+                Tooltip of a.
+            """
     
+    _TOOLTIP = "Test tooltip."
+    _PARAM_TOOLTIP = "Tooltip of a."
+    
+    ui = A()
+    ui.show(False)
+    
+    assert ui["func"].tooltip == _TOOLTIP
+    assert ui.Menu["func"].tooltip == _TOOLTIP
+    assert ui.Tool["func"].tooltip == _TOOLTIP
+    
+    ui["func"].changed()
+    ui["func"].mgui._call_button.changed()
+    ui.Menu["func"].changed()
+    ui.Menu["func"].mgui._call_button.changed()
+    ui.Tool["func"].changed()
+    ui.Tool["func"].mgui._call_button.changed()
+    
+    assert ui["func"].mgui.a.tooltip == _PARAM_TOOLTIP
+    assert ui.Menu["func"].mgui.a.tooltip == _PARAM_TOOLTIP
+    assert ui.Tool["func"].mgui.a.tooltip == _PARAM_TOOLTIP
