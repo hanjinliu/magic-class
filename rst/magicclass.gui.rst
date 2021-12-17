@@ -36,6 +36,14 @@ magicclass.gui.mgui\_ext module
    :undoc-members:
    :show-inheritance:
 
+magicclass.gui.toolbar module
+-----------------------------
+
+.. automodule:: magicclass.gui.toolbar
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 magicclass.gui.utils module
 ---------------------------
 

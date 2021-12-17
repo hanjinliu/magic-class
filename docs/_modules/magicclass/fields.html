@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.fields &mdash; magic-class 0.5.11 documentation</title>
+  <title>magicclass.fields &mdash; magic-class 0.5.14 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -27,7 +27,7 @@
             <a href="../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.11
+                0.5.14
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -212,7 +212,14 @@
 <span class="sd">            If there is not enough information to build an action.</span>
 <span class="sd">        &quot;&quot;&quot;</span>                
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">default</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">bool</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_factory</span> <span class="ow">is</span> <span class="nb">bool</span><span class="p">:</span>
-            <span class="n">action</span> <span class="o">=</span> <span class="n">Action</span><span class="p">(</span><span class="n">checkable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">checked</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="c1"># we should not use &quot;isinstance&quot; or &quot;issubclass&quot; because subclass may be mapped</span>
+            <span class="c1"># to different widget by users.</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="kc">False</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">default</span> <span class="ow">is</span> <span class="n">MISSING</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">default</span>
+            <span class="n">action</span> <span class="o">=</span> <span class="n">Action</span><span class="p">(</span><span class="n">checkable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">checked</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> 
+                            <span class="n">text</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">),</span> <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="n">options</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;options&quot;</span><span class="p">,</span> <span class="p">{})</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">options</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_widget</span><span class="p">()</span>
             <span class="n">action</span> <span class="o">=</span> <span class="n">WidgetAction</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
@@ -245,10 +252,22 @@
             <span class="n">wcls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_factory</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">wcls</span> <span class="o">=</span> <span class="n">get_widget_class</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">annotation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">annotation</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">wcls</span><span class="o">.</span><span class="vm">__name__</span></div>
-
-
+        <span class="k">return</span> <span class="n">wcls</span><span class="o">.</span><span class="vm">__name__</span>
+    
+<div class="viewcode-block" id="MagicField.decode_string_annotation"><a class="viewcode-back" href="../../magicclass.html#magicclass.fields.MagicField.decode_string_annotation">[docs]</a>    <span class="k">def</span> <span class="nf">decode_string_annotation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">annot</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicField</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Convert string type annotation into field info.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">default_factory</span> <span class="o">=</span> <span class="n">annot</span>
+        <span class="c1"># Sometimes annotation is not type but str. </span>
+        <span class="kn">from</span> <span class="nn">pydoc</span> <span class="kn">import</span> <span class="n">locate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">default_factory</span> <span class="o">=</span> <span class="n">locate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">default_factory</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div></div>
+    
+    
 <div class="viewcode-block" id="MagicValueField"><a class="viewcode-back" href="../../magicclass.html#magicclass.fields.MagicValueField">[docs]</a><span class="k">class</span> <span class="nc">MagicValueField</span><span class="p">(</span><span class="n">MagicField</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Field class for magicgui construction. Unlike MagicField, object of this class always </span>
+<span class="sd">    returns value itself.</span>
+<span class="sd">    &quot;&quot;&quot;</span>    
 <div class="viewcode-block" id="MagicValueField.get_widget"><a class="viewcode-back" href="../../magicclass.html#magicclass.fields.MagicValueField.get_widget">[docs]</a>    <span class="k">def</span> <span class="nf">get_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">X</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueWidget</span><span class="p">:</span>
         <span class="n">widget</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_widget</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">):</span>

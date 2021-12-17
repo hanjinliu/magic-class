@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.core &mdash; magic-class 0.5.12 documentation</title>
+  <title>magicclass.core &mdash; magic-class 0.5.14 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -27,7 +27,7 @@
             <a href="../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.12
+                0.5.14
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -98,6 +98,7 @@
     <span class="n">DraggableClassGui</span><span class="p">,</span>
     <span class="n">ButtonClassGui</span><span class="p">,</span> 
     <span class="n">CollapsibleClassGui</span><span class="p">,</span>
+    <span class="n">HCollapsibleClassGui</span><span class="p">,</span>
     <span class="n">SplitClassGui</span><span class="p">,</span>
     <span class="n">TabbedClassGui</span><span class="p">,</span>
     <span class="n">StackedClassGui</span><span class="p">,</span>
@@ -105,6 +106,7 @@
     <span class="n">ListClassGui</span><span class="p">,</span>
     <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">.gui._base</span> <span class="kn">import</span> <span class="n">PopUpMode</span><span class="p">,</span> <span class="n">ErrorMode</span><span class="p">,</span> <span class="n">defaults</span><span class="p">,</span> <span class="n">MagicTemplate</span><span class="p">,</span> <span class="n">check_override</span>
+<span class="kn">from</span> <span class="nn">.gui.toolbar</span> <span class="kn">import</span> <span class="n">ToolBarGui</span>
 <span class="kn">from</span> <span class="nn">.gui</span> <span class="kn">import</span> <span class="n">ContextMenuGui</span><span class="p">,</span> <span class="n">MenuGui</span><span class="p">,</span> <span class="n">MenuGuiBase</span>
 <span class="kn">from</span> <span class="nn">._app</span> <span class="kn">import</span> <span class="n">get_app</span>
 
@@ -134,9 +136,10 @@
 <div class="viewcode-block" id="WidgetType"><a class="viewcode-back" href="../../magicclass.html#magicclass.core.WidgetType">[docs]</a><span class="k">class</span> <span class="nc">WidgetType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
     <span class="n">none</span> <span class="o">=</span> <span class="s2">&quot;none&quot;</span>
     <span class="n">scrollable</span> <span class="o">=</span> <span class="s2">&quot;scrollable&quot;</span>
-    <span class="n">draggalbe</span> <span class="o">=</span> <span class="s2">&quot;draggable&quot;</span>
+    <span class="n">draggable</span> <span class="o">=</span> <span class="s2">&quot;draggable&quot;</span>
     <span class="n">split</span> <span class="o">=</span> <span class="s2">&quot;split&quot;</span>
     <span class="n">collapsible</span> <span class="o">=</span> <span class="s2">&quot;collapsible&quot;</span>
+    <span class="n">hcollapsible</span> <span class="o">=</span> <span class="s2">&quot;hcollapsible&quot;</span>
     <span class="n">button</span> <span class="o">=</span> <span class="s2">&quot;button&quot;</span>
     <span class="n">toolbox</span> <span class="o">=</span> <span class="s2">&quot;toolbox&quot;</span>
     <span class="n">tabbed</span> <span class="o">=</span> <span class="s2">&quot;tabbed&quot;</span>
@@ -149,7 +152,7 @@
 <span class="n">WidgetTypeStr</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;none&quot;</span><span class="p">],</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;scrollable&quot;</span><span class="p">],</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;draggable&quot;</span><span class="p">],</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;split&quot;</span><span class="p">],</span>
                       <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;collapsible&quot;</span><span class="p">],</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;button&quot;</span><span class="p">],</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;toolbox&quot;</span><span class="p">],</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;tabbed&quot;</span><span class="p">],</span>
                       <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;stacked&quot;</span><span class="p">],</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;list&quot;</span><span class="p">],</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;subwindows&quot;</span><span class="p">],</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;groupbox&quot;</span><span class="p">],</span>
-                      <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;mainwindow&quot;</span><span class="p">]]</span>
+                      <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;mainwindow&quot;</span><span class="p">],</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;hcollapsible&quot;</span><span class="p">]]</span>
 
 <span class="n">PopUpModeStr</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;popup&quot;</span><span class="p">],</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;first&quot;</span><span class="p">],</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;last&quot;</span><span class="p">],</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;above&quot;</span><span class="p">],</span>
                      <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;below&quot;</span><span class="p">],</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;dock&quot;</span><span class="p">],</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;parentlast&quot;</span><span class="p">]]</span>
@@ -159,9 +162,10 @@
 <span class="n">_TYPE_MAP</span> <span class="o">=</span> <span class="p">{</span>
     <span class="n">WidgetType</span><span class="o">.</span><span class="n">none</span><span class="p">:</span> <span class="n">ClassGui</span><span class="p">,</span>
     <span class="n">WidgetType</span><span class="o">.</span><span class="n">scrollable</span><span class="p">:</span> <span class="n">ScrollableClassGui</span><span class="p">,</span>
-    <span class="n">WidgetType</span><span class="o">.</span><span class="n">draggalbe</span><span class="p">:</span> <span class="n">DraggableClassGui</span><span class="p">,</span>
+    <span class="n">WidgetType</span><span class="o">.</span><span class="n">draggable</span><span class="p">:</span> <span class="n">DraggableClassGui</span><span class="p">,</span>
     <span class="n">WidgetType</span><span class="o">.</span><span class="n">split</span><span class="p">:</span> <span class="n">SplitClassGui</span><span class="p">,</span>
     <span class="n">WidgetType</span><span class="o">.</span><span class="n">collapsible</span><span class="p">:</span> <span class="n">CollapsibleClassGui</span><span class="p">,</span>
+    <span class="n">WidgetType</span><span class="o">.</span><span class="n">hcollapsible</span><span class="p">:</span> <span class="n">HCollapsibleClassGui</span><span class="p">,</span>
     <span class="n">WidgetType</span><span class="o">.</span><span class="n">button</span><span class="p">:</span> <span class="n">ButtonClassGui</span><span class="p">,</span>
     <span class="n">WidgetType</span><span class="o">.</span><span class="n">toolbox</span><span class="p">:</span> <span class="n">ToolBoxClassGui</span><span class="p">,</span>
     <span class="n">WidgetType</span><span class="o">.</span><span class="n">tabbed</span><span class="p">:</span> <span class="n">TabbedClassGui</span><span class="p">,</span>
@@ -203,6 +207,7 @@
                <span class="n">popup_mode</span><span class="p">:</span> <span class="n">PopUpModeStr</span> <span class="o">|</span> <span class="n">PopUpMode</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                <span class="n">error_mode</span><span class="p">:</span> <span class="n">ErrorModeStr</span> <span class="o">|</span> <span class="n">ErrorMode</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                <span class="n">widget_type</span><span class="p">:</span> <span class="n">WidgetTypeStr</span> <span class="o">|</span> <span class="n">WidgetType</span> <span class="o">=</span> <span class="n">WidgetType</span><span class="o">.</span><span class="n">none</span><span class="p">,</span>
+               <span class="n">icon_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                <span class="n">parent</span> <span class="o">=</span> <span class="kc">None</span>
                <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -237,6 +242,8 @@
 <span class="sd">        Option of how to raise errors during function calls.</span>
 <span class="sd">    widget_type : WidgetType or str, optional</span>
 <span class="sd">        Widget type of container.</span>
+<span class="sd">    icon_path : str, optional</span>
+<span class="sd">        Path to the icon image.</span>
 <span class="sd">    parent : magicgui.widgets._base.Widget, optional</span>
 <span class="sd">        Parent widget if exists.</span>
 <span class="sd">    </span>
@@ -256,7 +263,7 @@
         
     <span class="n">widget_type</span> <span class="o">=</span> <span class="n">WidgetType</span><span class="p">(</span><span class="n">widget_type</span><span class="p">)</span>
     
-    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ClassGui</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">[</span><span class="n">ClassGui</span><span class="p">]:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;magicclass can only wrap classes, not </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">is_dataclass</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
@@ -308,11 +315,12 @@
             <span class="k">if</span> <span class="n">widget_type</span> <span class="ow">in</span> <span class="p">(</span><span class="n">WidgetType</span><span class="o">.</span><span class="n">collapsible</span><span class="p">,</span> <span class="n">WidgetType</span><span class="o">.</span><span class="n">button</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">btn_text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
             
-            <span class="c1"># TODO: does this &quot;if&quot; make sense?</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__magicclass_parent__</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">macrowidget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">macro</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">native</span>
-                <span class="n">macrowidget</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="p">,</span> <span class="n">macrowidget</span><span class="o">.</span><span class="n">windowFlags</span><span class="p">())</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">macro</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">__magicclass_parent__</span> <span class="o">=</span> <span class="bp">self</span>
+            <span class="n">macrowidget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">macro</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">native</span>
+            <span class="n">macrowidget</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="p">,</span> <span class="n">macrowidget</span><span class="o">.</span><span class="n">windowFlags</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">macro</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">__magicclass_parent__</span> <span class="o">=</span> <span class="bp">self</span>
+            
+            <span class="k">if</span> <span class="n">icon_path</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">icon_path</span> <span class="o">=</span> <span class="n">icon_path</span>
 
         <span class="n">newclass</span><span class="o">.</span><span class="fm">__init__</span> <span class="o">=</span> <span class="fm">__init__</span>
         
@@ -320,8 +328,11 @@
         <span class="n">newclass</span><span class="o">.</span><span class="fm">__repr__</span> <span class="o">=</span> <span class="n">oldclass</span><span class="o">.</span><span class="fm">__repr__</span>
         
         <span class="k">return</span> <span class="n">newclass</span>
-    
-    <span class="k">return</span> <span class="n">wrapper</span> <span class="k">if</span> <span class="n">class_</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">wrapper</span><span class="p">(</span><span class="n">class_</span><span class="p">)</span></div>
+
+    <span class="k">if</span> <span class="n">class_</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">wrapper</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">wrapper</span><span class="p">(</span><span class="n">class_</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="magicmenu"><a class="viewcode-back" href="../../magicclass.html#magicclass.core.magicmenu">[docs]</a><span class="k">def</span> <span class="nf">magicmenu</span><span class="p">(</span><span class="n">class_</span><span class="p">:</span> <span class="nb">type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
@@ -330,6 +341,7 @@
               <span class="n">popup_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">PopUpMode</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
               <span class="n">error_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">ErrorMode</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
               <span class="n">labels</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
+              <span class="n">icon_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
               <span class="n">parent</span> <span class="o">=</span> <span class="kc">None</span>
               <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -343,12 +355,27 @@
                  <span class="n">popup_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">PopUpMode</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">error_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">ErrorMode</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">labels</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
+                 <span class="n">icon_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">parent</span><span class="o">=</span><span class="kc">None</span>
                  <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Decorator that can convert a Python class into a context menu.</span>
 <span class="sd">    &quot;&quot;&quot;</span>    
     <span class="k">return</span> <span class="n">_call_magicmenu</span><span class="p">(</span><span class="o">**</span><span class="nb">locals</span><span class="p">(),</span> <span class="n">menugui_class</span><span class="o">=</span><span class="n">ContextMenuGui</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="magictoolbar"><a class="viewcode-back" href="../../magicclass.html#magicclass.core.magictoolbar">[docs]</a><span class="k">def</span> <span class="nf">magictoolbar</span><span class="p">(</span><span class="n">class_</span><span class="p">:</span> <span class="nb">type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+                 <span class="o">*</span><span class="p">,</span> 
+                 <span class="n">close_on_run</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">popup_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">PopUpMode</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">error_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">ErrorMode</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">labels</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
+                 <span class="n">icon_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">parent</span> <span class="o">=</span> <span class="kc">None</span>
+                 <span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Decorator that can convert a Python class into a menu bar.</span>
+<span class="sd">    &quot;&quot;&quot;</span>    
+    <span class="k">return</span> <span class="n">_call_magicmenu</span><span class="p">(</span><span class="o">**</span><span class="nb">locals</span><span class="p">(),</span> <span class="n">menugui_class</span><span class="o">=</span><span class="n">ToolBarGui</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="MagicClassFactory"><a class="viewcode-back" href="../../magicclass.html#magicclass.core.MagicClassFactory">[docs]</a><span class="k">class</span> <span class="nc">MagicClassFactory</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -362,6 +389,7 @@
                  <span class="n">popup_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">PopUpMode</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">error_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">ErrorMode</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">widget_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">WidgetType</span> <span class="o">=</span> <span class="n">WidgetType</span><span class="o">.</span><span class="n">none</span><span class="p">,</span>
+                 <span class="n">icon_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">parent</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">attrs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
                  <span class="p">):</span>
@@ -372,6 +400,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">popup_mode</span> <span class="o">=</span> <span class="n">popup_mode</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">error_mode</span> <span class="o">=</span> <span class="n">error_mode</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget_type</span> <span class="o">=</span> <span class="n">widget_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">icon_path</span> <span class="o">=</span> <span class="n">icon_path</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">parent</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">attrs</span> <span class="o">=</span> <span class="n">attrs</span>
     
@@ -379,19 +408,28 @@
         <span class="n">_cls</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">attrs</span><span class="p">)</span>
         <span class="bp">cls</span> <span class="o">=</span> <span class="n">magicclass</span><span class="p">(</span><span class="n">_cls</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">,</span> <span class="n">close_on_run</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">close_on_run</span><span class="p">,</span> 
                          <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">popup_mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">popup_mode</span><span class="p">,</span> <span class="n">error_mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">error_mode</span><span class="p">,</span>
-                         <span class="n">widget_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">widget_type</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">)</span>
+                         <span class="n">widget_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">widget_type</span><span class="p">,</span> <span class="n">icon_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">icon_path</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span></div>
+    
+<div class="viewcode-block" id="MagicClassFactory.as_magictoolbar"><a class="viewcode-back" href="../../magicclass.html#magicclass.core.MagicClassFactory.as_magictoolbar">[docs]</a>    <span class="k">def</span> <span class="nf">as_magictoolbar</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ToolBarGui</span><span class="p">:</span>
+        <span class="n">_cls</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">attrs</span><span class="p">)</span>
+        <span class="bp">cls</span> <span class="o">=</span> <span class="n">magictoolbar</span><span class="p">(</span><span class="n">_cls</span><span class="p">,</span> <span class="n">close_on_run</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">close_on_run</span><span class="p">,</span> <span class="n">popup_mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">popup_mode</span><span class="p">,</span> 
+                           <span class="n">error_mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">error_mode</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">,</span> <span class="n">icon_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">icon_path</span><span class="p">,</span>
+                           <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span>   </div>
     
 <div class="viewcode-block" id="MagicClassFactory.as_magicmenu"><a class="viewcode-back" href="../../magicclass.html#magicclass.core.MagicClassFactory.as_magicmenu">[docs]</a>    <span class="k">def</span> <span class="nf">as_magicmenu</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MenuGui</span><span class="p">:</span>
         <span class="n">_cls</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">attrs</span><span class="p">)</span>
         <span class="bp">cls</span> <span class="o">=</span> <span class="n">magicmenu</span><span class="p">(</span><span class="n">_cls</span><span class="p">,</span> <span class="n">close_on_run</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">close_on_run</span><span class="p">,</span> <span class="n">popup_mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">popup_mode</span><span class="p">,</span> 
-                        <span class="n">error_mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">error_mode</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">)</span>
+                        <span class="n">error_mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">error_mode</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">,</span> <span class="n">icon_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">icon_path</span><span class="p">,</span>
+                        <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span></div>
     
 <div class="viewcode-block" id="MagicClassFactory.as_magiccontext"><a class="viewcode-back" href="../../magicclass.html#magicclass.core.MagicClassFactory.as_magiccontext">[docs]</a>    <span class="k">def</span> <span class="nf">as_magiccontext</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ContextMenuGui</span><span class="p">:</span>
         <span class="n">_cls</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">attrs</span><span class="p">)</span>
         <span class="bp">cls</span> <span class="o">=</span> <span class="n">magiccontext</span><span class="p">(</span><span class="n">_cls</span><span class="p">,</span> <span class="n">close_on_run</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">close_on_run</span><span class="p">,</span> <span class="n">popup_mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">popup_mode</span><span class="p">,</span> 
-                           <span class="n">error_mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">error_mode</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">)</span>
+                           <span class="n">error_mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">error_mode</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">,</span> <span class="n">icon_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">icon_path</span><span class="p">,</span>
+                           <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span></div></div>
 
 
@@ -400,6 +438,7 @@
                     <span class="n">popup_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">PopUpMode</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                     <span class="n">error_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">ErrorMode</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                     <span class="n">labels</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
+                    <span class="n">icon_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                     <span class="n">parent</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                     <span class="n">menugui_class</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">MenuGuiBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                     <span class="p">):</span>
@@ -432,7 +471,7 @@
     <span class="k">if</span> <span class="n">popup_mode</span> <span class="ow">in</span> <span class="p">(</span><span class="n">PopUpMode</span><span class="o">.</span><span class="n">above</span><span class="p">,</span> <span class="n">PopUpMode</span><span class="o">.</span><span class="n">below</span><span class="p">,</span> <span class="n">PopUpMode</span><span class="o">.</span><span class="n">first</span><span class="p">,</span> <span class="n">PopUpMode</span><span class="o">.</span><span class="n">last</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mode </span><span class="si">{</span><span class="n">popup_mode</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2"> is not compatible with Menu.&quot;</span><span class="p">)</span>
     
-    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">menugui_class</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">[</span><span class="n">menugui_class</span><span class="p">]:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;magicclass can only wrap classes, not </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">is_dataclass</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
@@ -471,6 +510,13 @@
             
             <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_POST_INIT</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">__post_init__</span><span class="p">()</span>
+            
+            <span class="k">if</span> <span class="n">icon_path</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">icon_path</span> <span class="o">=</span> <span class="n">icon_path</span>
+            
+            <span class="n">macrowidget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">macro</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">native</span>
+            <span class="n">macrowidget</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="p">,</span> <span class="n">macrowidget</span><span class="o">.</span><span class="n">windowFlags</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">macro</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">__magicclass_parent__</span> <span class="o">=</span> <span class="bp">self</span>
 
         <span class="n">newclass</span><span class="o">.</span><span class="fm">__init__</span> <span class="o">=</span> <span class="fm">__init__</span>
         

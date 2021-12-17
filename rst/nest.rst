@@ -57,8 +57,8 @@ You can also directly define the child classes inside the parent.
 .. image:: images/fig_2-1.png
 
 
-Make Menu Widgets Using Nesting Strategy
-----------------------------------------
+Make Menus Using Nesting Strategy
+---------------------------------
 
 To make multi-functional widgets, we usually want to use a menu bar to categorize functions.
 The ``@magicmenu`` decorator provides a consistent API to implement a menu bar as a standard magic class.
@@ -109,3 +109,33 @@ Same strategy also works for context menu.
     ui.show()
 
 .. image:: images/fig_2-3.png
+
+
+Make Toolbar
+------------
+
+Similar to menus, magic class also provide a toolbar widget with same API. ``@magictoolbar`` is the
+decorator for toolbar.
+
+.. code-block:: python
+
+    from magicclass import magicclass, magictoolbar
+
+    @magicclass
+    class Main:
+        @magictoolbar
+        class ToolBar:
+            def a(self): ...
+            def b(self): ...
+            def c(self): ...
+
+.. image:: images/fig_2-4.png
+
+
+Use Menu and Toolbar in a Main Window
+-------------------------------------
+
+It is highly recommended to use menus and toolbar in a main window widget. Unlike standard widget,
+a main window can contain both of them, and you can float toolbar by mouse drag.
+
+.. image:: images/fig_2-5.png

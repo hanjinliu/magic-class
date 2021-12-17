@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.widgets.containers &mdash; magic-class 0.5.12 documentation</title>
+  <title>magicclass.widgets.containers &mdash; magic-class 0.5.14 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -27,7 +27,7 @@
             <a href="../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.12
+                0.5.14
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -77,10 +77,10 @@
              
   <h1>Source code for magicclass.widgets.containers</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">Callable</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">Callable</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">qtpy</span> <span class="kn">import</span> <span class="n">QtWidgets</span> <span class="k">as</span> <span class="n">QtW</span>
-<span class="kn">from</span> <span class="nn">qtpy.QtCore</span> <span class="kn">import</span> <span class="n">Qt</span><span class="p">,</span> <span class="n">QEvent</span>
+<span class="kn">from</span> <span class="nn">qtpy.QtCore</span> <span class="kn">import</span> <span class="n">Qt</span><span class="p">,</span> <span class="n">QEvent</span><span class="p">,</span> <span class="n">QSize</span>
 <span class="kn">from</span> <span class="nn">magicgui.application</span> <span class="kn">import</span> <span class="n">use_app</span>
 <span class="kn">from</span> <span class="nn">magicgui.widgets._bases</span> <span class="kn">import</span> <span class="n">Widget</span>
 <span class="kn">from</span> <span class="nn">magicgui.widgets._concrete</span> <span class="kn">import</span> <span class="n">merge_super_sigs</span><span class="p">,</span> <span class="n">ContainerWidget</span>
@@ -273,11 +273,29 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">btn_text</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inner_widget</span><span class="o">.</span><span class="n">show</span><span class="p">())</span>
 
-<span class="k">class</span> <span class="nc">_CollapsibleContainer</span><span class="p">(</span><span class="n">ContainerBase</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Collapsible container.</span>
-<span class="sd">    See https://stackoverflow.com/questions/32476006/how-to-make-an-expandable-collapsable-section-widget-in-qt.</span>
-<span class="sd">    &quot;&quot;&quot;</span>    
+<span class="n">_VERTICAL_SETTING</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;expanded-arrow&quot;</span><span class="p">:</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ArrowType</span><span class="o">.</span><span class="n">DownArrow</span><span class="p">,</span>
+                     <span class="s2">&quot;collapsed-arrow&quot;</span><span class="p">:</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ArrowType</span><span class="o">.</span><span class="n">RightArrow</span><span class="p">,</span>
+                     <span class="s2">&quot;align&quot;</span><span class="p">:</span> <span class="n">Qt</span><span class="o">.</span><span class="n">AlignTop</span><span class="p">,</span>
+                     <span class="s2">&quot;text-align&quot;</span><span class="p">:</span> <span class="s2">&quot;left&quot;</span><span class="p">,</span>
+                     <span class="s2">&quot;layout&quot;</span><span class="p">:</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QVBoxLayout</span>
+                     <span class="p">}</span>
+<span class="n">_HORIZONTAL_SETTING</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;expanded-arrow&quot;</span><span class="p">:</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ArrowType</span><span class="o">.</span><span class="n">RightArrow</span><span class="p">,</span>
+                       <span class="s2">&quot;collapsed-arrow&quot;</span><span class="p">:</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ArrowType</span><span class="o">.</span><span class="n">LeftArrow</span><span class="p">,</span>
+                       <span class="s2">&quot;align&quot;</span><span class="p">:</span> <span class="n">Qt</span><span class="o">.</span><span class="n">AlignLeft</span><span class="p">,</span>
+                       <span class="s2">&quot;text-align&quot;</span><span class="p">:</span> <span class="s2">&quot;center&quot;</span><span class="p">,</span>
+                       <span class="s2">&quot;layout&quot;</span><span class="p">:</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QHBoxLayout</span>
+                       <span class="p">}</span>
+
+<span class="k">class</span> <span class="nc">_QCollapsible</span><span class="p">(</span><span class="n">QtW</span><span class="o">.</span><span class="n">QWidget</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">sizeHint</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QSize</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isVisible</span><span class="p">():</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">sizeHint</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">QSize</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            
+<span class="k">class</span> <span class="nc">_Collapsibles</span><span class="p">(</span><span class="n">ContainerBase</span><span class="p">):</span>
+    <span class="n">_setting</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+    
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="s2">&quot;vertical&quot;</span><span class="p">,</span> <span class="n">btn_text</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
         <span class="n">QBaseWidget</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QWidget</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">layout</span> <span class="o">==</span> <span class="s2">&quot;horizontal&quot;</span><span class="p">:</span>
@@ -285,9 +303,10 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_layout</span> <span class="o">=</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QVBoxLayout</span><span class="p">()</span>
         
+        <span class="bp">self</span><span class="o">.</span><span class="n">_get_setting</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span> <span class="o">=</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QWidget</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">QtW</span><span class="o">.</span><span class="n">QVBoxLayout</span><span class="p">())</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_inner_widget</span> <span class="o">=</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_setting</span><span class="p">[</span><span class="s2">&quot;layout&quot;</span><span class="p">]())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_inner_widget</span> <span class="o">=</span> <span class="n">_QCollapsible</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_inner_widget</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_layout</span><span class="p">)</span>
         
         <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">setSpacing</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
@@ -295,28 +314,45 @@
         
         <span class="bp">self</span><span class="o">.</span><span class="n">_expand_btn</span> <span class="o">=</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QToolButton</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_expand_btn</span><span class="o">.</span><span class="n">setToolButtonStyle</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">ToolButtonTextBesideIcon</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_expand_btn</span><span class="o">.</span><span class="n">setArrowType</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">ArrowType</span><span class="o">.</span><span class="n">RightArrow</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_expand_btn</span><span class="o">.</span><span class="n">setArrowType</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_setting</span><span class="p">[</span><span class="s2">&quot;collapsed-arrow&quot;</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_expand_btn</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">btn_text</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_expand_btn</span><span class="o">.</span><span class="n">setCheckable</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_expand_btn</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_expand_btn</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="s2">&quot;QToolButton { border: none; text-align: left;}&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_expand_btn</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;QToolButton </span><span class="se">{{</span><span class="s2"> border: none; text-align: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_setting</span><span class="p">[</span><span class="s1">&#39;text-align&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">;</span><span class="se">}}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_expand_btn</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mgui_change_expand</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_mgui_change_expand</span><span class="p">()</span>
         
-        <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_expand_btn</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">AlignTop</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_inner_widget</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">AlignTop</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_expand_btn</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_setting</span><span class="p">[</span><span class="s2">&quot;align&quot;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_inner_widget</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_setting</span><span class="p">[</span><span class="s2">&quot;align&quot;</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">setContentsMargins</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
     
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">collapsed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expand_btn</span><span class="o">.</span><span class="n">isChecked</span><span class="p">()</span>
+    
     <span class="k">def</span> <span class="nf">_mgui_change_expand</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expand_btn</span><span class="o">.</span><span class="n">isChecked</span><span class="p">():</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">collapsed</span><span class="p">:</span>
             <span class="c1"># collapse</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_inner_widget</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_expand_btn</span><span class="o">.</span><span class="n">setArrowType</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">ArrowType</span><span class="o">.</span><span class="n">RightArrow</span><span class="p">)</span>
-            
+            <span class="bp">self</span><span class="o">.</span><span class="n">_expand_btn</span><span class="o">.</span><span class="n">setArrowType</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_setting</span><span class="p">[</span><span class="s2">&quot;collapsed-arrow&quot;</span><span class="p">])</span>
+
         <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># expande</span>
+            <span class="c1"># expand</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_inner_widget</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_expand_btn</span><span class="o">.</span><span class="n">setArrowType</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">ArrowType</span><span class="o">.</span><span class="n">DownArrow</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_expand_btn</span><span class="o">.</span><span class="n">setArrowType</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_setting</span><span class="p">[</span><span class="s2">&quot;expanded-arrow&quot;</span><span class="p">])</span>
+    
+    <span class="k">def</span> <span class="nf">_get_setting</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+
+
+<span class="k">class</span> <span class="nc">_VCollapsibleContainer</span><span class="p">(</span><span class="n">_Collapsibles</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_get_setting</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_setting</span> <span class="o">=</span> <span class="n">_VERTICAL_SETTING</span>
+
+
+<span class="k">class</span> <span class="nc">_HCollapsibleContainer</span><span class="p">(</span><span class="n">_Collapsibles</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_get_setting</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_setting</span> <span class="o">=</span> <span class="n">_HORIZONTAL_SETTING</span>
     
 
 <span class="k">class</span> <span class="nc">_ListContainer</span><span class="p">(</span><span class="n">ContainerBase</span><span class="p">):</span>
@@ -465,7 +501,7 @@
     <span class="k">def</span> <span class="nf">btn_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_widget</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
 
-<span class="nd">@wrap_container</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="n">_CollapsibleContainer</span><span class="p">)</span>
+<span class="nd">@wrap_container</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="n">_VCollapsibleContainer</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">CollapsibleContainer</span><span class="p">(</span><span class="n">ContainerWidget</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A collapsible Container Widget.&quot;&quot;&quot;</span>    
     
@@ -476,6 +512,19 @@
     <span class="nd">@btn_text</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">btn_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_widget</span><span class="o">.</span><span class="n">_expand_btn</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+<span class="nd">@wrap_container</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="n">_HCollapsibleContainer</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">HCollapsibleContainer</span><span class="p">(</span><span class="n">ContainerWidget</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A collapsible Container Widget.&quot;&quot;&quot;</span>    
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">btn_text</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_widget</span><span class="o">.</span><span class="n">_expand_btn</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
+
+    <span class="nd">@btn_text</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">btn_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_widget</span><span class="o">.</span><span class="n">_expand_btn</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
 
 <span class="nd">@wrap_container</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="n">_ListContainer</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">ListContainer</span><span class="p">(</span><span class="n">ContainerWidget</span><span class="p">):</span>

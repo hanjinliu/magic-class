@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.widgets.napari.canvas &mdash; magic-class 0.5.10dev0 documentation</title>
+  <title>magicclass.widgets.napari.canvas &mdash; magic-class 0.5.14 documentation</title>
       <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -27,7 +27,7 @@
             <a href="../../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.10dev0
+                0.5.14
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
@@ -44,6 +44,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../use_field.html">Use Fields in magic-class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../use_wraps.html">Call Parent Methods from its Child</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../use_bind.html">Binding Values to Arguments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../keybinding.html">Define Custom Keybindings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../customize_macro.html">Customize Macro Recording</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../special_methods.html">Special attributes in magic-class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../containers.html">Container Variations</a></li>
@@ -75,7 +76,7 @@
            <div itemprop="articleBody">
              
   <h1>Source code for magicclass.widgets.napari.canvas</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">magicclass.widgets</span> <span class="kn">import</span> <span class="n">FreeWidget</span>
+<span></span><span class="kn">from</span> <span class="nn">..misc</span> <span class="kn">import</span> <span class="n">FreeWidget</span>
 
 <span class="c1"># BUG: If this canvas is used in napari.Viewer, its behavior becomes very unstable.</span>
 
@@ -117,7 +118,7 @@
                                          <span class="bp">self</span><span class="o">.</span><span class="n">layer_list</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">windowFlags</span><span class="p">()</span>
                                          <span class="p">)</span></div>
         
-        
+<span class="c1"># TODO: toggle n-display button of the original canvas is overwritten by this widget</span>
 </pre></div>
 
            </div>

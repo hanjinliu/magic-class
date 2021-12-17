@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.gui.menu_gui &mdash; magic-class 0.5.14 documentation</title>
+  <title>magicclass.gui.toolbar &mdash; magic-class 0.5.14 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -66,7 +66,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../../index.html">Module code</a> &raquo;</li>
-      <li>magicclass.gui.menu_gui</li>
+      <li>magicclass.gui.toolbar</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -75,7 +75,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <h1>Source code for magicclass.gui.menu_gui</h1><div class="highlight"><pre>
+  <h1>Source code for magicclass.gui.toolbar</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
@@ -84,25 +84,27 @@
 <span class="kn">from</span> <span class="nn">magicgui.widgets._bases</span> <span class="kn">import</span> <span class="n">ButtonWidget</span>
 <span class="kn">from</span> <span class="nn">magicgui.widgets._bases.widget</span> <span class="kn">import</span> <span class="n">Widget</span>
 <span class="kn">from</span> <span class="nn">macrokit</span> <span class="kn">import</span> <span class="n">Symbol</span>
-<span class="kn">from</span> <span class="nn">qtpy.QtWidgets</span> <span class="kn">import</span> <span class="n">QMenu</span>
+<span class="kn">from</span> <span class="nn">qtpy.QtWidgets</span> <span class="kn">import</span> <span class="n">QToolBar</span><span class="p">,</span> <span class="n">QMenu</span><span class="p">,</span> <span class="n">QWidgetAction</span>
+<span class="kn">from</span> <span class="nn">qtpy.QtCore</span> <span class="kn">import</span> <span class="n">Qt</span>
 
-<span class="kn">from</span> <span class="nn">.mgui_ext</span> <span class="kn">import</span> <span class="n">AbstractAction</span><span class="p">,</span> <span class="n">WidgetAction</span><span class="p">,</span> <span class="n">_LabeledWidgetAction</span>
+<span class="kn">from</span> <span class="nn">.mgui_ext</span> <span class="kn">import</span> <span class="n">AbstractAction</span><span class="p">,</span> <span class="n">_LabeledWidgetAction</span><span class="p">,</span> <span class="n">WidgetAction</span><span class="p">,</span> <span class="n">ToolButtonPlus</span>
 <span class="kn">from</span> <span class="nn">._base</span> <span class="kn">import</span> <span class="n">BaseGui</span><span class="p">,</span> <span class="n">PopUpMode</span><span class="p">,</span> <span class="n">ErrorMode</span><span class="p">,</span> <span class="n">ContainerLikeGui</span><span class="p">,</span> <span class="n">nested_function_gui_callback</span>
-<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">MagicClassConstructionError</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">MagicClassConstructionError</span><span class="p">,</span> <span class="n">define_context_menu</span>
+<span class="kn">from</span> <span class="nn">.menu_gui</span> <span class="kn">import</span> <span class="n">ContextMenuGui</span><span class="p">,</span> <span class="n">MenuGui</span><span class="p">,</span> <span class="n">MenuGuiBase</span><span class="p">,</span> <span class="n">insert_action_like</span>
 
 <span class="kn">from</span> <span class="nn">..signature</span> <span class="kn">import</span> <span class="n">get_additional_option</span>
 <span class="kn">from</span> <span class="nn">..fields</span> <span class="kn">import</span> <span class="n">MagicField</span>
-<span class="kn">from</span> <span class="nn">..widgets</span> <span class="kn">import</span> <span class="n">Separator</span><span class="p">,</span> <span class="n">FreeWidget</span>
+<span class="kn">from</span> <span class="nn">..widgets</span> <span class="kn">import</span> <span class="n">FreeWidget</span><span class="p">,</span> <span class="n">Separator</span>
 <span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">iter_members</span>
 
 
 <span class="k">def</span> <span class="nf">_check_popupmode</span><span class="p">(</span><span class="n">popup_mode</span><span class="p">:</span> <span class="n">PopUpMode</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">popup_mode</span> <span class="ow">in</span> <span class="p">(</span><span class="n">PopUpMode</span><span class="o">.</span><span class="n">above</span><span class="p">,</span> <span class="n">PopUpMode</span><span class="o">.</span><span class="n">below</span><span class="p">,</span> <span class="n">PopUpMode</span><span class="o">.</span><span class="n">first</span><span class="p">):</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;magicmenu does not support popup mode </span><span class="si">{</span><span class="n">popup_mode</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">.&quot;</span>\
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;magictoolbar does not support popup mode </span><span class="si">{</span><span class="n">popup_mode</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">.&quot;</span>\
                 <span class="s2">&quot;PopUpMode.popup is used instead&quot;</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="ne">UserWarning</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">popup_mode</span> <span class="o">==</span> <span class="n">PopUpMode</span><span class="o">.</span><span class="n">last</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;magicmenu does not support popup mode </span><span class="si">{</span><span class="n">popup_mode</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">.&quot;</span>\
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;magictoolbat does not support popup mode </span><span class="si">{</span><span class="n">popup_mode</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">.&quot;</span>\
                 <span class="s2">&quot;PopUpMode.parentlast is used instead&quot;</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="ne">UserWarning</span><span class="p">)</span>
         <span class="n">popup_mode</span> <span class="o">=</span> <span class="n">PopUpMode</span><span class="o">.</span><span class="n">parentlast</span>
@@ -110,25 +112,27 @@
     <span class="k">return</span> <span class="n">popup_mode</span>
 
 
-<div class="viewcode-block" id="MenuGuiBase"><a class="viewcode-back" href="../../../magicclass.gui.html#magicclass.gui.menu_gui.MenuGuiBase">[docs]</a><span class="k">class</span> <span class="nc">MenuGuiBase</span><span class="p">(</span><span class="n">ContainerLikeGui</span><span class="p">):</span>
+<div class="viewcode-block" id="ToolBarGui"><a class="viewcode-back" href="../../../magicclass.gui.html#magicclass.gui.toolbar.ToolBarGui">[docs]</a><span class="k">class</span> <span class="nc">ToolBarGui</span><span class="p">(</span><span class="n">ContainerLikeGui</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Magic class that will be converted into a toolbar&quot;&quot;&quot;</span>
+    
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
                  <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
                  <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">close_on_run</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                 <span class="n">popup_mode</span><span class="p">:</span> <span class="nb">str</span><span class="o">|</span><span class="n">PopUpMode</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                 <span class="n">error_mode</span><span class="p">:</span> <span class="nb">str</span><span class="o">|</span><span class="n">ErrorMode</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">popup_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">PopUpMode</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">error_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">ErrorMode</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">labels</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
                  <span class="p">):</span>
         <span class="n">popup_mode</span> <span class="o">=</span> <span class="n">_check_popupmode</span><span class="p">(</span><span class="n">popup_mode</span><span class="p">)</span>
             
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">close_on_run</span><span class="o">=</span><span class="n">close_on_run</span><span class="p">,</span> <span class="n">popup_mode</span><span class="o">=</span><span class="n">popup_mode</span><span class="p">,</span> <span class="n">error_mode</span><span class="o">=</span><span class="n">error_mode</span><span class="p">)</span>
         <span class="n">name</span> <span class="o">=</span> <span class="n">name</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">native</span> <span class="o">=</span> <span class="n">QMenu</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setToolTipsVisible</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span> <span class="o">=</span> <span class="n">QToolBar</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">MenuGuiBase</span> <span class="o">|</span> <span class="n">AbstractAction</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="n">labels</span>
-       
+    
+    
     <span class="k">def</span> <span class="nf">_convert_attributes_into_widgets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">cls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span>
         
@@ -137,7 +141,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setToolTip</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__doc__</span><span class="p">)</span>
             
         <span class="c1"># Bind all the methods and annotations</span>
-        <span class="n">base_members</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">iter_members</span><span class="p">(</span><span class="n">MenuGuiBase</span><span class="p">))</span>        
+        <span class="n">base_members</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">iter_members</span><span class="p">(</span><span class="n">ToolBarGui</span><span class="p">))</span>        
         
         <span class="n">_hist</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># for traceback</span>
         
@@ -170,16 +174,37 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">__magicclass_children__</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
                     <span class="n">widget</span><span class="o">.</span><span class="n">_my_symbol</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
                     
-                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="n">MenuGuiBase</span><span class="p">):</span>
-                        <span class="n">widget</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="p">,</span> <span class="n">widget</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">windowFlags</span><span class="p">())</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="n">MenuGui</span><span class="p">):</span>
+                        <span class="n">tb</span> <span class="o">=</span> <span class="n">ToolButtonPlus</span><span class="p">(</span><span class="n">widget</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                        <span class="n">tb</span><span class="o">.</span><span class="n">set_menu</span><span class="p">(</span><span class="n">widget</span><span class="o">.</span><span class="n">native</span><span class="p">)</span>
+                        <span class="n">tb</span><span class="o">.</span><span class="n">tooltip</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="vm">__doc__</span>
+                        <span class="n">widget</span> <span class="o">=</span> <span class="n">WidgetAction</span><span class="p">(</span><span class="n">tb</span><span class="p">)</span>
+                    
+                    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="n">ContextMenuGui</span><span class="p">):</span>
+                        <span class="c1"># Add context menu to toolbar</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setContextMenuPolicy</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">CustomContextMenu</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">customContextMenuRequested</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+                            <span class="n">define_context_menu</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="p">)</span>
+                            <span class="p">)</span>
+                        <span class="n">_hist</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">name</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">attr</span><span class="p">),</span> <span class="s2">&quot;ContextMenuGui&quot;</span><span class="p">))</span>
+                    
+                    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="n">ToolBarGui</span><span class="p">):</span>
+                        <span class="n">tb</span> <span class="o">=</span> <span class="n">ToolButtonPlus</span><span class="p">(</span><span class="n">widget</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                        <span class="n">tb</span><span class="o">.</span><span class="n">tooltip</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="vm">__doc__</span>
+                        <span class="n">qmenu</span> <span class="o">=</span> <span class="n">QMenu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="p">)</span>
+                        <span class="n">waction</span> <span class="o">=</span> <span class="n">QWidgetAction</span><span class="p">(</span><span class="n">qmenu</span><span class="p">)</span>
+                        <span class="n">waction</span><span class="o">.</span><span class="n">setDefaultWidget</span><span class="p">(</span><span class="n">widget</span><span class="o">.</span><span class="n">native</span><span class="p">)</span>
+                        <span class="n">qmenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">waction</span><span class="p">)</span>
+                        <span class="n">tb</span><span class="o">.</span><span class="n">set_menu</span><span class="p">(</span><span class="n">qmenu</span><span class="p">)</span>
+                        <span class="n">widget</span> <span class="o">=</span> <span class="n">WidgetAction</span><span class="p">(</span><span class="n">tb</span><span class="p">)</span>
                     
                     <span class="k">else</span><span class="p">:</span>
                         <span class="n">widget</span> <span class="o">=</span> <span class="n">WidgetAction</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
-                        
+                
                 <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="n">Widget</span><span class="p">):</span>
                     <span class="n">widget</span> <span class="o">=</span> <span class="n">WidgetAction</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
-
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="p">(</span><span class="n">MenuGuiBase</span><span class="p">,</span> <span class="n">AbstractAction</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Widget</span><span class="p">)):</span>
+                    
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="p">(</span><span class="n">AbstractAction</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Widget</span><span class="p">)):</span>
                     <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="n">Widget</span><span class="p">))</span> <span class="ow">and</span> <span class="n">callable</span><span class="p">(</span><span class="n">widget</span><span class="p">):</span>
                         <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_widget_from_method</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
                     
@@ -191,12 +216,13 @@
                         <span class="c1"># if __magicclass_parent__ is defined as a property, hasattr must be called</span>
                         <span class="c1"># with a type object (not instance).</span>
                         <span class="n">widget</span><span class="o">.</span><span class="n">__magicclass_parent__</span> <span class="o">=</span> <span class="bp">self</span>
+                    
                         
                     <span class="n">clsname</span> <span class="o">=</span> <span class="n">get_additional_option</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="s2">&quot;into&quot;</span><span class="p">)</span>
                     <span class="k">if</span> <span class="n">clsname</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">_unwrap_method</span><span class="p">(</span><span class="n">clsname</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">widget</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>           
-                        <span class="bp">self</span><span class="o">.</span><span class="n">_fast_insert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="n">widget</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="n">widget</span><span class="p">)</span>
                     
                     <span class="n">_hist</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">attr</span><span class="p">)),</span> <span class="nb">type</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
             
@@ -217,38 +243,7 @@
         <span class="k">return</span> <span class="kc">None</span>
     
     
-    <span class="k">def</span> <span class="nf">_fast_insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">|</span> <span class="n">MenuGuiBase</span> <span class="o">|</span> <span class="n">AbstractAction</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_component_class</span><span class="p">,</span> <span class="n">MenuGuiBase</span><span class="p">)):</span>
-            <span class="n">insert_action_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">obj</span><span class="o">.</span><span class="n">native</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_list</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">obj</span><span class="p">)</span>
-        
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">WidgetAction</span><span class="p">):</span>
-            <span class="kn">from</span> <span class="nn">.toolbar</span> <span class="kn">import</span> <span class="n">ToolBarGui</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">widget</span><span class="p">,</span> <span class="n">Separator</span><span class="p">):</span>
-                <span class="n">insert_action_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="s2">&quot;sep&quot;</span><span class="p">)</span>
-            
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">widget</span><span class="p">,</span> <span class="n">ToolBarGui</span><span class="p">):</span>
-                <span class="n">qmenu</span> <span class="o">=</span> <span class="n">QMenu</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="p">)</span>
-                <span class="n">qmenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">native</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">_icon_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">qmenu</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">windowIcon</span><span class="p">())</span>
-                <span class="n">insert_action_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">qmenu</span><span class="p">)</span>
-                
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">_hide_labels</span> <span class="o">=</span> <span class="p">(</span><span class="n">_LabeledWidgetAction</span><span class="p">,</span> <span class="n">ButtonWidget</span><span class="p">,</span> <span class="n">FreeWidget</span><span class="p">,</span> <span class="n">Label</span><span class="p">,</span> 
-                                <span class="n">FunctionGui</span><span class="p">,</span> <span class="n">Image</span><span class="p">,</span> <span class="n">Table</span><span class="p">)</span>
-                <span class="n">_obj</span> <span class="o">=</span> <span class="n">obj</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">widget</span><span class="p">,</span> <span class="n">_hide_labels</span><span class="p">):</span>
-                    <span class="n">_obj</span> <span class="o">=</span> <span class="n">_LabeledWidgetAction</span><span class="o">.</span><span class="n">from_action</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
-                <span class="n">_obj</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span>
-                <span class="n">insert_action_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">_obj</span><span class="o">.</span><span class="n">native</span><span class="p">)</span>
-                
-            <span class="bp">self</span><span class="o">.</span><span class="n">_list</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">obj</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span><span class="si">}</span><span class="s2"> is not supported.&quot;</span><span class="p">)</span>
-    
-    
-<div class="viewcode-block" id="MenuGuiBase.insert"><a class="viewcode-back" href="../../../magicclass.gui.html#magicclass.gui.menu_gui.MenuGuiBase.insert">[docs]</a>    <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">|</span> <span class="n">MenuGuiBase</span> <span class="o">|</span> <span class="n">AbstractAction</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_fast_insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">AbstractAction</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Insert object into the menu. Could be widget or callable.</span>
 
@@ -258,52 +253,33 @@
 <span class="sd">            Position to insert.</span>
 <span class="sd">        obj : Callable | MenuGuiBase | AbstractAction | Widget</span>
 <span class="sd">            Object to insert.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>        
+        <span class="c1"># _hide_labels should not contain Container because some ValueWidget like widgets</span>
+        <span class="c1"># are Containers.</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_component_class</span><span class="p">):</span>
+            <span class="n">insert_action_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">obj</span><span class="o">.</span><span class="n">native</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_list</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">obj</span><span class="p">)</span>
+        
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">WidgetAction</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">widget</span><span class="p">,</span> <span class="n">Separator</span><span class="p">):</span>
+                <span class="n">insert_action_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="s2">&quot;sep&quot;</span><span class="p">)</span>
+            
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">_hide_labels</span> <span class="o">=</span> <span class="p">(</span><span class="n">_LabeledWidgetAction</span><span class="p">,</span> <span class="n">ButtonWidget</span><span class="p">,</span> <span class="n">FreeWidget</span><span class="p">,</span> <span class="n">Label</span><span class="p">,</span> 
+                                <span class="n">FunctionGui</span><span class="p">,</span> <span class="n">Image</span><span class="p">,</span> <span class="n">Table</span><span class="p">)</span>
+                <span class="n">_obj</span> <span class="o">=</span> <span class="n">obj</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">widget</span><span class="p">,</span> <span class="n">_hide_labels</span><span class="p">):</span>
+                    <span class="n">_obj</span> <span class="o">=</span> <span class="n">_LabeledWidgetAction</span><span class="o">.</span><span class="n">from_action</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+                <span class="n">_obj</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span>
+                <span class="n">insert_action_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">_obj</span><span class="o">.</span><span class="n">native</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_list</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">obj</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span><span class="si">}</span><span class="s2"> is not supported.&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ToolBarGui.insert"><a class="viewcode-back" href="../../../magicclass.gui.html#magicclass.gui.toolbar.ToolBarGui.insert">[docs]</a>    <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">AbstractAction</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_fast_insert</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">obj</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_unify_label_widths</span><span class="p">()</span></div></div>
         
-    
-<div class="viewcode-block" id="insert_action_like"><a class="viewcode-back" href="../../../magicclass.gui.html#magicclass.gui.menu_gui.insert_action_like">[docs]</a><span class="k">def</span> <span class="nf">insert_action_like</span><span class="p">(</span><span class="n">qmenu</span><span class="p">:</span> <span class="n">QMenu</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Insert a QObject into a QMenu in a Pythonic way, like qmenu.insert(key, obj).</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    qmenu : QMenu</span>
-<span class="sd">        QMenu object to which object will be inserted.</span>
-<span class="sd">    key : int</span>
-<span class="sd">        Position to insert.</span>
-<span class="sd">    obj : QMenu or QAction or &quot;sep&quot;</span>
-<span class="sd">        Object to be inserted.</span>
-<span class="sd">    &quot;&quot;&quot;</span>    
-    <span class="n">actions</span> <span class="o">=</span> <span class="n">qmenu</span><span class="o">.</span><span class="n">actions</span><span class="p">()</span>
-    <span class="n">l</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">actions</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">key</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">key</span> <span class="o">=</span> <span class="n">key</span> <span class="o">+</span> <span class="n">l</span>
-    <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="n">l</span><span class="p">:</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">QMenu</span><span class="p">):</span>
-            <span class="n">qmenu</span><span class="o">.</span><span class="n">addMenu</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">obj</span> <span class="o">==</span> <span class="s2">&quot;sep&quot;</span><span class="p">:</span>
-            <span class="n">qmenu</span><span class="o">.</span><span class="n">addSeparator</span><span class="p">()</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">qmenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">new_action</span> <span class="o">=</span> <span class="n">actions</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-        <span class="n">before</span> <span class="o">=</span> <span class="n">new_action</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">QMenu</span><span class="p">):</span>
-            <span class="n">qmenu</span><span class="o">.</span><span class="n">insertMenu</span><span class="p">(</span><span class="n">before</span><span class="p">,</span> <span class="n">obj</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">obj</span> <span class="o">==</span> <span class="s2">&quot;sep&quot;</span><span class="p">:</span>
-            <span class="n">qmenu</span><span class="o">.</span><span class="n">insertSeparator</span><span class="p">(</span><span class="n">before</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">qmenu</span><span class="o">.</span><span class="n">insertAction</span><span class="p">(</span><span class="n">before</span><span class="p">,</span> <span class="n">obj</span><span class="p">)</span></div>
-        
-    
-<div class="viewcode-block" id="MenuGui"><a class="viewcode-back" href="../../../magicclass.gui.html#magicclass.gui.menu_gui.MenuGui">[docs]</a><span class="k">class</span> <span class="nc">MenuGui</span><span class="p">(</span><span class="n">MenuGuiBase</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Magic class that will be converted into a menu bar.&quot;&quot;&quot;</span></div>
-
-<div class="viewcode-block" id="ContextMenuGui"><a class="viewcode-back" href="../../../magicclass.gui.html#magicclass.gui.menu_gui.ContextMenuGui">[docs]</a><span class="k">class</span> <span class="nc">ContextMenuGui</span><span class="p">(</span><span class="n">MenuGuiBase</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Magic class that will be converted into a context menu.&quot;&quot;&quot;</span></div>
-    <span class="c1"># TODO: Prevent more than one context menu</span>
 </pre></div>
 
            </div>

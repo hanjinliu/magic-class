@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.help &mdash; magic-class 0.5.12 documentation</title>
+  <title>magicclass.help &mdash; magic-class 0.5.14 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -27,7 +27,7 @@
             <a href="../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.12
+                0.5.14
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -83,14 +83,17 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="kn">import</span> <span class="nn">qtpy</span>
-<span class="kn">from</span> <span class="nn">qtpy.QtWidgets</span> <span class="kn">import</span> <span class="n">QWidget</span><span class="p">,</span> <span class="n">QTreeWidget</span><span class="p">,</span> <span class="n">QTreeWidgetItem</span><span class="p">,</span> <span class="n">QSplitter</span><span class="p">,</span> <span class="n">QTextEdit</span>
+<span class="kn">from</span> <span class="nn">qtpy.QtWidgets</span> <span class="kn">import</span> <span class="n">QWidget</span><span class="p">,</span> <span class="n">QTreeWidget</span><span class="p">,</span> <span class="n">QTreeWidgetItem</span><span class="p">,</span> <span class="n">QSplitter</span>
 <span class="kn">from</span> <span class="nn">qtpy.QtCore</span> <span class="kn">import</span> <span class="n">Qt</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterator</span>
+
+<span class="kn">from</span> <span class="nn">magicclass.widgets.containers</span> <span class="kn">import</span> <span class="n">SplitterContainer</span>
+<span class="kn">from</span> <span class="nn">magicclass.widgets.misc</span> <span class="kn">import</span> <span class="n">ConsoleTextEdit</span>
 
 <span class="kn">from</span> <span class="nn">.gui.mgui_ext</span> <span class="kn">import</span> <span class="n">Action</span><span class="p">,</span> <span class="n">PushButtonPlus</span><span class="p">,</span> <span class="n">WidgetAction</span>
 <span class="kn">from</span> <span class="nn">.gui._base</span> <span class="kn">import</span> <span class="n">MagicTemplate</span>
 <span class="kn">from</span> <span class="nn">.widgets</span> <span class="kn">import</span> <span class="n">DraggableContainer</span><span class="p">,</span> <span class="n">FreeWidget</span>
-<span class="kn">from</span> <span class="nn">.gui.class_gui</span> <span class="kn">import</span> <span class="n">CollapsibleClassGui</span><span class="p">,</span> <span class="n">DraggableClassGui</span><span class="p">,</span> <span class="n">ScrollableClassGui</span><span class="p">,</span> <span class="n">ButtonClassGui</span><span class="p">,</span> <span class="n">TabbedClassGui</span>
+<span class="kn">from</span> <span class="nn">.gui.class_gui</span> <span class="kn">import</span> <span class="n">CollapsibleClassGui</span><span class="p">,</span> <span class="n">DraggableClassGui</span><span class="p">,</span> <span class="n">ScrollableClassGui</span><span class="p">,</span> <span class="n">ButtonClassGui</span>
 <span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">iter_members</span><span class="p">,</span> <span class="n">extract_tooltip</span><span class="p">,</span> <span class="n">get_signature</span>
 
 <span class="c1"># TODO: find</span>
@@ -108,8 +111,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">setWindowFlag</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">Window</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_tree</span> <span class="o">=</span> <span class="n">QTreeWidget</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_tree</span><span class="o">.</span><span class="n">itemClicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_on_treeitem_clicked</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_text</span> <span class="o">=</span> <span class="n">QTextEdit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_text</span><span class="o">.</span><span class="n">setReadOnly</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_text</span> <span class="o">=</span> <span class="n">ConsoleTextEdit</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_text</span><span class="o">.</span><span class="n">read_only</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_mgui_image</span> <span class="o">=</span> <span class="n">Image</span><span class="p">()</span>
         <span class="n">c</span> <span class="o">=</span> <span class="n">DraggableContainer</span><span class="p">(</span><span class="n">widgets</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_mgui_image</span><span class="p">])</span>
         
@@ -122,12 +125,10 @@
         <span class="n">c</span><span class="o">.</span><span class="n">min_height</span> <span class="o">=</span> <span class="mi">120</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_resize_image</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_initial_image_size</span><span class="p">)</span>
         
-        <span class="n">widget_right</span> <span class="o">=</span> <span class="n">QSplitter</span><span class="p">(</span><span class="n">orientation</span><span class="o">=</span><span class="n">Qt</span><span class="o">.</span><span class="n">Vertical</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
-        <span class="n">widget_right</span><span class="o">.</span><span class="n">insertWidget</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">c</span><span class="o">.</span><span class="n">native</span><span class="p">)</span>
-        <span class="n">widget_right</span><span class="o">.</span><span class="n">insertWidget</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_text</span><span class="p">)</span>
+        <span class="n">widget_right</span> <span class="o">=</span> <span class="n">SplitterContainer</span><span class="p">(</span><span class="n">widgets</span><span class="o">=</span><span class="p">[</span><span class="n">c</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_text</span><span class="p">])</span>
         
         <span class="bp">self</span><span class="o">.</span><span class="n">insertWidget</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tree</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">insertWidget</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">widget_right</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">insertWidget</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">widget_right</span><span class="o">.</span><span class="n">native</span><span class="p">)</span>
         
         <span class="k">if</span> <span class="n">ui</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">set_tree</span><span class="p">(</span><span class="n">ui</span><span class="p">)</span>
@@ -177,7 +178,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_mgui_image</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">img</span>
         
         <span class="c1"># set text</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_text</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
         <span class="n">htmls</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;&lt;h1&gt;</span><span class="si">{</span><span class="n">ui</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&lt;/h1&gt;&lt;p&gt;</span><span class="si">{</span><span class="n">extract_tooltip</span><span class="p">(</span><span class="n">ui</span><span class="p">)</span><span class="si">}</span><span class="s2">&lt;/p&gt;&quot;</span><span class="p">]</span>
         
         <span class="k">if</span> <span class="n">docs</span><span class="p">:</span>
@@ -185,7 +185,7 @@
         
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">doc</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">docs</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
             <span class="n">htmls</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&lt;h3&gt;(</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">) </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&lt;/h3&gt;&lt;p&gt;</span><span class="si">{</span><span class="n">doc</span><span class="si">}</span><span class="s2">&lt;/p&gt;&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_text</span><span class="o">.</span><span class="n">insertHtml</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">htmls</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_text</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">htmls</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_on_treeitem_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">UiBoundTreeItem</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">ui</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>

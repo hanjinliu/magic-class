@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.gui package &mdash; magic-class 0.5.12 documentation</title>
+  <title>magicclass.gui package &mdash; magic-class 0.5.14 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -30,7 +30,7 @@
             <a href="index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.12
+                0.5.14
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -507,265 +507,24 @@ here, not in ClassGuiBase.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.gui.menu_gui.ContextMenuGui">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.gui.menu_gui.</span></span><span class="sig-name descname"><span class="pre">ContextMenuGui</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">close_on_run</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">popup_mode</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">PopUpMode</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_mode</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">ErrorMode</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/gui/menu_gui.html#ContextMenuGui"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.gui.menu_gui.ContextMenuGui" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#magicclass.gui.menu_gui.MenuGuiBase" title="magicclass.gui.menu_gui.MenuGuiBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.gui.menu_gui.MenuGuiBase</span></code></a></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.gui._base.BaseGui</span></code>, <a class="reference internal" href="#magicclass.gui.mgui_ext.mguiLike" title="magicclass.gui.mgui_ext.mguiLike"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.gui.mgui_ext.mguiLike</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">MutableSequence</span></code></p>
 <p>Magic class that will be converted into a context menu.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.ContextMenuGui.annotation">
-<span class="sig-name descname"><span class="pre">annotation</span></span><em class="property"><span class="pre">:</span> <span class="pre">Any</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.ContextMenuGui.annotation" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.ContextMenuGui.enabled">
-<span class="sig-name descname"><span class="pre">enabled</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.ContextMenuGui.enabled" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.ContextMenuGui.gui_only">
-<span class="sig-name descname"><span class="pre">gui_only</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.ContextMenuGui.gui_only" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.ContextMenuGui.height">
-<span class="sig-name descname"><span class="pre">height</span></span><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.ContextMenuGui.height" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.ContextMenuGui.label">
-<span class="sig-name descname"><span class="pre">label</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.ContextMenuGui.label" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.ContextMenuGui.label_changed">
-<span class="sig-name descname"><span class="pre">label_changed</span></span><em class="property"><span class="pre">:</span> <span class="pre">Signal</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.ContextMenuGui.label_changed" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.ContextMenuGui.labels">
-<span class="sig-name descname"><span class="pre">labels</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.ContextMenuGui.labels" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.ContextMenuGui.layout">
-<span class="sig-name descname"><span class="pre">layout</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.ContextMenuGui.layout" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.ContextMenuGui.margins">
-<span class="sig-name descname"><span class="pre">margins</span></span><em class="property"><span class="pre">:</span> <span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#magicclass.gui.menu_gui.ContextMenuGui.margins" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.ContextMenuGui.max_height">
-<span class="sig-name descname"><span class="pre">max_height</span></span><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.ContextMenuGui.max_height" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.ContextMenuGui.max_width">
-<span class="sig-name descname"><span class="pre">max_width</span></span><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.ContextMenuGui.max_width" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.ContextMenuGui.min_height">
-<span class="sig-name descname"><span class="pre">min_height</span></span><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.ContextMenuGui.min_height" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.ContextMenuGui.min_width">
-<span class="sig-name descname"><span class="pre">min_width</span></span><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.ContextMenuGui.min_width" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.ContextMenuGui.name">
-<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.ContextMenuGui.name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.ContextMenuGui.options">
-<span class="sig-name descname"><span class="pre">options</span></span><em class="property"><span class="pre">:</span> <span class="pre">dict</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.ContextMenuGui.options" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.ContextMenuGui.param_kind">
-<span class="sig-name descname"><span class="pre">param_kind</span></span><em class="property"><span class="pre">:</span> <span class="pre">inspect._ParameterKind</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.ContextMenuGui.param_kind" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.ContextMenuGui.parent_changed">
-<span class="sig-name descname"><span class="pre">parent_changed</span></span><em class="property"><span class="pre">:</span> <span class="pre">Signal</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.ContextMenuGui.parent_changed" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.ContextMenuGui.tooltip">
-<span class="sig-name descname"><span class="pre">tooltip</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.ContextMenuGui.tooltip" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.ContextMenuGui.visible">
-<span class="sig-name descname"><span class="pre">visible</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.ContextMenuGui.visible" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.ContextMenuGui.widget_type">
-<span class="sig-name descname"><span class="pre">widget_type</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.ContextMenuGui.widget_type" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.ContextMenuGui.width">
-<span class="sig-name descname"><span class="pre">width</span></span><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.ContextMenuGui.width" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.gui.menu_gui.MenuGui">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.gui.menu_gui.</span></span><span class="sig-name descname"><span class="pre">MenuGui</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">close_on_run</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">popup_mode</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">PopUpMode</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_mode</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">ErrorMode</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/gui/menu_gui.html#MenuGui"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.gui.menu_gui.MenuGui" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#magicclass.gui.menu_gui.MenuGuiBase" title="magicclass.gui.menu_gui.MenuGuiBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.gui.menu_gui.MenuGuiBase</span></code></a></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.gui._base.BaseGui</span></code>, <a class="reference internal" href="#magicclass.gui.mgui_ext.mguiLike" title="magicclass.gui.mgui_ext.mguiLike"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.gui.mgui_ext.mguiLike</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">MutableSequence</span></code></p>
 <p>Magic class that will be converted into a menu bar.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.MenuGui.annotation">
-<span class="sig-name descname"><span class="pre">annotation</span></span><em class="property"><span class="pre">:</span> <span class="pre">Any</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.MenuGui.annotation" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.MenuGui.enabled">
-<span class="sig-name descname"><span class="pre">enabled</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.MenuGui.enabled" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.MenuGui.gui_only">
-<span class="sig-name descname"><span class="pre">gui_only</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.MenuGui.gui_only" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.MenuGui.height">
-<span class="sig-name descname"><span class="pre">height</span></span><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.MenuGui.height" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.MenuGui.label">
-<span class="sig-name descname"><span class="pre">label</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.MenuGui.label" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.MenuGui.label_changed">
-<span class="sig-name descname"><span class="pre">label_changed</span></span><em class="property"><span class="pre">:</span> <span class="pre">Signal</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.MenuGui.label_changed" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.MenuGui.labels">
-<span class="sig-name descname"><span class="pre">labels</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.MenuGui.labels" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.MenuGui.layout">
-<span class="sig-name descname"><span class="pre">layout</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.MenuGui.layout" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.MenuGui.margins">
-<span class="sig-name descname"><span class="pre">margins</span></span><em class="property"><span class="pre">:</span> <span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#magicclass.gui.menu_gui.MenuGui.margins" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.MenuGui.max_height">
-<span class="sig-name descname"><span class="pre">max_height</span></span><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.MenuGui.max_height" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.MenuGui.max_width">
-<span class="sig-name descname"><span class="pre">max_width</span></span><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.MenuGui.max_width" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.MenuGui.min_height">
-<span class="sig-name descname"><span class="pre">min_height</span></span><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.MenuGui.min_height" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.MenuGui.min_width">
-<span class="sig-name descname"><span class="pre">min_width</span></span><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.MenuGui.min_width" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.MenuGui.name">
-<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.MenuGui.name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.MenuGui.options">
-<span class="sig-name descname"><span class="pre">options</span></span><em class="property"><span class="pre">:</span> <span class="pre">dict</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.MenuGui.options" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.MenuGui.param_kind">
-<span class="sig-name descname"><span class="pre">param_kind</span></span><em class="property"><span class="pre">:</span> <span class="pre">inspect._ParameterKind</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.MenuGui.param_kind" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.MenuGui.parent_changed">
-<span class="sig-name descname"><span class="pre">parent_changed</span></span><em class="property"><span class="pre">:</span> <span class="pre">Signal</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.MenuGui.parent_changed" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.MenuGui.tooltip">
-<span class="sig-name descname"><span class="pre">tooltip</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.MenuGui.tooltip" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.MenuGui.visible">
-<span class="sig-name descname"><span class="pre">visible</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.MenuGui.visible" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.MenuGui.widget_type">
-<span class="sig-name descname"><span class="pre">widget_type</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.MenuGui.widget_type" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.MenuGui.width">
-<span class="sig-name descname"><span class="pre">width</span></span><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.MenuGui.width" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.gui.menu_gui.MenuGuiBase">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.gui.menu_gui.</span></span><span class="sig-name descname"><span class="pre">MenuGuiBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">close_on_run</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">popup_mode</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">PopUpMode</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_mode</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">ErrorMode</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/gui/menu_gui.html#MenuGuiBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.gui.menu_gui.MenuGuiBase" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.gui._base.BaseGui</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">collections.abc.MutableSequence</span></code></p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.MenuGuiBase.annotation">
-<span class="sig-name descname"><span class="pre">annotation</span></span><em class="property"><span class="pre">:</span> <span class="pre">Any</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.MenuGuiBase.annotation" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.MenuGuiBase.append">
-<span class="sig-name descname"><span class="pre">append</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span> <span class="p"><span class="pre">|</span></span> <a class="reference internal" href="#magicclass.gui.menu_gui.MenuGuiBase" title="magicclass.gui.menu_gui.MenuGuiBase"><span class="pre">MenuGuiBase</span></a> <span class="p"><span class="pre">|</span></span> <span class="pre">AbstractAction</span> <span class="p"><span class="pre">|</span></span> <span class="pre">Widget</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/magicclass/gui/menu_gui.html#MenuGuiBase.append"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.gui.menu_gui.MenuGuiBase.append" title="Permalink to this definition">¶</a></dt>
-<dd><p>S.append(value) -- append value to the end of the sequence</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.MenuGuiBase.changed">
-<span class="sig-name descname"><span class="pre">changed</span></span><em class="property"><span class="pre">:</span> <span class="pre">Signal</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.MenuGuiBase.changed" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.MenuGuiBase.enabled">
-<span class="sig-name descname"><span class="pre">enabled</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.MenuGuiBase.enabled" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.MenuGuiBase.gui_only">
-<span class="sig-name descname"><span class="pre">gui_only</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.MenuGuiBase.gui_only" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.MenuGuiBase.height">
-<span class="sig-name descname"><span class="pre">height</span></span><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.MenuGuiBase.height" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.gui._base.BaseGui</span></code>, <a class="reference internal" href="#magicclass.gui.mgui_ext.mguiLike" title="magicclass.gui.mgui_ext.mguiLike"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.gui.mgui_ext.mguiLike</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">MutableSequence</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="magicclass.gui.menu_gui.MenuGuiBase.insert">
-<span class="sig-name descname"><span class="pre">insert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span> <span class="p"><span class="pre">|</span></span> <a class="reference internal" href="#magicclass.gui.menu_gui.MenuGuiBase" title="magicclass.gui.menu_gui.MenuGuiBase"><span class="pre">MenuGuiBase</span></a> <span class="p"><span class="pre">|</span></span> <span class="pre">AbstractAction</span> <span class="p"><span class="pre">|</span></span> <span class="pre">Widget</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/magicclass/gui/menu_gui.html#MenuGuiBase.insert"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.gui.menu_gui.MenuGuiBase.insert" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">insert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span> <span class="p"><span class="pre">|</span></span> <a class="reference internal" href="#magicclass.gui.menu_gui.MenuGuiBase" title="magicclass.gui.menu_gui.MenuGuiBase"><span class="pre">MenuGuiBase</span></a> <span class="p"><span class="pre">|</span></span> <span class="pre">AbstractAction</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/magicclass/gui/menu_gui.html#MenuGuiBase.insert"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.gui.menu_gui.MenuGuiBase.insert" title="Permalink to this definition">¶</a></dt>
 <dd><p>Insert object into the menu. Could be widget or callable.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -777,101 +536,21 @@ here, not in ClassGuiBase.</p>
 </dl>
 </dd></dl>
 
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.MenuGuiBase.label">
-<span class="sig-name descname"><span class="pre">label</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.MenuGuiBase.label" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+</dd></dl>
 
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.MenuGuiBase.label_changed">
-<span class="sig-name descname"><span class="pre">label_changed</span></span><em class="property"><span class="pre">:</span> <span class="pre">Signal</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.MenuGuiBase.label_changed" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.MenuGuiBase.labels">
-<span class="sig-name descname"><span class="pre">labels</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.MenuGuiBase.labels" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.MenuGuiBase.layout">
-<span class="sig-name descname"><span class="pre">layout</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.MenuGuiBase.layout" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.MenuGuiBase.margins">
-<span class="sig-name descname"><span class="pre">margins</span></span><em class="property"><span class="pre">:</span> <span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#magicclass.gui.menu_gui.MenuGuiBase.margins" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.MenuGuiBase.max_height">
-<span class="sig-name descname"><span class="pre">max_height</span></span><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.MenuGuiBase.max_height" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.MenuGuiBase.max_width">
-<span class="sig-name descname"><span class="pre">max_width</span></span><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.MenuGuiBase.max_width" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.MenuGuiBase.min_height">
-<span class="sig-name descname"><span class="pre">min_height</span></span><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.MenuGuiBase.min_height" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.MenuGuiBase.min_width">
-<span class="sig-name descname"><span class="pre">min_width</span></span><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.MenuGuiBase.min_width" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.MenuGuiBase.name">
-<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.MenuGuiBase.name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.MenuGuiBase.options">
-<span class="sig-name descname"><span class="pre">options</span></span><em class="property"><span class="pre">:</span> <span class="pre">dict</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.MenuGuiBase.options" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.MenuGuiBase.param_kind">
-<span class="sig-name descname"><span class="pre">param_kind</span></span><em class="property"><span class="pre">:</span> <span class="pre">inspect._ParameterKind</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.MenuGuiBase.param_kind" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.MenuGuiBase.parent">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">parent</span></span><a class="headerlink" href="#magicclass.gui.menu_gui.MenuGuiBase.parent" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.MenuGuiBase.parent_changed">
-<span class="sig-name descname"><span class="pre">parent_changed</span></span><em class="property"><span class="pre">:</span> <span class="pre">Signal</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.MenuGuiBase.parent_changed" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.MenuGuiBase.render">
-<span class="sig-name descname"><span class="pre">render</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/gui/menu_gui.html#MenuGuiBase.render"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.gui.menu_gui.MenuGuiBase.render" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.MenuGuiBase.tooltip">
-<span class="sig-name descname"><span class="pre">tooltip</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.MenuGuiBase.tooltip" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.MenuGuiBase.visible">
-<span class="sig-name descname"><span class="pre">visible</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.MenuGuiBase.visible" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.MenuGuiBase.widget_type">
-<span class="sig-name descname"><span class="pre">widget_type</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.MenuGuiBase.widget_type" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.gui.menu_gui.MenuGuiBase.width">
-<span class="sig-name descname"><span class="pre">width</span></span><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><a class="headerlink" href="#magicclass.gui.menu_gui.MenuGuiBase.width" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
+<dl class="py function">
+<dt class="sig sig-object py" id="magicclass.gui.menu_gui.insert_action_like">
+<span class="sig-prename descclassname"><span class="pre">magicclass.gui.menu_gui.</span></span><span class="sig-name descname"><span class="pre">insert_action_like</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qmenu</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">PyQt5.QtWidgets.QMenu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/gui/menu_gui.html#insert_action_like"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.gui.menu_gui.insert_action_like" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert a QObject into a QMenu in a Pythonic way, like qmenu.insert(key, obj).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>qmenu</strong> (<em>QMenu</em>) -- QMenu object to which object will be inserted.</p></li>
+<li><p><strong>key</strong> (<em>int</em>) -- Position to insert.</p></li>
+<li><p><strong>obj</strong> (<em>QMenu</em><em> or </em><em>QAction</em><em> or </em><em>&quot;sep&quot;</em>) -- Object to be inserted.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
@@ -880,7 +559,7 @@ here, not in ClassGuiBase.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.gui.mgui_ext.AbstractAction">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.gui.mgui_ext.</span></span><span class="sig-name descname"><span class="pre">AbstractAction</span></span><a class="reference internal" href="_modules/magicclass/gui/mgui_ext.html#AbstractAction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.gui.mgui_ext.AbstractAction" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#magicclass.gui.mgui_ext.mguiLike" title="magicclass.gui.mgui_ext.mguiLike"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.gui.mgui_ext.mguiLike</span></code></a></p>
 <p>QAction encapsulated class with a similar API as magicgui Widget.
 This class makes it easier to combine QMenu to magicgui.</p>
 <dl class="py attribute">
@@ -888,29 +567,14 @@ This class makes it easier to combine QMenu to magicgui.</p>
 <span class="sig-name descname"><span class="pre">changed</span></span><a class="headerlink" href="#magicclass.gui.mgui_ext.AbstractAction.changed" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="py property">
-<dt class="sig sig-object py" id="magicclass.gui.mgui_ext.AbstractAction.enabled">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">enabled</span></span><a class="headerlink" href="#magicclass.gui.mgui_ext.AbstractAction.enabled" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 <dl class="py method">
 <dt class="sig sig-object py" id="magicclass.gui.mgui_ext.AbstractAction.from_options">
 <span class="sig-name descname"><span class="pre">from_options</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/gui/mgui_ext.html#AbstractAction.from_options"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.gui.mgui_ext.AbstractAction.from_options" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="py property">
-<dt class="sig sig-object py" id="magicclass.gui.mgui_ext.AbstractAction.name">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#magicclass.gui.mgui_ext.AbstractAction.name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 <dl class="py attribute">
 <dt class="sig sig-object py" id="magicclass.gui.mgui_ext.AbstractAction.native">
 <span class="sig-name descname"><span class="pre">native</span></span><em class="property"><span class="pre">:</span> <span class="pre">QAction</span> <span class="p"><span class="pre">|</span></span> <span class="pre">QWidgetAction</span></em><a class="headerlink" href="#magicclass.gui.mgui_ext.AbstractAction.native" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="magicclass.gui.mgui_ext.AbstractAction.parent">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">parent</span></span><a class="headerlink" href="#magicclass.gui.mgui_ext.AbstractAction.parent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -924,18 +588,8 @@ This class makes it easier to combine QMenu to magicgui.</p>
 <dd></dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="magicclass.gui.mgui_ext.AbstractAction.tooltip">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">tooltip</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#magicclass.gui.mgui_ext.AbstractAction.tooltip" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py property">
 <dt class="sig sig-object py" id="magicclass.gui.mgui_ext.AbstractAction.value">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">value</span></span><a class="headerlink" href="#magicclass.gui.mgui_ext.AbstractAction.value" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="magicclass.gui.mgui_ext.AbstractAction.visible">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">visible</span></span><a class="headerlink" href="#magicclass.gui.mgui_ext.AbstractAction.visible" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1047,19 +701,20 @@ This class makes it easier to combine QMenu to magicgui.</p>
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="magicclass.gui.mgui_ext.ToolButtonPlus">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.gui.mgui_ext.</span></span><span class="sig-name descname"><span class="pre">ToolButtonPlus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/gui/mgui_ext.html#ToolButtonPlus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.gui.mgui_ext.ToolButtonPlus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#magicclass.gui.mgui_ext.PushButtonPlus" title="magicclass.gui.mgui_ext.PushButtonPlus"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.gui.mgui_ext.PushButtonPlus</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.gui.mgui_ext.ToolButtonPlus.set_menu">
+<span class="sig-name descname"><span class="pre">set_menu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qmenu</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">PyQt5.QtWidgets.QMenu</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/gui/mgui_ext.html#ToolButtonPlus.set_menu"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.gui.mgui_ext.ToolButtonPlus.set_menu" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="magicclass.gui.mgui_ext.WidgetAction">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.gui.mgui_ext.</span></span><span class="sig-name descname"><span class="pre">WidgetAction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">widget</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">magicgui.widgets._bases.widget.Widget</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gui_only</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/gui/mgui_ext.html#WidgetAction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.gui.mgui_ext.WidgetAction" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.gui.mgui_ext.</span></span><span class="sig-name descname"><span class="pre">WidgetAction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">widget</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">magicgui.widgets._bases.widget.Widget</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/gui/mgui_ext.html#WidgetAction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.gui.mgui_ext.WidgetAction" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#magicclass.gui.mgui_ext.AbstractAction" title="magicclass.gui.mgui_ext.AbstractAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.gui.mgui_ext.AbstractAction</span></code></a></p>
-<dl class="py property">
-<dt class="sig sig-object py" id="magicclass.gui.mgui_ext.WidgetAction.max_width">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">max_width</span></span><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><a class="headerlink" href="#magicclass.gui.mgui_ext.WidgetAction.max_width" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="magicclass.gui.mgui_ext.WidgetAction.min_width">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">min_width</span></span><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><a class="headerlink" href="#magicclass.gui.mgui_ext.WidgetAction.min_width" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 <dl class="py attribute">
 <dt class="sig sig-object py" id="magicclass.gui.mgui_ext.WidgetAction.native">
 <span class="sig-name descname"><span class="pre">native</span></span><em class="property"><span class="pre">:</span> <span class="pre">QAction</span> <span class="p"><span class="pre">|</span></span> <span class="pre">QWidgetAction</span></em><a class="headerlink" href="#magicclass.gui.mgui_ext.WidgetAction.native" title="Permalink to this definition">¶</a></dt>
@@ -1076,14 +731,77 @@ This class makes it easier to combine QMenu to magicgui.</p>
 <dd></dd></dl>
 
 <dl class="py property">
+<dt class="sig sig-object py" id="magicclass.gui.mgui_ext.WidgetAction.text">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">text</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#magicclass.gui.mgui_ext.WidgetAction.text" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
 <dt class="sig sig-object py" id="magicclass.gui.mgui_ext.WidgetAction.value">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">value</span></span><a class="headerlink" href="#magicclass.gui.mgui_ext.WidgetAction.value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="magicclass.gui.mgui_ext.WidgetAction.width">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">width</span></span><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><a class="headerlink" href="#magicclass.gui.mgui_ext.WidgetAction.width" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="magicclass.gui.mgui_ext.WidgetAction.widget_type">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">widget_type</span></span><a class="headerlink" href="#magicclass.gui.mgui_ext.WidgetAction.widget_type" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.gui.mgui_ext.mguiLike">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.gui.mgui_ext.</span></span><span class="sig-name descname"><span class="pre">mguiLike</span></span><a class="reference internal" href="_modules/magicclass/gui/mgui_ext.html#mguiLike"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.gui.mgui_ext.mguiLike" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Abstract class that provide magicgui.widgets like properties.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.gui.mgui_ext.mguiLike.enabled">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">enabled</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#magicclass.gui.mgui_ext.mguiLike.enabled" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.gui.mgui_ext.mguiLike.name">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#magicclass.gui.mgui_ext.mguiLike.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.gui.mgui_ext.mguiLike.native">
+<span class="sig-name descname"><span class="pre">native</span></span><em class="property"><span class="pre">:</span> <span class="pre">QWidget</span> <span class="p"><span class="pre">|</span></span> <span class="pre">QAction</span></em><a class="headerlink" href="#magicclass.gui.mgui_ext.mguiLike.native" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.gui.mgui_ext.mguiLike.parent">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">parent</span></span><a class="headerlink" href="#magicclass.gui.mgui_ext.mguiLike.parent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.gui.mgui_ext.mguiLike.tooltip">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">tooltip</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#magicclass.gui.mgui_ext.mguiLike.tooltip" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.gui.mgui_ext.mguiLike.visible">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">visible</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#magicclass.gui.mgui_ext.mguiLike.visible" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.gui.mgui_ext.mguiLike.widget_type">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">widget_type</span></span><a class="headerlink" href="#magicclass.gui.mgui_ext.mguiLike.widget_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-magicclass.gui.toolbar">
+<span id="magicclass-gui-toolbar-module"></span><h2>magicclass.gui.toolbar module<a class="headerlink" href="#module-magicclass.gui.toolbar" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.gui.toolbar.ToolBarGui">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.gui.toolbar.</span></span><span class="sig-name descname"><span class="pre">ToolBarGui</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">close_on_run</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">popup_mode</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">PopUpMode</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_mode</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">ErrorMode</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/gui/toolbar.html#ToolBarGui"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.gui.toolbar.ToolBarGui" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.gui._base.BaseGui</span></code>, <a class="reference internal" href="#magicclass.gui.mgui_ext.mguiLike" title="magicclass.gui.mgui_ext.mguiLike"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.gui.mgui_ext.mguiLike</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">MutableSequence</span></code></p>
+<p>Magic class that will be converted into a toolbar</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.gui.toolbar.ToolBarGui.insert">
+<span class="sig-name descname"><span class="pre">insert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#magicclass.gui.mgui_ext.AbstractAction" title="magicclass.gui.mgui_ext.AbstractAction"><span class="pre">magicclass.gui.mgui_ext.AbstractAction</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/magicclass/gui/toolbar.html#ToolBarGui.insert"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.gui.toolbar.ToolBarGui.insert" title="Permalink to this definition">¶</a></dt>
+<dd><p>S.insert(index, value) -- insert value before index</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -1099,7 +817,12 @@ This class makes it easier to combine QMenu to magicgui.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="magicclass.gui.utils.define_callback">
-<span class="sig-prename descclassname"><span class="pre">magicclass.gui.utils.</span></span><span class="sig-name descname"><span class="pre">define_callback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">callback</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/gui/utils.html#define_callback"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.gui.utils.define_callback" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">magicclass.gui.utils.</span></span><span class="sig-name descname"><span class="pre">define_callback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">BaseGui</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">callback</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/gui/utils.html#define_callback"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.gui.utils.define_callback" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="magicclass.gui.utils.define_context_menu">
+<span class="sig-prename descclassname"><span class="pre">magicclass.gui.utils.</span></span><span class="sig-name descname"><span class="pre">define_context_menu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contextmenu</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">ContextMenuGui</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/gui/utils.html#define_context_menu"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.gui.utils.define_context_menu" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">

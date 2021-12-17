@@ -28,6 +28,14 @@ magicclass.widgets.pywidgets.object module
    :undoc-members:
    :show-inheritance:
 
+magicclass.widgets.pywidgets.tree module
+----------------------------------------
+
+.. automodule:: magicclass.widgets.pywidgets.tree
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Module contents
 ---------------
 
