@@ -145,11 +145,18 @@ class MagicTemplate:
     
     def append(self, widget: Widget) -> None:
         return self.insert(len(self, widget))
-        
-    def insert(self, key: int, widget: Widget) -> None:
+    
+    def _fast_insert(self, key: int, widget: Widget) -> None:
         raise NotImplementedError()
     
+    def insert(self, key: int, widget: Widget) -> None:
+        self._fast_insert(key, widget)
+        self._unify_label_widths()
+    
     def render(self) -> "np.ndarray":
+        raise NotImplementedError()
+    
+    def _unify_label_widths(self):
         raise NotImplementedError()
     
     @property

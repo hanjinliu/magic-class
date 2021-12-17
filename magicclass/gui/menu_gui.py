@@ -6,7 +6,7 @@ from magicgui.widgets import Image, Table, Label, FunctionGui
 from magicgui.widgets._bases import ButtonWidget
 from magicgui.widgets._bases.widget import Widget
 from macrokit import Symbol
-from qtpy.QtWidgets import QMenu, QWidgetAction
+from qtpy.QtWidgets import QMenu
 
 from .mgui_ext import AbstractAction, WidgetAction, _LabeledWidgetAction
 from ._base import BaseGui, PopUpMode, ErrorMode, ContainerLikeGui, nested_function_gui_callback
@@ -118,7 +118,7 @@ class MenuGuiBase(ContainerLikeGui):
                     if clsname is not None:
                         self._unwrap_method(clsname, name, widget)
                     else:           
-                        self.append(widget)
+                        self._fast_insert(len(self), widget)
                     
                     _hist.append((name, str(type(attr)), type(widget).__name__))
             
@@ -135,20 +135,11 @@ class MenuGuiBase(ContainerLikeGui):
                 else:
                     raise MagicClassConstructionError(f"{hist_str}\n\n{type(e).__name__}: {e}") from e
         
+        self._unify_label_widths()
         return None
     
     
-    def insert(self, key: int, obj: Callable | MenuGuiBase | AbstractAction) -> None:
-        """
-        Insert object into the menu. Could be widget or callable.
-
-        Parameters
-        ----------
-        key : int
-            Position to insert.
-        obj : Callable | MenuGuiBase | AbstractAction | Widget
-            Object to insert.
-        """
+    def _fast_insert(self, key: int, obj: Callable | MenuGuiBase | AbstractAction) -> None:
         if isinstance(obj, (self._component_class, MenuGuiBase)):
             insert_action_like(self.native, key, obj.native)
             self._list.insert(key, obj)
@@ -173,10 +164,25 @@ class MenuGuiBase(ContainerLikeGui):
                     _obj = _LabeledWidgetAction.from_action(obj)
                 _obj.parent = self
                 insert_action_like(self.native, key, _obj.native)
-                self._unify_label_widths()
+                
             self._list.insert(key, obj)
         else:
             raise TypeError(f"{type(obj)} is not supported.")
+    
+    
+    def insert(self, key: int, obj: Callable | MenuGuiBase | AbstractAction) -> None:
+        """
+        Insert object into the menu. Could be widget or callable.
+
+        Parameters
+        ----------
+        key : int
+            Position to insert.
+        obj : Callable | MenuGuiBase | AbstractAction | Widget
+            Object to insert.
+        """
+        self._fast_insert(key, obj)
+        self._unify_label_widths()
         
     
 def insert_action_like(qmenu: QMenu, key: int, obj):

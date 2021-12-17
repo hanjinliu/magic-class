@@ -205,7 +205,7 @@ class ClassGuiBase(BaseGui):
                     if clsname is not None:
                         self._unwrap_method(clsname, name, widget)
                     else:
-                        self.insert(n_insert, widget)
+                        self._fast_insert(n_insert, widget)
                         n_insert += 1
                     
                     _hist.append((name, str(type(attr)), type(widget).__name__))
@@ -227,11 +227,10 @@ class ClassGuiBase(BaseGui):
         # convert __call__ into a button
         if hasattr(self, "__call__"):
             widget = self._create_widget_from_method(self.__call__)
-            self.insert(n_insert, widget)
+            self._fast_insert(n_insert, widget)
             n_insert += 1
         
         self._unify_label_widths()
-        del _hist
         return None
 
 def make_gui(container: type[ContainerWidget], no_margin: bool = True):
@@ -269,8 +268,8 @@ def make_gui(container: type[ContainerWidget], no_margin: bool = True):
                 container.__setattr__(self, name, value)
             else:
                 object.__setattr__(self, name, value)
-
-        def insert(self: cls, key: int, widget: Widget):
+        
+        def _fast_insert(self: cls, key: int, widget: Widget):
             # _hide_labels should not contain Container because some ValueWidget like widgets
             # are Containers.
             _hide_labels = (_LabeledWidget, ButtonWidget, ClassGuiBase, FreeWidget, Label,
@@ -297,8 +296,12 @@ def make_gui(container: type[ContainerWidget], no_margin: bool = True):
             if key < 0:
                 key += len(self)
             self._widget._mgui_insert_widget(key, _widget)
-            self._unify_label_widths()
+            
 
+        def insert(self: cls, key: int, widget: Widget):
+            self._fast_insert(key, widget)
+            self._unify_label_widths()
+        
         
         def show(self: cls, run: bool = True) -> None:
             """
@@ -348,6 +351,7 @@ def make_gui(container: type[ContainerWidget], no_margin: bool = True):
         
         cls.__init__ = __init__
         cls.__setattr__ = __setattr__
+        cls._fast_insert = _fast_insert
         cls.insert = insert
         cls.show = show
         cls.close = close

@@ -144,7 +144,7 @@ class ToolBarGui(ContainerLikeGui):
                     if clsname is not None:
                         self._unwrap_method(clsname, name, widget)
                     else:           
-                        self.append(widget)
+                        self.insert(len(self), widget)
                     
                     _hist.append((name, str(type(attr)), type(widget).__name__))
             
@@ -161,10 +161,11 @@ class ToolBarGui(ContainerLikeGui):
                 else:
                     raise MagicClassConstructionError(f"{hist_str}\n\n{type(e).__name__}: {e}") from e
         
+        self._unify_label_widths()
         return None
     
     
-    def insert(self, key: int, obj: AbstractAction) -> None:
+    def _fast_insert(self, key: int, obj: AbstractAction) -> None:
         """
         Insert object into the menu. Could be widget or callable.
 
@@ -193,8 +194,11 @@ class ToolBarGui(ContainerLikeGui):
                     _obj = _LabeledWidgetAction.from_action(obj)
                 _obj.parent = self
                 insert_action_like(self.native, key, _obj.native)
-                self._unify_label_widths()
             self._list.insert(key, obj)
         else:
             raise TypeError(f"{type(obj)} is not supported.")
 
+    def insert(self, key: int, obj: AbstractAction) -> None:
+        self._fast_insert(key, obj)
+        self._unify_label_widths()
+        
