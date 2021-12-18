@@ -9,6 +9,7 @@ from ..utils import to_clipboard, show_messagebox
 
 if TYPE_CHECKING:
     from ._base import BaseGui
+    
 
 # TODO: Tabs
 
@@ -83,6 +84,12 @@ class MacroEdit(FreeWidget):
             self.show()
         parent = self._search_parent_magicclass()
         self.value = str(parent.macro)
+    
+    def _auto_pep8(self, e=None):
+        import autopep8
+        self.value = autopep8.fix_code(self.value)
+        parent = self._search_parent_magicclass()
+        parent.macro._last_setval = None # To avoid overwriting the last code.
     
     def new(self, name: str = None) -> MacroEdit:
         """
@@ -216,6 +223,14 @@ class MacroEdit(FreeWidget):
         complete_action = QAction("Get complete macro", self._macro_menu)
         complete_action.triggered.connect(self._get_complete)
         self._macro_menu.addAction(complete_action)
+        
+        try:
+            import autopep8
+            pep8_action = QAction("Run PEP8", self._macro_menu)
+            pep8_action.triggered.connect(self._auto_pep8)
+            self._macro_menu.addAction(pep8_action)
+        except ImportError:
+            pass
         
         
         syn = QAction("Synchronize", self._macro_menu)
