@@ -38,7 +38,7 @@ def _get_pen(kwargs: dict[str, Any]):
     return pg.mkPen(color=color, width=width, style=style)
 
 class PlotDataItem:
-    base_item: type[pg.PlotCurveItem|pg.ScatterPlotItem]
+    base_item: type[pg.PlotCurveItem | pg.ScatterPlotItem]
     def __init__(self, x, y, name=None, **kwargs):
         pen = _get_pen(kwargs)
         kwargs.pop("pen", None)
@@ -97,14 +97,24 @@ class PlotDataItem:
         self.native.setVisible(value)
     
     @property
-    def color(self) -> np.ndarray:
+    def edge_color(self) -> np.ndarray:
         rgba = self.native.opts["pen"].color().getRgb()
         return np.array(rgba)/255
     
-    @color.setter
-    def color(self, value: str | Sequence):
+    @edge_color.setter
+    def edge_color(self, value: str | Sequence):
         value = _convert_color_code(value)
         self.native.setPen(value)
+    
+    @property
+    def face_color(self) -> np.ndarray:
+        rgba = self.native.opts["brush"].color().getRgb()
+        return np.array(rgba)/255
+    
+    @face_color.setter
+    def face_color(self, value: str | Sequence):
+        value = _convert_color_code(value)
+        self.native.setBrush(value)
             
     @property
     def lw(self):
@@ -126,13 +136,15 @@ class PlotDataItem:
         self.native.opts["pen"].setWidth(_ls)
     
     linestyle = ls # alias
-    
+
+
 class Curve(PlotDataItem):
     base_item = pg.PlotCurveItem
 
+
 class Scatter(PlotDataItem):
     base_item = pg.ScatterPlotItem
-    
+            
     @property
     def symbol(self):
         return self.native.opts["symbol"]
@@ -142,12 +154,34 @@ class Scatter(PlotDataItem):
         self.native.setSymbol(value)
     
     @property
-    def symbol_size(self):
+    def size(self):
         self.native.opts["symbolSize"]
         
-    @symbol.setter
-    def symbol_size(self, size: float):
+    @size.setter
+    def size(self, size: float):
         self.native.setSymbolSize(size)
+
+
+class Histogram(PlotDataItem):
+    base_item = pg.PlotCurveItem
+    
+    def __init__(self, 
+                 data,
+                 bins: int | Sequence | str = 10,
+                 range=None,
+                 density:bool = False, 
+                 name=None,
+                 **kwargs):
+        pen = _get_pen(kwargs)
+        kwargs.pop("pen", None)
+        
+        y, x = np.histogram(data, bins=bins, range=range, density=density)
+        
+        self.native = self.base_item(x=x, y=y, pen=pen, stepMode=True, 
+                                     fillLevel=0, **kwargs)
+        self.name = name
+
+
 
 class TextOverlay:
     def __init__(self, text: str, color: Sequence[float] | str) -> None:
@@ -185,5 +219,38 @@ class TextOverlay:
                 raise AttributeError(f"Cannot set attribute {k} to TextOverlay.")
         for k, v in kwargs.items():
             setattr(self, k, v)
-            
-        
+
+
+class ScaleBar:
+    def __init__(self):
+        self._unit = ""
+        self.native = pg.ScaleBar(10, suffix=self._unit)
+    
+    @property
+    def color(self):
+        rgba = self.native.brush.color().getRgb()
+        return np.array(rgba)/255
+    
+    @color.setter
+    def color(self, value):
+        value = _convert_color_code(value)
+        self.native.brush = pg.mkBrush(value)
+        self.native.bar.setBrush(self.native.brush)
+    
+    @property
+    def visible(self):
+        return self.native.isVisible()
+    
+    @visible.setter
+    def visible(self, value: bool):
+        self.native.setVisible(value)
+    
+    @property
+    def unit(self) -> str:
+        return self._unit
+    
+    @unit.setter
+    def unit(self, value: str):
+        value = str(value)
+        self.native.text.setText(pg.siFormat(self.native.size, suffix=value))
+        self._unit = value

@@ -4,7 +4,7 @@ from pyqtgraph import colormap as cmap
 from typing import Sequence, overload
 import numpy as np
 from magicgui.events import Signal
-from .graph_items import PlotDataItem, Scatter, Curve, TextOverlay
+from .graph_items import PlotDataItem, ScaleBar, Scatter, Curve, Histogram, TextOverlay
 from .mouse_event import MouseClickEvent
 from ..utils import FreeWidget
 
@@ -42,7 +42,8 @@ class LayerList:
     def clear(self):
         for _ in range(len(self)):
             self.parent.remove_item(-1)
-    
+
+
 class HasPlotItem:
     _items: list[PlotDataItem]
     
@@ -112,7 +113,10 @@ class HasPlotItem:
                 x = np.arange(len(y))
         item = Scatter(x, y, **kwargs)
         self._add_item(item)
-        
+    
+    def add_hist(self, data, **kwargs):
+        item = Histogram(data, **kwargs)
+        self._add_item(item)
     
     def _add_item(self, item: PlotDataItem):
         self._items.append(item)
@@ -137,33 +141,67 @@ class HasPlotItem:
         item = self._items.pop(i)
         self._graphics.removeItem(item.native)
 
+
+class Region:
+    changed = Signal(tuple[float, float])
+    
+    def __init__(self):
+        self.native = pg.LinearRegionItem()
+        @self.native.sigRegionChanged.connect
+        def _(e=None):
+            self.changed.emit(self.native.getRegion())
+    
+    @property
+    def value(self) -> tuple[float, float]:
+        """Get the limits of linear region."""
+        return self.native.getRegion()
+    
+    @value.setter
+    def value(self, value: tuple[float, float]):
+        self.native.setRegion(value)
+    
+    @property
+    def visible(self) -> bool:
+        """Linear region visibility."""   
+        return self.native.isVisible()
+    
+    @visible.setter
+    def visible(self, value: bool):
+        self.native.setVisible(value)
+
+    @property
+    def enabled(self) -> bool:
+        return self.native.movable
+    
+    @enabled.setter
+    def enabled(self, value: bool):
+        self.native.setMovable(value)
+
+
 class QtPlotCanvas(FreeWidget, HasPlotItem):
     """
     A 1-D data viewer that have similar API as napari Viewer.
-    """    
-    region_changed = Signal(tuple[float, float])
-    
+    """
     def __init__(self, region_visible=False, **kwargs):
-        super().__init__(**kwargs)
+        
         
         # prepare widget
         self.plotwidget = pg.PlotWidget()
         self._items: list[PlotDataItem] = []
-        self.set_widget(self.plotwidget)
+        
         self._interactive = True
         
         # prepare region item
-        self.regionitem = pg.LinearRegionItem()
-        @self.regionitem.sigRegionChanged.connect
-        def _(e=None):
-            self.region_changed.emit(self.regionitem.getRegion())
-            
-        self.plotwidget.addItem(self.regionitem, ignoreBounds=True)
-        self.region_visible = region_visible
+        self._region = Region()
+        self._region.visible = region_visible
+        self.plotwidget.addItem(self._region.native, ignoreBounds=True)
         
         # prepare mouse event
         self.mouse_click_callbacks = []
         self.plotwidget.scene().sigMouseClicked.connect(self._mouse_clicked)
+        
+        super().__init__(**kwargs)
+        self.set_widget(self.plotwidget)
     
     def _mouse_clicked(self, e):
         if len(self._items) == 0:
@@ -171,6 +209,10 @@ class QtPlotCanvas(FreeWidget, HasPlotItem):
         e = MouseClickEvent(e, self._items[0].native)
         for callback in self.mouse_click_callbacks:
             callback(e)
+    
+    @property
+    def region(self) -> Region:
+        return self._region
     
     @property
     def _graphics(self):
@@ -221,37 +263,17 @@ class QtPlotCanvas(FreeWidget, HasPlotItem):
         self.plotwidget.setYRange(*value)
     
     @property
-    def interactive(self) -> bool:
+    def enabled(self) -> bool:
         """Mouse interactivity"""        
         return self._interactive
     
-    @interactive.setter
-    def interactive(self, value: bool):
+    @enabled.setter
+    def enabled(self, value: bool):
         self.plotwidget.setMouseEnabled(value, value)
         self._interactive = value
+    
+    interactive = enabled
 
-    @property
-    def region(self) -> tuple[float, float]:
-        """
-        Get the limits of linear region.
-        """        
-        return self.regionitem.getRegion()
-    
-    @region.setter
-    def region(self, value: tuple[float, float]):
-        self.regionitem.setRegion(value)
-    
-    @property
-    def region_visible(self) -> bool:
-        """
-        Linear region visibility.
-        """        
-        return self.regionitem.isVisible()
-    
-    @region_visible.setter
-    def region_visible(self, value: bool):
-        self.regionitem.setVisible(value)
-       
        
 class QtImageCanvas(FreeWidget, HasPlotItem):
     def __init__(self, 
@@ -262,9 +284,8 @@ class QtImageCanvas(FreeWidget, HasPlotItem):
                  show_button: bool = True,
                  **kwargs):
         
-        super().__init__(**kwargs)
-        self.imageview = pg.ImageView(parent=self.native, name=kwargs.get("name", "ImageView"))
-        self.set_widget(self.imageview)
+        self.imageview = pg.ImageView(name=kwargs.get("name", "ImageView"))
+        
         self._interactive = True
         self._items: list[PlotDataItem] = []
         self.show_hist(show_hist)
@@ -282,9 +303,19 @@ class QtImageCanvas(FreeWidget, HasPlotItem):
         self._text_overlay = TextOverlay(text="", color="gray")
         self.imageview.scene.addItem(self._text_overlay.native)
         
+        # prepare scale bar
+        self._scale_bar = ScaleBar()
+        self.imageview.scene.addItem(self._scale_bar.native)
+        self._scale_bar.visible = False
+        self._scale_bar.native.setParentItem(self.imageview.view)
+        self._scale_bar.native.anchor((1, 1), (1, 1), offset=(-20, -20))
+        
         # prepare mouse event
         self.mouse_click_callbacks = []
         self.imageview.scene.sigMouseClicked.connect(self._mouse_clicked)
+        
+        super().__init__(**kwargs)
+        self.set_widget(self.imageview)
         
     
     def _mouse_clicked(self, e):
@@ -303,6 +334,11 @@ class QtImageCanvas(FreeWidget, HasPlotItem):
     def text_overlay(self) -> TextOverlay:
         """Text overlay on the image."""        
         return self._text_overlay
+    
+    @property
+    def scale_bar(self) -> ScaleBar:
+        """Scale bar on the image."""
+        return self._scale_bar
     
     @property
     def image(self) -> np.ndarray | None:
@@ -338,16 +374,18 @@ class QtImageCanvas(FreeWidget, HasPlotItem):
     def view_range(self, value: tuple[tuple[float, float], tuple[float, float]]):
         yrange, xrange = value
         self.imageview.view.setRange(xRange=xrange, yRange=yrange)
-    
+
     @property
-    def interactive(self) -> bool:
+    def enabled(self) -> bool:
         """Mouse interactivity"""        
         return self._interactive
     
-    @interactive.setter
-    def interactive(self, value: bool):
+    @enabled.setter
+    def enabled(self, value: bool):
         self.imageview.view.setMouseEnabled(value, value)
         self._interactive = value
+    
+    interactive = enabled
     
     @property
     def cmap(self):
