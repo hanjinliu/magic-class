@@ -2,6 +2,14 @@
 Quick Start
 ===========
 
+.. contents:: Contents
+    :local:
+    :depth: 2
+
+
+Basics
+------
+
 In ``magicgui``, you can convert functions into widgets. For instance,
 
 .. code-block:: python
@@ -42,6 +50,7 @@ corresponding magicgui will be popped up.
 
     Methods whose names start with "_" are considered as inner functions so that they will
     not be converted into widgets.
+
 
 Use Other Widgets in magic-class
 --------------------------------
@@ -94,6 +103,7 @@ but ``FunctionGui`` widgets.
 
 .. image:: images/fig_1-3.png
 
+
 Macro Recording
 ---------------
 
@@ -136,6 +146,7 @@ only shows a help window). You can prevent macro recording with ``do_not_record`
     ui = Main()
     ui.show()
 
+
 Make Document of Your Widgets Automatically
 -------------------------------------------
 
@@ -159,6 +170,41 @@ and parameter annotations of functions are summerized with rich texts.
     help.show() # show widget
 
 .. image:: images/fig_1-5.png
+
+
+Add Functions after Construction
+--------------------------------
+
+Making a button or menu action dynamically is also useful, especially when you already have a 
+UI platform but you still want some extensions like plugin system. You don't have to worry
+about that since magic class construction itself is dynamic. Just ``append`` well-typed 
+functions to magic class object.
+
+.. code-block:: python
+
+    def new_function(i: int, s: str):
+        ...
+    
+    ui.append(new_function) # then a proper widget appears in the GUI
+
+
+.. note::
+
+    If you want to convert the function into a menu action, your code will look like this.
+
+    .. code-block:: python
+
+        @magicclass
+        class A:
+            @magicmenu
+            class Menu:
+                ...
+
+        ui = A()
+        ui.Menu.append(new_function)
+
+    For details of menu bar, see :doc:`nest`.
+
 
 Parameter Options
 -----------------
@@ -207,6 +253,7 @@ the design of button itself. ``magicclass`` uses ``set_design`` decorator to do 
     ui.show()
 
 ``set_design`` can take properties of ``PushButton`` as arguments.
+
 
 Code Completion
 ---------------

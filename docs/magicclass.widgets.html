@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.widgets package &mdash; magic-class 0.5.14 documentation</title>
+  <title>magicclass.widgets package &mdash; magic-class 0.5.15dev0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -30,7 +30,7 @@
             <a href="index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.14
+                0.5.15dev0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -831,6 +831,12 @@ for that widget in the GUI.</p></li>
 </dd></dl>
 
 <dl class="py property">
+<dt class="sig sig-object py" id="magicclass.widgets.QtImageCanvas.enabled">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">enabled</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#magicclass.widgets.QtImageCanvas.enabled" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mouse interactivity</p>
+</dd></dl>
+
+<dl class="py property">
 <dt class="sig sig-object py" id="magicclass.widgets.QtImageCanvas.image">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">image</span></span><em class="property"><span class="pre">:</span> <span class="pre">np.ndarray</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></em><a class="headerlink" href="#magicclass.widgets.QtImageCanvas.image" title="Permalink to this definition">¶</a></dt>
 <dd><p>Image data</p>
@@ -840,6 +846,12 @@ for that widget in the GUI.</p></li>
 <dt class="sig sig-object py" id="magicclass.widgets.QtImageCanvas.interactive">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">interactive</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#magicclass.widgets.QtImageCanvas.interactive" title="Permalink to this definition">¶</a></dt>
 <dd><p>Mouse interactivity</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.widgets.QtImageCanvas.scale_bar">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">scale_bar</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="magicclass.widgets.qtgraph.html#magicclass.widgets.qtgraph.graph_items.ScaleBar" title="magicclass.widgets.qtgraph.graph_items.ScaleBar"><span class="pre">magicclass.widgets.qtgraph.graph_items.ScaleBar</span></a></em><a class="headerlink" href="#magicclass.widgets.QtImageCanvas.scale_bar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scale bar on the image.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -884,6 +896,12 @@ for that widget in the GUI.</p></li>
 <dd><p>Bases: <a class="reference internal" href="#magicclass.widgets.utils.FreeWidget" title="magicclass.widgets.utils.FreeWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.widgets.utils.FreeWidget</span></code></a>, <a class="reference internal" href="magicclass.widgets.qtgraph.html#magicclass.widgets.qtgraph.qt_graph.HasPlotItem" title="magicclass.widgets.qtgraph.qt_graph.HasPlotItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.widgets.qtgraph.qt_graph.HasPlotItem</span></code></a></p>
 <p>A 1-D data viewer that have similar API as napari Viewer.</p>
 <dl class="py property">
+<dt class="sig sig-object py" id="magicclass.widgets.QtPlotCanvas.enabled">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">enabled</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#magicclass.widgets.QtPlotCanvas.enabled" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mouse interactivity</p>
+</dd></dl>
+
+<dl class="py property">
 <dt class="sig sig-object py" id="magicclass.widgets.QtPlotCanvas.interactive">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">interactive</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#magicclass.widgets.QtPlotCanvas.interactive" title="Permalink to this definition">¶</a></dt>
 <dd><p>Mouse interactivity</p>
@@ -891,20 +909,8 @@ for that widget in the GUI.</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="magicclass.widgets.QtPlotCanvas.region">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">region</span></span><em class="property"><span class="pre">:</span> <span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#magicclass.widgets.QtPlotCanvas.region" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the limits of linear region.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.widgets.QtPlotCanvas.region_changed">
-<span class="sig-name descname"><span class="pre">region_changed</span></span><a class="headerlink" href="#magicclass.widgets.QtPlotCanvas.region_changed" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">region</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="magicclass.widgets.qtgraph.html#magicclass.widgets.qtgraph.qt_graph.Region" title="magicclass.widgets.qtgraph.qt_graph.Region"><span class="pre">magicclass.widgets.qtgraph.qt_graph.Region</span></a></em><a class="headerlink" href="#magicclass.widgets.QtPlotCanvas.region" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="magicclass.widgets.QtPlotCanvas.region_visible">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">region_visible</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#magicclass.widgets.QtPlotCanvas.region_visible" title="Permalink to this definition">¶</a></dt>
-<dd><p>Linear region visibility.</p>
-</dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="magicclass.widgets.QtPlotCanvas.xlabel">

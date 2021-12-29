@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.widgets.qtgraph package &mdash; magic-class 0.5.14 documentation</title>
+  <title>magicclass.widgets.qtgraph package &mdash; magic-class 0.5.15dev0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -29,7 +29,7 @@
             <a href="index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.14
+                0.5.15dev0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -100,6 +100,18 @@
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="magicclass.widgets.qtgraph.graph_items.Histogram">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.qtgraph.graph_items.</span></span><span class="sig-name descname"><span class="pre">Histogram</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bins</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span> <span class="p"><span class="pre">|</span></span> <span class="pre">Sequence</span> <span class="p"><span class="pre">|</span></span> <span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">density</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/qtgraph/graph_items.html#Histogram"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.qtgraph.graph_items.Histogram" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#magicclass.widgets.qtgraph.graph_items.PlotDataItem" title="magicclass.widgets.qtgraph.graph_items.PlotDataItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.widgets.qtgraph.graph_items.PlotDataItem</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.widgets.qtgraph.graph_items.Histogram.base_item">
+<span class="sig-name descname"><span class="pre">base_item</span></span><a class="headerlink" href="#magicclass.widgets.qtgraph.graph_items.Histogram.base_item" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pyqtgraph.graphicsItems.PlotCurveItem.PlotCurveItem</span></code></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="magicclass.widgets.qtgraph.graph_items.PlotDataItem">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.qtgraph.graph_items.</span></span><span class="sig-name descname"><span class="pre">PlotDataItem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/qtgraph/graph_items.html#PlotDataItem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.qtgraph.graph_items.PlotDataItem" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
@@ -114,8 +126,13 @@
 <dd></dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="magicclass.widgets.qtgraph.graph_items.PlotDataItem.color">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">color</span></span><em class="property"><span class="pre">:</span> <span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#magicclass.widgets.qtgraph.graph_items.PlotDataItem.color" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="magicclass.widgets.qtgraph.graph_items.PlotDataItem.edge_color">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">edge_color</span></span><em class="property"><span class="pre">:</span> <span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#magicclass.widgets.qtgraph.graph_items.PlotDataItem.edge_color" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.widgets.qtgraph.graph_items.PlotDataItem.face_color">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">face_color</span></span><em class="property"><span class="pre">:</span> <span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#magicclass.widgets.qtgraph.graph_items.PlotDataItem.face_color" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
@@ -166,6 +183,27 @@
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="magicclass.widgets.qtgraph.graph_items.ScaleBar">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.qtgraph.graph_items.</span></span><span class="sig-name descname"><span class="pre">ScaleBar</span></span><a class="reference internal" href="_modules/magicclass/widgets/qtgraph/graph_items.html#ScaleBar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.qtgraph.graph_items.ScaleBar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.widgets.qtgraph.graph_items.ScaleBar.color">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">color</span></span><a class="headerlink" href="#magicclass.widgets.qtgraph.graph_items.ScaleBar.color" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.widgets.qtgraph.graph_items.ScaleBar.unit">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">unit</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#magicclass.widgets.qtgraph.graph_items.ScaleBar.unit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.widgets.qtgraph.graph_items.ScaleBar.visible">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">visible</span></span><a class="headerlink" href="#magicclass.widgets.qtgraph.graph_items.ScaleBar.visible" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="magicclass.widgets.qtgraph.graph_items.Scatter">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.qtgraph.graph_items.</span></span><span class="sig-name descname"><span class="pre">Scatter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/qtgraph/graph_items.html#Scatter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.qtgraph.graph_items.Scatter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#magicclass.widgets.qtgraph.graph_items.PlotDataItem" title="magicclass.widgets.qtgraph.graph_items.PlotDataItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.widgets.qtgraph.graph_items.PlotDataItem</span></code></a></p>
@@ -176,13 +214,13 @@
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="magicclass.widgets.qtgraph.graph_items.Scatter.symbol">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">symbol</span></span><a class="headerlink" href="#magicclass.widgets.qtgraph.graph_items.Scatter.symbol" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="magicclass.widgets.qtgraph.graph_items.Scatter.size">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">size</span></span><a class="headerlink" href="#magicclass.widgets.qtgraph.graph_items.Scatter.size" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="magicclass.widgets.qtgraph.graph_items.Scatter.symbol_size">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">symbol_size</span></span><a class="headerlink" href="#magicclass.widgets.qtgraph.graph_items.Scatter.symbol_size" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="magicclass.widgets.qtgraph.graph_items.Scatter.symbol">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">symbol</span></span><a class="headerlink" href="#magicclass.widgets.qtgraph.graph_items.Scatter.symbol" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -326,6 +364,11 @@ that the event was delivered to.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.qtgraph.qt_graph.HasPlotItem.add_hist">
+<span class="sig-name descname"><span class="pre">add_hist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/qtgraph/qt_graph.html#HasPlotItem.add_hist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.qtgraph.qt_graph.HasPlotItem.add_hist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="magicclass.widgets.qtgraph.qt_graph.HasPlotItem.add_scatter">
 <span class="sig-name descname"><span class="pre">add_scatter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/qtgraph/qt_graph.html#HasPlotItem.add_scatter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.qtgraph.qt_graph.HasPlotItem.add_scatter" title="Permalink to this definition">¶</a></dt>
 <dt class="sig sig-object py">
@@ -387,6 +430,12 @@ that the event was delivered to.</p>
 </dd></dl>
 
 <dl class="py property">
+<dt class="sig sig-object py" id="magicclass.widgets.qtgraph.qt_graph.QtImageCanvas.enabled">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">enabled</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#magicclass.widgets.qtgraph.qt_graph.QtImageCanvas.enabled" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mouse interactivity</p>
+</dd></dl>
+
+<dl class="py property">
 <dt class="sig sig-object py" id="magicclass.widgets.qtgraph.qt_graph.QtImageCanvas.image">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">image</span></span><em class="property"><span class="pre">:</span> <span class="pre">np.ndarray</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></em><a class="headerlink" href="#magicclass.widgets.qtgraph.qt_graph.QtImageCanvas.image" title="Permalink to this definition">¶</a></dt>
 <dd><p>Image data</p>
@@ -396,6 +445,12 @@ that the event was delivered to.</p>
 <dt class="sig sig-object py" id="magicclass.widgets.qtgraph.qt_graph.QtImageCanvas.interactive">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">interactive</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#magicclass.widgets.qtgraph.qt_graph.QtImageCanvas.interactive" title="Permalink to this definition">¶</a></dt>
 <dd><p>Mouse interactivity</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.widgets.qtgraph.qt_graph.QtImageCanvas.scale_bar">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">scale_bar</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="#magicclass.widgets.qtgraph.graph_items.ScaleBar" title="magicclass.widgets.qtgraph.graph_items.ScaleBar"><span class="pre">magicclass.widgets.qtgraph.graph_items.ScaleBar</span></a></em><a class="headerlink" href="#magicclass.widgets.qtgraph.qt_graph.QtImageCanvas.scale_bar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scale bar on the image.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -440,32 +495,21 @@ that the event was delivered to.</p>
 <dd><p>Bases: <a class="reference internal" href="magicclass.widgets.html#magicclass.widgets.utils.FreeWidget" title="magicclass.widgets.utils.FreeWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.widgets.utils.FreeWidget</span></code></a>, <a class="reference internal" href="#magicclass.widgets.qtgraph.qt_graph.HasPlotItem" title="magicclass.widgets.qtgraph.qt_graph.HasPlotItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.widgets.qtgraph.qt_graph.HasPlotItem</span></code></a></p>
 <p>A 1-D data viewer that have similar API as napari Viewer.</p>
 <dl class="py property">
+<dt class="sig sig-object py" id="magicclass.widgets.qtgraph.qt_graph.QtPlotCanvas.enabled">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">enabled</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#magicclass.widgets.qtgraph.qt_graph.QtPlotCanvas.enabled" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mouse interactivity</p>
+</dd></dl>
+
+<dl class="py property">
 <dt class="sig sig-object py" id="magicclass.widgets.qtgraph.qt_graph.QtPlotCanvas.interactive">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">interactive</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#magicclass.widgets.qtgraph.qt_graph.QtPlotCanvas.interactive" title="Permalink to this definition">¶</a></dt>
 <dd><p>Mouse interactivity</p>
 </dd></dl>
 
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.widgets.qtgraph.qt_graph.QtPlotCanvas.name">
-<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#magicclass.widgets.qtgraph.qt_graph.QtPlotCanvas.name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 <dl class="py property">
 <dt class="sig sig-object py" id="magicclass.widgets.qtgraph.qt_graph.QtPlotCanvas.region">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">region</span></span><em class="property"><span class="pre">:</span> <span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#magicclass.widgets.qtgraph.qt_graph.QtPlotCanvas.region" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the limits of linear region.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.widgets.qtgraph.qt_graph.QtPlotCanvas.region_changed">
-<span class="sig-name descname"><span class="pre">region_changed</span></span><a class="headerlink" href="#magicclass.widgets.qtgraph.qt_graph.QtPlotCanvas.region_changed" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">region</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="#magicclass.widgets.qtgraph.qt_graph.Region" title="magicclass.widgets.qtgraph.qt_graph.Region"><span class="pre">magicclass.widgets.qtgraph.qt_graph.Region</span></a></em><a class="headerlink" href="#magicclass.widgets.qtgraph.qt_graph.QtPlotCanvas.region" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="magicclass.widgets.qtgraph.qt_graph.QtPlotCanvas.region_visible">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">region_visible</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#magicclass.widgets.qtgraph.qt_graph.QtPlotCanvas.region_visible" title="Permalink to this definition">¶</a></dt>
-<dd><p>Linear region visibility.</p>
-</dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="magicclass.widgets.qtgraph.qt_graph.QtPlotCanvas.xlabel">
@@ -489,6 +533,34 @@ that the event was delivered to.</p>
 <dt class="sig sig-object py" id="magicclass.widgets.qtgraph.qt_graph.QtPlotCanvas.ylim">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">ylim</span></span><a class="headerlink" href="#magicclass.widgets.qtgraph.qt_graph.QtPlotCanvas.ylim" title="Permalink to this definition">¶</a></dt>
 <dd><p>Range limits of Y-axis.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.widgets.qtgraph.qt_graph.Region">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.qtgraph.qt_graph.</span></span><span class="sig-name descname"><span class="pre">Region</span></span><a class="reference internal" href="_modules/magicclass/widgets/qtgraph/qt_graph.html#Region"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.qtgraph.qt_graph.Region" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.widgets.qtgraph.qt_graph.Region.changed">
+<span class="sig-name descname"><span class="pre">changed</span></span><a class="headerlink" href="#magicclass.widgets.qtgraph.qt_graph.Region.changed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.widgets.qtgraph.qt_graph.Region.enabled">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">enabled</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#magicclass.widgets.qtgraph.qt_graph.Region.enabled" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.widgets.qtgraph.qt_graph.Region.value">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">value</span></span><em class="property"><span class="pre">:</span> <span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#magicclass.widgets.qtgraph.qt_graph.Region.value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the limits of linear region.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.widgets.qtgraph.qt_graph.Region.visible">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">visible</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#magicclass.widgets.qtgraph.qt_graph.Region.visible" title="Permalink to this definition">¶</a></dt>
+<dd><p>Linear region visibility.</p>
 </dd></dl>
 
 </dd></dl>
@@ -535,6 +607,12 @@ visualization.</p>
 </dd></dl>
 
 <dl class="py property">
+<dt class="sig sig-object py" id="magicclass.widgets.qtgraph.QtImageCanvas.enabled">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">enabled</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#magicclass.widgets.qtgraph.QtImageCanvas.enabled" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mouse interactivity</p>
+</dd></dl>
+
+<dl class="py property">
 <dt class="sig sig-object py" id="magicclass.widgets.qtgraph.QtImageCanvas.image">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">image</span></span><em class="property"><span class="pre">:</span> <span class="pre">np.ndarray</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></em><a class="headerlink" href="#magicclass.widgets.qtgraph.QtImageCanvas.image" title="Permalink to this definition">¶</a></dt>
 <dd><p>Image data</p>
@@ -544,6 +622,12 @@ visualization.</p>
 <dt class="sig sig-object py" id="magicclass.widgets.qtgraph.QtImageCanvas.interactive">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">interactive</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#magicclass.widgets.qtgraph.QtImageCanvas.interactive" title="Permalink to this definition">¶</a></dt>
 <dd><p>Mouse interactivity</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.widgets.qtgraph.QtImageCanvas.scale_bar">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">scale_bar</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="#magicclass.widgets.qtgraph.graph_items.ScaleBar" title="magicclass.widgets.qtgraph.graph_items.ScaleBar"><span class="pre">magicclass.widgets.qtgraph.graph_items.ScaleBar</span></a></em><a class="headerlink" href="#magicclass.widgets.qtgraph.QtImageCanvas.scale_bar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scale bar on the image.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -588,32 +672,21 @@ visualization.</p>
 <dd><p>Bases: <a class="reference internal" href="magicclass.widgets.html#magicclass.widgets.utils.FreeWidget" title="magicclass.widgets.utils.FreeWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.widgets.utils.FreeWidget</span></code></a>, <a class="reference internal" href="#magicclass.widgets.qtgraph.qt_graph.HasPlotItem" title="magicclass.widgets.qtgraph.qt_graph.HasPlotItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.widgets.qtgraph.qt_graph.HasPlotItem</span></code></a></p>
 <p>A 1-D data viewer that have similar API as napari Viewer.</p>
 <dl class="py property">
+<dt class="sig sig-object py" id="magicclass.widgets.qtgraph.QtPlotCanvas.enabled">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">enabled</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#magicclass.widgets.qtgraph.QtPlotCanvas.enabled" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mouse interactivity</p>
+</dd></dl>
+
+<dl class="py property">
 <dt class="sig sig-object py" id="magicclass.widgets.qtgraph.QtPlotCanvas.interactive">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">interactive</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#magicclass.widgets.qtgraph.QtPlotCanvas.interactive" title="Permalink to this definition">¶</a></dt>
 <dd><p>Mouse interactivity</p>
 </dd></dl>
 
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.widgets.qtgraph.QtPlotCanvas.name">
-<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#magicclass.widgets.qtgraph.QtPlotCanvas.name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 <dl class="py property">
 <dt class="sig sig-object py" id="magicclass.widgets.qtgraph.QtPlotCanvas.region">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">region</span></span><em class="property"><span class="pre">:</span> <span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#magicclass.widgets.qtgraph.QtPlotCanvas.region" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the limits of linear region.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.widgets.qtgraph.QtPlotCanvas.region_changed">
-<span class="sig-name descname"><span class="pre">region_changed</span></span><a class="headerlink" href="#magicclass.widgets.qtgraph.QtPlotCanvas.region_changed" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">region</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="#magicclass.widgets.qtgraph.qt_graph.Region" title="magicclass.widgets.qtgraph.qt_graph.Region"><span class="pre">magicclass.widgets.qtgraph.qt_graph.Region</span></a></em><a class="headerlink" href="#magicclass.widgets.qtgraph.QtPlotCanvas.region" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="magicclass.widgets.qtgraph.QtPlotCanvas.region_visible">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">region_visible</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#magicclass.widgets.qtgraph.QtPlotCanvas.region_visible" title="Permalink to this definition">¶</a></dt>
-<dd><p>Linear region visibility.</p>
-</dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="magicclass.widgets.qtgraph.QtPlotCanvas.xlabel">
