@@ -8,6 +8,7 @@ import os
 from enum import Enum
 import warnings
 from docstring_parser import parse, compose
+from qtpy.QtWidgets import QWidget
 from qtpy.QtGui import QIcon
 
 from magicgui.events import Signal
@@ -108,6 +109,7 @@ class MagicTemplate:
     min_height: int
     min_width: int
     name: str
+    native: QWidget
     options: dict
     param_kind: inspect._ParameterKind
     parent: Widget

@@ -6,7 +6,7 @@ from pathlib import Path
 import datetime
 from dataclasses import is_dataclass
 from weakref import WeakValueDictionary
-from typing import Any, Literal, Union
+from typing import Any
 from typing_extensions import Annotated, _AnnotatedAlias
 from macrokit import Expr, register_type, Head
 
@@ -31,6 +31,7 @@ from .gui._base import PopUpMode, ErrorMode, defaults, MagicTemplate, check_over
 from .gui.toolbar import ToolBarGui
 from .gui import ContextMenuGui, MenuGui, MenuGuiBase
 from ._app import get_app
+from ._typing import WidgetType, WidgetTypeStr, PopUpModeStr, ErrorModeStr
 
 _datetime = Expr(Head.getattr, [datetime, datetime.datetime])
 _date = Expr(Head.getattr, [datetime, datetime.date])
@@ -54,32 +55,6 @@ def find_myname(gui: MagicTemplate):
     
 _BASE_CLASS_SUFFIX = "_Base"
 _POST_INIT = "__post_init__"
-
-class WidgetType(Enum):
-    none = "none"
-    scrollable = "scrollable"
-    draggable = "draggable"
-    split = "split"
-    collapsible = "collapsible"
-    hcollapsible = "hcollapsible"
-    button = "button"
-    toolbox = "toolbox"
-    tabbed = "tabbed"
-    stacked = "stacked"
-    list = "list"
-    subwindows = "subwindows"
-    groupbox = "groupbox"
-    mainwindow = "mainwindow"
-
-WidgetTypeStr = Union[Literal["none"], Literal["scrollable"], Literal["draggable"], Literal["split"],
-                      Literal["collapsible"], Literal["button"], Literal["toolbox"], Literal["tabbed"],
-                      Literal["stacked"], Literal["list"], Literal["subwindows"], Literal["groupbox"],
-                      Literal["mainwindow"], Literal["hcollapsible"]]
-
-PopUpModeStr = Union[Literal["popup"], Literal["first"], Literal["last"], Literal["above"],
-                     Literal["below"], Literal["dock"], Literal["parentlast"]]
-
-ErrorModeStr = Union[Literal["msgbox"], Literal["stderr"]]
 
 _TYPE_MAP = {
     WidgetType.none: ClassGui,
@@ -119,6 +94,7 @@ def Bound(value: Any) -> _AnnotatedAlias:
     # EmptyWidget.
     
     return Annotated[Any, {"bind": value}]
+
 
 def magicclass(class_: type | None = None,
                *,
@@ -270,6 +246,7 @@ def magicmenu(class_: type = None,
     Decorator that can convert a Python class into a menu bar.
     """    
     return _call_magicmenu(**locals(), menugui_class=MenuGui)
+
 
 def magiccontext(class_: type = None, 
                  *, 
@@ -478,20 +455,12 @@ def build_help(ui: MagicTemplate, parent=None):
         help_widget = HelpWidget(ui, parent=parent)
         _HELPS[ui_id] = help_widget
     return help_widget
-        
 
-class _CallableClass:
+
+class Parameters:
     def __init__(self):
         self.__name__ = self.__class__.__name__
         self.__qualname__ = self.__class__.__qualname__
-    
-    def __call__(self, *args, **kwargs):
-        raise NotImplementedError()
-    
-    
-class Parameters(_CallableClass):
-    def __init__(self):
-        super().__init__()
         
         sig = [inspect.Parameter(name="self", 
                                  kind=inspect.Parameter.POSITIONAL_OR_KEYWORD)]
