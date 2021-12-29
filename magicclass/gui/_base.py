@@ -201,18 +201,6 @@ class MagicTemplate:
         """        
         return self.native.objectName()
     
-    def create_macro(self, show: bool = False) -> str:
-        msg = "Method 'create_macro' is deprecated and will be removed soon."\
-              "Macro object is available via 'self.macro' property, and the widget is"\
-              "available at 'self.macro.widget'."
-        warnings.warn(msg, DeprecationWarning)
-        
-        out = str(self.macro)
-                    
-        if show:
-            self.macro.widget.show()
-            
-        return out
     
     @classmethod
     def wraps(cls, 

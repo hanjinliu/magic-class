@@ -1,10 +1,7 @@
 from __future__ import annotations
 from inspect import signature
 from typing import Any, Callable
-import os
-import warnings
 from qtpy.QtWidgets import QMenuBar, QWidget, QMainWindow, QBoxLayout
-from qtpy.QtGui import QIcon
 from qtpy.QtCore import Qt
 from magicgui.widgets import Container, MainWindow,Label, FunctionGui, Image, Table
 from magicgui.widgets._bases import Widget, ButtonWidget, ValueWidget, ContainerWidget
@@ -36,6 +33,7 @@ from ..utils import iter_members, extract_tooltip
 from ..fields import MagicField
 from ..signature import get_additional_option
 from .._app import run_app
+
 
 class ClassGuiBase(BaseGui):
     # This class is always inherited by @magicclass decorator.
