@@ -185,11 +185,6 @@ class ClassGuiBase(BaseGui):
                         # with a type object (not instance).
                         widget.__magicclass_parent__ = self
 
-                    elif isinstance(widget, FunctionGui):
-                        # magic-class has to know when the nested FunctionGui is called.
-                        f = nested_function_gui_callback(self, widget)
-                        widget.called.connect(f)
-                        
                     else:
                         if not widget.name:
                             widget.name = name
@@ -269,7 +264,16 @@ def make_gui(container: type[ContainerWidget], no_margin: bool = True):
             else:
                 object.__setattr__(self, name, value)
         
-        def _fast_insert(self: cls, key: int, widget: Widget):
+        def _fast_insert(self: cls, key: int, widget: Widget | Callable):
+            if isinstance(widget, Callable):
+                # Sometimes uses want to dynamically add new functions to GUI.
+                if isinstance(widget, FunctionGui):
+                    if widget.parent is None:
+                        f = nested_function_gui_callback(self, widget)
+                        widget.called.connect(f)
+                else:
+                    widget = self._create_widget_from_method(widget)
+                
             # _hide_labels should not contain Container because some ValueWidget like widgets
             # are Containers.
             _hide_labels = (_LabeledWidget, ButtonWidget, ClassGuiBase, FreeWidget, Label,

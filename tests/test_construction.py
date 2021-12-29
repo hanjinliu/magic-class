@@ -223,3 +223,36 @@ def test_tooltip():
     assert ui["func"].mgui.a.tooltip == _PARAM_TOOLTIP
     assert ui.Menu["func"].mgui.a.tooltip == _PARAM_TOOLTIP
     assert ui.Tool["func"].mgui.a.tooltip == _PARAM_TOOLTIP
+
+
+def test_post_append():
+    @magicclass(widget_type="mainwindow")
+    class A:
+        @magicmenu
+        class Menu:
+            def func(self, a: int): ...
+                
+        @magictoolbar
+        class Tool:
+            def func(self, a: int): ...
+    
+    ui = A()
+    
+    def new_func_1(): ...
+    def new_func_2(): ...
+    def new_func_3(): ...
+    
+    ui.append(new_func_1)
+    ui.Menu.append(new_func_2)
+    ui.Tool.append(new_func_3)
+    
+    ui["new_func_1"].changed()
+    assert str(ui.macro[-1]) == "ui.new_func_1()"
+    ui.Menu["new_func_2"].changed()
+    assert str(ui.macro[-1]) == "ui.Menu.new_func_2()"
+    ui.Tool["new_func_3"].changed()
+    assert str(ui.macro[-1]) == "ui.Tool.new_func_3()"
+    
+    
+    
+    

@@ -87,9 +87,6 @@ class ToolBarGui(ContainerLikeGui):
                 if isinstance(widget, FunctionGui):
                     p0 = list(signature(attr).parameters)[0]
                     getattr(widget, p0).bind(self) # set self to the first argument
-                    # magic-class has to know when the nested FunctionGui is called.
-                    f = nested_function_gui_callback(self, widget)
-                    widget.called.connect(f)
                 
                 elif isinstance(widget, BaseGui):
                     widget.__magicclass_parent__ = self
@@ -165,7 +162,7 @@ class ToolBarGui(ContainerLikeGui):
         return None
     
     
-    def _fast_insert(self, key: int, obj: AbstractAction) -> None:
+    def _fast_insert(self, key: int, obj: AbstractAction | Callable) -> None:
         """
         Insert object into the menu. Could be widget or callable.
 
@@ -175,7 +172,16 @@ class ToolBarGui(ContainerLikeGui):
             Position to insert.
         obj : Callable | MenuGuiBase | AbstractAction | Widget
             Object to insert.
-        """        
+        """
+        if isinstance(obj, Callable):
+            # Sometimes uses want to dynamically add new functions to GUI.
+            if isinstance(obj, FunctionGui):
+                if obj.parent is None:
+                    f = nested_function_gui_callback(self, obj)
+                    obj.called.connect(f)
+            else:
+                obj = self._create_widget_from_method(obj)
+            
         # _hide_labels should not contain Container because some ValueWidget like widgets
         # are Containers.
         if isinstance(obj, self._component_class):

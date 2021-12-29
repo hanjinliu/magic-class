@@ -83,9 +83,6 @@ class MenuGuiBase(ContainerLikeGui):
                 if isinstance(widget, FunctionGui):
                     p0 = list(signature(attr).parameters)[0]
                     getattr(widget, p0).bind(self) # set self to the first argument
-                    # magic-class has to know when the nested FunctionGui is called.
-                    f = nested_function_gui_callback(self, widget)
-                    widget.called.connect(f)
                 
                 elif isinstance(widget, BaseGui):
                     widget.__magicclass_parent__ = self
@@ -140,6 +137,15 @@ class MenuGuiBase(ContainerLikeGui):
     
     
     def _fast_insert(self, key: int, obj: Callable | MenuGuiBase | AbstractAction) -> None:
+        if isinstance(obj, Callable):
+            # Sometimes uses want to dynamically add new functions to GUI.
+            if isinstance(obj, FunctionGui):
+                if obj.parent is None:
+                    f = nested_function_gui_callback(self, obj)
+                    obj.called.connect(f)
+            else:
+                obj = self._create_widget_from_method(obj)
+            
         if isinstance(obj, (self._component_class, MenuGuiBase)):
             insert_action_like(self.native, key, obj.native)
             self._list.insert(key, obj)
