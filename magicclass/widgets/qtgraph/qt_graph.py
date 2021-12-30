@@ -3,8 +3,8 @@ import pyqtgraph as pg
 from pyqtgraph import colormap as cmap
 from typing import Sequence, overload
 import numpy as np
-from magicgui.events import Signal
-from .graph_items import PlotDataItem, ScaleBar, Scatter, Curve, Histogram, TextOverlay
+from .components import Region, ScaleBar, TextOverlay
+from .graph_items import BarPlot, PlotDataItem, Scatter, Curve, Histogram
 from .mouse_event import MouseClickEvent
 from ..utils import FreeWidget
 
@@ -62,7 +62,14 @@ class HasPlotItem:
     @overload
     def add_curve(self, x: Sequence[float], y: Sequence[float], **kwargs): ...
     
-    def add_curve(self, x=None, y=None, **kwargs):
+    def add_curve(self, 
+                  x=None,
+                  y=None, 
+                  face_color = None,
+                  edge_color = "white",
+                  name: str | None = None,
+                  lw: float = 1,
+                  ls: str = "-"):
         """
         Add line plot like ``plt.plot(x, y)``
 
@@ -72,8 +79,6 @@ class HasPlotItem:
             X data.
         y : array-like, optional
             Y data.
-        kwargs :
-            color, lw (line width), ls (linestyle) is supported now.
         """        
         if y is None:
             if x is None:
@@ -82,8 +87,10 @@ class HasPlotItem:
             else:
                 y = x
                 x = np.arange(len(y))
-        item = Curve(x, y, **kwargs)
+        item = Curve(x, y, face_color=face_color, edge_color=edge_color, 
+                     name=name, lw=lw, ls=ls)
         self._add_item(item)
+        return item
     
     @overload
     def add_scatter(self, x: Sequence[float], **kwargs): ...
@@ -91,7 +98,16 @@ class HasPlotItem:
     @overload
     def add_scatter(self, x: Sequence[float], y: Sequence[float], **kwargs): ...
       
-    def add_scatter(self, x=None, y=None, **kwargs):
+    def add_scatter(self, 
+                    x=None, 
+                    y=None,
+                    face_color = "white",
+                    edge_color = None,
+                    size: float = 7,
+                    name: str | None = None,
+                    lw: float = 1,
+                    ls: str = "-",
+                    symbol="o"):
         """
         Add scatter plot like ``plt.scatter(x, y)``
 
@@ -111,12 +127,61 @@ class HasPlotItem:
             else:
                 y = x
                 x = np.arange(len(y))
-        item = Scatter(x, y, **kwargs)
+        item = Scatter(x, y, face_color=face_color, edge_color=edge_color, 
+                       size=size, name=name, lw=lw, ls=ls, symbol=symbol)
         self._add_item(item)
+        return item
     
-    def add_hist(self, data, **kwargs):
-        item = Histogram(data, **kwargs)
+    def add_hist(self, data: Sequence[float],
+                 bins: int | Sequence | str = 10,
+                 range=None,
+                 density: bool = False,
+                 face_color = "white",
+                 edge_color = None,
+                 name: str | None = None,
+                 lw: float = 1,
+                 ls: str = "-",
+                 ):
+        """
+        Add histogram like ``plt.hist(data)``
+
+        Parameters
+        ----------
+        data : array-like
+            Data for histogram constrction.
+        """        
+        item = Histogram(data, bins=bins, range=range, density=density, 
+                         face_color=face_color, edge_color=edge_color,
+                         name=name, lw=lw, ls=ls)
         self._add_item(item)
+        return item
+    
+    @overload
+    def add_bar(self, x: Sequence[float], **kwargs): ...
+    
+    @overload
+    def add_bar(self, x: Sequence[float], y: Sequence[float], **kwargs): ...
+    
+    def add_bar(self, 
+                x=None,
+                y=None, 
+                face_color = None,
+                edge_color = "white",
+                name: str | None = None,
+                lw: float = 1,
+                ls: str = "-"):
+        if y is None:
+            if x is None:
+                x = []
+                y = []
+            else:
+                y = x
+                x = np.arange(len(y))
+                
+        item = BarPlot(x, y, face_color=face_color, edge_color=edge_color, 
+                       name=name, lw=lw, ls=ls)
+        self._add_item(item)
+        return item
     
     def _add_item(self, item: PlotDataItem):
         self._items.append(item)
@@ -142,41 +207,6 @@ class HasPlotItem:
         self._graphics.removeItem(item.native)
 
 
-class Region:
-    changed = Signal(tuple[float, float])
-    
-    def __init__(self):
-        self.native = pg.LinearRegionItem()
-        @self.native.sigRegionChanged.connect
-        def _(e=None):
-            self.changed.emit(self.native.getRegion())
-    
-    @property
-    def value(self) -> tuple[float, float]:
-        """Get the limits of linear region."""
-        return self.native.getRegion()
-    
-    @value.setter
-    def value(self, value: tuple[float, float]):
-        self.native.setRegion(value)
-    
-    @property
-    def visible(self) -> bool:
-        """Linear region visibility."""   
-        return self.native.isVisible()
-    
-    @visible.setter
-    def visible(self, value: bool):
-        self.native.setVisible(value)
-
-    @property
-    def enabled(self) -> bool:
-        return self.native.movable
-    
-    @enabled.setter
-    def enabled(self, value: bool):
-        self.native.setMovable(value)
-
 
 class QtPlotCanvas(FreeWidget, HasPlotItem):
     """
@@ -187,9 +217,10 @@ class QtPlotCanvas(FreeWidget, HasPlotItem):
         
         # prepare widget
         self.plotwidget = pg.PlotWidget()
+        self.plotwidget.setMinimumSize(100, 60)
         self._items: list[PlotDataItem] = []
         
-        self._interactive = True
+        self._enabled = True
         
         # prepare region item
         self._region = Region()
@@ -265,12 +296,12 @@ class QtPlotCanvas(FreeWidget, HasPlotItem):
     @property
     def enabled(self) -> bool:
         """Mouse interactivity"""        
-        return self._interactive
+        return self._enabled
     
     @enabled.setter
     def enabled(self, value: bool):
         self.plotwidget.setMouseEnabled(value, value)
-        self._interactive = value
+        self._enabled = value
     
     interactive = enabled
 
@@ -285,7 +316,7 @@ class QtImageCanvas(FreeWidget, HasPlotItem):
                  **kwargs):
         
         self.imageview = pg.ImageView(name=kwargs.get("name", "ImageView"))
-        
+        self.imageview.view.setMinimumSize(100, 60)
         self._interactive = True
         self._items: list[PlotDataItem] = []
         self.show_hist(show_hist)

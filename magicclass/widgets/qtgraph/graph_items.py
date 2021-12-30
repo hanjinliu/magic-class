@@ -1,8 +1,9 @@
 from __future__ import annotations
-from typing import Sequence, Any
+from typing import Sequence
 import pyqtgraph as pg
 from qtpy.QtCore import Qt
 import numpy as np
+from .utils import convert_color_code
 
 LINE_STYLE = {"-": Qt.SolidLine,
               "--": Qt.DashLine,
@@ -10,41 +11,9 @@ LINE_STYLE = {"-": Qt.SolidLine,
               "-.": Qt.DashDotLine,
               }
 
-def _convert_color_code(c):
-    if not isinstance(c, str):
-        c = np.asarray(c) * 255
-    return c
-
-def _get_pen(kwargs: dict[str, Any]):
-    """Translation from matplotlib's kwargs to pyqtgraph's"""
-    if "pen" in kwargs:
-        return kwargs["pen"]
-    
-    if "c" in kwargs:
-        color = kwargs["c"]
-    else:
-        color = kwargs.get("color", None)
-    
-    if "lw" in kwargs:
-        width = kwargs["lw"]
-    else:
-        width = kwargs.get("lw", 1)
-        
-    if "ls" in kwargs:
-        style = LINE_STYLE[kwargs["ls"]]
-    else:
-        style = LINE_STYLE[kwargs.get("linestyle", "-")]
-    
-    return pg.mkPen(color=color, width=width, style=style)
 
 class PlotDataItem:
-    base_item: type[pg.PlotCurveItem | pg.ScatterPlotItem]
-    def __init__(self, x, y, name=None, **kwargs):
-        pen = _get_pen(kwargs)
-        kwargs.pop("pen", None)
-            
-        self.native = self.base_item(x=x, y=y, pen=pen, **kwargs)
-        self.name = name
+    native: pg.PlotCurveItem | pg.ScatterPlotItem
     
     @property
     def xdata(self) -> np.ndarray:
@@ -65,6 +34,15 @@ class PlotDataItem:
     @property
     def ndata(self) -> int:
         return self.native.getData()[0].size
+    
+    @property
+    def name(self) -> str:
+        return self.native.opts["name"]
+    
+    @name.setter
+    def name(self, value: str):
+        value = str(value)
+        self.native.opts["name"] = value
 
     def __len__(self) -> int:
         return self.native.getData()[0].size
@@ -103,7 +81,7 @@ class PlotDataItem:
     
     @edge_color.setter
     def edge_color(self, value: str | Sequence):
-        value = _convert_color_code(value)
+        value = convert_color_code(value)
         self.native.setPen(value)
     
     @property
@@ -113,7 +91,7 @@ class PlotDataItem:
     
     @face_color.setter
     def face_color(self, value: str | Sequence):
-        value = _convert_color_code(value)
+        value = convert_color_code(value)
         self.native.setBrush(value)
             
     @property
@@ -133,24 +111,59 @@ class PlotDataItem:
     @ls.setter
     def ls(self, value: str):
         _ls = LINE_STYLE[value]
-        self.native.opts["pen"].setWidth(_ls)
+        self.native.opts["pen"].setStyle(_ls)
     
     linestyle = ls # alias
 
 
 class Curve(PlotDataItem):
-    base_item = pg.PlotCurveItem
-
+    def __init__(self, 
+                 x,
+                 y,
+                 face_color = None,
+                 edge_color = "white",
+                 name: str | None = None,
+                 lw: float = 1,
+                 ls: str = "-"):
+        pen = pg.mkPen(edge_color, width=lw, style=LINE_STYLE[ls])
+        brush = pg.mkBrush(face_color)
+        self.native = pg.PlotCurveItem(x=x, y=y, pen=pen, brush=brush)
+        self.name = name
 
 class Scatter(PlotDataItem):
-    base_item = pg.ScatterPlotItem
-            
+    native: pg.ScatterPlotItem
+    _SymbolMap = {
+        "*": "star",
+        "D": "d",
+        "^": "t1",
+        "<": "t3",
+        "v": "t",
+        ">": "t2",
+    }
+    def __init__(self, 
+                 x,
+                 y,
+                 face_color = "white",
+                 edge_color = None,
+                 size: float = 7,
+                 name: str | None = None,
+                 lw: float = 1,
+                 ls: str = "-",
+                 symbol="o"
+                 ):
+        pen = pg.mkPen(edge_color, width=lw, style=LINE_STYLE[ls])
+        brush = pg.mkBrush(face_color)
+        symbol = self._SymbolMap.get(symbol, symbol)
+        self.native = pg.ScatterPlotItem(x=x, y=y, pen=pen, brush=brush, size=size, symbol=symbol)
+        self.name = name
+        
     @property
     def symbol(self):
         return self.native.opts["symbol"]
         
     @symbol.setter
     def symbol(self, value):
+        value = self._SymbolMap.get(value, value)
         self.native.setSymbol(value)
     
     @property
@@ -163,94 +176,82 @@ class Scatter(PlotDataItem):
 
 
 class Histogram(PlotDataItem):
-    base_item = pg.PlotCurveItem
+    native: pg.ScatterPlotItem
     
     def __init__(self, 
                  data,
                  bins: int | Sequence | str = 10,
                  range=None,
-                 density:bool = False, 
-                 name=None,
-                 **kwargs):
-        pen = _get_pen(kwargs)
-        kwargs.pop("pen", None)
+                 density: bool = False,
+                 face_color = "white",
+                 edge_color = None,
+                 name: str | None = None,
+                 lw: float = 1,
+                 ls: str = "-",
+                 ):
         
+        pen = pg.mkPen(edge_color, width=lw, style=LINE_STYLE[ls])
+        brush = pg.mkBrush(face_color)
         y, x = np.histogram(data, bins=bins, range=range, density=density)
-        
-        self.native = self.base_item(x=x, y=y, pen=pen, stepMode=True, 
-                                     fillLevel=0, **kwargs)
+        self.native = pg.PlotCurveItem(x=x, y=y, pen=pen, brush=brush, 
+                                       stepMode="center", fillLevel=0)
+        self.name = name
+    
+    def set_hist(self, data, bins=10, range=None, density=False):
+        y, x = np.histogram(data, bins=bins, range=range, density=density)
+        self.native.setData(x=x, y=y)
+
+
+class BarPlot(PlotDataItem):
+    native: pg.BarGraphItem
+    
+    def __init__(self, 
+                 x,
+                 y,
+                 face_color = "white",
+                 edge_color = "white",
+                 width: float = 0.6,
+                 name: str | None = None,
+                 lw: float = 1,
+                 ls: str = "-"):
+        pen = pg.mkPen(edge_color, width=lw, style=LINE_STYLE[ls])
+        brush = pg.mkBrush(face_color)
+        self.native = pg.BarGraphItem(x=x, height=y, width=width, pen=pen, brush=brush)
         self.name = name
 
-
-
-class TextOverlay:
-    def __init__(self, text: str, color: Sequence[float] | str) -> None:
-        self.native = pg.TextItem(text, color=_convert_color_code(color))
     
     @property
-    def color(self):
-        rgba = self.native.color.getRgb()
+    def edge_color(self) -> np.ndarray:
+        rgba = self.native.opts["pen"].color().getRgb()
         return np.array(rgba)/255
     
-    @color.setter
-    def color(self, value):
-        value = _convert_color_code(value)
-        self.native.setText(self.text, value)
+    @edge_color.setter
+    def edge_color(self, value: str | Sequence):
+        value = convert_color_code(value)
+        self.native.setOpts(pen=pg.mkPen(value))
     
     @property
-    def visible(self):
-        return self.native.isVisible()
-    
-    @visible.setter
-    def visible(self, value: bool):
-        self.native.setVisible(value)
-    
-    @property
-    def text(self):
-        return self.native.toPlainText()
-    
-    @text.setter
-    def text(self, value: str):
-        self.native.setText(value)
-    
-    def update(self, **kwargs):
-        for k, v in kwargs.items():
-            if k not in ["color", "text", "visible"]:
-                raise AttributeError(f"Cannot set attribute {k} to TextOverlay.")
-        for k, v in kwargs.items():
-            setattr(self, k, v)
-
-
-class ScaleBar:
-    def __init__(self):
-        self._unit = ""
-        self.native = pg.ScaleBar(10, suffix=self._unit)
-    
-    @property
-    def color(self):
-        rgba = self.native.brush.color().getRgb()
+    def face_color(self) -> np.ndarray:
+        rgba = self.native.opts["brush"].color().getRgb()
         return np.array(rgba)/255
     
-    @color.setter
-    def color(self, value):
-        value = _convert_color_code(value)
-        self.native.brush = pg.mkBrush(value)
-        self.native.bar.setBrush(self.native.brush)
+    @face_color.setter
+    def face_color(self, value: str | Sequence):
+        value = convert_color_code(value)
+        self.native.setOpts(brush=pg.mkBrush(value))
+
+    @property
+    def xdata(self) -> np.ndarray:
+        return self.native.getData()[0]
+    
+    @xdata.setter
+    def xdata(self, value: Sequence[float]):
+        self.native.setOpts(x=value)
     
     @property
-    def visible(self):
-        return self.native.isVisible()
+    def ydata(self) -> np.ndarray:
+        return self.native.getData()[1]
     
-    @visible.setter
-    def visible(self, value: bool):
-        self.native.setVisible(value)
-    
-    @property
-    def unit(self) -> str:
-        return self._unit
-    
-    @unit.setter
-    def unit(self, value: str):
-        value = str(value)
-        self.native.text.setText(pg.siFormat(self.native.size, suffix=value))
-        self._unit = value
+    @ydata.setter
+    def ydata(self, value: Sequence[float]):
+        self.native.setOpts(height=value)
