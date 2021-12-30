@@ -128,10 +128,13 @@ class Curve(PlotDataItem):
                  x,
                  y,
                  face_color = None,
-                 edge_color = "white",
+                 edge_color = None,
                  name: str | None = None,
                  lw: float = 1,
                  ls: str = "-"):
+        face_color, edge_color = _set_default_colors(
+            face_color, edge_color, "white", "white"
+            )
         pen = pg.mkPen(edge_color, width=lw, style=LINE_STYLE[ls])
         brush = pg.mkBrush(face_color)
         self.native = pg.PlotCurveItem(x=x, y=y, pen=pen, brush=brush)
@@ -150,7 +153,7 @@ class Scatter(PlotDataItem):
     def __init__(self, 
                  x,
                  y,
-                 face_color = "white",
+                 face_color = None,
                  edge_color = None,
                  size: float = 7,
                  name: str | None = None,
@@ -158,6 +161,9 @@ class Scatter(PlotDataItem):
                  ls: str = "-",
                  symbol="o"
                  ):
+        face_color, edge_color = _set_default_colors(
+            face_color, edge_color, "white", "white"
+            )
         pen = pg.mkPen(edge_color, width=lw, style=LINE_STYLE[ls])
         brush = pg.mkBrush(face_color)
         symbol = self._SymbolMap.get(symbol, symbol)
@@ -190,13 +196,15 @@ class Histogram(PlotDataItem):
                  bins: int | Sequence | str = 10,
                  range=None,
                  density: bool = False,
-                 face_color = "white",
+                 face_color = None,
                  edge_color = None,
                  name: str | None = None,
                  lw: float = 1,
                  ls: str = "-",
                  ):
-        
+        face_color, edge_color = _set_default_colors(
+            face_color, edge_color, "white", "white"
+            )
         pen = pg.mkPen(edge_color, width=lw, style=LINE_STYLE[ls])
         brush = pg.mkBrush(face_color)
         y, x = np.histogram(data, bins=bins, range=range, density=density)
@@ -215,12 +223,15 @@ class BarPlot(PlotDataItem):
     def __init__(self, 
                  x,
                  y,
-                 face_color = "white",
-                 edge_color = "white",
+                 face_color = None,
+                 edge_color = None,
                  width: float = 0.6,
                  name: str | None = None,
                  lw: float = 1,
                  ls: str = "-"):
+        face_color, edge_color = _set_default_colors(
+            face_color, edge_color, "white", "white"
+            )
         pen = pg.mkPen(edge_color, width=lw, style=LINE_STYLE[ls])
         brush = pg.mkBrush(face_color)
         self.native = pg.BarGraphItem(x=x, height=y, width=width, pen=pen, brush=brush)
@@ -262,3 +273,11 @@ class BarPlot(PlotDataItem):
     @ydata.setter
     def ydata(self, value: Sequence[float]):
         self.native.setOpts(height=value)
+
+
+def _set_default_colors(face_color, edge_color, default_f, default_e):
+    if face_color is None:
+        face_color = default_f
+    if edge_color is None:
+        edge_color = default_e
+    return face_color, edge_color

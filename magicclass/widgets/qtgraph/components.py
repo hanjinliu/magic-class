@@ -58,6 +58,28 @@ class TextOverlay:
         self.native.setText(self.text, value)
     
     @property
+    def background_color(self):
+        rgba = self.native.fill.color().getRgb()
+        return np.array(rgba)/255
+    
+    @background_color.setter
+    def background_color(self, value):
+        value = convert_color_code(value)
+        self.native.fill = pg.mkBrush(value)
+        self.native._updateView()
+    
+    @property
+    def border(self):
+        rgba = self.native.border.color().getRgb()
+        return np.array(rgba)/255
+    
+    @border.setter
+    def border(self, value):
+        value = convert_color_code(value)
+        self.native.border = pg.mkPen(value)
+        self.native._updateView()
+    
+    @property
     def visible(self):
         return self.native.isVisible()
     

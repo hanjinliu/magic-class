@@ -316,8 +316,6 @@ class QtPlotCanvas(FreeWidget, HasPlotItem):
     A 1-D data viewer that have similar API as napari Viewer.
     """
     def __init__(self, region_visible=False, **kwargs):
-        
-        
         # prepare widget
         self.plotwidget = pg.PlotWidget()
         self.plotwidget.setMinimumSize(100, 60)
@@ -519,7 +517,7 @@ class QtImageCanvas(FreeWidget, HasPlotItem):
         self.imageview.view.setMouseEnabled(value, value)
         self._interactive = value
     
-    interactive = enabled
+    interactive = enabled # alias
     
     @property
     def cmap(self):
@@ -564,6 +562,7 @@ class QtImageCanvas(FreeWidget, HasPlotItem):
         else:
             self.imageview.ui.menuBtn.hide()
             self.imageview.ui.roiBtn.hide()
+
 
 
 def _check_xy(x, y):
