@@ -11,6 +11,14 @@ LINE_STYLE = {"-": Qt.SolidLine,
               "-.": Qt.DashDotLine,
               }
 
+_SYMBOL_MAP = {
+        "*": "star",
+        "D": "d",
+        "^": "t1",
+        "<": "t3",
+        "v": "t",
+        ">": "t2",
+    }
 
 class PlotDataItem:
     native: pg.PlotCurveItem | pg.ScatterPlotItem
@@ -142,14 +150,7 @@ class Curve(PlotDataItem):
 
 class Scatter(PlotDataItem):
     native: pg.ScatterPlotItem
-    _SymbolMap = {
-        "*": "star",
-        "D": "d",
-        "^": "t1",
-        "<": "t3",
-        "v": "t",
-        ">": "t2",
-    }
+    
     def __init__(self, 
                  x,
                  y,
@@ -166,7 +167,7 @@ class Scatter(PlotDataItem):
             )
         pen = pg.mkPen(edge_color, width=lw, style=LINE_STYLE[ls])
         brush = pg.mkBrush(face_color)
-        symbol = self._SymbolMap.get(symbol, symbol)
+        symbol = _SYMBOL_MAP.get(symbol, symbol)
         self.native = pg.ScatterPlotItem(x=x, y=y, pen=pen, brush=brush, size=size, symbol=symbol)
         self.name = name
         
@@ -176,16 +177,80 @@ class Scatter(PlotDataItem):
         
     @symbol.setter
     def symbol(self, value):
-        value = self._SymbolMap.get(value, value)
+        value = _SYMBOL_MAP.get(value, value)
         self.native.setSymbol(value)
     
     @property
     def size(self):
-        self.native.opts["symbolSize"]
+        return self.native.opts["symbolSize"]
         
     @size.setter
     def size(self, size: float):
         self.native.setSymbolSize(size)
+
+
+class CurveScatter(PlotDataItem):
+    native: pg.PlotDataItem
+    
+    def __init__(self, 
+                 x,
+                 y,
+                 face_color = None,
+                 edge_color = None,
+                 size: float = 7,
+                 name: str | None = None,
+                 lw: float = 1,
+                 ls: str = "-",
+                 symbol="o"
+                 ):
+        face_color, edge_color = _set_default_colors(
+            face_color, edge_color, "white", "white"
+            )
+        pen = pg.mkPen(edge_color, width=lw, style=LINE_STYLE[ls])
+        brush = pg.mkBrush(face_color)
+        symbol = _SYMBOL_MAP.get(symbol, symbol)
+        self.native = pg.PlotDataItem(x=x, y=y, pen=pen, brush=brush, symbolSize=size, 
+                                      symbol=symbol, symbolPen=pen, symbolBrush=brush)
+        self.name = name
+        
+    @property
+    def symbol(self):
+        return self.native.opts["symbol"]
+        
+    @symbol.setter
+    def symbol(self, value):
+        value = _SYMBOL_MAP.get(value, value)
+        self.native.setSymbol(value)
+    
+    @property
+    def size(self):
+        return self.native.opts["symbolSize"]
+        
+    @size.setter
+    def size(self, size: float):
+        self.native.setSymbolSize(size)
+        
+    @property
+    def edge_color(self) -> np.ndarray:
+        rgba = self.native.opts["pen"].color().getRgb()
+        return np.array(rgba)/255
+    
+    @edge_color.setter
+    def edge_color(self, value: str | Sequence):
+        value = convert_color_code(value)
+        self.native.setPen(value)
+        self.native.setSymbolPen(value)
+    
+    @property
+    def face_color(self) -> np.ndarray:
+        rgba = self.native.opts["brush"].color().getRgb()
+        return np.array(rgba)/255
+    
+    @face_color.setter
+    def face_color(self, value: str | Sequence):
+        value = convert_color_code(value)
+        self.native.setBrush(value)
+        self.native.setSymbolBrush(value)
 
 
 class Histogram(PlotDataItem):

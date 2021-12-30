@@ -47,6 +47,25 @@ def test_plot_canvas():
     assert len(ui.plot.layers) == 3
     ui.plot.layers.clear()
     
+    # test curve scatter
+    ui.plot.add_curve_scatter(data)
+    ui.plot.add_curve_scatter(np.arange(ndata)*2, data)
+    item = ui.plot.add_curve_scatter(data, face_color="green", edge_color="green", name="test", lw=2, ls=":", size=6, symbol="*")
+    item.visible = False
+    item.face_color = "yellow"
+    item.edge_color = "yellow"
+    item.lw = 1
+    for ls in ["-", "--", ":", "-."]:
+        item.ls = "-"
+    for sym in ["o", "s", "D", "^", "<", "v", ">", "*"]:
+        item.symbol = sym
+    item.xdata = item.xdata + 1
+    item.ydata = item.ydata + 1
+    assert item.ndata == ndata
+    
+    assert len(ui.plot.layers) == 3
+    ui.plot.layers.clear()
+    
     # test bar
     ui.plot.add_bar(data)
     ui.plot.add_bar(np.arange(ndata)*2, data)

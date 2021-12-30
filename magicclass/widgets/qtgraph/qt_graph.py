@@ -4,7 +4,7 @@ from pyqtgraph import colormap as cmap
 from typing import Sequence, overload, MutableSequence
 import numpy as np
 from .components import Region, ScaleBar, TextOverlay
-from .graph_items import BarPlot, PlotDataItem, Scatter, Curve, Histogram
+from .graph_items import BarPlot, CurveScatter, PlotDataItem, Scatter, Curve, Histogram
 from .mouse_event import MouseClickEvent
 from ._doc import write_docs
 from ..utils import FreeWidget
@@ -122,6 +122,53 @@ class HasPlotItem:
         return item
     
     @overload
+    def add_curve_scatter(self, x: Sequence[float], **kwargs): ...
+    
+    @overload
+    def add_curve_scatter(self, x: Sequence[float], y: Sequence[float], **kwargs): ...
+    
+    @write_docs
+    def add_curve_scatter(self, 
+                          x=None, 
+                          y=None,
+                          face_color = None,
+                          edge_color = None,
+                          color = None,
+                          size: float = 7,
+                          name: str | None = None,
+                          lw: float = 1,
+                          ls: str = "-",
+                          symbol="o"):
+        """
+        Add a line plot like ``plt.plot(x, y)``.
+
+        Parameters
+        ----------
+        {x}
+        {y}
+        {face_color}
+        {edge_color}
+        {color}
+        size: float, default is 7
+            Symbol size.
+        {name}
+        {lw}
+        {ls}
+        {symbol}
+        
+        Returns
+        -------
+        Curve
+            A plot item of a curve.
+        """        
+        x, y = _check_xy(x, y)
+        face_color, edge_color = _check_colors(face_color, edge_color, color)
+        item = CurveScatter(x, y, face_color=face_color, edge_color=edge_color, 
+                            size=size, name=name, lw=lw, ls=ls, symbol=symbol)
+        self._add_item(item)
+        return item
+    
+    @overload
     def add_scatter(self, x: Sequence[float], **kwargs): ...
     
     @overload
@@ -154,10 +201,7 @@ class HasPlotItem:
         {name}
         {lw}
         {ls}
-        symbol: str, default is "o"
-            Symbol style. Currently supports circle ("o"), cross ("+", "x"), star ("*"), 
-            square ("s", "D") triangle ("^", "<", "v", ">") and others that ``pyqtgraph``
-            supports.
+        {symbol}
         
         Returns
         -------

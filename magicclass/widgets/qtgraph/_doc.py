@@ -32,6 +32,12 @@ shared_docs = {
     "ls": """
         ls: str, default is "-"
             Line style of edge. One of "-", "--", ":" or "-.".
+            """,
+    "symbol": """
+        symbol: str, default is "o"
+            Symbol style. Currently supports circle ("o"), cross ("+", "x"), star ("*"), 
+            square ("s", "D") triangle ("^", "<", "v", ">") and others that ``pyqtgraph``
+            supports.
             """
 }
 
