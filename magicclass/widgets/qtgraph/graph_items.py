@@ -115,6 +115,13 @@ class PlotDataItem:
     
     linestyle = ls # alias
 
+    @property
+    def zorder(self) -> float:
+        return self.native.zValue()
+    
+    @zorder.setter
+    def zorder(self, value: float):
+        self.native.setZValue(value)
 
 class Curve(PlotDataItem):
     def __init__(self, 

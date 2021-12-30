@@ -1,19 +1,21 @@
 from __future__ import annotations
 import pyqtgraph as pg
 from pyqtgraph import colormap as cmap
-from typing import Sequence, overload
+from typing import Sequence, overload, MutableSequence
 import numpy as np
 from .components import Region, ScaleBar, TextOverlay
 from .graph_items import BarPlot, PlotDataItem, Scatter, Curve, Histogram
 from .mouse_event import MouseClickEvent
+from ._doc import write_docs
 from ..utils import FreeWidget
 
 BOTTOM = "bottom"
 LEFT = "left"
 
-class LayerList:
+class LayerList(MutableSequence[PlotDataItem]):
     def __init__(self, parent: HasPlotItem):
         self.parent = parent
+    
     
     def __getitem__(self, key: int | str) -> PlotDataItem:
         if isinstance(key, int):
@@ -26,22 +28,43 @@ class LayerList:
                 raise ValueError(f"Item '{key}' not found.")
         else:
             raise TypeError(f"Cannot use type {type(key)} as a key.")
-        
+    
+    
+    def __setitem__(self, key, value):
+        raise NotImplementedError("Can't set item")
+    
+    
     def __delitem__(self, key: int | str):
-        return self.parent.remove_item(key)
+        return self.parent._remove_item(key)
+    
     
     def append(self, item: PlotDataItem):
-        if isinstance(item, PlotDataItem):
-            self.parent._add_item(item)
-        else:
+        if not isinstance(item, PlotDataItem):
             raise TypeError(f"Cannot append type {type(item)}.")
+        self.parent._add_item(item)
+            
     
+    def insert(self, pos: int, item: PlotDataItem):
+        if not isinstance(item, PlotDataItem):
+            raise TypeError(f"Cannot insert type {type(item)}.")
+        self.parent._insert_item(pos, item)
+        
+        
     def __len__(self):
         return len(self.parent._items)
     
+    
     def clear(self):
         for _ in range(len(self)):
-            self.parent.remove_item(-1)
+            self.parent._remove_item(-1)
+    
+    
+    def swap(self, pos0: int, pos1: int):
+        return self.parent._swap_items(pos0, pos1)
+    
+    
+    def move(self, source: int, destination: int):
+        return self.parent._move_item(source, destination)
 
 
 class HasPlotItem:
@@ -62,31 +85,37 @@ class HasPlotItem:
     @overload
     def add_curve(self, x: Sequence[float], y: Sequence[float], **kwargs): ...
     
+    @write_docs
     def add_curve(self, 
                   x=None,
                   y=None, 
                   face_color = None,
-                  edge_color = "white",
+                  edge_color = None,
+                  color = None,
                   name: str | None = None,
                   lw: float = 1,
                   ls: str = "-"):
         """
-        Add line plot like ``plt.plot(x, y)``
+        Add a line plot like ``plt.plot(x, y)``.
 
         Parameters
         ----------
-        x : array-like, optional
-            X data.
-        y : array-like, optional
-            Y data.
+        {x}
+        {y}
+        {face_color}
+        {edge_color}
+        {color}
+        {name}
+        {lw}
+        {ls}
+        
+        Returns
+        -------
+        Curve
+            A plot item of a curve.
         """        
-        if y is None:
-            if x is None:
-                x = []
-                y = []
-            else:
-                y = x
-                x = np.arange(len(y))
+        x, y = _check_xy(x, y)
+        face_color, edge_color = _check_colors(face_color, edge_color, color)
         item = Curve(x, y, face_color=face_color, edge_color=edge_color, 
                      name=name, lw=lw, ls=ls)
         self._add_item(item)
@@ -97,59 +126,90 @@ class HasPlotItem:
     
     @overload
     def add_scatter(self, x: Sequence[float], y: Sequence[float], **kwargs): ...
-      
+
+    @write_docs
     def add_scatter(self, 
                     x=None, 
                     y=None,
-                    face_color = "white",
+                    face_color = None,
                     edge_color = None,
+                    color = None,
                     size: float = 7,
                     name: str | None = None,
                     lw: float = 1,
                     ls: str = "-",
                     symbol="o"):
         """
-        Add scatter plot like ``plt.scatter(x, y)``
+        Add scatter plot like ``plt.scatter(x, y)``.
 
         Parameters
         ----------
-        x : array-like, optional
-            X data.
-        y : array-like, optional
-            Y data.
-        kwargs :
-            color, lw (line width), ls (linestyle) is supported now.
+        {x}
+        {y}
+        {face_color}
+        {edge_color}
+        {color}
+        size: float, default is 7
+            Symbol size.
+        {name}
+        {lw}
+        {ls}
+        symbol: str, default is "o"
+            Symbol style. Currently supports circle ("o"), cross ("+", "x"), star ("*"), 
+            square ("s", "D") triangle ("^", "<", "v", ">") and others that ``pyqtgraph``
+            supports.
+        
+        Returns
+        -------
+        Scatter
+            A plot item of the scatter plot.
         """        
-        if y is None:
-            if x is None:
-                x = []
-                y = []
-            else:
-                y = x
-                x = np.arange(len(y))
+        x, y = _check_xy(x, y)
+        face_color, edge_color = _check_colors(face_color, edge_color, color)
         item = Scatter(x, y, face_color=face_color, edge_color=edge_color, 
                        size=size, name=name, lw=lw, ls=ls, symbol=symbol)
         self._add_item(item)
         return item
     
+    @write_docs
     def add_hist(self, data: Sequence[float],
                  bins: int | Sequence | str = 10,
                  range=None,
                  density: bool = False,
-                 face_color = "white",
+                 face_color = None,
                  edge_color = None,
+                 color = None,
                  name: str | None = None,
                  lw: float = 1,
                  ls: str = "-",
                  ):
         """
-        Add histogram like ``plt.hist(data)``
+        Add histogram like ``plt.hist(data)``.
 
         Parameters
         ----------
         data : array-like
             Data for histogram constrction.
+        bins : int, sequence of float or str, default is 10
+            Bin numbers. See ``np.histogram`` for detail.
+        range : two floats, optional
+            Bin ranges. See ``np.histogram`` for detail.
+        density : bool, default is False
+            If true, plot the density instead of the counts. See ``np.histogram`` for
+            detail.
+        {face_color}
+        {edge_color}
+        {color}
+        {name}
+        {lw}
+        {ls}
+        
+        Returns
+        -------
+        Histogram
+            A plot item of the histogram.
         """        
+        face_color, edge_color = _check_colors(face_color, edge_color, color)
         item = Histogram(data, bins=bins, range=range, density=density, 
                          face_color=face_color, edge_color=edge_color,
                          name=name, lw=lw, ls=ls)
@@ -162,32 +222,70 @@ class HasPlotItem:
     @overload
     def add_bar(self, x: Sequence[float], y: Sequence[float], **kwargs): ...
     
+    @write_docs
     def add_bar(self, 
                 x=None,
                 y=None, 
+                width: float = 0.6,
                 face_color = None,
-                edge_color = "white",
+                edge_color = None,
+                color = None,
                 name: str | None = None,
                 lw: float = 1,
                 ls: str = "-"):
-        if y is None:
-            if x is None:
-                x = []
-                y = []
-            else:
-                y = x
-                x = np.arange(len(y))
-                
-        item = BarPlot(x, y, face_color=face_color, edge_color=edge_color, 
-                       name=name, lw=lw, ls=ls)
+        """
+        Add a bar plot like ``plt.bar(x, y)``.
+
+        Parameters
+        ----------
+        {x}
+        {y}
+        width : float, default is 0.6
+            Width of each bar.
+        {face_color}
+        {edge_color}
+        {color}
+        {name}
+        {lw}
+        {ls}
+        
+        Returns
+        -------
+        BarPlot
+            A plot item of the bar plot.
+        """               
+        x, y = _check_xy(x, y)
+        face_color, edge_color = _check_colors(face_color, edge_color, color)
+        item = BarPlot(x, y, width=width, face_color=face_color,
+                       edge_color=edge_color, name=name, lw=lw, ls=ls)
         self._add_item(item)
         return item
     
     def _add_item(self, item: PlotDataItem):
+        item.zorder = len(self._items)
         self._items.append(item)
         self._graphics.addItem(item.native)
     
-    def remove_item(self, item: PlotDataItem | int | str):
+    def _insert_item(self, pos: int, item: PlotDataItem):
+        self._items.insert(pos, item)
+        self._graphics.addItem(item.native)
+        self._reorder()
+    
+    def _swap_items(self, pos0: int, pos1: int):
+        item0 = self._items[pos0]
+        item1 = self._items[pos1]
+        self._items[pos0] = item1
+        self._items[pos1] = item0
+        self._reorder()
+    
+    def _move_item(self, source: int, destination: int):
+        if source < destination:
+            destination -= 1
+        item = self._items.pop(source)
+        self._items.insert(destination, item)
+        self._reorder()
+    
+    def _remove_item(self, item: PlotDataItem | int | str):
         if isinstance(item, PlotDataItem):
             i = self._items.index(item)
         elif isinstance(item, int):
@@ -205,6 +303,11 @@ class HasPlotItem:
             raise ValueError(f"Item {item} not found")
         item = self._items.pop(i)
         self._graphics.removeItem(item.native)
+    
+    def _reorder(self):
+        for i, item in enumerate(self._items):
+            item.zorder = i
+        return None
 
 
 
@@ -461,4 +564,25 @@ class QtImageCanvas(FreeWidget, HasPlotItem):
         else:
             self.imageview.ui.menuBtn.hide()
             self.imageview.ui.roiBtn.hide()
+
+
+def _check_xy(x, y):
+    if y is None:
+        if x is None:
+            x = []
+            y = []
+        else:
+            y = x
+            x = np.arange(len(y))
     
+    return x, y
+    
+def _check_colors(face_color, edge_color, color):
+    if color is None:
+        return face_color, edge_color
+    else:
+        if face_color is None and edge_color is None:
+            return color, color
+        else:
+            raise ValueError("Cannot set 'color' and either 'face_color' or "
+                             "'edge_color' at the same time.")
