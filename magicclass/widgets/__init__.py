@@ -48,7 +48,7 @@ except ImportError:
     QtConsole = NotInstalled(msg)
 
 try:
-    from .qtgraph import QtPlotCanvas, QtImageCanvas
+    from .qtgraph import QtPlotCanvas, QtMultiPlotCanvas, Qt2YPlotCanvas, QtImageCanvas
 except ImportError:
     msg = "Module 'pyqtgraph' is not installed. To use {}, " \
           "you have to install it by:\n" \
@@ -56,6 +56,8 @@ except ImportError:
           "or\n" \
           "   $ conda install pyqtgraph -c conda forge"
     QtPlotCanvas = NotInstalled(msg.format("QtPlotCanvas"))
+    QtMultiPlotCanvas = NotInstalled(msg.format("QtMultiPlotCanvas"))
+    Qt2YPlotCanvas = NotInstalled(msg.format("Qt2YPlotCanvas"))
     QtImageCanvas = NotInstalled(msg.format("QtImageCanvas"))
 
 try:
@@ -94,6 +96,8 @@ __all__ = ["ListWidget",
            "ToolBoxContainer",
            "QtConsole",
            "QtPlotCanvas",
+           "QtMultiPlotCanvas", 
+           "Qt2YPlotCanvas"
            "QtImageCanvas",
            "NapariCanvas",
            ]

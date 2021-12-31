@@ -131,22 +131,6 @@ class PlotDataItem:
     def zorder(self, value: float):
         self.native.setZValue(value)
 
-class Curve(PlotDataItem):
-    def __init__(self, 
-                 x,
-                 y,
-                 face_color = None,
-                 edge_color = None,
-                 name: str | None = None,
-                 lw: float = 1,
-                 ls: str = "-"):
-        face_color, edge_color = _set_default_colors(
-            face_color, edge_color, "white", "white"
-            )
-        pen = pg.mkPen(edge_color, width=lw, style=LINE_STYLE[ls])
-        brush = pg.mkBrush(face_color)
-        self.native = pg.PlotCurveItem(x=x, y=y, pen=pen, brush=brush)
-        self.name = name
 
 class Scatter(PlotDataItem):
     native: pg.ScatterPlotItem
@@ -189,7 +173,7 @@ class Scatter(PlotDataItem):
         self.native.setSymbolSize(size)
 
 
-class CurveScatter(PlotDataItem):
+class Curve(PlotDataItem):
     native: pg.PlotDataItem
     
     def __init__(self, 
@@ -201,7 +185,7 @@ class CurveScatter(PlotDataItem):
                  name: str | None = None,
                  lw: float = 1,
                  ls: str = "-",
-                 symbol="o"
+                 symbol=None
                  ):
         face_color, edge_color = _set_default_colors(
             face_color, edge_color, "white", "white"
@@ -243,7 +227,7 @@ class CurveScatter(PlotDataItem):
     
     @property
     def face_color(self) -> np.ndarray:
-        rgba = self.native.opts["brush"].color().getRgb()
+        rgba = self.native.opts["symbolBrush"].color().getRgb()
         return np.array(rgba)/255
     
     @face_color.setter

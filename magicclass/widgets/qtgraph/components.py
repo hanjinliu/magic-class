@@ -40,6 +40,16 @@ class Region:
     @enabled.setter
     def enabled(self, value: bool):
         self.native.setMovable(value)
+    
+    @property
+    def color(self):
+        rgba = self.native.brush.color().getRgb()
+        return np.array(rgba)/255
+    
+    @color.setter
+    def color(self, value):
+        value = convert_color_code(value)
+        self.native.setBrush(value)
 
 
 class TextOverlay:
@@ -137,3 +147,61 @@ class ScaleBar:
         value = str(value)
         self.native.text.setText(pg.siFormat(self.native.size, suffix=value))
         self._unit = value
+
+
+class Legend:
+    def __init__(self, offset=(30, 30)):
+        self.native = pg.LegendItem(offset=offset)
+    
+    @property
+    def visible(self):
+        return self.native.isVisible()
+    
+    @visible.setter
+    def visible(self, value: bool):
+        self.native.setVisible(value)
+    
+    @property
+    def color(self):
+        """Text color."""
+        color = self.native.labelTextColor()
+        if color is None:
+            color = pg.mkPen(None).color()
+        rgba = color.getRgb()
+        return np.array(rgba)/255
+    
+    @color.setter
+    def color(self, value):
+        value = convert_color_code(value)
+        self.native.setLabelTextColor(value)
+    
+    @property
+    def size(self) -> int:
+        """Text size."""
+        return self.native.labelTextSize()
+    
+    @size.setter
+    def size(self, value: int):
+        self.native.setLabelTextSize(value)
+    
+    @property
+    def border(self):
+        """Border color."""
+        rgba = self.native.pen().color().getRgb()
+        return np.array(rgba)/255
+    
+    @border.setter
+    def border(self, value):
+        value = convert_color_code(value)
+        self.native.setPen(pg.mkPen(value))
+        
+    @property
+    def background_color(self):
+        """Background color."""
+        rgba = self.native.brush().color().getRgb()
+        return np.array(rgba)/255
+    
+    @background_color.setter
+    def background_color(self, value):
+        value = convert_color_code(value)
+        self.native.setBrush(pg.mkBrush(value))

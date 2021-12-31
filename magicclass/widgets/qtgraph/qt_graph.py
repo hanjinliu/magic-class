@@ -1,10 +1,10 @@
 from __future__ import annotations
 import pyqtgraph as pg
 from pyqtgraph import colormap as cmap
-from typing import Sequence, overload, MutableSequence
+from typing import Iterator, Sequence, overload, MutableSequence
 import numpy as np
-from .components import Region, ScaleBar, TextOverlay
-from .graph_items import BarPlot, CurveScatter, PlotDataItem, Scatter, Curve, Histogram
+from .components import Legend, Region, ScaleBar, TextOverlay
+from .graph_items import BarPlot, Curve, PlotDataItem, Scatter, Histogram
 from .mouse_event import MouseClickEvent
 from ._doc import write_docs
 from ..utils import FreeWidget
@@ -88,60 +88,18 @@ class HasDataItems:
     
     @write_docs
     def add_curve(self, 
-                  x=None,
-                  y=None, 
+                  x=None, 
+                  y=None,
                   face_color = None,
                   edge_color = None,
                   color = None,
+                  size: float = 7,
                   name: str | None = None,
                   lw: float = 1,
-                  ls: str = "-"):
+                  ls: str = "-",
+                  symbol=None):
         """
         Add a line plot like ``plt.plot(x, y)``.
-
-        Parameters
-        ----------
-        {x}
-        {y}
-        {face_color}
-        {edge_color}
-        {color}
-        {name}
-        {lw}
-        {ls}
-        
-        Returns
-        -------
-        Curve
-            A plot item of a curve.
-        """        
-        x, y = _check_xy(x, y)
-        face_color, edge_color = _check_colors(face_color, edge_color, color)
-        item = Curve(x, y, face_color=face_color, edge_color=edge_color, 
-                     name=name, lw=lw, ls=ls)
-        self._add_item(item)
-        return item
-    
-    @overload
-    def add_curve_scatter(self, x: Sequence[float], **kwargs): ...
-    
-    @overload
-    def add_curve_scatter(self, x: Sequence[float], y: Sequence[float], **kwargs): ...
-    
-    @write_docs
-    def add_curve_scatter(self, 
-                          x=None, 
-                          y=None,
-                          face_color = None,
-                          edge_color = None,
-                          color = None,
-                          size: float = 7,
-                          name: str | None = None,
-                          lw: float = 1,
-                          ls: str = "-",
-                          symbol="o"):
-        """
-        Add a line plot with markers like ``plt.plot(x, y, marker=...)``.
 
         Parameters
         ----------
@@ -163,8 +121,9 @@ class HasDataItems:
             A plot item of a curve.
         """        
         x, y = _check_xy(x, y)
+        name = self._find_unique_name((name or "Curve"))
         face_color, edge_color = _check_colors(face_color, edge_color, color)
-        item = CurveScatter(x, y, face_color=face_color, edge_color=edge_color, 
+        item = Curve(x, y, face_color=face_color, edge_color=edge_color, 
                             size=size, name=name, lw=lw, ls=ls, symbol=symbol)
         self._add_item(item)
         return item
@@ -210,6 +169,7 @@ class HasDataItems:
             A plot item of the scatter plot.
         """        
         x, y = _check_xy(x, y)
+        name = self._find_unique_name((name or "Scatter"))
         face_color, edge_color = _check_colors(face_color, edge_color, color)
         item = Scatter(x, y, face_color=face_color, edge_color=edge_color, 
                        size=size, name=name, lw=lw, ls=ls, symbol=symbol)
@@ -254,6 +214,7 @@ class HasDataItems:
         Histogram
             A plot item of the histogram.
         """        
+        name = self._find_unique_name((name or "Histogram"))
         face_color, edge_color = _check_colors(face_color, edge_color, color)
         item = Histogram(data, bins=bins, range=range, density=density, 
                          face_color=face_color, edge_color=edge_color,
@@ -300,6 +261,7 @@ class HasDataItems:
             A plot item of the bar plot.
         """               
         x, y = _check_xy(x, y)
+        name = self._find_unique_name((name or "Bar"))
         face_color, edge_color = _check_colors(face_color, edge_color, color)
         item = BarPlot(x, y, width=width, face_color=face_color,
                        edge_color=edge_color, name=name, lw=lw, ls=ls)
@@ -353,6 +315,15 @@ class HasDataItems:
         for i, item in enumerate(self._items):
             item.zorder = i
         return None
+    
+    def _find_unique_name(self, prefix: str):
+        existing_names = [item.name for item in self._items]
+        name = prefix
+        i = 0
+        while name in existing_names:
+            name = f"{prefix}-{i}"
+            i += 1
+        return name
 
 
 class ViewBox(HasDataItems):
@@ -388,6 +359,11 @@ class PlotItem(HasDataItems):
         self._region.visible = region_visible
         self.plotitem.addItem(self._region.native, ignoreBounds=True)
         
+        # prepare legend item
+        self._legend = Legend()
+        self._legend.native.setParentItem(self.plotitem.vb)
+        self.plotitem.legend = self._legend.native
+        
         # prepare mouse event
         self.mouse_click_callbacks = []
         
@@ -419,6 +395,11 @@ class PlotItem(HasDataItems):
     def region(self) -> Region:
         """Linear region item."""
         return self._region
+    
+    @property
+    def legend(self) -> Legend:
+        """Legend item."""
+        return self._legend
     
     @property
     def _graphics(self):
@@ -471,7 +452,7 @@ class PlotItem(HasDataItems):
     def enabled(self, value: bool):
         self.plotitem.setMouseEnabled(value, value)
         self._enabled = value
-    
+        
     interactive = enabled
 
 
@@ -565,7 +546,9 @@ class QtImageCanvas(FreeWidget, HasDataItems):
         
     @image.setter
     def image(self, image):
-        self.imageview.setImage(np.asarray(image).T, pos=(-0.5, -0.5), autoRange=False)
+        self.imageview.setImage(np.asarray(image).T, 
+                                pos = (-0.5, -0.5), 
+                                autoRange = False)
         
     @image.deleter
     def image(self):
@@ -689,6 +672,20 @@ class QtMultiPlotCanvas(FreeWidget):
                  sharex: bool = False,
                  sharey: bool = False,
                  **kwargs):
+        """
+        Multi-plot ``pyqtgraph`` canvas widget.
+
+        Parameters
+        ----------
+        nrows : int, default is 0
+            Initial rows of plots.
+        ncols : int, default is 0
+            Initail columns of plots.
+        sharex : bool, default is False
+            If true, all the x-axes will be linked.
+        sharey : bool, default is False
+            If true, all the y-axes will be linked.
+        """
         self.layoutwidget = pg.GraphicsLayoutWidget()
         self._plot_items: list[PlotItem] = []
         self._sharex = sharex
@@ -702,7 +699,11 @@ class QtMultiPlotCanvas(FreeWidget):
                 for c in range(ncols):
                     self.addplot(r, c)
     
-    def addplot(self, row=None, col=None, rowspan=1, colspan=1):
+    def addplot(self, 
+                row: int | None = None,
+                col: int | None = None,
+                rowspan: int = 1,
+                colspan: int = 1) -> PlotItem:
         item = PlotItem()
         self._plot_items.append(item)
         self.layoutwidget.addItem(item.plotitem, row, col, rowspan, colspan)
@@ -716,6 +717,15 @@ class QtMultiPlotCanvas(FreeWidget):
     def __getitem__(self, k: int) -> PlotItem:
         return self._plot_items[k]
     
+    def __delitem__(self, k: int):
+        item = self._plot_items[k]
+        self.layoutwidget.removeItem(item.plotitem)
+    
+    def __iter__(self) -> Iterator[PlotItem]:
+        return iter(self._plot_items)
+    
+
+
 
 def _check_xy(x, y):
     if y is None:
