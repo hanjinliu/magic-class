@@ -8,7 +8,7 @@ import os
 from enum import Enum
 import warnings
 from docstring_parser import parse, compose
-from qtpy.QtWidgets import QWidget
+from qtpy.QtWidgets import QWidget, QDockWidget
 from qtpy.QtGui import QIcon
 
 from magicgui.events import Signal
@@ -33,7 +33,6 @@ from ..wrappers import upgrade_signature
 if TYPE_CHECKING:
     import numpy as np
     import napari
-    from qtpy.QtWidgets import QDockWidget
 
 class PopUpMode(Enum):
     popup = "popup"
@@ -173,13 +172,12 @@ class MagicTemplate:
         """
         Return napari.Viewer if magic class is a dock widget of a viewer.
         """
-        # TODO: https://github.com/napari/napari/pull/3748
-        parent_self = self._search_parent_magicclass()
         try:
-            viewer = parent_self.parent.parent().qt_viewer.viewer
-        except AttributeError:
-            viewer = None
-        return viewer
+            from napari.utils._magicgui import find_viewer_ancestor
+        except ImportError:
+            return None
+        parent_self = self._search_parent_magicclass()
+        return find_viewer_ancestor(parent_self.native)
     
     @property
     def parent_dock_widget(self) -> "QDockWidget" | None:
@@ -190,8 +188,11 @@ class MagicTemplate:
         parent_self = self._search_parent_magicclass()
         try:
             dock = parent_self.native.parent()
+            if not isinstance(dock, QDockWidget):
+                dock = None
         except AttributeError:
             dock = None
+            
         return dock
     
     def objectName(self) -> str:

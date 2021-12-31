@@ -14,6 +14,7 @@ class MyMenu:
     @magicmenu
     class Others:
         def Show_text(self, text: str):
+            self.parent_viewer.text_overlay.visible = True
             self.parent_viewer.text_overlay.text = text
         
         def Create_macro(self):
