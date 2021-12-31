@@ -51,6 +51,7 @@ class PlotDataItem:
     def name(self, value: str):
         value = str(value)
         self.native.opts["name"] = value
+        # TODO: now name is not linked to label item
 
     def __len__(self) -> int:
         return self.native.getData()[0].size
@@ -330,3 +331,9 @@ def _set_default_colors(face_color, edge_color, default_f, default_e):
     if edge_color is None:
         edge_color = default_e
     return face_color, edge_color
+
+def _find_ancestor(widget, itemtype: type):
+    item = widget
+    while type(item) is not itemtype:
+        item = widget.parentItem()
+    return item

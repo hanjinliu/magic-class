@@ -270,12 +270,12 @@ class HasDataItems:
     
     def _add_item(self, item: PlotDataItem):
         item.zorder = len(self._items)
-        self._items.append(item)
         self._graphics.addItem(item.native)
+        self._items.append(item)
     
     def _insert_item(self, pos: int, item: PlotDataItem):
-        self._items.insert(pos, item)
         self._graphics.addItem(item.native)
+        self._items.insert(pos, item)
         self._reorder()
     
     def _swap_items(self, pos0: int, pos1: int):
@@ -349,14 +349,16 @@ class PlotItem(HasDataItems):
     """
     A 1-D plot item that has similar API as napari Viewer.
     """
-    def __init__(self, region_visible=False):
+    def __init__(self, basePlotItem: pg.PlotItem | None = None):
         # prepare plot items
-        self.plotitem = pg.PlotItem()
+        if basePlotItem is None:
+            basePlotItem = pg.PlotItem()
+        self.plotitem = basePlotItem
         self._items: list[PlotDataItem] = []
         
         # prepare region item
         self._region = Region()
-        self._region.visible = region_visible
+        self._region.visible = False
         self.plotitem.addItem(self._region.native, ignoreBounds=True)
         
         # prepare legend item
@@ -460,9 +462,9 @@ class QtPlotCanvas(FreeWidget, PlotItem):
     """
     A 1-D data viewer that have similar API as napari Viewer.
     """
-    def __init__(self, region_visible=False, **kwargs):
+    def __init__(self, **kwargs):
         # prepare widget
-        PlotItem.__init__(self, region_visible)
+        PlotItem.__init__(self)
         self.layoutwidget = pg.GraphicsLayoutWidget()
         self.layoutwidget.addItem(self.plotitem)
         self._connect_mouse_event()
@@ -724,8 +726,6 @@ class QtMultiPlotCanvas(FreeWidget):
     def __iter__(self) -> Iterator[PlotItem]:
         return iter(self._plot_items)
     
-
-
 
 def _check_xy(x, y):
     if y is None:
