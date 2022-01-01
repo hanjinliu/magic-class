@@ -54,17 +54,17 @@ defaults = {"popup_mode": PopUpMode.popup,
 
 _RESERVED = {"__magicclass_parent__", "__magicclass_children__", "_close_on_run", 
              "_error_mode", "_popup_mode", "_my_symbol", "_macro_instance", "macro",
-             "annotation", "enabled", "gui_only", "height", "label_changed", "label", "layout",
-             "labels", "margins", "max_height", "max_width", "min_height", "min_width", "name",
-             "options", "param_kind", "parent_changed", "tooltip", "visible", "widget_type", 
-             "width", "wraps", "_unwrap_method", "_search_parent_magicclass", 
-             "_iter_child_magicclasses", 
+             "annotation", "enabled", "gui_only", "height", "label_changed", "label",
+             "layout", "labels", "margins", "max_height", "max_width", "min_height", 
+             "min_width", "name", "options", "param_kind", "parent_changed", 
+             "tooltip", "visible", "widget_type", "width", "wraps", "_unwrap_method",
+             "_search_parent_magicclass", "_iter_child_magicclasses", 
              }
 
 def check_override(cls: type):
     """
-    Some of the methods should not be overriden because they are essential for magic class
-    construction.
+    Some of the methods should not be overriden because they are essential for magic 
+    class construction.
 
     Parameters
     ----------
@@ -79,7 +79,9 @@ def check_override(cls: type):
     subclass_members = set(cls.__dict__.keys())
     collision = subclass_members & _RESERVED
     if collision:
-        raise AttributeError(f"Cannot override magic class reserved attributes: {collision}")
+        raise AttributeError(
+            f"Cannot override magic class reserved attributes: {collision}"
+            )
           
 
 class MagicTemplate: 
@@ -182,8 +184,8 @@ class MagicTemplate:
     @property
     def parent_dock_widget(self) -> "QDockWidget" | None:
         """
-        Return dock widget object if magic class is a dock widget of a main window widget,
-        such as a napari Viewer.
+        Return dock widget object if magic class is a dock widget of a main 
+        window widget, such as a napari Viewer.
         """
         parent_self = self._search_parent_magicclass()
         try:
@@ -209,8 +211,8 @@ class MagicTemplate:
               *, 
               template: Callable | None = None) -> Callable:
         """
-        Wrap a parent method in a child magic-class. Wrapped method will appear in the
-        child widget but behaves as if it is in the parent widget.
+        Wrap a parent method in a child magic-class. Wrapped method will appear in 
+        the child widget but behaves as if it is in the parent widget.
         
         Basically, this function is used as a wrapper like below.
         
@@ -403,7 +405,9 @@ class MagicTemplate:
         obj_sig = get_signature(obj)
         if isinstance(func.__signature__, MagicMethodSignature):
             # NOTE: I don't know the reason why "additional_options" is lost. 
-            func.__signature__.additional_options = getattr(obj_sig, "additional_options", {})
+            func.__signature__.additional_options = getattr(
+                obj_sig, "additional_options", {}
+                )
         
         # TODO: "update_widget" argument is useful.
         # see https://github.com/napari/magicgui/pull/309
@@ -414,7 +418,9 @@ class MagicTemplate:
                 # "compiled" otherwise function wrappings are not ready!
                 mgui = _build_mgui(widget, func)
                 mgui.native.setParent(self.native, mgui.native.windowFlags())
-                if mgui.call_count == 0 and len(mgui.called._slots) == 0 and _need_record(func):
+                if (mgui.call_count == 0 and 
+                    len(mgui.called._slots) == 0 and 
+                    _need_record(func)):
                     callback = _temporal_function_gui_callback(self, mgui, widget)
                     mgui.called.connect(callback)
                 
@@ -427,7 +433,9 @@ class MagicTemplate:
             def run_function():
                 mgui = _build_mgui(widget, func)
                 mgui.native.setParent(self.native, mgui.native.windowFlags())
-                if mgui.call_count == 0 and len(mgui.called._slots) == 0 and _need_record(func):
+                if (mgui.call_count == 0 and 
+                    len(mgui.called._slots) == 0 and 
+                    _need_record(func)):
                     callback = _temporal_function_gui_callback(self, mgui, widget)
                     mgui.called.connect(callback)
                 
@@ -485,10 +493,11 @@ class MagicTemplate:
                         viewer = parent_self.parent_viewer
                         if viewer is None:
                             if not hasattr(parent_self.native, "addDockWidget"):
-                                msg = "Cannot add dock widget to a normal container. Please use\n" \
-                                      ">>> @magicclass(widget_type='mainwindow')\n" \
-                                      "to create main window widget, or add the container as a dock "\
-                                      "widget in napari."
+                                msg = (
+                                    "Cannot add dock widget to a normal container. Please use\n"
+                                    ">>> @magicclass(widget_type='mainwindow')\n"
+                                    "to create main window widget, or add the container as a dock "
+                                    "widget in napari.")
                                 warnings.warn(msg, UserWarning)
                             
                             else:
@@ -611,7 +620,8 @@ class ContainerLikeGui(BaseGui, mguiLike, MutableSequence):
                      
             # By default, set value function will be connected to the widget.
             if fld.record:
-                f = value_widget_callback(self, action, name, getvalue=type(fld) is MagicField)
+                getvalue = type(fld) is MagicField
+                f = value_widget_callback(self, action, name, getvalue=getvalue)
                 action.changed.connect(f)
                 
         return action
@@ -646,8 +656,8 @@ class ContainerLikeGui(BaseGui, mguiLike, MutableSequence):
         return self.insert(len(self._list), obj)
     
     def _unify_label_widths(self):
-        _hide_labels = (_LabeledWidgetAction, ButtonWidget, FreeWidget, Label, FunctionGui,
-                        BaseGui, Image, Table, Action)
+        _hide_labels = (_LabeledWidgetAction, ButtonWidget, FreeWidget, Label, 
+                        FunctionGui, BaseGui, Image, Table, Action)
         need_labels = [w for w in self if not isinstance(w, _hide_labels)]
         
         if self.labels and need_labels:
@@ -700,7 +710,9 @@ def _get_widget_name(widget: Widget):
     # To escape reference
     return widget.name
     
-def _temporal_function_gui_callback(bgui: MagicTemplate, fgui: FunctionGuiPlus, widget: PushButtonPlus):
+def _temporal_function_gui_callback(bgui: MagicTemplate, 
+                                    fgui: FunctionGuiPlus, 
+                                    widget: PushButtonPlus):
     if isinstance(fgui, FunctionGui):
         _function = fgui._function
     else:
@@ -751,8 +763,10 @@ def _build_mgui(widget_, func):
     try:
         mgui = FunctionGuiPlus(func)
     except Exception as e:
-        msg = f"Exception was raised during building magicgui from method {func.__name__}.\n" \
-            f"{e.__class__.__name__}: {e}"
+        msg = (
+            "Exception was raised during building magicgui from method "
+            f"{func.__name__}.\n{e.__class__.__name__}: {e}"
+            )
         raise type(e)(msg)
     
     widget_.mgui = mgui
@@ -841,7 +855,9 @@ def _raise_error_in_msgbox(_func: Callable, parent: Widget = None):
         try:
             out = _func(*args, **kwargs)
         except Exception as e:
-            QMessageBox.critical(parent.native, e.__class__.__name__, str(e), QMessageBox.Ok)
+            QMessageBox.critical(
+                parent.native, e.__class__.__name__, str(e), QMessageBox.Ok
+                )
             out = e
         return out
     
@@ -918,23 +934,30 @@ def _field_as_getter(self, bound_value: MagicField):
         while type(ins).__name__ not in clsnames:
             ins = getattr(ins, "__magicclass_parent__", None)
             if ins is None:
-                raise ValueError(f"MagicField {namespace}.{bound_value.name} is invisible"
-                                 f"from magicclass {self.__class__.__qualname__}")
+                raise ValueError(
+                    f"MagicField {namespace}.{bound_value.name} is invisible"
+                    f"from magicclass {self.__class__.__qualname__}"
+                    )
         i = clsnames.index(type(ins).__name__)
         for clsname in clsnames[i:]:
             ins = getattr(ins, clsname, ins)
             
         _field_widget = bound_value.get_widget(ins)
         if not hasattr(_field_widget, "value"):
-            raise TypeError(f"MagicField {bound_value.name} does not return ValueWidget "
-                            "thus cannot be used as a bound value.")
+            raise TypeError(
+                f"MagicField {bound_value.name} does not return ValueWidget "
+                "thus cannot be used as a bound value."
+                )
         return bound_value.as_getter(ins)(w)
     return _func
 
 def _need_record(func: Callable):
     return get_additional_option(func, "record", True)
 
-def value_widget_callback(gui: MagicTemplate, widget: ValueWidget, name: str, getvalue: bool = True):
+def value_widget_callback(gui: MagicTemplate,
+                          widget: ValueWidget, 
+                          name: str, 
+                          getvalue: bool = True):
     """
     Define a ValueWidget callback, including macro recording.
     """    

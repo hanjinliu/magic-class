@@ -28,8 +28,7 @@ from .gui.class_gui import (
     ListClassGui,
     )
 from .gui._base import PopUpMode, ErrorMode, defaults, MagicTemplate, check_override
-from .gui.toolbar import ToolBarGui
-from .gui import ContextMenuGui, MenuGui, MenuGuiBase
+from .gui import ContextMenuGui, MenuGui, MenuGuiBase, ToolBarGui
 from ._app import get_app
 from ._typing import WidgetType, WidgetTypeStr, PopUpModeStr, ErrorModeStr
 
@@ -275,6 +274,7 @@ def magictoolbar(class_: type = None,
     Decorator that can convert a Python class into a menu bar.
     """    
     return _call_magicmenu(**locals(), menugui_class=ToolBarGui)
+
 
 class MagicClassFactory:
     """
