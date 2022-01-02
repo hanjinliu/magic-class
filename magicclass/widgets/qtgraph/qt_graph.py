@@ -1,9 +1,10 @@
 from __future__ import annotations
+from qtpy.QtGui import QTransform
 import pyqtgraph as pg
 from pyqtgraph import colormap as cmap
 from typing import Iterator, Sequence, overload, MutableSequence
 import numpy as np
-from .components import Legend, Region, ScaleBar, TextOverlay
+from .components import Legend, Region, Roi, ScaleBar, TextOverlay
 from .graph_items import BarPlot, Curve, PlotDataItem, Scatter, Histogram
 from .mouse_event import MouseClickEvent
 from ._doc import write_docs
@@ -329,7 +330,7 @@ class HasDataItems:
 class ViewBox(HasDataItems):
     def __init__(self):
         # prepare plot items
-        self.viewbox = pg.ViewBox()
+        self.pgitem = pg.ViewBox()
         self._items: list[PlotDataItem] = []
         
         # prepare mouse event
@@ -342,56 +343,165 @@ class ViewBox(HasDataItems):
     
     @property
     def _graphics(self):
-        return self.viewbox
-    
+        return self.pgitem
 
-class PlotItem(HasDataItems):
-    """
-    A 1-D plot item that has similar API as napari Viewer.
-    """
-    def __init__(self, basePlotItem: pg.PlotItem | None = None):
-        # prepare plot items
-        if basePlotItem is None:
-            basePlotItem = pg.PlotItem()
-        self.plotitem = basePlotItem
+
+class HasViewBox(HasDataItems):
+    def __init__(self, viewbox: pg.ViewBox):
+        self._viewbox = viewbox
         self._items: list[PlotDataItem] = []
-        
-        # prepare region item
-        self._region = Region()
-        self._region.visible = False
-        self.plotitem.addItem(self._region.native, ignoreBounds=True)
-        
-        # prepare legend item
-        self._legend = Legend()
-        self._legend.native.setParentItem(self.plotitem.vb)
-        self.plotitem.legend = self._legend.native
         
         # prepare mouse event
         self.mouse_click_callbacks = []
         
-        # initialize private attributes
         self._enabled = True
-        self._xlabel = ""
-        self._ylabel = ""
-        
-    
-    def _connect_mouse_event(self):
-        # Since plot item does not have graphics scene before being added to
-        # a graphical layout, mouse event should be connected afterward.
-        self.plotitem.scene().sigMouseClicked.connect(self._mouse_clicked)
-        
-    
+
+
     def _mouse_clicked(self, e):
         # NOTE: Mouse click event needs a reference item to map coordinates.
         # Here plot items always have a linear region item as a default one,
         # we can use it as the referene.
-        ev = MouseClickEvent(e, self._region.native)
+        ev = MouseClickEvent(e, self._get_default_item())
         x, y = ev.pos()
-        xmin, xmax = self.xlim
-        ymin, ymax = self.ylim
+        [xmin, xmax], [ymin, ymax] = self._viewbox.viewRange()
+        
         if xmin <= x <= xmax and ymin <= y <= ymax:
             for callback in self.mouse_click_callbacks:
                 callback(ev)
+
+    @property
+    def xlim(self):
+        """Range limits of X-axis."""  
+        [xmin, xmax], _ = self._viewbox.viewRange()
+        return xmin, xmax
+    
+    @xlim.setter
+    def xlim(self, value: tuple[float, float]):
+        self._viewbox.setXRange(*value)
+       
+    @property
+    def ylim(self):
+        """Range limits of Y-axis."""
+        _, [ymin, ymax] = self._viewbox.viewRange()
+        return ymin, ymax
+    
+    @ylim.setter
+    def ylim(self, value: tuple[float, float]):
+        self._viewbox.setYRange(*value)
+
+    @property
+    def enabled(self) -> bool:
+        """Mouse interactivity"""        
+        return self._enabled
+
+    @enabled.setter
+    def enabled(self, value: bool):
+        self._viewbox.setMouseEnabled(value, value)
+        self._enabled = value
+        
+    interactive = enabled
+    
+
+class HasPlotItems(HasDataItems):
+    def __init__(self, basePlotItem: pg.PlotItem | None = None):
+        # prepare plot items
+        if basePlotItem is None:
+            basePlotItem = pg.PlotItem()
+        self.pgitem = basePlotItem
+        self._items: list[PlotDataItem] = []
+        
+        # prepare mouse event
+        self.mouse_click_callbacks = []
+        
+        self._enabled = True
+
+    @property
+    def _graphics(self):
+        return self.pgitem
+
+
+    def _update_scene(self):
+        # Since plot item does not have graphics scene before being added to
+        # a graphical layout, mouse event should be connected afterward.
+        self.pgitem.scene().sigMouseClicked.connect(self._mouse_clicked)
+
+
+    def _mouse_clicked(self, e):
+        # NOTE: Mouse click event needs a reference item to map coordinates.
+        # Here plot items always have a linear region item as a default one,
+        # we can use it as the referene.
+        ev = MouseClickEvent(e, self._get_default_item())
+        x, y = ev.pos()
+        [xmin, xmax], [ymin, ymax] = self.pgitem.vb.viewRange()
+        
+        if xmin <= x <= xmax and ymin <= y <= ymax:
+            for callback in self.mouse_click_callbacks:
+                callback(ev)
+
+    @property
+    def xlim(self):
+        """Range limits of X-axis."""  
+        [xmin, xmax], _ = self.pgitem.vb.viewRange()
+        return xmin, xmax
+    
+    @xlim.setter
+    def xlim(self, value: tuple[float, float]):
+        self.pgitem.vb.setXRange(*value)
+       
+    @property
+    def ylim(self):
+        """Range limits of Y-axis."""
+        _, [ymin, ymax] = self.pgitem.vb.viewRange()
+        return ymin, ymax
+    
+    @ylim.setter
+    def ylim(self, value: tuple[float, float]):
+        self.pgitem.vb.setYRange(*value)
+
+    @property
+    def enabled(self) -> bool:
+        """Mouse interactivity"""        
+        return self._enabled
+
+    @enabled.setter
+    def enabled(self, value: bool):
+        self.pgitem.vb.setMouseEnabled(value, value)
+        self._enabled = value
+        
+    interactive = enabled
+
+
+class PlotItem(HasViewBox):
+    """
+    A 1-D plot item that has similar API as napari Viewer.
+    """
+    def __init__(self, viewbox: pg.ViewBox | None = None):
+        if viewbox is None:
+            viewbox = pg.ViewBox()
+            
+        self.pgitem = pg.PlotItem(viewBox=viewbox)
+        super().__init__(self.pgitem.vb)
+        
+        # prepare region item
+        self._region = Region()
+        self._region.visible = False
+        self.pgitem.addItem(self._region.native, ignoreBounds=True)
+        
+        # prepare legend item
+        self._legend = Legend()
+        self._legend.native.setParentItem(self.pgitem.vb)
+        self.pgitem.legend = self._legend.native
+        
+        # initialize private attributes
+        self._xlabel = ""
+        self._ylabel = ""
+    
+    @property
+    def _graphics(self):
+        return self.pgitem
+    
+    def _get_default_item(self):
+        return self._region.native
     
     @property
     def region(self) -> Region:
@@ -404,28 +514,15 @@ class PlotItem(HasDataItems):
         return self._legend
     
     @property
-    def _graphics(self):
-        return self.plotitem
-    
-    @property
     def xlabel(self):
         """Label of X-axis."""
         return self._xlabel
     
     @xlabel.setter
     def xlabel(self, label: str) -> str:
-        self.plotitem.setLabel(BOTTOM, label)
+        self.pgitem.setLabel(BOTTOM, label)
         self._xlabel = label
     
-    @property
-    def xlim(self):
-        """Range limits of X-axis."""        
-        return self.plotitem.getAxis(BOTTOM).range
-    
-    @xlim.setter
-    def xlim(self, value: tuple[float, float]):
-        self.plotitem.setXRange(*value)
-        
     @property
     def ylabel(self) -> str:
         """Label of Y-axis."""        
@@ -433,101 +530,68 @@ class PlotItem(HasDataItems):
         
     @ylabel.setter
     def ylabel(self, label: str):
-        self.plotitem.setLabel(LEFT, label)
+        self.pgitem.setLabel(LEFT, label)
         self._ylabel = label
+    
+    
+    def _update_scene(self):
+        # Since plot item does not have graphics scene before being added to
+        # a graphical layout, mouse event should be connected afterward.
+        self.pgitem.scene().sigMouseClicked.connect(self._mouse_clicked)
        
-    @property
-    def ylim(self):
-        """Range limits of Y-axis."""        
-        return self.plotitem.getAxis(LEFT).range
-    
-    @ylim.setter
-    def ylim(self, value: tuple[float, float]):
-        self.plotitem.setYRange(*value)
-    
-    @property
-    def enabled(self) -> bool:
-        """Mouse interactivity"""        
-        return self._enabled
-    
-    @enabled.setter
-    def enabled(self, value: bool):
-        self.plotitem.setMouseEnabled(value, value)
-        self._enabled = value
-        
-    interactive = enabled
 
-
-class QtPlotCanvas(FreeWidget, PlotItem):
-    """
-    A 1-D data viewer that have similar API as napari Viewer.
-    """
-    def __init__(self, **kwargs):
-        # prepare widget
-        PlotItem.__init__(self)
-        self.layoutwidget = pg.GraphicsLayoutWidget()
-        self.layoutwidget.addItem(self.plotitem)
-        self._connect_mouse_event()
+class ImageItem(HasViewBox):
+    
+    def __init__(self, viewbox: pg.ViewBox | None = None):
+        if viewbox is None:
+            viewbox = pg.ViewBox(lockAspect=True, invertY=True)
+        super().__init__(viewbox)
+        self._image_item = pg.ImageItem()
+        tr = self._image_item.transform().translate(-0.5, -0.5)
+        self._image_item.setTransform(tr)
         
-        super().__init__(**kwargs)
-        self.set_widget(self.layoutwidget)
-        
-       
-class QtImageCanvas(FreeWidget, HasDataItems):
-    def __init__(self, 
-                 image: np.ndarray = None, 
-                 cmap=None, 
-                 contrast_limits: tuple[float, float] = None,
-                 show_hist: bool = True,
-                 show_button: bool = True,
-                 **kwargs):
-        
-        self.imageview = pg.ImageView(name=kwargs.get("name", "ImageView"))
-        self.imageview.view.setMinimumSize(100, 60)
-        self._interactive = True
-        self._items: list[PlotDataItem] = []
-        self.show_hist(show_hist)
-        self.show_button(show_button)
-        
-        # set properties
-        if image is not None:
-            self.image = image
-        if cmap is not None:
-            self.cmap = cmap
-        if contrast_limits is not None:
-            self.contrast_limits = contrast_limits
+        self._viewbox.addItem(self._image_item)
         
         # prepare text overlay
         self._text_overlay = TextOverlay(text="", color="gray")
-        self.imageview.scene.addItem(self._text_overlay.native)
+        
+        # prepare region item
+        self._region = Roi()
+        self._region.visible = False
+        self._viewbox.addItem(self._region.native, ignoreBounds=True)
         
         # prepare scale bar
         self._scale_bar = ScaleBar()
-        self.imageview.scene.addItem(self._scale_bar.native)
         self._scale_bar.visible = False
-        self._scale_bar.native.setParentItem(self.imageview.view)
+        self._scale_bar.native.setParentItem(self._viewbox)
         self._scale_bar.native.anchor((1, 1), (1, 1), offset=(-20, -20))
         
-        # prepare mouse event
-        self.mouse_click_callbacks = []
-        self.imageview.scene.sigMouseClicked.connect(self._mouse_clicked)
+        self._hist = pg.HistogramLUTItem(orientation="horizontal")
+        self._hist.vb.setBackgroundColor([0, 0, 0, 0.2])
+        self._hist.setParentItem(self._viewbox)
+        self._hist.setFixedWidth(160)
+        self._hist.setVisible(False)
+        from pyqtgraph import icons
+        self._btn = pg.ButtonItem(icons.getGraphPixmap("auto"), 14, self._viewbox)
         
-        super().__init__(**kwargs)
-        self.set_widget(self.imageview)
+        @self._btn.clicked.connect
+        def _(e):
+            v = not self._hist.isVisible()
+            self._hist.setVisible(v)
         
+        self._cmap = "gray"
+        
+    def _get_default_item(self):
+        return self._region.native
     
-    def _mouse_clicked(self, e):
-        items = self.imageview.view.addedItems
-        if len(items) == 0:
-            return
-        e = MouseClickEvent(e, items[0])
-        for callback in self.mouse_click_callbacks:
-            callback(e)
-    
-    @property
-    def _graphics(self):
-        return self.imageview.view
-    
+
+    def _update_scene(self):
+        # Since plot item does not have graphics scene before being added to
+        # a graphical layout, mouse event should be connected afterward.
+        self._image_item.scene().sigMouseClicked.connect(self._mouse_clicked)
+        self._image_item.scene().addItem(self._text_overlay.native)
+        self._image_item.scene().addItem(self._scale_bar.native)
+        
     @property
     def text_overlay(self) -> TextOverlay:
         """Text overlay on the image."""        
@@ -539,53 +603,37 @@ class QtImageCanvas(FreeWidget, HasDataItems):
         return self._scale_bar
     
     @property
+    def _graphics(self):
+        return self._viewbox
+    
+    @property
     def image(self) -> np.ndarray | None:
         """Image data"""
-        if self.imageview.image is None:
+        if self._image_item.image is None:
             return None
         else:
-            return self.imageview.image.T
+            return self._image_item.image.T
         
     @image.setter
-    def image(self, image):
-        self.imageview.setImage(np.asarray(image).T, 
-                                pos = (-0.5, -0.5), 
-                                autoRange = False)
+    def image(self, image: np.ndarray):
+        self._image_item.setImage(np.asarray(image).T)
+        self._hist.setImageItem(self._image_item)
+        self._hist._updateView()
+        
         
     @image.deleter
     def image(self):
-        self.imageview.clear()
+        self._image_item.clear()
     
     @property
-    def contrast_limits(self) -> tuple[float, float]:
+    def contrast_limits(self) -> list[float, float]:
         """Contrast limits of image"""        
-        return self.imageview.levelMin, self.imageview.levelMax
+        return self._image_item.levels
     
     @contrast_limits.setter
     def contrast_limits(self, value: tuple[float, float]):
-        self.imageview.setLevels(*value)
-    
-    @property
-    def view_range(self) -> list[list[float, float]]:
-        """Range of image (edge coordinates of canvas)"""
-        return self.imageview.view.viewRange()
-    
-    @view_range.setter
-    def view_range(self, value: tuple[tuple[float, float], tuple[float, float]]):
-        yrange, xrange = value
-        self.imageview.view.setRange(xRange=xrange, yRange=yrange)
+        self._hist.setLevels(*value)
 
-    @property
-    def enabled(self) -> bool:
-        """Mouse interactivity"""        
-        return self._interactive
-    
-    @enabled.setter
-    def enabled(self, value: bool):
-        self.imageview.view.setMouseEnabled(value, value)
-        self._interactive = value
-    
-    interactive = enabled # alias
     
     @property
     def cmap(self):
@@ -598,38 +646,35 @@ class QtImageCanvas(FreeWidget, HasDataItems):
             _cmap = cmap.get(value, source="matplotlib")
         else:
             _cmap = value
-        self.imageview.setColorMap(_cmap)
+        self._hist.gradient.setColorMap(_cmap)
         self._cmap = value
             
-    def show_hist(self, visible: bool = True):
-        """
-        Set visibility of intensity histogram.
 
-        Parameters
-        ----------
-        visible : bool
-            Visibility of histogram
-        """        
-        if visible:
-            self.imageview.ui.histogram.show()
-        else:
-            self.imageview.ui.histogram.hide()
+class QtPlotCanvas(FreeWidget, PlotItem):
+    """
+    A 1-D data viewer that have similar API as napari Viewer.
+    """
+    def __init__(self, **kwargs):
+        # prepare widget
+        PlotItem.__init__(self)
+        self.layoutwidget = pg.GraphicsLayoutWidget()
+        self.layoutwidget.addItem(self.pgitem)
+        self._update_scene()
         
-    def show_button(self, visible: bool = True):
-        """
-        Set visibility of ROI/Norm buttons.
+        super().__init__(**kwargs)
+        self.set_widget(self.layoutwidget)
 
-        Parameters
-        ----------
-        visible : bool
-            Visibility of ROI/Norm buttons
-        """        
-        if visible:
-            self.imageview.ui.menuBtn.show()
-            self.imageview.ui.roiBtn.show()
-        else:
-            self.imageview.ui.menuBtn.hide()
-            self.imageview.ui.roiBtn.hide()
+
+class QtImageCanvas(FreeWidget, ImageItem):
+    def __init__(self, **kwargs):
+        # prepare widget
+        ImageItem.__init__(self)
+        self.layoutwidget = pg.GraphicsLayoutWidget()
+        self.layoutwidget.addItem(self._viewbox)
+        self._update_scene()
+        
+        super().__init__(**kwargs)
+        self.set_widget(self.layoutwidget)
 
 
 class Qt2YPlotCanvas(FreeWidget):
@@ -639,19 +684,19 @@ class Qt2YPlotCanvas(FreeWidget):
         item_l = PlotItem()
         item_r = ViewBox()
         
-        self.layoutwidget.addItem(item_l.plotitem)
+        self.layoutwidget.addItem(item_l.pgitem)
                 
-        item_l.plotitem.scene().addItem(item_r.viewbox)
-        item_l.plotitem.getAxis("right").linkToView(item_r.viewbox)
-        item_r.viewbox.setXLink(item_l.plotitem)
+        item_l.pgitem.scene().addItem(item_r.pgitem)
+        item_l.pgitem.getAxis("right").linkToView(item_r.pgitem)
+        item_r.pgitem.setXLink(item_l.pgitem)
         
-        item_l._connect_mouse_event()
-        item_l.plotitem.showAxis("right")
+        item_l._update_scene()
+        item_l.pgitem.showAxis("right")
         
         self._plot_items: tuple[PlotItem, ViewBox] = (item_l, item_r)
         
         self.updateViews()
-        item_l.plotitem.vb.sigResized.connect(self.updateViews)
+        item_l.pgitem.vb.sigResized.connect(self.updateViews)
         
         super().__init__(**kwargs)
         self.set_widget(self.layoutwidget)
@@ -663,8 +708,8 @@ class Qt2YPlotCanvas(FreeWidget):
     
     def updateViews(self):
         item_l ,item_r = self._plot_items
-        item_r.viewbox.setGeometry(item_l.plotitem.vb.sceneBoundingRect())
-        item_r.viewbox.linkedViewChanged(item_l.plotitem.vb, item_r.viewbox.XAxis)
+        item_r.pgitem.setGeometry(item_l.pgitem.vb.sceneBoundingRect())
+        item_r.pgitem.linkedViewChanged(item_l.pgitem.vb, item_r.pgitem.XAxis)
     
 
 class QtMultiPlotCanvas(FreeWidget):
@@ -699,21 +744,21 @@ class QtMultiPlotCanvas(FreeWidget):
         if nrows * ncols > 0:
             for r in range(nrows):
                 for c in range(ncols):
-                    self.addplot(r, c)
+                    self.add(r, c)
     
-    def addplot(self, 
-                row: int | None = None,
-                col: int | None = None,
-                rowspan: int = 1,
-                colspan: int = 1) -> PlotItem:
+    def add(self, 
+            row: int | None = None,
+            col: int | None = None,
+            rowspan: int = 1,
+            colspan: int = 1) -> PlotItem:
         item = PlotItem()
         self._plot_items.append(item)
-        self.layoutwidget.addItem(item.plotitem, row, col, rowspan, colspan)
-        item._connect_mouse_event()
+        self.layoutwidget.addItem(item._graphics, row, col, rowspan, colspan)
+        item._update_scene()
         if self._sharex and len(self._plot_items) > 1:
-            item.plotitem.vb.setXLink(self._plot_items[0].plotitem.vb)
+            item._viewbox.setXLink(self._plot_items[0]._viewbox)
         if self._sharey and len(self._plot_items) > 1:
-            item.plotitem.vb.setYLink(self._plot_items[0].plotitem.vb)
+            item._viewbox.setYLink(self._plot_items[0]._viewbox)
         return item
 
     def __getitem__(self, k: int) -> PlotItem:
@@ -721,11 +766,70 @@ class QtMultiPlotCanvas(FreeWidget):
     
     def __delitem__(self, k: int):
         item = self._plot_items[k]
-        self.layoutwidget.removeItem(item.plotitem)
+        self.layoutwidget.removeItem(item._graphics)
     
     def __iter__(self) -> Iterator[PlotItem]:
         return iter(self._plot_items)
     
+
+class QtMultiImageCanvas(FreeWidget):
+    def __init__(self, 
+                 nrows: int = 0,
+                 ncols: int = 0,
+                 sharex: bool = False,
+                 sharey: bool = False,
+                 **kwargs):
+        """
+        Multi-plot ``pyqtgraph`` canvas widget.
+
+        Parameters
+        ----------
+        nrows : int, default is 0
+            Initial rows of plots.
+        ncols : int, default is 0
+            Initail columns of plots.
+        sharex : bool, default is False
+            If true, all the x-axes will be linked.
+        sharey : bool, default is False
+            If true, all the y-axes will be linked.
+        """
+        self.layoutwidget = pg.GraphicsLayoutWidget()
+        self._plot_items: list[ImageItem] = []
+        self._sharex = sharex
+        self._sharey = sharey
+        
+        super().__init__(**kwargs)
+        self.set_widget(self.layoutwidget)
+        
+        if nrows * ncols > 0:
+            for r in range(nrows):
+                for c in range(ncols):
+                    self.add(r, c)
+    
+    def add(self, 
+            row: int | None = None,
+            col: int | None = None,
+            rowspan: int = 1,
+            colspan: int = 1) -> ImageItem:
+        item = ImageItem()
+        self._plot_items.append(item)
+        self.layoutwidget.addItem(item._graphics, row, col, rowspan, colspan)
+        item._update_scene()
+        if self._sharex and len(self._plot_items) > 1:
+            item._viewbox.setXLink(self._plot_items[0]._viewbox)
+        if self._sharey and len(self._plot_items) > 1:
+            item._viewbox.setYLink(self._plot_items[0]._viewbox)
+        return item
+
+    def __getitem__(self, k: int) -> PlotItem:
+        return self._plot_items[k]
+    
+    def __delitem__(self, k: int):
+        item = self._plot_items[k]
+        self.layoutwidget.removeItem(item._graphics)
+    
+    def __iter__(self) -> Iterator[PlotItem]:
+        return iter(self._plot_items)
 
 def _check_xy(x, y):
     if y is None:

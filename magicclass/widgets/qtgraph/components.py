@@ -52,6 +52,31 @@ class Region:
         self.native.setBrush(value)
 
 
+class Roi:
+    def __init__(self, pos=(0, 0)):
+        self.native = pg.ROI(pos)
+        self.native.setZValue(10000)
+    
+    @property
+    def border(self):
+        rgba = self.native.pen.color().getRgb()
+        return np.array(rgba)/255
+    
+    @border.setter
+    def border(self, value):
+        value = convert_color_code(value)
+        self.native.setPen(pg.mkPen(value))
+        self.native._updateView()
+    
+    @property
+    def visible(self):
+        return self.native.isVisible()
+    
+    @visible.setter
+    def visible(self, value: bool):
+        self.native.setVisible(value)
+
+
 class TextOverlay:
     """A text overlay with napari-like API."""
     def __init__(self, text: str, color: Sequence[float] | str) -> None:
@@ -150,7 +175,7 @@ class ScaleBar:
 
 
 class Legend:
-    def __init__(self, offset=(30, 30)):
+    def __init__(self, offset=(0, 0)):
         self.native = pg.LegendItem(offset=offset)
     
     @property
