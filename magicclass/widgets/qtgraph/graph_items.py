@@ -3,6 +3,7 @@ from typing import Sequence
 import pyqtgraph as pg
 from qtpy.QtCore import Qt
 import numpy as np
+
 from .utils import convert_color_code
 
 LINE_STYLE = {"-": Qt.SolidLine,
@@ -415,7 +416,7 @@ class FillBetween(PlotDataItem):
         self.native.curves[1].opts["pen"].setStyle(_ls)
     
     linestyle = ls # alias
-        
+
 
 def _set_default_colors(face_color, edge_color, default_f, default_e):
     if face_color is None:

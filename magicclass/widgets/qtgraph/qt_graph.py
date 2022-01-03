@@ -496,6 +496,14 @@ class PlotItem(HasViewBox):
         self.pgitem.setLabel(LEFT, label)
         self._ylabel = label
     
+    @property
+    def title(self) -> str:
+        return self.pgitem.titleLabel.text
+    
+    @title.setter
+    def title(self, value: str):
+        value = str(value)
+        self.pgitem.setTitle(value)
     
     def _update_scene(self):
         # Since plot item does not have graphics scene before being added to
@@ -510,7 +518,7 @@ class ViewBoxExt(pg.ViewBox):
         pg.ViewBox.__init__(**locals())
         from pyqtgraph import icons
         self.button = pg.ButtonItem(icons.getGraphPixmap("ctrl"), 14, self)
-        # self.hide()
+        self.button.hide()
         
     def hoverEvent(self, ev):
         try:
@@ -523,10 +531,13 @@ class ViewBoxExt(pg.ViewBox):
 
 
 class ImageItem(HasViewBox):
-    
-    def __init__(self, viewbox: pg.ViewBox | None = None):
+    def __init__(self, 
+                 viewbox: pg.ViewBox | None = None, 
+                 lock_contrast_limits: bool = False
+                 ):
         if viewbox is None:
             viewbox = ViewBoxExt(lockAspect=True, invertY=True)
+        self._lock_contrast_limits = lock_contrast_limits
         super().__init__(viewbox)
         self._image_item = pg.ImageItem()
         tr = self._image_item.transform().translate(-0.5, -0.5)
@@ -548,7 +559,6 @@ class ImageItem(HasViewBox):
             self._hist = pg.HistogramLUTItem(orientation="horizontal")
             self._hist.vb.setBackgroundColor([0, 0, 0, 0.2])
             self._hist.setParentItem(self._viewbox)
-            self._hist.setFixedWidth(160)
             self._hist.setVisible(False)
             
             @viewbox.button.clicked.connect
@@ -557,6 +567,8 @@ class ImageItem(HasViewBox):
                 self._hist.setVisible(visible)
                 if visible:
                     self._hist._updateView()
+                    width = min(160, self._viewbox.width())
+                    self._hist.setFixedWidth(width)
         
         self._cmap = "gray"
     
@@ -592,10 +604,13 @@ class ImageItem(HasViewBox):
         
     @image.setter
     def image(self, image: np.ndarray):
-        self._image_item.setImage(np.asarray(image).T)
+        no_image = self._image_item.image is None
+        auto_levels = not self._lock_contrast_limits
+        self._image_item.setImage(np.asarray(image).T, autoLevels=auto_levels)
         self._hist.setImageItem(self._image_item)
         self._hist._updateView()
-        
+        if no_image:
+            self._viewbox.autoRange()
         
     @image.deleter
     def image(self):
@@ -610,7 +625,6 @@ class ImageItem(HasViewBox):
     def contrast_limits(self, value: tuple[float, float]):
         self._hist.setLevels(*value)
 
-    
     @property
     def cmap(self):
         """Color map"""
