@@ -624,11 +624,15 @@ class ImageItem(HasViewBox):
             auto_levels = True
         else:
             auto_levels = not self._lock_contrast_limits
+            clims = self.contrast_limits
+        
         self._image_item.setImage(np.asarray(image).T, autoLevels=auto_levels)
         self._hist.setImageItem(self._image_item)
         self._hist._updateView()
         if no_image:
             self._viewbox.autoRange()
+        if not auto_levels:
+            self.contrast_limits = clims
         
     @image.deleter
     def image(self):
