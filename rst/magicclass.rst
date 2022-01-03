@@ -7,7 +7,9 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
+   magicclass.ext
    magicclass.gui
+   magicclass.type_matching
    magicclass.utils
    magicclass.widgets
 

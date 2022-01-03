@@ -4,6 +4,14 @@ magicclass.widgets.qtgraph package
 Submodules
 ----------
 
+magicclass.widgets.qtgraph.components module
+--------------------------------------------
+
+.. automodule:: magicclass.widgets.qtgraph.components
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 magicclass.widgets.qtgraph.graph\_items module
 ----------------------------------------------
 

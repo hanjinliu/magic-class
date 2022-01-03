@@ -4,7 +4,7 @@ from pyqtgraph import colormap as cmap
 from typing import Generic, Iterator, Sequence, TypeVar, overload, MutableSequence
 import numpy as np
 
-from .utils import convert_color_code, to_rgba
+from ._utils import convert_color_code, to_rgba
 from .components import Legend, Region, ScaleBar, TextOverlay
 from .graph_items import BarPlot, Curve, FillBetween, PlotDataItem, Scatter, Histogram
 from .mouse_event import MouseClickEvent
@@ -802,10 +802,12 @@ class _MultiPlot(FreeWidget, Generic[_C]):
     
 
 class QtMultiPlotCanvas(_MultiPlot[PlotItem]):
+    """A pyqtgraph-based canvas with multiple plot."""
     _base_item_class = PlotItem
     
 
 class QtMultiImageCanvas(_MultiPlot[ImageItem]):
+    """A pyqtgraph-based canvas with multiple images."""
     _base_item_class = ImageItem
 
 

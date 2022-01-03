@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.widgets.qtgraph.graph_items &mdash; magic-class 0.5.15dev0 documentation</title>
+  <title>magicclass.widgets.qtgraph.graph_items &mdash; magic-class 0.5.15 documentation</title>
       <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -27,7 +27,7 @@
             <a href="../../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.15dev0
+                0.5.15
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
@@ -77,10 +77,12 @@
              
   <h1>Source code for magicclass.widgets.qtgraph.graph_items</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Any</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span>
 <span class="kn">import</span> <span class="nn">pyqtgraph</span> <span class="k">as</span> <span class="nn">pg</span>
 <span class="kn">from</span> <span class="nn">qtpy.QtCore</span> <span class="kn">import</span> <span class="n">Qt</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">._utils</span> <span class="kn">import</span> <span class="n">convert_color_code</span><span class="p">,</span> <span class="n">to_rgba</span>
 
 <span class="n">LINE_STYLE</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;-&quot;</span><span class="p">:</span> <span class="n">Qt</span><span class="o">.</span><span class="n">SolidLine</span><span class="p">,</span>
               <span class="s2">&quot;--&quot;</span><span class="p">:</span> <span class="n">Qt</span><span class="o">.</span><span class="n">DashLine</span><span class="p">,</span>
@@ -88,41 +90,17 @@
               <span class="s2">&quot;-.&quot;</span><span class="p">:</span> <span class="n">Qt</span><span class="o">.</span><span class="n">DashDotLine</span><span class="p">,</span>
               <span class="p">}</span>
 
-<span class="k">def</span> <span class="nf">_convert_color_code</span><span class="p">(</span><span class="n">c</span><span class="p">):</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">*</span> <span class="mi">255</span>
-    <span class="k">return</span> <span class="n">c</span>
-
-<span class="k">def</span> <span class="nf">_get_pen</span><span class="p">(</span><span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
-    <span class="sd">&quot;&quot;&quot;Translation from matplotlib&#39;s kwargs to pyqtgraph&#39;s&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="s2">&quot;pen&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;pen&quot;</span><span class="p">]</span>
-    
-    <span class="k">if</span> <span class="s2">&quot;c&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-        <span class="n">color</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;c&quot;</span><span class="p">]</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">color</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;color&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-    
-    <span class="k">if</span> <span class="s2">&quot;lw&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-        <span class="n">width</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;lw&quot;</span><span class="p">]</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">width</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;lw&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-        
-    <span class="k">if</span> <span class="s2">&quot;ls&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-        <span class="n">style</span> <span class="o">=</span> <span class="n">LINE_STYLE</span><span class="p">[</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;ls&quot;</span><span class="p">]]</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">style</span> <span class="o">=</span> <span class="n">LINE_STYLE</span><span class="p">[</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;linestyle&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">)]</span>
-    
-    <span class="k">return</span> <span class="n">pg</span><span class="o">.</span><span class="n">mkPen</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="n">style</span><span class="p">)</span>
+<span class="n">_SYMBOL_MAP</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;*&quot;</span><span class="p">:</span> <span class="s2">&quot;star&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;D&quot;</span><span class="p">:</span> <span class="s2">&quot;d&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;^&quot;</span><span class="p">:</span> <span class="s2">&quot;t1&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;&lt;&quot;</span><span class="p">:</span> <span class="s2">&quot;t3&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;v&quot;</span><span class="p">:</span> <span class="s2">&quot;t&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;&gt;&quot;</span><span class="p">:</span> <span class="s2">&quot;t2&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
 
 <div class="viewcode-block" id="PlotDataItem"><a class="viewcode-back" href="../../../../magicclass.widgets.qtgraph.html#magicclass.widgets.qtgraph.graph_items.PlotDataItem">[docs]</a><span class="k">class</span> <span class="nc">PlotDataItem</span><span class="p">:</span>
-    <span class="n">base_item</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">pg</span><span class="o">.</span><span class="n">PlotCurveItem</span> <span class="o">|</span> <span class="n">pg</span><span class="o">.</span><span class="n">ScatterPlotItem</span><span class="p">]</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="n">pen</span> <span class="o">=</span> <span class="n">_get_pen</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;pen&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-            
-        <span class="bp">self</span><span class="o">.</span><span class="n">native</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_item</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">pen</span><span class="o">=</span><span class="n">pen</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+    <span class="n">native</span><span class="p">:</span> <span class="n">pg</span><span class="o">.</span><span class="n">PlotCurveItem</span> <span class="o">|</span> <span class="n">pg</span><span class="o">.</span><span class="n">ScatterPlotItem</span>
     
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">xdata</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
@@ -143,11 +121,22 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">ndata</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">getData</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">size</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+    
+    <span class="nd">@name</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="c1"># TODO: now name is not linked to label item</span>
 
     <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">getData</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">size</span>
         
 <div class="viewcode-block" id="PlotDataItem.add"><a class="viewcode-back" href="../../../../magicclass.widgets.qtgraph.html#magicclass.widgets.qtgraph.graph_items.PlotDataItem.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add new points to the plot data item.&quot;&quot;&quot;</span>
         <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Points must be of the shape (N, 2).&quot;</span><span class="p">)</span>
@@ -158,6 +147,7 @@
         <span class="k">return</span> <span class="kc">None</span></div>
     
 <div class="viewcode-block" id="PlotDataItem.remove"><a class="viewcode-back" href="../../../../magicclass.widgets.qtgraph.html#magicclass.widgets.qtgraph.graph_items.PlotDataItem.remove">[docs]</a>    <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]):</span>
+        <span class="sd">&quot;&quot;&quot;Remove the i-th data.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
             <span class="n">i</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="p">]</span>
         <span class="n">sl</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ndata</span><span class="p">))</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
@@ -168,6 +158,7 @@
     
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">visible</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Visibility of data.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">isVisible</span><span class="p">()</span>
     
     <span class="nd">@visible</span><span class="o">.</span><span class="n">setter</span>
@@ -176,26 +167,35 @@
     
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">edge_color</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-        <span class="n">rgba</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;pen&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">color</span><span class="p">()</span><span class="o">.</span><span class="n">getRgb</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rgba</span><span class="p">)</span><span class="o">/</span><span class="mi">255</span>
-    
+        <span class="sd">&quot;&quot;&quot;Edge color of the data.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">to_rgba</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;pen&quot;</span><span class="p">])</span>
+        
     <span class="nd">@edge_color</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">edge_color</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">):</span>
-        <span class="n">value</span> <span class="o">=</span> <span class="n">_convert_color_code</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">convert_color_code</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
     
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">face_color</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-        <span class="n">rgba</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;brush&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">color</span><span class="p">()</span><span class="o">.</span><span class="n">getRgb</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rgba</span><span class="p">)</span><span class="o">/</span><span class="mi">255</span>
-    
+        <span class="sd">&quot;&quot;&quot;Face color of the data.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">to_rgba</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;brush&quot;</span><span class="p">])</span>
+        
     <span class="nd">@face_color</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">face_color</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">):</span>
-        <span class="n">value</span> <span class="o">=</span> <span class="n">_convert_color_code</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">convert_color_code</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setBrush</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-            
+
+    <span class="n">color</span> <span class="o">=</span> <span class="nb">property</span><span class="p">()</span>
+    
+    <span class="nd">@color</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">color</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set face color and edge color at the same time.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">face_color</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">edge_color</span> <span class="o">=</span> <span class="n">value</span>
+        
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">lw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Line width.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;pen&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">width</span><span class="p">()</span>
     
     <span class="nd">@lw</span><span class="o">.</span><span class="n">setter</span>
@@ -206,132 +206,306 @@
     
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">ls</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Line style.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;pen&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">style</span><span class="p">()</span>
     
     <span class="nd">@ls</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">ls</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">_ls</span> <span class="o">=</span> <span class="n">LINE_STYLE</span><span class="p">[</span><span class="n">value</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;pen&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setWidth</span><span class="p">(</span><span class="n">_ls</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;pen&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setStyle</span><span class="p">(</span><span class="n">_ls</span><span class="p">)</span>
     
-    <span class="n">linestyle</span> <span class="o">=</span> <span class="n">ls</span> <span class="c1"># alias</span></div>
+    <span class="n">linestyle</span> <span class="o">=</span> <span class="n">ls</span> <span class="c1"># alias</span>
 
-
-<div class="viewcode-block" id="Curve"><a class="viewcode-back" href="../../../../magicclass.widgets.qtgraph.html#magicclass.widgets.qtgraph.graph_items.Curve">[docs]</a><span class="k">class</span> <span class="nc">Curve</span><span class="p">(</span><span class="n">PlotDataItem</span><span class="p">):</span>
-    <span class="n">base_item</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">PlotCurveItem</span></div>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">zorder</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Z-order of item. Item with larger z will be displayed on the top.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">zValue</span><span class="p">()</span>
+    
+    <span class="nd">@zorder</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">zorder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setZValue</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Scatter"><a class="viewcode-back" href="../../../../magicclass.widgets.qtgraph.html#magicclass.widgets.qtgraph.graph_items.Scatter">[docs]</a><span class="k">class</span> <span class="nc">Scatter</span><span class="p">(</span><span class="n">PlotDataItem</span><span class="p">):</span>
-    <span class="n">base_item</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">ScatterPlotItem</span>
-            
+    <span class="n">native</span><span class="p">:</span> <span class="n">pg</span><span class="o">.</span><span class="n">ScatterPlotItem</span>
+    
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+                 <span class="n">x</span><span class="p">,</span>
+                 <span class="n">y</span><span class="p">,</span>
+                 <span class="n">face_color</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">edge_color</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">size</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">7</span><span class="p">,</span>
+                 <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">lw</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+                 <span class="n">ls</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span>
+                 <span class="n">symbol</span><span class="o">=</span><span class="s2">&quot;o&quot;</span>
+                 <span class="p">):</span>
+        <span class="n">face_color</span><span class="p">,</span> <span class="n">edge_color</span> <span class="o">=</span> <span class="n">_set_default_colors</span><span class="p">(</span>
+            <span class="n">face_color</span><span class="p">,</span> <span class="n">edge_color</span><span class="p">,</span> <span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="s2">&quot;white&quot;</span>
+            <span class="p">)</span>
+        <span class="n">pen</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">mkPen</span><span class="p">(</span><span class="n">edge_color</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">lw</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="n">LINE_STYLE</span><span class="p">[</span><span class="n">ls</span><span class="p">])</span>
+        <span class="n">brush</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">mkBrush</span><span class="p">(</span><span class="n">face_color</span><span class="p">)</span>
+        <span class="n">symbol</span> <span class="o">=</span> <span class="n">_SYMBOL_MAP</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">symbol</span><span class="p">,</span> <span class="n">symbol</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">ScatterPlotItem</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">pen</span><span class="o">=</span><span class="n">pen</span><span class="p">,</span> <span class="n">brush</span><span class="o">=</span><span class="n">brush</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">,</span> <span class="n">symbol</span><span class="o">=</span><span class="n">symbol</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">symbol</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;symbol&quot;</span><span class="p">]</span>
         
     <span class="nd">@symbol</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">symbol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">_SYMBOL_MAP</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setSymbol</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
     
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;symbolSize&quot;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;symbolSize&quot;</span><span class="p">]</span>
         
     <span class="nd">@size</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setSymbolSize</span><span class="p">(</span><span class="n">size</span><span class="p">)</span></div>
 
 
+<div class="viewcode-block" id="Curve"><a class="viewcode-back" href="../../../../magicclass.widgets.qtgraph.html#magicclass.widgets.qtgraph.graph_items.Curve">[docs]</a><span class="k">class</span> <span class="nc">Curve</span><span class="p">(</span><span class="n">PlotDataItem</span><span class="p">):</span>
+    <span class="n">native</span><span class="p">:</span> <span class="n">pg</span><span class="o">.</span><span class="n">PlotDataItem</span>
+    
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+                 <span class="n">x</span><span class="p">,</span>
+                 <span class="n">y</span><span class="p">,</span>
+                 <span class="n">face_color</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">edge_color</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">size</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">7</span><span class="p">,</span>
+                 <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">lw</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+                 <span class="n">ls</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span>
+                 <span class="n">symbol</span><span class="o">=</span><span class="kc">None</span>
+                 <span class="p">):</span>
+        <span class="n">face_color</span><span class="p">,</span> <span class="n">edge_color</span> <span class="o">=</span> <span class="n">_set_default_colors</span><span class="p">(</span>
+            <span class="n">face_color</span><span class="p">,</span> <span class="n">edge_color</span><span class="p">,</span> <span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="s2">&quot;white&quot;</span>
+            <span class="p">)</span>
+        <span class="n">pen</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">mkPen</span><span class="p">(</span><span class="n">edge_color</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">lw</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="n">LINE_STYLE</span><span class="p">[</span><span class="n">ls</span><span class="p">])</span>
+        <span class="n">brush</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">mkBrush</span><span class="p">(</span><span class="n">face_color</span><span class="p">)</span>
+        <span class="n">symbol</span> <span class="o">=</span> <span class="n">_SYMBOL_MAP</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">symbol</span><span class="p">,</span> <span class="n">symbol</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">PlotDataItem</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">pen</span><span class="o">=</span><span class="n">pen</span><span class="p">,</span> <span class="n">brush</span><span class="o">=</span><span class="n">brush</span><span class="p">,</span> <span class="n">symbolSize</span><span class="o">=</span><span class="n">size</span><span class="p">,</span> 
+                                      <span class="n">symbol</span><span class="o">=</span><span class="n">symbol</span><span class="p">,</span> <span class="n">symbolPen</span><span class="o">=</span><span class="n">pen</span><span class="p">,</span> <span class="n">symbolBrush</span><span class="o">=</span><span class="n">brush</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">symbol</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;symbol&quot;</span><span class="p">]</span>
+        
+    <span class="nd">@symbol</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">symbol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">_SYMBOL_MAP</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setSymbol</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;symbolSize&quot;</span><span class="p">]</span>
+        
+    <span class="nd">@size</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setSymbolSize</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
+        
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">edge_color</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="n">rgba</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;pen&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">color</span><span class="p">()</span><span class="o">.</span><span class="n">getRgb</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rgba</span><span class="p">)</span><span class="o">/</span><span class="mi">255</span>
+    
+    <span class="nd">@edge_color</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">edge_color</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">):</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">convert_color_code</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setSymbolPen</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">face_color</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="n">rgba</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;symbolBrush&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">color</span><span class="p">()</span><span class="o">.</span><span class="n">getRgb</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rgba</span><span class="p">)</span><span class="o">/</span><span class="mi">255</span>
+    
+    <span class="nd">@face_color</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">face_color</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">):</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">convert_color_code</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setBrush</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setSymbolBrush</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+
+
 <div class="viewcode-block" id="Histogram"><a class="viewcode-back" href="../../../../magicclass.widgets.qtgraph.html#magicclass.widgets.qtgraph.graph_items.Histogram">[docs]</a><span class="k">class</span> <span class="nc">Histogram</span><span class="p">(</span><span class="n">PlotDataItem</span><span class="p">):</span>
-    <span class="n">base_item</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">PlotCurveItem</span>
+    <span class="n">native</span><span class="p">:</span> <span class="n">pg</span><span class="o">.</span><span class="n">ScatterPlotItem</span>
     
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
                  <span class="n">data</span><span class="p">,</span>
                  <span class="n">bins</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">Sequence</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
                  <span class="nb">range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">density</span><span class="p">:</span><span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> 
-                 <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="n">pen</span> <span class="o">=</span> <span class="n">_get_pen</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;pen&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        
+                 <span class="n">density</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="n">face_color</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">edge_color</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">lw</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+                 <span class="n">ls</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span>
+                 <span class="p">):</span>
+        <span class="n">face_color</span><span class="p">,</span> <span class="n">edge_color</span> <span class="o">=</span> <span class="n">_set_default_colors</span><span class="p">(</span>
+            <span class="n">face_color</span><span class="p">,</span> <span class="n">edge_color</span><span class="p">,</span> <span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="s2">&quot;white&quot;</span>
+            <span class="p">)</span>
+        <span class="n">pen</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">mkPen</span><span class="p">(</span><span class="n">edge_color</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">lw</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="n">LINE_STYLE</span><span class="p">[</span><span class="n">ls</span><span class="p">])</span>
+        <span class="n">brush</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">mkBrush</span><span class="p">(</span><span class="n">face_color</span><span class="p">)</span>
         <span class="n">y</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span> <span class="nb">range</span><span class="o">=</span><span class="nb">range</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="n">density</span><span class="p">)</span>
-        
-        <span class="bp">self</span><span class="o">.</span><span class="n">native</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_item</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">pen</span><span class="o">=</span><span class="n">pen</span><span class="p">,</span> <span class="n">stepMode</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
-                                     <span class="n">fillLevel</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span></div>
-
-
-
-<div class="viewcode-block" id="TextOverlay"><a class="viewcode-back" href="../../../../magicclass.widgets.qtgraph.html#magicclass.widgets.qtgraph.graph_items.TextOverlay">[docs]</a><span class="k">class</span> <span class="nc">TextOverlay</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">color</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">native</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">TextItem</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">_convert_color_code</span><span class="p">(</span><span class="n">color</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">PlotCurveItem</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">pen</span><span class="o">=</span><span class="n">pen</span><span class="p">,</span> <span class="n">brush</span><span class="o">=</span><span class="n">brush</span><span class="p">,</span> 
+                                       <span class="n">stepMode</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span> <span class="n">fillLevel</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
     
+<div class="viewcode-block" id="Histogram.set_hist"><a class="viewcode-back" href="../../../../magicclass.widgets.qtgraph.html#magicclass.widgets.qtgraph.graph_items.Histogram.set_hist">[docs]</a>    <span class="k">def</span> <span class="nf">set_hist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="nb">range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="n">y</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span> <span class="nb">range</span><span class="o">=</span><span class="nb">range</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="n">density</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="BarPlot"><a class="viewcode-back" href="../../../../magicclass.widgets.qtgraph.html#magicclass.widgets.qtgraph.graph_items.BarPlot">[docs]</a><span class="k">class</span> <span class="nc">BarPlot</span><span class="p">(</span><span class="n">PlotDataItem</span><span class="p">):</span>
+    <span class="n">native</span><span class="p">:</span> <span class="n">pg</span><span class="o">.</span><span class="n">BarGraphItem</span>
+    
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+                 <span class="n">x</span><span class="p">,</span>
+                 <span class="n">y</span><span class="p">,</span>
+                 <span class="n">face_color</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">edge_color</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">width</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.6</span><span class="p">,</span>
+                 <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">lw</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+                 <span class="n">ls</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span><span class="p">):</span>
+        <span class="n">face_color</span><span class="p">,</span> <span class="n">edge_color</span> <span class="o">=</span> <span class="n">_set_default_colors</span><span class="p">(</span>
+            <span class="n">face_color</span><span class="p">,</span> <span class="n">edge_color</span><span class="p">,</span> <span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="s2">&quot;white&quot;</span>
+            <span class="p">)</span>
+        <span class="n">pen</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">mkPen</span><span class="p">(</span><span class="n">edge_color</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">lw</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="n">LINE_STYLE</span><span class="p">[</span><span class="n">ls</span><span class="p">])</span>
+        <span class="n">brush</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">mkBrush</span><span class="p">(</span><span class="n">face_color</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">BarGraphItem</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span> <span class="n">pen</span><span class="o">=</span><span class="n">pen</span><span class="p">,</span> <span class="n">brush</span><span class="o">=</span><span class="n">brush</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">color</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">rgba</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">color</span><span class="o">.</span><span class="n">getRgb</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">edge_color</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="n">rgba</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;pen&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">color</span><span class="p">()</span><span class="o">.</span><span class="n">getRgb</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rgba</span><span class="p">)</span><span class="o">/</span><span class="mi">255</span>
     
-    <span class="nd">@color</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">color</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="n">value</span> <span class="o">=</span> <span class="n">_convert_color_code</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+    <span class="nd">@edge_color</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">edge_color</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">):</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">convert_color_code</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setOpts</span><span class="p">(</span><span class="n">pen</span><span class="o">=</span><span class="n">pg</span><span class="o">.</span><span class="n">mkPen</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
     
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">visible</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">isVisible</span><span class="p">()</span>
-    
-    <span class="nd">@visible</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">visible</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-    
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">text</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">toPlainText</span><span class="p">()</span>
-    
-    <span class="nd">@text</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-    
-<div class="viewcode-block" id="TextOverlay.update"><a class="viewcode-back" href="../../../../magicclass.widgets.qtgraph.html#magicclass.widgets.qtgraph.graph_items.TextOverlay.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;color&quot;</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="s2">&quot;visible&quot;</span><span class="p">]:</span>
-                <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot set attribute </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> to TextOverlay.&quot;</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span></div></div>
-
-
-<div class="viewcode-block" id="ScaleBar"><a class="viewcode-back" href="../../../../magicclass.widgets.qtgraph.html#magicclass.widgets.qtgraph.graph_items.ScaleBar">[docs]</a><span class="k">class</span> <span class="nc">ScaleBar</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_unit</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">native</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">ScaleBar</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_unit</span><span class="p">)</span>
-    
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">color</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">rgba</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">brush</span><span class="o">.</span><span class="n">color</span><span class="p">()</span><span class="o">.</span><span class="n">getRgb</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">face_color</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="n">rgba</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;brush&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">color</span><span class="p">()</span><span class="o">.</span><span class="n">getRgb</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rgba</span><span class="p">)</span><span class="o">/</span><span class="mi">255</span>
     
-    <span class="nd">@color</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">color</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="n">value</span> <span class="o">=</span> <span class="n">_convert_color_code</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">brush</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">mkBrush</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">bar</span><span class="o">.</span><span class="n">setBrush</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">brush</span><span class="p">)</span>
+    <span class="nd">@face_color</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">face_color</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">):</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">convert_color_code</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setOpts</span><span class="p">(</span><span class="n">brush</span><span class="o">=</span><span class="n">pg</span><span class="o">.</span><span class="n">mkBrush</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">xdata</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">getData</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+    
+    <span class="nd">@xdata</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">xdata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setOpts</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">value</span><span class="p">)</span>
     
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">visible</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">isVisible</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">ydata</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">getData</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
     
-    <span class="nd">@visible</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">visible</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="nd">@ydata</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">ydata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setOpts</span><span class="p">(</span><span class="n">height</span><span class="o">=</span><span class="n">value</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="FillBetween"><a class="viewcode-back" href="../../../../magicclass.widgets.qtgraph.html#magicclass.widgets.qtgraph.graph_items.FillBetween">[docs]</a><span class="k">class</span> <span class="nc">FillBetween</span><span class="p">(</span><span class="n">PlotDataItem</span><span class="p">):</span>
+    <span class="n">native</span><span class="p">:</span> <span class="n">pg</span><span class="o">.</span><span class="n">FillBetweenItem</span>
+    
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+                 <span class="n">x</span><span class="p">,</span>
+                 <span class="n">y1</span><span class="p">,</span>
+                 <span class="n">y2</span><span class="p">,</span>
+                 <span class="n">face_color</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">edge_color</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">lw</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+                 <span class="n">ls</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span><span class="p">):</span>
+        <span class="n">face_color</span><span class="p">,</span> <span class="n">edge_color</span> <span class="o">=</span> <span class="n">_set_default_colors</span><span class="p">(</span>
+            <span class="n">face_color</span><span class="p">,</span> <span class="n">edge_color</span><span class="p">,</span> <span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="s2">&quot;white&quot;</span>
+            <span class="p">)</span>
+        <span class="n">pen</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">mkPen</span><span class="p">(</span><span class="n">edge_color</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">lw</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="n">LINE_STYLE</span><span class="p">[</span><span class="n">ls</span><span class="p">])</span>
+        <span class="n">brush</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">mkBrush</span><span class="p">(</span><span class="n">face_color</span><span class="p">)</span>
+        <span class="n">curve1</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">PlotCurveItem</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y1</span><span class="p">,</span> <span class="n">pen</span><span class="o">=</span><span class="n">pen</span><span class="p">)</span>
+        <span class="n">curve2</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">PlotCurveItem</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y2</span><span class="p">,</span> <span class="n">pen</span><span class="o">=</span><span class="n">pen</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">FillBetweenItem</span><span class="p">(</span><span class="n">curve1</span><span class="p">,</span> <span class="n">curve2</span><span class="p">,</span> <span class="n">brush</span><span class="o">=</span><span class="n">brush</span><span class="p">,</span> <span class="n">pen</span><span class="o">=</span><span class="n">pen</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">edge_color</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="n">rgba</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">curves</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;pen&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">color</span><span class="p">()</span><span class="o">.</span><span class="n">getRgb</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rgba</span><span class="p">)</span><span class="o">/</span><span class="mi">255</span>
+    
+    <span class="nd">@edge_color</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">edge_color</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">):</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">convert_color_code</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">pg</span><span class="o">.</span><span class="n">mkPen</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
     
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">unit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unit</span>
+    <span class="k">def</span> <span class="nf">face_color</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="n">rgba</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">curves</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;brush&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">color</span><span class="p">()</span><span class="o">.</span><span class="n">getRgb</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rgba</span><span class="p">)</span><span class="o">/</span><span class="mi">255</span>
     
-    <span class="nd">@unit</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">unit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="nd">@face_color</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">face_color</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">):</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">convert_color_code</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setBrush</span><span class="p">(</span><span class="n">pg</span><span class="o">.</span><span class="n">mkBrush</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">curves</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+    
+    <span class="nd">@name</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">pg</span><span class="o">.</span><span class="n">siFormat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="n">value</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_unit</span> <span class="o">=</span> <span class="n">value</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">curves</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">lw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Line width.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">curves</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;pen&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">width</span><span class="p">()</span>
+    
+    <span class="nd">@lw</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">lw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">curves</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;pen&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setWidth</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">curves</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;pen&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setWidth</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        
+    <span class="n">linewidth</span> <span class="o">=</span> <span class="n">lw</span> <span class="c1"># alias</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ls</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Line style.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">curves</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;pen&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">style</span><span class="p">()</span>
+    
+    <span class="nd">@ls</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">ls</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">_ls</span> <span class="o">=</span> <span class="n">LINE_STYLE</span><span class="p">[</span><span class="n">value</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">curves</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;pen&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setStyle</span><span class="p">(</span><span class="n">_ls</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">curves</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;pen&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setStyle</span><span class="p">(</span><span class="n">_ls</span><span class="p">)</span>
+    
+    <span class="n">linestyle</span> <span class="o">=</span> <span class="n">ls</span> <span class="c1"># alias</span></div>
+
+
+<span class="k">def</span> <span class="nf">_set_default_colors</span><span class="p">(</span><span class="n">face_color</span><span class="p">,</span> <span class="n">edge_color</span><span class="p">,</span> <span class="n">default_f</span><span class="p">,</span> <span class="n">default_e</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">face_color</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">face_color</span> <span class="o">=</span> <span class="n">default_f</span>
+    <span class="k">if</span> <span class="n">edge_color</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">edge_color</span> <span class="o">=</span> <span class="n">default_e</span>
+    <span class="k">return</span> <span class="n">face_color</span><span class="p">,</span> <span class="n">edge_color</span>
+
+<span class="k">def</span> <span class="nf">_find_ancestor</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="n">itemtype</span><span class="p">:</span> <span class="nb">type</span><span class="p">):</span>
+    <span class="n">item</span> <span class="o">=</span> <span class="n">widget</span>
+    <span class="k">while</span> <span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">itemtype</span><span class="p">:</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">parentItem</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">item</span>
 </pre></div>
 
            </div>

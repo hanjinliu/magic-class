@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.widgets.qtgraph.mouse_event &mdash; magic-class 0.5.10dev0 documentation</title>
+  <title>magicclass.widgets.qtgraph.mouse_event &mdash; magic-class 0.5.15 documentation</title>
       <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -27,7 +27,7 @@
             <a href="../../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.10dev0
+                0.5.15
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
@@ -44,6 +44,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../use_field.html">Use Fields in magic-class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../use_wraps.html">Call Parent Methods from its Child</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../use_bind.html">Binding Values to Arguments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../keybinding.html">Define Custom Keybindings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../customize_macro.html">Customize Macro Recording</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../special_methods.html">Special attributes in magic-class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../containers.html">Container Variations</a></li>
@@ -79,24 +80,9 @@
 
 <span class="kn">from</span> <span class="nn">qtpy.QtCore</span> <span class="kn">import</span> <span class="n">Qt</span>
 <span class="kn">from</span> <span class="nn">pyqtgraph.GraphicsScene.mouseEvents</span> <span class="kn">import</span> <span class="n">MouseClickEvent</span> <span class="k">as</span> <span class="n">_MouseClickEvent</span>
-<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span> <span class="nn">._const</span> <span class="kn">import</span> <span class="n">Modifier</span><span class="p">,</span> <span class="n">Button</span>
 
-<div class="viewcode-block" id="strEnum"><a class="viewcode-back" href="../../../../magicclass.widgets.qtgraph.html#magicclass.widgets.qtgraph.mouse_event.strEnum">[docs]</a><span class="k">class</span> <span class="nc">strEnum</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="n">other</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
-        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__eq__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span></div>
-    
-<div class="viewcode-block" id="Modifier"><a class="viewcode-back" href="../../../../magicclass.widgets.qtgraph.html#magicclass.widgets.qtgraph.mouse_event.Modifier">[docs]</a><span class="k">class</span> <span class="nc">Modifier</span><span class="p">(</span><span class="n">strEnum</span><span class="p">):</span>
-    <span class="n">shift</span> <span class="o">=</span> <span class="s2">&quot;shift&quot;</span>
-    <span class="n">control</span> <span class="o">=</span> <span class="s2">&quot;control&quot;</span>
-    <span class="n">alt</span> <span class="o">=</span> <span class="s2">&quot;alt&quot;</span></div>
 
-<div class="viewcode-block" id="Button"><a class="viewcode-back" href="../../../../magicclass.widgets.qtgraph.html#magicclass.widgets.qtgraph.mouse_event.Button">[docs]</a><span class="k">class</span> <span class="nc">Button</span><span class="p">(</span><span class="n">strEnum</span><span class="p">):</span>
-    <span class="n">left</span> <span class="o">=</span> <span class="s2">&quot;left&quot;</span>
-    <span class="n">right</span> <span class="o">=</span> <span class="s2">&quot;right&quot;</span>
-    <span class="n">middle</span> <span class="o">=</span> <span class="s2">&quot;middle&quot;</span></div>
-    
 <span class="k">def</span> <span class="nf">_factorize_modifiers</span><span class="p">(</span><span class="n">mod</span><span class="p">):</span>
     <span class="n">out</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">if</span> <span class="n">mod</span> <span class="o">&amp;</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ShiftModifier</span><span class="p">:</span>

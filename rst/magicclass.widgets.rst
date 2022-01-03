@@ -10,6 +10,7 @@ Subpackages
    magicclass.widgets.napari
    magicclass.widgets.pywidgets
    magicclass.widgets.qtgraph
+   magicclass.widgets.tests
 
 Submodules
 ----------
