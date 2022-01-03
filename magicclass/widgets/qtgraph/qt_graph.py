@@ -1,10 +1,10 @@
 from __future__ import annotations
 import pyqtgraph as pg
 from pyqtgraph import colormap as cmap
-from typing import Iterator, Sequence, overload, MutableSequence
+from typing import Generic, Iterator, Sequence, TypeVar, overload, MutableSequence
 import numpy as np
 
-from .utils import convert_color_code
+from .utils import convert_color_code, to_rgba
 from .components import Legend, Region, ScaleBar, TextOverlay
 from .graph_items import BarPlot, Curve, FillBetween, PlotDataItem, Scatter, Histogram
 from .mouse_event import MouseClickEvent
@@ -426,7 +426,16 @@ class HasViewBox(HasDataItems):
         
     def _update_scene(self):
         raise NotImplementedError()
-
+    
+    @property
+    def border(self):
+        return to_rgba(self._viewbox.border)
+    
+    @border.setter
+    def border(self, value):
+        value = convert_color_code(value)
+        self._viewbox.setBorder(value)
+        
 
 class SimpleViewBox(HasViewBox):
     def __init__(self):
@@ -547,6 +556,7 @@ class ImageItem(HasViewBox):
         
         # prepare text overlay
         self._text_overlay = TextOverlay(text="", color="gray")
+        self._text_overlay.native.setParentItem(self._viewbox)
         
         # prepare scale bar
         self._scale_bar = ScaleBar()
@@ -571,24 +581,29 @@ class ImageItem(HasViewBox):
                     self._hist.setFixedWidth(width)
         
         self._cmap = "gray"
-    
 
     def _update_scene(self):
         # Since plot item does not have graphics scene before being added to
         # a graphical layout, mouse event should be connected afterward.
         self._image_item.scene().sigMouseClicked.connect(self._mouse_clicked)
-        self._image_item.scene().addItem(self._text_overlay.native)
-        self._image_item.scene().addItem(self._scale_bar.native)
-        
+
     @property
     def text_overlay(self) -> TextOverlay:
         """Text overlay on the image."""        
         return self._text_overlay
-    
+
     @property
     def scale_bar(self) -> ScaleBar:
         """Scale bar on the image."""
         return self._scale_bar
+    
+    @property
+    def lock_contrast_limits(self):
+        return self._lock_contrast_limits
+    
+    @lock_contrast_limits.setter
+    def lock_contrast_limits(self, value: bool):
+        self._lock_contrast_limits = bool(value)
 
     @property
     def _graphics(self):
@@ -605,7 +620,10 @@ class ImageItem(HasViewBox):
     @image.setter
     def image(self, image: np.ndarray):
         no_image = self._image_item.image is None
-        auto_levels = not self._lock_contrast_limits
+        if no_image:
+            auto_levels = True
+        else:
+            auto_levels = not self._lock_contrast_limits
         self._image_item.setImage(np.asarray(image).T, autoLevels=auto_levels)
         self._hist.setImageItem(self._image_item)
         self._hist._updateView()
@@ -656,9 +674,9 @@ class QtPlotCanvas(FreeWidget, PlotItem):
 
 
 class QtImageCanvas(FreeWidget, ImageItem):
-    def __init__(self, **kwargs):
+    def __init__(self, lock_contrast_limits: bool = False, **kwargs):
         # prepare widget
-        ImageItem.__init__(self)
+        ImageItem.__init__(self, lock_contrast_limits=lock_contrast_limits)
         self.layoutwidget = pg.GraphicsLayoutWidget()
         self.layoutwidget.addItem(self._viewbox)
         self._update_scene()
@@ -702,8 +720,10 @@ class Qt2YPlotCanvas(FreeWidget):
         item_r._viewbox.linkedViewChanged(item_l._viewbox, item_r._viewbox.XAxis)
 
 
-class _MultiPlot(FreeWidget):
-    _base_item_class: type[HasViewBox]
+_C = TypeVar("_C", bound=HasViewBox)
+
+class _MultiPlot(FreeWidget, Generic[_C]):
+    _base_item_class: type[_C]
     
     def __init__(self, 
                  nrows: int = 0,
@@ -727,8 +747,7 @@ class _MultiPlot(FreeWidget):
             If true, all the y-axes will be linked.
         """
         self.layoutwidget = pg.GraphicsLayoutWidget()
-        _T = self._base_item_class
-        self._axes: list[_T] = []
+        self._axes: list[_C] = []
         self._sharex = sharex
         self._sharey = sharey
         
@@ -741,6 +760,7 @@ class _MultiPlot(FreeWidget):
                     self.addaxis(r, c)
     
     def __init_subclass__(cls) -> None:
+        """Update doc."""
         init = cls.__init__
         init.__doc__ = init.__doc__.format(
             cls=cls._base_item_class.__name__
@@ -751,7 +771,7 @@ class _MultiPlot(FreeWidget):
                 row: int | None = None,
                 col: int | None = None,
                 rowspan: int = 1,
-                colspan: int = 1) -> _base_item_class:
+                colspan: int = 1) -> _C:
         """Add a new axis to widget."""
         item = self._base_item_class()
         self._axes.append(item)
@@ -762,23 +782,26 @@ class _MultiPlot(FreeWidget):
         if self._sharey and len(self._axes) > 1:
             item._viewbox.setYLink(self._axes[0]._viewbox)
         return item
+    
 
-    def __getitem__(self, k: int) -> _base_item_class:
+    def __getitem__(self, k: int) -> _C:
         return self._axes[k]
+    
     
     def __delitem__(self, k: int):
         item = self._axes[k]
         self.layoutwidget.removeItem(item._graphics)
     
-    def __iter__(self) -> Iterator[_base_item_class]:
+    
+    def __iter__(self) -> Iterator[_C]:
         return iter(self._axes)
     
 
-class QtMultiPlotCanvas(_MultiPlot):
+class QtMultiPlotCanvas(_MultiPlot[PlotItem]):
     _base_item_class = PlotItem
     
 
-class QtMultiImageCanvas(_MultiPlot):
+class QtMultiImageCanvas(_MultiPlot[ImageItem]):
     _base_item_class = ImageItem
 
 

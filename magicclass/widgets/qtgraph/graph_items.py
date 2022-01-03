@@ -4,7 +4,7 @@ import pyqtgraph as pg
 from qtpy.QtCore import Qt
 import numpy as np
 
-from .utils import convert_color_code
+from .utils import convert_color_code, to_rgba
 
 LINE_STYLE = {"-": Qt.SolidLine,
               "--": Qt.DashLine,
@@ -90,9 +90,8 @@ class PlotDataItem:
     @property
     def edge_color(self) -> np.ndarray:
         """Edge color of the data."""
-        rgba = self.native.opts["pen"].color().getRgb()
-        return np.array(rgba)/255
-    
+        return to_rgba(self.native.opts["pen"])
+        
     @edge_color.setter
     def edge_color(self, value: str | Sequence):
         value = convert_color_code(value)
@@ -101,9 +100,8 @@ class PlotDataItem:
     @property
     def face_color(self) -> np.ndarray:
         """Face color of the data."""
-        rgba = self.native.opts["brush"].color().getRgb()
-        return np.array(rgba)/255
-    
+        return to_rgba(self.native.opts["brush"])
+        
     @face_color.setter
     def face_color(self, value: str | Sequence):
         value = convert_color_code(value)

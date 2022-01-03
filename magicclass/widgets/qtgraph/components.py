@@ -3,7 +3,7 @@ from typing import Sequence
 import numpy as np
 import pyqtgraph as pg
 from magicgui.events import Signal
-from .utils import convert_color_code
+from .utils import convert_color_code, to_rgba
 
 class GraphicComponent:
     native: pg.GraphicsObject
@@ -55,8 +55,7 @@ class Region(GraphicComponent):
     
     @property
     def color(self):
-        rgba = self.native.brush.color().getRgb()
-        return np.array(rgba)/255
+        return to_rgba(self.native.brush)
     
     @color.setter
     def color(self, value):
@@ -74,9 +73,8 @@ class Roi(GraphicComponent):
     
     @property
     def border(self):
-        rgba = self.native.pen.color().getRgb()
-        return np.array(rgba)/255
-    
+        return to_rgba(self.native.pen)
+        
     @border.setter
     def border(self, value):
         value = convert_color_code(value)
@@ -103,8 +101,7 @@ class TextOverlay(GraphicComponent):
     
     @property
     def background_color(self):
-        rgba = self.native.fill.color().getRgb()
-        return np.array(rgba)/255
+        return to_rgba(self.native.fill)
     
     @background_color.setter
     def background_color(self, value):
@@ -114,9 +111,8 @@ class TextOverlay(GraphicComponent):
     
     @property
     def border(self):
-        rgba = self.native.border.color().getRgb()
-        return np.array(rgba)/255
-    
+        return to_rgba(self.native.border)
+        
     @border.setter
     def border(self, value):
         value = convert_color_code(value)
@@ -143,9 +139,8 @@ class ScaleBar(GraphicComponent):
     
     @property
     def color(self):
-        rgba = self.native.brush.color().getRgb()
-        return np.array(rgba)/255
-    
+        return to_rgba(self.native.brush)
+        
     @color.setter
     def color(self, value):
         value = convert_color_code(value)
@@ -195,9 +190,8 @@ class Legend(GraphicComponent):
     @property
     def border(self):
         """Border color."""
-        rgba = self.native.pen().color().getRgb()
-        return np.array(rgba)/255
-    
+        return to_rgba(self.native.pen())
+        
     @border.setter
     def border(self, value):
         value = convert_color_code(value)
@@ -206,9 +200,8 @@ class Legend(GraphicComponent):
     @property
     def background_color(self):
         """Background color."""
-        rgba = self.native.brush().color().getRgb()
-        return np.array(rgba)/255
-    
+        return to_rgba(self.native.brush())
+        
     @background_color.setter
     def background_color(self, value):
         value = convert_color_code(value)
