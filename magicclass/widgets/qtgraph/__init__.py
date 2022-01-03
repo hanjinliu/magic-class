@@ -28,6 +28,16 @@ visualization.
 
 """
 
-from .qt_graph import QtPlotCanvas, QtMultiPlotCanvas, Qt2YPlotCanvas, QtImageCanvas
+from .qt_graph import (QtPlotCanvas, 
+                       QtMultiPlotCanvas,
+                       Qt2YPlotCanvas,
+                       QtImageCanvas,
+                       QtMultiImageCanvas
+                       )
 
-__all__ = ["QtPlotCanvas", "QtMultiPlotCanvas", "Qt2YPlotCanvas", "QtImageCanvas"]
+__all__ = ["QtPlotCanvas",
+           "QtMultiPlotCanvas", 
+           "Qt2YPlotCanvas",
+           "QtImageCanvas",
+           "QtMultiImageCanvas"
+           ]

@@ -48,7 +48,13 @@ except ImportError:
     QtConsole = NotInstalled(msg)
 
 try:
-    from .qtgraph import QtPlotCanvas, QtMultiPlotCanvas, Qt2YPlotCanvas, QtImageCanvas
+    from .qtgraph import (
+        QtPlotCanvas,
+        QtMultiPlotCanvas,
+        Qt2YPlotCanvas,
+        QtImageCanvas,
+        QtMultiImageCanvas
+        )
 except ImportError:
     msg = "Module 'pyqtgraph' is not installed. To use {}, " \
           "you have to install it by:\n" \
@@ -59,6 +65,7 @@ except ImportError:
     QtMultiPlotCanvas = NotInstalled(msg.format("QtMultiPlotCanvas"))
     Qt2YPlotCanvas = NotInstalled(msg.format("Qt2YPlotCanvas"))
     QtImageCanvas = NotInstalled(msg.format("QtImageCanvas"))
+    QtMultiImageCanvas = NotInstalled(msg.format("QtMultiImageCanvas"))
 
 try:
     from .napari import NapariCanvas
@@ -97,7 +104,8 @@ __all__ = ["ListWidget",
            "QtConsole",
            "QtPlotCanvas",
            "QtMultiPlotCanvas", 
-           "Qt2YPlotCanvas"
+           "Qt2YPlotCanvas",
            "QtImageCanvas",
+           "QtMultiImageCanvas",
            "NapariCanvas",
            ]

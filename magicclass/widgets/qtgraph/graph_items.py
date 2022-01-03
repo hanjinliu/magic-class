@@ -57,6 +57,7 @@ class PlotDataItem:
         return self.native.getData()[0].size
         
     def add(self, points: np.ndarray | Sequence, **kwargs):
+        """Add new points to the plot data item."""
         points = np.atleast_2d(points)
         if points.shape[1] != 2:
             raise ValueError("Points must be of the shape (N, 2).")
@@ -67,6 +68,7 @@ class PlotDataItem:
         return None
     
     def remove(self, i: int | Sequence[int]):
+        """Remove the i-th data."""
         if isinstance(i, int):
             i = [i]
         sl = list(set(range(self.ndata)) - set(i))
@@ -77,6 +79,7 @@ class PlotDataItem:
     
     @property
     def visible(self):
+        """Visibility of data."""
         return self.native.isVisible()
     
     @visible.setter
@@ -85,6 +88,7 @@ class PlotDataItem:
     
     @property
     def edge_color(self) -> np.ndarray:
+        """Edge color of the data."""
         rgba = self.native.opts["pen"].color().getRgb()
         return np.array(rgba)/255
     
@@ -95,6 +99,7 @@ class PlotDataItem:
     
     @property
     def face_color(self) -> np.ndarray:
+        """Face color of the data."""
         rgba = self.native.opts["brush"].color().getRgb()
         return np.array(rgba)/255
     
@@ -102,9 +107,18 @@ class PlotDataItem:
     def face_color(self, value: str | Sequence):
         value = convert_color_code(value)
         self.native.setBrush(value)
-            
+
+    color = property()
+    
+    @color.setter
+    def color(self, value: str | Sequence):
+        """Set face color and edge color at the same time."""
+        self.face_color = value
+        self.edge_color = value
+        
     @property
     def lw(self):
+        """Line width."""
         return self.native.opts["pen"].width()
     
     @lw.setter
@@ -115,6 +129,7 @@ class PlotDataItem:
     
     @property
     def ls(self):
+        """Line style."""
         return self.native.opts["pen"].style()
     
     @ls.setter
@@ -126,6 +141,7 @@ class PlotDataItem:
 
     @property
     def zorder(self) -> float:
+        """Z-order of item. Item with larger z will be displayed on the top."""
         return self.native.zValue()
     
     @zorder.setter
@@ -287,7 +303,6 @@ class BarPlot(PlotDataItem):
         self.native = pg.BarGraphItem(x=x, height=y, width=width, pen=pen, brush=brush)
         self.name = name
 
-    
     @property
     def edge_color(self) -> np.ndarray:
         rgba = self.native.opts["pen"].color().getRgb()
@@ -324,6 +339,83 @@ class BarPlot(PlotDataItem):
     def ydata(self, value: Sequence[float]):
         self.native.setOpts(height=value)
 
+
+class FillBetween(PlotDataItem):
+    native: pg.FillBetweenItem
+    
+    def __init__(self, 
+                 x,
+                 y1,
+                 y2,
+                 face_color = None,
+                 edge_color = None,
+                 name: str | None = None,
+                 lw: float = 1,
+                 ls: str = "-"):
+        face_color, edge_color = _set_default_colors(
+            face_color, edge_color, "white", "white"
+            )
+        pen = pg.mkPen(edge_color, width=lw, style=LINE_STYLE[ls])
+        brush = pg.mkBrush(face_color)
+        curve1 = pg.PlotCurveItem(x=x, y=y1, pen=pen)
+        curve2 = pg.PlotCurveItem(x=x, y=y2, pen=pen)
+        self.native = pg.FillBetweenItem(curve1, curve2, brush=brush, pen=pen)
+        self.name = name
+
+    @property
+    def edge_color(self) -> np.ndarray:
+        rgba = self.native.curves[0].opts["pen"].color().getRgb()
+        return np.array(rgba)/255
+    
+    @edge_color.setter
+    def edge_color(self, value: str | Sequence):
+        value = convert_color_code(value)
+        self.native.setPen(pg.mkPen(value))
+    
+    @property
+    def face_color(self) -> np.ndarray:
+        rgba = self.native.curves[0].opts["brush"].color().getRgb()
+        return np.array(rgba)/255
+    
+    @face_color.setter
+    def face_color(self, value: str | Sequence):
+        value = convert_color_code(value)
+        self.native.setBrush(pg.mkBrush(value))
+    
+    @property
+    def name(self) -> str:
+        return self.native.curves[0].opts["name"]
+    
+    @name.setter
+    def name(self, value: str):
+        value = str(value)
+        self.native.curves[0].opts["name"] = value
+    
+    @property
+    def lw(self):
+        """Line width."""
+        return self.native.curves[0].opts["pen"].width()
+    
+    @lw.setter
+    def lw(self, value: float):
+        self.native.curves[0].opts["pen"].setWidth(value)
+        self.native.curves[1].opts["pen"].setWidth(value)
+        
+    linewidth = lw # alias
+    
+    @property
+    def ls(self):
+        """Line style."""
+        return self.native.curves[0].opts["pen"].style()
+    
+    @ls.setter
+    def ls(self, value: str):
+        _ls = LINE_STYLE[value]
+        self.native.curves[0].opts["pen"].setStyle(_ls)
+        self.native.curves[1].opts["pen"].setStyle(_ls)
+    
+    linestyle = ls # alias
+        
 
 def _set_default_colors(face_color, edge_color, default_f, default_e):
     if face_color is None:

@@ -2,24 +2,9 @@ from __future__ import annotations
 
 from qtpy.QtCore import Qt
 from pyqtgraph.GraphicsScene.mouseEvents import MouseClickEvent as _MouseClickEvent
-from enum import Enum
+from ._const import Modifier, Button
 
-class strEnum(Enum):
-    def __eq__(self, other):
-        if isinstance(other, str):
-            other = self.__class__(other.lower())
-        return super().__eq__(other)
-    
-class Modifier(strEnum):
-    shift = "shift"
-    control = "control"
-    alt = "alt"
 
-class Button(strEnum):
-    left = "left"
-    right = "right"
-    middle = "middle"
-    
 def _factorize_modifiers(mod):
     out = []
     if mod & Qt.ShiftModifier:

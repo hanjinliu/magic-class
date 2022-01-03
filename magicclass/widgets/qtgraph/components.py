@@ -5,7 +5,28 @@ import pyqtgraph as pg
 from magicgui.events import Signal
 from .utils import convert_color_code
 
-class Region:
+class GraphicComponent:
+    native: pg.GraphicsObject
+    
+    @property
+    def visible(self) -> bool:
+        """Linear region visibility."""   
+        return self.native.isVisible()
+    
+    @visible.setter
+    def visible(self, value: bool):
+        self.native.setVisible(value)
+    
+    
+    def update(self, **kwargs):
+        for k, v in kwargs.items():
+            if not hasattr(self.__class__, k):
+                raise AttributeError(f"Cannot set attribute {k} to TextOverlay.")
+        for k, v in kwargs.items():
+            setattr(self, k, v)
+
+
+class Region(GraphicComponent):
     """A linear region with magicgui-like API"""
     changed = Signal(tuple[float, float])
     
@@ -23,15 +44,6 @@ class Region:
     @value.setter
     def value(self, value: tuple[float, float]):
         self.native.setRegion(value)
-    
-    @property
-    def visible(self) -> bool:
-        """Linear region visibility."""   
-        return self.native.isVisible()
-    
-    @visible.setter
-    def visible(self, value: bool):
-        self.native.setVisible(value)
 
     @property
     def enabled(self) -> bool:
@@ -52,10 +64,13 @@ class Region:
         self.native.setBrush(value)
 
 
-class Roi:
+class Roi(GraphicComponent):
+    native: pg.ROI
+
     def __init__(self, pos=(0, 0)):
         self.native = pg.ROI(pos)
         self.native.setZValue(10000)
+        self.native.addScaleHandle([1, 1], [0, 0])
     
     @property
     def border(self):
@@ -67,18 +82,12 @@ class Roi:
         value = convert_color_code(value)
         self.native.setPen(pg.mkPen(value))
         self.native._updateView()
-    
-    @property
-    def visible(self):
-        return self.native.isVisible()
-    
-    @visible.setter
-    def visible(self, value: bool):
-        self.native.setVisible(value)
 
 
-class TextOverlay:
+class TextOverlay(GraphicComponent):
     """A text overlay with napari-like API."""
+    native: pg.TextItem
+    
     def __init__(self, text: str, color: Sequence[float] | str) -> None:
         self.native = pg.TextItem(text, color=convert_color_code(color))
     
@@ -115,34 +124,22 @@ class TextOverlay:
         self.native._updateView()
     
     @property
-    def visible(self):
-        return self.native.isVisible()
-    
-    @visible.setter
-    def visible(self, value: bool):
-        self.native.setVisible(value)
-    
-    @property
     def text(self):
         return self.native.toPlainText()
     
     @text.setter
     def text(self, value: str):
         self.native.setText(value)
-    
-    def update(self, **kwargs):
-        for k, v in kwargs.items():
-            if k not in ["color", "text", "visible"]:
-                raise AttributeError(f"Cannot set attribute {k} to TextOverlay.")
-        for k, v in kwargs.items():
-            setattr(self, k, v)
 
 
-class ScaleBar:
+class ScaleBar(GraphicComponent):
     """A scale bar with napari-like API"""
+    native: pg.ScaleBar
+    
     def __init__(self):
         self._unit = ""
         self.native = pg.ScaleBar(10, suffix=self._unit)
+        self.native
     
     @property
     def color(self):
@@ -156,14 +153,6 @@ class ScaleBar:
         self.native.bar.setBrush(self.native.brush)
     
     @property
-    def visible(self):
-        return self.native.isVisible()
-    
-    @visible.setter
-    def visible(self, value: bool):
-        self.native.setVisible(value)
-    
-    @property
     def unit(self) -> str:
         return self._unit
     
@@ -174,17 +163,11 @@ class ScaleBar:
         self._unit = value
 
 
-class Legend:
+class Legend(GraphicComponent):
+    native: pg.LegendItem
+    
     def __init__(self, offset=(0, 0)):
         self.native = pg.LegendItem(offset=offset)
-    
-    @property
-    def visible(self):
-        return self.native.isVisible()
-    
-    @visible.setter
-    def visible(self, value: bool):
-        self.native.setVisible(value)
     
     @property
     def color(self):
