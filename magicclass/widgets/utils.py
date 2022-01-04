@@ -12,6 +12,7 @@ class FreeWidget(Widget):
     def __init__(self, layout="vertical", **kwargs):
         super().__init__(widget_type=QBaseWidget, backend_kwargs={"qwidg": QWidget}, **kwargs)
         self.native: QWidget
+        self.central_widget: QWidget
         if layout == "vertical":
             self.native.setLayout(QVBoxLayout())
         elif layout == "horizontal":
@@ -25,6 +26,7 @@ class FreeWidget(Widget):
     def set_widget(self, widget: QWidget, *args):
         self.native.layout().addWidget(widget, *args)
         widget.setParent(self.native)
+        self.central_widget = widget
 
 def magicwidget(qcls: type[QWidget]):
     @wraps(qcls.__init__)
@@ -36,3 +38,14 @@ def magicwidget(qcls: type[QWidget]):
     new_class = type(qcls.__name__, (FreeWidget,), {})
     new_class.__init__ = __init__
     return new_class
+
+
+class NotInstalled:
+    def __init__(self, msg):
+        self.msg = msg
+    
+    def __getattr__(self, key: str):
+        raise ModuleNotFoundError(self.msg)
+    
+    def __call__(self, *args, **kwargs):
+        raise ModuleNotFoundError(self.msg)

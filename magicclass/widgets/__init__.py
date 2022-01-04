@@ -26,19 +26,10 @@ from .sequence import ListEdit, TupleEdit
 from .threading import ProgressWidget, progress
 from .utils import FreeWidget
 
-class NotInstalled:
-    def __init__(self, msg):
-        self.msg = msg
-    
-    def __getattr__(self, key: str):
-        raise ModuleNotFoundError(self.msg)
-    
-    def __call__(self, *args, **kwargs):
-        raise ModuleNotFoundError(self.msg)
-
 try:
     from .console import QtConsole
 except ImportError:
+    from .utils import NotInstalled
     msg = "Module 'qtconsole' is not installed. To use QtConsole, " \
           "you have to install it by:\n" \
           "   $ pip install qtconsole\n" \
@@ -47,35 +38,10 @@ except ImportError:
           
     QtConsole = NotInstalled(msg)
 
-try:
-    from .qtgraph import (
-        QtPlotCanvas,
-        QtMultiPlotCanvas,
-        Qt2YPlotCanvas,
-        QtImageCanvas,
-        QtMultiImageCanvas
-        )
-except ImportError:
-    msg = "Module 'pyqtgraph' is not installed. To use {}, " \
-          "you have to install it by:\n" \
-          "   $ pip install pyqtgraph\n" \
-          "or\n" \
-          "   $ conda install pyqtgraph -c conda forge"
-    QtPlotCanvas = NotInstalled(msg.format("QtPlotCanvas"))
-    QtMultiPlotCanvas = NotInstalled(msg.format("QtMultiPlotCanvas"))
-    Qt2YPlotCanvas = NotInstalled(msg.format("Qt2YPlotCanvas"))
-    QtImageCanvas = NotInstalled(msg.format("QtImageCanvas"))
-    QtMultiImageCanvas = NotInstalled(msg.format("QtMultiImageCanvas"))
+from .qtgraph import *
+from .napari import *
+from .pyvista import *
 
-try:
-    from .napari import NapariCanvas
-except ImportError:
-    msg = "Module 'napari' is not installed. To use NapariCanvas, " \
-          "you have to install it by:\n" \
-          "   $ pip install napari[all]\n" \
-          "or\n" \
-          "   $ conda install napari -c conda-forge"
-    NapariCanvas = NotInstalled(msg)
 
 __all__ = ["ListWidget", 
            "Figure",

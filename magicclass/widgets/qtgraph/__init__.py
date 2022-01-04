@@ -1,9 +1,23 @@
-from .qt_graph import (QtPlotCanvas, 
-                       QtMultiPlotCanvas,
-                       Qt2YPlotCanvas,
-                       QtImageCanvas,
-                       QtMultiImageCanvas
-                       )
+try:
+    from .widgets import (
+        QtPlotCanvas,
+        QtMultiPlotCanvas,
+        Qt2YPlotCanvas,
+        QtImageCanvas,
+        QtMultiImageCanvas
+        )
+except ImportError:
+    from ..utils import NotInstalled
+    msg = "Module 'pyqtgraph' is not installed. To use {}, " \
+          "you have to install it by:\n" \
+          "   $ pip install pyqtgraph\n" \
+          "or\n" \
+          "   $ conda install pyqtgraph -c conda forge"
+    QtPlotCanvas = NotInstalled(msg.format("QtPlotCanvas"))
+    QtMultiPlotCanvas = NotInstalled(msg.format("QtMultiPlotCanvas"))
+    Qt2YPlotCanvas = NotInstalled(msg.format("Qt2YPlotCanvas"))
+    QtImageCanvas = NotInstalled(msg.format("QtImageCanvas"))
+    QtMultiImageCanvas = NotInstalled(msg.format("QtMultiImageCanvas"))
 
 __all__ = ["QtPlotCanvas",
            "QtMultiPlotCanvas", 

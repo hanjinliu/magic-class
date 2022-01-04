@@ -449,6 +449,7 @@ class TextItemView:
     
     @property
     def color(self):
+        """Text color."""
         rgba = self.native.color.getRgb()
         return np.array(rgba)/255
     
@@ -459,6 +460,7 @@ class TextItemView:
     
     @property
     def background_color(self):
+        """Text background color."""
         return to_rgba(self.native.fill)
     
     @background_color.setter
@@ -469,6 +471,7 @@ class TextItemView:
     
     @property
     def border(self):
+        """Border color of text bounding box."""
         return to_rgba(self.native.border)
         
     @border.setter
@@ -478,7 +481,8 @@ class TextItemView:
         self.native._updateView()
     
     @property
-    def text(self):
+    def text(self) -> str:
+        """Text string."""
         return self.native.toPlainText()
     
     @text.setter
@@ -487,6 +491,7 @@ class TextItemView:
     
     @property
     def anchor(self) -> np.ndarray:
+        """Text anchor position."""
         anchor = self.native.anchor
         return np.array([anchor.x(), anchor.y()])
     
