@@ -1,6 +1,7 @@
 from __future__ import annotations
 from inspect import signature
 from typing import Any, Callable
+import warnings
 from qtpy.QtWidgets import QMenuBar, QWidget, QMainWindow, QBoxLayout
 from qtpy.QtCore import Qt
 from magicgui.widgets import Container, MainWindow,Label, FunctionGui, Image, Table
@@ -61,8 +62,16 @@ class ClassGuiBase(BaseGui):
                 
             if hasattr(widget, "value") and fld.record:
                 # By default, set value function will be connected to the widget.
-                f = value_widget_callback(self, widget, name, getvalue=type(fld) is MagicField)
+                getvalue = type(fld) is MagicField
+                f = value_widget_callback(self, widget, name, getvalue=getvalue)
                 widget.changed.connect(f)
+        
+        elif fld.callbacks:
+            msg = (
+                f"{type(widget).__name__} does not have value-change callback. "
+                f"Connecting callback functions does no effect."
+                )
+            warnings.warn(msg, UserWarning)
                 
         return widget
     

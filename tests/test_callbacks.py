@@ -1,6 +1,6 @@
 from magicclass import magicclass, magicmenu, MagicTemplate, field, vfield
 from unittest.mock import MagicMock
-
+import pytest
 
 def test_simple_callback():
     mock_x = MagicMock()
@@ -83,4 +83,18 @@ def test_callback_in_parent():
     ui.B.M.m_y += 1
     mock2.assert_called_with(name="m_y/A")
     mock.assert_called_with(name="m_y/B")
-    
+
+
+def test_warning():
+    # Should warn if widgets that does not have signal instance is connected with
+    # callbacks
+    from magicclass.widgets import Separator
+    @magicclass
+    class A:
+        a = field(Separator)
+        @a.connect
+        def _callback(self):
+            pass
+            
+    with pytest.warns(UserWarning):
+        ui = A()
