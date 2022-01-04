@@ -344,6 +344,63 @@ class BarPlot(PlotDataItem):
         self.native.setOpts(height=value)
 
 
+class InfLine(PlotDataItem):
+    native: pg.InfiniteLine
+    
+    def __init__(self, 
+                 pos,
+                 angle,
+                 edge_color = None,
+                 name: str | None = None,
+                 lw: float = 1,
+                 ls: str = "-"
+                 ):
+        if edge_color is None:
+            edge_color = "yellow"
+        
+        pen = pg.mkPen(edge_color, width=lw, style=_LINE_STYLE[ls])
+        self.native = pg.InfiniteLine(pos, angle, pen=pen, name=name)
+        self.name = name
+        
+    @property
+    def slope(self) -> float:
+        return np.tan(np.deg2rad(self.native.angle))
+    
+    @slope.setter
+    def slope(self, value: float):
+        self.native.setAngle(np.rad2deg(np.arctan(value)))
+    
+    @property
+    def intercept(self) -> float:
+        a = self.slope
+        x0, y0 = self.native.getPos()
+        return y0 - a * x0
+    
+    @intercept.setter
+    def intercept(self, value: float):
+        value = float(value)
+        self.native.setPos((0, value))
+    
+    @property
+    def edge_color(self) -> np.ndarray:
+        return to_rgba(self.native.pen)
+    
+    @edge_color.setter
+    def edge_color(self, value):
+        value = convert_color_code(value)
+        self.native.setPen(value)
+    
+    color = edge_color
+    
+    @property
+    def name(self):
+        return self.native._name
+    
+    @name.setter
+    def name(self, value: str):
+        self.native.setName(value)
+
+
 class FillBetween(PlotDataItem):
     native: pg.FillBetweenItem
     

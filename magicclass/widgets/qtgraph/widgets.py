@@ -6,7 +6,7 @@ import numpy as np
 
 from ._utils import convert_color_code, to_rgba
 from .components import Legend, Region, ScaleBar, TextOverlay
-from .graph_items import BarPlot, Curve, FillBetween, PlotDataItem, Scatter, Histogram, TextGroup
+from .graph_items import BarPlot, Curve, FillBetween, InfLine, PlotDataItem, Scatter, Histogram, TextGroup
 from .mouse_event import MouseClickEvent
 from ._doc import write_docs
 from ..utils import FreeWidget
@@ -293,6 +293,46 @@ class HasDataItems:
         
         item = FillBetween(x, y1, y2, face_color=face_color, edge_color=edge_color, 
                            name=name, lw=lw, ls=ls)
+        self._add_item(item)
+    
+    @overload
+    def add_infline(self, slope: float, intercept: float, **kwargs):
+        ...
+    
+    @overload
+    def add_infline(self, pos: tuple[float, float], degree: float, **kwargs):
+        ...
+    
+    def add_infline(self, 
+                    *args, 
+                    color = None,
+                    name: str | None = None,
+                    lw: float = 1,
+                    ls: str = "-"):
+        nargs = len(args)
+        if nargs == 1:
+            arg0 = args[0]
+            if np.isscalar(arg0):
+                angle = np.rad2deg(np.arctan(arg0))
+                pos = (0, 0)
+            else:
+                pos = arg0
+                angle = 90
+        elif nargs == 2:
+            arg0, arg1 = args
+            if np.isscalar(arg0):
+                angle = np.rad2deg(np.arctan(arg0))
+                pos = (0, arg1)
+            else:
+                pos = arg0
+                angle = arg1
+        else:
+            raise TypeError(
+                "Arguments of 'add_infline' should be either 'add_infline(slope, intercept)' "
+                "or 'add_infline(pos, degree)'."
+                )
+        
+        item = InfLine(pos, angle, edge_color=color, name=name, lw=lw, ls=ls)
         self._add_item(item)
     
     @overload
