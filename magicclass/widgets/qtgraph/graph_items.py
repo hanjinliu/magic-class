@@ -6,7 +6,8 @@ import numpy as np
 
 from ._utils import convert_color_code, to_rgba
 
-LINE_STYLE = {"-": Qt.SolidLine,
+# compatibility with matplotlib
+_LINE_STYLE = {"-": Qt.SolidLine,
               "--": Qt.DashLine,
               ":": Qt.DotLine,
               "-.": Qt.DashDotLine,
@@ -21,8 +22,12 @@ _SYMBOL_MAP = {
         ">": "t2",
     }
 
+
 class PlotDataItem:
     native: pg.PlotCurveItem | pg.ScatterPlotItem
+    
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__} '{self.name}'"
     
     @property
     def xdata(self) -> np.ndarray:
@@ -133,7 +138,7 @@ class PlotDataItem:
     
     @ls.setter
     def ls(self, value: str):
-        _ls = LINE_STYLE[value]
+        _ls = _LINE_STYLE[value]
         self.native.opts["pen"].setStyle(_ls)
     
     linestyle = ls # alias
@@ -165,7 +170,7 @@ class Scatter(PlotDataItem):
         face_color, edge_color = _set_default_colors(
             face_color, edge_color, "white", "white"
             )
-        pen = pg.mkPen(edge_color, width=lw, style=LINE_STYLE[ls])
+        pen = pg.mkPen(edge_color, width=lw, style=_LINE_STYLE[ls])
         brush = pg.mkBrush(face_color)
         symbol = _SYMBOL_MAP.get(symbol, symbol)
         self.native = pg.ScatterPlotItem(x=x, y=y, pen=pen, brush=brush, size=size, symbol=symbol)
@@ -206,7 +211,7 @@ class Curve(PlotDataItem):
         face_color, edge_color = _set_default_colors(
             face_color, edge_color, "white", "white"
             )
-        pen = pg.mkPen(edge_color, width=lw, style=LINE_STYLE[ls])
+        pen = pg.mkPen(edge_color, width=lw, style=_LINE_STYLE[ls])
         brush = pg.mkBrush(face_color)
         symbol = _SYMBOL_MAP.get(symbol, symbol)
         self.native = pg.PlotDataItem(x=x, y=y, pen=pen, brush=brush, symbolSize=size, 
@@ -270,7 +275,7 @@ class Histogram(PlotDataItem):
         face_color, edge_color = _set_default_colors(
             face_color, edge_color, "white", "white"
             )
-        pen = pg.mkPen(edge_color, width=lw, style=LINE_STYLE[ls])
+        pen = pg.mkPen(edge_color, width=lw, style=_LINE_STYLE[ls])
         brush = pg.mkBrush(face_color)
         y, x = np.histogram(data, bins=bins, range=range, density=density)
         self.native = pg.PlotCurveItem(x=x, y=y, pen=pen, brush=brush, 
@@ -297,7 +302,7 @@ class BarPlot(PlotDataItem):
         face_color, edge_color = _set_default_colors(
             face_color, edge_color, "white", "white"
             )
-        pen = pg.mkPen(edge_color, width=lw, style=LINE_STYLE[ls])
+        pen = pg.mkPen(edge_color, width=lw, style=_LINE_STYLE[ls])
         brush = pg.mkBrush(face_color)
         self.native = pg.BarGraphItem(x=x, height=y, width=width, pen=pen, brush=brush)
         self.name = name
@@ -354,7 +359,7 @@ class FillBetween(PlotDataItem):
         face_color, edge_color = _set_default_colors(
             face_color, edge_color, "white", "white"
             )
-        pen = pg.mkPen(edge_color, width=lw, style=LINE_STYLE[ls])
+        pen = pg.mkPen(edge_color, width=lw, style=_LINE_STYLE[ls])
         brush = pg.mkBrush(face_color)
         curve1 = pg.PlotCurveItem(x=x, y=y1, pen=pen)
         curve2 = pg.PlotCurveItem(x=x, y=y2, pen=pen)
@@ -409,12 +414,86 @@ class FillBetween(PlotDataItem):
     
     @ls.setter
     def ls(self, value: str):
-        _ls = LINE_STYLE[value]
+        _ls = _LINE_STYLE[value]
         self.native.curves[0].opts["pen"].setStyle(_ls)
         self.native.curves[1].opts["pen"].setStyle(_ls)
     
-    linestyle = ls # alias
+    linestyle = ls  # alias
 
+
+class TextGroup:
+    def __init__(self, 
+                 x: Sequence[float],
+                 y: Sequence[float],
+                 texts: Sequence[str],
+                 color,
+                 name: str = None):
+        self.native = pg.ItemGroup()
+        if color is None:
+            color = "white"
+        for x_, y_, text_ in zip(x, y, texts):
+            item = pg.TextItem(text_, color=convert_color_code(color))
+            item.setPos(x_, y_)
+            self.native.addItem(item)
+        
+        self.name = name
+
+
+    def __getitem__(self, key: int) -> TextItemView:
+        return TextItemView(self.native.childItems()[key])
+
+
+class TextItemView:
+    def __init__(self, textitem: pg.TextItem):
+        self.native = textitem
+    
+    @property
+    def color(self):
+        rgba = self.native.color.getRgb()
+        return np.array(rgba)/255
+    
+    @color.setter
+    def color(self, value):
+        value = convert_color_code(value)
+        self.native.setText(self.text, value)
+    
+    @property
+    def background_color(self):
+        return to_rgba(self.native.fill)
+    
+    @background_color.setter
+    def background_color(self, value):
+        value = convert_color_code(value)
+        self.native.fill = pg.mkBrush(value)
+        self.native._updateView()
+    
+    @property
+    def border(self):
+        return to_rgba(self.native.border)
+        
+    @border.setter
+    def border(self, value):
+        value = convert_color_code(value)
+        self.native.border = pg.mkPen(value)
+        self.native._updateView()
+    
+    @property
+    def text(self):
+        return self.native.toPlainText()
+    
+    @text.setter
+    def text(self, value: str):
+        self.native.setText(value)
+    
+    @property
+    def anchor(self) -> np.ndarray:
+        anchor = self.native.anchor
+        return np.array([anchor.x(), anchor.y()])
+    
+    @anchor.setter
+    def anchor(self, value):
+        self.native.setAnchor(value)
+        
 
 def _set_default_colors(face_color, edge_color, default_f, default_e):
     if face_color is None:
@@ -422,9 +501,3 @@ def _set_default_colors(face_color, edge_color, default_f, default_e):
     if edge_color is None:
         edge_color = default_e
     return face_color, edge_color
-
-def _find_ancestor(widget, itemtype: type):
-    item = widget
-    while type(item) is not itemtype:
-        item = widget.parentItem()
-    return item

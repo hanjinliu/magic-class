@@ -6,7 +6,7 @@ import numpy as np
 
 from ._utils import convert_color_code, to_rgba
 from .components import Legend, Region, ScaleBar, TextOverlay
-from .graph_items import BarPlot, Curve, FillBetween, PlotDataItem, Scatter, Histogram
+from .graph_items import BarPlot, Curve, FillBetween, PlotDataItem, Scatter, Histogram, TextGroup
 from .mouse_event import MouseClickEvent
 from ._doc import write_docs
 from ..utils import FreeWidget
@@ -294,6 +294,23 @@ class HasDataItems:
         item = FillBetween(x, y1, y2, face_color=face_color, edge_color=edge_color, 
                            name=name, lw=lw, ls=ls)
         self._add_item(item)
+    
+    @overload
+    def add_text(self, x: float, y: float, text: str, **kwargs):
+        ...
+    
+    @overload
+    def add_text(self, x: Sequence[float], y: Sequence[float], text: Sequence[str], **kwargs):
+        ...
+        
+    def add_text(self, x, y, text, color=None, name=None):
+        if np.isscalar(x) and np.isscalar(y):
+            x = [x]
+            y = [y]
+            text = [text]
+        item = TextGroup(x, y, text, color, name)
+        self._add_item(item)
+    
     
     def _add_item(self, item: PlotDataItem):
         item.zorder = len(self._items)
