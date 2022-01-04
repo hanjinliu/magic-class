@@ -10,7 +10,7 @@ def get_parameters(fgui: FunctionGui):
     return {k: v.default for k, v in fgui.__signature__.parameters.items()}
 
 def define_callback(self: BaseGui, callback: Callable):
-    clsname, funcname = callback.__qualname__.split(".")
+    *_, clsname, funcname = callback.__qualname__.split(".")
     def _callback():
         # search for parent instances that have the same name.
         current_self = self
