@@ -140,8 +140,9 @@ class ClassGuiBase(BaseGui):
                                 _layout.setMenuBar(self._menubar)
                             else:
                                 raise RuntimeError(
-                                    "Cannot add both toolbar and menubar to a non-main window."
-                                    "Use maigcclass(widget_type='mainwindow') instead."
+                                    "Cannot add menubar after adding a toolbar in a non-main window. "
+                                    "Use maigcclass(widget_type='mainwindow') instead, or reorder "
+                                    "class definition."
                                     )
                     
                     widget.native.setParent(self._menubar, widget.native.windowFlags())
@@ -168,10 +169,8 @@ class ClassGuiBase(BaseGui):
                         if _layout.menuBar() is None:
                             _layout.setMenuBar(widget.native)
                         else:
-                            raise RuntimeError(
-                                "Cannot add two or more toolbars and/or menubars to a non-main"
-                                "window. Use maigcclass(widget_type='mainwindow') instead."
-                                )
+                            _layout.insertWidget(0, widget.native, alignment=Qt.AlignTop)
+                            widget.native.setContentsMargins(0, 0, 0, 0)
                     _hist.append((name, type(attr), "ToolBarGui"))
                 
                 elif isinstance(widget, (Widget, Callable)):
