@@ -1,7 +1,6 @@
 from __future__ import annotations
-from functools import wraps
 import numpy as np
-from ..misc import FreeWidget
+from ..utils import FreeWidget
 
 class PyVistaCanvas(FreeWidget):
     def __init__(self, **kwargs):

@@ -100,7 +100,7 @@ class PlotDataItem:
     @edge_color.setter
     def edge_color(self, value: str | Sequence):
         value = convert_color_code(value)
-        self.native.setPen(value)
+        self.native.setPen(value, width=self.lw, style=self.ls)
     
     @property
     def face_color(self) -> np.ndarray:
@@ -364,6 +364,7 @@ class InfLine(PlotDataItem):
         
     @property
     def slope(self) -> float:
+        """Slope of the line."""
         return np.tan(np.deg2rad(self.native.angle))
     
     @slope.setter
@@ -372,6 +373,7 @@ class InfLine(PlotDataItem):
     
     @property
     def intercept(self) -> float:
+        """Y-intercept of the line."""
         a = self.slope
         x0, y0 = self.native.getPos()
         return y0 - a * x0
@@ -382,13 +384,22 @@ class InfLine(PlotDataItem):
         self.native.setPos((0, value))
     
     @property
+    def angle(self) -> float:
+        """Angle of the line in degree."""
+        return self.native.angle
+    
+    @angle.setter
+    def angle(self, value: float):
+        self.native.setAngle(value)
+    
+    @property
     def edge_color(self) -> np.ndarray:
         return to_rgba(self.native.pen)
     
     @edge_color.setter
     def edge_color(self, value):
         value = convert_color_code(value)
-        self.native.setPen(value)
+        self.native.setPen(value, width=self.lw, style=self.ls)
     
     color = edge_color
     
@@ -399,6 +410,29 @@ class InfLine(PlotDataItem):
     @name.setter
     def name(self, value: str):
         self.native.setName(value)
+
+    @property
+    def lw(self):
+        """Line width."""
+        return self.native.pen.width()
+    
+    @lw.setter
+    def lw(self, value: float):
+        self.native.pen.setWidth(value)
+        
+    linewidth = lw # alias
+    
+    @property
+    def ls(self):
+        """Line style."""
+        return self.native.pen.style()
+    
+    @ls.setter
+    def ls(self, value: str):
+        _ls = _LINE_STYLE[value]
+        self.native.pen.setStyle(_ls)
+    
+    linestyle = ls # alias
 
 
 class FillBetween(PlotDataItem):
