@@ -15,18 +15,31 @@ Returns = TypeVar("Returns")
 T = TypeVar("T")
 
 
-def set_options(call_button: bool | str | None = None,
-                layout: str = "vertical", 
+def set_options(layout: str = "vertical", 
+                call_button: bool | str | None = None,
                 auto_call: bool = False,
-                **options):
+                **options) -> Callable[[Callable[[Args], Returns]], Callable[[Args], Returns]]:
     """
-    Set MagicSignature to functions. By decorating a function like below:
+    Set MagicSignature to functions. 
     
-    >>> @set_options(x={"value": -1})
-    >>> def func(x):
-    >>>     ...
+    By decorating a method with this function, ``magicgui`` will create a widget with these
+    options.
     
-    then magicgui knows what widget it should be converted to. 
+    Parameters
+    ----------
+    layout : str, optional
+        The type of layout to use. Must be one of {'horizontal', 'vertical'}.
+        by default "vertical".
+    call_button : bool or str, optional
+        If ``True``, create an additional button that calls the original
+        function when clicked.  If a ``str``, set the button text. If None (the
+        default), it defaults to True when ``auto_call`` is False, and False
+        otherwise.
+    auto_call : bool, optional
+        If ``True``, changing any parameter in either the GUI or the widget attributes
+        will call the original function with the current settings. by default False
+    options : dict
+        Parameter options.
     """    
     def wrapper(func: Callable[[Args], Returns]) -> Callable[[Args], Returns]:
         upgrade_signature(func, 
@@ -149,9 +162,7 @@ def click(enables: nStrings = None, disables: nStrings = None, enabled: bool = T
 
 
 def do_not_record(method: Callable[[Args], Returns]) -> Callable[[Args], Returns]:
-    """
-    Wrapped method will not be recorded in macro.
-    """    
+    """Wrapped method will not be recorded in macro."""    
     upgrade_signature(method, additional_options={"record": False})
     return method
 
