@@ -82,12 +82,17 @@ class Roi(GraphicComponent):
         self.native._updateView()
 
 
-class TextOverlay(GraphicComponent):
-    """A text overlay with napari-like API."""
+class TextItem(GraphicComponent):
+    """A text item with napari-like API."""
     native: pg.TextItem
     
-    def __init__(self, text: str, color: Sequence[float] | str) -> None:
-        self.native = pg.TextItem(text, color=convert_color_code(color))
+    def __init__(self, 
+                 text: str, 
+                 color: Sequence[float] | str, 
+                 anchor = (0, 0),
+                 angle: float = 0) -> None:
+        self.native = pg.TextItem(text, color=convert_color_code(color), 
+                                  anchor=anchor, angle=angle)
     
     @property
     def color(self):
@@ -126,6 +131,24 @@ class TextOverlay(GraphicComponent):
     @text.setter
     def text(self, value: str):
         self.native.setText(value)
+
+    @property
+    def pos(self) -> np.ndarray:
+        pos = self.native.pos()
+        return np.array([pos.x(), pos.y()])
+    
+    @pos.setter
+    def pos(self, value):
+        self.native.setPos(*value)
+    
+    @property
+    def anchor(self) -> np.ndarray:
+        anchor = self.native.anchor
+        return np.array([anchor.x(), anchor.y()])
+    
+    @anchor.setter
+    def anchor(self, value):
+        self.native.setAnchor(value)
 
 
 class ScaleBar(GraphicComponent):

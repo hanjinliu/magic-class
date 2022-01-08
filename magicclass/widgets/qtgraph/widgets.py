@@ -5,7 +5,7 @@ from typing import Generic, Iterator, Sequence, TypeVar, overload, MutableSequen
 import numpy as np
 
 from ._utils import convert_color_code, to_rgba
-from .components import Legend, Region, ScaleBar, TextOverlay
+from .components import Legend, Region, ScaleBar, TextItem
 from .graph_items import BarPlot, Curve, FillBetween, InfLine, PlotDataItem, Scatter, Histogram, TextGroup
 from .mouse_event import MouseClickEvent
 from ._doc import write_docs
@@ -612,7 +612,7 @@ class ImageItem(HasViewBox):
         self._viewbox.addItem(self._image_item)
         
         # prepare text overlay
-        self._text_overlay = TextOverlay(text="", color="gray")
+        self._text_overlay = TextItem(text="", color="gray")
         self._text_overlay.native.setParentItem(self._viewbox)
         
         # prepare scale bar
@@ -620,6 +620,21 @@ class ImageItem(HasViewBox):
         self._scale_bar.visible = False
         self._scale_bar.native.setParentItem(self._viewbox)
         self._scale_bar.native.anchor((1, 1), (1, 1), offset=(-20, -20))
+        
+        # prepare title and labels
+        self._title = TextItem(text="", color="white", anchor=(0.5, 1.1))
+        self._title.pos = [1, 0]
+        self._viewbox.addItem(self._title.native)
+        
+        self._xlabel = TextItem(text="", color="white", anchor=(0.5, -0.1))
+        self._xlabel.pos = [1, 1]
+        self._viewbox.addItem(self._xlabel.native)
+        
+        self._ylabel = TextItem(text="", color="white", anchor=(0.5, 1.1), angle=90)
+        self._ylabel.pos = [0, 1]
+        self._viewbox.addItem(self._ylabel.native)
+        
+        
         
         if isinstance(viewbox, ViewBoxExt):
             # prepare LUT histogram
@@ -645,10 +660,34 @@ class ImageItem(HasViewBox):
         self._image_item.scene().sigMouseClicked.connect(self._mouse_clicked)
 
     @property
-    def text_overlay(self) -> TextOverlay:
+    def text_overlay(self) -> TextItem:
         """Text overlay on the image."""        
         return self._text_overlay
 
+    @property
+    def title(self) -> str:
+        return self._title.text
+    
+    @title.setter
+    def title(self, value: str):
+        self._title.text = value
+    
+    @property
+    def xlabel(self) -> str:
+        return self._xlabel.text
+    
+    @xlabel.setter
+    def xlabel(self, value: str):
+        self._xlabel.text = value
+    
+    @property
+    def ylabel(self) -> str:
+        return self._ylabel.text
+    
+    @xlabel.setter
+    def ylabel(self, value: str):
+        self._ylabel.text = value
+        
     @property
     def scale_bar(self) -> ScaleBar:
         """Scale bar on the image."""
@@ -682,18 +721,26 @@ class ImageItem(HasViewBox):
         else:
             auto_levels = not self._lock_contrast_limits
             clims = self.contrast_limits
-        
-        self._image_item.setImage(np.asarray(image).T, autoLevels=auto_levels)
+        img = np.asarray(image)
+        self._image_item.setImage(img.T, autoLevels=auto_levels)
         self._hist.setImageItem(self._image_item)
         self._hist._updateView()
         if no_image:
             self._viewbox.autoRange()
         if not auto_levels:
             self.contrast_limits = clims
+        sy, sx = img.shape[-2:]
+        self._title.pos = [sx/2, self._title.pos[1]]
+        self._title.visible = True
+        self._xlabel.pos = [sx/2, sy]
+        self._xlabel.visible = True
+        self._ylabel.pos = [0, sy/2]
+        self._ylabel.visible = True
         
     @image.deleter
     def image(self):
         self._image_item.clear()
+        self._title.visible = False
     
     @property
     def contrast_limits(self) -> list[float, float]:

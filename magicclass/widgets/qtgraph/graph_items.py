@@ -517,7 +517,7 @@ class TextGroup:
                  x: Sequence[float],
                  y: Sequence[float],
                  texts: Sequence[str],
-                 color,
+                 color = None,
                  name: str = None):
         self.native = pg.ItemGroup()
         if color is None:
