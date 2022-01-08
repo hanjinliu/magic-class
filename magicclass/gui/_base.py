@@ -196,6 +196,7 @@ class MagicTemplate:
             dock = None
             
         return dock
+
     
     def objectName(self) -> str:
         """
@@ -203,8 +204,7 @@ class MagicTemplate:
         `viewer.window.add_dock_widget` function.
         """        
         return self.native.objectName()
-    
-    
+
     @classmethod
     def wraps(cls, 
               method: Callable | None = None,
@@ -255,6 +255,7 @@ class MagicTemplate:
             return method
         
         return wrapper if method is None else wrapper(method)
+    
     
     def _unwrap_method(self, child_clsname: str, name: str, widget: FunctionGui | PushButtonPlus):
         """
@@ -316,12 +317,14 @@ class MagicTemplate:
         else:
             raise RuntimeError(f"{child_clsname} not found in class {self.__class__.__name__}")
     
+    
     def _convert_attributes_into_widgets(self):
         """
         This function is called in dynamically created __init__. Methods, fields and nested
         classes are converted to magicgui widgets.
         """        
         raise NotImplementedError()
+    
     
     def _create_widget_from_field(self, name: str, fld: MagicField):
         """
@@ -336,7 +339,9 @@ class MagicTemplate:
         """        
         raise NotImplementedError()
     
+    
     def _create_widget_from_method(self, obj: Callable):
+        """Convert instance methods into GUI objects, such as push buttons or actions."""
         text = obj.__name__.replace("_", " ")
         widget = self._component_class(name=obj.__name__, text=text, gui_only=True)
 
@@ -518,7 +523,7 @@ class MagicTemplate:
                         mgui.native.setParent(self.native, mgui.native.windowFlags())
                         mgui.native.move(screen_center() - mgui.native.rect().center())
                         
-                    if self._close_on_run:
+                    if self._close_on_run and not mgui._auto_call:
                         if self._popup_mode != PopUpMode.dock:
                             mgui.called.connect(mgui.hide)
                         else:
@@ -731,16 +736,25 @@ def _temporal_function_gui_callback(bgui: MagicTemplate,
         if len(widget.changed._slots) > 2:
             b = Expr(head=Head.getitem, args=[symbol(bgui), widget.name])
             ev = Expr(head=Head.getattr, args=[b, Symbol("changed")])
-            line = Expr(head=Head.call, args=[ev])
-            if result_required:
-                line = Expr(head=Head.assign, args=[result, line])
-            bgui.macro.append(line)
+            expr = Expr(head=Head.call, args=[ev])
         else:
             kwargs = {k: v for k, v in bound.arguments.items()}
-            line = Expr.parse_method(bgui, _function, (), kwargs)
-            if result_required:
-                line = Expr(Head.assign, [result, line])
-            bgui.macro.append(line)
+            expr = Expr.parse_method(bgui, _function, (), kwargs)
+        
+        if fgui._auto_call:
+            # Auto-call will cause many redundant macros. To avoid this, only the last input
+            # will be recorded in magic-class.
+            last_expr = bgui.macro[-1]
+            if (last_expr.head == Head.call and
+                last_expr.args[0].head == Head.getattr and
+                last_expr.at(0, 1) == expr.at(0, 1) and
+                len(bgui.macro) > 0):
+                bgui.macro.pop()
+                bgui.macro._erase_last()
+        
+        if result_required:
+            expr = Expr(Head.assign, [result, expr])
+        bgui.macro.append(expr)
         
         # Deal with return annotation
         
@@ -761,7 +775,10 @@ def _build_mgui(widget_, func):
     if widget_.mgui is not None:
         return widget_.mgui
     try:
-        mgui = FunctionGuiPlus(func)
+        call_button = get_additional_option(func, "call_button", None)
+        layout = get_additional_option(func, "layout", "vertical")
+        auto_call = get_additional_option(func, "auto_call", False)
+        mgui = FunctionGuiPlus(func, call_button, layout=layout, auto_call=auto_call)
     except Exception as e:
         msg = (
             "Exception was raised during building magicgui from method "
@@ -770,7 +787,8 @@ def _build_mgui(widget_, func):
         raise type(e)(msg)
     
     widget_.mgui = mgui
-    mgui.native.setWindowTitle(widget_.name)
+    name = widget_.name or ""
+    mgui.native.setWindowTitle(name.replace("_", " "))
     return mgui
         
 _C = TypeVar("_C", Callable, type)

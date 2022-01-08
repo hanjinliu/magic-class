@@ -14,7 +14,11 @@ Args = TypeVar("Args")
 Returns = TypeVar("Returns")
 T = TypeVar("T")
 
-def set_options(**options):
+
+def set_options(call_button: bool | str | None = None,
+                layout: str = "vertical", 
+                auto_call: bool = False,
+                **options):
     """
     Set MagicSignature to functions. By decorating a function like below:
     
@@ -25,9 +29,15 @@ def set_options(**options):
     then magicgui knows what widget it should be converted to. 
     """    
     def wrapper(func: Callable[[Args], Returns]) -> Callable[[Args], Returns]:
-        upgrade_signature(func, gui_options=options)
+        upgrade_signature(func, 
+                          gui_options=options,
+                          additional_options={"call_button": call_button,
+                                              "layout": layout,
+                                              "auto_call": auto_call}
+                          )
         return func
     return wrapper
+
 
 def set_design(width: int = None, height: int = None, min_width: int = None, min_height: int = None,
                max_width: int = None, max_height: int = None, text: str = None, 
@@ -91,6 +101,7 @@ def set_design(width: int = None, height: int = None, min_width: int = None, min
     
     return wrapper
 
+
 def click(enables: nStrings = None, disables: nStrings = None, enabled: bool = True,
           shows: nStrings = None, hides: nStrings = None, visible: bool = True):
     """
@@ -136,12 +147,14 @@ def click(enables: nStrings = None, disables: nStrings = None, enabled: bool = T
         return f
     return wrapper
 
+
 def do_not_record(method: Callable[[Args], Returns]) -> Callable[[Args], Returns]:
     """
     Wrapped method will not be recorded in macro.
     """    
     upgrade_signature(method, additional_options={"record": False})
     return method
+
 
 def bind_key(*key) -> Callable[[Callable[[Args], Returns]], Callable[[Args], Returns]]:
     """
@@ -161,12 +174,14 @@ def bind_key(*key) -> Callable[[Callable[[Args], Returns]], Callable[[Args], Ret
         return method
     return wrapper
 
+
 def _assert_iterable(obj):
     if obj is None:
         obj = []
     elif isinstance(obj, str) or callable(obj):
         obj = [obj]
     return obj
+
 
 def _iter_widgets(self: BaseGui, 
                   descriptors: Iterable[list[str]] | Iterable[Callable]
