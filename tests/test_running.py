@@ -17,6 +17,7 @@ def test_running():
     ui["func"].changed()
     assert ui.last_running == True
 
+
 def test_wrapped_running():
     @magicclass
     class A:

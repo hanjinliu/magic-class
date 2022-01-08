@@ -14,7 +14,8 @@ def _make_class(t: WidgetType):
         def b1(self, a: int): ...
     
     return A
-    
+
+
 def test_all_works():
     for wtype in WidgetType._member_names_:
         ui = _make_class(wtype)()
