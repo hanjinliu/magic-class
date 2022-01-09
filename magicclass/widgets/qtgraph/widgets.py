@@ -625,16 +625,17 @@ class ImageItem(HasViewBox):
         self._title = TextItem(text="", color="white", anchor=(0.5, 1.1))
         self._title.pos = [1, 0]
         self._viewbox.addItem(self._title.native)
+        self._title.visible = False
         
         self._xlabel = TextItem(text="", color="white", anchor=(0.5, -0.1))
         self._xlabel.pos = [1, 1]
         self._viewbox.addItem(self._xlabel.native)
+        self._xlabel.visible = False
         
         self._ylabel = TextItem(text="", color="white", anchor=(0.5, 1.1), angle=90)
         self._ylabel.pos = [0, 1]
         self._viewbox.addItem(self._ylabel.native)
-        
-        
+        self._ylabel.visible = False
         
         if isinstance(viewbox, ViewBoxExt):
             # prepare LUT histogram
@@ -653,6 +654,7 @@ class ImageItem(HasViewBox):
                     self._hist.setFixedWidth(width)
         
         self._cmap = "gray"
+
 
     def _update_scene(self):
         # Since plot item does not have graphics scene before being added to
@@ -741,6 +743,8 @@ class ImageItem(HasViewBox):
     def image(self):
         self._image_item.clear()
         self._title.visible = False
+        self._xlabel.visible = False
+        self._ylabel.visible = False
     
     @property
     def contrast_limits(self) -> list[float, float]:
