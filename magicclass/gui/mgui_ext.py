@@ -112,6 +112,11 @@ class PushButtonPlus(PushButton):
     
     def set_shortcut(self, key):
         self.native.setShortcut(key)
+    
+    def reset_choices(self, *_: Any):
+        """Reset child Categorical widgets."""
+        if self.mgui is not None:
+            self.mgui.reset_choices()
         
     @property
     def background_color(self):
@@ -201,10 +206,22 @@ class ToolButtonPlus(PushButtonPlus):
         self.text = text or self.name.replace("_", " ")
         self.native: QToolButton
     
+    
     def set_menu(self, qmenu: QMenu):
         self.native.setMenu(qmenu)
         self.native.setPopupMode(QToolButton.InstantPopup)
         self.native.setIcon(qmenu.icon()) # icon have to be copied.
+    
+    
+    def set_shortcut(self, key):
+        self.native.setShortcut(key)
+   
+    
+    def reset_choices(self, *_: Any):
+        """Reset child Categorical widgets."""
+        if self.mgui is not None:
+            self.mgui.reset_choices()
+
 
 class mguiLike:
     """Abstract class that provide magicgui.widgets like properties."""
@@ -254,7 +271,8 @@ class mguiLike:
     @property
     def widget_type(self):
         return self.__class__.__name__
-    
+
+
 class AbstractAction(mguiLike):
     """
     QAction encapsulated class with a similar API as magicgui Widget.
@@ -263,9 +281,6 @@ class AbstractAction(mguiLike):
     changed = Signal(object)
     support_value: bool
     native: QAction | QWidgetAction
-    
-    def set_shortcut(self, key):
-        self.native.setShortcut(key)
         
     @property
     def value(self):
@@ -273,6 +288,7 @@ class AbstractAction(mguiLike):
     
     def from_options(self, options):
         raise NotImplementedError()
+
 
 class Action(AbstractAction):
     support_value = True
@@ -296,6 +312,16 @@ class Action(AbstractAction):
     def running(self) -> bool:
         return getattr(self.mgui, "running", False)
     
+    
+    def set_shortcut(self, key):
+        self.native.setShortcut(key)
+    
+    
+    def reset_choices(self, *_: Any):
+        """Reset child Categorical widgets."""
+        if self.mgui is not None:
+            self.mgui.reset_choices()
+        
     @property
     def text(self) -> str:
         return self.native.text()

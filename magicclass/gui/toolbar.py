@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Callable
+from typing import Callable, TYPE_CHECKING, Any
 import warnings
 from inspect import signature
 from magicgui.widgets import Image, Table, Label, FunctionGui
@@ -19,6 +19,8 @@ from ..fields import MagicField
 from ..widgets import FreeWidget, Separator
 from ..utils import iter_members
 
+if TYPE_CHECKING:
+    from napari.viewer import Viewer
 
 def _check_popupmode(popup_mode: PopUpMode):
     if popup_mode in (PopUpMode.above, PopUpMode.below, PopUpMode.first):
@@ -54,6 +56,23 @@ class ToolBarGui(ContainerLikeGui):
         self._list: list[MenuGuiBase | AbstractAction] = []
         self.labels = labels
     
+    
+    def reset_choices(self, *_: Any):
+        """Reset child Categorical widgets"""
+        for widget in self:
+            if hasattr(widget, "reset_choices"):
+                widget.reset_choices()
+        for widget in self.__magicclass_children__:
+            if hasattr(widget, "reset_choices"):
+                widget.reset_choices()
+        
+        # If parent magic-class is added to napari viewer, the style sheet need update because
+        # QToolButton has inappropriate style.
+        # Detecting this event using "reset_choices" is not a elegant way, but works for now.
+        viewer = self.parent_viewer
+        style = _create_stylesheet(viewer)
+        self.native.setStyleSheet(style)
+
     
     def _convert_attributes_into_widgets(self):
         cls = self.__class__
@@ -149,7 +168,7 @@ class ToolBarGui(ContainerLikeGui):
                 hist_str = "\n\t".join(map(
                     lambda x: f"{x[0]} {x[1]} -> {x[2]}",
                     _hist
-                    )) + f"\n\t\t{name} ({type(attr).__name__}) <--- Error"
+                    )) + f"\n\t\t{name} ({type(attr)}) <--- Error"
                 if not hist_str.startswith("\n\t"):
                     hist_str = "\n\t" + hist_str
                 if isinstance(e, MagicClassConstructionError):
@@ -207,4 +226,14 @@ class ToolBarGui(ContainerLikeGui):
     def insert(self, key: int, obj: AbstractAction) -> None:
         self._fast_insert(key, obj)
         self._unify_label_widths()
-        
+
+
+def _create_stylesheet(viewer: Viewer):
+    if viewer is None:
+        return ""
+    w = viewer.window._qt_window
+    styles = []
+    for s in w.styleSheet().split("\n\n"):
+        if s.startswith("QPushButton ") or s.startswith("QPushButton:"):
+            styles.append("QToolButton" + s[11:])
+    return "\n".join(styles)

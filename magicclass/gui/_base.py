@@ -590,7 +590,16 @@ class ContainerLikeGui(BaseGui, mguiLike, MutableSequence):
     _component_class = Action
     changed = Signal(object)
     _list: list[AbstractAction | ContainerLikeGui]
-        
+    
+    def reset_choices(self, *_: Any):
+        """Reset child Categorical widgets"""
+        for widget in self:
+            if hasattr(widget, "reset_choices"):
+                widget.reset_choices()
+        for widget in self.__magicclass_children__:
+            if hasattr(widget, "reset_choices"):
+                widget.reset_choices()
+    
     @property
     def icon_path(self):
         return self._icon_path

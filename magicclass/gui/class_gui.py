@@ -348,6 +348,16 @@ def make_gui(container: type[ContainerWidget], no_margin: bool = True):
                 run_app()
             return None
         
+        
+        def reset_choices(self: cls, *_: Any):
+            """Reset child Categorical widgets"""
+            for widget in self:
+                if hasattr(widget, "reset_choices"):
+                    widget.reset_choices()
+            for widget in self.__magicclass_children__:
+                if hasattr(widget, "reset_choices"):
+                    widget.reset_choices()
+        
         def close(self: cls):
             current_self = self._search_parent_magicclass()
             
@@ -367,6 +377,7 @@ def make_gui(container: type[ContainerWidget], no_margin: bool = True):
         cls._fast_insert = _fast_insert
         cls.insert = insert
         cls.show = show
+        cls.reset_choices = reset_choices
         cls.close = close
         cls._container_widget = container
         cls._remove_child_margins = no_margin
