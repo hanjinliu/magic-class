@@ -2,6 +2,7 @@ from __future__ import annotations
 from inspect import signature
 from typing import Any, Callable
 import warnings
+from PyQt5.QtWidgets import QVBoxLayout
 from qtpy.QtWidgets import QMenuBar, QWidget, QMainWindow, QBoxLayout
 from qtpy.QtCore import Qt
 from magicgui.widgets import Container, MainWindow,Label, FunctionGui, Image, Table
@@ -124,7 +125,7 @@ class ClassGuiBase(BaseGui):
                     widget.__magicclass_parent__ = self
                     self.__magicclass_children__.append(widget)
                     widget._my_symbol = Symbol(name)
-                            
+                
                 if isinstance(widget, MenuGui):
                     # Add menubar to container
                     widget.__magicclass_parent__ = self
@@ -169,8 +170,11 @@ class ClassGuiBase(BaseGui):
                         if _layout.menuBar() is None:
                             _layout.setMenuBar(widget.native)
                         else:
+                            # _layout.insertWidget(0, widget.native)
                             _layout.insertWidget(0, widget.native, alignment=Qt.AlignTop)
                             widget.native.setContentsMargins(0, 0, 0, 0)
+                            n_insert += 1
+                            
                     _hist.append((name, type(attr), "ToolBarGui"))
                 
                 elif isinstance(widget, (Widget, Callable)):
@@ -215,7 +219,7 @@ class ClassGuiBase(BaseGui):
                 hist_str = "\n\t".join(map(
                     lambda x: f"{x[0]} {x[1]} -> {x[2]}",
                     _hist
-                    )) + f"\n\t\t{name} ({type(attr).__name__}) <--- Error"
+                    )) + f"\n\t\t{name} ({type(attr)}) <--- Error"
                 if not hist_str.startswith("\n\t"):
                     hist_str = "\n\t" + hist_str
                 if isinstance(e, MagicClassConstructionError):

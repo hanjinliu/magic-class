@@ -5,6 +5,7 @@ import pyqtgraph as pg
 from magicgui.events import Signal
 from ._utils import convert_color_code, to_rgba
 
+
 class GraphicComponent:
     native: pg.GraphicsObject
     

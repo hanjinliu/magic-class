@@ -537,6 +537,7 @@ class MagicTemplate:
                 if self._popup_mode != PopUpMode.dock:
                     widget.mgui.show()
                 else:
+                    # show dock widget
                     mgui.parent.show()
                                 
                 return None
@@ -558,28 +559,32 @@ class MagicTemplate:
                 widget.set_shortcut(shortcut)
             
         return widget
-    
+
+
     def _search_parent_magicclass(self) -> MagicTemplate:
         current_self = self
         while getattr(current_self, "__magicclass_parent__", None) is not None:
             current_self = current_self.__magicclass_parent__
         return current_self
-    
+
+
     def _iter_child_magicclasses(self) -> Iterable[MagicTemplate]:
         for child in self.__magicclass_children__:
             yield child
             yield from child.__magicclass_children__
+
     
 class BaseGui(MagicTemplate):
     def __init__(self, close_on_run, popup_mode, error_mode):
         self._macro_instance = GuiMacro(flags={"Get": False, "Return": False})
-        self.__magicclass_parent__: None | BaseGui = None
+        self.__magicclass_parent__: BaseGui | None = None
         self.__magicclass_children__: list[MagicTemplate] = []
         self._close_on_run = close_on_run
         self._popup_mode = popup_mode
         self._error_mode = error_mode
         self._my_symbol = Symbol.var("ui")
         self._icon_path = None
+
 
 class ContainerLikeGui(BaseGui, mguiLike, MutableSequence):
     _component_class = Action
