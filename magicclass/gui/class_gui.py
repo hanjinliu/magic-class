@@ -166,11 +166,10 @@ class ClassGuiBase(BaseGui):
                         self.native.addToolBar(widget.native)
                     else:
                         # self is not a main window object
-                        _layout: QBoxLayout = self.native.layout()
+                        _layout: QBoxLayout = self._widget._layout
                         if _layout.menuBar() is None:
                             _layout.setMenuBar(widget.native)
                         else:
-                            # _layout.insertWidget(0, widget.native)
                             _layout.insertWidget(0, widget.native, alignment=Qt.AlignTop)
                             widget.native.setContentsMargins(0, 0, 0, 0)
                             n_insert += 1
