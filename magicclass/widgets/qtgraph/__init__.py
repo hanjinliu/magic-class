@@ -1,11 +1,5 @@
 try:
-    from .widgets import (
-        QtPlotCanvas,
-        QtMultiPlotCanvas,
-        Qt2YPlotCanvas,
-        QtImageCanvas,
-        QtMultiImageCanvas
-        )
+    import pyqtgraph
 except ImportError:
     from ..utils import NotInstalled
     msg = "Module 'pyqtgraph' is not installed. To use {}, " \
@@ -19,12 +13,23 @@ except ImportError:
     QtImageCanvas = NotInstalled(msg.format("QtImageCanvas"))
     QtMultiImageCanvas = NotInstalled(msg.format("QtMultiImageCanvas"))
 
+else:
+    from .widgets import (
+        QtPlotCanvas,
+        QtMultiPlotCanvas,
+        Qt2YPlotCanvas,
+        QtImageCanvas,
+        QtMultiImageCanvas
+        )
+    
 __all__ = ["QtPlotCanvas",
            "QtMultiPlotCanvas", 
            "Qt2YPlotCanvas",
            "QtImageCanvas",
            "QtMultiImageCanvas"
            ]
+
+del pyqtgraph
 
 def _join(strs):
     strs = [f"``{s}``" for s in strs]

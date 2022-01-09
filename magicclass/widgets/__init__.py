@@ -27,7 +27,7 @@ from .threading import ProgressWidget, progress
 from .utils import FreeWidget
 
 try:
-    from .console import QtConsole
+    import qtconsole
 except ImportError:
     from .utils import NotInstalled
     msg = "Module 'qtconsole' is not installed. To use QtConsole, " \
@@ -37,11 +37,14 @@ except ImportError:
           "   $ conda install qtconsole"
           
     QtConsole = NotInstalled(msg)
+else:
+    from .console import QtConsole
 
 from .qtgraph import *
 from .napari import *
 from .pyvista import *
 
+del qtconsole
 
 __all__ = ["ListWidget", 
            "Figure",
