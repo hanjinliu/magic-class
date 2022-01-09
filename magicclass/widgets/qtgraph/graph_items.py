@@ -386,6 +386,14 @@ class InfLine(LayerItem):
         self.native.setPos((0, value))
     
     @property
+    def pos(self) -> np.ndarray:
+        return np.array(self.native.getPos())
+    
+    @pos.setter
+    def pos(self, value):
+        self.native.setPos(value)
+        
+    @property
     def angle(self) -> float:
         """Angle of the line in degree."""
         return self.native.angle

@@ -296,11 +296,13 @@ class HasDataItems:
         self._add_item(item)
     
     @overload
-    def add_infline(self, slope: float, intercept: float, **kwargs):
+    def add_infline(self, slope: float, intercept: float, color = None,
+                    name: str | None = None, lw: float = 1, ls: str = "-"):
         ...
     
     @overload
-    def add_infline(self, pos: tuple[float, float], degree: float, **kwargs):
+    def add_infline(self, pos: tuple[float, float], degree: float, color = None,
+                    name: str | None = None, lw: float = 1, ls: str = "-"):
         ...
     
     def add_infline(self, 
@@ -308,7 +310,19 @@ class HasDataItems:
                     color = None,
                     name: str | None = None,
                     lw: float = 1,
-                    ls: str = "-"):
+                    ls: str = "-",
+                    **kwargs):
+        if kwargs:
+            if args:
+                raise TypeError("Cannot mix args and kwargs for infinite line parameters.")
+            keys = set(kwargs.keys())
+            if keys <= {"pos", "angle"}:
+                args = (kwargs.get("pos", (0, 0)), kwargs.get("angle", 0))
+            elif keys <= {"slope", "intercept"}:
+                args = (kwargs.get("slope", (0, 0)), kwargs.get("intercept", 0))
+            else:
+                raise ValueError(f"{kwargs} is invalid input.")
+            
         nargs = len(args)
         if nargs == 1:
             arg0 = args[0]
