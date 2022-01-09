@@ -6,7 +6,7 @@ import numpy as np
 
 from ._utils import convert_color_code, to_rgba
 from .components import Legend, Region, ScaleBar, TextItem
-from .graph_items import BarPlot, Curve, FillBetween, InfLine, PlotDataItem, Scatter, Histogram, TextGroup
+from .graph_items import BarPlot, Curve, FillBetween, InfLine, LayerItem, Scatter, Histogram, TextGroup
 from .mouse_event import MouseClickEvent
 from ._doc import write_docs
 from ..utils import FreeWidget
@@ -14,13 +14,13 @@ from ..utils import FreeWidget
 BOTTOM = "bottom"
 LEFT = "left"
 
-class LayerList(MutableSequence[PlotDataItem]):
+class LayerList(MutableSequence[LayerItem]):
     """A napari-like layer list for plot item handling."""
     def __init__(self, parent: HasDataItems):
         self.parent = parent
     
     
-    def __getitem__(self, key: int | str) -> PlotDataItem:
+    def __getitem__(self, key: int | str) -> LayerItem:
         if isinstance(key, int):
             return self.parent._items[key]
         elif isinstance(key, str):
@@ -41,14 +41,14 @@ class LayerList(MutableSequence[PlotDataItem]):
         return self.parent._remove_item(key)
     
     
-    def append(self, item: PlotDataItem):
-        if not isinstance(item, PlotDataItem):
+    def append(self, item: LayerItem):
+        if not isinstance(item, LayerItem):
             raise TypeError(f"Cannot append type {type(item)}.")
         self.parent._add_item(item)
             
     
-    def insert(self, pos: int, item: PlotDataItem):
-        if not isinstance(item, PlotDataItem):
+    def insert(self, pos: int, item: LayerItem):
+        if not isinstance(item, LayerItem):
             raise TypeError(f"Cannot insert type {type(item)}.")
         self.parent._insert_item(pos, item)
         
@@ -71,7 +71,7 @@ class LayerList(MutableSequence[PlotDataItem]):
 
 
 class HasDataItems:
-    _items: list[PlotDataItem]
+    _items: list[LayerItem]
     
     @property
     def _graphics(self) -> pg.GraphicsWidget:
@@ -352,12 +352,12 @@ class HasDataItems:
         self._add_item(item)
     
     
-    def _add_item(self, item: PlotDataItem):
+    def _add_item(self, item: LayerItem):
         item.zorder = len(self._items)
         self._graphics.addItem(item.native)
         self._items.append(item)
     
-    def _insert_item(self, pos: int, item: PlotDataItem):
+    def _insert_item(self, pos: int, item: LayerItem):
         self._graphics.addItem(item.native)
         self._items.insert(pos, item)
         self._reorder()
@@ -376,8 +376,8 @@ class HasDataItems:
         self._items.insert(destination, item)
         self._reorder()
     
-    def _remove_item(self, item: PlotDataItem | int | str):
-        if isinstance(item, PlotDataItem):
+    def _remove_item(self, item: LayerItem | int | str):
+        if isinstance(item, LayerItem):
             i = self._items.index(item)
         elif isinstance(item, int):
             if item < 0:
@@ -413,7 +413,7 @@ class HasDataItems:
 class HasViewBox(HasDataItems):
     def __init__(self, viewbox: pg.ViewBox):
         self._viewbox = viewbox
-        self._items: list[PlotDataItem] = []
+        self._items: list[LayerItem] = []
         
         # prepare mouse event
         self.mouse_click_callbacks = []

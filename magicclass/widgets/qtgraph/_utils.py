@@ -6,6 +6,6 @@ def convert_color_code(c):
         c = np.asarray(c) * 255
     return c
 
-def to_rgba(pen):
+def to_rgba(pen) -> np.ndarray:
     rgba = pen.color().getRgb()
     return np.array(rgba)/255

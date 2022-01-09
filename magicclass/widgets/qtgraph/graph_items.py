@@ -23,11 +23,33 @@ _SYMBOL_MAP = {
     }
 
 
-class PlotDataItem:
-    native: pg.PlotCurveItem | pg.ScatterPlotItem
+class LayerItem:
+    native: pg.GraphicsItem
     
     def __repr__(self) -> str:
         return f"{self.__class__.__name__} '{self.name}'"
+    
+    @property
+    def visible(self):
+        """Visibility of data."""
+        return self.native.isVisible()
+    
+    @visible.setter
+    def visible(self, value: bool):
+        self.native.setVisible(value)
+    
+    @property
+    def zorder(self) -> float:
+        """Z-order of item. Item with larger z will be displayed on the top."""
+        return self.native.zValue()
+    
+    @zorder.setter
+    def zorder(self, value: float):
+        self.native.setZValue(value)
+
+
+class PlotDataLayer(LayerItem):
+    native: pg.PlotCurveItem | pg.ScatterPlotItem
     
     @property
     def xdata(self) -> np.ndarray:
@@ -59,9 +81,7 @@ class PlotDataItem:
         self.native.opts["name"] = value
         # TODO: now name is not linked to label item
 
-    def __len__(self) -> int:
-        return self.native.getData()[0].size
-        
+    
     def add(self, points: np.ndarray | Sequence, **kwargs):
         """Add new points to the plot data item."""
         points = np.atleast_2d(points)
@@ -82,15 +102,6 @@ class PlotDataItem:
         ydata = self.ydata[sl]
         self.native.setData(xdata, ydata)
         return None
-    
-    @property
-    def visible(self):
-        """Visibility of data."""
-        return self.native.isVisible()
-    
-    @visible.setter
-    def visible(self, value: bool):
-        self.native.setVisible(value)
     
     @property
     def edge_color(self) -> np.ndarray:
@@ -143,17 +154,8 @@ class PlotDataItem:
     
     linestyle = ls # alias
 
-    @property
-    def zorder(self) -> float:
-        """Z-order of item. Item with larger z will be displayed on the top."""
-        return self.native.zValue()
-    
-    @zorder.setter
-    def zorder(self, value: float):
-        self.native.setZValue(value)
 
-
-class Scatter(PlotDataItem):
+class Scatter(PlotDataLayer):
     native: pg.ScatterPlotItem
     
     def __init__(self, 
@@ -194,7 +196,7 @@ class Scatter(PlotDataItem):
         self.native.setSymbolSize(size)
 
 
-class Curve(PlotDataItem):
+class Curve(PlotDataLayer):
     native: pg.PlotDataItem
     
     def __init__(self, 
@@ -258,7 +260,7 @@ class Curve(PlotDataItem):
         self.native.setSymbolBrush(value)
 
 
-class Histogram(PlotDataItem):
+class Histogram(PlotDataLayer):
     native: pg.ScatterPlotItem
     
     def __init__(self, 
@@ -287,7 +289,7 @@ class Histogram(PlotDataItem):
         self.native.setData(x=x, y=y)
 
 
-class BarPlot(PlotDataItem):
+class BarPlot(PlotDataLayer):
     native: pg.BarGraphItem
     
     def __init__(self, 
@@ -344,7 +346,7 @@ class BarPlot(PlotDataItem):
         self.native.setOpts(height=value)
 
 
-class InfLine(PlotDataItem):
+class InfLine(LayerItem):
     native: pg.InfiniteLine
     
     def __init__(self, 
@@ -435,7 +437,7 @@ class InfLine(PlotDataItem):
     linestyle = ls # alias
 
 
-class FillBetween(PlotDataItem):
+class FillBetween(PlotDataLayer):
     native: pg.FillBetweenItem
     
     def __init__(self, 
@@ -511,8 +513,9 @@ class FillBetween(PlotDataItem):
     
     linestyle = ls  # alias
 
-
-class TextGroup:
+# WIP!
+# How to update a subset of properties? item.text[2:5] = "new" or item[2:5].text = "new"
+class TextGroup(LayerItem):
     def __init__(self, 
                  x: Sequence[float],
                  y: Sequence[float],
@@ -529,67 +532,191 @@ class TextGroup:
         
         self.name = name
 
+    @property
+    def text_items(self) -> list[pg.TextItem]:
+        return self.native.childItems()
 
-    def __getitem__(self, key: int) -> TextItemView:
-        return TextItemView(self.native.childItems()[key])
-
-
-class TextItemView:
-    def __init__(self, textitem: pg.TextItem):
-        self.native = textitem
+    def __getitem__(self, key: int | slice) -> TextItemView:
+        return TextItemView(self.text_items[key])
     
     @property
-    def color(self):
+    def xdata(self) -> np.ndarray:
+        return np.array([item.pos().x() for item in self.text_items])
+    
+    @property
+    def ydata(self) -> np.ndarray:
+        return np.array([item.pos().y() for item in self.text_items])
+    
+    @property
+    def color(self) -> np.ndarray:
         """Text color."""
-        rgba = self.native.color.getRgb()
-        return np.array(rgba)/255
+        rgba = np.stack([item.color.getRgb() for item in self.text_items])
+        return rgba/255
     
     @color.setter
     def color(self, value):
         value = convert_color_code(value)
-        self.native.setText(self.text, value)
+        for item in self.text_items:
+            item.setText(item.toPlainText(), value)
     
     @property
-    def background_color(self):
+    def background_color(self) -> np.ndarray:
         """Text background color."""
-        return to_rgba(self.native.fill)
+        return np.stack([to_rgba(item.fill) for item in self.text_items])
     
     @background_color.setter
     def background_color(self, value):
         value = convert_color_code(value)
-        self.native.fill = pg.mkBrush(value)
-        self.native._updateView()
+        brush = pg.mkBrush(value)
+        for item in self.text_items:
+            item.fill = brush
+            item._updateView()
     
     @property
-    def border(self):
+    def border(self) -> np.ndarray:
         """Border color of text bounding box."""
-        return to_rgba(self.native.border)
+        if isinstance(self.native, list):
+            return np.stack([to_rgba(item.border) for item in self.native])
+        else:
+            return to_rgba(self.native.border)
         
     @border.setter
     def border(self, value):
         value = convert_color_code(value)
-        self.native.border = pg.mkPen(value)
-        self.native._updateView()
+        pen = pg.mkPen(value)
+        
+        for item in self.text_items:
+            item.border = pen
+            item._updateView()
     
     @property
-    def text(self) -> str:
+    def text(self) -> str | list[str]:
         """Text string."""
-        return self.native.toPlainText()
+        return [item.toPlainText() for item in self.text_items]
     
     @text.setter
     def text(self, value: str):
-        self.native.setText(value)
+        for item in self.text_items:
+            item.setText(value)
     
     @property
     def anchor(self) -> np.ndarray:
         """Text anchor position."""
-        anchor = self.native.anchor
-        return np.array([anchor.x(), anchor.y()])
+        out = []
+        for item in self.text_items:
+            anchor = item.anchor
+            out.append([anchor.x(), anchor.y()])
+        return np.array(out)
+        
+    @anchor.setter
+    def anchor(self, value):
+        for item in self.text_items:
+            item.setAnchor(value)
+        
+
+class TextItemView:
+    def __init__(self, textitem: pg.TextItem | list[pg.TextItem]):
+        self.native = textitem
+    
+    @property
+    def color(self) -> np.ndarray:
+        """Text color."""
+        if isinstance(self.native, list):
+            rgba = np.stack([item.color.getRgb() for item in self.native])
+            arr = rgba/255
+        else:
+            rgba = self.native.color.getRgb()
+            arr = np.array(rgba)/255
+        return arr
+    
+    @color.setter
+    def color(self, value):
+        value = convert_color_code(value)
+        if isinstance(self.native, list):
+            for item in self.native:
+                item.setText(item.text, value)
+        else:
+            self.native.setText(self.text, value)
+    
+    @property
+    def background_color(self) -> np.ndarray:
+        """Text background color."""
+        if isinstance(self.native, list):
+            return np.stack([to_rgba(item.fill) for item in self.native])
+        else:
+            return to_rgba(self.native.fill)
+    
+    @background_color.setter
+    def background_color(self, value):
+        value = convert_color_code(value)
+        brush = pg.mkBrush(value)
+        if isinstance(self.native, list):
+            for item in self.native:
+                item.fill = brush
+                item._updateView()
+        else:
+            self.native.fill = brush
+            self.native._updateView()
+    
+    @property
+    def border(self) -> np.ndarray:
+        """Border color of text bounding box."""
+        if isinstance(self.native, list):
+            return np.stack([to_rgba(item.border) for item in self.native])
+        else:
+            return to_rgba(self.native.border)
+        
+    @border.setter
+    def border(self, value):
+        value = convert_color_code(value)
+        pen = pg.mkPen(value)
+        
+        if isinstance(self.native, list):
+            for item in self.native:
+                item.border = pen
+                item._updateView()
+        else:
+            self.native.border = pen
+            self.native._updateView()
+        
+    @property
+    def text(self) -> str | list[str]:
+        """Text string."""
+        if isinstance(self.native, list):
+            return [item.toPlainText() for item in self.native]
+        else:
+            return self.native.toPlainText()
+    
+    @text.setter
+    def text(self, value: str):
+        
+        if isinstance(self.native, list):
+            for item in self.native:
+                item.setText(value)
+        else:
+            self.native.setText(value)
+    
+    @property
+    def anchor(self) -> np.ndarray:
+        """Text anchor position."""
+        if isinstance(self.native, list):
+            out = []
+            for item in self.native:
+                anchor = item.anchor
+                out.append([anchor.x(), anchor.y()])
+            return np.array(out)
+        else:
+            anchor = self.native.anchor
+            return np.array([anchor.x(), anchor.y()])
     
     @anchor.setter
     def anchor(self, value):
-        self.native.setAnchor(value)
-        
+        if isinstance(self.native, list):
+            for item in self.native:
+                item.setAnchor(value)
+        else:
+            self.native.setAnchor(value)
+
 
 def _set_default_colors(face_color, edge_color, default_f, default_e):
     if face_color is None:
