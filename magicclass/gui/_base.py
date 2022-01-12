@@ -342,6 +342,11 @@ class MagicTemplate:
     
     def _create_widget_from_method(self, obj: Callable):
         """Convert instance methods into GUI objects, such as push buttons or actions."""
+        if isinstance(obj, MagicMethod):
+            obj.widget.__magicclass_parent__ = self
+            self.__magicclass_children__.append(obj.widget)
+            obj.widget._my_symbol = Symbol(obj.__name__)
+            
         text = obj.__name__.replace("_", " ")
         widget = self._component_class(name=obj.__name__, text=text, gui_only=True)
 
@@ -1053,3 +1058,15 @@ def nested_function_gui_callback(gui: MagicTemplate, fgui: FunctionGui):
         gui.macro.append(expr)
         gui.macro._last_setval = None
     return _after_run
+
+
+class MagicMethod:
+    def __init__(self, parent: MagicTemplate):
+        self.__name__ = parent.__class__.__name__
+        self.__qualname__ = parent.__class__.__qualname__
+        self.widget = parent
+        self.__signature__ = MagicMethodSignature(additional_options={"record": False})
+    
+    def __call__(self):
+        self.widget.show()
+    

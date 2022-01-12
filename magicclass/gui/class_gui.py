@@ -127,7 +127,7 @@ class ClassGuiBase(BaseGui):
                 
                 if isinstance(widget, MenuGui):
                     # Add menubar to container
-                    widget.__magicclass_parent__ = self
+                    # widget.__magicclass_parent__ = self
                     if self._menubar is None:
                         # if widget has no menubar, a new one should be created.
                         self._menubar = QMenuBar(parent=self.native)
@@ -151,7 +151,7 @@ class ClassGuiBase(BaseGui):
                 
                 elif isinstance(widget, ContextMenuGui):
                     # Add context menu to container
-                    widget.__magicclass_parent__ = self
+                    # widget.__magicclass_parent__ = self
                     self.native.setContextMenuPolicy(Qt.CustomContextMenu)
                     self.native.customContextMenuRequested.connect(
                         define_context_menu(widget, self.native)
@@ -159,7 +159,7 @@ class ClassGuiBase(BaseGui):
                     _hist.append((name, type(attr), "ContextMenuGui"))
                 
                 elif isinstance(widget, ToolBarGui):
-                    widget.__magicclass_parent__ = self
+                    # widget.__magicclass_parent__ = self
                     if issubclass(self.__class__, MainWindow):
                         self.native: QMainWindow
                         self.native.addToolBar(widget.native)

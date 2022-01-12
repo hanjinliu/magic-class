@@ -51,6 +51,36 @@ def magicclass(class_: Literal[None],
     ...
 
 @overload
+def magicmethod(class_: _C,
+                *,
+                layout: Layout = "vertical", 
+                labels: bool = True, 
+                name: str | None = None,
+                close_on_run: bool | None = None,
+                popup_mode: PopUpModeStr | PopUpMode | None = None,
+                error_mode: ErrorModeStr | ErrorMode | None = None,
+                widget_type: WidgetTypeStr | WidgetType = WidgetType.none,
+                icon_path: str | None = None,
+                parent = None,
+                ) -> type[ClassGui | _C]:
+    ...
+
+@overload
+def magicmethod(class_: Literal[None],
+                *,
+                layout: Layout = "vertical", 
+                labels: bool = True, 
+                name: str | None = None,
+                close_on_run: bool | None = None,
+                popup_mode: PopUpModeStr | PopUpMode | None = None,
+                error_mode: ErrorModeStr | ErrorMode | None = None,
+                widget_type: WidgetTypeStr | WidgetType = WidgetType.none,
+                icon_path: str | None = None,
+                parent = None,
+                ) -> Callable[[_C], type[ClassGui | _C]]:
+    ...
+
+@overload
 def magicmenu(class_: _C, 
               *, 
               close_on_run: bool | None = None,

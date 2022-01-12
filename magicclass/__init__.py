@@ -1,10 +1,11 @@
-__version__ = "0.5.16"
+__version__ = "0.5.17.dev0"
 
 from .core import (
     magicclass,
     magicmenu,
     magiccontext,
     magictoolbar, 
+    magicmethod,
     Parameters,
     Bound,
     build_help
