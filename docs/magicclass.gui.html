@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.gui package &mdash; magic-class 0.5.15 documentation</title>
+  <title>magicclass.gui package &mdash; magic-class 0.5.16 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -30,7 +30,7 @@
             <a href="index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.15
+                0.5.16
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -577,11 +577,6 @@ This class makes it easier to combine QMenu to magicgui.</p>
 <span class="sig-name descname"><span class="pre">native</span></span><em class="property"><span class="pre">:</span> <span class="pre">QAction</span> <span class="p"><span class="pre">|</span></span> <span class="pre">QWidgetAction</span></em><a class="headerlink" href="#magicclass.gui.mgui_ext.AbstractAction.native" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="magicclass.gui.mgui_ext.AbstractAction.set_shortcut">
-<span class="sig-name descname"><span class="pre">set_shortcut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/gui/mgui_ext.html#AbstractAction.set_shortcut"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.gui.mgui_ext.AbstractAction.set_shortcut" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 <dl class="py attribute">
 <dt class="sig sig-object py" id="magicclass.gui.mgui_ext.AbstractAction.support_value">
 <span class="sig-name descname"><span class="pre">support_value</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#magicclass.gui.mgui_ext.AbstractAction.support_value" title="Permalink to this definition">¶</a></dt>
@@ -613,9 +608,20 @@ This class makes it easier to combine QMenu to magicgui.</p>
 <span class="sig-name descname"><span class="pre">native</span></span><em class="property"><span class="pre">:</span> <span class="pre">QAction</span> <span class="p"><span class="pre">|</span></span> <span class="pre">QWidgetAction</span></em><a class="headerlink" href="#magicclass.gui.mgui_ext.Action.native" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.gui.mgui_ext.Action.reset_choices">
+<span class="sig-name descname"><span class="pre">reset_choices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">_</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/gui/mgui_ext.html#Action.reset_choices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.gui.mgui_ext.Action.reset_choices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset child Categorical widgets.</p>
+</dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="magicclass.gui.mgui_ext.Action.running">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">running</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#magicclass.gui.mgui_ext.Action.running" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.gui.mgui_ext.Action.set_shortcut">
+<span class="sig-name descname"><span class="pre">set_shortcut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/gui/mgui_ext.html#Action.set_shortcut"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.gui.mgui_ext.Action.set_shortcut" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -688,6 +694,12 @@ This class makes it easier to combine QMenu to magicgui.</p>
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">icon_size</span></span><a class="headerlink" href="#magicclass.gui.mgui_ext.PushButtonPlus.icon_size" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.gui.mgui_ext.PushButtonPlus.reset_choices">
+<span class="sig-name descname"><span class="pre">reset_choices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">_</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/gui/mgui_ext.html#PushButtonPlus.reset_choices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.gui.mgui_ext.PushButtonPlus.reset_choices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset child Categorical widgets.</p>
+</dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="magicclass.gui.mgui_ext.PushButtonPlus.running">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">running</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#magicclass.gui.mgui_ext.PushButtonPlus.running" title="Permalink to this definition">¶</a></dt>
@@ -705,8 +717,19 @@ This class makes it easier to combine QMenu to magicgui.</p>
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.gui.mgui_ext.</span></span><span class="sig-name descname"><span class="pre">ToolButtonPlus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/gui/mgui_ext.html#ToolButtonPlus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.gui.mgui_ext.ToolButtonPlus" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#magicclass.gui.mgui_ext.PushButtonPlus" title="magicclass.gui.mgui_ext.PushButtonPlus"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.gui.mgui_ext.PushButtonPlus</span></code></a></p>
 <dl class="py method">
+<dt class="sig sig-object py" id="magicclass.gui.mgui_ext.ToolButtonPlus.reset_choices">
+<span class="sig-name descname"><span class="pre">reset_choices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">_</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/gui/mgui_ext.html#ToolButtonPlus.reset_choices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.gui.mgui_ext.ToolButtonPlus.reset_choices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset child Categorical widgets.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="magicclass.gui.mgui_ext.ToolButtonPlus.set_menu">
 <span class="sig-name descname"><span class="pre">set_menu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qmenu</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">PyQt5.QtWidgets.QMenu</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/gui/mgui_ext.html#ToolButtonPlus.set_menu"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.gui.mgui_ext.ToolButtonPlus.set_menu" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.gui.mgui_ext.ToolButtonPlus.set_shortcut">
+<span class="sig-name descname"><span class="pre">set_shortcut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/gui/mgui_ext.html#ToolButtonPlus.set_shortcut"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.gui.mgui_ext.ToolButtonPlus.set_shortcut" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -801,6 +824,12 @@ This class makes it easier to combine QMenu to magicgui.</p>
 <dt class="sig sig-object py" id="magicclass.gui.toolbar.ToolBarGui.insert">
 <span class="sig-name descname"><span class="pre">insert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#magicclass.gui.mgui_ext.AbstractAction" title="magicclass.gui.mgui_ext.AbstractAction"><span class="pre">magicclass.gui.mgui_ext.AbstractAction</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/magicclass/gui/toolbar.html#ToolBarGui.insert"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.gui.toolbar.ToolBarGui.insert" title="Permalink to this definition">¶</a></dt>
 <dd><p>S.insert(index, value) -- insert value before index</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.gui.toolbar.ToolBarGui.reset_choices">
+<span class="sig-name descname"><span class="pre">reset_choices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">_</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/gui/toolbar.html#ToolBarGui.reset_choices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.gui.toolbar.ToolBarGui.reset_choices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset child Categorical widgets</p>
 </dd></dl>
 
 </dd></dl>

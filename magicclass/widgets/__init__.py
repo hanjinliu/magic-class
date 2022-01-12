@@ -26,30 +26,15 @@ from .sequence import ListEdit, TupleEdit
 from .threading import ProgressWidget, progress
 from .utils import FreeWidget
 
-try:
-    import qtconsole
-except ImportError:
-    from .utils import NotInstalled
-    msg = "Module 'qtconsole' is not installed. To use QtConsole, " \
-          "you have to install it by:\n" \
-          "   $ pip install qtconsole\n" \
-          "or\n" \
-          "   $ conda install qtconsole"
-          
-    QtConsole = NotInstalled(msg)
-else:
-    from .console import QtConsole
-
+from .qtconsole import *
 from .qtgraph import *
 from .napari import *
 from .pyvista import *
 
-del qtconsole
 
 __all__ = ["ListWidget", 
            "Figure",
-           "ConsoleTextEdit", 
-           "MacroEdit",
+           "ConsoleTextEdit",
            "CheckButton",
            "Separator",
            "ListEdit",
@@ -70,11 +55,4 @@ __all__ = ["ListWidget",
            "StackedContainer",
            "TabbedContainer",
            "ToolBoxContainer",
-           "QtConsole",
-           "QtPlotCanvas",
-           "QtMultiPlotCanvas", 
-           "Qt2YPlotCanvas",
-           "QtImageCanvas",
-           "QtMultiImageCanvas",
-           "NapariCanvas",
            ]

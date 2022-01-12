@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.gui.toolbar &mdash; magic-class 0.5.15 documentation</title>
+  <title>magicclass.gui.toolbar &mdash; magic-class 0.5.16 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -27,7 +27,7 @@
             <a href="../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.15
+                0.5.16
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -77,7 +77,7 @@
              
   <h1>Source code for magicclass.gui.toolbar</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">signature</span>
 <span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">Table</span><span class="p">,</span> <span class="n">Label</span><span class="p">,</span> <span class="n">FunctionGui</span>
@@ -97,6 +97,8 @@
 <span class="kn">from</span> <span class="nn">..widgets</span> <span class="kn">import</span> <span class="n">FreeWidget</span><span class="p">,</span> <span class="n">Separator</span>
 <span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">iter_members</span>
 
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">napari.viewer</span> <span class="kn">import</span> <span class="n">Viewer</span>
 
 <span class="k">def</span> <span class="nf">_check_popupmode</span><span class="p">(</span><span class="n">popup_mode</span><span class="p">:</span> <span class="n">PopUpMode</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">popup_mode</span> <span class="ow">in</span> <span class="p">(</span><span class="n">PopUpMode</span><span class="o">.</span><span class="n">above</span><span class="p">,</span> <span class="n">PopUpMode</span><span class="o">.</span><span class="n">below</span><span class="p">,</span> <span class="n">PopUpMode</span><span class="o">.</span><span class="n">first</span><span class="p">):</span>
@@ -132,6 +134,23 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">MenuGuiBase</span> <span class="o">|</span> <span class="n">AbstractAction</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="n">labels</span>
     
+    
+<div class="viewcode-block" id="ToolBarGui.reset_choices"><a class="viewcode-back" href="../../../magicclass.gui.html#magicclass.gui.toolbar.ToolBarGui.reset_choices">[docs]</a>    <span class="k">def</span> <span class="nf">reset_choices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Reset child Categorical widgets&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">widget</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="s2">&quot;reset_choices&quot;</span><span class="p">):</span>
+                <span class="n">widget</span><span class="o">.</span><span class="n">reset_choices</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">widget</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__magicclass_children__</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="s2">&quot;reset_choices&quot;</span><span class="p">):</span>
+                <span class="n">widget</span><span class="o">.</span><span class="n">reset_choices</span><span class="p">()</span>
+        
+        <span class="c1"># If parent magic-class is added to napari viewer, the style sheet need update because</span>
+        <span class="c1"># QToolButton has inappropriate style.</span>
+        <span class="c1"># Detecting this event using &quot;reset_choices&quot; is not a elegant way, but works for now.</span>
+        <span class="n">viewer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent_viewer</span>
+        <span class="n">style</span> <span class="o">=</span> <span class="n">_create_stylesheet</span><span class="p">(</span><span class="n">viewer</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="n">style</span><span class="p">)</span></div>
+
     
     <span class="k">def</span> <span class="nf">_convert_attributes_into_widgets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">cls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span>
@@ -227,7 +246,7 @@
                 <span class="n">hist_str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span>
                     <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> -&gt; </span><span class="si">{</span><span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
                     <span class="n">_hist</span>
-                    <span class="p">))</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n\t\t</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">) &lt;--- Error&quot;</span>
+                    <span class="p">))</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n\t\t</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span><span class="si">}</span><span class="s2">) &lt;--- Error&quot;</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">hist_str</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">&quot;</span><span class="p">):</span>
                     <span class="n">hist_str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">hist_str</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">MagicClassConstructionError</span><span class="p">):</span>
@@ -285,7 +304,17 @@
 <div class="viewcode-block" id="ToolBarGui.insert"><a class="viewcode-back" href="../../../magicclass.gui.html#magicclass.gui.toolbar.ToolBarGui.insert">[docs]</a>    <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">AbstractAction</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_fast_insert</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">obj</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_unify_label_widths</span><span class="p">()</span></div></div>
-        
+
+
+<span class="k">def</span> <span class="nf">_create_stylesheet</span><span class="p">(</span><span class="n">viewer</span><span class="p">:</span> <span class="n">Viewer</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">viewer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">viewer</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">_qt_window</span>
+    <span class="n">styles</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">w</span><span class="o">.</span><span class="n">styleSheet</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;QPushButton &quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">s</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;QPushButton:&quot;</span><span class="p">):</span>
+            <span class="n">styles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;QToolButton&quot;</span> <span class="o">+</span> <span class="n">s</span><span class="p">[</span><span class="mi">11</span><span class="p">:])</span>
+    <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">styles</span><span class="p">)</span>
 </pre></div>
 
            </div>

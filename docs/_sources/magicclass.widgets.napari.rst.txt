@@ -4,10 +4,10 @@ magicclass.widgets.napari package
 Submodules
 ----------
 
-magicclass.widgets.napari.canvas module
----------------------------------------
+magicclass.widgets.napari.widgets module
+----------------------------------------
 
-.. automodule:: magicclass.widgets.napari.canvas
+.. automodule:: magicclass.widgets.napari.widgets
    :members:
    :undoc-members:
    :show-inheritance:

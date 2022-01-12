@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass package &mdash; magic-class 0.5.15 documentation</title>
+  <title>magicclass package &mdash; magic-class 0.5.16 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -30,7 +30,7 @@
             <a href="index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.15
+                0.5.16
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -119,8 +119,14 @@
 <li class="toctree-l2"><a class="reference internal" href="magicclass.widgets.html#subpackages">Subpackages</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="magicclass.widgets.napari.html">magicclass.widgets.napari package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="magicclass.widgets.napari.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.widgets.napari.html#module-magicclass.widgets.napari.canvas">magicclass.widgets.napari.canvas module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.widgets.napari.html#module-magicclass.widgets.napari.widgets">magicclass.widgets.napari.widgets module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="magicclass.widgets.napari.html#module-magicclass.widgets.napari">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.widgets.pyvista.html">magicclass.widgets.pyvista package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.widgets.pyvista.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.widgets.pyvista.html#module-magicclass.widgets.pyvista.widgets">magicclass.widgets.pyvista.widgets module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.widgets.pyvista.html#module-magicclass.widgets.pyvista">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="magicclass.widgets.pywidgets.html">magicclass.widgets.pywidgets package</a><ul>
@@ -132,12 +138,18 @@
 <li class="toctree-l4"><a class="reference internal" href="magicclass.widgets.pywidgets.html#module-magicclass.widgets.pywidgets">Module contents</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.widgets.qtconsole.html">magicclass.widgets.qtconsole package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.widgets.qtconsole.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.widgets.qtconsole.html#module-magicclass.widgets.qtconsole.widgets">magicclass.widgets.qtconsole.widgets module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.widgets.qtconsole.html#module-magicclass.widgets.qtconsole">Module contents</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="magicclass.widgets.qtgraph.html">magicclass.widgets.qtgraph package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="magicclass.widgets.qtgraph.html#submodules">Submodules</a></li>
 <li class="toctree-l4"><a class="reference internal" href="magicclass.widgets.qtgraph.html#module-magicclass.widgets.qtgraph.components">magicclass.widgets.qtgraph.components module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="magicclass.widgets.qtgraph.html#module-magicclass.widgets.qtgraph.graph_items">magicclass.widgets.qtgraph.graph_items module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="magicclass.widgets.qtgraph.html#module-magicclass.widgets.qtgraph.mouse_event">magicclass.widgets.qtgraph.mouse_event module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.widgets.qtgraph.html#module-magicclass.widgets.qtgraph.qt_graph">magicclass.widgets.qtgraph.qt_graph module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.widgets.qtgraph.html#module-magicclass.widgets.qtgraph.widgets">magicclass.widgets.qtgraph.widgets module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="magicclass.widgets.qtgraph.html#module-magicclass.widgets.qtgraph">Module contents</a></li>
 </ul>
 </li>
@@ -825,14 +837,25 @@ if not given.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="magicclass.wrappers.set_options">
-<span class="sig-prename descclassname"><span class="pre">magicclass.wrappers.</span></span><span class="sig-name descname"><span class="pre">set_options</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/wrappers.html#set_options"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.wrappers.set_options" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set MagicSignature to functions. By decorating a function like below:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nd">@set_options</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">})</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="o">...</span>
-</pre></div>
-</div>
-<p>then magicgui knows what widget it should be converted to.</p>
+<span class="sig-prename descclassname"><span class="pre">magicclass.wrappers.</span></span><span class="sig-name descname"><span class="pre">set_options</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'vertical'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">call_button</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span> <span class="p"><span class="pre">|</span></span> <span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auto_call</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">Args</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">Returns</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">Args</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">Returns</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/magicclass/wrappers.html#set_options"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.wrappers.set_options" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set MagicSignature to functions.</p>
+<p>By decorating a method with this function, <code class="docutils literal notranslate"><span class="pre">magicgui</span></code> will create a widget with these
+options.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layout</strong> (<em>str</em><em>, </em><em>optional</em>) -- The type of layout to use. Must be one of {'horizontal', 'vertical'}.
+by default &quot;vertical&quot;.</p></li>
+<li><p><strong>call_button</strong> (<em>bool</em><em> or </em><em>str</em><em>, </em><em>optional</em>) -- If <code class="docutils literal notranslate"><span class="pre">True</span></code>, create an additional button that calls the original
+function when clicked.  If a <code class="docutils literal notranslate"><span class="pre">str</span></code>, set the button text. If None (the
+default), it defaults to True when <code class="docutils literal notranslate"><span class="pre">auto_call</span></code> is False, and False
+otherwise.</p></li>
+<li><p><strong>auto_call</strong> (<em>bool</em><em>, </em><em>optional</em>) -- If <code class="docutils literal notranslate"><span class="pre">True</span></code>, changing any parameter in either the GUI or the widget attributes
+will call the original function with the current settings. by default False</p></li>
+<li><p><strong>options</strong> (<em>dict</em>) -- Parameter options.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </section>

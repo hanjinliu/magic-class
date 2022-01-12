@@ -28,10 +28,10 @@ magicclass.widgets.qtgraph.mouse\_event module
    :undoc-members:
    :show-inheritance:
 
-magicclass.widgets.qtgraph.qt\_graph module
--------------------------------------------
+magicclass.widgets.qtgraph.widgets module
+-----------------------------------------
 
-.. automodule:: magicclass.widgets.qtgraph.qt_graph
+.. automodule:: magicclass.widgets.qtgraph.widgets
    :members:
    :undoc-members:
    :show-inheritance:

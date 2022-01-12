@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.widgets.containers &mdash; magic-class 0.5.14 documentation</title>
+  <title>magicclass.widgets.containers &mdash; magic-class 0.5.16 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -27,7 +27,7 @@
             <a href="../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.14
+                0.5.16
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -512,6 +512,15 @@
     <span class="nd">@btn_text</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">btn_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_widget</span><span class="o">.</span><span class="n">_expand_btn</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">collapsed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_widget</span><span class="o">.</span><span class="n">collapsed</span>
+    
+    <span class="nd">@collapsed</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">collapsed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_widget</span><span class="o">.</span><span class="n">_expand_btn</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
 
 <span class="nd">@wrap_container</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="n">_HCollapsibleContainer</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">HCollapsibleContainer</span><span class="p">(</span><span class="n">ContainerWidget</span><span class="p">):</span>
@@ -524,6 +533,14 @@
     <span class="nd">@btn_text</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">btn_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_widget</span><span class="o">.</span><span class="n">_expand_btn</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+        
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">collapsed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_widget</span><span class="o">.</span><span class="n">collapsed</span>
+    
+    <span class="nd">@collapsed</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">collapsed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_widget</span><span class="o">.</span><span class="n">_expand_btn</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
 
 <span class="nd">@wrap_container</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="n">_ListContainer</span><span class="p">)</span>

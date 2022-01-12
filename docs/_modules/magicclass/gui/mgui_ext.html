@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.gui.mgui_ext &mdash; magic-class 0.5.14 documentation</title>
+  <title>magicclass.gui.mgui_ext &mdash; magic-class 0.5.16 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -27,7 +27,7 @@
             <a href="../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.14
+                0.5.16
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -190,6 +190,11 @@
     
 <div class="viewcode-block" id="PushButtonPlus.set_shortcut"><a class="viewcode-back" href="../../../magicclass.gui.html#magicclass.gui.mgui_ext.PushButtonPlus.set_shortcut">[docs]</a>    <span class="k">def</span> <span class="nf">set_shortcut</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setShortcut</span><span class="p">(</span><span class="n">key</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="PushButtonPlus.reset_choices"><a class="viewcode-back" href="../../../magicclass.gui.html#magicclass.gui.mgui_ext.PushButtonPlus.reset_choices">[docs]</a>    <span class="k">def</span> <span class="nf">reset_choices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Reset child Categorical widgets.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mgui</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mgui</span><span class="o">.</span><span class="n">reset_choices</span><span class="p">()</span></div>
         
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">background_color</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -279,10 +284,22 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">text</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="p">:</span> <span class="n">QToolButton</span>
     
+    
 <div class="viewcode-block" id="ToolButtonPlus.set_menu"><a class="viewcode-back" href="../../../magicclass.gui.html#magicclass.gui.mgui_ext.ToolButtonPlus.set_menu">[docs]</a>    <span class="k">def</span> <span class="nf">set_menu</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qmenu</span><span class="p">:</span> <span class="n">QMenu</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setMenu</span><span class="p">(</span><span class="n">qmenu</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setPopupMode</span><span class="p">(</span><span class="n">QToolButton</span><span class="o">.</span><span class="n">InstantPopup</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">qmenu</span><span class="o">.</span><span class="n">icon</span><span class="p">())</span> <span class="c1"># icon have to be copied.</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">qmenu</span><span class="o">.</span><span class="n">icon</span><span class="p">())</span> <span class="c1"># icon have to be copied.</span></div>
+    
+    
+<div class="viewcode-block" id="ToolButtonPlus.set_shortcut"><a class="viewcode-back" href="../../../magicclass.gui.html#magicclass.gui.mgui_ext.ToolButtonPlus.set_shortcut">[docs]</a>    <span class="k">def</span> <span class="nf">set_shortcut</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setShortcut</span><span class="p">(</span><span class="n">key</span><span class="p">)</span></div>
+   
+    
+<div class="viewcode-block" id="ToolButtonPlus.reset_choices"><a class="viewcode-back" href="../../../magicclass.gui.html#magicclass.gui.mgui_ext.ToolButtonPlus.reset_choices">[docs]</a>    <span class="k">def</span> <span class="nf">reset_choices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Reset child Categorical widgets.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mgui</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mgui</span><span class="o">.</span><span class="n">reset_choices</span><span class="p">()</span></div></div>
+
 
 <div class="viewcode-block" id="mguiLike"><a class="viewcode-back" href="../../../magicclass.gui.html#magicclass.gui.mgui_ext.mguiLike">[docs]</a><span class="k">class</span> <span class="nc">mguiLike</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Abstract class that provide magicgui.widgets like properties.&quot;&quot;&quot;</span>
@@ -332,7 +349,8 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">widget_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span></div>
-    
+
+
 <div class="viewcode-block" id="AbstractAction"><a class="viewcode-back" href="../../../magicclass.gui.html#magicclass.gui.mgui_ext.AbstractAction">[docs]</a><span class="k">class</span> <span class="nc">AbstractAction</span><span class="p">(</span><span class="n">mguiLike</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    QAction encapsulated class with a similar API as magicgui Widget.</span>
@@ -341,9 +359,6 @@
     <span class="n">changed</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">(</span><span class="nb">object</span><span class="p">)</span>
     <span class="n">support_value</span><span class="p">:</span> <span class="nb">bool</span>
     <span class="n">native</span><span class="p">:</span> <span class="n">QAction</span> <span class="o">|</span> <span class="n">QWidgetAction</span>
-    
-<div class="viewcode-block" id="AbstractAction.set_shortcut"><a class="viewcode-back" href="../../../magicclass.gui.html#magicclass.gui.mgui_ext.AbstractAction.set_shortcut">[docs]</a>    <span class="k">def</span> <span class="nf">set_shortcut</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setShortcut</span><span class="p">(</span><span class="n">key</span><span class="p">)</span></div>
         
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -351,6 +366,7 @@
     
 <div class="viewcode-block" id="AbstractAction.from_options"><a class="viewcode-back" href="../../../magicclass.gui.html#magicclass.gui.mgui_ext.AbstractAction.from_options">[docs]</a>    <span class="k">def</span> <span class="nf">from_options</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">options</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div></div>
+
 
 <div class="viewcode-block" id="Action"><a class="viewcode-back" href="../../../magicclass.gui.html#magicclass.gui.mgui_ext.Action">[docs]</a><span class="k">class</span> <span class="nc">Action</span><span class="p">(</span><span class="n">AbstractAction</span><span class="p">):</span>
     <span class="n">support_value</span> <span class="o">=</span> <span class="kc">True</span>
@@ -374,6 +390,16 @@
     <span class="k">def</span> <span class="nf">running</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mgui</span><span class="p">,</span> <span class="s2">&quot;running&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
     
+    
+<div class="viewcode-block" id="Action.set_shortcut"><a class="viewcode-back" href="../../../magicclass.gui.html#magicclass.gui.mgui_ext.Action.set_shortcut">[docs]</a>    <span class="k">def</span> <span class="nf">set_shortcut</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setShortcut</span><span class="p">(</span><span class="n">key</span><span class="p">)</span></div>
+    
+    
+<div class="viewcode-block" id="Action.reset_choices"><a class="viewcode-back" href="../../../magicclass.gui.html#magicclass.gui.mgui_ext.Action.reset_choices">[docs]</a>    <span class="k">def</span> <span class="nf">reset_choices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Reset child Categorical widgets.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mgui</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mgui</span><span class="o">.</span><span class="n">reset_choices</span><span class="p">()</span></div>
+        
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">text</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>

@@ -32,31 +32,34 @@ executable GUI.
     
 """
 
-from ipykernel.connect import get_connection_file
-from ipykernel.inprocess.ipkernel import InProcessInteractiveShell
-from ipykernel.zmqshell import ZMQInteractiveShell
-from IPython import get_ipython
-from IPython.terminal.interactiveshell import TerminalInteractiveShell
-from qtconsole.client import QtKernelClient
-from qtconsole.inprocess import QtInProcessKernelManager
 from magicgui.events import Signal
-from qtconsole.rich_jupyter_widget import RichJupyterWidget
 from magicgui.widgets import Widget
 from .utils import FreeWidget
 
 # See napari_console
 # https://github.com/napari/napari-console
 
+from qtconsole.rich_jupyter_widget import RichJupyterWidget
+
 class _Console(RichJupyterWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         
     def connect_parent(self, ui: Widget):
+        from IPython import get_ipython
+        from IPython.terminal.interactiveshell import TerminalInteractiveShell
+        from ipykernel.connect import get_connection_file
+        from ipykernel.inprocess.ipkernel import InProcessInteractiveShell
+        from ipykernel.zmqshell import ZMQInteractiveShell
+        from qtconsole.client import QtKernelClient
+        from qtconsole.inprocess import QtInProcessKernelManager
+        
         if not isinstance(ui, Widget):
             raise TypeError(f"Cannot connect QtConsole to {type(ui)}.")
         
         shell = get_ipython()
-
+        
+        
         if shell is None:
             # If there is no currently running instance create an in-process
             # kernel.

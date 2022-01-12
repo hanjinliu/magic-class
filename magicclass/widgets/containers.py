@@ -434,6 +434,15 @@ class CollapsibleContainer(ContainerWidget):
     @btn_text.setter
     def btn_text(self, text: str):
         self._widget._expand_btn.setText(text)
+    
+    @property
+    def collapsed(self) -> bool:
+        return self._widget.collapsed
+    
+    @collapsed.setter
+    def collapsed(self, value: bool):
+        self._widget._expand_btn.setChecked(value)
+
 
 @wrap_container(base=_HCollapsibleContainer)
 class HCollapsibleContainer(ContainerWidget):
@@ -446,6 +455,14 @@ class HCollapsibleContainer(ContainerWidget):
     @btn_text.setter
     def btn_text(self, text: str):
         self._widget._expand_btn.setText(text)
+        
+    @property
+    def collapsed(self) -> bool:
+        return self._widget.collapsed
+    
+    @collapsed.setter
+    def collapsed(self, value: bool):
+        self._widget._expand_btn.setChecked(value)
 
 
 @wrap_container(base=_ListContainer)

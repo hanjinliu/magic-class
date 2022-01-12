@@ -38,14 +38,3 @@ def magicwidget(qcls: type[QWidget]):
     new_class = type(qcls.__name__, (FreeWidget,), {})
     new_class.__init__ = __init__
     return new_class
-
-
-class NotInstalled:
-    def __init__(self, msg):
-        self.msg = msg
-    
-    def __getattr__(self, key: str):
-        raise ModuleNotFoundError(self.msg)
-    
-    def __call__(self, *args, **kwargs):
-        raise ModuleNotFoundError(self.msg)

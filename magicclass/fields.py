@@ -1,12 +1,11 @@
 from __future__ import annotations
-from typing import Any, TYPE_CHECKING, Callable, TypeVar
+from typing import Any, TYPE_CHECKING, Callable, TypeVar, overload
 from dataclasses import Field, MISSING
 from magicgui.type_map import get_widget_class
 from magicgui.widgets import create_widget
 from magicgui.widgets._bases import Widget, ValueWidget
 from magicgui.widgets._bases.value_widget import UNSET 
 
-from .widgets.utils import NotInstalled
 from .gui.mgui_ext import AbstractAction, Action, WidgetAction
 
 if TYPE_CHECKING:
@@ -71,11 +70,10 @@ class MagicField(Field):
                 
         return action
     
-    def as_getter(self, obj: X):
+    def as_getter(self, obj: X) -> Callable:
         """
         Make a function that get the value of Widget or Action.
         """        
-        # return lambda widget: self.get_widget(obj).value
         return lambda w: self.guis[id(obj)].value
     
     def __get__(self, obj: X, objtype=None):
@@ -109,9 +107,6 @@ class MagicField(Field):
         if self.default_factory is not MISSING and issubclass(self.default_factory, Widget):
             widget = self.default_factory(**self.options)
         else:
-            if isinstance(self.value, NotInstalled):
-                self.value() # raise ModuleNotFoundError here
-                
             widget = create_widget(value=self.value, 
                                    annotation=self.annotation,
                                    **self.metadata

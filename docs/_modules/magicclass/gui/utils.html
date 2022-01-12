@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.gui.utils &mdash; magic-class 0.5.14 documentation</title>
+  <title>magicclass.gui.utils &mdash; magic-class 0.5.16 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -27,7 +27,7 @@
             <a href="../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.14
+                0.5.16
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -88,7 +88,7 @@
     <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="o">.</span><span class="n">default</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">fgui</span><span class="o">.</span><span class="n">__signature__</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span></div>
 
 <div class="viewcode-block" id="define_callback"><a class="viewcode-back" href="../../../magicclass.gui.html#magicclass.gui.utils.define_callback">[docs]</a><span class="k">def</span> <span class="nf">define_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">BaseGui</span><span class="p">,</span> <span class="n">callback</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
-    <span class="n">clsname</span><span class="p">,</span> <span class="n">funcname</span> <span class="o">=</span> <span class="n">callback</span><span class="o">.</span><span class="vm">__qualname__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+    <span class="o">*</span><span class="n">_</span><span class="p">,</span> <span class="n">clsname</span><span class="p">,</span> <span class="n">funcname</span> <span class="o">=</span> <span class="n">callback</span><span class="o">.</span><span class="vm">__qualname__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">_callback</span><span class="p">():</span>
         <span class="c1"># search for parent instances that have the same name.</span>
         <span class="n">current_self</span> <span class="o">=</span> <span class="bp">self</span>

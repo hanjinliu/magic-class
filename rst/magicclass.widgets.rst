@@ -8,7 +8,9 @@ Subpackages
    :maxdepth: 4
 
    magicclass.widgets.napari
+   magicclass.widgets.pyvista
    magicclass.widgets.pywidgets
+   magicclass.widgets.qtconsole
    magicclass.widgets.qtgraph
    magicclass.widgets.tests
 

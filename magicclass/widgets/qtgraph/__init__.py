@@ -1,19 +1,4 @@
 try:
-    import pyqtgraph
-except ImportError:
-    from ..utils import NotInstalled
-    msg = "Module 'pyqtgraph' is not installed. To use {}, " \
-          "you have to install it by:\n" \
-          "   $ pip install pyqtgraph\n" \
-          "or\n" \
-          "   $ conda install pyqtgraph -c conda forge"
-    QtPlotCanvas = NotInstalled(msg.format("QtPlotCanvas"))
-    QtMultiPlotCanvas = NotInstalled(msg.format("QtMultiPlotCanvas"))
-    Qt2YPlotCanvas = NotInstalled(msg.format("Qt2YPlotCanvas"))
-    QtImageCanvas = NotInstalled(msg.format("QtImageCanvas"))
-    QtMultiImageCanvas = NotInstalled(msg.format("QtMultiImageCanvas"))
-
-else:
     from .widgets import (
         QtPlotCanvas,
         QtMultiPlotCanvas,
@@ -21,7 +6,9 @@ else:
         QtImageCanvas,
         QtMultiImageCanvas
         )
-    
+except ImportError:
+    pass
+
 __all__ = ["QtPlotCanvas",
            "QtMultiPlotCanvas", 
            "Qt2YPlotCanvas",
@@ -29,7 +16,6 @@ __all__ = ["QtPlotCanvas",
            "QtMultiImageCanvas"
            ]
 
-del pyqtgraph
 
 def _join(strs):
     strs = [f"``{s}``" for s in strs]
