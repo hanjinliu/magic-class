@@ -6,15 +6,22 @@ try:
         QtImageCanvas,
         QtMultiImageCanvas
         )
+    
+    PYQTGRAPH_AVAILABLE = True
+    
+    __all__ = ["QtPlotCanvas",
+               "QtMultiPlotCanvas", 
+               "Qt2YPlotCanvas",
+               "QtImageCanvas",
+               "QtMultiImageCanvas",
+               "PYQTGRAPH_AVAILABLE",
+               ]
 except ImportError:
-    pass
+    
+    PYQTGRAPH_AVAILABLE = False
+    
+    __all__ = ["PYQTGRAPH_AVAILABLE"]
 
-__all__ = ["QtPlotCanvas",
-           "QtMultiPlotCanvas", 
-           "Qt2YPlotCanvas",
-           "QtImageCanvas",
-           "QtMultiImageCanvas"
-           ]
 
 
 def _join(strs):
