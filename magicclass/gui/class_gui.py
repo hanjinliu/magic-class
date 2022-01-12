@@ -135,7 +135,10 @@ class ClassGuiBase(BaseGui):
                             self.native: QMainWindow
                             self.native.setMenuBar(self._menubar)
                         else:
-                            _layout: QBoxLayout = self.native.layout()
+                            if hasattr(self._widget, "_scroll_area"):
+                                _layout: QBoxLayout = self._widget._qwidget.layout()
+                            else:
+                                _layout = self.native.layout()
                             if _layout.menuBar() is None:
                                 _layout.setMenuBar(self._menubar)
                             else:
@@ -165,7 +168,10 @@ class ClassGuiBase(BaseGui):
                         self.native.addToolBar(widget.native)
                     else:
                         # self is not a main window object
-                        _layout: QBoxLayout = self._widget._layout
+                        if hasattr(self._widget, "_scroll_area"):
+                            _layout: QBoxLayout = self._widget._qwidget.layout()
+                        else:
+                            _layout = self.native.layout()
                         if _layout.menuBar() is None:
                             _layout.setMenuBar(widget.native)
                         else:

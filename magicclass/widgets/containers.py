@@ -146,7 +146,7 @@ class _ScrollableContainer(ContainerBase):
         self._inner_widget.setLayout(self._layout)
         self._scroll_area.setWidget(self._inner_widget)
         
-        self._qwidget.setLayout(QtW.QHBoxLayout())
+        self._qwidget.setLayout(QtW.QVBoxLayout())
         self._qwidget.layout().addWidget(self._scroll_area)
         self._qwidget.layout().setContentsMargins(0, 0, 0, 0)
 
@@ -171,7 +171,7 @@ class _DraggableContainer(ContainerBase):
         self._inner_widget.setLayout(self._layout)
         self._scroll_area.setWidget(self._inner_widget)
         
-        self._qwidget.setLayout(QtW.QHBoxLayout())
+        self._qwidget.setLayout(QtW.QVBoxLayout())
         self._qwidget.layout().addWidget(self._scroll_area)
         self._qwidget.layout().setContentsMargins(0, 0, 0, 0)
         QtW.QScroller.grabGesture(self._scroll_area, QtW.QScroller.LeftMouseButtonGesture)
