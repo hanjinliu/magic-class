@@ -1,8 +1,7 @@
 from __future__ import annotations
 from typing import Callable, Iterable, Any, Generic, TypeVar
 import re
-from PyQt5.QtWidgets import QMenu
-from qtpy.QtWidgets import QPushButton, QAction, QWidgetAction, QToolButton, QWidget
+from qtpy.QtWidgets import QPushButton, QAction, QWidgetAction, QToolButton, QWidget, QMenu
 from qtpy.QtGui import QIcon
 from qtpy.QtCore import QSize
 from magicgui.events import Signal
@@ -135,8 +134,9 @@ class PushButtonPlus(PushButton):
         return self._icon_path
     
     @icon_path.setter
-    def icon_path(self, path:str):
-        icon = QIcon(str(path))
+    def icon_path(self, path):
+        path = str(path)
+        icon = QIcon(path)
         self.native.setIcon(icon)
     
     @property
@@ -343,11 +343,10 @@ class Action(AbstractAction):
         return self._icon_path
     
     @icon_path.setter
-    def icon_path(self, path: str):
+    def icon_path(self, path):
         path = str(path)
         icon = QIcon(path)
         self.native.setIcon(icon)
-        self._icon_path = path
     
     def from_options(self, options: dict[str] | Callable):
         if callable(options):

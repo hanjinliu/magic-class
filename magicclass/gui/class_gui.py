@@ -2,7 +2,6 @@ from __future__ import annotations
 from inspect import signature
 from typing import Any, Callable
 import warnings
-from PyQt5.QtWidgets import QVBoxLayout
 from qtpy.QtWidgets import QMenuBar, QWidget, QMainWindow, QBoxLayout
 from qtpy.QtCore import Qt
 from magicgui.widgets import Container, MainWindow,Label, FunctionGui, Image, Table
