@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Callable, Iterable, Any
+from typing import Callable, Iterable, Any, Generic, TypeVar
 import re
 from PyQt5.QtWidgets import QMenu
 from qtpy.QtWidgets import QPushButton, QAction, QWidgetAction, QToolButton, QWidget
@@ -361,9 +361,11 @@ class Action(AbstractAction):
                 setattr(self, k, v)
         return None
 
-class WidgetAction(AbstractAction):
-    
-    def __init__(self, widget: Widget, label: str = None, parent=None):
+_W = TypeVar("_W", bound=Widget)
+
+
+class WidgetAction(AbstractAction, Generic[_W]):
+    def __init__(self, widget: _W, label: str = None, parent=None):
         if not isinstance(widget, (Widget, mguiLike)):
             raise TypeError(f"The first argument must be a magicgui-like widget, got {type(widget)}")
         
@@ -410,7 +412,8 @@ class WidgetAction(AbstractAction):
     @text.setter
     def text(self, value: str):
         self.native.setText(value)
-    
+
+
     def _labeled_widget(self):
         return self.widget._labeled_widget()
     
@@ -418,9 +421,11 @@ class WidgetAction(AbstractAction):
     def render(self):
         return self.widget.render()
 
+
     def _repr_png_(self):
         return self.widget._repr_png_()
-    
+
+
 class _LabeledWidgetAction(WidgetAction):
     widget: _LabeledWidget
     

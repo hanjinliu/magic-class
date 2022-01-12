@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Any, TYPE_CHECKING, Callable, TypeVar, overload
+from typing import Any, TYPE_CHECKING, Callable, TypeVar, overload, Generic
 from dataclasses import Field, MISSING
 from magicgui.type_map import get_widget_class
 from magicgui.widgets import create_widget
@@ -12,9 +12,10 @@ if TYPE_CHECKING:
     from magicgui.widgets._protocols import WidgetProtocol
     from magicgui.types import WidgetOptions
     
-X = TypeVar("X")
+_X = TypeVar("_X")
+_W = TypeVar("_W", bound=Widget)
 
-class MagicField(Field):
+class MagicField(Field, Generic[_W]):
     """
     Field class for magicgui construction. This object is compatible with dataclass.
     """    
@@ -26,7 +27,7 @@ class MagicField(Field):
         super().__init__(default=default, default_factory=default_factory, init=True, repr=True, 
                          hash=False, compare=False, metadata=metadata)
         self.callbacks: list[Callable] = []
-        self.guis: dict[int, X] = {}
+        self.guis: dict[int, _X] = {}
         self.name = name
         self.record = record
         self.parent_class = None
@@ -34,7 +35,7 @@ class MagicField(Field):
     def __repr__(self):
         return self.__class__.__name__.rstrip("Field") + super().__repr__()
     
-    def get_widget(self, obj: X) -> Widget:
+    def get_widget(self, obj: _X) -> _W:
         """
         Get a widget from ``obj``. This function will be called every time MagicField is referred
         by ``obj.field``.
@@ -52,7 +53,7 @@ class MagicField(Field):
                 
         return widget
     
-    def get_action(self, obj: X) -> AbstractAction:
+    def get_action(self, obj: _X) -> AbstractAction:
         """
         Get an action from ``obj``. This function will be called every time MagicField is referred
         by ``obj.field``.
@@ -70,18 +71,18 @@ class MagicField(Field):
                 
         return action
     
-    def as_getter(self, obj: X) -> Callable:
+    def as_getter(self, obj: _X) -> Callable:
         """
         Make a function that get the value of Widget or Action.
         """        
         return lambda w: self.guis[id(obj)].value
     
-    def __get__(self, obj: X, objtype=None):
+    def __get__(self, obj: _X, objtype=None) -> _W:
         if obj is None:
             return self
         return self.get_widget(obj)
     
-    def __set__(self, obj: X, value) -> None:
+    def __set__(self, obj: _X, value) -> None:
         raise AttributeError(f"Cannot set value to {self.__class__.__name__}.")
         
     def ready(self) -> bool:
@@ -90,7 +91,7 @@ class MagicField(Field):
     def not_ready(self) -> bool:
         return self.default is MISSING and self.default_factory is MISSING
 
-    def to_widget(self) -> Widget:
+    def to_widget(self) -> _W:
         """
         Create a widget from the field.
 
@@ -114,7 +115,7 @@ class MagicField(Field):
         widget.name = self.name
         return widget
     
-    def to_action(self) -> Action | WidgetAction:
+    def to_action(self) -> Action | WidgetAction[_W]:
         """
         Create a menu action or a menu widget action from the field.
 
@@ -185,7 +186,7 @@ class MagicValueField(MagicField):
     Field class for magicgui construction. Unlike MagicField, object of this class always 
     returns value itself.
     """    
-    def get_widget(self, obj: X) -> ValueWidget:
+    def get_widget(self, obj: _X) -> ValueWidget:
         widget = super().get_widget(obj)
         if not hasattr(widget, "value"):
             raise TypeError("Widget is not a value widget or a widget with value: "
@@ -193,15 +194,33 @@ class MagicValueField(MagicField):
         
         return widget
     
-    def __get__(self, obj: X, objtype=None):
+    def __get__(self, obj: _X, objtype=None) -> Any:
         if obj is None:
             return self
         return self.get_widget(obj).value
     
-    def __set__(self, obj: X, value) -> None:
+    def __set__(self, obj: _X, value) -> None:
         if obj is None:
             raise AttributeError(f"Cannot set {self.__class__.__name__}.")
         self.get_widget(obj).value = value
+
+@overload
+def field(obj: type[_W], 
+          *,
+          name: str = "", 
+          widget_type: str | type[WidgetProtocol] | None = None, 
+          options: WidgetOptions = {},
+          record: bool = True) -> MagicField[_W]:
+    ...
+
+@overload
+def field(obj: Any, 
+          *,
+          name: str = "", 
+          widget_type: str | type[WidgetProtocol] | None = None, 
+          options: WidgetOptions = {},
+          record: bool = True) -> MagicField:
+    ...
 
 def field(obj: Any = MISSING,
           *, 
@@ -236,6 +255,7 @@ def field(obj: Any = MISSING,
     MagicField
     """    
     return _get_field(obj, name, widget_type, options, record, MagicField)
+
 
 def vfield(obj: Any = MISSING,
            *, 
@@ -274,13 +294,14 @@ def vfield(obj: Any = MISSING,
     """    
     return _get_field(obj, name, widget_type, options, record, MagicValueField)
 
+
 def _get_field(obj, 
                name: str, 
                widget_type: str | type[WidgetProtocol] | None, 
                options: WidgetOptions,
                record: bool,
                field_class: type[MagicField]
-               ):
+               ) -> type[MagicField]:
     options = options.copy()
     metadata = dict(widget_type=widget_type, options=options)
     
