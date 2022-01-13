@@ -56,9 +56,7 @@ class Figure(FreeWidget):
         
 
 class ConsoleTextEdit(TextEdit):
-    """
-    A text edit with console-like setting.
-    """    
+    """A text edit with console-like setting."""    
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         from qtpy.QtGui import QFont, QTextOption
@@ -95,9 +93,7 @@ class ConsoleTextEdit(TextEdit):
         
 
 class CheckButton(PushButton):
-    """
-    A checkable button.
-    """    
+    """A checkable button."""
     def __init__(self, text: str | None = None, **kwargs):
         super().__init__(text=text, **kwargs)
         self.native.setCheckable(True)

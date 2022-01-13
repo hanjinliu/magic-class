@@ -31,14 +31,14 @@ class FunctionGuiPlus(FunctionGui):
                     f"{e} in call to '{self._callable_name}{sig}'.\n"
                     "To avoid this error, you can bind a value or callback to the "
                     f"parameter:\n\n    {self._callable_name}.{missing}.bind(value)"
-                    "\n\nOr use the 'bind' option in the magicgui decorator:\n\n"
-                    f"    @magicgui({missing}={{'bind': value}})\n"
+                    "\n\nOr use the 'bind' option in the set_option decorator:\n\n"
+                    f"    @set_option({missing}={{'bind': value}})\n"
                     f"    def {self._callable_name}{sig}: ..."
                 )
                 raise TypeError(msg) from None
             else:
                 raise
-
+                    
         bound.apply_defaults()
         
         # 1. Parameter recording
@@ -71,7 +71,8 @@ class FunctionGuiPlus(FunctionGui):
                 callback(self, value, return_type)
         self.called.emit(value)
         return value
-    
+
+
     def insert(self, key: int, widget: Widget):
         """Insert widget at ``key``."""
         if isinstance(widget, (ValueWidget, ContainerWidget)):

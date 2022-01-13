@@ -1,6 +1,6 @@
 from __future__ import annotations
 from inspect import signature
-from typing import Any, Callable
+from typing import Any, Callable, TypeVar
 import warnings
 from qtpy.QtWidgets import QMenuBar, QWidget, QMainWindow, QBoxLayout
 from qtpy.QtCore import Qt
@@ -244,7 +244,9 @@ class ClassGuiBase(BaseGui):
         self._unify_label_widths()
         return None
 
-def make_gui(container: type[ContainerWidget], no_margin: bool = True):
+_C = TypeVar("_C", bound=ContainerWidget)
+
+def make_gui(container: type[_C], no_margin: bool = True) -> type[_C | ClassGuiBase]:
     """
     Make a ClassGui class from a Container widget.
     Because GUI class inherits Container here, functions that need overriden must be defined
@@ -364,6 +366,7 @@ def make_gui(container: type[ContainerWidget], no_margin: bool = True):
             for widget in self.__magicclass_children__:
                 if hasattr(widget, "reset_choices"):
                     widget.reset_choices()
+        
         
         def close(self: cls):
             current_self = self._search_parent_magicclass()

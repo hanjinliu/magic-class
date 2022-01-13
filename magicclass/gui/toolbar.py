@@ -183,13 +183,13 @@ class ToolBarGui(ContainerLikeGui):
     
     def _fast_insert(self, key: int, obj: AbstractAction | Callable) -> None:
         """
-        Insert object into the menu. Could be widget or callable.
+        Insert object into the toolbar. Could be widget or callable.
 
         Parameters
         ----------
         key : int
             Position to insert.
-        obj : Callable | MenuGuiBase | AbstractAction | Widget
+        obj : Callable or AbstractAction
             Object to insert.
         """
         if isinstance(obj, Callable):

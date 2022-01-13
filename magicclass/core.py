@@ -261,6 +261,7 @@ def magiccontext(class_: type = None,
     """    
     return _call_magicmenu(**locals(), menugui_class=ContextMenuGui)
 
+
 def magictoolbar(class_: type = None, 
                  *, 
                  close_on_run: bool = None,
@@ -429,7 +430,7 @@ def _call_magicmenu(class_: type = None,
 magicmenu.__doc__ += _call_magicmenu.__doc__
 magiccontext.__doc__ += _call_magicmenu.__doc__
 
-_HELPS: WeakValueDictionary[int, MagicTemplate] = {}
+_HELPS: WeakValueDictionary[int, MagicTemplate] = WeakValueDictionary()
 
 def build_help(ui: MagicTemplate, parent=None):
     """
