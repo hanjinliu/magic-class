@@ -6,7 +6,7 @@ from typing_extensions import Literal, _AnnotatedAlias
 from .gui.menu_gui import ContextMenuGui, MenuGui
 from .gui.toolbar import ToolBarGui
 from .gui.class_gui import ClassGui
-from .gui._base import PopUpMode, ErrorMode, MagicTemplate
+from .gui._base import PopUpMode, ErrorMode, MagicTemplate, MagicMethod
 
 if TYPE_CHECKING:
     from ._typing import WidgetType, WidgetTypeStr, PopUpModeStr, ErrorModeStr
@@ -62,7 +62,7 @@ def magicmethod(class_: _C,
                 widget_type: WidgetTypeStr | WidgetType = WidgetType.none,
                 icon_path: str | None = None,
                 parent = None,
-                ) -> type[ClassGui | _C]:
+                ) -> MagicMethod[type[ClassGui | _C]]:
     ...
 
 @overload
@@ -77,7 +77,7 @@ def magicmethod(class_: Literal[None],
                 widget_type: WidgetTypeStr | WidgetType = WidgetType.none,
                 icon_path: str | None = None,
                 parent = None,
-                ) -> Callable[[_C], type[ClassGui | _C]]:
+                ) -> Callable[[_C], MagicMethod[type[ClassGui | _C]]]:
     ...
 
 @overload

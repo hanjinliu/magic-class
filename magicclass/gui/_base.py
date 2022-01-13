@@ -1,6 +1,16 @@
 from __future__ import annotations
 from functools import wraps as functools_wraps
-from typing import Any, Callable, TYPE_CHECKING, Iterable, Iterator, TypeVar, overload, MutableSequence
+from typing import (
+    Any,
+    Callable,
+    TYPE_CHECKING,
+    Generic,
+    Iterable,
+    Iterator,
+    TypeVar,
+    overload,
+    MutableSequence
+    )
 from typing_extensions import _AnnotatedAlias
 import inspect
 import warnings
@@ -13,14 +23,29 @@ from qtpy.QtGui import QIcon
 
 from magicgui.events import Signal
 from magicgui.signature import MagicParameter
-from magicgui.widgets import FunctionGui, FileEdit, EmptyWidget, Widget, Container, Image, Table, Label
+from magicgui.widgets import (
+    FunctionGui,
+    FileEdit,
+    EmptyWidget,
+    Widget,
+    Container,
+    Image,
+    Table,
+    Label
+    )
 from magicgui.application import use_app
 from magicgui.widgets._bases.widget import Widget
 from magicgui.widgets._bases import ButtonWidget, ValueWidget
 from macrokit import Expr, Head, Symbol, symbol
 
 from .keybinding import as_shortcut
-from .mgui_ext import AbstractAction, Action, FunctionGuiPlus, PushButtonPlus, _LabeledWidgetAction, mguiLike
+from .mgui_ext import (
+    AbstractAction,
+    Action,
+    FunctionGuiPlus,
+    PushButtonPlus,
+    _LabeledWidgetAction,
+    mguiLike)
 from .utils import get_parameters, define_callback
 from ._macro import GuiMacro
 
@@ -122,7 +147,7 @@ class MagicTemplate:
     
     __init_subclass__ = check_override
     
-    def show(self) -> None:
+    def show(self, run: bool) -> None:
         raise NotImplementedError()
     
     def hide(self) -> None:
@@ -277,7 +302,7 @@ class MagicTemplate:
         RuntimeError
             If ``child_clsname`` was not found in child widget list. This error will NEVER be raised
             in the user's side.
-        """        
+        """
         for child_instance in self._iter_child_magicclasses():
             if child_instance.__class__.__name__ == child_clsname:
                 # get the position of predefined child widget
@@ -1063,9 +1088,10 @@ def nested_function_gui_callback(gui: MagicTemplate, fgui: FunctionGui):
         gui.macro._last_setval = None
     return _after_run
 
+_M = TypeVar("_M", bound=MagicTemplate)
 
-class MagicMethod:
-    def __init__(self, parent: MagicTemplate):
+class MagicMethod(Generic[_M]):
+    def __init__(self, parent: _M):
         self.__name__ = parent.__class__.__name__
         self.__qualname__ = parent.__class__.__qualname__
         self.__doc__ = parent.__class__.__doc__
@@ -1076,5 +1102,24 @@ class MagicMethod:
             )
     
     def __call__(self):
-        self.widget.show()
+        self.widget.show(False)
+        
+    def __get__(self, obj, objtype=None) -> MagicMethod[_M]:
+        if obj is None:
+            return self
+        out = self.__class__(self.widget)
+        sig = self.__signature__
+        
+        out.__signature__ = MagicMethodSignature(
+            [],
+            gui_options=MagicMethodSignature.get_gui_options(sig),
+            caller_options=sig.caller_options,
+            additional_options=sig.additional_options
+            )
+        return out
     
+    def wraps(self, 
+              method: Callable | None = None,
+              *, 
+              template: Callable | None = None) -> Callable:
+        return self.widget.__class__.wraps(method, template=template)

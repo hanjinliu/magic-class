@@ -190,6 +190,8 @@ class ClassGuiBase(BaseGui):
                         try:
                             widget = self._create_widget_from_method(widget)
                         except Exception:
+                            msg = f"Could not convert {widget!r} into a widget."
+                            warnings.warn(msg, UserWarning)
                             continue
                     
                     elif hasattr(widget, "__magicclass_parent__") or \
