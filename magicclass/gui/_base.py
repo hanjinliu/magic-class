@@ -367,12 +367,6 @@ class MagicTemplate:
     
     def _create_widget_from_method(self, obj: Callable):
         """Convert instance methods into GUI objects, such as push buttons or actions."""
-        if isinstance(obj, MagicMethod):
-            obj.widget.__magicclass_parent__ = self
-            self.__magicclass_children__.append(obj.widget)
-            obj.widget._my_symbol = Symbol(obj.widget.name)
-            setattr(self, obj.widget.name, obj.widget)
-            
         text = obj.__name__.replace("_", " ")
         widget = self._component_class(name=obj.__name__, text=text, gui_only=True)
 
@@ -1087,41 +1081,3 @@ def nested_function_gui_callback(gui: MagicTemplate, fgui: FunctionGui):
         gui.macro.append(expr)
         gui.macro._last_setval = None
     return _after_run
-
-_M = TypeVar("_M", bound=MagicTemplate)
-
-class MagicMethod(Generic[_M]):
-    def __init__(self, parent: _M):
-        self.__name__ = parent.__class__.__name__
-        self.__qualname__ = parent.__class__.__qualname__
-        self.__doc__ = parent.__class__.__doc__
-        self.widget = parent
-        self.__signature__ = MagicMethodSignature(
-            [inspect.Parameter("self", inspect.Parameter.POSITIONAL_OR_KEYWORD)],
-            additional_options={"record": False}
-            )
-    
-    def __call__(self):
-        self.widget.native.move(screen_center() - self.widget.native.rect().center())
-        self.widget.show(False)
-        
-    def __get__(self, obj, objtype=None) -> MagicMethod[_M]:
-        if obj is None:
-            return self
-        out = self.__class__(self.widget)
-        sig = self.__signature__
-        
-        out.__signature__ = MagicMethodSignature(
-            [],
-            gui_options=MagicMethodSignature.get_gui_options(sig),
-            caller_options=sig.caller_options,
-            additional_options=sig.additional_options
-            )
-        return out
-    
-    @functools_wraps(MagicTemplate.wraps)
-    def wraps(self, 
-              method: Callable | None = None,
-              *, 
-              template: Callable | None = None) -> Callable:
-        return self.widget.__class__.wraps(method, template=template)

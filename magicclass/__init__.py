@@ -5,7 +5,6 @@ from .core import (
     magicmenu,
     magiccontext,
     magictoolbar, 
-    magicmethod,
     Parameters,
     Bound,
     build_help

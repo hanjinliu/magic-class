@@ -1,1 +1,1 @@
-from .napari import to_napari
+"""Extension of magic-class widgets."""

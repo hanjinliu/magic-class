@@ -6,7 +6,7 @@ from typing_extensions import Literal, _AnnotatedAlias
 from .gui.menu_gui import ContextMenuGui, MenuGui
 from .gui.toolbar import ToolBarGui
 from .gui.class_gui import ClassGui
-from .gui._base import PopUpMode, ErrorMode, MagicTemplate, MagicMethod
+from .gui._base import PopUpMode, ErrorMode, MagicTemplate
 
 if TYPE_CHECKING:
     from ._typing import WidgetType, WidgetTypeStr, PopUpModeStr, ErrorModeStr
@@ -50,35 +50,6 @@ def magicclass(class_: Literal[None],
                ) -> Callable[[_C], type[ClassGui | _C]]:
     ...
 
-@overload
-def magicmethod(class_: _C,
-                *,
-                layout: Layout = "vertical", 
-                labels: bool = True, 
-                name: str | None = None,
-                close_on_run: bool | None = None,
-                popup_mode: PopUpModeStr | PopUpMode | None = None,
-                error_mode: ErrorModeStr | ErrorMode | None = None,
-                widget_type: WidgetTypeStr | WidgetType = WidgetType.none,
-                icon_path: str | None = None,
-                parent = None,
-                ) -> MagicMethod[type[ClassGui | _C]]:
-    ...
-
-@overload
-def magicmethod(class_: Literal[None],
-                *,
-                layout: Layout = "vertical", 
-                labels: bool = True, 
-                name: str | None = None,
-                close_on_run: bool | None = None,
-                popup_mode: PopUpModeStr | PopUpMode | None = None,
-                error_mode: ErrorModeStr | ErrorMode | None = None,
-                widget_type: WidgetTypeStr | WidgetType = WidgetType.none,
-                icon_path: str | None = None,
-                parent = None,
-                ) -> Callable[[_C], MagicMethod[type[ClassGui | _C]]]:
-    ...
 
 @overload
 def magicmenu(class_: _C, 

@@ -27,7 +27,7 @@ from .gui.class_gui import (
     ToolBoxClassGui,
     ListClassGui,
     )
-from .gui._base import PopUpMode, ErrorMode, defaults, MagicTemplate, check_override, MagicMethod
+from .gui._base import PopUpMode, ErrorMode, defaults, MagicTemplate, check_override
 from .gui import ContextMenuGui, MenuGui, MenuGuiBase, ToolBarGui
 from ._app import get_app
 from ._typing import WidgetType, WidgetTypeStr, PopUpModeStr, ErrorModeStr
@@ -231,72 +231,6 @@ def magicclass(class_: type | None = None,
     else:
         return wrapper(class_)
 
-
-def magicmethod(class_: type = None,
-                *,
-                layout: str = "vertical", 
-                labels: bool = True, 
-                name: str = None,
-                close_on_run: bool = None,
-                popup_mode: PopUpModeStr | PopUpMode = None,
-                error_mode: ErrorModeStr | ErrorMode = None,
-                widget_type: WidgetTypeStr | WidgetType = WidgetType.none,
-                icon_path: str = None,
-                parent = None):
-    """
-    Create a method-like magicclass.
-    
-    .. code-block:: python
-    
-        @magicclass
-        class UI:
-            @magicmethod
-            class button:
-                # this widget will appear as a push button, and shown when the button
-                # is clicked.
-                def func(self): ...
-            
-    Parameters
-    ----------
-    class_ : type, optional
-        Class to be decorated.
-    layout : str, "vertical" or "horizontal", default is "vertical"
-        Layout of the main widget.
-    labels : bool, default is True
-        If true, magicgui labels are shown.
-    name : str
-        Name of GUI.
-    close_on_run : bool, default is True
-        If True, magicgui created by every method will be deleted after the method is completed without
-        exceptions, i.e. magicgui is more like a dialog.
-    popup : bool, default is True
-        Deprecated.
-    popup_mode : str or PopUpMode, default is PopUpMode.popup
-        Option of how to popup FunctionGui widget when a button is clicked.
-    error_mode : str or ErrorMode, default is ErrorMode.msgbox
-        Option of how to raise errors during function calls.
-    widget_type : WidgetType or str, optional
-        Widget type of container.
-    icon_path : str, optional
-        Path to the icon image.
-    parent : magicgui.widgets._base.Widget, optional
-        Parent widget if exists.
-    
-    Returns
-    -------
-    Decorated class or decorator.
-    """    
-    _locals = locals()
-    _locals.pop("class_")
-    
-    def wrapper(cls):
-        magic_obj = magicclass(cls, **_locals)
-        return MagicMethod(magic_obj())
-        
-    if class_ is None:
-        return wrapper
-    else:
-        return wrapper(class_)
 
 def magicmenu(class_: type = None, 
               *, 
