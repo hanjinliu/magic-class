@@ -7,23 +7,10 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
-   magicclass.widgets.napari
-   magicclass.widgets.pyvista
    magicclass.widgets.pywidgets
-   magicclass.widgets.qtconsole
-   magicclass.widgets.qtgraph
-   magicclass.widgets.tests
 
 Submodules
 ----------
-
-magicclass.widgets.console module
----------------------------------
-
-.. automodule:: magicclass.widgets.console
-   :members:
-   :undoc-members:
-   :show-inheritance:
 
 magicclass.widgets.containers module
 ------------------------------------

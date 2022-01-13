@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.gui package &mdash; magic-class 0.5.16 documentation</title>
+  <title>magicclass.gui package &mdash; magic-class 0.5.17 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -19,7 +19,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="magicclass.type_matching package" href="magicclass.type_matching.html" />
-    <link rel="prev" title="magicclass.ext package" href="magicclass.ext.html" /> 
+    <link rel="prev" title="magicclass.ext.qtconsole package" href="magicclass.ext.qtconsole.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -30,7 +30,7 @@
             <a href="index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.16
+                0.5.17
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -100,7 +100,7 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="magicclass.gui.class_gui.make_gui">
-<span class="sig-prename descclassname"><span class="pre">magicclass.gui.class_gui.</span></span><span class="sig-name descname"><span class="pre">make_gui</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">container</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">type</span><span class="p"><span class="pre">[</span></span><span class="pre">magicgui.widgets._bases.container_widget.ContainerWidget</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_margin</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/gui/class_gui.html#make_gui"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.gui.class_gui.make_gui" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">magicclass.gui.class_gui.</span></span><span class="sig-name descname"><span class="pre">make_gui</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">container</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">type</span><span class="p"><span class="pre">[</span></span><span class="pre">_C</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_margin</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">type</span><span class="p"><span class="pre">[</span></span><span class="pre">_C</span> <span class="p"><span class="pre">|</span></span> <a class="reference internal" href="#magicclass.gui.class_gui.ClassGuiBase" title="magicclass.gui.class_gui.ClassGuiBase"><span class="pre">ClassGuiBase</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/magicclass/gui/class_gui.html#make_gui"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.gui.class_gui.make_gui" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make a ClassGui class from a Container widget.
 Because GUI class inherits Container here, functions that need overriden must be defined
 here, not in ClassGuiBase.</p>
@@ -736,8 +736,8 @@ This class makes it easier to combine QMenu to magicgui.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.gui.mgui_ext.WidgetAction">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.gui.mgui_ext.</span></span><span class="sig-name descname"><span class="pre">WidgetAction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">widget</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">magicgui.widgets._bases.widget.Widget</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/gui/mgui_ext.html#WidgetAction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.gui.mgui_ext.WidgetAction" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#magicclass.gui.mgui_ext.AbstractAction" title="magicclass.gui.mgui_ext.AbstractAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.gui.mgui_ext.AbstractAction</span></code></a></p>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.gui.mgui_ext.</span></span><span class="sig-name descname"><span class="pre">WidgetAction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">widget</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">magicclass.gui.mgui_ext._W</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/gui/mgui_ext.html#WidgetAction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.gui.mgui_ext.WidgetAction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#magicclass.gui.mgui_ext.AbstractAction" title="magicclass.gui.mgui_ext.AbstractAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.gui.mgui_ext.AbstractAction</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">magicclass.gui.mgui_ext._W</span></code>]</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="magicclass.gui.mgui_ext.WidgetAction.native">
 <span class="sig-name descname"><span class="pre">native</span></span><em class="property"><span class="pre">:</span> <span class="pre">QAction</span> <span class="p"><span class="pre">|</span></span> <span class="pre">QWidgetAction</span></em><a class="headerlink" href="#magicclass.gui.mgui_ext.WidgetAction.native" title="Permalink to this definition">¶</a></dt>
@@ -869,7 +869,7 @@ This class makes it easier to combine QMenu to magicgui.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="magicclass.ext.html" class="btn btn-neutral float-left" title="magicclass.ext package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="magicclass.ext.qtconsole.html" class="btn btn-neutral float-left" title="magicclass.ext.qtconsole package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="magicclass.type_matching.html" class="btn btn-neutral float-right" title="magicclass.type_matching package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

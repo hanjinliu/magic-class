@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.gui.menu_gui &mdash; magic-class 0.5.16 documentation</title>
+  <title>magicclass.gui.menu_gui &mdash; magic-class 0.5.17 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -27,7 +27,7 @@
             <a href="../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.16
+                0.5.17
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -244,7 +244,7 @@
                 <span class="n">_hide_labels</span> <span class="o">=</span> <span class="p">(</span><span class="n">_LabeledWidgetAction</span><span class="p">,</span> <span class="n">ButtonWidget</span><span class="p">,</span> <span class="n">FreeWidget</span><span class="p">,</span> <span class="n">Label</span><span class="p">,</span> 
                                 <span class="n">FunctionGui</span><span class="p">,</span> <span class="n">Image</span><span class="p">,</span> <span class="n">Table</span><span class="p">)</span>
                 <span class="n">_obj</span> <span class="o">=</span> <span class="n">obj</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">widget</span><span class="p">,</span> <span class="n">_hide_labels</span><span class="p">):</span>
+                <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">widget</span><span class="p">,</span> <span class="n">_hide_labels</span><span class="p">))</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">:</span>
                     <span class="n">_obj</span> <span class="o">=</span> <span class="n">_LabeledWidgetAction</span><span class="o">.</span><span class="n">from_action</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
                 <span class="n">_obj</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span>
                 <span class="n">insert_action_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">_obj</span><span class="o">.</span><span class="n">native</span><span class="p">)</span>

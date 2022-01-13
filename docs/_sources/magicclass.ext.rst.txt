@@ -1,16 +1,16 @@
 magicclass.ext package
 ======================
 
-Submodules
-----------
+Subpackages
+-----------
 
-magicclass.ext.napari module
-----------------------------
+.. toctree::
+   :maxdepth: 4
 
-.. automodule:: magicclass.ext.napari
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   magicclass.ext.napari
+   magicclass.ext.pyqtgraph
+   magicclass.ext.pyvista
+   magicclass.ext.qtconsole
 
 Module contents
 ---------------

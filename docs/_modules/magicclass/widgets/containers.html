@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.widgets.containers &mdash; magic-class 0.5.16 documentation</title>
+  <title>magicclass.widgets.containers &mdash; magic-class 0.5.17 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -27,7 +27,7 @@
             <a href="../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.16
+                0.5.17
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -224,7 +224,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_inner_widget</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_layout</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_area</span><span class="o">.</span><span class="n">setWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_inner_widget</span><span class="p">)</span>
         
-        <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">QtW</span><span class="o">.</span><span class="n">QHBoxLayout</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">QtW</span><span class="o">.</span><span class="n">QVBoxLayout</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scroll_area</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">setContentsMargins</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 
@@ -249,7 +249,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_inner_widget</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_layout</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_area</span><span class="o">.</span><span class="n">setWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_inner_widget</span><span class="p">)</span>
         
-        <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">QtW</span><span class="o">.</span><span class="n">QHBoxLayout</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">QtW</span><span class="o">.</span><span class="n">QVBoxLayout</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scroll_area</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">setContentsMargins</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="n">QtW</span><span class="o">.</span><span class="n">QScroller</span><span class="o">.</span><span class="n">grabGesture</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scroll_area</span><span class="p">,</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QScroller</span><span class="o">.</span><span class="n">LeftMouseButtonGesture</span><span class="p">)</span>

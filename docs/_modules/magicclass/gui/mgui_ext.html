@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.gui.mgui_ext &mdash; magic-class 0.5.16 documentation</title>
+  <title>magicclass.gui.mgui_ext &mdash; magic-class 0.5.17 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -27,7 +27,7 @@
             <a href="../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.16
+                0.5.17
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -77,10 +77,9 @@
              
   <h1>Source code for magicclass.gui.mgui_ext</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Any</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">TypeVar</span>
 <span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">from</span> <span class="nn">PyQt5.QtWidgets</span> <span class="kn">import</span> <span class="n">QMenu</span>
-<span class="kn">from</span> <span class="nn">qtpy.QtWidgets</span> <span class="kn">import</span> <span class="n">QPushButton</span><span class="p">,</span> <span class="n">QAction</span><span class="p">,</span> <span class="n">QWidgetAction</span><span class="p">,</span> <span class="n">QToolButton</span><span class="p">,</span> <span class="n">QWidget</span>
+<span class="kn">from</span> <span class="nn">qtpy.QtWidgets</span> <span class="kn">import</span> <span class="n">QPushButton</span><span class="p">,</span> <span class="n">QAction</span><span class="p">,</span> <span class="n">QWidgetAction</span><span class="p">,</span> <span class="n">QToolButton</span><span class="p">,</span> <span class="n">QWidget</span><span class="p">,</span> <span class="n">QMenu</span>
 <span class="kn">from</span> <span class="nn">qtpy.QtGui</span> <span class="kn">import</span> <span class="n">QIcon</span>
 <span class="kn">from</span> <span class="nn">qtpy.QtCore</span> <span class="kn">import</span> <span class="n">QSize</span>
 <span class="kn">from</span> <span class="nn">magicgui.events</span> <span class="kn">import</span> <span class="n">Signal</span>
@@ -110,14 +109,14 @@
                     <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2"> in call to &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_callable_name</span><span class="si">}{</span><span class="n">sig</span><span class="si">}</span><span class="s2">&#39;.</span><span class="se">\n</span><span class="s2">&quot;</span>
                     <span class="s2">&quot;To avoid this error, you can bind a value or callback to the &quot;</span>
                     <span class="sa">f</span><span class="s2">&quot;parameter:</span><span class="se">\n\n</span><span class="s2">    </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_callable_name</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">missing</span><span class="si">}</span><span class="s2">.bind(value)&quot;</span>
-                    <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">Or use the &#39;bind&#39; option in the magicgui decorator:</span><span class="se">\n\n</span><span class="s2">&quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;    @magicgui(</span><span class="si">{</span><span class="n">missing</span><span class="si">}</span><span class="s2">=</span><span class="se">{{</span><span class="s2">&#39;bind&#39;: value</span><span class="se">}}</span><span class="s2">)</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">Or use the &#39;bind&#39; option in the set_option decorator:</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;    @set_option(</span><span class="si">{</span><span class="n">missing</span><span class="si">}</span><span class="s2">=</span><span class="se">{{</span><span class="s2">&#39;bind&#39;: value</span><span class="se">}}</span><span class="s2">)</span><span class="se">\n</span><span class="s2">&quot;</span>
                     <span class="sa">f</span><span class="s2">&quot;    def </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_callable_name</span><span class="si">}{</span><span class="n">sig</span><span class="si">}</span><span class="s2">: ...&quot;</span>
                 <span class="p">)</span>
                 <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span>
-
+                    
         <span class="n">bound</span><span class="o">.</span><span class="n">apply_defaults</span><span class="p">()</span>
         
         <span class="c1"># 1. Parameter recording</span>
@@ -150,7 +149,8 @@
                 <span class="n">callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">return_type</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">called</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">value</span>
-    
+
+
 <div class="viewcode-block" id="FunctionGuiPlus.insert"><a class="viewcode-back" href="../../../magicclass.gui.html#magicclass.gui.mgui_ext.FunctionGuiPlus.insert">[docs]</a>    <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">widget</span><span class="p">:</span> <span class="n">Widget</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Insert widget at ``key``.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="p">(</span><span class="n">ValueWidget</span><span class="p">,</span> <span class="n">ContainerWidget</span><span class="p">)):</span>
@@ -213,8 +213,9 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_icon_path</span>
     
     <span class="nd">@icon_path</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">icon_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span><span class="nb">str</span><span class="p">):</span>
-        <span class="n">icon</span> <span class="o">=</span> <span class="n">QIcon</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+    <span class="k">def</span> <span class="nf">icon_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="n">icon</span> <span class="o">=</span> <span class="n">QIcon</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">icon</span><span class="p">)</span>
     
     <span class="nd">@property</span>
@@ -421,11 +422,10 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_icon_path</span>
     
     <span class="nd">@icon_path</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">icon_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">icon_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="n">path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="n">icon</span> <span class="o">=</span> <span class="n">QIcon</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">icon</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_icon_path</span> <span class="o">=</span> <span class="n">path</span>
     
 <div class="viewcode-block" id="Action.from_options"><a class="viewcode-back" href="../../../magicclass.gui.html#magicclass.gui.mgui_ext.Action.from_options">[docs]</a>    <span class="k">def</span> <span class="nf">from_options</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="n">Callable</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">options</span><span class="p">):</span>
@@ -439,9 +439,11 @@
                 <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">None</span></div></div>
 
-<div class="viewcode-block" id="WidgetAction"><a class="viewcode-back" href="../../../magicclass.gui.html#magicclass.gui.mgui_ext.WidgetAction">[docs]</a><span class="k">class</span> <span class="nc">WidgetAction</span><span class="p">(</span><span class="n">AbstractAction</span><span class="p">):</span>
-    
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">:</span> <span class="n">Widget</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="n">_W</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;_W&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">Widget</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="WidgetAction"><a class="viewcode-back" href="../../../magicclass.gui.html#magicclass.gui.mgui_ext.WidgetAction">[docs]</a><span class="k">class</span> <span class="nc">WidgetAction</span><span class="p">(</span><span class="n">AbstractAction</span><span class="p">,</span> <span class="n">Generic</span><span class="p">[</span><span class="n">_W</span><span class="p">]):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">:</span> <span class="n">_W</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="p">(</span><span class="n">Widget</span><span class="p">,</span> <span class="n">mguiLike</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The first argument must be a magicgui-like widget, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         
@@ -488,7 +490,8 @@
     <span class="nd">@text</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-    
+
+
     <span class="k">def</span> <span class="nf">_labeled_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">_labeled_widget</span><span class="p">()</span>
     
@@ -496,9 +499,11 @@
 <div class="viewcode-block" id="WidgetAction.render"><a class="viewcode-back" href="../../../magicclass.gui.html#magicclass.gui.mgui_ext.WidgetAction.render">[docs]</a>    <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">render</span><span class="p">()</span></div>
 
+
     <span class="k">def</span> <span class="nf">_repr_png_</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">_repr_png_</span><span class="p">()</span></div>
-    
+
+
 <span class="k">class</span> <span class="nc">_LabeledWidgetAction</span><span class="p">(</span><span class="n">WidgetAction</span><span class="p">):</span>
     <span class="n">widget</span><span class="p">:</span> <span class="n">_LabeledWidget</span>
     

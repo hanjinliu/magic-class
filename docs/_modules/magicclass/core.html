@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.core &mdash; magic-class 0.5.16 documentation</title>
+  <title>magicclass.core &mdash; magic-class 0.5.17 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -27,7 +27,7 @@
             <a href="../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.16
+                0.5.17
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -193,8 +193,8 @@
 <span class="sd">        @magicclass</span>
 <span class="sd">        class C:</span>
 <span class="sd">            ...</span>
-<span class="sd">        c = C(a=0)</span>
-<span class="sd">        c.show()</span>
+<span class="sd">        ui = C()</span>
+<span class="sd">        ui.show()  # open GUI</span>
 <span class="sd">            </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -338,6 +338,7 @@
 <span class="sd">    Decorator that can convert a Python class into a context menu.</span>
 <span class="sd">    &quot;&quot;&quot;</span>    
     <span class="k">return</span> <span class="n">_call_magicmenu</span><span class="p">(</span><span class="o">**</span><span class="nb">locals</span><span class="p">(),</span> <span class="n">menugui_class</span><span class="o">=</span><span class="n">ContextMenuGui</span><span class="p">)</span></div>
+
 
 <div class="viewcode-block" id="magictoolbar"><a class="viewcode-back" href="../../magicclass.html#magicclass.core.magictoolbar">[docs]</a><span class="k">def</span> <span class="nf">magictoolbar</span><span class="p">(</span><span class="n">class_</span><span class="p">:</span> <span class="nb">type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
                  <span class="o">*</span><span class="p">,</span> 
@@ -507,7 +508,7 @@
 <span class="n">magicmenu</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">+=</span> <span class="n">_call_magicmenu</span><span class="o">.</span><span class="vm">__doc__</span>
 <span class="n">magiccontext</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">+=</span> <span class="n">_call_magicmenu</span><span class="o">.</span><span class="vm">__doc__</span>
 
-<span class="n">_HELPS</span><span class="p">:</span> <span class="n">WeakValueDictionary</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">MagicTemplate</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">_HELPS</span><span class="p">:</span> <span class="n">WeakValueDictionary</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">MagicTemplate</span><span class="p">]</span> <span class="o">=</span> <span class="n">WeakValueDictionary</span><span class="p">()</span>
 
 <div class="viewcode-block" id="build_help"><a class="viewcode-back" href="../../magicclass.html#magicclass.core.build_help">[docs]</a><span class="k">def</span> <span class="nf">build_help</span><span class="p">(</span><span class="n">ui</span><span class="p">:</span> <span class="n">MagicTemplate</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
