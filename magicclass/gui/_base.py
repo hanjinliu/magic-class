@@ -1119,6 +1119,7 @@ class MagicMethod(Generic[_M]):
             )
         return out
     
+    @functools_wraps(MagicTemplate.wraps)
     def wraps(self, 
               method: Callable | None = None,
               *, 
