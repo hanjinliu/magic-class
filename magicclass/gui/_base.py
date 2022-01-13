@@ -1102,6 +1102,7 @@ class MagicMethod(Generic[_M]):
             )
     
     def __call__(self):
+        self.widget.native.move(screen_center() - self.widget.native.rect().center())
         self.widget.show(False)
         
     def __get__(self, obj, objtype=None) -> MagicMethod[_M]:
