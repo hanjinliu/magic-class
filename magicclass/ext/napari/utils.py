@@ -1,6 +1,6 @@
 from __future__ import annotations
-from ..gui._base import BaseGui
-from ..gui import MenuGui, ToolBarGui, ClassGui
+from ...gui._base import BaseGui
+from ...gui import MenuGui, ToolBarGui, ClassGui
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
