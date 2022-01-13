@@ -26,11 +26,6 @@ from .sequence import ListEdit, TupleEdit
 from .threading import ProgressWidget, progress
 from .utils import FreeWidget
 
-from .qtconsole import *
-from .qtgraph import *
-from .napari import *
-from .pyvista import *
-
 
 __all__ = ["ListWidget", 
            "Figure",

@@ -1,5 +1,6 @@
 from magicclass import magicclass, field, click, magiccontext
-from magicclass.widgets import QtPlotCanvas, QtConsole
+from magicclass.ext.pyqtgraph import QtPlotCanvas
+from magicclass.ext.qtconsole import QtConsole
 
 @magicclass(labels=False, layout="horizontal")
 class Layer:

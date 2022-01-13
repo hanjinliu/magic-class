@@ -215,7 +215,7 @@ class ToolBarGui(ContainerLikeGui):
                 _hide_labels = (_LabeledWidgetAction, ButtonWidget, FreeWidget, Label, 
                                 FunctionGui, Image, Table)
                 _obj = obj
-                if not isinstance(obj.widget, _hide_labels):
+                if (not isinstance(obj.widget, _hide_labels)) and self.labels:
                     _obj = _LabeledWidgetAction.from_action(obj)
                 _obj.parent = self
                 insert_action_like(self.native, key, _obj.native)

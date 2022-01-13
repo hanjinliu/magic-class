@@ -107,6 +107,7 @@ def show_messagebox(mode: str | MessageBoxMode = MessageBoxMode.INFO,
     result = show_dialog(parent, title, text)
     return result in (QMessageBox.Ok, QMessageBox.Yes)
 
+
 def open_url(link: str) -> None:
     """
     Open the link with the default browser.
@@ -119,6 +120,7 @@ def open_url(link: str) -> None:
     from qtpy.QtGui import QDesktopServices
     from qtpy.QtCore import QUrl
     QDesktopServices.openUrl(QUrl(link))
+
 
 def to_clipboard(obj: Any) -> None:
     """
@@ -151,7 +153,8 @@ def to_clipboard(obj: Any) -> None:
         clipboard.setText(obj.to_csv(sep="\t"))
     else:
         clipboard.setText(str(obj))
-        
+
+
 def screen_center():
     """
     Get the center coordinate of the screen.

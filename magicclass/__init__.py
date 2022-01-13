@@ -23,6 +23,6 @@ from .fields import field, vfield
 from .gui._base import wraps, defaults, MagicTemplate, PopUpMode
 from ._typing import WidgetType
 from .gui.keybinding import Key
-from . import widgets, utils, ext
+from . import widgets, utils
 
 from magicgui import *

@@ -345,7 +345,8 @@ class MagicTemplate:
         if isinstance(obj, MagicMethod):
             obj.widget.__magicclass_parent__ = self
             self.__magicclass_children__.append(obj.widget)
-            obj.widget._my_symbol = Symbol(obj.__name__)
+            obj.widget._my_symbol = Symbol(obj.widget.name)
+            setattr(self, obj.widget.name, obj.widget)
             
         text = obj.__name__.replace("_", " ")
         widget = self._component_class(name=obj.__name__, text=text, gui_only=True)
@@ -988,8 +989,10 @@ def _field_as_getter(self, bound_value: MagicField):
         return bound_value.as_getter(ins)(w)
     return _func
 
+
 def _need_record(func: Callable):
     return get_additional_option(func, "record", True)
+
 
 def value_widget_callback(gui: MagicTemplate,
                           widget: ValueWidget, 
@@ -1028,6 +1031,7 @@ def value_widget_callback(gui: MagicTemplate,
         return None
     return _set_value
 
+
 def nested_function_gui_callback(gui: MagicTemplate, fgui: FunctionGui):
     """
     Define a FunctionGui callback, including macro recording.
@@ -1064,8 +1068,12 @@ class MagicMethod:
     def __init__(self, parent: MagicTemplate):
         self.__name__ = parent.__class__.__name__
         self.__qualname__ = parent.__class__.__qualname__
+        self.__doc__ = parent.__class__.__doc__
         self.widget = parent
-        self.__signature__ = MagicMethodSignature(additional_options={"record": False})
+        self.__signature__ = MagicMethodSignature(
+            [inspect.Parameter("self", inspect.Parameter.POSITIONAL_OR_KEYWORD)],
+            additional_options={"record": False}
+            )
     
     def __call__(self):
         self.widget.show()

@@ -252,7 +252,36 @@ def test_post_append():
     assert str(ui.macro[-1]) == "ui.Menu.new_func_2()"
     ui.Tool["new_func_3"].changed()
     assert str(ui.macro[-1]) == "ui.Tool.new_func_3()"
+
+
+def test_labels_arg():
+    """Test 'labels=False' works in menubar and toolbar."""
+    @magicclass
+    class A:
+        @magicmenu
+        class Menu:
+            a = field(int)
+                
+        @magictoolbar
+        class Tool:
+            a = field(int)
     
+    ui = A()
     
+    assert ui.Menu.a._labeled_widget() is not None
+    assert ui.Tool.a._labeled_widget() is not None
     
+    @magicclass
+    class A:
+        @magicmenu(labels=False)
+        class Menu:
+            a = field(int)
+                
+        @magictoolbar(labels=False)
+        class Tool:
+            a = field(int)
     
+    ui = A()
+    
+    assert ui.Menu.a._labeled_widget() is None
+    assert ui.Tool.a._labeled_widget() is None
