@@ -10,7 +10,7 @@ from magicgui.widgets._concrete import _LabeledWidget
 from macrokit import Symbol
 
 from .mgui_ext import PushButtonPlus
-from .toolbar import ToolBarGui
+from .toolbar import ToolBarGui, QtTabToolBar
 from .menu_gui import MenuGui, ContextMenuGui
 from ._base import BaseGui, PopUpMode, ErrorMode, value_widget_callback, nested_function_gui_callback
 from .utils import define_callback, MagicClassConstructionError, define_context_menu
@@ -127,7 +127,6 @@ class ClassGuiBase(BaseGui):
                 
                 if isinstance(widget, MenuGui):
                     # Add menubar to container
-                    # widget.__magicclass_parent__ = self
                     if self._menubar is None:
                         # if widget has no menubar, a new one should be created.
                         self._menubar = QMenuBar(parent=self.native)
@@ -138,14 +137,14 @@ class ClassGuiBase(BaseGui):
                             if hasattr(self._widget, "_scroll_area"):
                                 _layout: QBoxLayout = self._widget._qwidget.layout()
                             else:
-                                _layout = self.native.layout()
+                                _layout = self._widget._layout
                             if _layout.menuBar() is None:
                                 _layout.setMenuBar(self._menubar)
                             else:
                                 raise RuntimeError(
                                     "Cannot add menubar after adding a toolbar in a non-main window. "
-                                    "Use maigcclass(widget_type='mainwindow') instead, or reorder "
-                                    "class definition."
+                                    "Use maigcclass(widget_type='mainwindow') instead, or define the"
+                                    "menu class before toolbar class."
                                     )
                     
                     widget.native.setParent(self._menubar, widget.native.windowFlags())
@@ -154,7 +153,6 @@ class ClassGuiBase(BaseGui):
                 
                 elif isinstance(widget, ContextMenuGui):
                     # Add context menu to container
-                    # widget.__magicclass_parent__ = self
                     self.native.setContextMenuPolicy(Qt.CustomContextMenu)
                     self.native.customContextMenuRequested.connect(
                         define_context_menu(widget, self.native)
@@ -162,23 +160,27 @@ class ClassGuiBase(BaseGui):
                     _hist.append((name, type(attr), "ContextMenuGui"))
                 
                 elif isinstance(widget, ToolBarGui):
-                    # widget.__magicclass_parent__ = self
-                    if issubclass(self.__class__, MainWindow):
-                        self.native: QMainWindow
-                        self.native.addToolBar(widget.native)
-                    else:
-                        # self is not a main window object
-                        if hasattr(self._widget, "_scroll_area"):
-                            _layout: QBoxLayout = self._widget._qwidget.layout()
+                    if self._toolbar is None:
+                        self._toolbar = QtTabToolBar(widget.name, self.native)
+                        if issubclass(self.__class__, MainWindow):
+                            self.native: QMainWindow
+                            self.native.addToolBar(self._toolbar)
                         else:
-                            _layout = self.native.layout()
-                        if _layout.menuBar() is None:
-                            _layout.setMenuBar(widget.native)
-                        else:
-                            _layout.insertWidget(0, widget.native, alignment=Qt.AlignTop)
-                            widget.native.setContentsMargins(0, 0, 0, 0)
-                            n_insert += 1
-                            
+                            # self is not a main window object
+                            if hasattr(self._widget, "_scroll_area"):
+                                _layout: QBoxLayout = self._widget._qwidget.layout()
+                            else:
+                                _layout = self._widget._layout
+                                # _layout = self.native.layout()
+                            if _layout.menuBar() is None:
+                                _layout.setMenuBar(self._toolbar)
+                            else:
+                                _layout.insertWidget(0, self._toolbar, alignment=Qt.AlignTop)
+                                self._toolbar.setContentsMargins(0, 0, 0, 0)
+                                n_insert += 1
+                    
+                    widget.native.setParent(self._toolbar, widget.native.windowFlags())
+                    self._toolbar.addToolBar(widget.native, widget.name.replace("_", " "))
                     _hist.append((name, type(attr), "ToolBarGui"))
                 
                 elif isinstance(widget, (Widget, Callable)):
@@ -272,6 +274,7 @@ def make_gui(container: type[_C], no_margin: bool = True) -> type[_C | ClassGuiB
                 self.parent = parent
                 
             self._menubar = None
+            self._toolbar = None
             
             self.native.setObjectName(self.name)
             self.native.setWindowTitle(self.name)

@@ -6,7 +6,7 @@ from magicgui.widgets import Image, Table, Label, FunctionGui
 from magicgui.widgets._bases import ButtonWidget
 from magicgui.widgets._bases.widget import Widget
 from macrokit import Symbol
-from qtpy.QtWidgets import QToolBar, QMenu, QWidgetAction
+from qtpy.QtWidgets import QToolBar, QMenu, QWidgetAction, QTabWidget
 from qtpy.QtCore import Qt
 
 from .mgui_ext import AbstractAction, _LabeledWidgetAction, WidgetAction, ToolButtonPlus
@@ -34,6 +34,22 @@ def _check_popupmode(popup_mode: PopUpMode):
         popup_mode = PopUpMode.parentlast
     
     return popup_mode
+
+
+class QtTabToolBar(QToolBar):
+    """ToolBar widget with tabs."""
+    def __init__(self, title: str, parent=None):
+        super().__init__(title, parent)
+        self._tab = QTabWidget(self)
+        self._tab.setContentsMargins(0, 0, 0, 0)
+        self._tab.setTabBarAutoHide(True)
+        self.addWidget(self._tab)
+    
+    def addToolBar(self, toolbar: QToolBar, name: str) -> None:
+        """Add a toolbar as a tab."""
+        self._tab.addTab(toolbar, name)
+        toolbar.setContentsMargins(0, 0, 0, 0)
+        return None
 
 
 class ToolBarGui(ContainerLikeGui):
