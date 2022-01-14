@@ -5,7 +5,7 @@ from typing_extensions import Literal, _AnnotatedAlias
 
 from .gui.menu_gui import ContextMenuGui, MenuGui
 from .gui.toolbar import ToolBarGui
-from .gui.class_gui import ClassGui
+from .gui.class_gui import ClassGuiBase
 from .gui._base import PopUpMode, ErrorMode, MagicTemplate
 
 if TYPE_CHECKING:
@@ -32,7 +32,7 @@ def magicclass(class_: _C,
                widget_type: WidgetTypeStr | WidgetType = WidgetType.none,
                icon_path: str | None = None,
                parent = None,
-               ) -> type[ClassGui | _C]:
+               ) -> type[ClassGuiBase | _C]:
     ...
 
 @overload
@@ -47,7 +47,7 @@ def magicclass(class_: Literal[None],
                widget_type: WidgetTypeStr | WidgetType = WidgetType.none,
                icon_path: str | None = None,
                parent = None,
-               ) -> Callable[[_C], type[ClassGui | _C]]:
+               ) -> Callable[[_C], type[ClassGuiBase | _C]]:
     ...
 
 
