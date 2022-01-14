@@ -35,6 +35,9 @@ from ..fields import MagicField
 from ..signature import get_additional_option
 from .._app import run_app
 
+# For Containers that belong to these classes, menubar must be set to _qwidget.layout().
+_USE_OUTER_LAYOUT = (ScrollableContainer, DraggableContainer, SplitterContainer, TabbedContainer)
+
 
 class ClassGuiBase(BaseGui):
     # This class is always inherited by @magicclass decorator.
@@ -167,11 +170,11 @@ class ClassGuiBase(BaseGui):
                             self.native.addToolBar(self._toolbar)
                         else:
                             # self is not a main window object
-                            if hasattr(self._widget, "_scroll_area"):
+                            # if hasattr(self._widget, "_scroll_area"):
+                            if isinstance(self, _USE_OUTER_LAYOUT):
                                 _layout: QBoxLayout = self._widget._qwidget.layout()
                             else:
                                 _layout = self._widget._layout
-                                # _layout = self.native.layout()
                             if _layout.menuBar() is None:
                                 _layout.setMenuBar(self._toolbar)
                             else:

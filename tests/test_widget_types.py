@@ -1,8 +1,20 @@
-from magicclass import magicclass, WidgetType, build_help
+from magicclass import magicclass, magicmenu, magictoolbar, WidgetType, build_help
 
 def _make_class(t: WidgetType):
     @magicclass(widget_type=t)
     class A:
+        @magicmenu
+        class Menu:
+            pass
+        
+        @magictoolbar
+        class Tool1:
+            pass
+        
+        @magictoolbar
+        class Tool2:
+            pass
+        
         @magicclass
         class B:
             def b1(self, a: int): ...

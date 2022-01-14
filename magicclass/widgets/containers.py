@@ -14,9 +14,10 @@ from magicgui.backends._qtpy.widgets import (
 
 # Container variations that is useful in making GUI designs better.
 
-C = TypeVar("C")
+C = TypeVar("C", bound=ContainerWidget)
+D = TypeVar("D", bound=ContainerBase)
 
-def wrap_container(cls: type[C] = None, base: type = None) -> Callable | type[C]:
+def wrap_container(cls: type[C] = None, base: type[D] = None) -> Callable | type[C | D]:
     """
     Provide a wrapper for a new container widget with a new protocol.
     """    
@@ -34,21 +35,27 @@ def wrap_container(cls: type[C] = None, base: type = None) -> Callable | type[C]
     return wrapper(cls) if cls else wrapper
 
 class _Splitter(ContainerBase):
-    _qwidget: QtW.QSplitter
+    _qwidget: QtW.QWidget
     def __init__(self, layout="vertical"):
-        QBaseWidget.__init__(self, QtW.QSplitter)
+        QBaseWidget.__init__(self, QtW.QWidget)
         # SetLayout is not supported for QSplitter.
         # Layout is just a dummy.
+        self._splitter = QtW.QSplitter(self._qwidget)
         if layout == "horizontal":
-            self._qwidget.setOrientation(Qt.Horizontal)
+            self._splitter.setOrientation(Qt.Horizontal)
             self._layout = QtW.QHBoxLayout()
         else:
-            self._qwidget.setOrientation(Qt.Vertical)
+            self._splitter.setOrientation(Qt.Vertical)
             self._layout = QtW.QVBoxLayout()
+        
+        self._scroll_area = None
+        self._qwidget.setLayout(QtW.QVBoxLayout())
+        self._qwidget.layout().addWidget(self._splitter)
+        self._qwidget.layout().setContentsMargins(0, 0, 0, 0)
                 
     
     def _mgui_insert_widget(self, position: int, widget: Widget):
-        self._qwidget.insertWidget(position, widget.native)
+        self._splitter.insertWidget(position, widget.native)
 
     def _mgui_remove_widget(self, widget: Widget):
         widget.native.setParent(None)
@@ -84,24 +91,27 @@ class _ToolBox(ContainerBase):
             raise ValueError(f"Widget {widget.name} not found.")
 
 class _Tab(ContainerBase):
-    _qwidget: QtW.QTabWidget
     def __init__(self, layout="vertical"):
-        QBaseWidget.__init__(self, QtW.QTabWidget)
+        QBaseWidget.__init__(self, QtW.QWidget)
         
         if layout == "horizontal":
             self._layout: QtW.QLayout = QtW.QHBoxLayout()
         else:
             self._layout = QtW.QVBoxLayout()
-        
-        self._qwidget.setLayout(self._layout)
+        self._scroll_area = None
+        self._tab_widget = QtW.QTabWidget(self._qwidget)
+        self._tab_widget.setLayout(self._layout)
+        self._qwidget.setLayout(QtW.QVBoxLayout())
+        self._qwidget.layout().addWidget(self._tab_widget)
+        self._qwidget.layout().setContentsMargins(0, 0, 0, 0)
     
     def _mgui_insert_widget(self, position: int, widget: Widget):
-        self._qwidget.insertTab(position, widget.native, widget.name)
+        self._tab_widget.insertTab(position, widget.native, widget.name)
     
     def _mgui_remove_widget(self, widget: Widget):
-        for i in range(self._qwidget.count()):
-            if self._qwidget.widget(i) is widget.native:
-                self._qwidget.removeTab(i)
+        for i in range(self._tab_widget.count()):
+            if self._tab_widget.widget(i) is widget.native:
+                self._tab_widget.removeTab(i)
                 widget.native.setParent(None)
                 break
         else:
