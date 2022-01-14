@@ -155,7 +155,7 @@ class _WheelDisabledScrollArea(QtW.QScrollArea):
         if event.type() == QEvent.Wheel:
             return True
         return super().eventFilter(source, event)
-
+    
 class _DraggableContainer(ContainerBase):
     def __init__(self, layout="vertical"):
         QBaseWidget.__init__(self, QtW.QWidget)
@@ -214,6 +214,7 @@ class _QCollapsible(QtW.QWidget):
             return super().sizeHint()
         else:
             return QSize(0, 0)
+
             
 class _Collapsibles(ContainerBase):
     _setting: dict[str, Any]
@@ -250,19 +251,22 @@ class _Collapsibles(ContainerBase):
     
     @property
     def collapsed(self) -> bool:
-        return self._expand_btn.isChecked()
+        return not self._expand_btn.isChecked()
+    
+    def _collapse(self):
+        self._inner_widget.setVisible(False)
+        self._expand_btn.setArrowType(self._setting["collapsed-arrow"])
+
+    def _expand(self):
+        self._inner_widget.setVisible(True)
+        self._expand_btn.setArrowType(self._setting["expanded-arrow"])
     
     def _mgui_change_expand(self):
-        if not self.collapsed:
-            # collapse
-            self._inner_widget.setVisible(False)
-            self._expand_btn.setArrowType(self._setting["collapsed-arrow"])
-
+        if self.collapsed:
+            self._collapse()
         else:
-            # expand
-            self._inner_widget.setVisible(True)
-            self._expand_btn.setArrowType(self._setting["expanded-arrow"])
-    
+            self._expand()
+
     def _get_setting(self):
         raise NotImplementedError()
 
@@ -355,7 +359,7 @@ class _GroupBoxContainer(ContainerBase):
         self._groupbox.setLayout(QtW.QHBoxLayout())
         self._groupbox.layout().addWidget(self._inner_widget)
         
-        self._qwidget.setLayout(QtW.QHBoxLayout())
+        self._qwidget.setLayout(QtW.QVBoxLayout())
         self._qwidget.layout().addWidget(self._groupbox)
         self._qwidget.layout().setContentsMargins(0, 0, 0, 0)
     
@@ -441,7 +445,10 @@ class CollapsibleContainer(ContainerWidget):
     
     @collapsed.setter
     def collapsed(self, value: bool):
-        self._widget._expand_btn.setChecked(value)
+        if value:
+            self._widget._collapse()
+        else:
+            self._widget._expand()
 
 
 @wrap_container(base=_HCollapsibleContainer)
@@ -462,7 +469,10 @@ class HCollapsibleContainer(ContainerWidget):
     
     @collapsed.setter
     def collapsed(self, value: bool):
-        self._widget._expand_btn.setChecked(value)
+        if value:
+            self._widget._collapse()
+        else:
+            self._widget._expand()
 
 
 @wrap_container(base=_ListContainer)
