@@ -102,13 +102,11 @@ class ClassGuiBase(BaseGui):
             
             try:
                 if isinstance(attr, type):
+                    if not issubclass(attr, BaseGui):
+                        continue
                     # Nested magic-class
                     widget = attr()
-                    setattr(self, name, widget)
-                
-                elif isinstance(attr, BaseGui):
-                    widget = attr
-                    setattr(self, name, widget)
+                    object.__setattr__(self, name, widget)
                 
                 elif isinstance(attr, MagicField):
                     # If MagicField is given by field() function.
@@ -267,7 +265,7 @@ def make_gui(container: type[_C], no_margin: bool = True) -> type[_C | ClassGuiB
                      error_mode: str | ErrorMode = None,
                      labels: bool = True, 
                      name: str = None,
-                     visible: bool = True,
+                     visible: bool = None,
                      ):
 
             container.__init__(self, layout=layout, labels=labels, name=name, 

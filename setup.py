@@ -19,8 +19,7 @@ setup(
     download_url="https://github.com/hanjinliu/magic-class",
     packages=find_packages(exclude=["docs", "examples", "rst"]),
     install_requires=[
-          "magicgui>=0.3.3",
-          "numpy>=1.20.3",
+          "magicgui>=0.3.4",
           "qtpy>=1.10.0",
           "macro-kit>=0.3.5",
     ],

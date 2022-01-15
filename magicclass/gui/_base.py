@@ -506,7 +506,9 @@ class MagicTemplate:
                         mgui.insert(0, title)
                         mgui.append(Separator(orientation="horizontal"))
                         
-                        if self._popup_mode == PopUpMode.parentlast:
+                        if self._popup_mode == PopUpMode.popup:
+                            pass
+                        elif self._popup_mode == PopUpMode.parentlast:
                             parent_self = self._search_parent_magicclass()
                             parent_self.append(mgui)
                         elif self._popup_mode == PopUpMode.first:

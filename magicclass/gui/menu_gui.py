@@ -66,9 +66,11 @@ class MenuGuiBase(ContainerLikeGui):
         for name, attr in filter(lambda x: x[0] not in base_members, iter_members(cls)):
             try:
                 if isinstance(attr, type):
+                    if not issubclass(attr, BaseGui):
+                        continue
                     # Nested magic-menu
                     widget = attr()
-                    setattr(self, name, widget)
+                    object.__setattr__(self, name, widget)
                 
                 elif isinstance(attr, MagicField):
                     widget = self._create_widget_from_field(name, attr)

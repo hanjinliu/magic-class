@@ -77,7 +77,7 @@ def magicclass(class_: type | None = None,
                layout: str = "vertical", 
                labels: bool = True, 
                name: str = None,
-               visible: bool = True,
+               visible: bool | None = None,
                close_on_run: bool = None,
                popup_mode: PopUpModeStr | PopUpMode = None,
                error_mode: ErrorModeStr | ErrorMode = None,
@@ -106,7 +106,7 @@ def magicclass(class_: type | None = None,
         If true, magicgui labels are shown.
     name : str, optional
         Name of GUI.
-    visible : bool, default is True
+    visible : bool, optional
         Initial visibility of GUI. Useful when magic class is nested.
     close_on_run : bool, default is True
         If True, magicgui created by every method will be deleted after the method is completed without
