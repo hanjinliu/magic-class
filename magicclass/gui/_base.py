@@ -199,12 +199,15 @@ class MagicTemplate:
         """
         Return napari.Viewer if magic class is a dock widget of a viewer.
         """
+        parent_self = self._search_parent_magicclass()
+        if parent_self.parent is None:
+            return None
         try:
             from napari.utils._magicgui import find_viewer_ancestor
         except ImportError:
             return None
-        parent_self = self._search_parent_magicclass()
-        return find_viewer_ancestor(parent_self.native)
+        viewer = find_viewer_ancestor(parent_self.native)
+        return viewer
     
     @property
     def parent_dock_widget(self) -> "QDockWidget" | None:

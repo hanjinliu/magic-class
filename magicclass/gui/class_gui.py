@@ -194,7 +194,7 @@ class ClassGuiBase(BaseGui):
                         # useful. Those callable objects should be passed from widget construction.
                         try:
                             widget = self._create_widget_from_method(widget)
-                        except Exception:
+                        except AttributeError:
                             msg = f"Could not convert {widget!r} into a widget."
                             warnings.warn(msg, UserWarning)
                             continue
@@ -266,10 +266,12 @@ def make_gui(container: type[_C], no_margin: bool = True) -> type[_C | ClassGuiB
                      popup_mode: str | PopUpMode = None, 
                      error_mode: str | ErrorMode = None,
                      labels: bool = True, 
-                     name: str = None, 
+                     name: str = None,
+                     visible: bool = True,
                      ):
 
-            container.__init__(self, layout=layout, labels=labels, name=name)
+            container.__init__(self, layout=layout, labels=labels, name=name, 
+                               visible=visible)
             BaseGui.__init__(self, close_on_run=close_on_run, popup_mode=popup_mode, 
                              error_mode=error_mode)
             
