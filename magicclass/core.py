@@ -1,14 +1,10 @@
 from __future__ import annotations
 from functools import wraps as functools_wraps
 import inspect
-from enum import Enum
-from pathlib import Path
-import datetime
 from dataclasses import is_dataclass
 from weakref import WeakValueDictionary
 from typing import Any
 from typing_extensions import Annotated, _AnnotatedAlias
-from macrokit import Expr, register_type, Head
 
 from .gui.class_gui import (
     ClassGuiBase, 
@@ -31,26 +27,7 @@ from .gui._base import PopUpMode, ErrorMode, defaults, MagicTemplate, check_over
 from .gui import ContextMenuGui, MenuGui, MenuGuiBase, ToolBarGui
 from ._app import get_app
 from ._typing import WidgetType, WidgetTypeStr, PopUpModeStr, ErrorModeStr
-
-_datetime = Expr(Head.getattr, [datetime, datetime.datetime])
-_date = Expr(Head.getattr, [datetime, datetime.date])
-_time = Expr(Head.getattr, [datetime, datetime.time])
-
-# magicgui-style input
-register_type(Enum, lambda e: repr(str(e.name)))
-register_type(Path, lambda e: f"r'{e}'")
-register_type(datetime.datetime, lambda e: Expr.parse_call(_datetime, (e.year, e.month, e.day, e.hour, e.minute), {}))
-register_type(datetime.date, lambda e: Expr.parse_call(_date, (e.year, e.month, e.day), {}))
-register_type(datetime.time, lambda e: Expr.parse_call(_time, (e.hour, e.minute), {}))
-
-@register_type(MagicTemplate)
-def find_myname(gui: MagicTemplate):
-    """This function is the essential part of macro recording"""
-    parent = gui.__magicclass_parent__
-    if parent is None:
-        return gui._my_symbol
-    else:
-        return Expr(Head.getattr, [find_myname(parent), gui._my_symbol])
+from . import _macrokit  # activate macrokit registration things.
     
 _BASE_CLASS_SUFFIX = "_Base"
 _POST_INIT = "__post_init__"
@@ -100,6 +77,7 @@ def magicclass(class_: type | None = None,
                layout: str = "vertical", 
                labels: bool = True, 
                name: str = None,
+               visible: bool = True,
                close_on_run: bool = None,
                popup_mode: PopUpModeStr | PopUpMode = None,
                error_mode: ErrorModeStr | ErrorMode = None,
@@ -126,8 +104,10 @@ def magicclass(class_: type | None = None,
         Layout of the main widget.
     labels : bool, default is True
         If true, magicgui labels are shown.
-    name : str
+    name : str, optional
         Name of GUI.
+    visible : bool, default is True
+        Initial visibility of GUI. Useful when magic class is nested.
     close_on_run : bool, default is True
         If True, magicgui created by every method will be deleted after the method is completed without
         exceptions, i.e. magicgui is more like a dialog.
@@ -201,7 +181,8 @@ def magicclass(class_: type | None = None,
                                popup_mode=PopUpMode(popup_mode),
                                error_mode=ErrorMode(error_mode),
                                labels=labels,
-                               name=name or cls.__name__.replace("_", " ")
+                               name=name or cls.__name__.replace("_", " "),
+                               visible=visible,
                                )
             super(oldclass, self).__init__(*args, **kwargs)
             self._convert_attributes_into_widgets()
