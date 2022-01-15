@@ -3,7 +3,7 @@ from typing import Any, TYPE_CHECKING, Callable, TypeVar, overload, Generic
 from dataclasses import Field, MISSING
 from magicgui.type_map import get_widget_class
 from magicgui.widgets import create_widget
-from magicgui.widgets._bases import Widget, ValueWidget
+from magicgui.widgets._bases import Widget
 from magicgui.widgets._bases.value_widget import UNSET 
 
 from .gui.mgui_ext import AbstractAction, Action, WidgetAction
@@ -11,6 +11,8 @@ from .gui.mgui_ext import AbstractAction, Action, WidgetAction
 if TYPE_CHECKING:
     from magicgui.widgets._protocols import WidgetProtocol
     from magicgui.types import WidgetOptions
+    from .gui._base import MagicTemplate
+    _M = TypeVar("_M", bound=MagicTemplate)
     
 _X = TypeVar("_X")
 _W = TypeVar("_W", bound=Widget)
@@ -186,7 +188,7 @@ class MagicValueField(MagicField):
     Field class for magicgui construction. Unlike MagicField, object of this class always 
     returns value itself.
     """    
-    def get_widget(self, obj: _X) -> ValueWidget:
+    def get_widget(self, obj: _X) -> _W:
         widget = super().get_widget(obj)
         if not hasattr(widget, "value"):
             raise TypeError("Widget is not a value widget or a widget with value: "
@@ -213,6 +215,15 @@ def field(obj: type[_W],
           record: bool = True) -> MagicField[_W]:
     ...
 
+@overload
+def field(obj: type[_M], 
+          *,
+          name: str = "", 
+          widget_type: str | type[WidgetProtocol] | None = None, 
+          options: WidgetOptions = {},
+          record: bool = True) -> MagicField[_M]:
+    ...
+    
 @overload
 def field(obj: Any, 
           *,

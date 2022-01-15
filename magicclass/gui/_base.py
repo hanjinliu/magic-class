@@ -282,7 +282,10 @@ class MagicTemplate:
         return wrapper if method is None else wrapper(method)
     
     
-    def _unwrap_method(self, child_clsname: str, name: str, widget: FunctionGui | PushButtonPlus):
+    def _unwrap_method(self, 
+                       child_clsname: str,
+                       method_name: str,
+                       widget: FunctionGui | PushButtonPlus):
         """
         This private method converts class methods that are wrapped by its child widget class
         into widget in child widget. Practically same widget is shared between parent and child,
@@ -292,7 +295,7 @@ class MagicTemplate:
         ----------
         child_clsname : str
             Name of child widget class name.
-        name : str
+        method_name : str
             Name of method.
         widget : FunctionGui
             Widget to be added.
@@ -307,7 +310,7 @@ class MagicTemplate:
             if child_instance.__class__.__name__ == child_clsname:
                 # get the position of predefined child widget
                 try:
-                    index = _get_index(child_instance, name)
+                    index = _get_index(child_instance, method_name)
                     new = False
                 except ValueError:
                     index = -1
