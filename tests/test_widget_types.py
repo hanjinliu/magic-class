@@ -36,6 +36,8 @@ def test_all_works():
         ui[1].changed()
         ui.B[0].changed()
         ui.B[1].changed()
+        if hasattr(ui, "current_index"):
+            ui.current_index = 1
         ui.close()
         help = build_help(ui)
         help.show()

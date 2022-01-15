@@ -15,9 +15,8 @@ from magicgui.backends._qtpy.widgets import (
 # Container variations that is useful in making GUI designs better.
 
 C = TypeVar("C", bound=ContainerWidget)
-D = TypeVar("D", bound=ContainerBase)
 
-def wrap_container(cls: type[C] = None, base: type[D] = None) -> Callable | type[C | D]:
+def wrap_container(cls: type[C] = None, base: type = None) -> Callable | type[C]:
     """
     Provide a wrapper for a new container widget with a new protocol.
     """    
@@ -398,11 +397,11 @@ class TabbedContainer(ContainerWidget):
     
     @property
     def current_index(self):
-        return self.native.currentIndex()
+        return self._widget._tab_widget.currentIndex()
     
     @current_index.setter
     def current_index(self, index: int):
-        self.native.setCurrentIndex(index)
+        self._widget._tab_widget.setCurrentIndex(index)
 
 @wrap_container(base=_Stack)
 class StackedContainer(ContainerWidget):
