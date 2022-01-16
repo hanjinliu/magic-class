@@ -2,12 +2,11 @@ from __future__ import annotations
 from magicgui.widgets import FunctionGui, Image, Slider
 from magicgui.widgets._bases.widget import Widget
 from magicgui.widgets._function_gui import _docstring_to_html
-import numpy as np
 
 import qtpy
 from qtpy.QtWidgets import QWidget, QTreeWidget, QTreeWidgetItem, QSplitter
 from qtpy.QtCore import Qt
-from typing import Any, Callable, Iterator
+from typing import Any, Callable, Iterator, TYPE_CHECKING
 
 from magicclass.widgets.containers import SplitterContainer
 from magicclass.widgets.misc import ConsoleTextEdit
@@ -18,6 +17,9 @@ from .widgets import DraggableContainer, FreeWidget
 from .gui.class_gui import CollapsibleClassGui, DraggableClassGui, ScrollableClassGui, ButtonClassGui
 from .utils import iter_members, extract_tooltip, get_signature
 
+if TYPE_CHECKING:
+    import numpy as np
+    
 # TODO: find
 # TODO: key-binding
 
@@ -145,6 +147,7 @@ def _issubclass(child: Any, parent: Any):
         return False
 
 def get_help_info(ui: MagicTemplate) -> tuple[np.ndarray, dict[str, str]]:
+    import numpy as np
     import matplotlib as mpl
     import matplotlib.pyplot as plt
     backend = mpl.get_backend()
@@ -177,7 +180,7 @@ def get_help_info(ui: MagicTemplate) -> tuple[np.ndarray, dict[str, str]]:
                 docs[widget.name] = _get_doc(widget)
             fig.tight_layout()
             fig.canvas.draw()
-        
+            
             data = np.asarray(fig.canvas.renderer.buffer_rgba(), dtype=np.uint8)
         
         
@@ -209,6 +212,7 @@ def _get_doc(widget) -> str:
 
 def _render(qwidget: QWidget) -> np.ndarray:
     """Render Qt widgets. Used in certain type of containers."""
+    import numpy as np
     img = qwidget.grab().toImage()
     bits = img.constBits()
     h, w, c = img.height(), img.width(), 4

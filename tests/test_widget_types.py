@@ -39,6 +39,3 @@ def test_all_works():
         if hasattr(ui, "current_index"):
             ui.current_index = 1
         ui.close()
-        help = build_help(ui)
-        help.show()
-        help.close()
