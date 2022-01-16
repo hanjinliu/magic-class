@@ -81,16 +81,23 @@ class ConsoleTextEdit(TextEdit):
         self.native.setTabStopWidth(size*metrics.width(" "))
         
     def append(self, text: str):
+        """Append new text."""
         self.native.append(text)
     
     def erase_last(self):
+        """Erase the last line."""
         cursor = self.native.textCursor()
         cursor.movePosition(QTextCursor.End)
         cursor.select(QTextCursor.LineUnderCursor)
         cursor.removeSelectedText()
         cursor.deletePreviousChar()
         self.native.setTextCursor(cursor)
-        
+    
+    @property
+    def selected(self) -> str:
+        """Return selected string."""
+        cursor = self.native.textCursor()
+        return cursor.selectedText().replace(u"\u2029", "\n")
 
 class CheckButton(PushButton):
     """A checkable button."""

@@ -1,6 +1,6 @@
 from __future__ import annotations
 from macrokit import Symbol, Expr, Head, Macro, parse
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Iterable
 from qtpy.QtWidgets import QMenuBar, QMenu, QAction
 from magicgui.widgets import FileEdit
 
@@ -63,14 +63,26 @@ class MacroEdit(FreeWidget):
         return self.close()
     
     def execute(self):
-        """
-        Execute macro.
-        """        
+        """Execute macro."""
         parent = self._search_parent_magicclass()
         with parent.macro.blocked():
             try:
                 code = parse(self.textedit.value)
                 code.eval({Symbol.var("ui"): parent})
+            except Exception as e:
+                show_messagebox("error", title=e.__class__.__name__,
+                                text=str(e), parent=self.native)
+    
+    def execute_lines(self, line_numbers: int | slice | Iterable[int] = -1):
+        parent = self._search_parent_magicclass()
+        with parent.macro.blocked():
+            try:
+                code = parse(self.textedit.value)
+                if isinstance(line_numbers, (int, slice)):
+                    lines = code.args[line_numbers]
+                else:
+                    lines = "\n".join(code.args[l] for l in line_numbers)
+                lines.eval({Symbol.var("ui"): parent})
             except Exception as e:
                 show_messagebox("error", title=e.__class__.__name__,
                                 text=str(e), parent=self.native)
@@ -142,8 +154,32 @@ class MacroEdit(FreeWidget):
         self.native.move(screen_center() - self.native.rect().center())
     
     def _execute(self, e=None):
-        """Run macro"""
+        """Run macro."""
         self.execute()
+    
+    def _execute_selected(self, e=None):
+        """Run selected line of macro."""
+        parent = self._search_parent_magicclass()
+        with parent.macro.blocked():
+            try:
+                all_code = self.textedit.value
+                selected = self.textedit.selected
+                code = parse(selected.strip())
+                
+                # to safely run code, every line should be fully selected even if selected
+                # region does not raise SyntaxError.
+                l = len(selected)
+                start = all_code.find(selected)
+                end = start + l
+                if start != 0 and "\n" not in all_code[start-1:start+1]:
+                    raise SyntaxError("Select full line(s).")
+                if end < l and "\n" not in all_code[end:end+2]:
+                    raise SyntaxError("Select full line(s).")
+                
+                code.eval({Symbol.var("ui"): parent})
+            except Exception as e:
+                show_messagebox("error", title=e.__class__.__name__,
+                                text=str(e), parent=self.native)
             
     def _search_parent_magicclass(self) -> "BaseGui":
         current_self = self
@@ -216,6 +252,10 @@ class MacroEdit(FreeWidget):
         run_action.triggered.connect(self._execute)
         self._macro_menu.addAction(run_action)
         
+        run1_action = QAction("Execute selected lines", self._macro_menu)
+        run1_action.triggered.connect(self._execute_selected)
+        self._macro_menu.addAction(run1_action)
+        
         create_action = QAction("Create", self._macro_menu)
         create_action.triggered.connect(self._create_duplicate)
         self._macro_menu.addAction(create_action)
@@ -231,7 +271,6 @@ class MacroEdit(FreeWidget):
             self._macro_menu.addAction(pep8_action)
         except ImportError:
             pass
-        
         
         syn = QAction("Synchronize", self._macro_menu)
         syn.setCheckable(True)
