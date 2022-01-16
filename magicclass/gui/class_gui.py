@@ -215,9 +215,10 @@ class ClassGuiBase(BaseGui):
                     if name.startswith("_"):
                         continue
                 
-                    clsname = get_additional_option(attr, "into")
-                    if clsname is not None:
-                        self._unwrap_method(clsname, name, widget)
+                    moveto = get_additional_option(attr, "into")
+                    copyto = get_additional_option(attr, "copyto", [])
+                    if moveto is not None or copyto:
+                        self._unwrap_method(name, widget, moveto, copyto)
                     else:
                         self._fast_insert(n_insert, widget)
                         n_insert += 1

@@ -179,9 +179,10 @@ class ToolBarGui(ContainerLikeGui):
                         widget.__magicclass_parent__ = self
                     
                         
-                    clsname = get_additional_option(attr, "into")
-                    if clsname is not None:
-                        self._unwrap_method(clsname, name, widget)
+                    moveto = get_additional_option(attr, "into")
+                    copyto = get_additional_option(attr, "copyto", [])
+                    if moveto is not None or copyto:
+                        self._unwrap_method(name, widget, moveto, copyto)
                     else:           
                         self.insert(len(self), widget)
                     

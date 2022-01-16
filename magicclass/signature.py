@@ -12,7 +12,8 @@ class AdditionalOptions(TypedDict):
     keybinding: str
     into: str
 
-def upgrade_signature(func, gui_options: dict = None, 
+def upgrade_signature(func, 
+                      gui_options: dict = None, 
                       caller_options: WidgetOptions = None,
                       additional_options: AdditionalOptions = None):
     """
@@ -59,7 +60,9 @@ def upgrade_signature(func, gui_options: dict = None,
 
     return func
 
-def get_additional_option(obj: Any, option: str, default = None):
+
+def get_additional_option(obj: Any, option: str, default: Any = None):
+    """Safely get an additional option from any objects."""
     if isinstance(obj, FunctionGui):
         sig = getattr(obj._function, "__signature__", None)
     else:
@@ -70,6 +73,10 @@ def get_additional_option(obj: Any, option: str, default = None):
     else:
         return default
     
+
+class _void:
+    """private sentinel."""
+
 
 class MagicMethodSignature(MagicSignature):
     """
@@ -116,3 +123,26 @@ class MagicMethodSignature(MagicSignature):
             return {}
         else:
             return {k: v.options for k, v in self.parameters.items()}
+    
+    def replace(
+        self,
+        *,
+        parameters=_void,
+        return_annotation: Any = _void,
+    ) -> MagicMethodSignature:
+        """Create a customized copy of the Signature.
+
+        Pass ``parameters`` and/or ``return_annotation`` arguments
+        to override them in the new copy.
+        """
+        if parameters is _void:
+            parameters = self.parameters.values()
+
+        if return_annotation is _void:
+            return_annotation = self.return_annotation
+        cls = type(self)
+        return cls(parameters,
+                   return_annotation=return_annotation,
+                   gui_options = cls.get_gui_options(self),
+                   caller_options = self.caller_options,
+                   additional_options = self.additional_options)

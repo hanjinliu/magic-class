@@ -270,6 +270,9 @@ class MagicTemplate:
         Callable
             Same method as input, but has updated signature to hide the button.
         """      
+        if (not copy) and get_additional_option(method, "into", None) is not None:
+            # If method is already wrapped, wraps should create a copy.
+            copy = True
             
         def wrapper(method: Callable):
             # Base function to get access to the original function
@@ -280,20 +283,37 @@ class MagicTemplate:
                 
             if template is not None:
                 wraps(template)(func)
-            if hasattr(cls, func.__name__):
-                getattr(cls, func.__name__).__signature__ = get_signature(func)
             
-            # key = "copyto" if copy else "into"
-            upgrade_signature(func, additional_options={"into": cls.__name__})
+            predefined = getattr(cls, func.__name__, None)
+            if predefined is not None:
+                # update signature to the parent one.
+                parent_sig = get_signature(func)
+                if not hasattr(predefined, "__signature__"):
+                    predefined.__signature__ = parent_sig
+                else:
+                    sig: inspect.Signature = predefined.__signature__
+                    predefined.__signature__ = sig.replace(
+                        parameters=parent_sig.parameters.values(), 
+                        return_annotation=parent_sig.return_annotation
+                        )
+                upgrade_signature(predefined, additional_options={"copyto": []})
+            
+            if copy:
+                copyto_list = get_additional_option(func, "copyto", [])
+                copyto_list.append(cls.__name__)
+                upgrade_signature(func, additional_options={"copyto": copyto_list})
+            else:
+                upgrade_signature(func, additional_options={"into": cls.__name__})
             return method
         
         return wrapper if method is None else wrapper(method)
     
     
     def _unwrap_method(self, 
-                       child_clsname: str,
                        method_name: str,
-                       widget: FunctionGui | PushButtonPlus):
+                       widget: FunctionGui | PushButtonPlus | Action,
+                       moveto: str,
+                       copyto: list[str]):
         """
         This private method converts class methods that are wrapped by its child widget class
         into widget in child widget. Practically same widget is shared between parent and child,
@@ -301,7 +321,7 @@ class MagicTemplate:
 
         Parameters
         ----------
-        child_clsname : str
+        moveto : str
             Name of child widget class name.
         method_name : str
             Name of method.
@@ -314,8 +334,17 @@ class MagicTemplate:
             If ``child_clsname`` was not found in child widget list. This error will NEVER be raised
             in the user's side.
         """
+        if moveto is not None:
+            matcher = copyto + [moveto]
+        else:
+            matcher = copyto
+        
+        _found = 0
+        _n_match = len(matcher)
+        
         for child_instance in self._iter_child_magicclasses():
-            if child_instance.__class__.__name__ == child_clsname:
+            _name = child_instance.__class__.__name__
+            if _name in matcher:
                 # get the position of predefined child widget
                 try:
                     index = _get_index(child_instance, method_name)
@@ -324,21 +353,24 @@ class MagicTemplate:
                     index = -1
                     new = True
                 
-                self.append(widget)
+                self._fast_insert(-1, widget)
+                copy = _name in copyto
                 
                 if isinstance(widget, FunctionGui):
+                    if copy:
+                        widget = widget.copy()
                     if new:
-                        child_instance.append(widget)
+                        child_instance._fast_insert(-1, widget)
                     else:
                         del child_instance[index]
-                        child_instance.insert(index, widget)
+                        child_instance._fast_insert(index, widget)
                     
                 else:
-                    widget.visible = False
+                    widget.visible = copy
                     if new:
                         child_widget = child_instance._create_widget_from_method(lambda x: None)
                         child_widget.text = widget.text
-                        child_instance.append(child_widget)
+                        child_instance._fast_insert(-1, child_widget)
                     else:
                         child_widget: PushButtonPlus | AbstractAction = child_instance[index]
                     
@@ -349,9 +381,12 @@ class MagicTemplate:
                     
                 widget._unwrapped = True
                 
-                break
+                _found += 1
+                if _found == _n_match:
+                    break
+            
         else:
-            raise RuntimeError(f"{child_clsname} not found in class {self.__class__.__name__}")
+            raise RuntimeError(f"{method_name} not found in class {self.__class__.__name__}")
     
     
     def _convert_attributes_into_widgets(self):
@@ -420,7 +455,7 @@ class MagicTemplate:
         all_params = []
         for param in func.__signature__.parameters.values():
             if isinstance(param.annotation, _AnnotatedAlias):
-                # TODO: pydantic
+                # TODO: after magicgui supports pydantic, something needs update here.
                 param = MagicParameter.from_parameter(param)
             if isinstance(param, MagicParameter):
                 bound_value = param.options.get("bind", None)
@@ -600,6 +635,7 @@ class MagicTemplate:
 
 
     def _search_parent_magicclass(self) -> MagicTemplate:
+        """Find the ancestor."""
         current_self = self
         while getattr(current_self, "__magicclass_parent__", None) is not None:
             current_self = current_self.__magicclass_parent__
@@ -607,6 +643,7 @@ class MagicTemplate:
 
 
     def _iter_child_magicclasses(self) -> Iterable[MagicTemplate]:
+        """Iterate over all the child magic classes"""
         for child in self.__magicclass_children__:
             yield child
             yield from child.__magicclass_children__
