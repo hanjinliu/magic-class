@@ -37,8 +37,7 @@ def magicclass(class_: _C,
     ...
 
 @overload
-def magicclass(class_: Literal[None],
-               *,
+def magicclass(*,
                layout: Layout = "vertical", 
                labels: bool = True, 
                name: str | None = None,
@@ -66,8 +65,7 @@ def magicmenu(class_: _C,
     ...
     
 @overload
-def magicmenu(class_: Literal[None], 
-              *, 
+def magicmenu(*, 
               close_on_run: bool | None = None,
               popup_mode: str | PopUpMode | None = None,
               error_mode: str | ErrorMode | None = None,
@@ -90,8 +88,7 @@ def magiccontext(class_: _C,
     ...
     
 @overload
-def magiccontext(class_: Literal[None], 
-                 *, 
+def magiccontext(*, 
                  close_on_run: bool | None = None,
                  popup_mode: str | PopUpMode | None = None,
                  error_mode: str | ErrorMode | None = None,
@@ -114,8 +111,7 @@ def magictoolbar(class_: _C,
     ...
     
 @overload
-def magictoolbar(class_: Literal[None], 
-                 *, 
+def magictoolbar(*, 
                  close_on_run: bool | None = None,
                  popup_mode: str | PopUpMode | None = None,
                  error_mode: str | ErrorMode | None = None,
