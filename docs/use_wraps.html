@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Call Parent Methods from its Child &mdash; magic-class 0.5.17 documentation</title>
+  <title>Call Parent Methods from its Child &mdash; magic-class 0.5.18.dev0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -30,7 +30,7 @@
             <a href="index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.17
+                0.5.18.dev0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -48,6 +48,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Call Parent Methods from its Child</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#basic-syntax">Basic Syntax</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#use-template-functions">Use Template Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#make-copies-of-a-method">Make Copies of a Method</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="use_bind.html">Binding Values to Arguments</a></li>
@@ -88,8 +89,7 @@
 widget for better widget design, code will look very complicated and will be hard to maintain. This problem
 usually happens when you want a menu bar, since menu actions always execute something using the parameters
 of the parent and often update its parent.</p>
-<p>With class method <code class="docutils literal notranslate"><span class="pre">warps</span></code> of <code class="docutils literal notranslate"><span class="pre">magicclass</span></code>, you can easily connect parent methods to its child while
-keeping code clean.</p>
+<p>With class method <code class="docutils literal notranslate"><span class="pre">warps</span></code>, you can easily connect parent methods to its child while keeping code clean.</p>
 <section id="basic-syntax">
 <h2>Basic Syntax<a class="headerlink" href="#basic-syntax" title="Permalink to this headline">¶</a></h2>
 <p>You have to do is:</p>
@@ -172,6 +172,70 @@ functions, and this function is integrated in <code class="docutils literal notr
 
 <span class="n">ui</span> <span class="o">=</span> <span class="n">Main</span><span class="p">()</span>
 <span class="n">ui</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="make-copies-of-a-method">
+<h2>Make Copies of a Method<a class="headerlink" href="#make-copies-of-a-method" title="Permalink to this headline">¶</a></h2>
+<p>You can use <code class="docutils literal notranslate"><span class="pre">copy=True</span></code> option to make a copy of a same method. This option is useful when
+you want to call same method from different places, like in menu and toolbar.</p>
+<p>In following example, <code class="docutils literal notranslate"><span class="pre">func</span></code> method appears in menu <code class="docutils literal notranslate"><span class="pre">Menu</span></code>, toolbar  <code class="docutils literal notranslate"><span class="pre">Tools</span></code> and the
+main widget <code class="docutils literal notranslate"><span class="pre">Main</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">magicmenu</span><span class="p">,</span> <span class="n">magictoolbar</span>
+
+<span class="nd">@magicclass</span>
+<span class="k">class</span> <span class="nc">Main</span><span class="p">:</span>
+    <span class="nd">@magicmenu</span>
+    <span class="k">class</span> <span class="nc">Menu</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
+
+    <span class="nd">@magictoolbar</span>
+    <span class="k">class</span> <span class="nc">Tools</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
+
+    <span class="nd">@Menu</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="nd">@Tools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;write program here.&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<img alt="_images/fig_4-2.png" src="_images/fig_4-2.png" />
+<p>If push button in <code class="docutils literal notranslate"><span class="pre">Main</span></code> is not needed, delete <code class="docutils literal notranslate"><span class="pre">copy=True</span></code> from the first decorator.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># in class Main</span>
+    <span class="nd">@Menu</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="nd">@Tools</span><span class="o">.</span><span class="n">wraps</span>
+    <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;write program here.&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>In this case, even the second <code class="docutils literal notranslate"><span class="pre">copy=True</span></code> option can be omitted because you'll never have to wrap
+same method twice. Magic classes automatically make copies if a method is already wrapped.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># in class Main</span>
+    <span class="nd">@Menu</span><span class="o">.</span><span class="n">wraps</span>
+    <span class="nd">@Tools</span><span class="o">.</span><span class="n">wraps</span>
+    <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;write program here.&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>Widget designs can be separetely set via pre-defined methods.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">magicmenu</span><span class="p">,</span> <span class="n">magictoolbar</span><span class="p">,</span> <span class="n">set_design</span>
+
+<span class="nd">@magicclass</span>
+<span class="k">class</span> <span class="nc">Main</span><span class="p">:</span>
+    <span class="nd">@magicmenu</span>
+    <span class="k">class</span> <span class="nc">Menu</span><span class="p">:</span>
+        <span class="nd">@set_design</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;func in Menu&quot;</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
+
+    <span class="nd">@magictoolbar</span>
+    <span class="k">class</span> <span class="nc">Tools</span><span class="p">:</span>
+        <span class="nd">@set_design</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;func in Tools&quot;</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
+
+    <span class="nd">@Menu</span><span class="o">.</span><span class="n">wraps</span>
+    <span class="nd">@Tools</span><span class="o">.</span><span class="n">wraps</span>
+    <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;write program here.&quot;&quot;&quot;</span>
 </pre></div>
 </div>
 </section>

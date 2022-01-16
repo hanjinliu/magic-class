@@ -87,7 +87,9 @@ The ``@magicmenu`` decorator provides a consistent API to implement a menu bar a
 
 .. image:: images/fig_2-2.png
 
-Same strategy also works for context menu.
+If multiple menus are defined in tandem, they will all added to the menu bar.
+
+Same strategy also works for right-click context menu.
 
 .. code-block:: python
 
@@ -131,11 +133,5 @@ decorator for toolbar.
 
 .. image:: images/fig_2-4.png
 
+If multiple toolbars are defined in tandem, they will split by tabs.
 
-Use Menu and Toolbar in a Main Window
--------------------------------------
-
-It is highly recommended to use menus and toolbar in a main window widget. Unlike standard widget,
-a main window can contain both of them, and you can float toolbar by mouse drag.
-
-.. image:: images/fig_2-5.png

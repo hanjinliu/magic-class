@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Nest magic-classes &mdash; magic-class 0.5.17 documentation</title>
+  <title>Nest magic-classes &mdash; magic-class 0.5.18.dev0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -30,7 +30,7 @@
             <a href="index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.17
+                0.5.18.dev0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -47,7 +47,6 @@
 <li class="toctree-l2"><a class="reference internal" href="#basics">Basics</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#make-menus-using-nesting-strategy">Make Menus Using Nesting Strategy</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#make-toolbar">Make Toolbar</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#use-menu-and-toolbar-in-a-main-window">Use Menu and Toolbar in a Main Window</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="use_field.html">Use Fields in magic-class</a></li>
@@ -55,8 +54,8 @@
 <li class="toctree-l1"><a class="reference internal" href="use_bind.html">Binding Values to Arguments</a></li>
 <li class="toctree-l1"><a class="reference internal" href="keybinding.html">Define Custom Keybindings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="customize_macro.html">Customize Macro Recording</a></li>
-<li class="toctree-l1"><a class="reference internal" href="special_methods.html">Special attributes in magic-class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="containers.html">Container Variations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="special_methods.html">Special Attributes in Magic class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API References</a></li>
 </ul>
 
@@ -160,7 +159,8 @@ The <code class="docutils literal notranslate"><span class="pre">&#64;magicmenu<
 </pre></div>
 </div>
 <img alt="_images/fig_2-2.png" src="_images/fig_2-2.png" />
-<p>Same strategy also works for context menu.</p>
+<p>If multiple menus are defined in tandem, they will all added to the menu bar.</p>
+<p>Same strategy also works for right-click context menu.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">magiccontext</span>
 
 <span class="nd">@magicclass</span>
@@ -197,12 +197,7 @@ decorator for toolbar.</p>
 </pre></div>
 </div>
 <img alt="_images/fig_2-4.png" src="_images/fig_2-4.png" />
-</section>
-<section id="use-menu-and-toolbar-in-a-main-window">
-<h2>Use Menu and Toolbar in a Main Window<a class="headerlink" href="#use-menu-and-toolbar-in-a-main-window" title="Permalink to this headline">¶</a></h2>
-<p>It is highly recommended to use menus and toolbar in a main window widget. Unlike standard widget,
-a main window can contain both of them, and you can float toolbar by mouse drag.</p>
-<img alt="_images/fig_2-5.png" src="_images/fig_2-5.png" />
+<p>If multiple toolbars are defined in tandem, they will split by tabs.</p>
 </section>
 </section>
 

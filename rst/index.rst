@@ -34,8 +34,8 @@ Contents
    use_bind
    keybinding
    customize_macro
-   special_methods
    containers
+   special_methods
    api
 
 

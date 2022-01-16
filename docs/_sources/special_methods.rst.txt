@@ -1,5 +1,5 @@
 =================================
-Special attributes in magic-class
+Special Attributes in Magic class
 =================================
 
 There are some special attributes that will be recognized differently by magic classes. 

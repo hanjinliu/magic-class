@@ -14,7 +14,9 @@ These options are inherited from ``magicgui``:
 
 * ``parent = None`` ... Parent widget.
 
-These options are magic class specific:
+These options are `magicclass` specific:
+
+* ``visible: bool = None`` ... Initial visibility of the widget.
 
 * ``close_on_run: bool = None`` ... If ``True`` (default), ``magicgui`` widgets will be closed
   after function call.
@@ -47,4 +49,3 @@ To avoid writing the same options many times, you can change the default setting
     
     default["close_on_run"] = False
     default["popup_mode"] = "dock"
-

@@ -7,8 +7,7 @@ widget for better widget design, code will look very complicated and will be har
 usually happens when you want a menu bar, since menu actions always execute something using the parameters
 of the parent and often update its parent.
 
-With class method ``warps`` of ``magicclass``, you can easily connect parent methods to its child while
-keeping code clean.
+With class method ``warps``, you can easily connect parent methods to its child while keeping code clean.
 
 Basic Syntax
 ------------
@@ -66,6 +65,7 @@ child widget.
     2. If the widget is composed of nested magic classes and other widgets or fields, the order of
        widgets will not be sorted due to different timing of widget creation.
 
+
 Use Template Functions
 ----------------------
 
@@ -102,3 +102,78 @@ functions, and this function is integrated in ``wraps`` method (You might have n
     
     ui = Main()
     ui.show()
+
+
+Make Copies of a Method
+-----------------------
+
+You can use ``copy=True`` option to make a copy of a same method. This option is useful when
+you want to call same method from different places, like in menu and toolbar.
+
+In following example, ``func`` method appears in menu ``Menu``, toolbar  ``Tools`` and the
+main widget ``Main``.
+
+.. code-block:: python
+
+    from magicclass import magicclass, magicmenu, magictoolbar
+
+    @magicclass
+    class Main:
+        @magicmenu
+        class Menu:
+            def func(self): ...
+
+        @magictoolbar
+        class Tools:
+            def func(self): ...
+        
+        @Menu.wraps(copy=True)
+        @Tools.wraps(copy=True)
+        def func(self):
+            """write program here."""
+
+.. image:: images/fig_4-2.png
+
+If push button in ``Main`` is not needed, delete ``copy=True`` from the first decorator.
+
+.. code-block:: python
+
+    # in class Main
+        @Menu.wraps(copy=True)
+        @Tools.wraps
+        def func(self):
+            """write program here."""
+
+In this case, even the second ``copy=True`` option can be omitted because you'll never have to wrap
+same method twice. Magic classes automatically make copies if a method is already wrapped.
+
+.. code-block:: python
+
+    # in class Main
+        @Menu.wraps
+        @Tools.wraps
+        def func(self):
+            """write program here."""
+
+Widget designs can be separetely set via pre-defined methods.
+
+.. code-block:: python
+
+    from magicclass import magicclass, magicmenu, magictoolbar, set_design
+
+    @magicclass
+    class Main:
+        @magicmenu
+        class Menu:
+            @set_design(text="func in Menu")
+            def func(self): ...
+
+        @magictoolbar
+        class Tools:
+            @set_design(text="func in Tools")
+            def func(self): ...
+        
+        @Menu.wraps
+        @Tools.wraps
+        def func(self):
+            """write program here."""

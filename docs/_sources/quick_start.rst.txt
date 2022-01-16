@@ -131,7 +131,9 @@ By default, the script shown in the macro editor is synchronized, that is, autom
 updated whenever macro itself is updated.
 
 Occasionally, you may want some functions not to record macro (such as a function that 
-only shows a help window). You can prevent macro recording with ``do_not_record`` decorator.
+only shows a help window). It could also be redundant to record value changes of some
+widgets. You can prevent macro recording with ``do_not_record`` decorator for methods
+(or ``record=False`` option for fields; see :doc:`use_field`).
 
 .. code-block:: python
 
