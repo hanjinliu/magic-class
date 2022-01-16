@@ -19,6 +19,7 @@ class WidgetType(Enum):
     list = "list"
     subwindows = "subwindows"
     groupbox = "groupbox"
+    frame = "frame"
     mainwindow = "mainwindow"
 
 
@@ -34,6 +35,7 @@ WidgetTypeStr = Union[Literal["none"],
                       Literal["list"],
                       Literal["subwindows"],
                       Literal["groupbox"],
+                      Literal["frame"],
                       Literal["mainwindow"], 
                       Literal["hcollapsible"]
                       ]

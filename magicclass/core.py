@@ -9,6 +9,7 @@ from typing_extensions import Annotated, _AnnotatedAlias
 from .gui.class_gui import (
     ClassGuiBase, 
     ClassGui,
+    FrameClassGui,
     GroupBoxClassGui,
     MainWindowClassGui,
     SubWindowsClassGui,
@@ -45,6 +46,7 @@ _TYPE_MAP = {
     WidgetType.stacked: StackedClassGui,
     WidgetType.list: ListClassGui,
     WidgetType.groupbox: GroupBoxClassGui,
+    WidgetType.frame: FrameClassGui,
     WidgetType.subwindows: SubWindowsClassGui,
     WidgetType.mainwindow: MainWindowClassGui,
 }

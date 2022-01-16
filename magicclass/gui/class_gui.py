@@ -17,6 +17,7 @@ from .utils import define_callback, MagicClassConstructionError, define_context_
 from ..widgets import (
     ButtonContainer,
     GroupBoxContainer,
+    FrameContainer,
     ListContainer,
     SubWindowsContainer,
     ScrollableContainer,
@@ -70,11 +71,11 @@ class ClassGuiBase(BaseGui):
                 widget.changed.connect(f)
         
         elif fld.callbacks:
-            msg = (
+            warnings.warn(
                 f"{type(widget).__name__} does not have value-change callback. "
-                f"Connecting callback functions does no effect."
+                f"Connecting callback functions does no effect.",
+                UserWarning
                 )
-            warnings.warn(msg, UserWarning)
                 
         return widget
     
@@ -168,7 +169,6 @@ class ClassGuiBase(BaseGui):
                             self.native.addToolBar(self._toolbar)
                         else:
                             # self is not a main window object
-                            # if hasattr(self._widget, "_scroll_area"):
                             if isinstance(self, _USE_OUTER_LAYOUT):
                                 _layout: QBoxLayout = self._widget._qwidget.layout()
                             else:
@@ -385,7 +385,7 @@ def make_gui(container: type[_C], no_margin: bool = True) -> type[_C | ClassGuiB
                     pass
                 
             container.close(self)
-                
+
             return None
         
         cls.__init__ = __init__
@@ -439,6 +439,9 @@ class SubWindowsClassGui: pass
 
 @make_gui(GroupBoxContainer, no_margin=False)
 class GroupBoxClassGui: pass
+
+@make_gui(FrameContainer, no_margin=False)
+class FrameClassGui: pass
 
 @make_gui(MainWindow)
 class MainWindowClassGui: pass

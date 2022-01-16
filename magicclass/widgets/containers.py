@@ -250,7 +250,12 @@ class _Collapsibles(ContainerBase):
         self._expand_btn.setText(btn_text)
         self._expand_btn.setCheckable(True)
         self._expand_btn.setChecked(False)
-        self._expand_btn.setStyleSheet(f"QToolButton {{ border: none; text-align: {self._setting['text-align']};}}")
+        self._expand_btn.setStyleSheet(f"""
+            QToolButton {{ 
+                border: none; 
+                text-align: {self._setting['text-align']};
+                }}
+            """)
         self._expand_btn.clicked.connect(self._mgui_change_expand)
         self._mgui_change_expand()
         
@@ -346,6 +351,7 @@ class _SubWindowsContainer(ContainerBase):
         self._qwidget.setLayout(self._layout)
     
     def _mgui_insert_widget(self, position: int, widget: Widget):
+        # position does not have any effect
         self._mdiarea.addSubWindow(widget.native, self._NoCloseButtonFlag)
     
     def _mgui_remove_widget(self, widget: Widget):
@@ -374,6 +380,11 @@ class _GroupBoxContainer(ContainerBase):
     
     def _set_title(self, title: str):
         self._groupbox.setTitle(title)
+
+class _FrameContainer(_GroupBoxContainer):
+    def __init__(self, layout="vertical"):
+        super().__init__(layout=layout)
+        self._groupbox.setTitle("")
 
 @wrap_container(base=_Splitter)
 class SplitterContainer(ContainerWidget):
@@ -530,3 +541,7 @@ class GroupBoxContainer(ContainerWidget):
     def name(self, value: str):
         self._name = value
         self._widget._set_title(value.replace("_", " "))
+
+@wrap_container(base=_FrameContainer)
+class FrameContainer(ContainerWidget):
+    """A QGroupBox like container without title."""

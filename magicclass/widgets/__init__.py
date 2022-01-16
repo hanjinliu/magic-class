@@ -8,6 +8,7 @@ from magicgui.widgets import * # to avoid importing both magicgui.widgets and ma
 from .containers import (
     ButtonContainer,
     GroupBoxContainer,
+    FrameContainer,
     ListContainer,
     SubWindowsContainer,
     ScrollableContainer,

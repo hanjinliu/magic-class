@@ -251,9 +251,7 @@ class GuiMacro(Macro):
     
     @property
     def widget(self) -> MacroEdit:
-        """
-        Returns the macro editor.
-        """
+        """Returns the macro editor."""
         if self._widget is None:
             self._widget = MacroEdit(name="Macro")
             from datetime import datetime

@@ -187,6 +187,9 @@ class MagicTemplate:
     def _unify_label_widths(self):
         raise NotImplementedError()
     
+    def reset_choices(self, *args):
+        raise NotImplementedError()
+    
     @property
     def macro(self) -> GuiMacro:
         if self.__magicclass_parent__ is None:
@@ -237,7 +240,8 @@ class MagicTemplate:
     def wraps(cls, 
               method: Callable | None = None,
               *, 
-              template: Callable | None = None) -> Callable:
+              template: Callable | None = None,
+              copy: bool = False) -> Callable:
         """
         Wrap a parent method in a child magic-class. Wrapped method will appear in 
         the child widget but behaves as if it is in the parent widget.
@@ -279,6 +283,7 @@ class MagicTemplate:
             if hasattr(cls, func.__name__):
                 getattr(cls, func.__name__).__signature__ = get_signature(func)
             
+            # key = "copyto" if copy else "into"
             upgrade_signature(func, additional_options={"into": cls.__name__})
             return method
         
