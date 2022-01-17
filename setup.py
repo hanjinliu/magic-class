@@ -18,7 +18,7 @@ setup(
     license="BSD 3-Clause",
     download_url="https://github.com/hanjinliu/magic-class",
     packages=find_packages(exclude=["docs", "examples", "rst"]),
-    package_data=[".pyi"],
+    package_data={"magic-class": ".pyi"},
     install_requires=[
           "magicgui>=0.3.4",
           "qtpy>=1.10.0",
