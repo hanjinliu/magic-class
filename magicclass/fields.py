@@ -1,9 +1,12 @@
 from __future__ import annotations
-from typing import Any, TYPE_CHECKING, Callable, TypeVar, overload, Generic
+from typing import Any, TYPE_CHECKING, Callable, TypeVar, overload, Generic, Union
+from pathlib import Path
+import datetime
+from enum import Enum
 from dataclasses import Field, MISSING
 from magicgui.type_map import get_widget_class
 from magicgui.widgets import create_widget
-from magicgui.widgets._bases import Widget
+from magicgui.widgets._bases import Widget, ValueWidget
 from magicgui.widgets._bases.value_widget import UNSET 
 
 from .gui.mgui_ext import AbstractAction, Action, WidgetAction
@@ -13,11 +16,11 @@ if TYPE_CHECKING:
     from magicgui.types import WidgetOptions
     from .gui._base import MagicTemplate
     _M = TypeVar("_M", bound=MagicTemplate)
-    
-_X = TypeVar("_X")
-_W = TypeVar("_W", bound=Widget)
 
-class MagicField(Field, Generic[_W]):
+_W = TypeVar("_W", bound=Widget)
+_V = TypeVar("_V", bound=object)
+
+class MagicField(Field, Generic[_W, _V]):
     """
     Field class for magicgui construction. This object is compatible with dataclass.
     """    
@@ -29,7 +32,7 @@ class MagicField(Field, Generic[_W]):
         super().__init__(default=default, default_factory=default_factory, init=True, repr=True, 
                          hash=False, compare=False, metadata=metadata)
         self.callbacks: list[Callable] = []
-        self.guis: dict[int, _X] = {}
+        self.guis: dict[int, _M] = {}
         self.name = name
         self.record = record
         self.parent_class = None
@@ -37,7 +40,7 @@ class MagicField(Field, Generic[_W]):
     def __repr__(self):
         return self.__class__.__name__.rstrip("Field") + super().__repr__()
     
-    def get_widget(self, obj: _X) -> _W:
+    def get_widget(self, obj: Any) -> _W:
         """
         Get a widget from ``obj``. This function will be called every time MagicField is referred
         by ``obj.field``.
@@ -55,7 +58,7 @@ class MagicField(Field, Generic[_W]):
                 
         return widget
     
-    def get_action(self, obj: _X) -> AbstractAction:
+    def get_action(self, obj: Any) -> AbstractAction:
         """
         Get an action from ``obj``. This function will be called every time MagicField is referred
         by ``obj.field``.
@@ -73,18 +76,18 @@ class MagicField(Field, Generic[_W]):
                 
         return action
     
-    def as_getter(self, obj: _X) -> Callable:
+    def as_getter(self, obj: Any) -> Callable[[Any], _V]:
         """
         Make a function that get the value of Widget or Action.
         """        
         return lambda w: self.guis[id(obj)].value
     
-    def __get__(self, obj: _X, objtype=None) -> _W:
+    def __get__(self, obj: Any, objtype=None) -> _W:
         if obj is None:
             return self
         return self.get_widget(obj)
     
-    def __set__(self, obj: _X, value) -> None:
+    def __set__(self, obj, value) -> None:
         raise AttributeError(f"Cannot set value to {self.__class__.__name__}.")
         
     def ready(self) -> bool:
@@ -183,12 +186,12 @@ class MagicField(Field, Generic[_W]):
         return self
     
     
-class MagicValueField(MagicField):
+class MagicValueField(MagicField, Generic[_W, _V]):
     """
     Field class for magicgui construction. Unlike MagicField, object of this class always 
     returns value itself.
     """    
-    def get_widget(self, obj: _X) -> _W:
+    def get_widget(self, obj: Any) -> _W:
         widget = super().get_widget(obj)
         if not hasattr(widget, "value"):
             raise TypeError("Widget is not a value widget or a widget with value: "
@@ -196,23 +199,44 @@ class MagicValueField(MagicField):
         
         return widget
     
-    def __get__(self, obj: _X, objtype=None) -> Any:
+    def __get__(self, obj: Any, objtype=None) -> _V:
         if obj is None:
             return self
         return self.get_widget(obj).value
     
-    def __set__(self, obj: _X, value) -> None:
+    def __set__(self, obj: _M, value: _V) -> None:
         if obj is None:
             raise AttributeError(f"Cannot set {self.__class__.__name__}.")
         self.get_widget(obj).value = value
 
+_X = TypeVar("_X", bound=Union[int, float, bool, str, Path, datetime.datetime, 
+                               datetime.date, datetime.time, Enum])
+
+@overload
+def field(obj: _X, 
+          *,
+          name: str = "", 
+          widget_type: str | type[WidgetProtocol] | None = None, 
+          options: WidgetOptions = {},
+          record: bool = True) -> MagicField[ValueWidget, _X]:
+    ...
+
+@overload
+def field(obj: type[_X], 
+          *,
+          name: str = "", 
+          widget_type: str | type[WidgetProtocol] | None = None, 
+          options: WidgetOptions = {},
+          record: bool = True) -> MagicField[ValueWidget, _X]:
+    ...
+    
 @overload
 def field(obj: type[_W], 
           *,
           name: str = "", 
           widget_type: str | type[WidgetProtocol] | None = None, 
           options: WidgetOptions = {},
-          record: bool = True) -> MagicField[_W]:
+          record: bool = True) -> MagicField[_W, Any]:
     ...
 
 @overload
@@ -221,7 +245,7 @@ def field(obj: type[_M],
           name: str = "", 
           widget_type: str | type[WidgetProtocol] | None = None, 
           options: WidgetOptions = {},
-          record: bool = True) -> MagicField[_M]:
+          record: bool = True) -> MagicField[_M, Any]:
     ...
     
 @overload
@@ -230,7 +254,7 @@ def field(obj: Any,
           name: str = "", 
           widget_type: str | type[WidgetProtocol] | None = None, 
           options: WidgetOptions = {},
-          record: bool = True) -> MagicField:
+          record: bool = True) -> MagicField[Widget, Any]:
     ...
 
 def field(obj: Any = MISSING,
@@ -239,7 +263,7 @@ def field(obj: Any = MISSING,
           widget_type: str | type[WidgetProtocol] | None = None, 
           options: WidgetOptions = {},
           record: bool = True
-          ) -> MagicField:
+          ) -> MagicField[Widget, Any]:
     """
     Make a MagicField object.
     
@@ -267,14 +291,40 @@ def field(obj: Any = MISSING,
     """    
     return _get_field(obj, name, widget_type, options, record, MagicField)
 
+@overload
+def vfield(obj: type[_V],
+          *,
+          name: str = "", 
+          widget_type: str | type[WidgetProtocol] | None = None, 
+          options: WidgetOptions = {},
+          record: bool = True) -> MagicValueField[Widget, _V]:
+    ...
+    
+@overload
+def vfield(obj: _V,
+          *,
+          name: str = "", 
+          widget_type: str | type[WidgetProtocol] | None = None, 
+          options: WidgetOptions = {},
+          record: bool = True) -> MagicValueField[Widget, _V]:
+    ...
 
+@overload
+def vfield(obj: Any, 
+          *,
+          name: str = "", 
+          widget_type: str | type[WidgetProtocol] | None = None, 
+          options: WidgetOptions = {},
+          record: bool = True) -> MagicValueField[Widget, Any]:
+    ...
+    
 def vfield(obj: Any = MISSING,
            *, 
            name: str = "", 
            widget_type: str | type[WidgetProtocol] | None = None, 
            options: WidgetOptions = {},
            record: bool = True,
-           ) -> MagicValueField:
+           ) -> MagicValueField[Widget, Any]:
     """
     Make a MagicValueField object.
     
