@@ -1,1 +1,1 @@
-"""Extension of magic-class widgets."""
+"""magic-class widgets using external packages."""
