@@ -1,12 +1,15 @@
 from __future__ import annotations
 from functools import wraps
+import inspect
 from typing import Callable, Iterable, Iterator, Union, TYPE_CHECKING, TypeVar, overload
-from magicgui.widgets._bases import ButtonWidget
+from magicgui.widgets import Label
+from macrokit import Expr, Symbol, Head
 from .signature import upgrade_signature
 
 if TYPE_CHECKING:
     from .gui import BaseGui
     from .gui.mgui_ext import Action
+    from magicgui.widgets._bases import ButtonWidget
 
 Color = Union[str, Iterable[float]]
 nStrings = Union[str, Iterable[str]]
@@ -201,13 +204,25 @@ def confirm(text: str, call_button_text: str = "OK"):
     call_button_text : str, default is "OK"
         Text shown on the call button.
     """
-    from magicgui.widgets import Label
+    if not isinstance(text, str):
+        raise TypeError(
+            f"The first argument of 'confirm' must be a str bug got {type(text)}"
+            )
     def _decorator(method: Callable[[Args], Returns]) -> Callable[[Args], Returns]:
+        sig = inspect.signature(method)
+        if len(sig.parameters) != 1:
+            raise ValueError(
+                "Currently 'confirm' only supports methods that take no argument."
+                )
+        @do_not_record
         @set_options(call_button=call_button_text,
                      labels=False,
                      label={"widget_type": Label, "value": text})
-        def _method(self, label):
-            return method(self)
+        def _method(self: BaseGui, label):
+            out = method(self)
+            expr = Expr.parse_method(self, method, (), {})
+            self.macro.append(expr)
+            return out
         _method.__name__ = method.__name__
         _method.__qualname__ = method.__qualname__
         _method.__module__ = method.__module__

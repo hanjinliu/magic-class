@@ -1,4 +1,4 @@
-from magicclass import magicclass, set_options, set_design, do_not_record
+from magicclass import magicclass, set_options, set_design, do_not_record, confirm
 
 def test_set_options():
     @magicclass
@@ -47,3 +47,16 @@ def test_do_not_record():
     ui = A()
     ui["f"].changed()
     assert len(ui.macro) == 1
+
+def test_confirm():
+    @magicclass
+    class A:
+        @confirm("really?")
+        def f(self):
+            self.a = 0
+    
+    ui = A()
+    ui["f"].changed()
+    assert ui["f"].mgui[0].value == "really?"
+    ui["f"].mgui[-1].changed()
+    assert str(ui.macro[-1]) == "ui.f()"
