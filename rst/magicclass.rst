@@ -56,6 +56,14 @@ magicclass.signature module
    :undoc-members:
    :show-inheritance:
 
+magicclass.tqdm module
+----------------------
+
+.. automodule:: magicclass.tqdm
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 magicclass.wrappers module
 --------------------------
 

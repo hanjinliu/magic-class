@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.gui.mgui_ext &mdash; magic-class 0.5.18.dev0 documentation</title>
+  <title>magicclass.gui.mgui_ext &mdash; magic-class 0.5.18 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -27,7 +27,7 @@
             <a href="../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.18.dev0
+                0.5.18
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -46,8 +46,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../use_bind.html">Binding Values to Arguments</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../keybinding.html">Define Custom Keybindings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../customize_macro.html">Customize Macro Recording</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../special_methods.html">Special attributes in magic-class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../containers.html">Container Variations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../special_methods.html">Special Attributes in Magic class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api.html">API References</a></li>
 </ul>
 
@@ -78,99 +78,17 @@
   <h1>Source code for magicclass.gui.mgui_ext</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">TypeVar</span>
-<span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">from</span> <span class="nn">qtpy.QtWidgets</span> <span class="kn">import</span> <span class="n">QPushButton</span><span class="p">,</span> <span class="n">QAction</span><span class="p">,</span> <span class="n">QWidgetAction</span><span class="p">,</span> <span class="n">QToolButton</span><span class="p">,</span> <span class="n">QWidget</span><span class="p">,</span> <span class="n">QMenu</span>
 <span class="kn">from</span> <span class="nn">qtpy.QtGui</span> <span class="kn">import</span> <span class="n">QIcon</span>
 <span class="kn">from</span> <span class="nn">qtpy.QtCore</span> <span class="kn">import</span> <span class="n">QSize</span>
 <span class="kn">from</span> <span class="nn">magicgui.events</span> <span class="kn">import</span> <span class="n">Signal</span>
-<span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">PushButton</span><span class="p">,</span> <span class="n">FunctionGui</span>
+<span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">PushButton</span>
 <span class="kn">from</span> <span class="nn">magicgui.widgets._concrete</span> <span class="kn">import</span> <span class="n">_LabeledWidget</span>
-<span class="kn">from</span> <span class="nn">magicgui.widgets._bases</span> <span class="kn">import</span> <span class="n">Widget</span><span class="p">,</span> <span class="n">ValueWidget</span><span class="p">,</span> <span class="n">ButtonWidget</span><span class="p">,</span> <span class="n">ContainerWidget</span>
-<span class="kn">from</span> <span class="nn">magicgui.widgets._function_gui</span> <span class="kn">import</span> <span class="n">_function_name_pointing_to_widget</span>
+<span class="kn">from</span> <span class="nn">magicgui.widgets._bases</span> <span class="kn">import</span> <span class="n">Widget</span><span class="p">,</span> <span class="n">ValueWidget</span>
 <span class="kn">from</span> <span class="nn">magicgui.backends._qtpy.widgets</span> <span class="kn">import</span> <span class="n">QBaseButtonWidget</span>
-<span class="kn">from</span> <span class="nn">matplotlib.colors</span> <span class="kn">import</span> <span class="n">to_rgb</span>
-<span class="kn">from</span> <span class="nn">..widgets</span> <span class="kn">import</span> <span class="n">Separator</span>
+<span class="kn">from</span> <span class="nn">._function_gui</span> <span class="kn">import</span> <span class="n">FunctionGuiPlus</span>
 
 <span class="c1"># magicgui widgets that need to be extended to fit into magicclass</span>
-
-<div class="viewcode-block" id="FunctionGuiPlus"><a class="viewcode-back" href="../../../magicclass.gui.html#magicclass.gui.mgui_ext.FunctionGuiPlus">[docs]</a><span class="k">class</span> <span class="nc">FunctionGuiPlus</span><span class="p">(</span><span class="n">FunctionGui</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    FunctionGui class with a parameter recording functionality etc.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
-        <span class="n">sig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__signature__</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">bound</span> <span class="o">=</span> <span class="n">sig</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="k">if</span> <span class="s2">&quot;missing a required argument&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
-                <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&quot;argument: &#39;(.+)&#39;&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
-                <span class="n">missing</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">groups</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">match</span> <span class="k">else</span> <span class="s2">&quot;&lt;param&gt;&quot;</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2"> in call to &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_callable_name</span><span class="si">}{</span><span class="n">sig</span><span class="si">}</span><span class="s2">&#39;.</span><span class="se">\n</span><span class="s2">&quot;</span>
-                    <span class="s2">&quot;To avoid this error, you can bind a value or callback to the &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;parameter:</span><span class="se">\n\n</span><span class="s2">    </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_callable_name</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">missing</span><span class="si">}</span><span class="s2">.bind(value)&quot;</span>
-                    <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">Or use the &#39;bind&#39; option in the set_option decorator:</span><span class="se">\n\n</span><span class="s2">&quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;    @set_option(</span><span class="si">{</span><span class="n">missing</span><span class="si">}</span><span class="s2">=</span><span class="se">{{</span><span class="s2">&#39;bind&#39;: value</span><span class="se">}}</span><span class="s2">)</span><span class="se">\n</span><span class="s2">&quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;    def </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_callable_name</span><span class="si">}{</span><span class="n">sig</span><span class="si">}</span><span class="s2">: ...&quot;</span>
-                <span class="p">)</span>
-                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span>
-                    
-        <span class="n">bound</span><span class="o">.</span><span class="n">apply_defaults</span><span class="p">()</span>
-        
-        <span class="c1"># 1. Parameter recording</span>
-        <span class="c1"># This is important when bound function set by {&quot;bind&quot;: f} updates something.</span>
-        <span class="c1"># When the value is referred via &quot;__signature__&quot; the bound function get called</span>
-        <span class="c1"># and updated againg.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_previous_bound</span> <span class="o">=</span> <span class="n">bound</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_tqdm_depth</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># reset the tqdm stack count</span>
-        <span class="k">with</span> <span class="n">_function_name_pointing_to_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-            <span class="c1"># 2. Running flag</span>
-            <span class="c1"># We sometimes want to know if the function is called programmatically or</span>
-            <span class="c1"># from GUI. The &quot;running&quot; argument is True only when it&#39;s called via GUI.</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">running</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_function</span><span class="p">(</span><span class="o">*</span><span class="n">bound</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">bound</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span>
-            <span class="k">finally</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">running</span> <span class="o">=</span> <span class="kc">False</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_call_count</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result_widget</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result_widget</span><span class="o">.</span><span class="n">changed</span><span class="o">.</span><span class="n">blocked</span><span class="p">():</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_result_widget</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
-
-        <span class="n">return_type</span> <span class="o">=</span> <span class="n">sig</span><span class="o">.</span><span class="n">return_annotation</span>
-        <span class="k">if</span> <span class="n">return_type</span><span class="p">:</span>
-            <span class="kn">from</span> <span class="nn">magicgui.type_map</span> <span class="kn">import</span> <span class="n">_type2callback</span>
-
-            <span class="k">for</span> <span class="n">callback</span> <span class="ow">in</span> <span class="n">_type2callback</span><span class="p">(</span><span class="n">return_type</span><span class="p">):</span>
-                <span class="n">callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">return_type</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">called</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">value</span>
-
-
-<div class="viewcode-block" id="FunctionGuiPlus.insert"><a class="viewcode-back" href="../../../magicclass.gui.html#magicclass.gui.mgui_ext.FunctionGuiPlus.insert">[docs]</a>    <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">widget</span><span class="p">:</span> <span class="n">Widget</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Insert widget at ``key``.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="p">(</span><span class="n">ValueWidget</span><span class="p">,</span> <span class="n">ContainerWidget</span><span class="p">)):</span>
-            <span class="n">widget</span><span class="o">.</span><span class="n">changed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">changed</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
-        <span class="n">_widget</span> <span class="o">=</span> <span class="n">widget</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">:</span>
-            <span class="c1"># no labels for button widgets (push buttons, checkboxes, have their own)</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="p">(</span><span class="n">_LabeledWidget</span><span class="p">,</span> <span class="n">ButtonWidget</span><span class="p">,</span> <span class="n">Separator</span><span class="p">)):</span>
-                <span class="n">_widget</span> <span class="o">=</span> <span class="n">_LabeledWidget</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
-                <span class="n">widget</span><span class="o">.</span><span class="n">label_changed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_unify_label_widths</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_list</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">widget</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">key</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">key</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-        <span class="c1"># NOTE: if someone has manually mucked around with self.native.layout()</span>
-        <span class="c1"># it&#39;s possible that indices will be off.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_widget</span><span class="o">.</span><span class="n">_mgui_insert_widget</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">_widget</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_unify_label_widths</span><span class="p">()</span></div></div>
-
 
 <div class="viewcode-block" id="PushButtonPlus"><a class="viewcode-back" href="../../../magicclass.gui.html#magicclass.gui.mgui_ext.PushButtonPlus">[docs]</a><span class="k">class</span> <span class="nc">PushButtonPlus</span><span class="p">(</span><span class="n">PushButton</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -538,6 +456,7 @@
             
 <span class="k">def</span> <span class="nf">_to_rgb</span><span class="p">(</span><span class="n">color</span><span class="p">):</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">matplotlib.colors</span> <span class="kn">import</span> <span class="n">to_rgb</span>
         <span class="n">color</span> <span class="o">=</span> <span class="n">to_rgb</span><span class="p">(</span><span class="n">color</span><span class="p">)</span>
     <span class="n">rgb</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">c</span><span class="o">*</span><span class="mi">255</span><span class="p">),</span> <span class="mi">255</span><span class="p">),</span> <span class="mi">0</span><span class="p">))</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">color</span><span class="p">)</span>
     <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;rgb(</span><span class="si">{</span><span class="n">rgb</span><span class="si">}</span><span class="s2">)&quot;</span>

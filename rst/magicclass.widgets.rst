@@ -44,14 +44,6 @@ magicclass.widgets.sequence module
    :undoc-members:
    :show-inheritance:
 
-magicclass.widgets.threading module
------------------------------------
-
-.. automodule:: magicclass.widgets.threading
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 magicclass.widgets.utils module
 -------------------------------
 
