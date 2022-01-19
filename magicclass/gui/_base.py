@@ -866,8 +866,14 @@ def _build_mgui(widget_, func):
     try:
         call_button = get_additional_option(func, "call_button", None)
         layout = get_additional_option(func, "layout", "vertical")
+        labels = get_additional_option(func, "labels", True)
         auto_call = get_additional_option(func, "auto_call", False)
-        mgui = FunctionGuiPlus(func, call_button, layout=layout, auto_call=auto_call)
+        mgui = FunctionGuiPlus(func, 
+                               call_button,
+                               layout=layout,
+                               labels=labels,
+                               auto_call=auto_call
+                               )
     except Exception as e:
         msg = (
             "Exception was raised during building magicgui from method "

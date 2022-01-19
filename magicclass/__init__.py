@@ -15,7 +15,8 @@ from .wrappers import (
     click,
     set_design,
     do_not_record,
-    bind_key
+    bind_key,
+    confirm,
     )
 
 from .fields import field, vfield

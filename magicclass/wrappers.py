@@ -16,6 +16,7 @@ T = TypeVar("T")
 
 
 def set_options(layout: str = "vertical", 
+                labels: bool = True,
                 call_button: bool | str | None = None,
                 auto_call: bool = False,
                 **options) -> Callable[[Callable[[Args], Returns]], Callable[[Args], Returns]]:
@@ -27,9 +28,10 @@ def set_options(layout: str = "vertical",
     
     Parameters
     ----------
-    layout : str, optional
-        The type of layout to use. Must be one of {'horizontal', 'vertical'}.
-        by default "vertical".
+    layout : str, default is "vertical"
+        The type of layout to use in FunctionGui. Must be one of {'horizontal', 'vertical'}.
+    labels : bool, default is True
+        Whether labels are shown in the FunctionGui.
     call_button : bool or str, optional
         If ``True``, create an additional button that calls the original
         function when clicked.  If a ``str``, set the button text. If None (the
@@ -46,6 +48,7 @@ def set_options(layout: str = "vertical",
                           gui_options=options,
                           additional_options={"call_button": call_button,
                                               "layout": layout,
+                                              "labels": labels,
                                               "auto_call": auto_call}
                           )
         return func
@@ -184,6 +187,32 @@ def bind_key(*key) -> Callable[[Callable[[Args], Returns]], Callable[[Args], Ret
         upgrade_signature(method, additional_options={"keybinding": key})
         return method
     return wrapper
+
+
+def confirm(text: str, call_button_text: str = "OK"):
+    """
+    Confirm if it is OK to run function in GUI. Useful when the function will irreversibly
+    delete or update something in GUI.
+
+    Parameters
+    ----------
+    text : str
+        Confirmation text, such as "Are you sure to run this function?".
+    call_button_text : str, default is "OK"
+        Text shown on the call button.
+    """
+    from magicgui.widgets import Label
+    def _decorator(method: Callable[[Args], Returns]) -> Callable[[Args], Returns]:
+        @set_options(call_button=call_button_text,
+                     labels=False,
+                     label={"widget_type": Label, "value": text})
+        def _method(self, label):
+            return method(self)
+        _method.__name__ = method.__name__
+        _method.__qualname__ = method.__qualname__
+        _method.__module__ = method.__module__
+        return _method
+    return _decorator
 
 
 def _assert_iterable(obj):
