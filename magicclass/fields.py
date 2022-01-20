@@ -217,16 +217,7 @@ def field(obj: _X,
           *,
           name: str = "", 
           widget_type: str | type[WidgetProtocol] | None = None, 
-          options: WidgetOptions = {},
-          record: bool = True) -> MagicField[ValueWidget, _X]:
-    ...
-
-@overload
-def field(obj: type[_X], 
-          *,
-          name: str = "", 
-          widget_type: str | type[WidgetProtocol] | None = None, 
-          options: WidgetOptions = {},
+          options: dict[str, Any] = {},
           record: bool = True) -> MagicField[ValueWidget, _X]:
     ...
     
@@ -235,8 +226,17 @@ def field(obj: type[_W],
           *,
           name: str = "", 
           widget_type: str | type[WidgetProtocol] | None = None, 
-          options: WidgetOptions = {},
+          options: dict[str, Any] = {},
           record: bool = True) -> MagicField[_W, Any]:
+    ...
+
+@overload
+def field(obj: type[_X], 
+          *,
+          name: str = "", 
+          widget_type: str | type[WidgetProtocol] | None = None, 
+          options: dict[str, Any] = {},
+          record: bool = True) -> MagicField[ValueWidget, _X]:
     ...
 
 @overload
@@ -244,7 +244,7 @@ def field(obj: type[_M],
           *,
           name: str = "", 
           widget_type: str | type[WidgetProtocol] | None = None, 
-          options: WidgetOptions = {},
+          options: dict[str, Any] = {},
           record: bool = True) -> MagicField[_M, Any]:
     ...
     
@@ -253,7 +253,7 @@ def field(obj: Any,
           *,
           name: str = "", 
           widget_type: str | type[WidgetProtocol] | None = None, 
-          options: WidgetOptions = {},
+          options: dict[str, Any] = {},
           record: bool = True) -> MagicField[Widget, Any]:
     ...
 
@@ -261,7 +261,7 @@ def field(obj: Any = MISSING,
           *, 
           name: str = "", 
           widget_type: str | type[WidgetProtocol] | None = None, 
-          options: WidgetOptions = {},
+          options: dict[str, Any] = {},
           record: bool = True
           ) -> MagicField[Widget, Any]:
     """
@@ -296,7 +296,7 @@ def vfield(obj: type[_V],
           *,
           name: str = "", 
           widget_type: str | type[WidgetProtocol] | None = None, 
-          options: WidgetOptions = {},
+          options: dict[str, Any] = {},
           record: bool = True) -> MagicValueField[Widget, _V]:
     ...
     
@@ -305,7 +305,7 @@ def vfield(obj: _V,
           *,
           name: str = "", 
           widget_type: str | type[WidgetProtocol] | None = None, 
-          options: WidgetOptions = {},
+          options: dict[str, Any] = {},
           record: bool = True) -> MagicValueField[Widget, _V]:
     ...
 
@@ -314,7 +314,7 @@ def vfield(obj: Any,
           *,
           name: str = "", 
           widget_type: str | type[WidgetProtocol] | None = None, 
-          options: WidgetOptions = {},
+          options: dict[str, Any] = {},
           record: bool = True) -> MagicValueField[Widget, Any]:
     ...
     
@@ -322,7 +322,7 @@ def vfield(obj: Any = MISSING,
            *, 
            name: str = "", 
            widget_type: str | type[WidgetProtocol] | None = None, 
-           options: WidgetOptions = {},
+           options: dict[str, Any] = {},
            record: bool = True,
            ) -> MagicValueField[Widget, Any]:
     """
@@ -359,7 +359,7 @@ def vfield(obj: Any = MISSING,
 def _get_field(obj, 
                name: str, 
                widget_type: str | type[WidgetProtocol] | None, 
-               options: WidgetOptions,
+               options: dict[str, Any],
                record: bool,
                field_class: type[MagicField]
                ) -> type[MagicField]:
