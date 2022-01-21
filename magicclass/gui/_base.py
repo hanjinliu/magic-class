@@ -4,7 +4,6 @@ from typing import (
     Any,
     Callable,
     TYPE_CHECKING,
-    Generic,
     Iterable,
     Iterator,
     TypeVar,
@@ -107,7 +106,8 @@ def check_override(cls: type):
         raise AttributeError(
             f"Cannot override magic class reserved attributes: {collision}"
             )
-          
+      
+_T = TypeVar("_T")    
 
 class MagicTemplate: 
     __doc__ = ""
@@ -227,8 +227,41 @@ class MagicTemplate:
             dock = None
             
         return dock
-
     
+
+    def find_ancestor(self, ancestor: type[_T]) -> _T:
+        """
+        Find magic class ancestor whose type matches the input.
+        This method is useful when a child widget class is defined outside a magic
+        class while it needs access to its parent.
+
+        Parameters
+        ----------
+        ancestor : type of MagicTemplate
+            Type of ancestor to search for.
+
+        Returns
+        -------
+        MagicTemplate
+            Magic class object if found.
+        """        
+        if not isinstance(ancestor, type):
+            raise TypeError(
+                "The first argument of 'find_ancestor' must be a type but got "
+                f"{type(ancestor)}"
+                )
+
+        current_self = self
+        while type(current_self) is not ancestor:
+            current_self = current_self.__magicclass_parent__
+            if current_self is None:
+                raise RuntimeError(
+                    f"Magic class {ancestor.__name__} not found. {ancestor.__name__} it "
+                    f"is not an ancestor of {self.__class__.__name__}"
+                    )
+        return current_self
+
+
     def objectName(self) -> str:
         """
         This function makes the object name discoverable by napari's 
