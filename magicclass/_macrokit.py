@@ -3,6 +3,7 @@ from macrokit import Expr, register_type, Head
 from enum import Enum
 from pathlib import Path
 import datetime
+from .widgets.sequence import ListDataView
 from .gui._base import MagicTemplate
 
 # classes
@@ -13,6 +14,7 @@ _time = Expr(Head.getattr, [datetime, datetime.time])
 # magicgui-style input
 register_type(Enum, lambda e: repr(str(e.name)))
 register_type(Path, lambda e: f"r'{e}'")
+register_type(ListDataView, lambda e: list(e))
 register_type(datetime.datetime, lambda e: Expr.parse_call(_datetime, (e.year, e.month, e.day, e.hour, e.minute), {}))
 register_type(datetime.date, lambda e: Expr.parse_call(_date, (e.year, e.month, e.day), {}))
 register_type(datetime.time, lambda e: Expr.parse_call(_time, (e.hour, e.minute), {}))
