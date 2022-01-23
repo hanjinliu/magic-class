@@ -313,9 +313,14 @@ def make_gui(container: type[_C], no_margin: bool = True) -> type[_C | ClassGuiB
             
             if hasattr(widget, "__magicclass_parent__") or \
                 hasattr(widget.__class__, "__magicclass_parent__"):
-                if isinstance(widget, ClassGuiBase) and self._remove_child_margins:
-                    widget.margins = (0, 0, 0, 0)
                 widget.__magicclass_parent__ = self
+                if isinstance(widget, ClassGuiBase):
+                    if self._remove_child_margins:
+                        widget.margins = (0, 0, 0, 0)
+                    self.__magicclass_children__.append(widget)
+                    widget._my_symbol = Symbol(widget.name)
+                    # NOTE: This is not safe. Attributes could collision and macro recording
+                    # may break if not correctly named.
                 
             _widget = widget
 
@@ -398,6 +403,8 @@ def make_gui(container: type[_C], no_margin: bool = True) -> type[_C | ClassGuiB
             # See napari/_qt/widgets/qt_viewer_dock_widget.py
             from ..wrappers import nogui
             
+            # This function will be detected as non-reserved method so that magicclass will
+            # try to convert it into widget. Should decorate with @nogui.
             @nogui
             def add_dock_widget(self: MainWindowClassGui | BaseGui, 
                                 widget: Widget,
@@ -421,21 +428,16 @@ def make_gui(container: type[_C], no_margin: bool = True) -> type[_C | ClassGuiB
                 allowed_areas : sequence of str, optional
                     Allowed dock widget area. Allow all areas by default.
                 """
-                areas = {
-                    "left": Qt.LeftDockWidgetArea,
-                    "right": Qt.RightDockWidgetArea,
-                    "top": Qt.TopDockWidgetArea,
-                    "bottom": Qt.BottomDockWidgetArea,
-                }
                 name = name or widget.name
                 mainwin: QMainWindow = self.native
                 dock = QtDockWidget(mainwin, 
                                     widget.native,
                                     name=name.replace("_", " "),
                                     area=area,
-                                    allowed_areas=allowed_areas)
-                
-                mainwin.addDockWidget(areas[area], dock)
+                                    allowed_areas=allowed_areas
+                                    )
+
+                mainwin.addDockWidget(QtDockWidget.areas[area], dock)
                 if isinstance(widget, BaseGui):
                     widget.__magicclass_parent__ = self
                     self.__magicclass_children__.append(widget)

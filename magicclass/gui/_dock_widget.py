@@ -4,14 +4,15 @@ from operator import ior
 from qtpy.QtWidgets import QDockWidget as _QDockWidget, QMainWindow, QWidget
 from qtpy.QtCore import Qt
 
-areas = {
-    "left": Qt.LeftDockWidgetArea,
-    "right": Qt.RightDockWidgetArea,
-    "top": Qt.TopDockWidgetArea,
-    "bottom": Qt.BottomDockWidgetArea,
-}
 
 class QtDockWidget(_QDockWidget):
+    areas = {
+        "left": Qt.LeftDockWidgetArea,
+        "right": Qt.RightDockWidgetArea,
+        "top": Qt.TopDockWidgetArea,
+        "bottom": Qt.BottomDockWidgetArea,
+    }
+
     def __init__(
         self,
         parent: QMainWindow,
@@ -22,6 +23,8 @@ class QtDockWidget(_QDockWidget):
         allowed_areas: list[str] = None,
     ):
         super().__init__(name, parent)
+        areas = self.__class__.areas
+        
         if allowed_areas:
             if not isinstance(allowed_areas, (list, tuple)):
                 raise TypeError("`allowed_areas` must be a list or tuple")

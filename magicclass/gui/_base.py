@@ -205,7 +205,7 @@ class MagicTemplate:
         Return napari.Viewer if magic class is a dock widget of a viewer.
         """
         parent_self = self._search_parent_magicclass()
-        if parent_self.parent is None:
+        if parent_self.native.parent() is None:
             return None
         try:
             from napari.utils._magicgui import find_viewer_ancestor
