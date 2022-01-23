@@ -17,6 +17,7 @@ from .wrappers import (
     do_not_record,
     bind_key,
     confirm,
+    nogui,
     )
 
 from .fields import field, vfield

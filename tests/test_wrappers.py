@@ -1,4 +1,6 @@
-from magicclass import magicclass, set_options, set_design, do_not_record, confirm
+from types import MethodType
+from magicclass import magicclass, set_options, set_design, do_not_record, confirm, nogui
+from magicgui.widgets import PushButton
 
 def test_set_options():
     @magicclass
@@ -60,3 +62,17 @@ def test_confirm():
     assert ui["f"].mgui[0].value == "really?"
     ui["f"].mgui[-1].changed()
     assert str(ui.macro[-1]) == "ui.f()"
+
+def test_nogui():
+    @magicclass
+    class A:
+        @nogui
+        def f(self):
+            pass
+        
+        def g(self):
+            pass
+    
+    ui = A()
+    assert isinstance(ui["f"], MethodType)
+    assert isinstance(ui["g"], PushButton)

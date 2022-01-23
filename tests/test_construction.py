@@ -1,6 +1,7 @@
 from magicclass import magicclass, magictoolbar, magicmenu, MagicTemplate
 from unittest.mock import MagicMock
 from pathlib import Path
+from types import MethodType
 
 from magicclass.fields import field
 
@@ -9,7 +10,8 @@ def test_basic():
     class A(MagicTemplate):
         def f1(self): ...
         def f2(self, path: Path): ...
-        def _private(self): ...
+        # "type" will raise error if magicgui try to interpret the annotation
+        def _private(self, arg: type): ...
         def f3(self, i: int): ...
     
     ui = A()
@@ -17,6 +19,7 @@ def test_basic():
     assert ui[0].name == "f1"
     assert ui[1].name == "f2"
     assert ui[2].name == "f3"
+    assert isinstance(ui["_private"], MethodType)
     
     # test macro
     mock = MagicMock()

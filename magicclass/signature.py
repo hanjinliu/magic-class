@@ -72,7 +72,7 @@ def get_additional_option(obj: Any, option: str, default: Any = None):
         return opt.get(option, default)
     else:
         return default
-    
+
 
 class _void:
     """private sentinel."""

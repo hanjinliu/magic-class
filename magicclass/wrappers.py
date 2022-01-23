@@ -230,6 +230,12 @@ def confirm(text: str, call_button_text: str = "OK"):
     return _decorator
 
 
+def nogui(method: Callable[[Args], Returns]) -> Callable[[Args], Returns]:
+    """Wrapped method will not be converted into a widget."""    
+    upgrade_signature(method, additional_options={"gui": False})
+    return method
+
+
 def _assert_iterable(obj):
     if obj is None:
         obj = []
