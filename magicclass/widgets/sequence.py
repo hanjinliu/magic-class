@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Any, Iterable, TypeVar, overload, Iterator, Tuple, ForwardRef, Sequence
+from typing import Any, Iterable, TypeVar, overload, Iterator, Tuple, ForwardRef, Sequence, List
 from typing_extensions import get_args, get_origin
 import inspect
 from magicgui.widgets import create_widget, Container, PushButton
@@ -22,8 +22,8 @@ class ListEdit(Container):
 
     Parameters
     ----------
-    type_ : type, optional
-        Type of values in the list.
+    options: WidgetOptions, optional
+        Widget options of child widgets.
     """
 
     def __init__(
@@ -233,18 +233,20 @@ class TupleEdit(Container):
 
     Parameters
     ----------
-    types : iterable of types, optional
-        Types of values in the tuple.
+    options: WidgetOptions, optional
+        Widget options of child widgets.
     """
 
     def __init__(
         self,
         value: Iterable[_V] | _Unset = UNSET,
         layout: str = "horizontal",
+        options: WidgetOptions = None,
         **kwargs,
     ):
         self._args_types: tuple[type, ...] | None = None
         super().__init__(layout=layout, labels=False, **kwargs)
+        self._child_options = options or {}
         self.margins = (0, 0, 0, 0)
 
         if not isinstance(value, _Unset):
@@ -261,7 +263,8 @@ class TupleEdit(Container):
         for i, a in enumerate(_value):
             i = len(self)
             widget = create_widget(
-                value=a, annotation=self._args_types[i], name=f"value_{i}"
+                value=a, annotation=self._args_types[i], name=f"value_{i}",
+                options=self._child_options,
             )
             self.insert(i, widget)
 
