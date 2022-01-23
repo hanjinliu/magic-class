@@ -10,6 +10,7 @@ from .gui._base import PopUpMode, ErrorMode, MagicTemplate
 
 if TYPE_CHECKING:
     from ._typing import WidgetType, WidgetTypeStr, PopUpModeStr, ErrorModeStr
+    from .stylesheets import StyleSheet
     from qtpy.QtWidgets import QWidget
     
 
@@ -32,6 +33,7 @@ def magicclass(class_: _C,
                error_mode: ErrorModeStr | ErrorMode | None = None,
                widget_type: WidgetTypeStr | WidgetType = WidgetType.none,
                icon_path: str | None = None,
+               stylesheet: str | StyleSheet | None = None,
                parent = None,
                ) -> type[ClassGuiBase | _C]:
     ...
@@ -47,6 +49,7 @@ def magicclass(*,
                error_mode: ErrorModeStr | ErrorMode | None = None,
                widget_type: WidgetTypeStr | WidgetType = WidgetType.none,
                icon_path: str | None = None,
+               stylesheet: str | StyleSheet | None = None,
                parent = None,
                ) -> Callable[[_C], type[ClassGuiBase | _C]]:
     ...

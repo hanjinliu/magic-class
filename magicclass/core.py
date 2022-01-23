@@ -3,7 +3,7 @@ from functools import wraps as functools_wraps
 import inspect
 from dataclasses import is_dataclass
 from weakref import WeakValueDictionary
-from typing import Any
+from typing import Any, TYPE_CHECKING
 from typing_extensions import Annotated, _AnnotatedAlias
 
 from .gui.class_gui import (
@@ -25,10 +25,15 @@ from .gui.class_gui import (
     ListClassGui,
     )
 from .gui._base import PopUpMode, ErrorMode, defaults, MagicTemplate, check_override
-from .gui import ContextMenuGui, MenuGui, MenuGuiBase, ToolBarGui
+from .gui import ContextMenuGui, MenuGui, ToolBarGui
 from ._app import get_app
-from ._typing import WidgetType, WidgetTypeStr, PopUpModeStr, ErrorModeStr
+from ._typing import WidgetType
 from . import _macrokit  # activate macrokit registration things.
+
+if TYPE_CHECKING:
+    from .stylesheets import StyleSheet
+    from .gui import MenuGuiBase
+    from ._typing import WidgetTypeStr, PopUpModeStr, ErrorModeStr
     
 _BASE_CLASS_SUFFIX = "_Base"
 _POST_INIT = "__post_init__"
@@ -85,6 +90,7 @@ def magicclass(class_: type | None = None,
                error_mode: ErrorModeStr | ErrorMode = None,
                widget_type: WidgetTypeStr | WidgetType = WidgetType.none,
                icon_path: str = None,
+               stylesheet: str | StyleSheet = None,
                parent = None
                ):
     """
@@ -123,6 +129,8 @@ def magicclass(class_: type | None = None,
         Widget type of container.
     icon_path : str, optional
         Path to the icon image.
+    stylesheet : str or StyleSheet object, optional
+        Set stylesheet to the widget if given.
     parent : magicgui.widgets._base.Widget, optional
         Parent widget if exists.
     
@@ -201,6 +209,8 @@ def magicclass(class_: type | None = None,
             
             if icon_path:
                 self.icon_path = icon_path
+            if stylesheet:
+                self.native.setStyleSheet(str(stylesheet))
 
         newclass.__init__ = __init__
         
