@@ -218,6 +218,10 @@ class ToolBarGui(ContainerLikeGui):
         """
         if isinstance(obj, Callable):
             # Sometimes uses want to dynamically add new functions to GUI.
+            method_name = getattr(obj, "__name__", None)
+            if method_name and not hasattr(self, method_name):
+                object.__setattr__(self, method_name, obj)
+                
             if isinstance(obj, FunctionGui):
                 if obj.parent is None:
                     f = nested_function_gui_callback(self, obj)

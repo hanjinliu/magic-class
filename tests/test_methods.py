@@ -1,4 +1,4 @@
-from magicclass import magicclass, field, MagicTemplate
+from magicclass import magicclass, magicmenu, magictoolbar, field, MagicTemplate
 
 def test_find_ancestor():
     @magicclass
@@ -30,4 +30,38 @@ def test_add_dock_widget():
     ui.add_dock_widget(A())
     ui.add_dock_widget(A())
     ui.add_dock_widget(A())
+
+
+def test_post_append():
+    from types import FunctionType
+    
+    @magicclass
+    class A:
+        @magicmenu
+        class Menu:
+            pass
+        @magictoolbar
+        class Tool:
+            pass
+        
+        def f(self):
+            ...
+    
+    ui = A()
+    f_id = id(ui.f)
+    @ui.append
+    def g(): pass
+    @ui.Menu.append
+    def g(): pass
+    @ui.Tool.append
+    def g(): pass
+    
+    assert isinstance(ui.g, FunctionType)
+    assert isinstance(ui.Menu.g, FunctionType)
+    assert isinstance(ui.Tool.g, FunctionType)
+    
+    @ui.append
+    def f(): pass
+    
+    assert id(ui.f) == f_id
     

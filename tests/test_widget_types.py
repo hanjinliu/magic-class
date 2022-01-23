@@ -1,4 +1,4 @@
-from magicclass import magicclass, magicmenu, magictoolbar, WidgetType, build_help
+from magicclass import magicclass, magicmenu, magictoolbar, WidgetType
 
 def _make_class(t: WidgetType):
     @magicclass(widget_type=t)

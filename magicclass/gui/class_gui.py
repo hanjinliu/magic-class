@@ -296,13 +296,17 @@ def make_gui(container: type[_C], no_margin: bool = True) -> type[_C | ClassGuiB
         def _fast_insert(self: cls, key: int, widget: Widget | Callable):
             if isinstance(widget, Callable):
                 # Sometimes uses want to dynamically add new functions to GUI.
+                method_name = getattr(widget, "__name__", None)
+                if method_name and not hasattr(self, method_name):
+                    object.__setattr__(self, method_name, widget)
+                    
                 if isinstance(widget, FunctionGui):
                     if widget.parent is None:
                         f = nested_function_gui_callback(self, widget)
                         widget.called.connect(f)
                 else:
                     widget = self._create_widget_from_method(widget)
-                
+
             # _hide_labels should not contain Container because some ValueWidget like widgets
             # are Containers.
             _hide_labels = (_LabeledWidget, ButtonWidget, ClassGuiBase, FreeWidget, Label,
