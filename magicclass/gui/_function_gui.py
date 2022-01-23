@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import Any, TYPE_CHECKING
 import re
+import weakref
 from magicgui.widgets._concrete import _LabeledWidget
 from magicgui.widgets._bases import ValueWidget, ButtonWidget, ContainerWidget
 from magicgui.widgets._function_gui import FunctionGui, _function_name_pointing_to_widget
@@ -9,7 +10,6 @@ from ..widgets import Separator
 if TYPE_CHECKING:
     from magicgui.widgets._bases import Widget
     from ._base import BaseGui
-    import weakref
 
 
 class FunctionGuiPlus(FunctionGui):
@@ -92,9 +92,13 @@ class FunctionGuiPlus(FunctionGui):
         self._unify_label_widths()
 
     @property
-    def magicclass_parent(self) -> BaseGui | None:
+    def __magicclass_parent__(self) -> BaseGui | None:
         """Return parent magic class if exists."""
         if self._magicclass_parent_ref is None:
             return None
         parent = self._magicclass_parent_ref()
         return parent
+    
+    @__magicclass_parent__.setter
+    def __magicclass_parent__(self, parent) -> None:
+        self._magicclass_parent_ref = weakref.ref(parent)
