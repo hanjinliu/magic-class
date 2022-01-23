@@ -1,15 +1,22 @@
 from __future__ import annotations
-from typing import Any
+from typing import Any, TYPE_CHECKING
 import re
 from magicgui.widgets._concrete import _LabeledWidget
-from magicgui.widgets._bases import Widget, ValueWidget, ButtonWidget, ContainerWidget
+from magicgui.widgets._bases import ValueWidget, ButtonWidget, ContainerWidget
 from magicgui.widgets._function_gui import FunctionGui, _function_name_pointing_to_widget
 from ..widgets import Separator
 
+if TYPE_CHECKING:
+    from magicgui.widgets._bases import Widget
+    from ._base import BaseGui
+    import weakref
+
+
 class FunctionGuiPlus(FunctionGui):
-    """
-    FunctionGui class with a parameter recording functionality etc.
-    """
+    """FunctionGui class with a parameter recording functionality etc."""
+    
+    _magicclass_parent_ref: weakref.ReferenceType[BaseGui] | None = None
+    
     def __call__(self, *args: Any, **kwargs: Any):
         sig = self.__signature__
         try:
@@ -83,3 +90,11 @@ class FunctionGuiPlus(FunctionGui):
         # it's possible that indices will be off.
         self._widget._mgui_insert_widget(key, _widget)
         self._unify_label_widths()
+
+    @property
+    def magicclass_parent(self) -> BaseGui | None:
+        """Return parent magic class if exists."""
+        if self._magicclass_parent_ref is None:
+            return None
+        parent = self._magicclass_parent_ref()
+        return parent

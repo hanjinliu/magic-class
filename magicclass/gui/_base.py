@@ -16,6 +16,7 @@ import warnings
 import os
 from enum import Enum
 import warnings
+import weakref
 from docstring_parser import parse, compose
 from qtpy.QtWidgets import QWidget, QDockWidget
 from qtpy.QtGui import QIcon
@@ -533,7 +534,7 @@ class MagicTemplate:
             def run_function():
                 # NOTE: callback must be defined inside function. Magic class must be
                 # "compiled" otherwise function wrappings are not ready!
-                mgui = _build_mgui(widget, func)
+                mgui = _build_mgui(widget, func, self)
                 mgui.native.setParent(self.native, mgui.native.windowFlags())
                 if (mgui.call_count == 0 and 
                     len(mgui.called._slots) == 0 and 
@@ -548,7 +549,7 @@ class MagicTemplate:
         elif nparams == 1 and isinstance(fgui[0], FileEdit):
             # We don't want to open a magicgui dialog and again open a file dialog.
             def run_function():
-                mgui = _build_mgui(widget, func)
+                mgui = _build_mgui(widget, func, self)
                 mgui.native.setParent(self.native, mgui.native.windowFlags())
                 if (mgui.call_count == 0 and 
                     len(mgui.called._slots) == 0 and 
@@ -573,7 +574,7 @@ class MagicTemplate:
             
         else:                
             def run_function():
-                mgui = _build_mgui(widget, func)
+                mgui = _build_mgui(widget, func, self)
                 if mgui.call_count == 0 and len(mgui.called._slots) == 0:
                     
                     # deal with popup mode.
@@ -901,7 +902,8 @@ def _temporal_function_gui_callback(bgui: MagicTemplate,
     
     return _after_run
 
-def _build_mgui(widget_, func):
+
+def _build_mgui(widget_: Action | PushButtonPlus, func: Callable, parent: BaseGui):
     if widget_.mgui is not None:
         return widget_.mgui
     try:
@@ -925,6 +927,7 @@ def _build_mgui(widget_, func):
     widget_.mgui = mgui
     name = widget_.name or ""
     mgui.native.setWindowTitle(name.replace("_", " "))
+    mgui._magicclass_parent_ref = weakref.ref(parent)
     return mgui
         
 _C = TypeVar("_C", Callable, type)
