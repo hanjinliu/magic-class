@@ -101,9 +101,9 @@ class tqdm(_tqdm_std):
 
     def display(self, msg: str = None, pos: int = None) -> None:
         """Update the display."""
-        if not self._in_visible_gui:
+        if not (self._in_visible_gui or self.progressbar.visible):
             return super().display(msg=msg, pos=pos)
-
+        
         self.progressbar.value = self.n
         if self.prefix:
             self.progressbar.label = self.prefix
