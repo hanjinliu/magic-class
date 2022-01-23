@@ -96,9 +96,10 @@ class ClassGuiBase(BaseGui):
         base_members |= set(x[0] for x in iter_members(ClassGuiBase))
         
         _hist: list[tuple[str, str, str]] = [] # for traceback
+        _base_annotations = ClassGuiBase.__annotations__.keys()
         
         for name, attr in filter(lambda x: x[0] not in base_members, iter_members(cls)):
-            if name in ClassGuiBase.__annotations__.keys() or isinstance(attr, property):
+            if name in _base_annotations or isinstance(attr, property):
                 continue
             
             try:
@@ -190,6 +191,8 @@ class ClassGuiBase(BaseGui):
                         # NOTE: Here any custom callable objects could be given. Some callable
                         # objects can be incompatible (like "Signal" object in magicgui) but
                         # useful. Those callable objects should be passed from widget construction.
+                        if name.startswith("_") or not get_additional_option(attr, "gui", True):
+                            continue
                         try:
                             widget = self._create_widget_from_method(widget)
                         except AttributeError:
