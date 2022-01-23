@@ -203,8 +203,8 @@ class ToolBarGui(ContainerLikeGui):
         
         self._unify_label_widths()
         return None
-    
-    
+
+
     def _fast_insert(self, key: int, obj: AbstractAction | Callable) -> None:
         """
         Insert object into the toolbar. Could be widget or callable.

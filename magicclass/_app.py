@@ -15,6 +15,7 @@ def gui_qt():
         shell.enable_gui("qt")
     return None
 
+
 def gui_qt_is_active() -> bool:
     """True only if "%gui qt" magic is called in ipython kernel."""
     try:
@@ -26,6 +27,7 @@ def gui_qt_is_active() -> bool:
     
     return shell and shell.active_eventloop == "qt"
 
+
 def get_app():
     """Get QApplication."""    
     gui_qt()
@@ -36,9 +38,8 @@ def get_app():
     APPLICATION = app
     return app
 
+
 def run_app():
-    """
-    Start the event loop.
-    """ 
+    """Start the event loop.""" 
     if not gui_qt_is_active():
         return get_app().exec_()

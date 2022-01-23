@@ -11,6 +11,10 @@ class AdditionalOptions(TypedDict):
     record: bool
     keybinding: str
     into: str
+    copyto: str
+    moveto: str
+    gui: bool
+
 
 def upgrade_signature(func, 
                       gui_options: dict = None, 
