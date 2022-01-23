@@ -270,8 +270,11 @@ class MagicTemplate:
         `viewer.window.add_dock_widget` function. At the same time, since this function
         will always be called when the widget is added as a dock widget of napari, we
         can import macro recorders for napari types in the appropriate timing.
-        """        
-        from . import _napari_type  # load default macro recorder.
+        """
+        try:
+            from . import _napari_type  # load default macro recorder.
+        except Exception:
+            pass
         return self.native.objectName()
 
     @classmethod
