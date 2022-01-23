@@ -31,7 +31,8 @@ from magicgui.widgets import (
     Container,
     Image,
     Table,
-    Label
+    Label,
+    MainWindow,
     )
 from magicgui.application import use_app
 from magicgui.widgets._bases.widget import Widget
@@ -609,10 +610,13 @@ class MagicTemplate:
                             child_self.insert(i+1, mgui)
                             
                     elif self._popup_mode == PopUpMode.dock:
+                        from .class_gui import MainWindowClassGui
                         parent_self = self._search_parent_magicclass()
                         viewer = parent_self.parent_viewer
                         if viewer is None:
-                            if not hasattr(parent_self.native, "addDockWidget"):
+                            if isinstance(parent_self, MainWindowClassGui):
+                                parent_self.add_dock_widget(mgui)
+                            else:
                                 msg = (
                                     "Cannot add dock widget to a normal container. Please use\n"
                                     ">>> @magicclass(widget_type='mainwindow')\n"
@@ -620,16 +624,8 @@ class MagicTemplate:
                                     "widget in napari.")
                                 warnings.warn(msg, UserWarning)
                             
-                            else:
-                                from qtpy.QtWidgets import QDockWidget
-                                from qtpy.QtCore import Qt
-                                dock = QDockWidget(_get_widget_name(widget), self.native)
-                                dock.setWidget(mgui.native)
-                                parent_self.native.addDockWidget(
-                                    Qt.DockWidgetArea.RightDockWidgetArea, dock
-                                    )
                         else:
-                            dock = viewer.window.add_dock_widget(
+                            viewer.window.add_dock_widget(
                                 mgui, name=_get_widget_name(widget), area="right"
                                 )
                     else:

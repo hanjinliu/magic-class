@@ -1,7 +1,7 @@
 from magicclass import magicclass, PopUpMode
 
-def _make_class(mode: PopUpMode):
-    @magicclass(popup_mode=mode)
+def _make_class(mode: PopUpMode, widget_type="none"):
+    @magicclass(popup_mode=mode, widget_type=widget_type)
     class A:
         @magicclass(popup_mode=mode)
         class B:
@@ -18,8 +18,9 @@ def _make_class(mode: PopUpMode):
 def test_all_works():
     for mode in PopUpMode._member_names_:
         if mode == "dock":
-            continue
-        ui = _make_class(mode)()
+            ui = _make_class(mode, "mainwindow")()
+        else:
+            ui = _make_class(mode)()
         ui.show(run=False)
         ui[1].changed()
         ui.B[0].changed()

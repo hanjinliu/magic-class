@@ -1,8 +1,8 @@
 from __future__ import annotations
 from inspect import signature
-from typing import Any, Callable, TypeVar
+from typing import Any, Callable, Sequence, TypeVar
 import warnings
-from qtpy.QtWidgets import QMenuBar, QWidget, QMainWindow, QBoxLayout
+from qtpy.QtWidgets import QMenuBar, QWidget, QMainWindow, QBoxLayout, QDockWidget
 from qtpy.QtCore import Qt
 from magicgui.widgets import Container, MainWindow,Label, FunctionGui, Image, Table
 from magicgui.widgets._bases import Widget, ButtonWidget, ValueWidget, ContainerWidget
@@ -35,6 +35,7 @@ from ..utils import iter_members, extract_tooltip
 from ..fields import MagicField
 from ..signature import get_additional_option
 from .._app import run_app
+from ._dock_widget import QtDockWidget
 
 # For Containers that belong to these classes, menubar must be set to _qwidget.layout().
 _USE_OUTER_LAYOUT = (ScrollableContainer, DraggableContainer, SplitterContainer, TabbedContainer)
@@ -391,6 +392,56 @@ def make_gui(container: type[_C], no_margin: bool = True) -> type[_C | ClassGuiB
             container.close(self)
 
             return None
+        
+        if issubclass(container, MainWindow):
+            # Similar to napari's viewer.window.add_dock_widget.
+            # See napari/_qt/widgets/qt_viewer_dock_widget.py
+            from ..wrappers import nogui
+            
+            @nogui
+            def add_dock_widget(self: MainWindowClassGui | BaseGui, 
+                                widget: Widget,
+                                *, 
+                                name: str = "", 
+                                area: str = "right", 
+                                allowed_areas: Sequence[str] | None = None):
+                """
+                Add a widget as a dock widget of the main window.
+                This method follows napari's "add_dock_widget" method.
+
+                Parameters
+                ----------
+                widget : Widget
+                    Widget that will be converted into a dock widget and added to the main
+                    window.
+                name : str, optional
+                    Name of the dock widget.
+                area : str, default is "right"
+                    Initial dock widget area.
+                allowed_areas : sequence of str, optional
+                    Allowed dock widget area. Allow all areas by default.
+                """
+                areas = {
+                    "left": Qt.LeftDockWidgetArea,
+                    "right": Qt.RightDockWidgetArea,
+                    "top": Qt.TopDockWidgetArea,
+                    "bottom": Qt.BottomDockWidgetArea,
+                }
+                name = name or widget.name
+                mainwin: QMainWindow = self.native
+                dock = QtDockWidget(mainwin, 
+                                    widget.native,
+                                    name=name.replace("_", " "),
+                                    area=area,
+                                    allowed_areas=allowed_areas)
+                
+                mainwin.addDockWidget(areas[area], dock)
+                if isinstance(widget, BaseGui):
+                    widget.__magicclass_parent__ = self
+                    self.__magicclass_children__.append(widget)
+                    widget._my_symbol = Symbol(name)
+
+            cls.add_dock_widget = add_dock_widget
         
         cls.__init__ = __init__
         cls.__setattr__ = __setattr__
