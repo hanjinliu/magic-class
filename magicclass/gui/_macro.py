@@ -1,5 +1,5 @@
 from __future__ import annotations
-from macrokit import Symbol, Expr, Head, Macro, parse
+from macrokit import Symbol, Expr, Head, Macro, parse, symbol
 from typing import TYPE_CHECKING, Iterable
 from qtpy.QtWidgets import QMenuBar, QMenu, QAction
 from magicgui.widgets import FileEdit
@@ -67,13 +67,17 @@ class MacroEdit(FreeWidget):
         parent = self._search_parent_magicclass()
         with parent.macro.blocked():
             try:
+                # substitute :ui and :viewer to the actual objects
                 code = parse(self.textedit.value)
-                code.eval({Symbol.var("ui"): parent})
+                _ui = Symbol.var("ui")
+                _viewer = symbol(parent.parent_viewer)
+                code.eval({_ui: parent, _viewer: parent.parent_viewer})
             except Exception as e:
                 show_messagebox("error", title=e.__class__.__name__,
                                 text=str(e), parent=self.native)
     
     def execute_lines(self, line_numbers: int | slice | Iterable[int] = -1):
+        """Execute macro at selected lines."""
         parent = self._search_parent_magicclass()
         with parent.macro.blocked():
             try:

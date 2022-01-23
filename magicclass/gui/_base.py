@@ -264,9 +264,14 @@ class MagicTemplate:
 
     def objectName(self) -> str:
         """
+        Return object name of the QWidget.
+        
         This function makes the object name discoverable by napari's 
-        `viewer.window.add_dock_widget` function.
+        `viewer.window.add_dock_widget` function. At the same time, since this function
+        will always be called when the widget is added as a dock widget of napari, we
+        can import macro recorders for napari types in the appropriate timing.
         """        
+        from . import _napari_type  # load default macro recorder.
         return self.native.objectName()
 
     @classmethod
@@ -276,10 +281,10 @@ class MagicTemplate:
               template: Callable | None = None,
               copy: bool = False) -> Callable:
         """
-        Wrap a parent method in a child magic-class. Wrapped method will appear in 
-        the child widget but behaves as if it is in the parent widget.
+        Wrap a parent method in a child magic-class. 
         
-        Basically, this function is used as a wrapper like below.
+        Wrapped method will appear in the child widget but behaves as if it is in
+        the parent widget. Basically, this function is used as a wrapper like below.
         
         .. code-block:: python
         
