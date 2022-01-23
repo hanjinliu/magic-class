@@ -1,14 +1,26 @@
 
 from __future__ import annotations
-from functools import wraps
 from qtpy.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QHBoxLayout
 from magicgui.widgets import Widget
 from magicgui.backends._qtpy.widgets import QBaseWidget
 
+
+class _NotInitialized:
+    def __init__(self, msg: str):
+        self.msg = msg
+
+    def __getattr__(self, key: str):
+        raise RuntimeError(self.msg)
+
+
 class FreeWidget(Widget):
-    """
-    A Widget class with any QWidget as a child.
-    """    
+    """A Widget class with any QWidget as a child."""
+    
+    _widget = _NotInitialized(
+        "Widget is not correctly initialized. Must call `super().__init__` before using "
+        "the widget."
+        )
+    
     def __init__(self, layout="vertical", **kwargs):
         super().__init__(widget_type=QBaseWidget, backend_kwargs={"qwidg": QWidget}, **kwargs)
         self.native: QWidget
@@ -20,21 +32,12 @@ class FreeWidget(Widget):
         elif layout == "grid":
             self.native.setLayout(QGridLayout())
         else:
-            ValueError(layout)
+            raise ValueError(layout)
         self.native.setContentsMargins(0, 0, 0, 0)
-        
+
+
     def set_widget(self, widget: QWidget, *args):
+        """Set the central widget to the widget."""
         self.native.layout().addWidget(widget, *args)
         widget.setParent(self.native)
         self.central_widget = widget
-
-def magicwidget(qcls: type[QWidget]):
-    @wraps(qcls.__init__)
-    def __init__(self: FreeWidget, *args, **kwargs):
-        FreeWidget.__init__(self)
-        self._qwidget = qcls.__init__(*args, **kwargs)
-        self.set_widget(self._qwidget)
-    
-    new_class = type(qcls.__name__, (FreeWidget,), {})
-    new_class.__init__ = __init__
-    return new_class
