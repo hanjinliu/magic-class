@@ -851,9 +851,12 @@ def _temporal_function_gui_callback(bgui: MagicTemplate,
         raise TypeError("fgui must be FunctionGui object.")
         
     return_type = fgui.return_annotation
-    result_required = return_type is not inspect._empty
+    result_required = return_type is not inspect.Parameter.empty
     
-    def _after_run():
+    def _after_run(e: Exception = None):
+        if isinstance(e, Exception):
+            # If function call ended with an exception, don't record macro.
+            return
         bound = fgui._previous_bound
         result = Symbol("result")
         # Standard button will be connected with two callbacks.
@@ -1079,8 +1082,10 @@ def _method_as_getter(self, bound_value: Callable):
         return getattr(ins, funcname)(w)
     return _func
 
-def _field_as_getter(self, bound_value: MagicField):
+def _field_as_getter(self: BaseGui, bound_value: MagicField):
+    """Called when a MagicField is used in Bound method."""
     def _func(w):
+        # First we have to know where (which instance) MagicField came from.
         namespace = bound_value.parent_class.__qualname__
         clsnames = namespace.split(".")
         ins = self
@@ -1094,7 +1099,8 @@ def _field_as_getter(self, bound_value: MagicField):
         i = clsnames.index(type(ins).__name__)
         for clsname in clsnames[i:]:
             ins = getattr(ins, clsname, ins)
-            
+        
+        # Extract correct widget from MagicField
         _field_widget = bound_value.get_widget(ins)
         if not hasattr(_field_widget, "value"):
             raise TypeError(
