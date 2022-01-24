@@ -98,3 +98,22 @@ def test_warning():
             
     with pytest.warns(UserWarning):
         ui = A()
+
+def test_container_callbalc():
+    from magicclass.widgets import GroupBoxContainer, LineEdit
+    mock = MagicMock()
+    @magicclass
+    class A:
+        a = field(GroupBoxContainer)
+        def __post_init__(self):
+            self.line = LineEdit()
+            self.a.append(self.line)
+            
+        @a.connect
+        def _callback(self):
+            mock()
+    
+    ui = A()
+    mock.assert_not_called()
+    ui.a[0].value = "xxx"
+    mock.assert_called()

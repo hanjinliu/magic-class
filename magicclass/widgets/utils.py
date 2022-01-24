@@ -41,3 +41,11 @@ class FreeWidget(Widget):
         self.native.layout().addWidget(widget, *args)
         widget.setParent(self.native)
         self.central_widget = widget
+
+def magicwidget(qcls: type[QWidget]):
+    from ..utils import iter_members
+    for name, attr in iter_members(qcls):
+        def _(self: FreeWidget, *args, **kwargs):
+            return attr(self.central_widget, *args, **kwargs)
+    cls = type(qcls.__name__, (FreeWidget, ), {})
+    

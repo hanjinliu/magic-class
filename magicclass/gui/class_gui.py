@@ -2,11 +2,11 @@ from __future__ import annotations
 from inspect import signature
 from typing import Any, Callable, Sequence, TypeVar
 import warnings
-from qtpy.QtWidgets import QMenuBar, QWidget, QMainWindow, QBoxLayout, QDockWidget
+from qtpy.QtWidgets import QMenuBar, QWidget, QMainWindow, QBoxLayout
 from qtpy.QtCore import Qt
 from magicgui.widgets import Container, MainWindow,Label, FunctionGui, Image, Table
 from magicgui.widgets._bases import Widget, ButtonWidget, ValueWidget, ContainerWidget
-from magicgui.widgets._concrete import _LabeledWidget
+from magicgui.widgets._concrete import _LabeledWidget, ContainerWidget
 from macrokit import Symbol
 
 from .mgui_ext import PushButtonPlus
@@ -59,7 +59,7 @@ class ClassGuiBase(BaseGui):
         fld.name = fld.name or name.replace("_", " ")
         widget = fld.get_widget(self)
             
-        if isinstance(widget, (ValueWidget, Container)):
+        if isinstance(widget, (ValueWidget, ContainerWidget)):
             # If the field has callbacks, connect it to the newly generated widget.
             for callback in fld.callbacks:
                 # funcname = callback.__name__
