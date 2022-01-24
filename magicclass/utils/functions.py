@@ -1,12 +1,13 @@
 from __future__ import annotations
 import inspect
 from enum import Enum
-from typing import Any
+from typing import Any, Iterable
 from docstring_parser import parse
 from qtpy.QtWidgets import QApplication, QMessageBox
 
 __all__ = ["MessageBoxMode", "show_messagebox", "open_url", "screen_center", "to_clipboard",
            "iter_members", "extract_tooltip", "get_signature"]
+
 
 def iter_members(cls: type, exclude_prefix: str = "__") -> list[str, Any]:
     """
@@ -18,7 +19,7 @@ def iter_members(cls: type, exclude_prefix: str = "__") -> list[str, Any]:
     processed = set()
     names: list[str] = list(cls.__dict__.keys())
     try:
-        for base in mro:
+        for base in reversed(mro):
             for k in base.__dict__.keys():
                 if k not in names:
                     names.append(k)
@@ -42,7 +43,51 @@ def iter_members(cls: type, exclude_prefix: str = "__") -> list[str, Any]:
         if not key.startswith(exclude_prefix):
             yield key, value
         processed.add(key)
+
+def _iter_members(cls: type, 
+                 exclude_prefix: str = "__", 
+                 exclude_base_class: Iterable[type] = ()) -> list[str, Any]:
+    """
+    Iterate over all the members in the order of source code line number. 
+    This function is identical to inspect.getmembers except for the order
+    of the results. We have to sort the name in the order of line number.
+    """    
+    mro = set((cls,) + inspect.getmro(cls))
+    exclude_mro = set()
+    for c in exclude_base_class:
+        exclude_mro.add(set((c,) + inspect.getmro(c)))
+    mro = mro - exclude_mro
     
+    processed = set()
+    cls_attrs: list[str] = list(cls.__dict__.keys())
+    names: list[str] = []
+    try:
+        for base in mro:
+            for k in base.__dict__.keys():
+                if k not in cls_attrs:
+                    names.append(k)
+
+        names = names + cls_attrs
+
+    except AttributeError:
+        pass
+    
+    for key in names:
+        try:
+            value = getattr(cls, key)
+            # handle the duplicate key
+            if key in processed:
+                raise AttributeError
+        except AttributeError:
+            for base in mro:
+                if key in base.__dict__:
+                    value = base.__dict__[key]
+                    break
+            else:
+                continue
+        if not key.startswith(exclude_prefix):
+            yield key, value
+        processed.add(key)
 
 def extract_tooltip(obj: Any) -> str:    
     doc = parse(obj.__doc__)
