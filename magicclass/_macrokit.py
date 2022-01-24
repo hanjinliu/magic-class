@@ -12,7 +12,7 @@ _date = Expr(Head.getattr, [datetime, datetime.date])
 _time = Expr(Head.getattr, [datetime, datetime.time])
 
 # magicgui-style input
-register_type(Enum, lambda e: repr(str(e.name)))
+register_type(Enum, lambda e: e.value)
 register_type(Path, lambda e: f"r'{e}'")
 register_type(ListDataView, lambda e: list(e))
 register_type(datetime.datetime, lambda e: Expr.parse_call(_datetime, (e.year, e.month, e.day, e.hour, e.minute), {}))

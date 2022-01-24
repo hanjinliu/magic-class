@@ -37,6 +37,7 @@ def test_post_append():
     
     @magicclass
     class A:
+        a = 0
         @magicmenu
         class Menu:
             pass
@@ -45,10 +46,10 @@ def test_post_append():
             pass
         
         def f(self):
-            ...
+            self.a = 1
     
     ui = A()
-    f_id = id(ui.f)
+    
     @ui.append
     def g(): pass
     @ui.Menu.append
@@ -63,5 +64,6 @@ def test_post_append():
     @ui.append
     def f(): pass
     
-    assert id(ui.f) == f_id
+    ui.f()
+    assert ui.a == 1
     
