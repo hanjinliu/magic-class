@@ -8,14 +8,24 @@ class X(Enum):
     a = 1
     b = 2
 
+class Y(Enum):
+    t = "\t"
+    n = "\n"
+
 def test_macro_rerun():
     mock = MagicMock()
     
     @magicclass(error_mode="stderr")
     class A:
-        def f1(self, x: X):
+        def f0(self, x: X):
             try:
                 x = X(x)  # this is the formal way to use Enum
+            except Exception:
+                mock()
+        
+        def f1(self, y: Y):
+            try:
+                y = Y(y)  # this is the formal way to use Enum
             except Exception:
                 mock()
         
@@ -40,6 +50,8 @@ def test_macro_rerun():
             str(path)  # this is the formal way to use Path
     
     ui = A()
+    ui["f0"].changed()
+    ui["f0"].mgui[-1].changed()
     ui["f1"].changed()
     ui["f1"].mgui[-1].changed()
     ui["f2"].changed()
@@ -58,4 +70,6 @@ def test_macro_rerun():
     ui.macro.widget.execute_lines(2)
     mock.assert_not_called()
     ui.macro.widget.execute_lines(3)
+    mock.assert_not_called()
+    ui.macro.widget.execute_lines(4)
     mock.assert_not_called()

@@ -1,5 +1,5 @@
 from __future__ import annotations
-from macrokit import Expr, register_type, Head
+from macrokit import Expr, register_type, Head, symbol
 from enum import Enum
 from pathlib import Path
 import datetime
@@ -12,7 +12,7 @@ _date = Expr(Head.getattr, [datetime, datetime.date])
 _time = Expr(Head.getattr, [datetime, datetime.time])
 
 # magicgui-style input
-register_type(Enum, lambda e: e.value)
+register_type(Enum, lambda e: symbol(e.value))
 register_type(Path, lambda e: f"r'{e}'")
 register_type(ListDataView, lambda e: list(e))
 register_type(datetime.datetime, lambda e: Expr.parse_call(_datetime, (e.year, e.month, e.day, e.hour, e.minute), {}))
