@@ -35,6 +35,7 @@ Contents
    keybinding
    customize_macro
    containers
+   class_inheritance
    special_methods
    api
 
