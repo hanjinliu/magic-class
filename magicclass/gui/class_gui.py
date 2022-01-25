@@ -446,8 +446,29 @@ def make_gui(container: type[_C], no_margin: bool = True) -> type[_C | ClassGuiB
                     widget.__magicclass_parent__ = self
                     self.__magicclass_children__.append(widget)
                     widget._my_symbol = Symbol(name)
+            
+            @nogui
+            def remove_dock_widget(self: cls, widget: Widget):
+                dock = None
+                i_dock = -1
+                for i, child in enumerate(self.__magicclass_children__):
+                    if child is widget:
+                        dock = child.native.parent()
+                        if not isinstance(dock, QtDockWidget):
+                            dock = None
+                        i_dock = i
+                        self.__magicclass_parent__ = None
+                        break
+                else:
+                    raise RuntimeError("Dock widget not found.")
+                
+                mainwin: QMainWindow = self.native
+                mainwin.removeDockWidget(dock)
+                self.__magicclass_children__.pop(i_dock)
+                
 
             cls.add_dock_widget = add_dock_widget
+            cls.remove_dock_widget = remove_dock_widget
         
         cls.__init__ = __init__
         cls.__setattr__ = __setattr__
