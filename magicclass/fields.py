@@ -13,7 +13,6 @@ from .gui.mgui_ext import AbstractAction, Action, WidgetAction
 
 if TYPE_CHECKING:
     from magicgui.widgets._protocols import WidgetProtocol
-    from magicgui.types import WidgetOptions
     from .gui._base import MagicTemplate
     _M = TypeVar("_M", bound=MagicTemplate)
 
@@ -35,10 +34,21 @@ class MagicField(Field, Generic[_W, _V]):
         self.guis: dict[int, _M] = {}
         self.name = name
         self.record = record
-        self.parent_class = None
+        self.parent_class: type = None
     
     def __repr__(self):
         return self.__class__.__name__.rstrip("Field") + super().__repr__()
+    
+    
+    def copy(self) -> MagicField:
+        """Copy object."""
+        return self.__class__(
+            self.default,
+            self.default_factory,
+            self.metadata,
+            self.name,
+            self.record
+            )
     
     def get_widget(self, obj: Any) -> _W:
         """
@@ -54,7 +64,10 @@ class MagicField(Field, Generic[_W, _V]):
             self.guis[obj_id] = widget
             self.parent_class = objtype
         else:
-            raise TypeError(f"Cannot refer MagicField {self.name} from object of type {objtype}")
+            raise TypeError(
+                f"Cannot refer {self.__class__.__name__} {self.name} from object of type "
+                f"{objtype} since it has its parent {self.parent_class}."
+                )
                 
         return widget
     
@@ -72,17 +85,19 @@ class MagicField(Field, Generic[_W, _V]):
             self.guis[obj_id] = action
             self.parent_class = objtype
         else:
-            raise TypeError(f"Cannot refer MagicField {self.name} from object of type {objtype}")
+            raise TypeError(
+                f"Cannot refer {self.__class__.__name__} {self.name} from object of type "
+                f"{objtype} since it has its parent {self.parent_class}."
+                )
                 
         return action
     
     def as_getter(self, obj: Any) -> Callable[[Any], _V]:
-        """
-        Make a function that get the value of Widget or Action.
-        """        
+        """Make a function that get the value of Widget or Action."""        
         return lambda w: self.guis[id(obj)].value
     
     def __get__(self, obj: Any, objtype=None) -> _W:
+        """Get widget for the object."""
         if obj is None:
             return self
         return self.get_widget(obj)
@@ -149,13 +164,21 @@ class MagicField(Field, Generic[_W, _V]):
         return action
         
     def connect(self, func: Callable) -> Callable:
-        """
-        Set callback function to "ready to connect" state.
-        """        
+        """Set callback function to "ready to connect" state."""
         if not callable(func):
             raise TypeError("Cannot connect non-callable object")
         self.callbacks.append(func)
         return func
+    
+    def disconnect(self, func: Callable) -> None:
+        """
+        Disconnect callback from the field.
+        This method does NOT disconnect callbacks from widgets that are
+        already created.
+        """
+        i = self.callbacks.index(func)
+        self.callbacks.pop(i)
+        return None
 
     @property
     def value(self) -> Any:
@@ -208,6 +231,7 @@ class MagicValueField(MagicField, Generic[_W, _V]):
         if obj is None:
             raise AttributeError(f"Cannot set {self.__class__.__name__}.")
         self.get_widget(obj).value = value
+
 
 _X = TypeVar("_X", bound=Union[int, float, bool, str, Path, datetime.datetime, 
                                datetime.date, datetime.time, Enum])

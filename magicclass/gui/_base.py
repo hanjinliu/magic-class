@@ -72,6 +72,7 @@ class PopUpMode(Enum):
 class ErrorMode(Enum):
     msgbox = "msgbox"
     stderr = "stderr"
+    stdout = "stdout"
     
 defaults = {"popup_mode": PopUpMode.popup,
             "error_mode": ErrorMode.msgbox,
@@ -80,11 +81,11 @@ defaults = {"popup_mode": PopUpMode.popup,
 
 _RESERVED = {"__magicclass_parent__", "__magicclass_children__", "_close_on_run", 
              "_error_mode", "_popup_mode", "_my_symbol", "_macro_instance", "macro",
-             "annotation", "enabled", "gui_only", "height", "label_changed", "label",
-             "layout", "labels", "margins", "max_height", "max_width", "min_height", 
-             "min_width", "name", "options", "param_kind", "parent_changed", 
-             "tooltip", "visible", "widget_type", "width", "wraps", "_unwrap_method",
-             "_search_parent_magicclass", "_iter_child_magicclasses", 
+             "annotation", "enabled", "find_ancestor", "gui_only", "height", 
+             "label_changed", "label", "layout", "labels", "margins", "max_height",
+             "max_width", "min_height", "min_width", "name", "options", "param_kind",
+             "parent_changed", "tooltip", "visible", "widget_type", "width", "wraps",
+             "_unwrap_method", "_search_parent_magicclass", "_iter_child_magicclasses", 
              }
 
 def check_override(cls: type):
@@ -464,6 +465,8 @@ class MagicTemplate:
             wrapper = _raise_error_in_msgbox
         elif self._error_mode == ErrorMode.stderr:
             wrapper = _identity_wrapper
+        elif self._error_mode == ErrorMode.stdout:
+            wrapper = _print_error
         else:
             raise ValueError(self._error_mode)
         
@@ -972,7 +975,7 @@ def wraps(template: Callable | inspect.Signature) -> Callable[[_C], _C]:
         new_params: list[Param] = []
         
         for k, v in old_params.items():
-            if v.annotation is inspect._empty and v.default is inspect._empty:
+            if v.annotation is Param.empty and v.default is Param.empty:
                 new_params.append(
                     template_params.get(k, 
                                         Param(k, Param.POSITIONAL_OR_KEYWORD)
@@ -1003,9 +1006,7 @@ def wraps(template: Callable | inspect.Signature) -> Callable[[_C], _C]:
     return wrapper
 
 def _raise_error_in_msgbox(_func: Callable, parent: Widget = None):
-    """
-    If exception happened inside function, then open a message box.
-    """    
+    """If exception happened inside function, then open a message box."""
     def wrapped_func(*args, **kwargs):
         from qtpy.QtWidgets import QMessageBox
         try:
@@ -1019,18 +1020,27 @@ def _raise_error_in_msgbox(_func: Callable, parent: Widget = None):
     
     return wrapped_func
 
+
+def _print_error(_func: Callable, parent: Widget = None):
+    """If exception happened inside function, then print it."""
+    def wrapped_func(*args, **kwargs):
+        try:
+            out = _func(*args, **kwargs)
+        except Exception as e:
+            print(f"{e.__class__.__name__}: {e}")
+            out = e
+        return out
+    
+    return wrapped_func
+
 def _identity_wrapper(_func: Callable, parent: Widget = None):
-    """
-    Do nothing.
-    """    
+    """Do nothing."""    
     def wrapped_func(*args, **kwargs):
         return _func(*args, **kwargs)
     return wrapped_func
 
 def _n_parameters(func: Callable):
-    """
-    Count the number of parameters of a callable object.
-    """    
+    """Count the number of parameters of a callable object."""    
     return len(inspect.signature(func).parameters)
 
 def _get_index(container: Container, widget_or_name: Widget | str) -> int:

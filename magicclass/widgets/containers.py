@@ -386,6 +386,9 @@ class _FrameContainer(_GroupBoxContainer):
         super().__init__(layout=layout)
         self._groupbox.setTitle("")
 
+
+# Container Widgets
+
 @wrap_container(base=_Splitter)
 class SplitterContainer(ContainerWidget):
     """A Container equipped with splitter"""
