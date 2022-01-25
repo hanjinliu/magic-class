@@ -1,4 +1,5 @@
 from magicclass import magicclass, field, MagicTemplate
+from unittest.mock import MagicMock
 
 def test_predefinition():
     class Base(MagicTemplate):
@@ -45,3 +46,36 @@ def test_predefinition():
     b.shared_func_2(15)
     assert a.a.value == 10
     assert b.a.value == 15
+
+
+def test_field():
+    mock = MagicMock()
+    
+    class Base(MagicTemplate):
+        a = field(int)
+        @a.connect
+        def _callback(self):
+            mock()
+    
+    @magicclass
+    class A(Base):
+        pass
+    
+    @magicclass
+    class B(Base):
+        pass
+    
+    a = A()
+    b = B()
+    
+    assert len(a) == 1
+    assert len(b) == 1
+    mock.assert_not_called()
+    a.a.value = 1
+    assert b.a.value == 0
+    mock.assert_called_once()
+    mock.reset_mock()
+    b.a.value = 2
+    assert a.a.value == 1
+    mock.assert_called_once()
+    

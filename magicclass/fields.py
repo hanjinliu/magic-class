@@ -34,6 +34,9 @@ class MagicField(Field, Generic[_W, _V]):
         self.guis: dict[int, _M] = {}
         self.name = name
         self.record = record
+        
+        # MagicField has to remenber the first class that referred to itself so that it can
+        # "know" the namespace it belongs to.
         self.parent_class: type = None
     
     def __repr__(self):
@@ -59,15 +62,11 @@ class MagicField(Field, Generic[_W, _V]):
         objtype = type(obj)
         if obj_id in self.guis.keys():
             widget = self.guis[obj_id]
-        elif self.parent_class is None or self.parent_class is objtype:    
+        else:
             widget = self.to_widget()
             self.guis[obj_id] = widget
-            self.parent_class = objtype
-        else:
-            raise TypeError(
-                f"Cannot refer {self.__class__.__name__} {self.name} from object of type "
-                f"{objtype} since it has its parent {self.parent_class}."
-                )
+            if self.parent_class is None:
+                self.parent_class = objtype
                 
         return widget
     
@@ -80,15 +79,11 @@ class MagicField(Field, Generic[_W, _V]):
         objtype = type(obj)
         if obj_id in self.guis.keys():
             action = self.guis[obj_id]
-        elif self.parent_class is None or self.parent_class is objtype:    
+        else:
             action = self.to_action()
             self.guis[obj_id] = action
-            self.parent_class = objtype
-        else:
-            raise TypeError(
-                f"Cannot refer {self.__class__.__name__} {self.name} from object of type "
-                f"{objtype} since it has its parent {self.parent_class}."
-                )
+            if self.parent_class is None:
+                self.parent_class = objtype
                 
         return action
     
@@ -232,9 +227,9 @@ class MagicValueField(MagicField, Generic[_W, _V]):
             raise AttributeError(f"Cannot set {self.__class__.__name__}.")
         self.get_widget(obj).value = value
 
-
+# magicgui symple types
 _X = TypeVar("_X", bound=Union[int, float, bool, str, Path, datetime.datetime, 
-                               datetime.date, datetime.time, Enum])
+                               datetime.date, datetime.time, Enum, range, slice])
 
 @overload
 def field(obj: _X, 

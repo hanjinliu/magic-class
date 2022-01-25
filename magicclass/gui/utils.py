@@ -1,4 +1,5 @@
 from __future__ import annotations
+import inspect
 from typing import Callable, TYPE_CHECKING
 from magicgui.widgets import FunctionGui
 
@@ -11,14 +12,23 @@ def get_parameters(fgui: FunctionGui):
 
 def define_callback(self: BaseGui, callback: Callable):
     *_, clsname, funcname = callback.__qualname__.split(".")
-    def _callback():
-        # search for parent instances that have the same name.
-        current_self = self
-        while not (hasattr(current_self, funcname) and 
-                   current_self.__class__.__name__ == clsname):
-            current_self = current_self.__magicclass_parent__
-        getattr(current_self, funcname)()
-        return None
+    mro = self.__class__.__mro__
+    for base in mro:
+        if base.__name__ == clsname:
+            def _callback():
+                getattr(base, funcname)(self)
+                return None
+            break
+    else:
+        def _callback():
+            # search for parent instances that have the same name.
+            current_self = self
+            while not (hasattr(current_self, funcname) and 
+                    current_self.__class__.__name__ == clsname):
+                current_self = current_self.__magicclass_parent__
+            getattr(current_self, funcname)()
+            return None
+    
     return _callback
 
 def define_context_menu(contextmenu: ContextMenuGui, parent):
