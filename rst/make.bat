@@ -10,6 +10,7 @@ if "%SPHINXBUILD%" == "" (
 set SOURCEDIR=.
 set BUILDDIR=_build
 
+if "%1" == "livehtml" goto livehtml
 if "%1" == "" goto help
 
 %SPHINXBUILD% >NUL 2>NUL
@@ -26,6 +27,10 @@ if errorlevel 9009 (
 )
 
 %SPHINXBUILD% -M %1 %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
+goto end
+
+:livehtml:
+sphinx-autobuild %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
 goto end
 
 :help

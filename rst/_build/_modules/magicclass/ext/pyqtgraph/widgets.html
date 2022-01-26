@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="English" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>magicclass.ext.pyqtgraph.widgets &mdash; magic-class 0.5.19 documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/columns.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> magic-class
+          </a>
+              <div class="version">
+                0.5.19
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../quick_start.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../options.html">Options in magic-class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../nest.html">Nest magic-classes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../use_field.html">Use Fields in magic-class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../use_wraps.html">Call Parent Methods from its Child</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../use_bind.html">Binding Values to Arguments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../keybinding.html">Define Custom Keybindings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../customize_macro.html">Customize Macro Recording</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../containers.html">Container Variations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../class_inheritance.html">Inherit Magic Class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../special_methods.html">Special Attributes in Magic class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api.html">API References</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">magic-class</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+      <li>magicclass.ext.pyqtgraph.widgets</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for magicclass.ext.pyqtgraph.widgets</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">import</span> <span class="nn">pyqtgraph</span> <span class="k">as</span> <span class="nn">pg</span>
+<span class="kn">from</span> <span class="nn">pyqtgraph</span> <span class="kn">import</span> <span class="n">colormap</span> <span class="k">as</span> <span class="n">cmap</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">overload</span><span class="p">,</span> <span class="n">MutableSequence</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">._utils</span> <span class="kn">import</span> <span class="n">convert_color_code</span><span class="p">,</span> <span class="n">to_rgba</span>
+<span class="kn">from</span> <span class="nn">.components</span> <span class="kn">import</span> <span class="n">Legend</span><span class="p">,</span> <span class="n">Region</span><span class="p">,</span> <span class="n">ScaleBar</span><span class="p">,</span> <span class="n">TextItem</span>
+<span class="kn">from</span> <span class="nn">.graph_items</span> <span class="kn">import</span> <span class="n">BarPlot</span><span class="p">,</span> <span class="n">Curve</span><span class="p">,</span> <span class="n">FillBetween</span><span class="p">,</span> <span class="n">InfLine</span><span class="p">,</span> <span class="n">LayerItem</span><span class="p">,</span> <span class="n">Scatter</span><span class="p">,</span> <span class="n">Histogram</span><span class="p">,</span> <span class="n">TextGroup</span>
+<span class="kn">from</span> <span class="nn">.mouse_event</span> <span class="kn">import</span> <span class="n">MouseClickEvent</span>
+<span class="kn">from</span> <span class="nn">._doc</span> <span class="kn">import</span> <span class="n">write_docs</span>
+<span class="kn">from</span> <span class="nn">...widgets.utils</span> <span class="kn">import</span> <span class="n">FreeWidget</span>
+
+<span class="n">BOTTOM</span> <span class="o">=</span> <span class="s2">&quot;bottom&quot;</span>
+<span class="n">LEFT</span> <span class="o">=</span> <span class="s2">&quot;left&quot;</span>
+
+<div class="viewcode-block" id="LayerList"><a class="viewcode-back" href="../../../../magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.LayerList">[docs]</a><span class="k">class</span> <span class="nc">LayerList</span><span class="p">(</span><span class="n">MutableSequence</span><span class="p">[</span><span class="n">LayerItem</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot;A napari-like layer list for plot item handling.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">:</span> <span class="n">HasDataItems</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">parent</span>
+    
+    
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LayerItem</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">_items</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">_items</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">key</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">item</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Item &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39; not found.&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot use type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">key</span><span class="p">)</span><span class="si">}</span><span class="s2"> as a key.&quot;</span><span class="p">)</span>
+    
+    
+    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Can&#39;t set item&quot;</span><span class="p">)</span>
+    
+    
+    <span class="k">def</span> <span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">_remove_item</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+    
+    
+<div class="viewcode-block" id="LayerList.append"><a class="viewcode-back" href="../../../../magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.LayerList.append">[docs]</a>    <span class="k">def</span> <span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">LayerItem</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">LayerItem</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot append type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">_add_item</span><span class="p">(</span><span class="n">item</span><span class="p">)</span></div>
+            
+    
+<div class="viewcode-block" id="LayerList.insert"><a class="viewcode-back" href="../../../../magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.LayerList.insert">[docs]</a>    <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">LayerItem</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">LayerItem</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot insert type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">_insert_item</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span></div>
+        
+        
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">_items</span><span class="p">)</span>
+    
+    
+<div class="viewcode-block" id="LayerList.clear"><a class="viewcode-back" href="../../../../magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.LayerList.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">_remove_item</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span></div>
+    
+    
+<div class="viewcode-block" id="LayerList.swap"><a class="viewcode-back" href="../../../../magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.LayerList.swap">[docs]</a>    <span class="k">def</span> <span class="nf">swap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos0</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">pos1</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">_swap_items</span><span class="p">(</span><span class="n">pos0</span><span class="p">,</span> <span class="n">pos1</span><span class="p">)</span></div>
+    
+    
+<div class="viewcode-block" id="LayerList.move"><a class="viewcode-back" href="../../../../magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.LayerList.move">[docs]</a>    <span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">destination</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">_move_item</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">destination</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="HasDataItems"><a class="viewcode-back" href="../../../../magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.HasDataItems">[docs]</a><span class="k">class</span> <span class="nc">HasDataItems</span><span class="p">:</span>
+    <span class="n">_items</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">LayerItem</span><span class="p">]</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">_graphics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pg</span><span class="o">.</span><span class="n">GraphicsWidget</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Target widget to add graphics items.&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">layers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LayerList</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">LayerList</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+    
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="nf">add_curve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span> <span class="o">...</span>
+    
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="nf">add_curve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">y</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span> <span class="o">...</span>
+    
+<div class="viewcode-block" id="HasDataItems.add_curve"><a class="viewcode-back" href="../../../../magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.HasDataItems.add_curve">[docs]</a>    <span class="nd">@write_docs</span>
+    <span class="k">def</span> <span class="nf">add_curve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+                  <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+                  <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="n">face_color</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                  <span class="n">edge_color</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                  <span class="n">color</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                  <span class="n">size</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">7</span><span class="p">,</span>
+                  <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                  <span class="n">lw</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+                  <span class="n">ls</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span>
+                  <span class="n">symbol</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add a line plot like ``plt.plot(x, y)``.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        {x}</span>
+<span class="sd">        {y}</span>
+<span class="sd">        {face_color}</span>
+<span class="sd">        {edge_color}</span>
+<span class="sd">        {color}</span>
+<span class="sd">        size: float, default is 7</span>
+<span class="sd">            Symbol size.</span>
+<span class="sd">        {name}</span>
+<span class="sd">        {lw}</span>
+<span class="sd">        {ls}</span>
+<span class="sd">        {symbol}</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Curve</span>
+<span class="sd">            A plot item of a curve.</span>
+<span class="sd">        &quot;&quot;&quot;</span>        
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">_check_xy</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_unique_name</span><span class="p">((</span><span class="n">name</span> <span class="ow">or</span> <span class="s2">&quot;Curve&quot;</span><span class="p">))</span>
+        <span class="n">face_color</span><span class="p">,</span> <span class="n">edge_color</span> <span class="o">=</span> <span class="n">_check_colors</span><span class="p">(</span><span class="n">face_color</span><span class="p">,</span> <span class="n">edge_color</span><span class="p">,</span> <span class="n">color</span><span class="p">)</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">Curve</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">face_color</span><span class="o">=</span><span class="n">face_color</span><span class="p">,</span> <span class="n">edge_color</span><span class="o">=</span><span class="n">edge_color</span><span class="p">,</span> 
+                            <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="n">lw</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="n">ls</span><span class="p">,</span> <span class="n">symbol</span><span class="o">=</span><span class="n">symbol</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_item</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">item</span></div>
+    
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="nf">add_scatter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span> <span class="o">...</span>
+    
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="nf">add_scatter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">y</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span> <span class="o">...</span>
+
+<div class="viewcode-block" id="HasDataItems.add_scatter"><a class="viewcode-back" href="../../../../magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.HasDataItems.add_scatter">[docs]</a>    <span class="nd">@write_docs</span>
+    <span class="k">def</span> <span class="nf">add_scatter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+                    <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+                    <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">face_color</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                    <span class="n">edge_color</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                    <span class="n">color</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                    <span class="n">size</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">7</span><span class="p">,</span>
+                    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                    <span class="n">lw</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+                    <span class="n">ls</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span>
+                    <span class="n">symbol</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add scatter plot like ``plt.scatter(x, y)``.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        {x}</span>
+<span class="sd">        {y}</span>
+<span class="sd">        {face_color}</span>
+<span class="sd">        {edge_color}</span>
+<span class="sd">        {color}</span>
+<span class="sd">        size: float, default is 7</span>
+<span class="sd">            Symbol size.</span>
+<span class="sd">        {name}</span>
+<span class="sd">        {lw}</span>
+<span class="sd">        {ls}</span>
+<span class="sd">        {symbol}</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Scatter</span>
+<span class="sd">            A plot item of the scatter plot.</span>
+<span class="sd">        &quot;&quot;&quot;</span>        
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">_check_xy</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_unique_name</span><span class="p">((</span><span class="n">name</span> <span class="ow">or</span> <span class="s2">&quot;Scatter&quot;</span><span class="p">))</span>
+        <span class="n">face_color</span><span class="p">,</span> <span class="n">edge_color</span> <span class="o">=</span> <span class="n">_check_colors</span><span class="p">(</span><span class="n">face_color</span><span class="p">,</span> <span class="n">edge_color</span><span class="p">,</span> <span class="n">color</span><span class="p">)</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">Scatter</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">face_color</span><span class="o">=</span><span class="n">face_color</span><span class="p">,</span> <span class="n">edge_color</span><span class="o">=</span><span class="n">edge_color</span><span class="p">,</span> 
+                       <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="n">lw</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="n">ls</span><span class="p">,</span> <span class="n">symbol</span><span class="o">=</span><span class="n">symbol</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_item</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">item</span></div>
+    
+<div class="viewcode-block" id="HasDataItems.add_hist"><a class="viewcode-back" href="../../../../magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.HasDataItems.add_hist">[docs]</a>    <span class="nd">@write_docs</span>
+    <span class="k">def</span> <span class="nf">add_hist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
+                 <span class="n">bins</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">Sequence</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+                 <span class="nb">range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">density</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="n">face_color</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">edge_color</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">color</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">lw</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+                 <span class="n">ls</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span>
+                 <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add histogram like ``plt.hist(data)``.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data : array-like</span>
+<span class="sd">            Data for histogram constrction.</span>
+<span class="sd">        bins : int, sequence of float or str, default is 10</span>
+<span class="sd">            Bin numbers. See ``np.histogram`` for detail.</span>
+<span class="sd">        range : two floats, optional</span>
+<span class="sd">            Bin ranges. See ``np.histogram`` for detail.</span>
+<span class="sd">        density : bool, default is False</span>
+<span class="sd">            If true, plot the density instead of the counts. See ``np.histogram`` for</span>
+<span class="sd">            detail.</span>
+<span class="sd">        {face_color}</span>
+<span class="sd">        {edge_color}</span>
+<span class="sd">        {color}</span>
+<span class="sd">        {name}</span>
+<span class="sd">        {lw}</span>
+<span class="sd">        {ls}</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Histogram</span>
+<span class="sd">            A plot item of the histogram.</span>
+<span class="sd">        &quot;&quot;&quot;</span>        
+        <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_unique_name</span><span class="p">((</span><span class="n">name</span> <span class="ow">or</span> <span class="s2">&quot;Histogram&quot;</span><span class="p">))</span>
+        <span class="n">face_color</span><span class="p">,</span> <span class="n">edge_color</span> <span class="o">=</span> <span class="n">_check_colors</span><span class="p">(</span><span class="n">face_color</span><span class="p">,</span> <span class="n">edge_color</span><span class="p">,</span> <span class="n">color</span><span class="p">)</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">Histogram</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span> <span class="nb">range</span><span class="o">=</span><span class="nb">range</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="n">density</span><span class="p">,</span> 
+                         <span class="n">face_color</span><span class="o">=</span><span class="n">face_color</span><span class="p">,</span> <span class="n">edge_color</span><span class="o">=</span><span class="n">edge_color</span><span class="p">,</span>
+                         <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="n">lw</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="n">ls</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_item</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">item</span></div>
+    
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="nf">add_bar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span> <span class="o">...</span>
+    
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="nf">add_bar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">y</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span> <span class="o">...</span>
+    
+<div class="viewcode-block" id="HasDataItems.add_bar"><a class="viewcode-back" href="../../../../magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.HasDataItems.add_bar">[docs]</a>    <span class="nd">@write_docs</span>
+    <span class="k">def</span> <span class="nf">add_bar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+                <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+                <span class="n">width</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.6</span><span class="p">,</span>
+                <span class="n">face_color</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">edge_color</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">color</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">lw</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="n">ls</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add a bar plot like ``plt.bar(x, y)``.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        {x}</span>
+<span class="sd">        {y}</span>
+<span class="sd">        width : float, default is 0.6</span>
+<span class="sd">            Width of each bar.</span>
+<span class="sd">        {face_color}</span>
+<span class="sd">        {edge_color}</span>
+<span class="sd">        {color}</span>
+<span class="sd">        {name}</span>
+<span class="sd">        {lw}</span>
+<span class="sd">        {ls}</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        BarPlot</span>
+<span class="sd">            A plot item of the bar plot.</span>
+<span class="sd">        &quot;&quot;&quot;</span>               
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">_check_xy</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_unique_name</span><span class="p">((</span><span class="n">name</span> <span class="ow">or</span> <span class="s2">&quot;Bar&quot;</span><span class="p">))</span>
+        <span class="n">face_color</span><span class="p">,</span> <span class="n">edge_color</span> <span class="o">=</span> <span class="n">_check_colors</span><span class="p">(</span><span class="n">face_color</span><span class="p">,</span> <span class="n">edge_color</span><span class="p">,</span> <span class="n">color</span><span class="p">)</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">BarPlot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span> <span class="n">face_color</span><span class="o">=</span><span class="n">face_color</span><span class="p">,</span>
+                       <span class="n">edge_color</span><span class="o">=</span><span class="n">edge_color</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="n">lw</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="n">ls</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_item</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">item</span></div>
+
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="nf">add_fillbetween</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span> <span class="o">...</span>
+    
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="nf">add_fillbetween</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">y</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span> <span class="o">...</span>
+
+<div class="viewcode-block" id="HasDataItems.add_fillbetween"><a class="viewcode-back" href="../../../../magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.HasDataItems.add_fillbetween">[docs]</a>    <span class="nd">@write_docs</span>
+    <span class="k">def</span> <span class="nf">add_fillbetween</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+                        <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+                        <span class="n">y1</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                        <span class="n">y2</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                        <span class="n">face_color</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="n">edge_color</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="n">color</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="n">lw</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+                        <span class="n">ls</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span><span class="p">):</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y1</span> <span class="o">=</span> <span class="n">_check_xy</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y1</span><span class="p">)</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_unique_name</span><span class="p">((</span><span class="n">name</span> <span class="ow">or</span> <span class="s2">&quot;FillBetween&quot;</span><span class="p">))</span>
+        <span class="n">face_color</span><span class="p">,</span> <span class="n">edge_color</span> <span class="o">=</span> <span class="n">_check_colors</span><span class="p">(</span><span class="n">face_color</span><span class="p">,</span> <span class="n">edge_color</span><span class="p">,</span> <span class="n">color</span><span class="p">)</span>
+        
+        <span class="n">item</span> <span class="o">=</span> <span class="n">FillBetween</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">y2</span><span class="p">,</span> <span class="n">face_color</span><span class="o">=</span><span class="n">face_color</span><span class="p">,</span> <span class="n">edge_color</span><span class="o">=</span><span class="n">edge_color</span><span class="p">,</span> 
+                           <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="n">lw</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="n">ls</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_item</span><span class="p">(</span><span class="n">item</span><span class="p">)</span></div>
+    
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="nf">add_infline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">slope</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">intercept</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">lw</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">ls</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span><span class="p">):</span>
+        <span class="o">...</span>
+    
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="nf">add_infline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">degree</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">lw</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">ls</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span><span class="p">):</span>
+        <span class="o">...</span>
+    
+<div class="viewcode-block" id="HasDataItems.add_infline"><a class="viewcode-back" href="../../../../magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.HasDataItems.add_infline">[docs]</a>    <span class="k">def</span> <span class="nf">add_infline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+                    <span class="o">*</span><span class="n">args</span><span class="p">,</span> 
+                    <span class="n">color</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                    <span class="n">lw</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+                    <span class="n">ls</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span>
+                    <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">args</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Cannot mix args and kwargs for infinite line parameters.&quot;</span><span class="p">)</span>
+            <span class="n">keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+            <span class="k">if</span> <span class="n">keys</span> <span class="o">&lt;=</span> <span class="p">{</span><span class="s2">&quot;pos&quot;</span><span class="p">,</span> <span class="s2">&quot;angle&quot;</span><span class="p">}:</span>
+                <span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pos&quot;</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)),</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;angle&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">keys</span> <span class="o">&lt;=</span> <span class="p">{</span><span class="s2">&quot;slope&quot;</span><span class="p">,</span> <span class="s2">&quot;intercept&quot;</span><span class="p">}:</span>
+                <span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;slope&quot;</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)),</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;intercept&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">kwargs</span><span class="si">}</span><span class="s2"> is invalid input.&quot;</span><span class="p">)</span>
+            
+        <span class="n">nargs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">nargs</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">arg0</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">arg0</span><span class="p">):</span>
+                <span class="n">angle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="n">arg0</span><span class="p">))</span>
+                <span class="n">pos</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">pos</span> <span class="o">=</span> <span class="n">arg0</span>
+                <span class="n">angle</span> <span class="o">=</span> <span class="mi">90</span>
+        <span class="k">elif</span> <span class="n">nargs</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">arg0</span><span class="p">,</span> <span class="n">arg1</span> <span class="o">=</span> <span class="n">args</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">arg0</span><span class="p">):</span>
+                <span class="n">angle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="n">arg0</span><span class="p">))</span>
+                <span class="n">pos</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">arg1</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">pos</span> <span class="o">=</span> <span class="n">arg0</span>
+                <span class="n">angle</span> <span class="o">=</span> <span class="n">arg1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s2">&quot;Arguments of &#39;add_infline&#39; should be either &#39;add_infline(slope, intercept)&#39; &quot;</span>
+                <span class="s2">&quot;or &#39;add_infline(pos, degree)&#39;.&quot;</span>
+                <span class="p">)</span>
+        
+        <span class="n">item</span> <span class="o">=</span> <span class="n">InfLine</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="n">edge_color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="n">lw</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="n">ls</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_item</span><span class="p">(</span><span class="n">item</span><span class="p">)</span></div>
+    
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="nf">add_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="o">...</span>
+    
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="nf">add_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">y</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">text</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="o">...</span>
+        
+<div class="viewcode-block" id="HasDataItems.add_text"><a class="viewcode-back" href="../../../../magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.HasDataItems.add_text">[docs]</a>    <span class="k">def</span> <span class="nf">add_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">y</span><span class="p">):</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="p">[</span><span class="n">y</span><span class="p">]</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="p">[</span><span class="n">text</span><span class="p">]</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">TextGroup</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_item</span><span class="p">(</span><span class="n">item</span><span class="p">)</span></div>
+    
+    
+    <span class="k">def</span> <span class="nf">_add_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">LayerItem</span><span class="p">):</span>
+        <span class="n">item</span><span class="o">.</span><span class="n">zorder</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_graphics</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">native</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">_insert_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">LayerItem</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_graphics</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">native</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reorder</span><span class="p">()</span>
+    
+    <span class="k">def</span> <span class="nf">_swap_items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos0</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">pos1</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="n">item0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="p">[</span><span class="n">pos0</span><span class="p">]</span>
+        <span class="n">item1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="p">[</span><span class="n">pos1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="p">[</span><span class="n">pos0</span><span class="p">]</span> <span class="o">=</span> <span class="n">item1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="p">[</span><span class="n">pos1</span><span class="p">]</span> <span class="o">=</span> <span class="n">item0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reorder</span><span class="p">()</span>
+    
+    <span class="k">def</span> <span class="nf">_move_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">destination</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">source</span> <span class="o">&lt;</span> <span class="n">destination</span><span class="p">:</span>
+            <span class="n">destination</span> <span class="o">-=</span> <span class="mi">1</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">destination</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reorder</span><span class="p">()</span>
+    
+    <span class="k">def</span> <span class="nf">_remove_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">LayerItem</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">LayerItem</span><span class="p">):</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">item</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">item</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="p">)</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="n">item</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">each</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">each</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">item</span><span class="p">:</span>
+                    <span class="k">break</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No item named </span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            
+        <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Item </span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2"> not found&quot;</span><span class="p">)</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_graphics</span><span class="o">.</span><span class="n">removeItem</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">native</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">_reorder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="p">):</span>
+            <span class="n">item</span><span class="o">.</span><span class="n">zorder</span> <span class="o">=</span> <span class="n">i</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    
+    <span class="k">def</span> <span class="nf">_find_unique_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">existing_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="p">]</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">prefix</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">existing_names</span><span class="p">:</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">name</span></div>
+
+
+<div class="viewcode-block" id="HasViewBox"><a class="viewcode-back" href="../../../../magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.HasViewBox">[docs]</a><span class="k">class</span> <span class="nc">HasViewBox</span><span class="p">(</span><span class="n">HasDataItems</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">viewbox</span><span class="p">:</span> <span class="n">pg</span><span class="o">.</span><span class="n">ViewBox</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span> <span class="o">=</span> <span class="n">viewbox</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">LayerItem</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="c1"># prepare mouse event</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mouse_click_callbacks</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="c1"># This ROI is not editable. Mouse click event will use it to determine</span>
+        <span class="c1"># the origin of the coordinate system.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_coordinate_fiducial</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">ROI</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_coordinate_fiducial</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_coordinate_fiducial</span><span class="p">,</span> <span class="n">ignoreBounds</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_enabled</span> <span class="o">=</span> <span class="kc">True</span>
+
+
+    <span class="k">def</span> <span class="nf">_mouse_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">e</span><span class="p">):</span>
+        <span class="c1"># NOTE: Mouse click event needs a reference item to map coordinates.</span>
+        <span class="c1"># Here plot items always have a linear region item as a default one,</span>
+        <span class="c1"># we can use it as the referene.</span>
+        <span class="n">ev</span> <span class="o">=</span> <span class="n">MouseClickEvent</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coordinate_fiducial</span><span class="p">)</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">ev</span><span class="o">.</span><span class="n">pos</span><span class="p">()</span>
+        <span class="p">[</span><span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">],</span> <span class="p">[</span><span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">viewRange</span><span class="p">()</span>
+        
+        <span class="k">if</span> <span class="n">xmin</span> <span class="o">&lt;=</span> <span class="n">x</span> <span class="o">&lt;=</span> <span class="n">xmax</span> <span class="ow">and</span> <span class="n">ymin</span> <span class="o">&lt;=</span> <span class="n">y</span> <span class="o">&lt;=</span> <span class="n">ymax</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">callback</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mouse_click_callbacks</span><span class="p">:</span>
+                <span class="n">callback</span><span class="p">(</span><span class="n">ev</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">xlim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Range limits of X-axis.&quot;&quot;&quot;</span>  
+        <span class="p">(</span><span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">),</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">viewRange</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span>
+    
+    <span class="nd">@xlim</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">xlim</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">setXRange</span><span class="p">(</span><span class="o">*</span><span class="n">value</span><span class="p">)</span>
+       
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ylim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Range limits of Y-axis.&quot;&quot;&quot;</span>
+        <span class="n">_</span><span class="p">,</span> <span class="p">(</span><span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">viewRange</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span>
+    
+    <span class="nd">@ylim</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">ylim</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">setYRange</span><span class="p">(</span><span class="o">*</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">enabled</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Mouse interactivity&quot;&quot;&quot;</span>        
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_enabled</span>
+
+    <span class="nd">@enabled</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">enabled</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">setMouseEnabled</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_enabled</span> <span class="o">=</span> <span class="n">value</span>
+        
+    <span class="n">interactive</span> <span class="o">=</span> <span class="n">enabled</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">background_color</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">rgba</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">background</span><span class="o">.</span><span class="n">brush</span><span class="p">()</span><span class="o">.</span><span class="n">color</span><span class="p">()</span><span class="o">.</span><span class="n">getRgb</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rgba</span><span class="p">)</span><span class="o">/</span><span class="mi">255</span>
+    
+    <span class="nd">@background_color</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">background_color</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">convert_color_code</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">setBackgroundColor</span><span class="p">(</span><span class="n">pg</span><span class="o">.</span><span class="n">mkBrush</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">color</span><span class="p">())</span>
+        
+    <span class="k">def</span> <span class="nf">_update_scene</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">border</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">to_rgba</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">border</span><span class="p">)</span>
+    
+    <span class="nd">@border</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">border</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">convert_color_code</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">setBorder</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+        
+
+<div class="viewcode-block" id="SimpleViewBox"><a class="viewcode-back" href="../../../../magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.SimpleViewBox">[docs]</a><span class="k">class</span> <span class="nc">SimpleViewBox</span><span class="p">(</span><span class="n">HasViewBox</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">pg</span><span class="o">.</span><span class="n">ViewBox</span><span class="p">())</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">_graphics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span></div>
+
+
+<div class="viewcode-block" id="PlotItem"><a class="viewcode-back" href="../../../../magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.PlotItem">[docs]</a><span class="k">class</span> <span class="nc">PlotItem</span><span class="p">(</span><span class="n">HasViewBox</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A 1-D plot item that has similar API as napari Viewer.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">viewbox</span><span class="p">:</span> <span class="n">pg</span><span class="o">.</span><span class="n">ViewBox</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">viewbox</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">viewbox</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">ViewBox</span><span class="p">()</span>
+            
+        <span class="bp">self</span><span class="o">.</span><span class="n">pgitem</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">PlotItem</span><span class="p">(</span><span class="n">viewBox</span><span class="o">=</span><span class="n">viewbox</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pgitem</span><span class="o">.</span><span class="n">vb</span><span class="p">)</span>
+        
+        <span class="c1"># prepare region item</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_region</span> <span class="o">=</span> <span class="n">Region</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_region</span><span class="o">.</span><span class="n">visible</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pgitem</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_region</span><span class="o">.</span><span class="n">native</span><span class="p">,</span> <span class="n">ignoreBounds</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        
+        <span class="c1"># prepare legend item</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_legend</span> <span class="o">=</span> <span class="n">Legend</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_legend</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setParentItem</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pgitem</span><span class="o">.</span><span class="n">legend</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_legend</span><span class="o">.</span><span class="n">native</span>
+        
+        <span class="c1"># initialize private attributes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_xlabel</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ylabel</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">_graphics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pgitem</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">region</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Region</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Linear region item.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_region</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">legend</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Legend</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Legend item.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_legend</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">xlabel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Label of X-axis.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_xlabel</span>
+    
+    <span class="nd">@xlabel</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">xlabel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pgitem</span><span class="o">.</span><span class="n">setLabel</span><span class="p">(</span><span class="n">BOTTOM</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_xlabel</span> <span class="o">=</span> <span class="n">label</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ylabel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Label of Y-axis.&quot;&quot;&quot;</span>        
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ylabel</span>
+        
+    <span class="nd">@ylabel</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">ylabel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pgitem</span><span class="o">.</span><span class="n">setLabel</span><span class="p">(</span><span class="n">LEFT</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ylabel</span> <span class="o">=</span> <span class="n">label</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">title</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pgitem</span><span class="o">.</span><span class="n">titleLabel</span><span class="o">.</span><span class="n">text</span>
+    
+    <span class="nd">@title</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">title</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pgitem</span><span class="o">.</span><span class="n">setTitle</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">_update_scene</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Since plot item does not have graphics scene before being added to</span>
+        <span class="c1"># a graphical layout, mouse event should be connected afterward.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pgitem</span><span class="o">.</span><span class="n">scene</span><span class="p">()</span><span class="o">.</span><span class="n">sigMouseClicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mouse_clicked</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ViewBoxExt"><a class="viewcode-back" href="../../../../magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.ViewBoxExt">[docs]</a><span class="k">class</span> <span class="nc">ViewBoxExt</span><span class="p">(</span><span class="n">pg</span><span class="o">.</span><span class="n">ViewBox</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">border</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">lockAspect</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">enableMouse</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
+                 <span class="n">invertY</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">enableMenu</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">invertX</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> 
+                 <span class="n">defaultPadding</span><span class="o">=</span><span class="mf">0.02</span><span class="p">):</span>
+        <span class="n">pg</span><span class="o">.</span><span class="n">ViewBox</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="nb">locals</span><span class="p">())</span>
+        <span class="kn">from</span> <span class="nn">pyqtgraph</span> <span class="kn">import</span> <span class="n">icons</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">button</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">ButtonItem</span><span class="p">(</span><span class="n">icons</span><span class="o">.</span><span class="n">getGraphPixmap</span><span class="p">(</span><span class="s2">&quot;ctrl&quot;</span><span class="p">),</span> <span class="mi">14</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">button</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span>
+        
+<div class="viewcode-block" id="ViewBoxExt.hoverEvent"><a class="viewcode-back" href="../../../../magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.ViewBoxExt.hoverEvent">[docs]</a>    <span class="k">def</span> <span class="nf">hoverEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ev</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">ev</span><span class="o">.</span><span class="n">enter</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">button</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">ev</span><span class="o">.</span><span class="n">exit</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">button</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">RuntimeError</span><span class="p">:</span>
+            <span class="k">pass</span></div></div>
+
+
+<div class="viewcode-block" id="ImageItem"><a class="viewcode-back" href="../../../../magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.ImageItem">[docs]</a><span class="k">class</span> <span class="nc">ImageItem</span><span class="p">(</span><span class="n">HasViewBox</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+                 <span class="n">viewbox</span><span class="p">:</span> <span class="n">pg</span><span class="o">.</span><span class="n">ViewBox</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+                 <span class="n">lock_contrast_limits</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+                 <span class="p">):</span>
+        <span class="k">if</span> <span class="n">viewbox</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">viewbox</span> <span class="o">=</span> <span class="n">ViewBoxExt</span><span class="p">(</span><span class="n">lockAspect</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">invertY</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lock_contrast_limits</span> <span class="o">=</span> <span class="n">lock_contrast_limits</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">viewbox</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_image_item</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">ImageItem</span><span class="p">()</span>
+        <span class="n">tr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image_item</span><span class="o">.</span><span class="n">transform</span><span class="p">()</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_image_item</span><span class="o">.</span><span class="n">setTransform</span><span class="p">(</span><span class="n">tr</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_image_item</span><span class="p">)</span>
+        
+        <span class="c1"># prepare text overlay</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_text_overlay</span> <span class="o">=</span> <span class="n">TextItem</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_text_overlay</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setParentItem</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="p">)</span>
+        
+        <span class="c1"># prepare scale bar</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_scale_bar</span> <span class="o">=</span> <span class="n">ScaleBar</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_scale_bar</span><span class="o">.</span><span class="n">visible</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_scale_bar</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setParentItem</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_scale_bar</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">anchor</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">offset</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">20</span><span class="p">,</span> <span class="o">-</span><span class="mi">20</span><span class="p">))</span>
+        
+        <span class="c1"># prepare title and labels</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_title</span> <span class="o">=</span> <span class="n">TextItem</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="n">anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_title</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_title</span><span class="o">.</span><span class="n">native</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_title</span><span class="o">.</span><span class="n">visible</span> <span class="o">=</span> <span class="kc">False</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_xlabel</span> <span class="o">=</span> <span class="n">TextItem</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="n">anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_xlabel</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_xlabel</span><span class="o">.</span><span class="n">native</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_xlabel</span><span class="o">.</span><span class="n">visible</span> <span class="o">=</span> <span class="kc">False</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ylabel</span> <span class="o">=</span> <span class="n">TextItem</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="n">anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">),</span> <span class="n">angle</span><span class="o">=</span><span class="mi">90</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ylabel</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ylabel</span><span class="o">.</span><span class="n">native</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ylabel</span><span class="o">.</span><span class="n">visible</span> <span class="o">=</span> <span class="kc">False</span>
+        
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">viewbox</span><span class="p">,</span> <span class="n">ViewBoxExt</span><span class="p">):</span>
+            <span class="c1"># prepare LUT histogram</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_hist</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">HistogramLUTItem</span><span class="p">(</span><span class="n">orientation</span><span class="o">=</span><span class="s2">&quot;horizontal&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_hist</span><span class="o">.</span><span class="n">vb</span><span class="o">.</span><span class="n">setBackgroundColor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_hist</span><span class="o">.</span><span class="n">setParentItem</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_hist</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            
+            <span class="nd">@viewbox</span><span class="o">.</span><span class="n">button</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span>
+            <span class="k">def</span> <span class="nf">_</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
+                <span class="n">visible</span> <span class="o">=</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hist</span><span class="o">.</span><span class="n">isVisible</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_hist</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="n">visible</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">visible</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_hist</span><span class="o">.</span><span class="n">_updateView</span><span class="p">()</span>
+                    <span class="n">width</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mi">160</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">width</span><span class="p">())</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_hist</span><span class="o">.</span><span class="n">setFixedWidth</span><span class="p">(</span><span class="n">width</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cmap</span> <span class="o">=</span> <span class="s2">&quot;gray&quot;</span>
+
+
+    <span class="k">def</span> <span class="nf">_update_scene</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Since plot item does not have graphics scene before being added to</span>
+        <span class="c1"># a graphical layout, mouse event should be connected afterward.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_image_item</span><span class="o">.</span><span class="n">scene</span><span class="p">()</span><span class="o">.</span><span class="n">sigMouseClicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mouse_clicked</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">text_overlay</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TextItem</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Text overlay on the image.&quot;&quot;&quot;</span>        
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_text_overlay</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">title</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_title</span><span class="o">.</span><span class="n">text</span>
+    
+    <span class="nd">@title</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">title</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_title</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">value</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">xlabel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_xlabel</span><span class="o">.</span><span class="n">text</span>
+    
+    <span class="nd">@xlabel</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">xlabel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_xlabel</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">value</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ylabel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ylabel</span><span class="o">.</span><span class="n">text</span>
+    
+    <span class="nd">@xlabel</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">ylabel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ylabel</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">value</span>
+        
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">scale_bar</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ScaleBar</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Scale bar on the image.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale_bar</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">lock_contrast_limits</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock_contrast_limits</span>
+    
+    <span class="nd">@lock_contrast_limits</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">lock_contrast_limits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lock_contrast_limits</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">_graphics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">image</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Image data&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image_item</span><span class="o">.</span><span class="n">image</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image_item</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">T</span>
+        
+    <span class="nd">@image</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="n">no_image</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image_item</span><span class="o">.</span><span class="n">image</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">no_image</span><span class="p">:</span>
+            <span class="n">auto_levels</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">auto_levels</span> <span class="o">=</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock_contrast_limits</span>
+            <span class="n">clims</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">contrast_limits</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_image_item</span><span class="o">.</span><span class="n">setImage</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">autoLevels</span><span class="o">=</span><span class="n">auto_levels</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hist</span><span class="o">.</span><span class="n">setImageItem</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_image_item</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hist</span><span class="o">.</span><span class="n">_updateView</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">no_image</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">autoRange</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">auto_levels</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">contrast_limits</span> <span class="o">=</span> <span class="n">clims</span>
+        <span class="n">sy</span><span class="p">,</span> <span class="n">sx</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_title</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="p">[</span><span class="n">sx</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_title</span><span class="o">.</span><span class="n">pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_title</span><span class="o">.</span><span class="n">visible</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_xlabel</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="p">[</span><span class="n">sx</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">sy</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_xlabel</span><span class="o">.</span><span class="n">visible</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ylabel</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">sy</span><span class="o">/</span><span class="mi">2</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ylabel</span><span class="o">.</span><span class="n">visible</span> <span class="o">=</span> <span class="kc">True</span>
+        
+    <span class="nd">@image</span><span class="o">.</span><span class="n">deleter</span>
+    <span class="k">def</span> <span class="nf">image</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_image_item</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_title</span><span class="o">.</span><span class="n">visible</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_xlabel</span><span class="o">.</span><span class="n">visible</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ylabel</span><span class="o">.</span><span class="n">visible</span> <span class="o">=</span> <span class="kc">False</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">contrast_limits</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Contrast limits of image&quot;&quot;&quot;</span>        
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image_item</span><span class="o">.</span><span class="n">levels</span>
+    
+    <span class="nd">@contrast_limits</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">contrast_limits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hist</span><span class="o">.</span><span class="n">setLevels</span><span class="p">(</span><span class="o">*</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">cmap</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Color map&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cmap</span>
+    
+    <span class="nd">@cmap</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">cmap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">_cmap</span> <span class="o">=</span> <span class="n">cmap</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="s2">&quot;matplotlib&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">_cmap</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hist</span><span class="o">.</span><span class="n">gradient</span><span class="o">.</span><span class="n">setColorMap</span><span class="p">(</span><span class="n">_cmap</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cmap</span> <span class="o">=</span> <span class="n">value</span></div>
+            
+
+<div class="viewcode-block" id="QtPlotCanvas"><a class="viewcode-back" href="../../../../magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.QtPlotCanvas">[docs]</a><span class="k">class</span> <span class="nc">QtPlotCanvas</span><span class="p">(</span><span class="n">FreeWidget</span><span class="p">,</span> <span class="n">PlotItem</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A 1-D data viewer that have similar API as napari Viewer.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># prepare widget</span>
+        <span class="n">PlotItem</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layoutwidget</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">GraphicsLayoutWidget</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layoutwidget</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pgitem</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_scene</span><span class="p">()</span>
+        
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_widget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layoutwidget</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="QtImageCanvas"><a class="viewcode-back" href="../../../../magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.QtImageCanvas">[docs]</a><span class="k">class</span> <span class="nc">QtImageCanvas</span><span class="p">(</span><span class="n">FreeWidget</span><span class="p">,</span> <span class="n">ImageItem</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lock_contrast_limits</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># prepare widget</span>
+        <span class="n">ImageItem</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lock_contrast_limits</span><span class="o">=</span><span class="n">lock_contrast_limits</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layoutwidget</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">GraphicsLayoutWidget</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layoutwidget</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_scene</span><span class="p">()</span>
+        
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_widget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layoutwidget</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Qt2YPlotCanvas"><a class="viewcode-back" href="../../../../magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.Qt2YPlotCanvas">[docs]</a><span class="k">class</span> <span class="nc">Qt2YPlotCanvas</span><span class="p">(</span><span class="n">FreeWidget</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layoutwidget</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">GraphicsLayoutWidget</span><span class="p">()</span>
+        
+        <span class="n">item_l</span> <span class="o">=</span> <span class="n">PlotItem</span><span class="p">()</span>
+        <span class="n">item_r</span> <span class="o">=</span> <span class="n">SimpleViewBox</span><span class="p">()</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">layoutwidget</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="n">item_l</span><span class="o">.</span><span class="n">pgitem</span><span class="p">)</span>
+                
+        <span class="n">item_l</span><span class="o">.</span><span class="n">pgitem</span><span class="o">.</span><span class="n">scene</span><span class="p">()</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="n">item_r</span><span class="o">.</span><span class="n">_viewbox</span><span class="p">)</span>
+        <span class="n">item_l</span><span class="o">.</span><span class="n">pgitem</span><span class="o">.</span><span class="n">getAxis</span><span class="p">(</span><span class="s2">&quot;right&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">linkToView</span><span class="p">(</span><span class="n">item_r</span><span class="o">.</span><span class="n">_viewbox</span><span class="p">)</span>
+        <span class="n">item_r</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">setXLink</span><span class="p">(</span><span class="n">item_l</span><span class="o">.</span><span class="n">pgitem</span><span class="p">)</span>
+        
+        <span class="n">item_l</span><span class="o">.</span><span class="n">_update_scene</span><span class="p">()</span>
+        <span class="n">item_l</span><span class="o">.</span><span class="n">pgitem</span><span class="o">.</span><span class="n">showAxis</span><span class="p">(</span><span class="s2">&quot;right&quot;</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_plot_items</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">PlotItem</span><span class="p">,</span> <span class="n">SimpleViewBox</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">item_l</span><span class="p">,</span> <span class="n">item_r</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">updateViews</span><span class="p">()</span>
+        <span class="n">item_l</span><span class="o">.</span><span class="n">pgitem</span><span class="o">.</span><span class="n">vb</span><span class="o">.</span><span class="n">sigResized</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">updateViews</span><span class="p">)</span>
+        
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_widget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layoutwidget</span><span class="p">)</span>
+    
+    
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PlotItem</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_plot_items</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+    
+    
+<div class="viewcode-block" id="Qt2YPlotCanvas.updateViews"><a class="viewcode-back" href="../../../../magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.Qt2YPlotCanvas.updateViews">[docs]</a>    <span class="k">def</span> <span class="nf">updateViews</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">item_l</span> <span class="p">,</span><span class="n">item_r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_plot_items</span>
+        <span class="n">item_r</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="n">item_l</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">sceneBoundingRect</span><span class="p">())</span>
+        <span class="n">item_r</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">linkedViewChanged</span><span class="p">(</span><span class="n">item_l</span><span class="o">.</span><span class="n">_viewbox</span><span class="p">,</span> <span class="n">item_r</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">XAxis</span><span class="p">)</span></div></div>
+
+
+<span class="n">_C</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;_C&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">HasViewBox</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">_MultiPlot</span><span class="p">(</span><span class="n">FreeWidget</span><span class="p">,</span> <span class="n">Generic</span><span class="p">[</span><span class="n">_C</span><span class="p">]):</span>
+    <span class="n">_base_item_class</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">_C</span><span class="p">]</span>
+    
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+                 <span class="n">nrows</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                 <span class="n">ncols</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                 <span class="n">sharex</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="n">sharey</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Multi-axes ``pyqtgraph`` canvas widget. Can contain multiple objects</span>
+<span class="sd">        of {cls}.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        nrows : int, default is 0</span>
+<span class="sd">            Initial rows of axes.</span>
+<span class="sd">        ncols : int, default is 0</span>
+<span class="sd">            Initail columns of axes.</span>
+<span class="sd">        sharex : bool, default is False</span>
+<span class="sd">            If true, all the x-axes will be linked.</span>
+<span class="sd">        sharey : bool, default is False</span>
+<span class="sd">            If true, all the y-axes will be linked.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layoutwidget</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">GraphicsLayoutWidget</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_axes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">_C</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sharex</span> <span class="o">=</span> <span class="n">sharex</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sharey</span> <span class="o">=</span> <span class="n">sharey</span>
+        
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_widget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layoutwidget</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">nrows</span> <span class="o">*</span> <span class="n">ncols</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nrows</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ncols</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">addaxis</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">__init_subclass__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Update doc.&quot;&quot;&quot;</span>
+        <span class="n">init</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="fm">__init__</span>
+        <span class="n">init</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">init</span><span class="o">.</span><span class="vm">__doc__</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">cls</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">_base_item_class</span><span class="o">.</span><span class="vm">__name__</span>
+            <span class="p">)</span>
+
+    
+    <span class="k">def</span> <span class="nf">addaxis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+                <span class="n">row</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">col</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">rowspan</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="n">colspan</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_C</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Add a new axis to widget.&quot;&quot;&quot;</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_base_item_class</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_axes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layoutwidget</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">_graphics</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">rowspan</span><span class="p">,</span> <span class="n">colspan</span><span class="p">)</span>
+        <span class="n">item</span><span class="o">.</span><span class="n">_update_scene</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sharex</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_axes</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">item</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">setXLink</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">_viewbox</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sharey</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_axes</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">item</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">setYLink</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">_viewbox</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">item</span>
+    
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_C</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_axes</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+    
+    
+    <span class="k">def</span> <span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_axes</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layoutwidget</span><span class="o">.</span><span class="n">removeItem</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">_graphics</span><span class="p">)</span>
+    
+    
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">_C</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_axes</span><span class="p">)</span>
+    
+
+<div class="viewcode-block" id="QtMultiPlotCanvas"><a class="viewcode-back" href="../../../../magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.QtMultiPlotCanvas">[docs]</a><span class="k">class</span> <span class="nc">QtMultiPlotCanvas</span><span class="p">(</span><span class="n">_MultiPlot</span><span class="p">[</span><span class="n">PlotItem</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot;A pyqtgraph-based canvas with multiple plot.&quot;&quot;&quot;</span>
+    <span class="n">_base_item_class</span> <span class="o">=</span> <span class="n">PlotItem</span></div>
+    
+
+<div class="viewcode-block" id="QtMultiImageCanvas"><a class="viewcode-back" href="../../../../magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.QtMultiImageCanvas">[docs]</a><span class="k">class</span> <span class="nc">QtMultiImageCanvas</span><span class="p">(</span><span class="n">_MultiPlot</span><span class="p">[</span><span class="n">ImageItem</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot;A pyqtgraph-based canvas with multiple images.&quot;&quot;&quot;</span>
+    <span class="n">_base_item_class</span> <span class="o">=</span> <span class="n">ImageItem</span></div>
+
+
+<span class="k">def</span> <span class="nf">_check_xy</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">y</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">x</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
+    
+    <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span>
+    
+<span class="k">def</span> <span class="nf">_check_colors</span><span class="p">(</span><span class="n">face_color</span><span class="p">,</span> <span class="n">edge_color</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">color</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">face_color</span><span class="p">,</span> <span class="n">edge_color</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">face_color</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">edge_color</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">color</span><span class="p">,</span> <span class="n">color</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot set &#39;color&#39; and either &#39;face_color&#39; or &quot;</span>
+                             <span class="s2">&quot;&#39;edge_color&#39; at the same time.&quot;</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Hanjin Liu.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

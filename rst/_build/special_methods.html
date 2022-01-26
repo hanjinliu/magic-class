@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="English" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Special Attributes in Magic class &mdash; magic-class 0.5.19 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/columns.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API References" href="api.html" />
+    <link rel="prev" title="Inherit Magic Class" href="class_inheritance.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> magic-class
+          </a>
+              <div class="version">
+                0.5.19
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="quick_start.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="options.html">Options in magic-class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nest.html">Nest magic-classes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="use_field.html">Use Fields in magic-class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="use_wraps.html">Call Parent Methods from its Child</a></li>
+<li class="toctree-l1"><a class="reference internal" href="use_bind.html">Binding Values to Arguments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="keybinding.html">Define Custom Keybindings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="customize_macro.html">Customize Macro Recording</a></li>
+<li class="toctree-l1"><a class="reference internal" href="containers.html">Container Variations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="class_inheritance.html">Inherit Magic Class</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Special Attributes in Magic class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API References</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">magic-class</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Special Attributes in Magic class</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/special_methods.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="special-attributes-in-magic-class">
+<h1>Special Attributes in Magic class<a class="headerlink" href="#special-attributes-in-magic-class" title="Permalink to this headline">¶</a></h1>
+<p>There are some special attributes that will be recognized differently by magic classes.</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">__post_init__</span></code></p>
+<blockquote>
+<div><p>Similar to builtin <code class="docutils literal notranslate"><span class="pre">dataclass</span></code>, this method will be called after <code class="docutils literal notranslate"><span class="pre">__init__</span></code> had finished.
+This method is necessary because widgets are created after instance construction so you cannot
+refer to the widgets in <code class="docutils literal notranslate"><span class="pre">__init__</span></code> function. For instance, you can set widget geometry in
+<code class="docutils literal notranslate"><span class="pre">__post_init__</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@magicclass</span>
+<span class="k">class</span> <span class="nc">Main</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;func&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">min_height</span> <span class="o">=</span> <span class="mi">100</span>
+
+    <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">__call__</span></code></p>
+<blockquote>
+<div><p>Magic classes do not convert methods into widgets if the name start with &quot;_&quot; but this is an
+exception.</p>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">__magicclass_parent__</span></code></p>
+<blockquote>
+<div><p>The parent magic class object is stored in this attribute. This parameter is needed because
+the <cite>parent</cite> property of <code class="docutils literal notranslate"><span class="pre">magicgui</span></code>'s widgets returns backend widget.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@magicclass</span>
+<span class="k">class</span> <span class="nc">Parent</span><span class="p">:</span>
+    <span class="nd">@magicclass</span>
+    <span class="k">class</span> <span class="nc">Child</span><span class="p">:</span> <span class="o">...</span>
+
+<span class="n">ui</span> <span class="o">=</span> <span class="n">Parent</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">ui</span><span class="o">.</span><span class="n">Child</span><span class="o">.</span><span class="n">parent</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">ui</span><span class="o">.</span><span class="n">Child</span><span class="o">.</span><span class="n">__magicclass_parent__</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;class &#39;PyQt5.QtWidgets.QWidget&#39;&gt;
+&lt;class &#39;abc.Parent&#39;&gt;
+</pre></div>
+</div>
+<p>Therefore, when you want to call parent methods from its children, you don't have to use <code class="docutils literal notranslate"><span class="pre">wraps</span></code>
+method in principle.</p>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">__magicclass_children__</span></code></p>
+<blockquote>
+<div><p>The child widgets are all stored in this list.</p>
+</div></blockquote>
+</li>
+</ul>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="class_inheritance.html" class="btn btn-neutral float-left" title="Inherit Magic Class" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="api.html" class="btn btn-neutral float-right" title="API References" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Hanjin Liu.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

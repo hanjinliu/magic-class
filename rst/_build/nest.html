@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="English" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nest magic-classes &mdash; magic-class 0.5.19 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/columns.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Use Fields in magic-class" href="use_field.html" />
+    <link rel="prev" title="Options in magic-class" href="options.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> magic-class
+          </a>
+              <div class="version">
+                0.5.19
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="quick_start.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="options.html">Options in magic-class</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Nest magic-classes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#basics">Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#make-menus-using-nesting-strategy">Make Menus Using Nesting Strategy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#make-toolbar">Make Toolbar</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="use_field.html">Use Fields in magic-class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="use_wraps.html">Call Parent Methods from its Child</a></li>
+<li class="toctree-l1"><a class="reference internal" href="use_bind.html">Binding Values to Arguments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="keybinding.html">Define Custom Keybindings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="customize_macro.html">Customize Macro Recording</a></li>
+<li class="toctree-l1"><a class="reference internal" href="containers.html">Container Variations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="class_inheritance.html">Inherit Magic Class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="special_methods.html">Special Attributes in Magic class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API References</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">magic-class</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Nest magic-classes</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/nest.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="nest-magic-classes">
+<h1>Nest magic-classes<a class="headerlink" href="#nest-magic-classes" title="Permalink to this headline">¶</a></h1>
+<section id="basics">
+<h2>Basics<a class="headerlink" href="#basics" title="Permalink to this headline">¶</a></h2>
+<p>Magic classes can be nested. During magic class construction, when a magic class encountered another
+magic class object, the child object is appended to the parent.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span>
+
+<span class="nd">@magicclass</span><span class="p">(</span><span class="n">layout</span><span class="o">=</span><span class="s2">&quot;horizontal&quot;</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">Frame1</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">first_a</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
+    <span class="k">def</span> <span class="nf">first_b</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
+
+<span class="nd">@magicclass</span><span class="p">(</span><span class="n">layout</span><span class="o">=</span><span class="s2">&quot;horizontal&quot;</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">Frame2</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">second_a</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
+    <span class="k">def</span> <span class="nf">second_b</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
+    <span class="k">def</span> <span class="nf">second_c</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
+
+<span class="nd">@magicclass</span>
+<span class="k">class</span> <span class="nc">Main</span><span class="p">:</span>
+    <span class="n">frame1</span> <span class="o">=</span> <span class="n">Frame1</span><span class="p">()</span>
+    <span class="n">frame2</span> <span class="o">=</span> <span class="n">Frame2</span><span class="p">()</span>
+
+<span class="n">ui</span> <span class="o">=</span> <span class="n">Main</span><span class="p">()</span>
+<span class="n">ui</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>You can also directly define the child classes inside the parent.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span>
+
+<span class="nd">@magicclass</span>
+<span class="k">class</span> <span class="nc">Main</span><span class="p">:</span>
+    <span class="nd">@magicclass</span><span class="p">(</span><span class="n">layout</span><span class="o">=</span><span class="s2">&quot;horizontal&quot;</span><span class="p">)</span>
+    <span class="k">class</span> <span class="nc">Frame1</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">first_a</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
+        <span class="k">def</span> <span class="nf">first_b</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
+
+    <span class="nd">@magicclass</span><span class="p">(</span><span class="n">layout</span><span class="o">=</span><span class="s2">&quot;horizontal&quot;</span><span class="p">)</span>
+    <span class="k">class</span> <span class="nc">Frame2</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">second_a</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
+        <span class="k">def</span> <span class="nf">second_b</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
+        <span class="k">def</span> <span class="nf">second_c</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
+
+<span class="n">ui</span> <span class="o">=</span> <span class="n">Main</span><span class="p">()</span>
+<span class="n">ui</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="_images/fig_2-1.png" src="_images/fig_2-1.png" />
+</section>
+<section id="make-menus-using-nesting-strategy">
+<h2>Make Menus Using Nesting Strategy<a class="headerlink" href="#make-menus-using-nesting-strategy" title="Permalink to this headline">¶</a></h2>
+<p>To make multi-functional widgets, we usually want to use a menu bar to categorize functions.
+The <code class="docutils literal notranslate"><span class="pre">&#64;magicmenu</span></code> decorator provides a consistent API to implement a menu bar as a standard magic class.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">magicmenu</span>
+
+<span class="nd">@magicclass</span>
+<span class="k">class</span> <span class="nc">Main</span><span class="p">:</span>
+    <span class="nd">@magicmenu</span>
+    <span class="k">class</span> <span class="nc">File</span><span class="p">:</span>
+        <span class="nd">@magicmenu</span>
+        <span class="k">class</span> <span class="nc">New</span><span class="p">:</span>
+            <span class="k">def</span> <span class="nf">first_a</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
+            <span class="k">def</span> <span class="nf">first_b</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
+        <span class="k">def</span> <span class="nf">Open</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
+        <span class="k">def</span> <span class="nf">Close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
+
+    <span class="nd">@magicmenu</span>
+    <span class="k">class</span> <span class="nc">Edit</span><span class="p">:</span>
+        <span class="o">...</span>
+
+<span class="n">ui</span> <span class="o">=</span> <span class="n">Main</span><span class="p">()</span>
+<span class="n">ui</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="_images/fig_2-2.png" src="_images/fig_2-2.png" />
+<p>If multiple menus are defined in tandem, they will all added to the menu bar.</p>
+<p>Same strategy also works for right-click context menu.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">magiccontext</span>
+
+<span class="nd">@magicclass</span>
+<span class="k">class</span> <span class="nc">Main</span><span class="p">:</span>
+    <span class="nd">@magiccontext</span>
+    <span class="k">class</span> <span class="nc">ContextMenu</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">Copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
+        <span class="k">def</span> <span class="nf">Paste</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
+        <span class="nd">@magiccontext</span>
+        <span class="k">class</span> <span class="nc">Others</span><span class="p">:</span>
+            <span class="k">def</span> <span class="nf">function_a</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
+            <span class="k">def</span> <span class="nf">function_b</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
+            <span class="k">def</span> <span class="nf">function_c</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
+
+<span class="n">ui</span> <span class="o">=</span> <span class="n">Main</span><span class="p">()</span>
+<span class="n">ui</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="_images/fig_2-3.png" src="_images/fig_2-3.png" />
+</section>
+<section id="make-toolbar">
+<h2>Make Toolbar<a class="headerlink" href="#make-toolbar" title="Permalink to this headline">¶</a></h2>
+<p>Similar to menus, magic class also provide a toolbar widget with same API. <code class="docutils literal notranslate"><span class="pre">&#64;magictoolbar</span></code> is the
+decorator for toolbar.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">magictoolbar</span>
+
+<span class="nd">@magicclass</span>
+<span class="k">class</span> <span class="nc">Main</span><span class="p">:</span>
+    <span class="nd">@magictoolbar</span>
+    <span class="k">class</span> <span class="nc">ToolBar</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">a</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
+        <span class="k">def</span> <span class="nf">b</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
+        <span class="k">def</span> <span class="nf">c</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
+</pre></div>
+</div>
+<img alt="_images/fig_2-4.png" src="_images/fig_2-4.png" />
+<p>If multiple toolbars are defined in tandem, they will split by tabs.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="options.html" class="btn btn-neutral float-left" title="Options in magic-class" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="use_field.html" class="btn btn-neutral float-right" title="Use Fields in magic-class" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Hanjin Liu.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

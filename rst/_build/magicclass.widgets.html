@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="English" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>magicclass.widgets package &mdash; magic-class 0.5.19 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/columns.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="magicclass.widgets.pywidgets package" href="magicclass.widgets.pywidgets.html" />
+    <link rel="prev" title="magicclass.utils package" href="magicclass.utils.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> magic-class
+          </a>
+              <div class="version">
+                0.5.19
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="quick_start.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="options.html">Options in magic-class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nest.html">Nest magic-classes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="use_field.html">Use Fields in magic-class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="use_wraps.html">Call Parent Methods from its Child</a></li>
+<li class="toctree-l1"><a class="reference internal" href="use_bind.html">Binding Values to Arguments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="keybinding.html">Define Custom Keybindings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="customize_macro.html">Customize Macro Recording</a></li>
+<li class="toctree-l1"><a class="reference internal" href="containers.html">Container Variations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="class_inheritance.html">Inherit Magic Class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="special_methods.html">Special Attributes in Magic class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API References</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">magic-class</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="api.html">API References</a> &raquo;</li>
+          <li><a href="magicclass.html">magicclass package</a> &raquo;</li>
+      <li>magicclass.widgets package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/magicclass.widgets.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="magicclass-widgets-package">
+<h1>magicclass.widgets package<a class="headerlink" href="#magicclass-widgets-package" title="Permalink to this headline">¶</a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="magicclass.widgets.pywidgets.html">magicclass.widgets.pywidgets package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.widgets.pywidgets.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.widgets.pywidgets.html#module-magicclass.widgets.pywidgets.dict">magicclass.widgets.pywidgets.dict module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.widgets.pywidgets.html#module-magicclass.widgets.pywidgets.list">magicclass.widgets.pywidgets.list module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.widgets.pywidgets.html#module-magicclass.widgets.pywidgets.object">magicclass.widgets.pywidgets.object module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.widgets.pywidgets.html#module-magicclass.widgets.pywidgets.tree">magicclass.widgets.pywidgets.tree module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.widgets.pywidgets.html#module-magicclass.widgets.pywidgets">Module contents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.widgets.pywidgets.html#listwidget">ListWidget</a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.widgets.pywidgets.html#dictwidget">DictWidget</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="module-magicclass.widgets.containers">
+<span id="magicclass-widgets-containers-module"></span><h2>magicclass.widgets.containers module<a class="headerlink" href="#module-magicclass.widgets.containers" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="magicclass.widgets.containers.wrap_container">
+<span class="sig-prename descclassname"><span class="pre">magicclass.widgets.containers.</span></span><span class="sig-name descname"><span class="pre">wrap_container</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cls</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">type</span><span class="p"><span class="pre">[</span></span><span class="pre">C</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">type</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span> <span class="p"><span class="pre">|</span></span> <span class="pre">type</span><span class="p"><span class="pre">[</span></span><span class="pre">C</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/magicclass/widgets/containers.html#wrap_container"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.containers.wrap_container" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provide a wrapper for a new container widget with a new protocol.</p>
+</dd></dl>
+
+</section>
+<section id="module-magicclass.widgets.misc">
+<span id="magicclass-widgets-misc-module"></span><h2>magicclass.widgets.misc module<a class="headerlink" href="#module-magicclass.widgets.misc" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.widgets.misc.CheckButton">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.misc.</span></span><span class="sig-name descname"><span class="pre">CheckButton</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/misc.html#CheckButton"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.misc.CheckButton" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets.PushButton</span></code></p>
+<p>A checkable button.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.widgets.misc.ConsoleTextEdit">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.misc.</span></span><span class="sig-name descname"><span class="pre">ConsoleTextEdit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/misc.html#ConsoleTextEdit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.misc.ConsoleTextEdit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets.TextEdit</span></code></p>
+<p>A text edit with console-like setting.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.misc.ConsoleTextEdit.append">
+<span class="sig-name descname"><span class="pre">append</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/misc.html#ConsoleTextEdit.append"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.misc.ConsoleTextEdit.append" title="Permalink to this definition">¶</a></dt>
+<dd><p>Append new text.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.misc.ConsoleTextEdit.erase_last">
+<span class="sig-name descname"><span class="pre">erase_last</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/misc.html#ConsoleTextEdit.erase_last"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.misc.ConsoleTextEdit.erase_last" title="Permalink to this definition">¶</a></dt>
+<dd><p>Erase the last line.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.widgets.misc.ConsoleTextEdit.selected">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">selected</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#magicclass.widgets.misc.ConsoleTextEdit.selected" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return selected string.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.widgets.misc.ConsoleTextEdit.tab_size">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">tab_size</span></span><a class="headerlink" href="#magicclass.widgets.misc.ConsoleTextEdit.tab_size" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.widgets.misc.Figure">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.misc.</span></span><span class="sig-name descname"><span class="pre">Figure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nrows</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncols</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">(4,</span> <span class="pre">3)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/misc.html#Figure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.misc.Figure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#magicclass.widgets.utils.FreeWidget" title="magicclass.widgets.utils.FreeWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.widgets.utils.FreeWidget</span></code></a></p>
+<p>A matplotlib figure canvas.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.widgets.misc.Figure.ax">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">ax</span></span><em class="property"><span class="pre">:</span> <span class="pre">Axes</span></em><a class="headerlink" href="#magicclass.widgets.misc.Figure.ax" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.widgets.misc.Figure.axes">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">axes</span></span><em class="property"><span class="pre">:</span> <span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Axes</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#magicclass.widgets.misc.Figure.axes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.misc.Figure.cla">
+<span class="sig-name descname"><span class="pre">cla</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/misc.html#Figure.cla"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.misc.Figure.cla" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copy of <code class="docutils literal notranslate"><span class="pre">plt.cla</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.misc.Figure.clf">
+<span class="sig-name descname"><span class="pre">clf</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/misc.html#Figure.clf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.misc.Figure.clf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copy of <code class="docutils literal notranslate"><span class="pre">plt.clf</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.misc.Figure.draw">
+<span class="sig-name descname"><span class="pre">draw</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/misc.html#Figure.draw"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.misc.Figure.draw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copy of <code class="docutils literal notranslate"><span class="pre">plt.draw()</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.misc.Figure.hist">
+<span class="sig-name descname"><span class="pre">hist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/misc.html#Figure.hist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.misc.Figure.hist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copy of <code class="docutils literal notranslate"><span class="pre">plt.hist</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.misc.Figure.imshow">
+<span class="sig-name descname"><span class="pre">imshow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Axes</span></span></span><a class="reference internal" href="_modules/magicclass/widgets/misc.html#Figure.imshow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.misc.Figure.imshow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copy of <code class="docutils literal notranslate"><span class="pre">plt.imshow</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.misc.Figure.legend">
+<span class="sig-name descname"><span class="pre">legend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/misc.html#Figure.legend"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.misc.Figure.legend" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copy of <code class="docutils literal notranslate"><span class="pre">plt.legend</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.misc.Figure.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Axes</span></span></span><a class="reference internal" href="_modules/magicclass/widgets/misc.html#Figure.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.misc.Figure.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copy of <code class="docutils literal notranslate"><span class="pre">plt.plot</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.misc.Figure.scatter">
+<span class="sig-name descname"><span class="pre">scatter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Axes</span></span></span><a class="reference internal" href="_modules/magicclass/widgets/misc.html#Figure.scatter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.misc.Figure.scatter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copy of <code class="docutils literal notranslate"><span class="pre">plt.scatter</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.misc.Figure.text">
+<span class="sig-name descname"><span class="pre">text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/misc.html#Figure.text"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.misc.Figure.text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copy of <code class="docutils literal notranslate"><span class="pre">plt.text</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.misc.Figure.title">
+<span class="sig-name descname"><span class="pre">title</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/misc.html#Figure.title"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.misc.Figure.title" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copy of <code class="docutils literal notranslate"><span class="pre">plt.title</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.misc.Figure.xlabel">
+<span class="sig-name descname"><span class="pre">xlabel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/misc.html#Figure.xlabel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.misc.Figure.xlabel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copy of <code class="docutils literal notranslate"><span class="pre">plt.xlabel</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.misc.Figure.xlim">
+<span class="sig-name descname"><span class="pre">xlim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/misc.html#Figure.xlim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.misc.Figure.xlim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copy of <code class="docutils literal notranslate"><span class="pre">plt.xlim</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.misc.Figure.ylabel">
+<span class="sig-name descname"><span class="pre">ylabel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/misc.html#Figure.ylabel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.misc.Figure.ylabel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copy of <code class="docutils literal notranslate"><span class="pre">plt.ylabel</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.misc.Figure.ylim">
+<span class="sig-name descname"><span class="pre">ylim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/misc.html#Figure.ylim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.misc.Figure.ylim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copy of <code class="docutils literal notranslate"><span class="pre">plt.ylim</span></code>.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-magicclass.widgets.separator">
+<span id="magicclass-widgets-separator-module"></span><h2>magicclass.widgets.separator module<a class="headerlink" href="#module-magicclass.widgets.separator" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.widgets.separator.Separator">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.separator.</span></span><span class="sig-name descname"><span class="pre">Separator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orientation</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'horizontal'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">button</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/separator.html#Separator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.separator.Separator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#magicclass.widgets.utils.FreeWidget" title="magicclass.widgets.utils.FreeWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.widgets.utils.FreeWidget</span></code></a></p>
+<p>A Separator widget that can be used in both widgets and menus.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.widgets.separator.Separator.btn_clicked">
+<span class="sig-name descname"><span class="pre">btn_clicked</span></span><a class="headerlink" href="#magicclass.widgets.separator.Separator.btn_clicked" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.widgets.separator.Separator.btn_text">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">btn_text</span></span><a class="headerlink" href="#magicclass.widgets.separator.Separator.btn_text" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-magicclass.widgets.sequence">
+<span id="magicclass-widgets-sequence-module"></span><h2>magicclass.widgets.sequence module<a class="headerlink" href="#module-magicclass.widgets.sequence" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.widgets.sequence.ListDataView">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.sequence.</span></span><span class="sig-name descname"><span class="pre">ListDataView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">widget</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#magicclass.widgets.ListEdit" title="magicgui.widgets.ListEdit"><span class="pre">magicgui.widgets.ListEdit</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/sequence.html#ListDataView"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.sequence.ListDataView" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Data view of ListEdit.</p>
+</dd></dl>
+
+</section>
+<section id="module-magicclass.widgets.utils">
+<span id="magicclass-widgets-utils-module"></span><h2>magicclass.widgets.utils module<a class="headerlink" href="#module-magicclass.widgets.utils" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.widgets.utils.FreeWidget">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.utils.</span></span><span class="sig-name descname"><span class="pre">FreeWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'vertical'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/utils.html#FreeWidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.utils.FreeWidget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.widget.Widget</span></code></p>
+<p>A Widget class with any QWidget as a child.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.utils.FreeWidget.set_widget">
+<span class="sig-name descname"><span class="pre">set_widget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">widget</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">PyQt5.QtWidgets.QWidget</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/utils.html#FreeWidget.set_widget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.utils.FreeWidget.set_widget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the central widget to the widget.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="magicclass.widgets.utils.magicwidget">
+<span class="sig-prename descclassname"><span class="pre">magicclass.widgets.utils.</span></span><span class="sig-name descname"><span class="pre">magicwidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qcls</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">type</span><span class="p"><span class="pre">[</span></span><span class="pre">PyQt5.QtWidgets.QWidget</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/utils.html#magicwidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.utils.magicwidget" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-magicclass.widgets">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-magicclass.widgets" title="Permalink to this headline">¶</a></h2>
+<p>Advanced widgets for magic class GUI.
+These widgets are all compatible with the <code class="docutils literal notranslate"><span class="pre">append</span></code> method of Container widgets.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.widgets.ButtonContainer">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.</span></span><span class="sig-name descname"><span class="pre">ButtonContainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotation</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tooltip</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">visible</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enabled</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gui_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'vertical'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">widgets</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Widget</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#magicclass.widgets.ButtonContainer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.widget.Widget</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.mixins._OrientationMixin</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">MutableSequence</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.widget.Widget</span></code>]</p>
+<p>A Container Widget hidden in a button.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) -- The name of the parameter represented by this widget. by default &quot;&quot;</p></li>
+<li><p><strong>annotation</strong> (<em>Any</em>) -- The type annotation for the parameter represented by the widget, by default
+<code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
+<li><p><strong>label</strong> (<em>str</em>) -- A string to use for an associated Label widget (if this widget is being
+shown in a <code class="xref py py-class docutils literal notranslate"><span class="pre">Container</span></code> widget, and labels are on).
+By default, <code class="docutils literal notranslate"><span class="pre">name</span></code> will be used. Note: <code class="docutils literal notranslate"><span class="pre">name</span></code> refers the name of the
+parameter, as might be used in a signature, whereas label is just the label
+for that widget in the GUI.</p></li>
+<li><p><strong>tooltip</strong> (<em>str</em>) -- A tooltip to display when hovering over the widget.</p></li>
+<li><p><strong>visible</strong> (<em>bool</em>) -- Whether the widget is visible, by default <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>backend_kwargs</strong> (<em>dict</em>) -- keyword argument to pass to the backend widget constructor.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.widgets.ButtonContainer.btn_text">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">btn_text</span></span><a class="headerlink" href="#magicclass.widgets.ButtonContainer.btn_text" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.widgets.CheckButton">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.</span></span><span class="sig-name descname"><span class="pre">CheckButton</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/misc.html#CheckButton"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.CheckButton" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets.PushButton</span></code></p>
+<p>A checkable button.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.widgets.CollapsibleContainer">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.</span></span><span class="sig-name descname"><span class="pre">CollapsibleContainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotation</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tooltip</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">visible</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enabled</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gui_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'vertical'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">widgets</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Widget</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#magicclass.widgets.CollapsibleContainer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.widget.Widget</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.mixins._OrientationMixin</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">MutableSequence</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.widget.Widget</span></code>]</p>
+<p>A collapsible Container Widget.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) -- The name of the parameter represented by this widget. by default &quot;&quot;</p></li>
+<li><p><strong>annotation</strong> (<em>Any</em>) -- The type annotation for the parameter represented by the widget, by default
+<code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
+<li><p><strong>label</strong> (<em>str</em>) -- A string to use for an associated Label widget (if this widget is being
+shown in a <code class="xref py py-class docutils literal notranslate"><span class="pre">Container</span></code> widget, and labels are on).
+By default, <code class="docutils literal notranslate"><span class="pre">name</span></code> will be used. Note: <code class="docutils literal notranslate"><span class="pre">name</span></code> refers the name of the
+parameter, as might be used in a signature, whereas label is just the label
+for that widget in the GUI.</p></li>
+<li><p><strong>tooltip</strong> (<em>str</em>) -- A tooltip to display when hovering over the widget.</p></li>
+<li><p><strong>visible</strong> (<em>bool</em>) -- Whether the widget is visible, by default <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>backend_kwargs</strong> (<em>dict</em>) -- keyword argument to pass to the backend widget constructor.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.widgets.CollapsibleContainer.btn_text">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">btn_text</span></span><a class="headerlink" href="#magicclass.widgets.CollapsibleContainer.btn_text" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.widgets.CollapsibleContainer.collapsed">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">collapsed</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#magicclass.widgets.CollapsibleContainer.collapsed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.widgets.ConsoleTextEdit">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.</span></span><span class="sig-name descname"><span class="pre">ConsoleTextEdit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/misc.html#ConsoleTextEdit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.ConsoleTextEdit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets.TextEdit</span></code></p>
+<p>A text edit with console-like setting.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.ConsoleTextEdit.append">
+<span class="sig-name descname"><span class="pre">append</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/misc.html#ConsoleTextEdit.append"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.ConsoleTextEdit.append" title="Permalink to this definition">¶</a></dt>
+<dd><p>Append new text.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.ConsoleTextEdit.erase_last">
+<span class="sig-name descname"><span class="pre">erase_last</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/misc.html#ConsoleTextEdit.erase_last"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.ConsoleTextEdit.erase_last" title="Permalink to this definition">¶</a></dt>
+<dd><p>Erase the last line.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.widgets.ConsoleTextEdit.selected">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">selected</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#magicclass.widgets.ConsoleTextEdit.selected" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return selected string.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.widgets.ConsoleTextEdit.tab_size">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">tab_size</span></span><a class="headerlink" href="#magicclass.widgets.ConsoleTextEdit.tab_size" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.widgets.DictWidget">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.</span></span><span class="sig-name descname"><span class="pre">DictWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/pywidgets/dict.html#DictWidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.DictWidget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.object.BaseWidget" title="magicclass.widgets.pywidgets.object.BaseWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.widgets.pywidgets.object.BaseWidget</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">MutableMapping</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.DictWidget.clear">
+<span class="sig-name descname"><span class="pre">clear</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/magicclass/widgets/pywidgets/dict.html#DictWidget.clear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.DictWidget.clear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clear dictionary contents.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.DictWidget.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">k</span></em><span class="optional">[</span>, <em class="sig-param"><span class="pre">d</span></em><span class="optional">]</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">D[k]</span> <span class="pre">if</span> <span class="pre">k</span> <span class="pre">in</span> <span class="pre">D,</span> <span class="pre">else</span> <span class="pre">d.</span>&#160; <span class="pre">d</span> <span class="pre">defaults</span> <span class="pre">to</span> <span class="pre">None.</span></span></span><a class="reference internal" href="_modules/magicclass/widgets/pywidgets/dict.html#DictWidget.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.DictWidget.get" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.DictWidget.items">
+<span class="sig-name descname"><span class="pre">items</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.dict.DictItemView" title="magicclass.widgets.pywidgets.dict.DictItemView"><span class="pre">magicclass.widgets.pywidgets.dict.DictItemView</span></a></span></span><a class="reference internal" href="_modules/magicclass/widgets/pywidgets/dict.html#DictWidget.items"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.DictWidget.items" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the view of dictionary keys and values as strings and Python objects.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.DictWidget.keys">
+<span class="sig-name descname"><span class="pre">keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/pywidgets/dict.html#DictWidget.keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.DictWidget.keys" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the view of dictionary keys.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.DictWidget.pop">
+<span class="sig-name descname"><span class="pre">pop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/pywidgets/dict.html#DictWidget.pop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.DictWidget.pop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pop a dictionary content.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.DictWidget.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">typing.Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/pywidgets/dict.html#DictWidget.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.DictWidget.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the dictionary contents.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.widgets.DictWidget.value">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">value</span></span><em class="property"><span class="pre">:</span> <span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">typing.Any</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#magicclass.widgets.DictWidget.value" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.DictWidget.values">
+<span class="sig-name descname"><span class="pre">values</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.dict.DictValueView" title="magicclass.widgets.pywidgets.dict.DictValueView"><span class="pre">magicclass.widgets.pywidgets.dict.DictValueView</span></a></span></span><a class="reference internal" href="_modules/magicclass/widgets/pywidgets/dict.html#DictWidget.values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.DictWidget.values" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the view of dictionary values as Python objects.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.widgets.DraggableContainer">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.</span></span><span class="sig-name descname"><span class="pre">DraggableContainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotation</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tooltip</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">visible</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enabled</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gui_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'vertical'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">widgets</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Widget</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#magicclass.widgets.DraggableContainer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.widget.Widget</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.mixins._OrientationMixin</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">MutableSequence</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.widget.Widget</span></code>]</p>
+<p>A draggable Container Widget.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) -- The name of the parameter represented by this widget. by default &quot;&quot;</p></li>
+<li><p><strong>annotation</strong> (<em>Any</em>) -- The type annotation for the parameter represented by the widget, by default
+<code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
+<li><p><strong>label</strong> (<em>str</em>) -- A string to use for an associated Label widget (if this widget is being
+shown in a <code class="xref py py-class docutils literal notranslate"><span class="pre">Container</span></code> widget, and labels are on).
+By default, <code class="docutils literal notranslate"><span class="pre">name</span></code> will be used. Note: <code class="docutils literal notranslate"><span class="pre">name</span></code> refers the name of the
+parameter, as might be used in a signature, whereas label is just the label
+for that widget in the GUI.</p></li>
+<li><p><strong>tooltip</strong> (<em>str</em>) -- A tooltip to display when hovering over the widget.</p></li>
+<li><p><strong>visible</strong> (<em>bool</em>) -- Whether the widget is visible, by default <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>backend_kwargs</strong> (<em>dict</em>) -- keyword argument to pass to the backend widget constructor.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.widgets.Figure">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.</span></span><span class="sig-name descname"><span class="pre">Figure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nrows</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncols</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">(4,</span> <span class="pre">3)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/misc.html#Figure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.Figure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#magicclass.widgets.utils.FreeWidget" title="magicclass.widgets.utils.FreeWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.widgets.utils.FreeWidget</span></code></a></p>
+<p>A matplotlib figure canvas.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.widgets.Figure.ax">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">ax</span></span><em class="property"><span class="pre">:</span> <span class="pre">Axes</span></em><a class="headerlink" href="#magicclass.widgets.Figure.ax" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.widgets.Figure.axes">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">axes</span></span><em class="property"><span class="pre">:</span> <span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Axes</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#magicclass.widgets.Figure.axes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.Figure.cla">
+<span class="sig-name descname"><span class="pre">cla</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/misc.html#Figure.cla"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.Figure.cla" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copy of <code class="docutils literal notranslate"><span class="pre">plt.cla</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.Figure.clf">
+<span class="sig-name descname"><span class="pre">clf</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/misc.html#Figure.clf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.Figure.clf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copy of <code class="docutils literal notranslate"><span class="pre">plt.clf</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.Figure.draw">
+<span class="sig-name descname"><span class="pre">draw</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/misc.html#Figure.draw"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.Figure.draw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copy of <code class="docutils literal notranslate"><span class="pre">plt.draw()</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.Figure.hist">
+<span class="sig-name descname"><span class="pre">hist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/misc.html#Figure.hist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.Figure.hist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copy of <code class="docutils literal notranslate"><span class="pre">plt.hist</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.Figure.imshow">
+<span class="sig-name descname"><span class="pre">imshow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Axes</span></span></span><a class="reference internal" href="_modules/magicclass/widgets/misc.html#Figure.imshow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.Figure.imshow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copy of <code class="docutils literal notranslate"><span class="pre">plt.imshow</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.Figure.legend">
+<span class="sig-name descname"><span class="pre">legend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/misc.html#Figure.legend"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.Figure.legend" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copy of <code class="docutils literal notranslate"><span class="pre">plt.legend</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.Figure.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Axes</span></span></span><a class="reference internal" href="_modules/magicclass/widgets/misc.html#Figure.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.Figure.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copy of <code class="docutils literal notranslate"><span class="pre">plt.plot</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.Figure.scatter">
+<span class="sig-name descname"><span class="pre">scatter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Axes</span></span></span><a class="reference internal" href="_modules/magicclass/widgets/misc.html#Figure.scatter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.Figure.scatter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copy of <code class="docutils literal notranslate"><span class="pre">plt.scatter</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.Figure.text">
+<span class="sig-name descname"><span class="pre">text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/misc.html#Figure.text"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.Figure.text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copy of <code class="docutils literal notranslate"><span class="pre">plt.text</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.Figure.title">
+<span class="sig-name descname"><span class="pre">title</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/misc.html#Figure.title"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.Figure.title" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copy of <code class="docutils literal notranslate"><span class="pre">plt.title</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.Figure.xlabel">
+<span class="sig-name descname"><span class="pre">xlabel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/misc.html#Figure.xlabel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.Figure.xlabel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copy of <code class="docutils literal notranslate"><span class="pre">plt.xlabel</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.Figure.xlim">
+<span class="sig-name descname"><span class="pre">xlim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/misc.html#Figure.xlim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.Figure.xlim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copy of <code class="docutils literal notranslate"><span class="pre">plt.xlim</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.Figure.ylabel">
+<span class="sig-name descname"><span class="pre">ylabel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/misc.html#Figure.ylabel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.Figure.ylabel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copy of <code class="docutils literal notranslate"><span class="pre">plt.ylabel</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.Figure.ylim">
+<span class="sig-name descname"><span class="pre">ylim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/misc.html#Figure.ylim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.Figure.ylim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copy of <code class="docutils literal notranslate"><span class="pre">plt.ylim</span></code>.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.widgets.FrameContainer">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.</span></span><span class="sig-name descname"><span class="pre">FrameContainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotation</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tooltip</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">visible</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enabled</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gui_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'vertical'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">widgets</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Widget</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#magicclass.widgets.FrameContainer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.widget.Widget</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.mixins._OrientationMixin</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">MutableSequence</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.widget.Widget</span></code>]</p>
+<p>A QGroupBox like container without title.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) -- The name of the parameter represented by this widget. by default &quot;&quot;</p></li>
+<li><p><strong>annotation</strong> (<em>Any</em>) -- The type annotation for the parameter represented by the widget, by default
+<code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
+<li><p><strong>label</strong> (<em>str</em>) -- A string to use for an associated Label widget (if this widget is being
+shown in a <code class="xref py py-class docutils literal notranslate"><span class="pre">Container</span></code> widget, and labels are on).
+By default, <code class="docutils literal notranslate"><span class="pre">name</span></code> will be used. Note: <code class="docutils literal notranslate"><span class="pre">name</span></code> refers the name of the
+parameter, as might be used in a signature, whereas label is just the label
+for that widget in the GUI.</p></li>
+<li><p><strong>tooltip</strong> (<em>str</em>) -- A tooltip to display when hovering over the widget.</p></li>
+<li><p><strong>visible</strong> (<em>bool</em>) -- Whether the widget is visible, by default <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>backend_kwargs</strong> (<em>dict</em>) -- keyword argument to pass to the backend widget constructor.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.widgets.FreeWidget">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.</span></span><span class="sig-name descname"><span class="pre">FreeWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'vertical'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/utils.html#FreeWidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.FreeWidget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.widget.Widget</span></code></p>
+<p>A Widget class with any QWidget as a child.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.FreeWidget.set_widget">
+<span class="sig-name descname"><span class="pre">set_widget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">widget</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">PyQt5.QtWidgets.QWidget</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/utils.html#FreeWidget.set_widget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.FreeWidget.set_widget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the central widget to the widget.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.widgets.GroupBoxContainer">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.</span></span><span class="sig-name descname"><span class="pre">GroupBoxContainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotation</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tooltip</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">visible</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enabled</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gui_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'vertical'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">widgets</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Widget</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#magicclass.widgets.GroupBoxContainer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.widget.Widget</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.mixins._OrientationMixin</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">MutableSequence</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.widget.Widget</span></code>]</p>
+<p>A QGroupBox like container</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) -- The name of the parameter represented by this widget. by default &quot;&quot;</p></li>
+<li><p><strong>annotation</strong> (<em>Any</em>) -- The type annotation for the parameter represented by the widget, by default
+<code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
+<li><p><strong>label</strong> (<em>str</em>) -- A string to use for an associated Label widget (if this widget is being
+shown in a <code class="xref py py-class docutils literal notranslate"><span class="pre">Container</span></code> widget, and labels are on).
+By default, <code class="docutils literal notranslate"><span class="pre">name</span></code> will be used. Note: <code class="docutils literal notranslate"><span class="pre">name</span></code> refers the name of the
+parameter, as might be used in a signature, whereas label is just the label
+for that widget in the GUI.</p></li>
+<li><p><strong>tooltip</strong> (<em>str</em>) -- A tooltip to display when hovering over the widget.</p></li>
+<li><p><strong>visible</strong> (<em>bool</em>) -- Whether the widget is visible, by default <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>backend_kwargs</strong> (<em>dict</em>) -- keyword argument to pass to the backend widget constructor.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.widgets.GroupBoxContainer.name">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#magicclass.widgets.GroupBoxContainer.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.widgets.HCollapsibleContainer">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.</span></span><span class="sig-name descname"><span class="pre">HCollapsibleContainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotation</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tooltip</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">visible</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enabled</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gui_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'vertical'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">widgets</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Widget</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#magicclass.widgets.HCollapsibleContainer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.widget.Widget</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.mixins._OrientationMixin</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">MutableSequence</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.widget.Widget</span></code>]</p>
+<p>A collapsible Container Widget.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) -- The name of the parameter represented by this widget. by default &quot;&quot;</p></li>
+<li><p><strong>annotation</strong> (<em>Any</em>) -- The type annotation for the parameter represented by the widget, by default
+<code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
+<li><p><strong>label</strong> (<em>str</em>) -- A string to use for an associated Label widget (if this widget is being
+shown in a <code class="xref py py-class docutils literal notranslate"><span class="pre">Container</span></code> widget, and labels are on).
+By default, <code class="docutils literal notranslate"><span class="pre">name</span></code> will be used. Note: <code class="docutils literal notranslate"><span class="pre">name</span></code> refers the name of the
+parameter, as might be used in a signature, whereas label is just the label
+for that widget in the GUI.</p></li>
+<li><p><strong>tooltip</strong> (<em>str</em>) -- A tooltip to display when hovering over the widget.</p></li>
+<li><p><strong>visible</strong> (<em>bool</em>) -- Whether the widget is visible, by default <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>backend_kwargs</strong> (<em>dict</em>) -- keyword argument to pass to the backend widget constructor.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.widgets.HCollapsibleContainer.btn_text">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">btn_text</span></span><a class="headerlink" href="#magicclass.widgets.HCollapsibleContainer.btn_text" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.widgets.HCollapsibleContainer.collapsed">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">collapsed</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#magicclass.widgets.HCollapsibleContainer.collapsed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.widgets.ListContainer">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.</span></span><span class="sig-name descname"><span class="pre">ListContainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotation</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tooltip</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">visible</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enabled</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gui_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'vertical'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">widgets</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Widget</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#magicclass.widgets.ListContainer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.widget.Widget</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.mixins._OrientationMixin</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">MutableSequence</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.widget.Widget</span></code>]</p>
+<p>A Container Widget that support drag and drop.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) -- The name of the parameter represented by this widget. by default &quot;&quot;</p></li>
+<li><p><strong>annotation</strong> (<em>Any</em>) -- The type annotation for the parameter represented by the widget, by default
+<code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
+<li><p><strong>label</strong> (<em>str</em>) -- A string to use for an associated Label widget (if this widget is being
+shown in a <code class="xref py py-class docutils literal notranslate"><span class="pre">Container</span></code> widget, and labels are on).
+By default, <code class="docutils literal notranslate"><span class="pre">name</span></code> will be used. Note: <code class="docutils literal notranslate"><span class="pre">name</span></code> refers the name of the
+parameter, as might be used in a signature, whereas label is just the label
+for that widget in the GUI.</p></li>
+<li><p><strong>tooltip</strong> (<em>str</em>) -- A tooltip to display when hovering over the widget.</p></li>
+<li><p><strong>visible</strong> (<em>bool</em>) -- Whether the widget is visible, by default <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>backend_kwargs</strong> (<em>dict</em>) -- keyword argument to pass to the backend widget constructor.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.widgets.ListContainer.current_index">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">current_index</span></span><a class="headerlink" href="#magicclass.widgets.ListContainer.current_index" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.widgets.ListEdit">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.</span></span><span class="sig-name descname"><span class="pre">ListEdit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotation</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tooltip</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">visible</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enabled</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gui_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'horizontal'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">widgets</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Widget</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">_V</span><span class="p"><span class="pre">]</span></span> <span class="p"><span class="pre">|</span></span> <span class="pre">_Unset</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">UNSET</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">WidgetOptions</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#magicclass.widgets.ListEdit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.widget.Widget</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.mixins._OrientationMixin</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">MutableSequence</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.widget.Widget</span></code>]</p>
+<p>A widget to represent a list of values.</p>
+<blockquote>
+<div><p>A ListEdit container can create a list with multiple objects of same type. It
+will contain many child widgets and their value is represented as a Python list
+object. If a list is given as the initial value, types of child widgets are
+determined from the contents. Number of contents can be adjusted with +/-
+buttons.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) -- The name of the parameter represented by this widget. by default &quot;&quot;</p></li>
+<li><p><strong>annotation</strong> (<em>Any</em>) -- The type annotation for the parameter represented by the widget, by default
+<code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
+<li><p><strong>label</strong> (<em>str</em>) -- A string to use for an associated Label widget (if this widget is being
+shown in a <code class="xref py py-class docutils literal notranslate"><span class="pre">Container</span></code> widget, and labels are on).
+By default, <code class="docutils literal notranslate"><span class="pre">name</span></code> will be used. Note: <code class="docutils literal notranslate"><span class="pre">name</span></code> refers the name of the
+parameter, as might be used in a signature, whereas label is just the label
+for that widget in the GUI.</p></li>
+<li><p><strong>tooltip</strong> (<em>str</em>) -- A tooltip to display when hovering over the widget.</p></li>
+<li><p><strong>visible</strong> (<em>bool</em>) -- Whether the widget is visible, by default <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>backend_kwargs</strong> (<em>dict</em>) -- keyword argument to pass to the backend widget constructor.</p></li>
+<li><p><strong>name</strong> -- The name of the parameter represented by this widget. by default &quot;&quot;</p></li>
+<li><p><strong>annotation</strong> -- The type annotation for the parameter represented by the widget, by default
+<code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
+<li><p><strong>label</strong> -- A string to use for an associated Label widget (if this widget is being
+shown in a <code class="xref py py-class docutils literal notranslate"><span class="pre">Container</span></code> widget, and labels are on).
+By default, <code class="docutils literal notranslate"><span class="pre">name</span></code> will be used. Note: <code class="docutils literal notranslate"><span class="pre">name</span></code> refers the name of the
+parameter, as might be used in a signature, whereas label is just the label
+for that widget in the GUI.</p></li>
+<li><p><strong>tooltip</strong> -- A tooltip to display when hovering over the widget.</p></li>
+<li><p><strong>visible</strong> -- Whether the widget is visible, by default <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>backend_kwargs</strong> -- keyword argument to pass to the backend widget constructor.</p></li>
+<li><p><strong>options</strong> (<em>WidgetOptions</em>) -- Widget options of child widgets.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.widgets.ListEdit.annotation">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">annotation</span></span><a class="headerlink" href="#magicclass.widgets.ListEdit.annotation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return type annotation for the parameter represented by the widget.</p>
+<p>ForwardRefs will be resolve when setting the annotation. For ListEdit,
+annotation will be like 'list[str]'.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.widgets.ListEdit.value">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">value</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="#magicclass.widgets.sequence.ListDataView" title="magicclass.widgets.sequence.ListDataView"><span class="pre">magicclass.widgets.sequence.ListDataView</span></a></em><a class="headerlink" href="#magicclass.widgets.ListEdit.value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a data view of current value.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.widgets.ListWidget">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.</span></span><span class="sig-name descname"><span class="pre">ListWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dragdrop</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/pywidgets/list.html#ListWidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.ListWidget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.object.BaseWidget" title="magicclass.widgets.pywidgets.object.BaseWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.widgets.pywidgets.object.BaseWidget</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">MutableSequence</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.ListWidget.clear">
+<span class="sig-name descname"><span class="pre">clear</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/pywidgets/list.html#ListWidget.clear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.ListWidget.clear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clear all the items.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.ListWidget.index">
+<span class="sig-name descname"><span class="pre">index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="_modules/magicclass/widgets/pywidgets/list.html#ListWidget.index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.ListWidget.index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find object or list widget item from the list widget.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obj</strong> (<em>Any</em>) -- Object to find. If a PyListWidgetItem is given, the index of the item
+(not the tagged object) is searched for.</p></li>
+<li><p><strong>start</strong> (<em>int</em><em>, </em><em>optional</em>) -- Starting index, by default 0</p></li>
+<li><p><strong>stop</strong> (<em>int</em><em>, </em><em>optional</em>) -- Index to stop searching.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Index of object.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> -- If object was not found.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.ListWidget.insert">
+<span class="sig-name descname"><span class="pre">insert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/pywidgets/list.html#ListWidget.insert"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.ListWidget.insert" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert object of any type to the list.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.widgets.ListWidget.value">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">value</span></span><em class="property"><span class="pre">:</span> <span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">typing.Any</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#magicclass.widgets.ListWidget.value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all the contents as a Python list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Contents of the list widget.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.widgets.ScrollableContainer">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.</span></span><span class="sig-name descname"><span class="pre">ScrollableContainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotation</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tooltip</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">visible</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enabled</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gui_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'vertical'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">widgets</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Widget</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#magicclass.widgets.ScrollableContainer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.widget.Widget</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.mixins._OrientationMixin</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">MutableSequence</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.widget.Widget</span></code>]</p>
+<p>A scrollable Container Widget.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) -- The name of the parameter represented by this widget. by default &quot;&quot;</p></li>
+<li><p><strong>annotation</strong> (<em>Any</em>) -- The type annotation for the parameter represented by the widget, by default
+<code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
+<li><p><strong>label</strong> (<em>str</em>) -- A string to use for an associated Label widget (if this widget is being
+shown in a <code class="xref py py-class docutils literal notranslate"><span class="pre">Container</span></code> widget, and labels are on).
+By default, <code class="docutils literal notranslate"><span class="pre">name</span></code> will be used. Note: <code class="docutils literal notranslate"><span class="pre">name</span></code> refers the name of the
+parameter, as might be used in a signature, whereas label is just the label
+for that widget in the GUI.</p></li>
+<li><p><strong>tooltip</strong> (<em>str</em>) -- A tooltip to display when hovering over the widget.</p></li>
+<li><p><strong>visible</strong> (<em>bool</em>) -- Whether the widget is visible, by default <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>backend_kwargs</strong> (<em>dict</em>) -- keyword argument to pass to the backend widget constructor.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.widgets.Separator">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.</span></span><span class="sig-name descname"><span class="pre">Separator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orientation</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'horizontal'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">button</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/separator.html#Separator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.Separator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#magicclass.widgets.utils.FreeWidget" title="magicclass.widgets.utils.FreeWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.widgets.utils.FreeWidget</span></code></a></p>
+<p>A Separator widget that can be used in both widgets and menus.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.widgets.Separator.btn_clicked">
+<span class="sig-name descname"><span class="pre">btn_clicked</span></span><a class="headerlink" href="#magicclass.widgets.Separator.btn_clicked" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.widgets.Separator.btn_text">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">btn_text</span></span><a class="headerlink" href="#magicclass.widgets.Separator.btn_text" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.widgets.Separator.central_widget">
+<span class="sig-name descname"><span class="pre">central_widget</span></span><em class="property"><span class="pre">:</span> <span class="pre">QWidget</span></em><a class="headerlink" href="#magicclass.widgets.Separator.central_widget" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.widgets.Separator.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#magicclass.widgets.Separator.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.widgets.SplitterContainer">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.</span></span><span class="sig-name descname"><span class="pre">SplitterContainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotation</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tooltip</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">visible</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enabled</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gui_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'vertical'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">widgets</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Widget</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#magicclass.widgets.SplitterContainer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.widget.Widget</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.mixins._OrientationMixin</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">MutableSequence</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.widget.Widget</span></code>]</p>
+<p>A Container equipped with splitter</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) -- The name of the parameter represented by this widget. by default &quot;&quot;</p></li>
+<li><p><strong>annotation</strong> (<em>Any</em>) -- The type annotation for the parameter represented by the widget, by default
+<code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
+<li><p><strong>label</strong> (<em>str</em>) -- A string to use for an associated Label widget (if this widget is being
+shown in a <code class="xref py py-class docutils literal notranslate"><span class="pre">Container</span></code> widget, and labels are on).
+By default, <code class="docutils literal notranslate"><span class="pre">name</span></code> will be used. Note: <code class="docutils literal notranslate"><span class="pre">name</span></code> refers the name of the
+parameter, as might be used in a signature, whereas label is just the label
+for that widget in the GUI.</p></li>
+<li><p><strong>tooltip</strong> (<em>str</em>) -- A tooltip to display when hovering over the widget.</p></li>
+<li><p><strong>visible</strong> (<em>bool</em>) -- Whether the widget is visible, by default <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>backend_kwargs</strong> (<em>dict</em>) -- keyword argument to pass to the backend widget constructor.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.widgets.StackedContainer">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.</span></span><span class="sig-name descname"><span class="pre">StackedContainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotation</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tooltip</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">visible</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enabled</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gui_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'vertical'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">widgets</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Widget</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#magicclass.widgets.StackedContainer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.widget.Widget</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.mixins._OrientationMixin</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">MutableSequence</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.widget.Widget</span></code>]</p>
+<p>A stacked Container Widget</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) -- The name of the parameter represented by this widget. by default &quot;&quot;</p></li>
+<li><p><strong>annotation</strong> (<em>Any</em>) -- The type annotation for the parameter represented by the widget, by default
+<code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
+<li><p><strong>label</strong> (<em>str</em>) -- A string to use for an associated Label widget (if this widget is being
+shown in a <code class="xref py py-class docutils literal notranslate"><span class="pre">Container</span></code> widget, and labels are on).
+By default, <code class="docutils literal notranslate"><span class="pre">name</span></code> will be used. Note: <code class="docutils literal notranslate"><span class="pre">name</span></code> refers the name of the
+parameter, as might be used in a signature, whereas label is just the label
+for that widget in the GUI.</p></li>
+<li><p><strong>tooltip</strong> (<em>str</em>) -- A tooltip to display when hovering over the widget.</p></li>
+<li><p><strong>visible</strong> (<em>bool</em>) -- Whether the widget is visible, by default <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>backend_kwargs</strong> (<em>dict</em>) -- keyword argument to pass to the backend widget constructor.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.widgets.StackedContainer.current_index">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">current_index</span></span><a class="headerlink" href="#magicclass.widgets.StackedContainer.current_index" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.widgets.SubWindowsContainer">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.</span></span><span class="sig-name descname"><span class="pre">SubWindowsContainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotation</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tooltip</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">visible</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enabled</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gui_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'vertical'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">widgets</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Widget</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#magicclass.widgets.SubWindowsContainer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.widget.Widget</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.mixins._OrientationMixin</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">MutableSequence</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.widget.Widget</span></code>]</p>
+<p>A window-in-window container</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) -- The name of the parameter represented by this widget. by default &quot;&quot;</p></li>
+<li><p><strong>annotation</strong> (<em>Any</em>) -- The type annotation for the parameter represented by the widget, by default
+<code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
+<li><p><strong>label</strong> (<em>str</em>) -- A string to use for an associated Label widget (if this widget is being
+shown in a <code class="xref py py-class docutils literal notranslate"><span class="pre">Container</span></code> widget, and labels are on).
+By default, <code class="docutils literal notranslate"><span class="pre">name</span></code> will be used. Note: <code class="docutils literal notranslate"><span class="pre">name</span></code> refers the name of the
+parameter, as might be used in a signature, whereas label is just the label
+for that widget in the GUI.</p></li>
+<li><p><strong>tooltip</strong> (<em>str</em>) -- A tooltip to display when hovering over the widget.</p></li>
+<li><p><strong>visible</strong> (<em>bool</em>) -- Whether the widget is visible, by default <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>backend_kwargs</strong> (<em>dict</em>) -- keyword argument to pass to the backend widget constructor.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.widgets.TabbedContainer">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.</span></span><span class="sig-name descname"><span class="pre">TabbedContainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotation</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tooltip</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">visible</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enabled</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gui_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'vertical'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">widgets</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Widget</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#magicclass.widgets.TabbedContainer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.widget.Widget</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.mixins._OrientationMixin</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">MutableSequence</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.widget.Widget</span></code>]</p>
+<p>A tab categorized Container Widget.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) -- The name of the parameter represented by this widget. by default &quot;&quot;</p></li>
+<li><p><strong>annotation</strong> (<em>Any</em>) -- The type annotation for the parameter represented by the widget, by default
+<code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
+<li><p><strong>label</strong> (<em>str</em>) -- A string to use for an associated Label widget (if this widget is being
+shown in a <code class="xref py py-class docutils literal notranslate"><span class="pre">Container</span></code> widget, and labels are on).
+By default, <code class="docutils literal notranslate"><span class="pre">name</span></code> will be used. Note: <code class="docutils literal notranslate"><span class="pre">name</span></code> refers the name of the
+parameter, as might be used in a signature, whereas label is just the label
+for that widget in the GUI.</p></li>
+<li><p><strong>tooltip</strong> (<em>str</em>) -- A tooltip to display when hovering over the widget.</p></li>
+<li><p><strong>visible</strong> (<em>bool</em>) -- Whether the widget is visible, by default <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>backend_kwargs</strong> (<em>dict</em>) -- keyword argument to pass to the backend widget constructor.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.widgets.TabbedContainer.current_index">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">current_index</span></span><a class="headerlink" href="#magicclass.widgets.TabbedContainer.current_index" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.widgets.ToolBoxContainer">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.</span></span><span class="sig-name descname"><span class="pre">ToolBoxContainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotation</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tooltip</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">visible</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enabled</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gui_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'vertical'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">widgets</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Widget</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#magicclass.widgets.ToolBoxContainer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.widget.Widget</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.mixins._OrientationMixin</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">MutableSequence</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.widget.Widget</span></code>]</p>
+<p>A Tool box Widget.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) -- The name of the parameter represented by this widget. by default &quot;&quot;</p></li>
+<li><p><strong>annotation</strong> (<em>Any</em>) -- The type annotation for the parameter represented by the widget, by default
+<code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
+<li><p><strong>label</strong> (<em>str</em>) -- A string to use for an associated Label widget (if this widget is being
+shown in a <code class="xref py py-class docutils literal notranslate"><span class="pre">Container</span></code> widget, and labels are on).
+By default, <code class="docutils literal notranslate"><span class="pre">name</span></code> will be used. Note: <code class="docutils literal notranslate"><span class="pre">name</span></code> refers the name of the
+parameter, as might be used in a signature, whereas label is just the label
+for that widget in the GUI.</p></li>
+<li><p><strong>tooltip</strong> (<em>str</em>) -- A tooltip to display when hovering over the widget.</p></li>
+<li><p><strong>visible</strong> (<em>bool</em>) -- Whether the widget is visible, by default <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>backend_kwargs</strong> (<em>dict</em>) -- keyword argument to pass to the backend widget constructor.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.widgets.ToolBoxContainer.current_index">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">current_index</span></span><a class="headerlink" href="#magicclass.widgets.ToolBoxContainer.current_index" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.widgets.TupleEdit">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.</span></span><span class="sig-name descname"><span class="pre">TupleEdit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotation</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tooltip</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">visible</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enabled</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gui_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'horizontal'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">widgets</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Widget</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">_V</span><span class="p"><span class="pre">]</span></span> <span class="p"><span class="pre">|</span></span> <span class="pre">_Unset</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">UNSET</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">WidgetOptions</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#magicclass.widgets.TupleEdit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.widget.Widget</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.mixins._OrientationMixin</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">MutableSequence</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.widget.Widget</span></code>]</p>
+<p>A widget to represent a tuple of values.</p>
+<blockquote>
+<div><p>A TupleEdit container has several child widgets of different type. Their value is
+represented as a Python tuple object. If a tuple is given as the initial value,
+types of child widgets are determined one by one. Unlike ListEdit, number of
+contents is not editable.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) -- The name of the parameter represented by this widget. by default &quot;&quot;</p></li>
+<li><p><strong>annotation</strong> (<em>Any</em>) -- The type annotation for the parameter represented by the widget, by default
+<code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
+<li><p><strong>label</strong> (<em>str</em>) -- A string to use for an associated Label widget (if this widget is being
+shown in a <code class="xref py py-class docutils literal notranslate"><span class="pre">Container</span></code> widget, and labels are on).
+By default, <code class="docutils literal notranslate"><span class="pre">name</span></code> will be used. Note: <code class="docutils literal notranslate"><span class="pre">name</span></code> refers the name of the
+parameter, as might be used in a signature, whereas label is just the label
+for that widget in the GUI.</p></li>
+<li><p><strong>tooltip</strong> (<em>str</em>) -- A tooltip to display when hovering over the widget.</p></li>
+<li><p><strong>visible</strong> (<em>bool</em>) -- Whether the widget is visible, by default <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>backend_kwargs</strong> (<em>dict</em>) -- keyword argument to pass to the backend widget constructor.</p></li>
+<li><p><strong>name</strong> -- The name of the parameter represented by this widget. by default &quot;&quot;</p></li>
+<li><p><strong>annotation</strong> -- The type annotation for the parameter represented by the widget, by default
+<code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
+<li><p><strong>label</strong> -- A string to use for an associated Label widget (if this widget is being
+shown in a <code class="xref py py-class docutils literal notranslate"><span class="pre">Container</span></code> widget, and labels are on).
+By default, <code class="docutils literal notranslate"><span class="pre">name</span></code> will be used. Note: <code class="docutils literal notranslate"><span class="pre">name</span></code> refers the name of the
+parameter, as might be used in a signature, whereas label is just the label
+for that widget in the GUI.</p></li>
+<li><p><strong>tooltip</strong> -- A tooltip to display when hovering over the widget.</p></li>
+<li><p><strong>visible</strong> -- Whether the widget is visible, by default <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>backend_kwargs</strong> -- keyword argument to pass to the backend widget constructor.</p></li>
+<li><p><strong>options</strong> (<em>WidgetOptions</em>) -- Widget options of child widgets.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.widgets.TupleEdit.annotation">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">annotation</span></span><a class="headerlink" href="#magicclass.widgets.TupleEdit.annotation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return type annotation for the parameter represented by the widget.</p>
+<p>ForwardRefs will be resolve when setting the annotation. For TupleEdit,
+annotation will be like 'tuple[str, int]'.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.widgets.TupleEdit.value">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">value</span></span><em class="property"><span class="pre">:</span> <span class="pre">tuple</span></em><a class="headerlink" href="#magicclass.widgets.TupleEdit.value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return current value as a tuple.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="magicclass.utils.html" class="btn btn-neutral float-left" title="magicclass.utils package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="magicclass.widgets.pywidgets.html" class="btn btn-neutral float-right" title="magicclass.widgets.pywidgets package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Hanjin Liu.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

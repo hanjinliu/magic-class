@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="English" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>magicclass.type_matching package &mdash; magic-class 0.5.19 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/columns.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="magicclass.utils package" href="magicclass.utils.html" />
+    <link rel="prev" title="magicclass.stylesheets package" href="magicclass.stylesheets.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> magic-class
+          </a>
+              <div class="version">
+                0.5.19
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="quick_start.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="options.html">Options in magic-class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nest.html">Nest magic-classes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="use_field.html">Use Fields in magic-class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="use_wraps.html">Call Parent Methods from its Child</a></li>
+<li class="toctree-l1"><a class="reference internal" href="use_bind.html">Binding Values to Arguments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="keybinding.html">Define Custom Keybindings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="customize_macro.html">Customize Macro Recording</a></li>
+<li class="toctree-l1"><a class="reference internal" href="containers.html">Container Variations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="class_inheritance.html">Inherit Magic Class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="special_methods.html">Special Attributes in Magic class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API References</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">magic-class</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="api.html">API References</a> &raquo;</li>
+          <li><a href="magicclass.html">magicclass package</a> &raquo;</li>
+      <li>magicclass.type_matching package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/magicclass.type_matching.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="magicclass-type-matching-package">
+<h1>magicclass.type_matching package<a class="headerlink" href="#magicclass-type-matching-package" title="Permalink to this headline">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="module-magicclass.type_matching.list_type">
+<span id="magicclass-type-matching-list-type-module"></span><h2>magicclass.type_matching.list_type module<a class="headerlink" href="#module-magicclass.type_matching.list_type" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="magicclass.type_matching.list_type.list_of_any">
+<span class="sig-prename descclassname"><span class="pre">magicclass.type_matching.list_type.</span></span><span class="sig-name descname"><span class="pre">list_of_any</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotation</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">WidgetTuple</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span></span><a class="reference internal" href="_modules/magicclass/type_matching/list_type.html#list_of_any"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.type_matching.list_type.list_of_any" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine if value/annotation is a list[X].</p>
+</dd></dl>
+
+</section>
+<section id="module-magicclass.type_matching.tuple_type">
+<span id="magicclass-type-matching-tuple-type-module"></span><h2>magicclass.type_matching.tuple_type module<a class="headerlink" href="#module-magicclass.type_matching.tuple_type" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="magicclass.type_matching.tuple_type.tuple_of_any">
+<span class="sig-prename descclassname"><span class="pre">magicclass.type_matching.tuple_type.</span></span><span class="sig-name descname"><span class="pre">tuple_of_any</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotation</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">WidgetTuple</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span></span><a class="reference internal" href="_modules/magicclass/type_matching/tuple_type.html#tuple_of_any"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.type_matching.tuple_type.tuple_of_any" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine if value/annotation is a tuple[X, Y, ...].</p>
+</dd></dl>
+
+</section>
+<section id="module-magicclass.type_matching">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-magicclass.type_matching" title="Permalink to this headline">¶</a></h2>
+<p>Enable type matching of tuple/list types in magicgui.
+Annotations such as <code class="docutils literal notranslate"><span class="pre">tuple[int,</span> <span class="pre">str]</span></code> and <code class="docutils literal notranslate"><span class="pre">list[float]</span></code> can be
+converted into TupleEdit or ListEdit. Type matching will be enabled
+just by importing them like:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">magicclass.type_matching</span> <span class="kn">import</span> <span class="n">tuple_type</span>  <span class="c1"># enable tuple</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">magicclass.type_matching</span> <span class="kn">import</span> <span class="n">list_type</span>  <span class="c1"># enable list</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="magicclass.stylesheets.html" class="btn btn-neutral float-left" title="magicclass.stylesheets package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="magicclass.utils.html" class="btn btn-neutral float-right" title="magicclass.utils package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Hanjin Liu.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

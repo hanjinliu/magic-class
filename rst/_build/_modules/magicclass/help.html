@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="English" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>magicclass.help &mdash; magic-class 0.5.19 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/columns.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> magic-class
+          </a>
+              <div class="version">
+                0.5.19
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../quick_start.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../options.html">Options in magic-class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../nest.html">Nest magic-classes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../use_field.html">Use Fields in magic-class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../use_wraps.html">Call Parent Methods from its Child</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../use_bind.html">Binding Values to Arguments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../keybinding.html">Define Custom Keybindings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../customize_macro.html">Customize Macro Recording</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../containers.html">Container Variations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../class_inheritance.html">Inherit Magic Class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../special_methods.html">Special Attributes in Magic class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API References</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">magic-class</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      <li>magicclass.help</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for magicclass.help</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">FunctionGui</span><span class="p">,</span> <span class="n">Image</span><span class="p">,</span> <span class="n">Slider</span>
+<span class="kn">from</span> <span class="nn">magicgui.widgets._bases.widget</span> <span class="kn">import</span> <span class="n">Widget</span>
+<span class="kn">from</span> <span class="nn">magicgui.widgets._function_gui</span> <span class="kn">import</span> <span class="n">_docstring_to_html</span>
+
+<span class="kn">import</span> <span class="nn">qtpy</span>
+<span class="kn">from</span> <span class="nn">qtpy.QtWidgets</span> <span class="kn">import</span> <span class="n">QWidget</span><span class="p">,</span> <span class="n">QTreeWidget</span><span class="p">,</span> <span class="n">QTreeWidgetItem</span><span class="p">,</span> <span class="n">QSplitter</span>
+<span class="kn">from</span> <span class="nn">qtpy.QtCore</span> <span class="kn">import</span> <span class="n">Qt</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span>
+
+<span class="kn">from</span> <span class="nn">magicclass.widgets.containers</span> <span class="kn">import</span> <span class="n">SplitterContainer</span>
+<span class="kn">from</span> <span class="nn">magicclass.widgets.misc</span> <span class="kn">import</span> <span class="n">ConsoleTextEdit</span>
+
+<span class="kn">from</span> <span class="nn">.gui.mgui_ext</span> <span class="kn">import</span> <span class="n">Action</span><span class="p">,</span> <span class="n">PushButtonPlus</span><span class="p">,</span> <span class="n">WidgetAction</span>
+<span class="kn">from</span> <span class="nn">.gui._base</span> <span class="kn">import</span> <span class="n">MagicTemplate</span>
+<span class="kn">from</span> <span class="nn">.widgets</span> <span class="kn">import</span> <span class="n">DraggableContainer</span><span class="p">,</span> <span class="n">FreeWidget</span>
+<span class="kn">from</span> <span class="nn">.gui.class_gui</span> <span class="kn">import</span> <span class="n">CollapsibleClassGui</span><span class="p">,</span> <span class="n">DraggableClassGui</span><span class="p">,</span> <span class="n">ScrollableClassGui</span><span class="p">,</span> <span class="n">ButtonClassGui</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">iter_members</span><span class="p">,</span> <span class="n">extract_tooltip</span><span class="p">,</span> <span class="n">get_signature</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+    
+<span class="c1"># TODO: find</span>
+<span class="c1"># TODO: key-binding</span>
+
+<span class="k">class</span> <span class="nc">_HelpWidget</span><span class="p">(</span><span class="n">QSplitter</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A Qt widget that will show information of a magic-class widget, built from its</span>
+<span class="sd">    class structure, function docstrings and type annotations.</span>
+<span class="sd">    &quot;&quot;&quot;</span>    
+    <span class="n">_initial_image_size</span> <span class="o">=</span> <span class="mi">250</span>
+    
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ui</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">orientation</span><span class="o">=</span><span class="n">Qt</span><span class="o">.</span><span class="n">Horizontal</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowFlag</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">Window</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tree</span> <span class="o">=</span> <span class="n">QTreeWidget</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tree</span><span class="o">.</span><span class="n">itemClicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_on_treeitem_clicked</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_text</span> <span class="o">=</span> <span class="n">ConsoleTextEdit</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_text</span><span class="o">.</span><span class="n">read_only</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mgui_image</span> <span class="o">=</span> <span class="n">Image</span><span class="p">()</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">DraggableContainer</span><span class="p">(</span><span class="n">widgets</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_mgui_image</span><span class="p">])</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mgui_slider</span> <span class="o">=</span> <span class="n">Slider</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_initial_image_size</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mgui_slider</span><span class="o">.</span><span class="n">changed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_resize_image</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mgui_slider</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">c</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mgui_slider</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mgui_slider</span><span class="o">.</span><span class="n">max_height</span> <span class="o">=</span> <span class="mi">20</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mgui_slider</span><span class="o">.</span><span class="n">max_width</span> <span class="o">=</span> <span class="mi">100</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">min_height</span> <span class="o">=</span> <span class="mi">120</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_resize_image</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_initial_image_size</span><span class="p">)</span>
+        
+        <span class="n">widget_right</span> <span class="o">=</span> <span class="n">SplitterContainer</span><span class="p">(</span><span class="n">widgets</span><span class="o">=</span><span class="p">[</span><span class="n">c</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_text</span><span class="p">])</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">insertWidget</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tree</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">insertWidget</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">widget_right</span><span class="o">.</span><span class="n">native</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">ui</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_tree</span><span class="p">(</span><span class="n">ui</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_update_ui_view</span><span class="p">(</span><span class="n">ui</span><span class="p">)</span>
+            
+        <span class="n">width</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">()</span>
+        <span class="n">left_width</span> <span class="o">=</span> <span class="n">width</span><span class="o">//</span><span class="mi">3</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setSizes</span><span class="p">([</span><span class="n">left_width</span><span class="p">,</span> <span class="n">width</span> <span class="o">-</span> <span class="n">left_width</span><span class="p">])</span>
+    
+    <span class="k">def</span> <span class="nf">set_tree</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ui</span><span class="p">:</span> <span class="n">MagicTemplate</span><span class="p">,</span> <span class="n">root</span><span class="p">:</span> <span class="n">UiBoundTreeItem</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">if</span> <span class="n">root</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">root</span> <span class="o">=</span> <span class="n">UiBoundTreeItem</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tree</span><span class="p">,</span> <span class="n">ui</span><span class="p">)</span>
+            <span class="n">root</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+            <span class="n">root</span><span class="o">.</span><span class="n">setExpanded</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_tree</span><span class="o">.</span><span class="n">invisibleRootItem</span><span class="p">()</span><span class="o">.</span><span class="n">addChild</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+                
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">widget</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">_iter_unwrapped_children</span><span class="p">(</span><span class="n">ui</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="n">MagicTemplate</span><span class="p">):</span>
+                <span class="n">child</span> <span class="o">=</span> <span class="n">UiBoundTreeItem</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">ui</span><span class="o">=</span><span class="n">widget</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">set_tree</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="n">child</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">childCount</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">child</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">ui</span><span class="p">,</span> <span class="n">MagicTemplate</span><span class="p">):</span>
+                    <span class="c1"># If only one magic class is nested, we don&#39;t create redundant items</span>
+                    <span class="n">grandchild</span> <span class="o">=</span> <span class="n">child</span><span class="o">.</span><span class="n">takeChild</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                    <span class="n">grandchild</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">) </span><span class="si">{</span><span class="n">widget</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> &gt; </span><span class="si">{</span><span class="n">grandchild</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="n">root</span><span class="o">.</span><span class="n">removeChild</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+                    <span class="n">child</span> <span class="o">=</span> <span class="n">grandchild</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">child</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">) </span><span class="si">{</span><span class="n">widget</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">child</span> <span class="o">=</span> <span class="n">UiBoundTreeItem</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">ui</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+                <span class="n">child</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">) </span><span class="si">{</span><span class="n">widget</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            
+            <span class="n">root</span><span class="o">.</span><span class="n">addChild</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">_resize_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mgui_image</span><span class="o">.</span><span class="n">min_height</span> <span class="o">=</span> <span class="n">v</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mgui_image</span><span class="o">.</span><span class="n">max_height</span> <span class="o">=</span> <span class="n">v</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mgui_image</span><span class="o">.</span><span class="n">min_width</span> <span class="o">=</span> <span class="n">v</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mgui_image</span><span class="o">.</span><span class="n">max_width</span> <span class="o">=</span> <span class="n">v</span>
+    
+    <span class="k">def</span> <span class="nf">_update_ui_view</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ui</span><span class="p">:</span> <span class="n">MagicTemplate</span><span class="p">):</span>
+        <span class="n">img</span><span class="p">,</span> <span class="n">docs</span> <span class="o">=</span> <span class="n">get_help_info</span><span class="p">(</span><span class="n">ui</span><span class="p">)</span>
+        
+        <span class="c1"># set image</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mgui_image</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">img</span>
+        
+        <span class="c1"># set text</span>
+        <span class="n">htmls</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;&lt;h1&gt;</span><span class="si">{</span><span class="n">ui</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&lt;/h1&gt;&lt;p&gt;</span><span class="si">{</span><span class="n">extract_tooltip</span><span class="p">(</span><span class="n">ui</span><span class="p">)</span><span class="si">}</span><span class="s2">&lt;/p&gt;&quot;</span><span class="p">]</span>
+        
+        <span class="k">if</span> <span class="n">docs</span><span class="p">:</span>
+            <span class="n">htmls</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&lt;h2&gt;Contents&lt;/h2&gt;&quot;</span><span class="p">)</span>
+        
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">doc</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">docs</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+            <span class="n">htmls</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&lt;h3&gt;(</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">) </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&lt;/h3&gt;&lt;p&gt;</span><span class="si">{</span><span class="n">doc</span><span class="si">}</span><span class="s2">&lt;/p&gt;&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_text</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">htmls</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_on_treeitem_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">UiBoundTreeItem</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">ui</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_update_ui_view</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">ui</span><span class="p">)</span>
+            <span class="n">item</span><span class="o">.</span><span class="n">setExpanded</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_on_treeitem_clicked</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">parent</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_resize_image</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_initial_image_size</span><span class="p">)</span>
+
+    
+<div class="viewcode-block" id="UiBoundTreeItem"><a class="viewcode-back" href="../../magicclass.html#magicclass.help.UiBoundTreeItem">[docs]</a><span class="k">class</span> <span class="nc">UiBoundTreeItem</span><span class="p">(</span><span class="n">QTreeWidgetItem</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">ui</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span> <span class="o">=</span> <span class="n">ui</span> <span class="c1"># TODO: use weakref?</span>
+    
+<div class="viewcode-block" id="UiBoundTreeItem.child"><a class="viewcode-back" href="../../magicclass.html#magicclass.help.UiBoundTreeItem.child">[docs]</a>    <span class="k">def</span> <span class="nf">child</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">UiBoundTreeItem</span><span class="p">:</span>
+        <span class="c1"># Just for typing</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">child</span><span class="p">(</span><span class="n">index</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="UiBoundTreeItem.takeChild"><a class="viewcode-back" href="../../magicclass.html#magicclass.help.UiBoundTreeItem.takeChild">[docs]</a>    <span class="k">def</span> <span class="nf">takeChild</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">UiBoundTreeItem</span><span class="p">:</span>
+        <span class="c1"># Just for typing</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">takeChild</span><span class="p">(</span><span class="n">index</span><span class="p">)</span></div></div>
+
+<div class="viewcode-block" id="HelpWidget"><a class="viewcode-back" href="../../magicclass.html#magicclass.help.HelpWidget">[docs]</a><span class="k">class</span> <span class="nc">HelpWidget</span><span class="p">(</span><span class="n">FreeWidget</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ui</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_help_widget</span> <span class="o">=</span> <span class="n">_HelpWidget</span><span class="p">(</span><span class="n">ui</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_widget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_help_widget</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">&quot;Help&quot;</span><span class="p">)</span></div>
+
+<span class="k">def</span> <span class="nf">_issubclass</span><span class="p">(</span><span class="n">child</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">parent</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="get_help_info"><a class="viewcode-back" href="../../magicclass.html#magicclass.help.get_help_info">[docs]</a><span class="k">def</span> <span class="nf">get_help_info</span><span class="p">(</span><span class="n">ui</span><span class="p">:</span> <span class="n">MagicTemplate</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+    <span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
+    <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+    <span class="n">backend</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">get_backend</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">_has_inner_widget</span> <span class="o">=</span> <span class="p">(</span><span class="n">ScrollableClassGui</span><span class="p">,</span> <span class="n">DraggableClassGui</span><span class="p">,</span> <span class="n">CollapsibleClassGui</span><span class="p">,</span> 
+                             <span class="n">ButtonClassGui</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ui</span><span class="p">,</span> <span class="n">_has_inner_widget</span><span class="p">):</span>
+            <span class="n">inner_widget</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">_widget</span><span class="o">.</span><span class="n">_inner_widget</span>
+            <span class="n">visible</span> <span class="o">=</span> <span class="n">inner_widget</span><span class="o">.</span><span class="n">isVisible</span><span class="p">()</span>
+            <span class="n">inner_widget</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">img</span> <span class="o">=</span> <span class="n">_render</span><span class="p">(</span><span class="n">inner_widget</span><span class="p">)</span>
+            <span class="n">inner_widget</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="n">visible</span><span class="p">)</span>
+        <span class="c1"># elif isinstance(ui, TabbedClassGui):</span>
+        <span class="c1"># TODO: Cannot assign correct position of tabs now.</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">img</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">render</span><span class="p">()</span>
+        <span class="n">scale</span> <span class="o">=</span> <span class="n">_screen_scale</span><span class="p">()</span>
+        <span class="n">docs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">mpl</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s2">&quot;Agg&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">context</span><span class="p">(</span><span class="s2">&quot;default&quot;</span><span class="p">):</span>
+            <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">patch</span><span class="o">.</span><span class="n">set_alpha</span><span class="p">(</span><span class="mf">0.05</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">widget</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">_iter_unwrapped_children</span><span class="p">(</span><span class="n">ui</span><span class="p">)):</span>
+                <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">_get_relative_pos</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">x</span><span class="o">*</span><span class="n">scale</span><span class="p">,</span> <span class="n">y</span><span class="o">*</span><span class="n">scale</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+                        <span class="n">ha</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span>
+                        <span class="n">backgroundcolor</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">fontfamily</span><span class="o">=</span><span class="s2">&quot;Arial&quot;</span><span class="p">)</span>
+                <span class="n">docs</span><span class="p">[</span><span class="n">widget</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">_get_doc</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+            
+            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">renderer</span><span class="o">.</span><span class="n">buffer_rgba</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+        
+        
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">mpl</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">backend</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">data</span><span class="p">,</span> <span class="n">docs</span></div>
+
+<span class="k">def</span> <span class="nf">_screen_scale</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">qtpy.QtGui</span> <span class="kn">import</span> <span class="n">QGuiApplication</span>
+    <span class="n">screen</span> <span class="o">=</span> <span class="n">QGuiApplication</span><span class="o">.</span><span class="n">screens</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">screen</span><span class="o">.</span><span class="n">devicePixelRatio</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">_get_doc</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="n">MagicTemplate</span><span class="p">):</span>
+        <span class="n">doc</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="vm">__doc__</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="p">(</span><span class="n">Action</span><span class="p">,</span> <span class="n">PushButtonPlus</span><span class="p">)):</span>
+        <span class="n">doc</span> <span class="o">=</span> <span class="n">_docstring_to_html</span><span class="p">(</span><span class="n">widget</span><span class="o">.</span><span class="n">_doc</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="n">FunctionGui</span><span class="p">):</span>
+        <span class="n">doc</span> <span class="o">=</span> <span class="n">_docstring_to_html</span><span class="p">(</span><span class="n">widget</span><span class="o">.</span><span class="n">_function</span><span class="o">.</span><span class="vm">__doc__</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="p">(</span><span class="n">Widget</span><span class="p">,</span> <span class="n">WidgetAction</span><span class="p">)):</span>
+        <span class="n">doc</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">tooltip</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">widget</span><span class="p">))</span>
+    <span class="n">doc</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;&lt;h3&gt;Parameters&lt;/h3&gt;&lt;ul&gt;&lt;/ul&gt;&quot;</span><span class="p">)</span> <span class="c1"># If parameter info was not given</span>
+    <span class="k">if</span> <span class="n">doc</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+        <span class="n">doc</span> <span class="o">=</span> <span class="s2">&quot;(No document found)&quot;</span>
+    <span class="k">return</span> <span class="n">doc</span>
+
+<span class="k">def</span> <span class="nf">_render</span><span class="p">(</span><span class="n">qwidget</span><span class="p">:</span> <span class="n">QWidget</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Render Qt widgets. Used in certain type of containers.&quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+    <span class="n">img</span> <span class="o">=</span> <span class="n">qwidget</span><span class="o">.</span><span class="n">grab</span><span class="p">()</span><span class="o">.</span><span class="n">toImage</span><span class="p">()</span>
+    <span class="n">bits</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">constBits</span><span class="p">()</span>
+    <span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">height</span><span class="p">(),</span> <span class="n">img</span><span class="o">.</span><span class="n">width</span><span class="p">(),</span> <span class="mi">4</span>
+    <span class="k">if</span> <span class="n">qtpy</span><span class="o">.</span><span class="n">API_NAME</span> <span class="o">==</span> <span class="s2">&quot;PySide2&quot;</span><span class="p">:</span>
+        <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">bits</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">bits</span><span class="o">.</span><span class="n">setsize</span><span class="p">(</span><span class="n">h</span> <span class="o">*</span> <span class="n">w</span> <span class="o">*</span> <span class="n">c</span><span class="p">)</span>
+        <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">bits</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">arr</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">]]</span>
+
+<span class="k">def</span> <span class="nf">_iter_unwrapped_children</span><span class="p">(</span><span class="n">ui</span><span class="p">:</span> <span class="n">MagicTemplate</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Widget</span><span class="p">]:</span>
+    <span class="k">for</span> <span class="n">widget</span> <span class="ow">in</span> <span class="n">ui</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="s2">&quot;_unwrapped&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+            <span class="k">yield</span> <span class="n">widget</span>
+
+<span class="k">def</span> <span class="nf">_get_relative_pos</span><span class="p">(</span><span class="n">widget</span><span class="p">:</span> <span class="n">Widget</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Get relative position of a widget seen from its parent.&quot;&quot;&quot;</span>    
+    <span class="n">w</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">_labeled_widget</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">w</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">widget</span>
+    <span class="n">qpos</span> <span class="o">=</span> <span class="n">w</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">mapToParent</span><span class="p">(</span><span class="n">w</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">rect</span><span class="p">()</span><span class="o">.</span><span class="n">topLeft</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">qpos</span><span class="o">.</span><span class="n">x</span><span class="p">(),</span> <span class="n">qpos</span><span class="o">.</span><span class="n">y</span><span class="p">()</span>
+
+<div class="viewcode-block" id="get_keymap"><a class="viewcode-back" href="../../magicclass.html#magicclass.help.get_keymap">[docs]</a><span class="k">def</span> <span class="nf">get_keymap</span><span class="p">(</span><span class="n">ui</span><span class="p">:</span> <span class="n">MagicTemplate</span> <span class="o">|</span> <span class="nb">type</span><span class="p">[</span><span class="n">MagicTemplate</span><span class="p">]):</span>
+    <span class="kn">from</span> <span class="nn">.signature</span> <span class="kn">import</span> <span class="n">get_additional_option</span>
+    <span class="kn">from</span> <span class="nn">.gui.keybinding</span> <span class="kn">import</span> <span class="n">as_shortcut</span>
+    <span class="n">keymap</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ui</span><span class="p">,</span> <span class="n">MagicTemplate</span><span class="p">):</span>
+        <span class="bp">cls</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="vm">__class__</span>
+    <span class="k">elif</span> <span class="n">_issubclass</span><span class="p">(</span><span class="n">ui</span><span class="p">,</span> <span class="n">MagicTemplate</span><span class="p">):</span>
+        <span class="bp">cls</span> <span class="o">=</span> <span class="n">ui</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;&#39;get_keymap&#39; can only be called with MagicTemplate input.&quot;</span><span class="p">)</span>
+    
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">iter_members</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">exclude_prefix</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">MagicTemplate</span><span class="p">):</span>
+            <span class="n">child_keymap</span> <span class="o">=</span> <span class="n">get_keymap</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
+            <span class="n">keymap</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">child_keymap</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">kb</span> <span class="o">=</span> <span class="n">get_additional_option</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="s2">&quot;keybinding&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">kb</span><span class="p">:</span>
+                <span class="n">keystr</span> <span class="o">=</span> <span class="n">as_shortcut</span><span class="p">(</span><span class="n">kb</span><span class="p">)</span><span class="o">.</span><span class="n">toString</span><span class="p">()</span>
+                <span class="n">keymap</span><span class="p">[</span><span class="n">keystr</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">extract_tooltip</span><span class="p">(</span><span class="n">attr</span><span class="p">))</span>
+                
+    <span class="k">return</span> <span class="n">keymap</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Hanjin Liu.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
