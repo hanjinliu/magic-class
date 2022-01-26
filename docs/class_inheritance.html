@@ -54,7 +54,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Inherit Magic Class</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#the-order-of-widget">The Order of Widget</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#field-objects-in-the-base-class">Field Objects in the Base Class</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#bind-method">1. Bind method</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bind-methods">1. Bind methods</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#define-callbacks">2. Define Callbacks</a></li>
 </ul>
 </li>
@@ -131,14 +131,14 @@ raise <code class="docutils literal notranslate"><span class="pre">TypeError</sp
 function&quot;, but it is not clear which is upper and which is lower.</p>
 <p>In magic-class, methods defined in base classes will appear <strong>upper</strong> than those in
 subclasses. In the case of example, GUI will look like:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="o">[</span> common <span class="k">function</span> <span class="o">]</span>
-<span class="o">[</span>  main <span class="k">function</span>  <span class="o">]</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span> <span class="n">common</span> <span class="n">function</span> <span class="p">]</span>
+<span class="p">[</span>  <span class="n">main</span> <span class="n">function</span>  <span class="p">]</span>
 </pre></div>
 </div>
 </section>
 <section id="field-objects-in-the-base-class">
 <h2>Field Objects in the Base Class<a class="headerlink" href="#field-objects-in-the-base-class" title="Permalink to this headline">¶</a></h2>
-<p>You may want to add widgets using <code class="docutils literal notranslate"><span class="pre">MagicField</span></code> (<a class="reference internal" href="use_field.html"><span class="doc">Use Fields in magic-class</span></a>). <code class="docutils literal notranslate"><span class="pre">MagicField</span></code>
+<p>You may want to add widgets using <code class="docutils literal notranslate"><span class="pre">MagicField</span></code> (see <a class="reference internal" href="use_field.html"><span class="doc">Use Fields in magic-class</span></a>). <code class="docutils literal notranslate"><span class="pre">MagicField</span></code>
 behaves similarly as methods. In the following example,</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">field</span>
 
@@ -153,8 +153,8 @@ behaves similarly as methods. In the following example,</p>
 <p>Two widgets, <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code> will be packed in the <code class="docutils literal notranslate"><span class="pre">Main</span></code> GUI, in order <code class="docutils literal notranslate"><span class="pre">x</span></code>, <code class="docutils literal notranslate"><span class="pre">y</span></code>.</p>
 <p>However, if you want to use <code class="docutils literal notranslate"><span class="pre">Bound</span></code> to bind parameter to method or connect callback
 function to a field, you must re-define fields in the subclasses.</p>
-<section id="bind-method">
-<h3>1. Bind method<a class="headerlink" href="#bind-method" title="Permalink to this headline">¶</a></h3>
+<section id="bind-methods">
+<h3>1. Bind methods<a class="headerlink" href="#bind-methods" title="Permalink to this headline">¶</a></h3>
 <div class="twocol docutils container">
 <div class="leftside docutils container">
 <p><em>This will not work</em></p>
@@ -244,7 +244,7 @@ until class definition finishes.</p>
 </section>
 <section id="nesting-magic-classes">
 <h2>Nesting Magic Classes<a class="headerlink" href="#nesting-magic-classes" title="Permalink to this headline">¶</a></h2>
-<p>Nesting magic classes (<a class="reference internal" href="nest.html"><span class="doc">Nest magic-classes</span></a>) is useful for designing layout of widgets.
+<p>Nesting magic classes (see <a class="reference internal" href="nest.html"><span class="doc">Nest magic-classes</span></a>) is useful for designing layout of widgets.
 You don't have to worry about inheriting base class with a nested magic class.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Base</span><span class="p">(</span><span class="n">MagicTemplate</span><span class="p">):</span>
     <span class="c1"># All of these widgets and their layout will be inherited to subclasses</span>
@@ -270,9 +270,24 @@ You don't have to worry about inheriting base class with a nested magic class.</
 of multipule GUIs. As mentioned above, methods and fields that are defined in the
 base class will packed <strong>before</strong> those in the subclasses. This is not desirable if
 you want the subclasses share same header and footer and make the middle widgets variable.</p>
-<p>Just like using <code class="docutils literal notranslate"><span class="pre">wraps</span></code> method (<a class="reference internal" href="use_wraps.html"><span class="doc">Call Parent Methods from its Child</span></a>), the pre-definition strategy is
+<p>Just like using <code class="docutils literal notranslate"><span class="pre">wraps</span></code> method (see <a class="reference internal" href="use_wraps.html"><span class="doc">Call Parent Methods from its Child</span></a>), the pre-definition strategy is
 also useful here. First arrange all the widgets in the base class, and specifically
 define the real widgets in the subclasses.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Base</span><span class="p">(</span><span class="n">MagicTemplate</span><span class="p">):</span>
+    <span class="n">header</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="s2">&quot;this is header&quot;</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="s2">&quot;Label&quot;</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="o">...</span>  <span class="c1"># pre-definition</span>
+    <span class="n">footer</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="s2">&quot;this is footer&quot;</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="s2">&quot;Label&quot;</span><span class="p">)</span>
+
+<span class="nd">@magicclass</span>
+<span class="k">class</span> <span class="nc">A</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Do something&quot;&quot;&quot;</span>
+
+<span class="nd">@magicclass</span>
+<span class="k">class</span> <span class="nc">B</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+</pre></div>
+</div>
 <img alt="_images/fig_7-1.png" src="_images/fig_7-1.png" />
 </section>
 </section>

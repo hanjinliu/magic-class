@@ -48,7 +48,7 @@ function", but it is not clear which is upper and which is lower.
 In magic-class, methods defined in base classes will appear **upper** than those in
 subclasses. In the case of example, GUI will look like:
 
-.. code-block:: shell
+.. code-block::
 
     [ common function ]
     [  main function  ]
@@ -57,7 +57,7 @@ subclasses. In the case of example, GUI will look like:
 Field Objects in the Base Class
 ===============================
 
-You may want to add widgets using ``MagicField`` (:doc:`use_field`). ``MagicField`` 
+You may want to add widgets using ``MagicField`` (see :doc:`use_field`). ``MagicField`` 
 behaves similarly as methods. In the following example,
 
 .. code-block:: python
@@ -76,8 +76,8 @@ Two widgets, ``x`` and ``y`` will be packed in the ``Main`` GUI, in order ``x``,
 However, if you want to use ``Bound`` to bind parameter to method or connect callback 
 function to a field, you must re-define fields in the subclasses.
 
-1. Bind method
---------------
+1. Bind methods
+---------------
 
 .. container:: twocol
 
@@ -178,7 +178,7 @@ function to a field, you must re-define fields in the subclasses.
 Nesting Magic Classes
 =====================
 
-Nesting magic classes (:doc:`nest`) is useful for designing layout of widgets.
+Nesting magic classes (see :doc:`nest`) is useful for designing layout of widgets.
 You don't have to worry about inheriting base class with a nested magic class.
 
 .. code-block:: python
@@ -207,11 +207,11 @@ of multipule GUIs. As mentioned above, methods and fields that are defined in th
 base class will packed **before** those in the subclasses. This is not desirable if 
 you want the subclasses share same header and footer and make the middle widgets variable.
 
-Just like using ``wraps`` method (:doc:`use_wraps`), the pre-definition strategy is
+Just like using ``wraps`` method (see :doc:`use_wraps`), the pre-definition strategy is
 also useful here. First arrange all the widgets in the base class, and specifically
 define the real widgets in the subclasses.
 
-.. code-blocks:: python
+.. code-block:: python
 
     class Base(MagicTemplate):
         header = field("this is header", default_factory="Label")
