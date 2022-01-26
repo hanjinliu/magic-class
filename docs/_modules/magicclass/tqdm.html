@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.tqdm &mdash; magic-class 0.5.18 documentation</title>
+  <title>magicclass.tqdm &mdash; magic-class 0.5.19.dev1 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -27,7 +27,7 @@
             <a href="../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.18
+                0.5.19.dev1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -47,6 +47,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../keybinding.html">Define Custom Keybindings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../customize_macro.html">Customize Macro Recording</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../containers.html">Container Variations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../class_inheritance.html">Inherit Magic Class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../special_methods.html">Special Attributes in Magic class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api.html">API References</a></li>
 </ul>
@@ -179,9 +180,9 @@
 
 <div class="viewcode-block" id="tqdm.display"><a class="viewcode-back" href="../../magicclass.html#magicclass.tqdm.tqdm.display">[docs]</a>    <span class="k">def</span> <span class="nf">display</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">pos</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Update the display.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_in_visible_gui</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_in_visible_gui</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">progressbar</span><span class="o">.</span><span class="n">visible</span><span class="p">):</span>
             <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="n">pos</span><span class="p">)</span>
-
+        
         <span class="bp">self</span><span class="o">.</span><span class="n">progressbar</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">progressbar</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span>
@@ -220,7 +221,7 @@
     
 
 <div class="viewcode-block" id="trange"><a class="viewcode-back" href="../../magicclass.html#magicclass.tqdm.trange">[docs]</a><span class="k">def</span> <span class="nf">trange</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">tqdm</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Shortcut for tqdm(range(*args), **kwargs).&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Shortcut for ``tqdm(range(*args), **kwargs)``.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 </pre></div>
 

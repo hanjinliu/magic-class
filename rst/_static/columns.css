@@ -1,0 +1,13 @@
+/*
+modified from https://stackoverflow.com/questions/56749718/how-to-make-2-columns-with-sphinx
+*/
+
+div.leftside {
+  width: 48%;
+  padding: 0px 3px 0px 0px;
+  float: left;
+}
+
+div.rightside {
+  margin-left: 52%;
+}

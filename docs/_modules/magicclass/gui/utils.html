@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.gui.utils &mdash; magic-class 0.5.16 documentation</title>
+  <title>magicclass.gui.utils &mdash; magic-class 0.5.19.dev1 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -27,7 +27,7 @@
             <a href="../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.16
+                0.5.19.dev1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -46,8 +46,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../use_bind.html">Binding Values to Arguments</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../keybinding.html">Define Custom Keybindings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../customize_macro.html">Customize Macro Recording</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../special_methods.html">Special attributes in magic-class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../containers.html">Container Variations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../class_inheritance.html">Inherit Magic Class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../special_methods.html">Special Attributes in Magic class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api.html">API References</a></li>
 </ul>
 
@@ -77,6 +78,7 @@
              
   <h1>Source code for magicclass.gui.utils</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span>
 <span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">FunctionGui</span>
 
@@ -88,15 +90,25 @@
     <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="o">.</span><span class="n">default</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">fgui</span><span class="o">.</span><span class="n">__signature__</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span></div>
 
 <div class="viewcode-block" id="define_callback"><a class="viewcode-back" href="../../../magicclass.gui.html#magicclass.gui.utils.define_callback">[docs]</a><span class="k">def</span> <span class="nf">define_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">BaseGui</span><span class="p">,</span> <span class="n">callback</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Define a callback function from a method.&quot;&quot;&quot;</span>
     <span class="o">*</span><span class="n">_</span><span class="p">,</span> <span class="n">clsname</span><span class="p">,</span> <span class="n">funcname</span> <span class="o">=</span> <span class="n">callback</span><span class="o">.</span><span class="vm">__qualname__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">_callback</span><span class="p">():</span>
-        <span class="c1"># search for parent instances that have the same name.</span>
-        <span class="n">current_self</span> <span class="o">=</span> <span class="bp">self</span>
-        <span class="k">while</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">hasattr</span><span class="p">(</span><span class="n">current_self</span><span class="p">,</span> <span class="n">funcname</span><span class="p">)</span> <span class="ow">and</span> 
-                   <span class="n">current_self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">==</span> <span class="n">clsname</span><span class="p">):</span>
-            <span class="n">current_self</span> <span class="o">=</span> <span class="n">current_self</span><span class="o">.</span><span class="n">__magicclass_parent__</span>
-        <span class="nb">getattr</span><span class="p">(</span><span class="n">current_self</span><span class="p">,</span> <span class="n">funcname</span><span class="p">)()</span>
-        <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">mro</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__mro__</span>
+    <span class="k">for</span> <span class="n">base</span> <span class="ow">in</span> <span class="n">mro</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">base</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">==</span> <span class="n">clsname</span><span class="p">:</span>
+            <span class="k">def</span> <span class="nf">_callback</span><span class="p">():</span>
+                <span class="nb">getattr</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">funcname</span><span class="p">)(</span><span class="bp">self</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
+            <span class="k">break</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">_callback</span><span class="p">():</span>
+            <span class="c1"># search for parent instances that have the same name.</span>
+            <span class="n">current_self</span> <span class="o">=</span> <span class="bp">self</span>
+            <span class="k">while</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">hasattr</span><span class="p">(</span><span class="n">current_self</span><span class="p">,</span> <span class="n">funcname</span><span class="p">)</span> <span class="ow">and</span> 
+                    <span class="n">current_self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">==</span> <span class="n">clsname</span><span class="p">):</span>
+                <span class="n">current_self</span> <span class="o">=</span> <span class="n">current_self</span><span class="o">.</span><span class="n">__magicclass_parent__</span>
+            <span class="nb">getattr</span><span class="p">(</span><span class="n">current_self</span><span class="p">,</span> <span class="n">funcname</span><span class="p">)()</span>
+            <span class="k">return</span> <span class="kc">None</span>
+    
     <span class="k">return</span> <span class="n">_callback</span></div>
 
 <div class="viewcode-block" id="define_context_menu"><a class="viewcode-back" href="../../../magicclass.gui.html#magicclass.gui.utils.define_context_menu">[docs]</a><span class="k">def</span> <span class="nf">define_context_menu</span><span class="p">(</span><span class="n">contextmenu</span><span class="p">:</span> <span class="n">ContextMenuGui</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>

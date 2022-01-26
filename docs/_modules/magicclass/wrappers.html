@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.wrappers &mdash; magic-class 0.5.18 documentation</title>
+  <title>magicclass.wrappers &mdash; magic-class 0.5.19.dev1 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -27,7 +27,7 @@
             <a href="../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.18
+                0.5.19.dev1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -47,6 +47,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../keybinding.html">Define Custom Keybindings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../customize_macro.html">Customize Macro Recording</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../containers.html">Container Variations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../class_inheritance.html">Inherit Magic Class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../special_methods.html">Special Attributes in Magic class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api.html">API References</a></li>
 </ul>
@@ -306,6 +307,12 @@
         <span class="n">_method</span><span class="o">.</span><span class="vm">__module__</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="vm">__module__</span>
         <span class="k">return</span> <span class="n">_method</span>
     <span class="k">return</span> <span class="n">_decorator</span></div>
+
+
+<div class="viewcode-block" id="nogui"><a class="viewcode-back" href="../../magicclass.html#magicclass.wrappers.nogui">[docs]</a><span class="k">def</span> <span class="nf">nogui</span><span class="p">(</span><span class="n">method</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Args</span><span class="p">],</span> <span class="n">Returns</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Args</span><span class="p">],</span> <span class="n">Returns</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Wrapped method will not be converted into a widget.&quot;&quot;&quot;</span>    
+    <span class="n">upgrade_signature</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">additional_options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;gui&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">})</span>
+    <span class="k">return</span> <span class="n">method</span></div>
 
 
 <span class="k">def</span> <span class="nf">_assert_iterable</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>

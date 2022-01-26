@@ -11,6 +11,7 @@ def get_parameters(fgui: FunctionGui):
     return {k: v.default for k, v in fgui.__signature__.parameters.items()}
 
 def define_callback(self: BaseGui, callback: Callable):
+    """Define a callback function from a method."""
     *_, clsname, funcname = callback.__qualname__.split(".")
     mro = self.__class__.__mro__
     for base in mro:

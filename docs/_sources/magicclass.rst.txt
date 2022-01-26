@@ -9,6 +9,7 @@ Subpackages
 
    magicclass.ext
    magicclass.gui
+   magicclass.stylesheets
    magicclass.type_matching
    magicclass.utils
    magicclass.widgets

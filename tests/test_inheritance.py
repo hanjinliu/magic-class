@@ -78,4 +78,34 @@ def test_field():
     b.a.value = 2
     assert a.a.value == 1
     mock.assert_called_once()
+
+def test_nested_class():
+    class Base(MagicTemplate):
+        result = field(str)
+        @magicclass
+        class X(MagicTemplate):
+            def func(self): ...
+        @X.wraps
+        def func(self):
+            self.result.value = self.__class__.__name__
+
+    @magicclass
+    class A(Base):
+        pass
+
+    @magicclass
+    class B(Base):
+        pass
+
+    a = A()
+    b = B()
+    
+    assert a["X"] is not b["X"]
+    
+    a.X["func"].changed()
+    assert a.result.value == "A"
+    assert b.result.value == ""
+    b.X["func"].changed()
+    assert a.result.value == "A"
+    assert b.result.value == "B"
     

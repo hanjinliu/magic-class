@@ -142,5 +142,5 @@ class tqdm(_tqdm_std):
     
 
 def trange(*args, **kwargs) -> tqdm:
-    """Shortcut for tqdm(range(*args), **kwargs)."""
+    """Shortcut for ``tqdm(range(*args), **kwargs)``."""
     return tqdm(range(*args), **kwargs)
