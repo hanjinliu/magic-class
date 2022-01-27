@@ -218,7 +218,7 @@ def confirm(text: str, call_button_text: str = "OK"):
         @set_options(call_button=call_button_text,
                      labels=False,
                      label={"widget_type": Label, "value": text})
-        def _method(self: BaseGui, label):
+        def _method(self: BaseGui, label=None):
             out = method(self)
             expr = Expr.parse_method(self, method, (), {})
             self.macro.append(expr)
