@@ -64,6 +64,9 @@ class MenuGuiBase(ContainerLikeGui):
         _hist: list[tuple[str, str, str]] = [] # for traceback
         
         for name, attr in filter(lambda x: x[0] not in base_members, iter_members(cls)):
+            if isinstance(attr, property):
+                continue
+            
             try:
                 if isinstance(attr, type):
                     if not issubclass(attr, BaseGui):
