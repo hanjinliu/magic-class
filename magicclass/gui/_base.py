@@ -1129,9 +1129,7 @@ def value_widget_callback(gui: MagicTemplate,
                           widget: ValueWidget, 
                           name: str, 
                           getvalue: bool = True):
-    """
-    Define a ValueWidget callback, including macro recording.
-    """    
+    """Define a ValueWidget callback, including macro recording."""
     sym_name = Symbol(name)
     sym_value = Symbol("value")
     def _set_value():

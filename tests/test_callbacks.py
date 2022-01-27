@@ -30,6 +30,33 @@ def test_simple_callback():
     ui.y = "y"
     mock_x.assert_called_once()
     mock_y.assert_called_once()
+
+def test_macro_blocked():    
+    @magicclass
+    class A(MagicTemplate):
+        x = field(int)
+        y = vfield(str)
+        
+        @x.connect
+        def _callback_x(self):
+            self.some_function()
+            self.y = "changed"
+        
+        @y.connect
+        def _callback_y(self):
+            self.some_function()
+            self.x.value = 100
+        
+        def some_function(self):
+            pass
+    
+    ui = A()
+    ui.x.value = 1
+    assert ui.y == "changed"
+    assert str(ui.macro[-1]) == "ui.x.value = 1"
+    ui.y = "y"
+    assert ui.x.value == 100
+    assert str(ui.macro[-1]) == "ui.y = 1"
     
 
 def test_callback_in_parent():

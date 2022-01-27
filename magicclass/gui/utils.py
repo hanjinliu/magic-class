@@ -17,7 +17,8 @@ def define_callback(self: BaseGui, callback: Callable):
     for base in mro:
         if base.__name__ == clsname:
             def _callback():
-                getattr(base, funcname)(self)
+                with self.macro.blocked():
+                    getattr(base, funcname)(self)
                 return None
             break
     else:
@@ -27,7 +28,8 @@ def define_callback(self: BaseGui, callback: Callable):
             while not (hasattr(current_self, funcname) and 
                     current_self.__class__.__name__ == clsname):
                 current_self = current_self.__magicclass_parent__
-            getattr(current_self, funcname)()
+            with self.macro.blocked():
+                getattr(current_self, funcname)()
             return None
     
     return _callback
