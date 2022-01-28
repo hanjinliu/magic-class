@@ -1,7 +1,9 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Iterable, MutableSequence
+from qtpy.QtWidgets import QTabWidget, QLineEdit, QMenu
 from qtpy.QtGui import QTextCursor
-from magicgui.widgets import PushButton, TextEdit
+from qtpy.QtCore import Qt
+from magicgui.widgets import PushButton, TextEdit, Table
 
 from .utils import FreeWidget
 
@@ -197,3 +199,115 @@ class CheckButton(PushButton):
     def __init__(self, text: str | None = None, **kwargs):
         super().__init__(text=text, **kwargs)
         self.native.setCheckable(True)
+
+class _QtSpreadSheet(QTabWidget):
+    def __init__(self):
+        super().__init__()
+        self.setMovable(True)
+        self._n_table = 0
+        self.tabBar().tabBarDoubleClicked.connect(self.editTabBarLabel)
+        self.tabBar().setContextMenuPolicy(Qt.CustomContextMenu)
+        self.tabBar().customContextMenuRequested.connect(self.showContextMenu)
+        self._line_edit = None
+    
+    def addTable(self, table):
+        self.addTab(table, f"Sheet {self._n_table}")
+        self._n_table += 1
+    
+    def renameTab(self, index: int, name: str) -> None:
+        self.tabBar().setTabText(index, name)
+        return None
+    
+    def editTabBarLabel(self, index: int):
+        if index < 0:
+            return
+        if self._line_edit is not None:
+            self._line_edit.deleteLater()
+            self._line_edit = None
+            
+        tabbar = self.tabBar()
+        self._line_edit = QLineEdit(self)
+        @self._line_edit.editingFinished.connect        
+        def _(_=None):
+            self.renameTab(index, self._line_edit.text())
+            self._line_edit.deleteLater()
+            self._line_edit = None
+        self._line_edit.setText(tabbar.tabText(index))  
+        self._line_edit.setGeometry(tabbar.tabRect(index))
+        self._line_edit.setFocus()
+        self._line_edit.selectAll()
+        self._line_edit.show()
+    
+    def showContextMenu(self, point):
+        if point.isNull():
+            return
+        tabbar = self.tabBar()
+        index = tabbar.tabAt(point)
+        menu = QMenu(self)
+        rename_action = menu.addAction("Rename")
+        rename_action.triggered.connect(lambda _: self.editTabBarLabel(index))
+        delete_action = menu.addAction("Delete")
+        delete_action.triggered.connect(lambda _: self.removeTab(index))
+        
+        menu.exec(tabbar.mapToGlobal(point))
+
+
+class SpreadSheet(FreeWidget, MutableSequence[Table]):
+    """A simple spread sheet widget."""
+    
+    def __init__(self):
+        super().__init__()
+        spreadsheet = _QtSpreadSheet()
+        self.set_widget(spreadsheet)
+        self.central_widget: _QtSpreadSheet
+        self._tables: list[Table] = []
+    
+    def __len__(self) -> int:
+        return self.central_widget.count()
+        
+    def index(self, item: Table | str):
+        if isinstance(item, Table):
+            for i, table in enumerate(self._tables):
+                if item is table:
+                    return i
+            else:
+                raise ValueError
+        elif isinstance(item, str):
+            tabbar = self.central_widget.tabBar()
+            for i in range(tabbar.count()):
+                text = tabbar.tabText(i)
+                if text == item:
+                    return i
+            else:
+                raise ValueError
+        else:
+            raise TypeError
+
+    
+    def __getitem__(self, key):
+        if isinstance(key, str):
+            key = self.index(key)
+        return self._tables[key]
+    
+    def __setitem__(self, key, value):
+        raise NotImplementedError
+    
+    def __delitem__(self, key):
+        if isinstance(key, str):
+            key = self.index(key)
+        self.central_widget.removeTab(key)
+        del self._tables[key]
+    
+    def __iter__(self) -> Iterable[Table]:
+        return iter(self._tables)
+        
+    def insert(self, key: int, value):
+        if key < 0:
+            key += len(self)
+        table = Table(value=value)
+        self.central_widget.addTable(table.native)
+        self._tables.insert(key, table)
+    
+    def rename(self, index: int, name: str):
+        self.central_widget.renameTab(index, name)
+        return None

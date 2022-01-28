@@ -91,6 +91,18 @@ class MagicField(Field, Generic[_W, _V]):
         """Make a function that get the value of Widget or Action."""        
         return lambda w: self.guis[id(obj)].value
     
+    # NOTE: Ideally these overload is needed for
+    # >>> @B.field.connect
+    # but in tern this will disable
+    # >>> self.B.field.value
+    # @overload
+    # def __get__(self, obj: Literal[None], objtype=None) -> MagicField[_W, _V]:
+    #     ...
+    
+    # @overload
+    # def __get__(self, obj: Any, objtype=None) -> _W:
+    #     ...
+    
     def __get__(self, obj: Any, objtype=None) -> _W:
         """Get widget for the object."""
         if obj is None:
