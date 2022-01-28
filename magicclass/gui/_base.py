@@ -150,9 +150,6 @@ class MagicTemplate:
     
     __init_subclass__ = check_override
     
-    def __post_init__(self):
-        pass
-    
     def show(self, run: bool) -> None:
         raise NotImplementedError()
     

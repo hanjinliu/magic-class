@@ -64,8 +64,8 @@ class ClassGuiBase(BaseGui):
             for callback in fld.callbacks:
                 # funcname = callback.__name__
                 widget.changed.connect(define_callback(self, callback))
-                
-            if hasattr(widget, "value") and fld.record:
+            
+            if (isinstance(widget, ValueWidget) or hasattr(widget, "value")) and fld.record:
                 # By default, set value function will be connected to the widget.
                 getvalue = type(fld) is MagicField
                 f = value_widget_callback(self, widget, name, getvalue=getvalue)
