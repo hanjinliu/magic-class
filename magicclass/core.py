@@ -36,7 +36,6 @@ if TYPE_CHECKING:
     from ._typing import WidgetTypeStr, PopUpModeStr, ErrorModeStr
     
 _BASE_CLASS_SUFFIX = "_Base"
-_POST_INIT = "__post_init__"
 
 _TYPE_MAP = {
     WidgetType.none: ClassGui,
@@ -196,9 +195,7 @@ def magicclass(class_: type | None = None,
                                )
             super(oldclass, self).__init__(*args, **kwargs)
             self._convert_attributes_into_widgets()
-            
-            if hasattr(self, _POST_INIT):
-                self.__post_init__()
+            self.__post_init__()
             
             if widget_type in (WidgetType.collapsible, WidgetType.button):
                 self.btn_text = self.name
@@ -400,9 +397,7 @@ def _call_magicmenu(class_: type = None,
                                    )
             super(oldclass, self).__init__(*args, **kwargs)
             self._convert_attributes_into_widgets()
-            
-            if hasattr(self, _POST_INIT):
-                self.__post_init__()
+            self.__post_init__()
             
             if icon_path:
                 self.icon_path = icon_path
