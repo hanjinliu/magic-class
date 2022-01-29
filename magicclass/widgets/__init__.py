@@ -21,6 +21,7 @@ from .containers import (
     ToolBoxContainer
     )
 from .pywidgets import ListWidget, DictWidget
+from .color import ColorEdit
 from .misc import Figure, ConsoleTextEdit, CheckButton, SpreadSheet
 from .separator import Separator
 from .sequence import ListEdit, TupleEdit
@@ -29,6 +30,7 @@ from .utils import FreeWidget
 
 __all__ = ["ListWidget", 
            "Figure",
+           "ColorEdit",
            "ConsoleTextEdit",
            "CheckButton",
            "Separator",

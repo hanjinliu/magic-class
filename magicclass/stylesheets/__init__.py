@@ -1,3 +1,4 @@
+from __future__ import annotations
 from typing import Callable
 
 __all__ = ["napari_light_theme",
@@ -15,6 +16,14 @@ class StyleSheet:
     def __str__(self) -> str:
         """Return style sheet."""
         return self.getter()
+    
+    def __add__(self, other: StyleSheet) -> StyleSheet:
+        """Conjugate stylesheets."""
+        def new_getter():
+            s0 = self.getter()
+            s1 = other.getter()
+            return s0 + "\n" +s1
+        return new_getter
 
 def _napari_get_stylesheet(theme: str):
     # TODO: don't launch a viewer if possible.
