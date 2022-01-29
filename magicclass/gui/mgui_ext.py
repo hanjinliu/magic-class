@@ -295,7 +295,7 @@ class WidgetAction(AbstractAction, Generic[_W]):
         
         self.widget = widget
         self.native.setDefaultWidget(widget.native)
-        self.support_value = hasattr(widget, "value")
+        self.support_value = isinstance(widget, (ValueWidget, _LabeledWidget)) or hasattr(widget, "value")
         
         if self.support_value:
             self.widget.changed.connect(lambda: self.changed.emit(self.value))
