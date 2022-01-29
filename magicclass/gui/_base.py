@@ -747,17 +747,17 @@ class ContainerLikeGui(BaseGui, mguiLike, MutableSequence):
         fld.name = fld.name or name.replace("_", " ")
         action = fld.get_action(self)
             
-        if action.support_value:
-            # If the field has callbacks, connect it to the newly generated widget.
-            for callback in fld.callbacks:
-                # funcname = callback.__name__
-                action.changed.connect(define_callback(self, callback))
-                     
+        if action.support_value:     
             # By default, set value function will be connected to the widget.
             if fld.record:
                 getvalue = type(fld) is MagicField
                 f = value_widget_callback(self, action, name, getvalue=getvalue)
                 action.changed.connect(f)
+                
+            # If the field has callbacks, connect it to the newly generated widget.
+            for callback in fld.callbacks:
+                # funcname = callback.__name__
+                action.changed.connect(define_callback(self, callback))
                 
         return action
     

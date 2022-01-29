@@ -61,20 +61,20 @@ class ClassGuiBase(BaseGui):
             
         if isinstance(widget, (ValueWidget, ContainerWidget)):
             # If the field has callbacks, connect it to the newly generated widget.
-            for callback in fld.callbacks:
-                # funcname = callback.__name__
-                widget.changed.connect(define_callback(self, callback))
-            
             if (isinstance(widget, ValueWidget) or hasattr(widget, "value")) and fld.record:
                 # By default, set value function will be connected to the widget.
                 getvalue = type(fld) is MagicField
                 f = value_widget_callback(self, widget, name, getvalue=getvalue)
                 widget.changed.connect(f)
+                
+            for callback in fld.callbacks:
+                # funcname = callback.__name__
+                widget.changed.connect(define_callback(self, callback))
         
         elif fld.callbacks:
             warnings.warn(
                 f"{type(widget).__name__} does not have value-change callback. "
-                f"Connecting callback functions does no effect.",
+                "Connecting callback functions does no effect.",
                 UserWarning
                 )
                 
@@ -97,10 +97,10 @@ class ClassGuiBase(BaseGui):
         base_members |= set(x[0] for x in iter_members(ClassGuiBase))
         
         _hist: list[tuple[str, str, str]] = [] # for traceback
-        _base_annotations = ClassGuiBase.__annotations__.keys()
+        _annot = ClassGuiBase.__annotations__.keys()
         
         for name, attr in filter(lambda x: x[0] not in base_members, iter_members(cls)):
-            if name in _base_annotations or isinstance(attr, property):
+            if name in _annot or isinstance(attr, (property, classmethod, staticmethod)):
                 continue
             
             try:

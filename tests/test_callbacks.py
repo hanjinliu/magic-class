@@ -36,27 +36,28 @@ def test_macro_blocked():
     class A(MagicTemplate):
         x = field(int)
         y = vfield(str)
+        result = field(str)
         
         @x.connect
         def _callback_x(self):
             self.some_function()
-            self.y = "changed"
+            self.result.value = "x changed"
         
         @y.connect
         def _callback_y(self):
             self.some_function()
-            self.x.value = 100
+            self.result.value = "y changed"
         
         def some_function(self):
             pass
     
     ui = A()
     ui.x.value = 1
-    assert ui.y == "changed"
+    assert ui.result.value == "x changed"
     assert str(ui.macro[-1]) == "ui.x.value = 1"
     ui.y = "y"
-    assert ui.x.value == 100
-    assert str(ui.macro[-1]) == "ui.y = 1"
+    assert ui.result.value == "y changed"
+    assert str(ui.macro[-1]) == "ui.y = 'y'"
     
 
 def test_callback_in_parent():
@@ -111,6 +112,23 @@ def test_callback_in_parent():
     mock2.assert_called_with(name="m_y/A")
     mock.assert_called_with(name="m_y/B")
 
+
+def test_callback_block():
+    @magicclass
+    class A:
+        f = field(int)
+        result = field(str)
+        
+        @f.connect
+        def _callback(self):
+            self.result.value = str(self.f.value)
+    
+    ui = A()
+    ui.f.value = 10
+    assert str(ui.macro[-1]) == "ui.f.value = 10"
+    assert ui.f.value == 10
+    assert ui.result.value == "10"
+    
 
 def test_warning():
     # Should warn if widgets that does not have signal instance is connected with
