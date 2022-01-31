@@ -2,8 +2,9 @@ from __future__ import annotations
 from functools import wraps
 import inspect
 from typing import Callable, Iterable, Iterator, Union, TYPE_CHECKING, TypeVar, overload
+from typing_extensions import ParamSpec
 from magicgui.widgets import Label
-from macrokit import Expr, Symbol, Head
+from macrokit import Expr
 from .signature import upgrade_signature
 
 if TYPE_CHECKING:
@@ -13,16 +14,15 @@ if TYPE_CHECKING:
 
 Color = Union[str, Iterable[float]]
 nStrings = Union[str, Iterable[str]]
-Args = TypeVar("Args")
-Returns = TypeVar("Returns")
+P = ParamSpec("P")
+R = TypeVar("R")
 T = TypeVar("T")
-
 
 def set_options(layout: str = "vertical", 
                 labels: bool = True,
                 call_button: bool | str | None = None,
                 auto_call: bool = False,
-                **options) -> Callable[[Callable[[Args], Returns]], Callable[[Args], Returns]]:
+                **options) -> Callable[[Callable[P, R]], Callable[P, R]]:
     """
     Set MagicSignature to functions. 
     
@@ -46,7 +46,7 @@ def set_options(layout: str = "vertical",
     options : dict
         Parameter options.
     """    
-    def wrapper(func: Callable[[Args], Returns]) -> Callable[[Args], Returns]:
+    def wrapper(func: Callable[P, R]) -> Callable[P, R]:
         upgrade_signature(func, 
                           gui_options=options,
                           additional_options={"call_button": call_button,
@@ -103,7 +103,7 @@ def set_design(width: int = None, height: int = None, min_width: int = None, min
     @overload
     def wrapper(obj: type[T]) -> type[T]: ...
     @overload
-    def wrapper(obj: Callable[[Args], Returns]) -> Callable[[Args], Returns]: ...
+    def wrapper(obj: Callable[P, R]) -> Callable[P, R]: ...
     
     def wrapper(obj):
         if isinstance(obj, type):
@@ -167,13 +167,13 @@ def click(enables: nStrings = None, disables: nStrings = None, enabled: bool = T
     return wrapper
 
 
-def do_not_record(method: Callable[[Args], Returns]) -> Callable[[Args], Returns]:
+def do_not_record(method: Callable[P, R]) -> Callable[P, R]:
     """Wrapped method will not be recorded in macro."""    
     upgrade_signature(method, additional_options={"record": False})
     return method
 
 
-def bind_key(*key) -> Callable[[Callable[[Args], Returns]], Callable[[Args], Returns]]:
+def bind_key(*key) -> Callable[[Callable[P, R]], Callable[P, R]]:
     """
     Define a keybinding to a button or an action.
     This function accepts several styles of shortcut expression.
@@ -186,7 +186,7 @@ def bind_key(*key) -> Callable[[Callable[[Args], Returns]], Callable[[Args], Ret
     """    
     if isinstance(key[0], tuple):
         key = key[0]
-    def wrapper(method: Callable[[Args], Returns], ) -> Callable[[Args], Returns]:
+    def wrapper(method: Callable[P, R], ) -> Callable[P, R]:
         upgrade_signature(method, additional_options={"keybinding": key})
         return method
     return wrapper
@@ -208,7 +208,7 @@ def confirm(text: str, call_button_text: str = "OK"):
         raise TypeError(
             f"The first argument of 'confirm' must be a str bug got {type(text)}"
             )
-    def _decorator(method: Callable[[Args], Returns]) -> Callable[[Args], Returns]:
+    def _decorator(method: Callable[P, R]) -> Callable[P, R]:
         sig = inspect.signature(method)
         if len(sig.parameters) != 1:
             raise ValueError(
@@ -230,7 +230,7 @@ def confirm(text: str, call_button_text: str = "OK"):
     return _decorator
 
 
-def nogui(method: Callable[[Args], Returns]) -> Callable[[Args], Returns]:
+def nogui(method: Callable[P, R]) -> Callable[P, R]:
     """Wrapped method will not be converted into a widget."""    
     upgrade_signature(method, additional_options={"gui": False})
     return method

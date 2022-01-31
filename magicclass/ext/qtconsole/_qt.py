@@ -22,7 +22,6 @@ class _Console(RichJupyterWidget):
         
         shell = get_ipython()
         
-        
         if shell is None:
             # If there is no currently running instance create an in-process
             # kernel.
