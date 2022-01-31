@@ -678,8 +678,10 @@ class MagicTemplate:
     def _search_parent_magicclass(self) -> MagicTemplate:
         """Find the ancestor."""
         current_self = self
-        while getattr(current_self, "__magicclass_parent__", None) is not None:
-            current_self = current_self.__magicclass_parent__
+        while (
+            parent := getattr(current_self, "__magicclass_parent__", None)
+            ) is not None:
+            current_self = parent
         return current_self
 
 

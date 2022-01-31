@@ -1,9 +1,10 @@
 from __future__ import annotations
-from typing import Iterable, TypeVar, Callable
+from typing import Iterable
 from qtpy.QtWidgets import QLineEdit, QColorDialog, QFrame, QWidget, QHBoxLayout
 from qtpy.QtGui import QColor
 from qtpy.QtCore import Qt, Signal as QtSignal
 
+from magicgui.widgets import Container, FloatSlider
 from magicgui.widgets._bases.value_widget import ValueWidget
 from magicgui.widgets._concrete import merge_super_sigs
 from magicgui.backends._qtpy.widgets import QBaseValueWidget
@@ -11,6 +12,9 @@ from magicgui.application import use_app
 
 def rgba_to_qcolor(rgba: Iterable[float]) -> QColor:
     return QColor(*[255*c for c in rgba])
+
+def qcolor_to_rgba(qcolor: QColor) -> tuple[float, float, float, float]:
+    return tuple(c/255 for c in qcolor.getRgb())
 
 def rgba_to_html(rgba: Iterable[float]) -> str:
     code = "#" + "".join(hex(int(c*255))[2:].upper().zfill(2) for c in rgba)
@@ -24,7 +28,7 @@ class QColorSwatch(QFrame):
     def __init__(self, parent = None):
         super().__init__(parent)
         self.setCursor(Qt.PointingHandCursor)
-        self._color: tuple[float, float, float, float] = [0., 0., 0., 0.]
+        self._color: tuple[float, float, float, float] = (0., 0., 0., 0.)
         self.colorChanged.connect(self._update_swatch_style)
         self.setMinimumWidth(40)
     
@@ -51,7 +55,7 @@ class QColorSwatch(QFrame):
         
     def setColor(self, color: QColor) -> None:
         old_color = rgba_to_html(self._color)
-        self._color = tuple(c/255 for c in color.getRgb())
+        self._color = qcolor_to_rgba(color)
         if rgba_to_html(self._color) != old_color:
             self.colorChanged.emit()
 
@@ -74,8 +78,10 @@ class QColorLineEdit(QLineEdit):
             Can be any ColorType recognized by our
             utils.colormaps.standardize_color.transform_color function.
         """
-        if not isinstance(color, str):
-            color = rgba_to_qcolor(color)
+        if isinstance(color, QColor):
+            color = rgba_to_html(qcolor_to_rgba(color))
+        elif not isinstance(color, str):
+            color = rgba_to_html(color)
         
         super().setText(color)
     
@@ -87,7 +93,7 @@ class QColorLineEdit(QLineEdit):
         if isinstance(color, str):
             color = self._color_converter(color)
         elif isinstance(color, QColor):
-            color = tuple(c/255 for c in color.getRgb())
+            color = qcolor_to_rgba(color)
         code = "#" + "".join(hex(int(c*255))[2:].upper().zfill(2) for c in color)
         if code.endswith("FF"):
             code = code[:-2]
@@ -120,6 +126,8 @@ class QColorEdit(QWidget):
     
     def setColor(self, color):
         """Set value as the current color."""
+        if isinstance(color, QColor):
+            color = qcolor_to_rgba(color)
         self._line_edit.setText(color)
         self.colorChanged.emit(self.color())
 
@@ -148,9 +156,49 @@ class _ColorEdit(QBaseValueWidget):
 
 @merge_super_sigs
 class ColorEdit(ValueWidget):
-    """A widget for editing colors."""
+    """
+    A widget for editing colors.
+    
+    Parameters
+    ----------
+    value : tuple of float
+        
+    """
     def __init__(self, **kwargs):
         app = use_app()
         assert app.native
         kwargs["widget_type"] = _ColorEdit
         super().__init__(**kwargs)
+
+@merge_super_sigs
+class ColorSlider(Container):
+    def __init__(self, value="white"):
+        self.sliders: list[FloatSlider] = [
+            FloatSlider(min=0, max=1, step=0.001, label="R"),
+            FloatSlider(min=0, max=1, step=0.001, label="G"),
+            FloatSlider(min=0, max=1, step=0.001, label="B"),
+            FloatSlider(min=0, max=1, step=0.001, label="A"),
+            ]
+        self.color_edit = ColorEdit(label="Color")
+        # self.color_edit.enabled = False
+        super().__init__(layout="vertical", 
+                         widgets = self.sliders + [self.color_edit]
+                         )
+        for sl in self.sliders:
+            @sl.changed.connect
+            def _():
+                self.color_edit.value = self.value
+                self.color_edit.native._on_line_edit_edited()
+        
+        self.value = value
+    
+    @property
+    def value(self) -> tuple[float, float, float, float]:
+        return tuple(sl.value for sl in self.sliders)
+    
+    @value.setter
+    def value(self, color):
+        self.color_edit.value = color
+        value = self.color_edit.value
+        for sl, v in zip(self.sliders, value):
+            sl.value = v
