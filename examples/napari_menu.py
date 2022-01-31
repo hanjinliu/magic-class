@@ -2,7 +2,7 @@ import napari
 from napari.layers import Image, Points
 import numpy as np
 from magicclass import magicmenu
-from magicclass.ext import to_napari
+from magicclass.ext.napari import to_napari
 
 
 if __name__ == "__main__":

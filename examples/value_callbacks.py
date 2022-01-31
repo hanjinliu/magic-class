@@ -11,7 +11,7 @@ class Plot:
         a = field(int, options=options)
         b = field(int, options=options)
     
-    canvas =field(Figure)
+    plt = field(Figure)
     
     @parameters.a.connect
     @parameters.b.connect
@@ -19,9 +19,8 @@ class Plot:
         a = self.parameters.a.value
         b = self.parameters.b.value
         t = np.linspace(0, 4*np.pi, 200)
-        self.canvas.ax.cla()
-        self.canvas.ax.plot(np.sin(a*t), np.sin(b*t))
-        self.canvas.draw()
+        self.plt.cla()
+        self.plt.plot(np.sin(a*t), np.sin(b*t))
 
 if __name__ == "__main__":
     ui = Plot()
