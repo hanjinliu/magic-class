@@ -63,8 +63,8 @@ class QColorSwatch(QFrame):
 class QColorLineEdit(QLineEdit):
     def __init__(self, parent=None):
         super().__init__(parent)
-        import matplotlib.colors as mplcolor
-        self._color_converter = mplcolor.to_rgba
+        import matplotlib.colors
+        self._color_converter = matplotlib.colors.to_rgba
 
     def setText(self, color: str | Iterable[float]):
         """Set the text of the lineEdit using any ColorType.
@@ -86,6 +86,7 @@ class QColorLineEdit(QLineEdit):
         super().setText(color)
     
     def getQColor(self) -> QColor:
+        """Get color as QColor object"""
         rgba = self._color_converter(self.text())
         return rgba_to_qcolor(rgba)
         
@@ -180,7 +181,7 @@ class ColorSlider(Container):
             FloatSlider(min=0, max=1, step=0.001, label="A"),
             ]
         self.color_edit = ColorEdit(label="Color")
-        # self.color_edit.enabled = False
+        self.color_edit.enabled = False
         super().__init__(layout="vertical", 
                          widgets = self.sliders + [self.color_edit]
                          )
@@ -189,6 +190,7 @@ class ColorSlider(Container):
             def _():
                 self.color_edit.value = self.value
                 self.color_edit.native._on_line_edit_edited()
+                self.color_edit.native._on_swatch_changed()
         
         self.value = value
     
