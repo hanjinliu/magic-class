@@ -1,7 +1,7 @@
 from __future__ import annotations
 import inspect
 from enum import Enum
-from typing import Any, Iterable
+from typing import Any
 from docstring_parser import parse
 from qtpy.QtWidgets import QApplication, QMessageBox
 

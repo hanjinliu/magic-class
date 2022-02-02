@@ -484,16 +484,6 @@ class HasViewBox(HasDataItems):
         self._enabled = value
         
     interactive = enabled
-    
-    @property
-    def background_color(self):
-        rgba = self._viewbox.background.brush().color().getRgb()
-        return np.array(rgba)/255
-    
-    @background_color.setter
-    def background_color(self, value):
-        value = convert_color_code(value)
-        self._viewbox.setBackgroundColor(pg.mkBrush(value).color())
         
     def _update_scene(self):
         raise NotImplementedError()
@@ -782,9 +772,19 @@ class ImageItem(HasViewBox):
             _cmap = value
         self._hist.gradient.setColorMap(_cmap)
         self._cmap = value
-            
 
-class QtPlotCanvas(FreeWidget, PlotItem):
+class HasBackground(FreeWidget):
+    @property
+    def background_color(self):
+        return self.layoutwidget._background
+    
+    @background_color.setter
+    def background_color(self, value):
+        value = convert_color_code(value)
+        self.layoutwidget.setBackground(value)
+    
+
+class QtPlotCanvas(HasBackground, PlotItem):
     """
     A 1-D data viewer that have similar API as napari Viewer.
     """
@@ -798,8 +798,7 @@ class QtPlotCanvas(FreeWidget, PlotItem):
         super().__init__(**kwargs)
         self.set_widget(self.layoutwidget)
 
-
-class QtImageCanvas(FreeWidget, ImageItem):
+class QtImageCanvas(HasBackground, ImageItem):
     def __init__(self, lock_contrast_limits: bool = False, **kwargs):
         # prepare widget
         ImageItem.__init__(self, lock_contrast_limits=lock_contrast_limits)
@@ -809,9 +808,18 @@ class QtImageCanvas(FreeWidget, ImageItem):
         
         super().__init__(**kwargs)
         self.set_widget(self.layoutwidget)
+    
+    @property
+    def background_color(self):
+        return self.layoutwidget._background
+    
+    @background_color.setter
+    def background_color(self, value):
+        value = convert_color_code(value)
+        self.layoutwidget.setBackground(value)
 
 
-class Qt2YPlotCanvas(FreeWidget):
+class Qt2YPlotCanvas(HasBackground):
     def __init__(self, **kwargs):
         self.layoutwidget = pg.GraphicsLayoutWidget()
         
@@ -848,7 +856,7 @@ class Qt2YPlotCanvas(FreeWidget):
 
 _C = TypeVar("_C", bound=HasViewBox)
 
-class _MultiPlot(FreeWidget, Generic[_C]):
+class _MultiPlot(HasBackground, Generic[_C]):
     _base_item_class: type[_C]
     
     def __init__(self, 
