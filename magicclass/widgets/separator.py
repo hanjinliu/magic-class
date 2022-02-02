@@ -6,8 +6,10 @@ from .utils import FreeWidget
 class Separator(FreeWidget):
     """
     A Separator widget that can be used in both widgets and menus.
+    This widget is not actually added to menus or toolbars.
     """    
     btn_clicked = Signal(bool)
+    
     def __init__(self, orientation: str = "horizontal", text: str = "", name: str = "", 
                  button: bool = False):
         super().__init__(name=name)
@@ -25,17 +27,24 @@ class Separator(FreeWidget):
     @btn_text.setter
     def btn_text(self, value: str):
         self._qtitlebar.button.setText(value)
+
         
 class _QTitleBar(QLabel):
-    """
-    See also: napari/_qt/qt_main_window.py.
-    """
+    """See also: napari/_qt/qt_main_window.py."""
+    
     def __init__(self, parent, text: str = "", button: bool = False):
         super().__init__(parent)
 
         line = QFrame(parent=self)
         line.setFrameShape(QFrame.HLine)
         line.setFrameShadow(QFrame.Sunken)
+        line.setObjectName("Separator")
+        line.setStyleSheet("""
+            QFrame#Separator {
+                background-color: gray;
+            }
+        """
+        )
 
         layout = QHBoxLayout()
         layout.setSpacing(4)
