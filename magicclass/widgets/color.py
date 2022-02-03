@@ -18,7 +18,6 @@ from magicgui.widgets._bases.value_widget import ValueWidget
 from magicgui.widgets._concrete import merge_super_sigs
 from magicgui.backends._qtpy.widgets import QBaseValueWidget
 from magicgui.application import use_app
-from superqt import QDoubleSlider
 
 def rgba_to_qcolor(rgba: Iterable[float]) -> QColor:
     return QColor(*[255*c for c in rgba])
@@ -302,7 +301,7 @@ class ColorEdit(ValueWidget):
         assert app.native
         kwargs["widget_type"] = _ColorEdit
         super().__init__(**kwargs)
-        # self.native._on_line_edit_edited()
+
 
 @merge_super_sigs
 class ColorSlider(ValueWidget):

@@ -101,6 +101,10 @@ class MenuGuiBase(ContainerLikeGui):
                         widget = WidgetAction(widget)
                         
                 elif isinstance(widget, Widget):
+                    if not widget.name:
+                        widget.name = name
+                    if hasattr(widget, "text") and not widget.text:
+                        widget.text = widget.name.replace("_", " ")
                     widget = WidgetAction(widget)
 
                 if isinstance(widget, (MenuGuiBase, AbstractAction, Callable, Widget)):

@@ -288,12 +288,12 @@ class WidgetAction(AbstractAction, Generic[_W]):
             raise TypeError(f"The first argument must be a magicgui-like widget, got {type(widget)}")
         
         self.native = QWidgetAction(parent)
+        self.widget = widget
         name = widget.name
         self.native.setObjectName(name)
         self.label = label or name.replace("_", " ")
-        self.text = getattr(widget, "text", self.label)
+        self.text = getattr(widget, "text", None) or name.replace("_", " ")
         
-        self.widget = widget
         self.native.setDefaultWidget(widget.native)
         self.support_value = isinstance(widget, (ValueWidget, _LabeledWidget)) or hasattr(widget, "value")
         
@@ -330,7 +330,8 @@ class WidgetAction(AbstractAction, Generic[_W]):
     @text.setter
     def text(self, value: str):
         self.native.setText(value)
-
+        if hasattr(self.widget, "text"):
+            self.widget.text = value
 
     def _labeled_widget(self):
         return self.widget._labeled_widget()
