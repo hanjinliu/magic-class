@@ -1,14 +1,24 @@
 from __future__ import annotations
 from typing import Iterable
-from qtpy.QtWidgets import QLineEdit, QColorDialog, QFrame, QWidget, QHBoxLayout
+from qtpy.QtWidgets import (
+    QLineEdit,
+    QColorDialog,
+    QFrame,
+    QWidget,
+    QVBoxLayout,
+    QHBoxLayout,
+    QLabel,
+    QDoubleSpinBox,
+    QSlider,
+    )
 from qtpy.QtGui import QColor
 from qtpy.QtCore import Qt, Signal as QtSignal
 
-from magicgui.widgets import Container, FloatSlider
 from magicgui.widgets._bases.value_widget import ValueWidget
 from magicgui.widgets._concrete import merge_super_sigs
 from magicgui.backends._qtpy.widgets import QBaseValueWidget
 from magicgui.application import use_app
+from superqt import QDoubleSlider
 
 def rgba_to_qcolor(rgba: Iterable[float]) -> QColor:
     return QColor(*[255*c for c in rgba])
@@ -25,6 +35,7 @@ def rgba_to_html(rgba: Iterable[float]) -> str:
 # modified from napari/_qt/widgets/qt_color_swatch.py
 class QColorSwatch(QFrame):
     colorChanged = QtSignal()
+    
     def __init__(self, parent = None):
         super().__init__(parent)
         self.setCursor(Qt.PointingHandCursor)
@@ -130,6 +141,8 @@ class QColorEdit(QWidget):
         if isinstance(color, QColor):
             color = qcolor_to_rgba(color)
         self._line_edit.setText(color)
+        color = self._line_edit.getQColor()
+        self._color_swatch.setColor(color)
         self.colorChanged.emit(self.color())
 
 
@@ -146,14 +159,133 @@ class QColorEdit(QWidget):
     def _on_swatch_changed(self, _=None):
         qcolor = self._color_swatch.getQColor()
         self._line_edit.setColor(qcolor)
-        self.colorChanged.emit(self.color())
 
+
+# See https://stackoverflow.com/questions/42820380/use-float-for-qslider
+class QDoubleSlider(QSlider):
+    changed = QtSignal(float)
+    
+    def __init__(self, parent = None, decimals: int = 3):
+        super().__init__(parent=parent)
+        self.scale = 10 ** decimals
+        self.setOrientation(Qt.Horizontal)
+        self.valueChanged.connect(self.doubleValueChanged)
+
+    def doubleValueChanged(self):
+        value = float(super().value())/self.scale
+        self.changed.emit(value)
+
+    def value(self):
+        return float(super().value()) / self.scale
+
+    def setValue(self, value):
+        super().setValue(int(float(value) * self.scale))
+        
+    def setMinimum(self, value):
+        return super().setMinimum(value * self.scale)
+
+    def setMaximum(self, value):
+        return super().setMaximum(value * self.scale)
+
+    def singleStep(self):
+        return float(super().singleStep()) / self.scale
+
+    def setSingleStep(self, value):
+        return super().setSingleStep(value * self.scale)
+
+        
+        
+class QColorSlider(QWidget):
+    colorChanged = QtSignal(tuple)
+    
+    def __init__(self, parent=None, value="white"):
+        super().__init__(parent=parent)
+        import matplotlib.colors
+        self._color_converter = matplotlib.colors.to_rgba
+        _layout = QVBoxLayout()
+        self.setLayout(_layout)
+        _layout.setContentsMargins(0, 0, 0, 0)
+        self._qsliders = [
+            self.addSlider("R"),
+            self.addSlider("G"),
+            self.addSlider("B"),
+            self.addSlider("A"),
+        ]
+        
+        self._color_edit = QColorEdit(self, value=value)
+        @self._color_edit._line_edit.editingFinished.connect
+        def _read_color_str(e=None):
+            self.setColor(self._color_edit._line_edit.getQColor())
+            
+        self._color_edit._color_swatch.setEnabled(False)
+        @self.colorChanged.connect
+        def _set_color_swatch(color: QColor):
+            qcolor = rgba_to_qcolor(color)
+            self._color_edit._color_swatch.setColor(qcolor)
+            
+        _layout.addWidget(self._color_edit)
+        
+    
+    def addSlider(self, label: str):
+        qlabel = QLabel(label)
+        qlabel.setFixedWidth(15)
+        qslider = QDoubleSlider()
+        qslider.setMaximum(1.0)
+        qslider.setSingleStep(0.001)
+        qspinbox = QDoubleSpinBox()
+        qspinbox.setMaximum(1.0)
+        qspinbox.setSingleStep(0.001)
+        qspinbox.setAlignment(Qt.AlignRight)
+        
+        qspinbox.setButtonSymbols(QDoubleSpinBox.ButtonSymbols.NoButtons)
+        qspinbox.setStyleSheet("background:transparent; border: 0;")
+
+        qslider.changed.connect(qspinbox.setValue)
+        qslider.changed.connect(lambda e: self.setColor(self.color()))
+        qspinbox.editingFinished.connect(qslider.setValue)
+        qspinbox.editingFinished.connect(lambda e: self.setColor(qspinbox.text()))
+
+        _container = QWidget(self)
+        layout = QHBoxLayout()
+        layout.setContentsMargins(0, 0, 0, 0)
+        _container.setLayout(layout)
+        layout.addWidget(qlabel)
+        layout.addWidget(qslider)
+        layout.addWidget(qspinbox)
+        
+        self.layout().addWidget(_container)
+        return qslider
+    
+    
+    def color(self):
+        """Return the current color."""
+        return tuple(sl.value() for sl in self._qsliders)
+    
+    
+    def setColor(self, color):
+        """Set value as the current color."""
+        if isinstance(color, QColor):
+            color = qcolor_to_rgba(color)
+        elif isinstance(color, str):
+            color = self._color_converter(color)
+        self._color_edit.setColor(color)
+        for sl, c in zip(self._qsliders, color):
+            sl.setValue(c)
+        self.colorChanged.emit(self.color())
+            
 
 class _ColorEdit(QBaseValueWidget):
     _qwidget: QColorEdit
     
     def __init__(self):
         super().__init__(QColorEdit, "color", "setColor", "colorChanged")
+        
+class _ColorSlider(QBaseValueWidget):
+    _qwidget: QColorSlider
+    
+    def __init__(self):
+        super().__init__(QColorSlider, "color", "setColor", "colorChanged")
+    
 
 @merge_super_sigs
 class ColorEdit(ValueWidget):
@@ -162,47 +294,28 @@ class ColorEdit(ValueWidget):
     
     Parameters
     ----------
-    value : tuple of float
-        
+    value : tuple of float or str
+        RGBA color, color code or standard color name.
     """
     def __init__(self, **kwargs):
         app = use_app()
         assert app.native
         kwargs["widget_type"] = _ColorEdit
         super().__init__(**kwargs)
-        self.native._on_line_edit_edited()
+        # self.native._on_line_edit_edited()
 
 @merge_super_sigs
-class ColorSlider(Container):
-    def __init__(self, value="white"):
-        self.sliders: list[FloatSlider] = [
-            FloatSlider(min=0, max=1, step=0.001, label="R"),
-            FloatSlider(min=0, max=1, step=0.001, label="G"),
-            FloatSlider(min=0, max=1, step=0.001, label="B"),
-            FloatSlider(min=0, max=1, step=0.001, label="A"),
-            ]
-        self.color_edit = ColorEdit(label="Color")
-        self.color_edit.enabled = False
-        super().__init__(layout="vertical", 
-                         widgets = self.sliders + [self.color_edit]
-                         )
-        for sl in self.sliders:
-            @sl.changed.connect
-            def _():
-                self.color_edit.value = self.value
-                self.color_edit.native._on_line_edit_edited()
-                self.color_edit.native._on_swatch_changed()
-        
-        self.value = value
+class ColorSlider(ValueWidget):
+    """
+    A multi-slider for editing colors.
     
-    @property
-    def value(self) -> tuple[float, float, float, float]:
-        return tuple(sl.value for sl in self.sliders)
-    
-    @value.setter
-    def value(self, color):
-        self.color_edit.value = color
-        self.color_edit.native._on_line_edit_edited()
-        value = self.color_edit.value
-        for sl, v in zip(self.sliders, value):
-            sl.value = v
+    Parameters
+    ----------
+    value : tuple of float or str
+        RGBA color, color code or standard color name.
+    """
+    def __init__(self, **kwargs):
+        app = use_app()
+        assert app.native
+        kwargs["widget_type"] = _ColorSlider
+        super().__init__(**kwargs)
