@@ -170,6 +170,7 @@ class ColorEdit(ValueWidget):
         assert app.native
         kwargs["widget_type"] = _ColorEdit
         super().__init__(**kwargs)
+        self.native._on_line_edit_edited()
 
 @merge_super_sigs
 class ColorSlider(Container):
