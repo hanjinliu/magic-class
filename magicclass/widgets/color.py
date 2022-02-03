@@ -202,6 +202,7 @@ class ColorSlider(Container):
     @value.setter
     def value(self, color):
         self.color_edit.value = color
+        self.color_edit.native._on_line_edit_edited()
         value = self.color_edit.value
         for sl, v in zip(self.sliders, value):
             sl.value = v
