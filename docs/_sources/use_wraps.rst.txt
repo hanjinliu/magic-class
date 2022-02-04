@@ -65,6 +65,11 @@ child widget.
     2. If the widget is composed of nested magic classes and other widgets or fields, the order of
        widgets will not be sorted due to different timing of widget creation.
 
+.. warning::
+
+    In the current version (0.5.19), integer indexing is not safe if a magic class has wrapped
+    methods. To access chind widgets, use ``str`` (such as ``ui["X"]``) instead of ``int`` 
+    (such as ``ui[1]``).
 
 Use Template Functions
 ----------------------

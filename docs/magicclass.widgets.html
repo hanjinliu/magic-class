@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.widgets package &mdash; magic-class 0.5.19.dev1 documentation</title>
+  <title>magicclass.widgets package &mdash; magic-class 0.5.20 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/columns.css" type="text/css" />
@@ -31,7 +31,7 @@
             <a href="index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.19.dev1
+                0.5.20
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -106,6 +106,184 @@
 </section>
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="module-magicclass.widgets.color">
+<span id="magicclass-widgets-color-module"></span><h2>magicclass.widgets.color module<a class="headerlink" href="#module-magicclass.widgets.color" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.widgets.color.QColorEdit">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.color.</span></span><span class="sig-name descname"><span class="pre">QColorEdit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'white'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/color.html#QColorEdit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.color.QColorEdit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QWidget</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.color.QColorEdit.color">
+<span class="sig-name descname"><span class="pre">color</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/color.html#QColorEdit.color"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.color.QColorEdit.color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the current color.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.widgets.color.QColorEdit.colorChanged">
+<span class="sig-name descname"><span class="pre">colorChanged</span></span><a class="headerlink" href="#magicclass.widgets.color.QColorEdit.colorChanged" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.color.QColorEdit.setColor">
+<span class="sig-name descname"><span class="pre">setColor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">color</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/color.html#QColorEdit.setColor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.color.QColorEdit.setColor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set value as the current color.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.widgets.color.QColorLineEdit">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.color.</span></span><span class="sig-name descname"><span class="pre">QColorLineEdit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/color.html#QColorLineEdit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.color.QColorLineEdit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QLineEdit</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.color.QColorLineEdit.getQColor">
+<span class="sig-name descname"><span class="pre">getQColor</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">PyQt5.QtGui.QColor</span></span></span><a class="reference internal" href="_modules/magicclass/widgets/color.html#QColorLineEdit.getQColor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.color.QColorLineEdit.getQColor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get color as QColor object</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.color.QColorLineEdit.setColor">
+<span class="sig-name descname"><span class="pre">setColor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">QColor</span> <span class="p"><span class="pre">|</span></span> <span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/color.html#QColorLineEdit.setColor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.color.QColorLineEdit.setColor" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.color.QColorLineEdit.setText">
+<span class="sig-name descname"><span class="pre">setText</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/color.html#QColorLineEdit.setText"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.color.QColorLineEdit.setText" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the text of the lineEdit using any ColorType.</p>
+<p>Colors will be converted to standard SVG spec names if possible,
+or shown as #RGBA hex if not.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>color</strong> (<em>ColorType</em>) -- Can be any ColorType recognized by our
+utils.colormaps.standardize_color.transform_color function.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.widgets.color.QColorSlider">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.color.</span></span><span class="sig-name descname"><span class="pre">QColorSlider</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'white'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/color.html#QColorSlider"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.color.QColorSlider" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QWidget</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.color.QColorSlider.addSlider">
+<span class="sig-name descname"><span class="pre">addSlider</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/color.html#QColorSlider.addSlider"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.color.QColorSlider.addSlider" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.color.QColorSlider.color">
+<span class="sig-name descname"><span class="pre">color</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/color.html#QColorSlider.color"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.color.QColorSlider.color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the current color.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.widgets.color.QColorSlider.colorChanged">
+<span class="sig-name descname"><span class="pre">colorChanged</span></span><a class="headerlink" href="#magicclass.widgets.color.QColorSlider.colorChanged" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.color.QColorSlider.setColor">
+<span class="sig-name descname"><span class="pre">setColor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">color</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/color.html#QColorSlider.setColor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.color.QColorSlider.setColor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set value as the current color.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.widgets.color.QColorSwatch">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.color.</span></span><span class="sig-name descname"><span class="pre">QColorSwatch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/color.html#QColorSwatch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.color.QColorSwatch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QFrame</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.widgets.color.QColorSwatch.colorChanged">
+<span class="sig-name descname"><span class="pre">colorChanged</span></span><a class="headerlink" href="#magicclass.widgets.color.QColorSwatch.colorChanged" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.color.QColorSwatch.getQColor">
+<span class="sig-name descname"><span class="pre">getQColor</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">PyQt5.QtGui.QColor</span></span></span><a class="reference internal" href="_modules/magicclass/widgets/color.html#QColorSwatch.getQColor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.color.QColorSwatch.getQColor" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.color.QColorSwatch.heightForWidth">
+<span class="sig-name descname"><span class="pre">heightForWidth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="_modules/magicclass/widgets/color.html#QColorSwatch.heightForWidth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.color.QColorSwatch.heightForWidth" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.color.QColorSwatch.mouseReleaseEvent">
+<span class="sig-name descname"><span class="pre">mouseReleaseEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/color.html#QColorSwatch.mouseReleaseEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.color.QColorSwatch.mouseReleaseEvent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show QColorPopup picker when the user clicks on the swatch.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.color.QColorSwatch.setColor">
+<span class="sig-name descname"><span class="pre">setColor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">PyQt5.QtGui.QColor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/magicclass/widgets/color.html#QColorSwatch.setColor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.color.QColorSwatch.setColor" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.widgets.color.QDoubleSlider">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.color.</span></span><span class="sig-name descname"><span class="pre">QDoubleSlider</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decimals</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/color.html#QDoubleSlider"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.color.QDoubleSlider" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QSlider</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.widgets.color.QDoubleSlider.changed">
+<span class="sig-name descname"><span class="pre">changed</span></span><a class="headerlink" href="#magicclass.widgets.color.QDoubleSlider.changed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.color.QDoubleSlider.doubleValueChanged">
+<span class="sig-name descname"><span class="pre">doubleValueChanged</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/color.html#QDoubleSlider.doubleValueChanged"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.color.QDoubleSlider.doubleValueChanged" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.color.QDoubleSlider.setMaximum">
+<span class="sig-name descname"><span class="pre">setMaximum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/color.html#QDoubleSlider.setMaximum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.color.QDoubleSlider.setMaximum" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.color.QDoubleSlider.setMinimum">
+<span class="sig-name descname"><span class="pre">setMinimum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/color.html#QDoubleSlider.setMinimum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.color.QDoubleSlider.setMinimum" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.color.QDoubleSlider.setSingleStep">
+<span class="sig-name descname"><span class="pre">setSingleStep</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/color.html#QDoubleSlider.setSingleStep"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.color.QDoubleSlider.setSingleStep" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.color.QDoubleSlider.setValue">
+<span class="sig-name descname"><span class="pre">setValue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/color.html#QDoubleSlider.setValue"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.color.QDoubleSlider.setValue" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.color.QDoubleSlider.singleStep">
+<span class="sig-name descname"><span class="pre">singleStep</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="_modules/magicclass/widgets/color.html#QDoubleSlider.singleStep"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.color.QDoubleSlider.singleStep" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.color.QDoubleSlider.value">
+<span class="sig-name descname"><span class="pre">value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="_modules/magicclass/widgets/color.html#QDoubleSlider.value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.color.QDoubleSlider.value" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="magicclass.widgets.color.qcolor_to_rgba">
+<span class="sig-prename descclassname"><span class="pre">magicclass.widgets.color.</span></span><span class="sig-name descname"><span class="pre">qcolor_to_rgba</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qcolor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">PyQt5.QtGui.QColor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/magicclass/widgets/color.html#qcolor_to_rgba"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.color.qcolor_to_rgba" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="magicclass.widgets.color.rgba_to_html">
+<span class="sig-prename descclassname"><span class="pre">magicclass.widgets.color.</span></span><span class="sig-name descname"><span class="pre">rgba_to_html</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rgba</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/magicclass/widgets/color.html#rgba_to_html"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.color.rgba_to_html" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="magicclass.widgets.color.rgba_to_qcolor">
+<span class="sig-prename descclassname"><span class="pre">magicclass.widgets.color.</span></span><span class="sig-name descname"><span class="pre">rgba_to_qcolor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rgba</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">PyQt5.QtGui.QColor</span></span></span><a class="reference internal" href="_modules/magicclass/widgets/color.html#rgba_to_qcolor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.color.rgba_to_qcolor" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </section>
 <section id="module-magicclass.widgets.containers">
 <span id="magicclass-widgets-containers-module"></span><h2>magicclass.widgets.containers module<a class="headerlink" href="#module-magicclass.widgets.containers" title="Permalink to this headline">¶</a></h2>
@@ -256,6 +434,32 @@
 
 </dd></dl>
 
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.widgets.misc.SpreadSheet">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.misc.</span></span><span class="sig-name descname"><span class="pre">SpreadSheet</span></span><a class="reference internal" href="_modules/magicclass/widgets/misc.html#SpreadSheet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.misc.SpreadSheet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#magicclass.widgets.utils.FreeWidget" title="magicclass.widgets.utils.FreeWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.widgets.utils.FreeWidget</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">MutableSequence</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._table.Table</span></code>]</p>
+<p>A simple spread sheet widget.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.misc.SpreadSheet.index">
+<span class="sig-name descname"><span class="pre">index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">value</span></em><span class="optional">[</span>, <em class="sig-param"><span class="pre">start</span></em><span class="optional">[</span>, <em class="sig-param"><span class="pre">stop</span></em><span class="optional">]</span><span class="optional">]</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">integer</span> <span class="pre">--</span> <span class="pre">return</span> <span class="pre">first</span> <span class="pre">index</span> <span class="pre">of</span> <span class="pre">value.</span></span></span><a class="reference internal" href="_modules/magicclass/widgets/misc.html#SpreadSheet.index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.misc.SpreadSheet.index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raises ValueError if the value is not present.</p>
+<p>Supporting start and stop arguments is optional, but
+recommended.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.misc.SpreadSheet.insert">
+<span class="sig-name descname"><span class="pre">insert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/misc.html#SpreadSheet.insert"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.misc.SpreadSheet.insert" title="Permalink to this definition">¶</a></dt>
+<dd><p>S.insert(index, value) -- insert value before index</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.misc.SpreadSheet.rename">
+<span class="sig-name descname"><span class="pre">rename</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/misc.html#SpreadSheet.rename"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.misc.SpreadSheet.rename" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
 <section id="module-magicclass.widgets.separator">
 <span id="magicclass-widgets-separator-module"></span><h2>magicclass.widgets.separator module<a class="headerlink" href="#module-magicclass.widgets.separator" title="Permalink to this headline">¶</a></h2>
@@ -263,7 +467,8 @@
 <dt class="sig sig-object py" id="magicclass.widgets.separator.Separator">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.separator.</span></span><span class="sig-name descname"><span class="pre">Separator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orientation</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'horizontal'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">button</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/separator.html#Separator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.separator.Separator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#magicclass.widgets.utils.FreeWidget" title="magicclass.widgets.utils.FreeWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.widgets.utils.FreeWidget</span></code></a></p>
-<p>A Separator widget that can be used in both widgets and menus.</p>
+<p>A Separator widget that can be used in both widgets and menus.
+This widget is not actually added to menus or toolbars.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="magicclass.widgets.separator.Separator.btn_clicked">
 <span class="sig-name descname"><span class="pre">btn_clicked</span></span><a class="headerlink" href="#magicclass.widgets.separator.Separator.btn_clicked" title="Permalink to this definition">¶</a></dt>
@@ -294,6 +499,11 @@
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.utils.</span></span><span class="sig-name descname"><span class="pre">FreeWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'vertical'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/utils.html#FreeWidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.utils.FreeWidget" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.widget.Widget</span></code></p>
 <p>A Widget class with any QWidget as a child.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.utils.FreeWidget.set_contextmenu">
+<span class="sig-name descname"><span class="pre">set_contextmenu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contextmenugui</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">ContextMenuGui</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/utils.html#FreeWidget.set_contextmenu"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.utils.FreeWidget.set_contextmenu" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="magicclass.widgets.utils.FreeWidget.set_widget">
 <span class="sig-name descname"><span class="pre">set_widget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">widget</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">PyQt5.QtWidgets.QWidget</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/utils.html#FreeWidget.set_widget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.utils.FreeWidget.set_widget" title="Permalink to this definition">¶</a></dt>
@@ -380,6 +590,70 @@ for that widget in the GUI.</p></li>
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">collapsed</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#magicclass.widgets.CollapsibleContainer.collapsed" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.widgets.ColorEdit">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.</span></span><span class="sig-name descname"><span class="pre">ColorEdit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotation</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tooltip</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">visible</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enabled</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gui_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">UNSET</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bind</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">UNSET</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nullable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#magicclass.widgets.ColorEdit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.value_widget.ValueWidget</span></code></p>
+<blockquote>
+<div><p>A widget for editing colors.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) -- The name of the parameter represented by this widget. by default &quot;&quot;</p></li>
+<li><p><strong>annotation</strong> (<em>Any</em>) -- The type annotation for the parameter represented by the widget, by default
+<code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
+<li><p><strong>label</strong> (<em>str</em>) -- A string to use for an associated Label widget (if this widget is being
+shown in a <code class="xref py py-class docutils literal notranslate"><span class="pre">Container</span></code> widget, and labels are on).
+By default, <code class="docutils literal notranslate"><span class="pre">name</span></code> will be used. Note: <code class="docutils literal notranslate"><span class="pre">name</span></code> refers the name of the
+parameter, as might be used in a signature, whereas label is just the label
+for that widget in the GUI.</p></li>
+<li><p><strong>tooltip</strong> (<em>str</em>) -- A tooltip to display when hovering over the widget.</p></li>
+<li><p><strong>visible</strong> (<em>bool</em>) -- Whether the widget is visible, by default <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>backend_kwargs</strong> (<em>dict</em>) -- keyword argument to pass to the backend widget constructor.</p></li>
+<li><p><strong>value</strong> (<em>tuple of float</em><em> or </em><em>str</em>) -- The starting value for the widget.</p></li>
+<li><p><strong>bind</strong> (<em>Any</em>) -- A value or callback to bind this widget, then whenever <cite>widget.value</cite> is
+accessed, the value provided here will be returned.  <code class="docutils literal notranslate"><span class="pre">value</span></code> can be a
+callable, in which case <code class="docutils literal notranslate"><span class="pre">value(self)</span></code> will be returned (i.e. your callback
+must accept a single parameter, which is this widget instance.).</p></li>
+<li><p><strong>value</strong> -- RGBA color, color code or standard color name.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.widgets.ColorSlider">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.</span></span><span class="sig-name descname"><span class="pre">ColorSlider</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotation</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tooltip</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">visible</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enabled</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gui_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">UNSET</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bind</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">UNSET</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nullable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#magicclass.widgets.ColorSlider" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.value_widget.ValueWidget</span></code></p>
+<blockquote>
+<div><p>A multi-slider for editing colors.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) -- The name of the parameter represented by this widget. by default &quot;&quot;</p></li>
+<li><p><strong>annotation</strong> (<em>Any</em>) -- The type annotation for the parameter represented by the widget, by default
+<code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
+<li><p><strong>label</strong> (<em>str</em>) -- A string to use for an associated Label widget (if this widget is being
+shown in a <code class="xref py py-class docutils literal notranslate"><span class="pre">Container</span></code> widget, and labels are on).
+By default, <code class="docutils literal notranslate"><span class="pre">name</span></code> will be used. Note: <code class="docutils literal notranslate"><span class="pre">name</span></code> refers the name of the
+parameter, as might be used in a signature, whereas label is just the label
+for that widget in the GUI.</p></li>
+<li><p><strong>tooltip</strong> (<em>str</em>) -- A tooltip to display when hovering over the widget.</p></li>
+<li><p><strong>visible</strong> (<em>bool</em>) -- Whether the widget is visible, by default <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>backend_kwargs</strong> (<em>dict</em>) -- keyword argument to pass to the backend widget constructor.</p></li>
+<li><p><strong>value</strong> (<em>tuple of float</em><em> or </em><em>str</em>) -- The starting value for the widget.</p></li>
+<li><p><strong>bind</strong> (<em>Any</em>) -- A value or callback to bind this widget, then whenever <cite>widget.value</cite> is
+accessed, the value provided here will be returned.  <code class="docutils literal notranslate"><span class="pre">value</span></code> can be a
+callable, in which case <code class="docutils literal notranslate"><span class="pre">value(self)</span></code> will be returned (i.e. your callback
+must accept a single parameter, which is this widget instance.).</p></li>
+<li><p><strong>value</strong> -- RGBA color, color code or standard color name.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py class">
@@ -618,6 +892,11 @@ for that widget in the GUI.</p></li>
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.</span></span><span class="sig-name descname"><span class="pre">FreeWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'vertical'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/utils.html#FreeWidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.FreeWidget" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._bases.widget.Widget</span></code></p>
 <p>A Widget class with any QWidget as a child.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.FreeWidget.set_contextmenu">
+<span class="sig-name descname"><span class="pre">set_contextmenu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contextmenugui</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">ContextMenuGui</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/utils.html#FreeWidget.set_contextmenu"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.FreeWidget.set_contextmenu" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="magicclass.widgets.FreeWidget.set_widget">
 <span class="sig-name descname"><span class="pre">set_widget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">widget</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">PyQt5.QtWidgets.QWidget</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/utils.html#FreeWidget.set_widget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.FreeWidget.set_widget" title="Permalink to this definition">¶</a></dt>
@@ -860,7 +1139,8 @@ for that widget in the GUI.</p></li>
 <dt class="sig sig-object py" id="magicclass.widgets.Separator">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.</span></span><span class="sig-name descname"><span class="pre">Separator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orientation</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'horizontal'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">button</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/separator.html#Separator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.Separator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#magicclass.widgets.utils.FreeWidget" title="magicclass.widgets.utils.FreeWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.widgets.utils.FreeWidget</span></code></a></p>
-<p>A Separator widget that can be used in both widgets and menus.</p>
+<p>A Separator widget that can be used in both widgets and menus.
+This widget is not actually added to menus or toolbars.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="magicclass.widgets.Separator.btn_clicked">
 <span class="sig-name descname"><span class="pre">btn_clicked</span></span><a class="headerlink" href="#magicclass.widgets.Separator.btn_clicked" title="Permalink to this definition">¶</a></dt>
@@ -905,6 +1185,32 @@ for that widget in the GUI.</p></li>
 </ul>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.widgets.SpreadSheet">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.widgets.</span></span><span class="sig-name descname"><span class="pre">SpreadSheet</span></span><a class="reference internal" href="_modules/magicclass/widgets/misc.html#SpreadSheet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.SpreadSheet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#magicclass.widgets.utils.FreeWidget" title="magicclass.widgets.utils.FreeWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.widgets.utils.FreeWidget</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">MutableSequence</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets._table.Table</span></code>]</p>
+<p>A simple spread sheet widget.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.SpreadSheet.index">
+<span class="sig-name descname"><span class="pre">index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">value</span></em><span class="optional">[</span>, <em class="sig-param"><span class="pre">start</span></em><span class="optional">[</span>, <em class="sig-param"><span class="pre">stop</span></em><span class="optional">]</span><span class="optional">]</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">integer</span> <span class="pre">--</span> <span class="pre">return</span> <span class="pre">first</span> <span class="pre">index</span> <span class="pre">of</span> <span class="pre">value.</span></span></span><a class="reference internal" href="_modules/magicclass/widgets/misc.html#SpreadSheet.index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.SpreadSheet.index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raises ValueError if the value is not present.</p>
+<p>Supporting start and stop arguments is optional, but
+recommended.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.SpreadSheet.insert">
+<span class="sig-name descname"><span class="pre">insert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/misc.html#SpreadSheet.insert"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.SpreadSheet.insert" title="Permalink to this definition">¶</a></dt>
+<dd><p>S.insert(index, value) -- insert value before index</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.SpreadSheet.rename">
+<span class="sig-name descname"><span class="pre">rename</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/widgets/misc.html#SpreadSheet.rename"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.SpreadSheet.rename" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="py class">

@@ -25,14 +25,6 @@ magicclass.core module
    :undoc-members:
    :show-inheritance:
 
-magicclass.creator module
--------------------------
-
-.. automodule:: magicclass.creator
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 magicclass.fields module
 ------------------------
 

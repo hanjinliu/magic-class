@@ -10,12 +10,6 @@ class itself, so how to deal with class inheritance is not a well-defined featur
 by default. Here are some points that you have to keep in mind before making
 abstract classes.
 
-.. warning::
-
-    In the current version (0.5.19), integer indexing is not safe if a magic class
-    inherits some other classes. To access chind widgets, use ``str`` (such as 
-    ``ui["X"]``) instead of ``int`` (such as ``ui[1]``)
-
 The Order of Widget
 ===================
 

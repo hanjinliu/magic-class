@@ -3,9 +3,10 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.gui.mgui_ext &mdash; magic-class 0.5.18 documentation</title>
+  <title>magicclass.gui.mgui_ext &mdash; magic-class 0.5.20 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -27,7 +28,7 @@
             <a href="../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.18
+                0.5.20
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -47,6 +48,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../keybinding.html">Define Custom Keybindings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../customize_macro.html">Customize Macro Recording</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../containers.html">Container Variations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../class_inheritance.html">Inherit Magic Class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../special_methods.html">Special Attributes in Magic class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api.html">API References</a></li>
 </ul>
@@ -366,14 +368,14 @@
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The first argument must be a magicgui-like widget, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         
         <span class="bp">self</span><span class="o">.</span><span class="n">native</span> <span class="o">=</span> <span class="n">QWidgetAction</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="n">widget</span>
         <span class="n">name</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">label</span> <span class="ow">or</span> <span class="n">name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="n">name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
         
-        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="n">widget</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setDefaultWidget</span><span class="p">(</span><span class="n">widget</span><span class="o">.</span><span class="n">native</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">support_value</span> <span class="o">=</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">support_value</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="p">(</span><span class="n">ValueWidget</span><span class="p">,</span> <span class="n">_LabeledWidget</span><span class="p">))</span> <span class="ow">or</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">)</span>
         
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">support_value</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">changed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">changed</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">))</span>
@@ -408,7 +410,8 @@
     <span class="nd">@text</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">value</span>
 
     <span class="k">def</span> <span class="nf">_labeled_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">_labeled_widget</span><span class="p">()</span>

@@ -3,9 +3,10 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.widgets.misc &mdash; magic-class 0.5.19.dev1 documentation</title>
+  <title>magicclass.widgets.misc &mdash; magic-class 0.5.20 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -27,7 +28,7 @@
             <a href="../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.19.dev1
+                0.5.20
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -78,9 +79,11 @@
              
   <h1>Source code for magicclass.widgets.misc</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">MutableSequence</span>
+<span class="kn">from</span> <span class="nn">qtpy.QtWidgets</span> <span class="kn">import</span> <span class="n">QTabWidget</span><span class="p">,</span> <span class="n">QLineEdit</span><span class="p">,</span> <span class="n">QMenu</span>
 <span class="kn">from</span> <span class="nn">qtpy.QtGui</span> <span class="kn">import</span> <span class="n">QTextCursor</span>
-<span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">PushButton</span><span class="p">,</span> <span class="n">TextEdit</span>
+<span class="kn">from</span> <span class="nn">qtpy.QtCore</span> <span class="kn">import</span> <span class="n">Qt</span>
+<span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">PushButton</span><span class="p">,</span> <span class="n">TextEdit</span><span class="p">,</span> <span class="n">Table</span>
 
 <span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">FreeWidget</span>
 
@@ -276,6 +279,118 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setCheckable</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span></div>
+
+<span class="k">class</span> <span class="nc">_QtSpreadSheet</span><span class="p">(</span><span class="n">QTabWidget</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setMovable</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_n_table</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tabBar</span><span class="p">()</span><span class="o">.</span><span class="n">tabBarDoubleClicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">editTabBarLabel</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tabBar</span><span class="p">()</span><span class="o">.</span><span class="n">setContextMenuPolicy</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">CustomContextMenu</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tabBar</span><span class="p">()</span><span class="o">.</span><span class="n">customContextMenuRequested</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">showContextMenu</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_line_edit</span> <span class="o">=</span> <span class="kc">None</span>
+    
+    <span class="k">def</span> <span class="nf">addTable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">addTab</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Sheet </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_table</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_n_table</span> <span class="o">+=</span> <span class="mi">1</span>
+    
+    <span class="k">def</span> <span class="nf">renameTab</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tabBar</span><span class="p">()</span><span class="o">.</span><span class="n">setTabText</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    
+    <span class="k">def</span> <span class="nf">editTabBarLabel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_line_edit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_line_edit</span><span class="o">.</span><span class="n">deleteLater</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_line_edit</span> <span class="o">=</span> <span class="kc">None</span>
+            
+        <span class="n">tabbar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabBar</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_line_edit</span> <span class="o">=</span> <span class="n">QLineEdit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="nd">@self</span><span class="o">.</span><span class="n">_line_edit</span><span class="o">.</span><span class="n">editingFinished</span><span class="o">.</span><span class="n">connect</span>        
+        <span class="k">def</span> <span class="nf">_</span><span class="p">(</span><span class="n">_</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">renameTab</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_line_edit</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_line_edit</span><span class="o">.</span><span class="n">deleteLater</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_line_edit</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_line_edit</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">tabbar</span><span class="o">.</span><span class="n">tabText</span><span class="p">(</span><span class="n">index</span><span class="p">))</span>  
+        <span class="bp">self</span><span class="o">.</span><span class="n">_line_edit</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="n">tabbar</span><span class="o">.</span><span class="n">tabRect</span><span class="p">(</span><span class="n">index</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_line_edit</span><span class="o">.</span><span class="n">setFocus</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_line_edit</span><span class="o">.</span><span class="n">selectAll</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_line_edit</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    
+    <span class="k">def</span> <span class="nf">showContextMenu</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">point</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">point</span><span class="o">.</span><span class="n">isNull</span><span class="p">():</span>
+            <span class="k">return</span>
+        <span class="n">tabbar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabBar</span><span class="p">()</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="n">tabbar</span><span class="o">.</span><span class="n">tabAt</span><span class="p">(</span><span class="n">point</span><span class="p">)</span>
+        <span class="n">menu</span> <span class="o">=</span> <span class="n">QMenu</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">rename_action</span> <span class="o">=</span> <span class="n">menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">&quot;Rename&quot;</span><span class="p">)</span>
+        <span class="n">rename_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span> <span class="n">_</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">editTabBarLabel</span><span class="p">(</span><span class="n">index</span><span class="p">))</span>
+        <span class="n">delete_action</span> <span class="o">=</span> <span class="n">menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">&quot;Delete&quot;</span><span class="p">)</span>
+        <span class="n">delete_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span> <span class="n">_</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">removeTab</span><span class="p">(</span><span class="n">index</span><span class="p">))</span>
+        
+        <span class="n">menu</span><span class="o">.</span><span class="n">exec</span><span class="p">(</span><span class="n">tabbar</span><span class="o">.</span><span class="n">mapToGlobal</span><span class="p">(</span><span class="n">point</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="SpreadSheet"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.misc.SpreadSheet">[docs]</a><span class="k">class</span> <span class="nc">SpreadSheet</span><span class="p">(</span><span class="n">FreeWidget</span><span class="p">,</span> <span class="n">MutableSequence</span><span class="p">[</span><span class="n">Table</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot;A simple spread sheet widget.&quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="n">spreadsheet</span> <span class="o">=</span> <span class="n">_QtSpreadSheet</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_widget</span><span class="p">(</span><span class="n">spreadsheet</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">central_widget</span><span class="p">:</span> <span class="n">_QtSpreadSheet</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tables</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Table</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_widget</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+        
+<div class="viewcode-block" id="SpreadSheet.index"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.misc.SpreadSheet.index">[docs]</a>    <span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">Table</span> <span class="o">|</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">Table</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">table</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tables</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">item</span> <span class="ow">is</span> <span class="n">table</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">i</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">tabbar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_widget</span><span class="o">.</span><span class="n">tabBar</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">tabbar</span><span class="o">.</span><span class="n">count</span><span class="p">()):</span>
+                <span class="n">text</span> <span class="o">=</span> <span class="n">tabbar</span><span class="o">.</span><span class="n">tabText</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">text</span> <span class="o">==</span> <span class="n">item</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">i</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span></div>
+
+    
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tables</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+    
+    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+    
+    <span class="k">def</span> <span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">central_widget</span><span class="o">.</span><span class="n">removeTab</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tables</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+    
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Table</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tables</span><span class="p">)</span>
+        
+<div class="viewcode-block" id="SpreadSheet.insert"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.misc.SpreadSheet.insert">[docs]</a>    <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">key</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">central_widget</span><span class="o">.</span><span class="n">addTable</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">native</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tables</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">table</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="SpreadSheet.rename"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.misc.SpreadSheet.rename">[docs]</a>    <span class="k">def</span> <span class="nf">rename</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">central_widget</span><span class="o">.</span><span class="n">renameTab</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span></div></div>
 </pre></div>
 
            </div>

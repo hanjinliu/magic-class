@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Call Parent Methods from its Child &mdash; magic-class 0.5.19.dev1 documentation</title>
+  <title>Call Parent Methods from its Child &mdash; magic-class 0.5.20 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/columns.css" type="text/css" />
@@ -31,7 +31,7 @@
             <a href="index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.19.dev1
+                0.5.20
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -142,6 +142,12 @@ and in what order they will appear in widgets.</p></li>
 <li><p>If the widget is composed of nested magic classes and other widgets or fields, the order of
 widgets will not be sorted due to different timing of widget creation.</p></li>
 </ol>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>In the current version (0.5.19), integer indexing is not safe if a magic class has wrapped
+methods. To access chind widgets, use <code class="docutils literal notranslate"><span class="pre">str</span></code> (such as <code class="docutils literal notranslate"><span class="pre">ui[&quot;X&quot;]</span></code>) instead of <code class="docutils literal notranslate"><span class="pre">int</span></code>
+(such as <code class="docutils literal notranslate"><span class="pre">ui[1]</span></code>).</p>
 </div>
 </section>
 <section id="use-template-functions">

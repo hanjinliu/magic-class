@@ -12,6 +12,14 @@ Subpackages
 Submodules
 ----------
 
+magicclass.widgets.color module
+-------------------------------
+
+.. automodule:: magicclass.widgets.color
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 magicclass.widgets.containers module
 ------------------------------------
 

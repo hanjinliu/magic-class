@@ -3,9 +3,10 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.fields &mdash; magic-class 0.5.19.dev1 documentation</title>
+  <title>magicclass.fields &mdash; magic-class 0.5.20 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/columns.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -27,7 +28,7 @@
             <a href="../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.19.dev1
+                0.5.20
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -169,6 +170,18 @@
 <div class="viewcode-block" id="MagicField.as_getter"><a class="viewcode-back" href="../../magicclass.html#magicclass.fields.MagicField.as_getter">[docs]</a>    <span class="k">def</span> <span class="nf">as_getter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">],</span> <span class="n">_V</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Make a function that get the value of Widget or Action.&quot;&quot;&quot;</span>        
         <span class="k">return</span> <span class="k">lambda</span> <span class="n">w</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">guis</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">obj</span><span class="p">)]</span><span class="o">.</span><span class="n">value</span></div>
+    
+    <span class="c1"># NOTE: Ideally these overload is needed for</span>
+    <span class="c1"># &gt;&gt;&gt; @B.field.connect</span>
+    <span class="c1"># but in tern this will disable</span>
+    <span class="c1"># &gt;&gt;&gt; self.B.field.value</span>
+    <span class="c1"># @overload</span>
+    <span class="c1"># def __get__(self, obj: Literal[None], objtype=None) -&gt; MagicField[_W, _V]:</span>
+    <span class="c1">#     ...</span>
+    
+    <span class="c1"># @overload</span>
+    <span class="c1"># def __get__(self, obj: Any, objtype=None) -&gt; _W:</span>
+    <span class="c1">#     ...</span>
     
     <span class="k">def</span> <span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">objtype</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_W</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Get widget for the object.&quot;&quot;&quot;</span>

@@ -3,9 +3,10 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.ext.pyqtgraph.widgets &mdash; magic-class 0.5.17 documentation</title>
+  <title>magicclass.ext.pyqtgraph.widgets &mdash; magic-class 0.5.20 documentation</title>
       <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/columns.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -27,7 +28,7 @@
             <a href="../../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.17
+                0.5.20
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
@@ -46,8 +47,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../use_bind.html">Binding Values to Arguments</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../keybinding.html">Define Custom Keybindings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../customize_macro.html">Customize Macro Recording</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../special_methods.html">Special attributes in magic-class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../containers.html">Container Variations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../class_inheritance.html">Inherit Magic Class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../special_methods.html">Special Attributes in Magic class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api.html">API References</a></li>
 </ul>
 
@@ -562,16 +564,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_enabled</span> <span class="o">=</span> <span class="n">value</span>
         
     <span class="n">interactive</span> <span class="o">=</span> <span class="n">enabled</span>
-    
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">background_color</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">rgba</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">background</span><span class="o">.</span><span class="n">brush</span><span class="p">()</span><span class="o">.</span><span class="n">color</span><span class="p">()</span><span class="o">.</span><span class="n">getRgb</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rgba</span><span class="p">)</span><span class="o">/</span><span class="mi">255</span>
-    
-    <span class="nd">@background_color</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">background_color</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="n">value</span> <span class="o">=</span> <span class="n">convert_color_code</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">setBackgroundColor</span><span class="p">(</span><span class="n">pg</span><span class="o">.</span><span class="n">mkBrush</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">color</span><span class="p">())</span>
         
     <span class="k">def</span> <span class="nf">_update_scene</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
@@ -860,9 +852,19 @@
             <span class="n">_cmap</span> <span class="o">=</span> <span class="n">value</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_hist</span><span class="o">.</span><span class="n">gradient</span><span class="o">.</span><span class="n">setColorMap</span><span class="p">(</span><span class="n">_cmap</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cmap</span> <span class="o">=</span> <span class="n">value</span></div>
-            
 
-<div class="viewcode-block" id="QtPlotCanvas"><a class="viewcode-back" href="../../../../magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.QtPlotCanvas">[docs]</a><span class="k">class</span> <span class="nc">QtPlotCanvas</span><span class="p">(</span><span class="n">FreeWidget</span><span class="p">,</span> <span class="n">PlotItem</span><span class="p">):</span>
+<div class="viewcode-block" id="HasBackground"><a class="viewcode-back" href="../../../../magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.HasBackground">[docs]</a><span class="k">class</span> <span class="nc">HasBackground</span><span class="p">(</span><span class="n">FreeWidget</span><span class="p">):</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">background_color</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">layoutwidget</span><span class="o">.</span><span class="n">_background</span>
+    
+    <span class="nd">@background_color</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">background_color</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">convert_color_code</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layoutwidget</span><span class="o">.</span><span class="n">setBackground</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+    
+
+<div class="viewcode-block" id="QtPlotCanvas"><a class="viewcode-back" href="../../../../magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.QtPlotCanvas">[docs]</a><span class="k">class</span> <span class="nc">QtPlotCanvas</span><span class="p">(</span><span class="n">HasBackground</span><span class="p">,</span> <span class="n">PlotItem</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A 1-D data viewer that have similar API as napari Viewer.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -876,8 +878,7 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_widget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layoutwidget</span><span class="p">)</span></div>
 
-
-<div class="viewcode-block" id="QtImageCanvas"><a class="viewcode-back" href="../../../../magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.QtImageCanvas">[docs]</a><span class="k">class</span> <span class="nc">QtImageCanvas</span><span class="p">(</span><span class="n">FreeWidget</span><span class="p">,</span> <span class="n">ImageItem</span><span class="p">):</span>
+<div class="viewcode-block" id="QtImageCanvas"><a class="viewcode-back" href="../../../../magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.QtImageCanvas">[docs]</a><span class="k">class</span> <span class="nc">QtImageCanvas</span><span class="p">(</span><span class="n">HasBackground</span><span class="p">,</span> <span class="n">ImageItem</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lock_contrast_limits</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="c1"># prepare widget</span>
         <span class="n">ImageItem</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lock_contrast_limits</span><span class="o">=</span><span class="n">lock_contrast_limits</span><span class="p">)</span>
@@ -886,10 +887,19 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_scene</span><span class="p">()</span>
         
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">set_widget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layoutwidget</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_widget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layoutwidget</span><span class="p">)</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">background_color</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">layoutwidget</span><span class="o">.</span><span class="n">_background</span>
+    
+    <span class="nd">@background_color</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">background_color</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">convert_color_code</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layoutwidget</span><span class="o">.</span><span class="n">setBackground</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="Qt2YPlotCanvas"><a class="viewcode-back" href="../../../../magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.Qt2YPlotCanvas">[docs]</a><span class="k">class</span> <span class="nc">Qt2YPlotCanvas</span><span class="p">(</span><span class="n">FreeWidget</span><span class="p">):</span>
+<div class="viewcode-block" id="Qt2YPlotCanvas"><a class="viewcode-back" href="../../../../magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.Qt2YPlotCanvas">[docs]</a><span class="k">class</span> <span class="nc">Qt2YPlotCanvas</span><span class="p">(</span><span class="n">HasBackground</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">layoutwidget</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">GraphicsLayoutWidget</span><span class="p">()</span>
         
@@ -926,7 +936,7 @@
 
 <span class="n">_C</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;_C&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">HasViewBox</span><span class="p">)</span>
 
-<span class="k">class</span> <span class="nc">_MultiPlot</span><span class="p">(</span><span class="n">FreeWidget</span><span class="p">,</span> <span class="n">Generic</span><span class="p">[</span><span class="n">_C</span><span class="p">]):</span>
+<span class="k">class</span> <span class="nc">_MultiPlot</span><span class="p">(</span><span class="n">HasBackground</span><span class="p">,</span> <span class="n">Generic</span><span class="p">[</span><span class="n">_C</span><span class="p">]):</span>
     <span class="n">_base_item_class</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">_C</span><span class="p">]</span>
     
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 

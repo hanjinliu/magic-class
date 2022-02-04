@@ -3,9 +3,10 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.gui.toolbar &mdash; magic-class 0.5.19.dev1 documentation</title>
+  <title>magicclass.gui.toolbar &mdash; magic-class 0.5.20 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -27,7 +28,7 @@
             <a href="../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.19.dev1
+                0.5.20
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -187,6 +188,9 @@
         <span class="n">_hist</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># for traceback</span>
         
         <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">attr</span> <span class="ow">in</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">base_members</span><span class="p">,</span> <span class="n">iter_members</span><span class="p">(</span><span class="bp">cls</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="nb">property</span><span class="p">):</span>
+                <span class="k">continue</span>
+            
             <span class="k">try</span><span class="p">:</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
                     <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">BaseGui</span><span class="p">):</span>

@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.ext.pyqtgraph package &mdash; magic-class 0.5.19.dev1 documentation</title>
+  <title>magicclass.ext.pyqtgraph package &mdash; magic-class 0.5.20 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/columns.css" type="text/css" />
@@ -31,7 +31,7 @@
             <a href="index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.19.dev1
+                0.5.20
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -744,6 +744,17 @@ that the event was delivered to.</p>
 <section id="module-magicclass.ext.pyqtgraph.widgets">
 <span id="magicclass-ext-pyqtgraph-widgets-module"></span><h2>magicclass.ext.pyqtgraph.widgets module<a class="headerlink" href="#module-magicclass.ext.pyqtgraph.widgets" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
+<dt class="sig sig-object py" id="magicclass.ext.pyqtgraph.widgets.HasBackground">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.pyqtgraph.widgets.</span></span><span class="sig-name descname"><span class="pre">HasBackground</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'vertical'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/ext/pyqtgraph/widgets.html#HasBackground"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.pyqtgraph.widgets.HasBackground" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="magicclass.widgets.html#magicclass.widgets.utils.FreeWidget" title="magicclass.widgets.utils.FreeWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.widgets.utils.FreeWidget</span></code></a></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.ext.pyqtgraph.widgets.HasBackground.background_color">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">background_color</span></span><a class="headerlink" href="#magicclass.ext.pyqtgraph.widgets.HasBackground.background_color" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="magicclass.ext.pyqtgraph.widgets.HasDataItems">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.pyqtgraph.widgets.</span></span><span class="sig-name descname"><span class="pre">HasDataItems</span></span><a class="reference internal" href="_modules/magicclass/ext/pyqtgraph/widgets.html#HasDataItems"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.pyqtgraph.widgets.HasDataItems" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
@@ -901,11 +912,6 @@ supports.</p></li>
 <dt class="sig sig-object py" id="magicclass.ext.pyqtgraph.widgets.HasViewBox">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.pyqtgraph.widgets.</span></span><span class="sig-name descname"><span class="pre">HasViewBox</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">viewbox</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pyqtgraph.graphicsItems.ViewBox.ViewBox.ViewBox</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/ext/pyqtgraph/widgets.html#HasViewBox"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.pyqtgraph.widgets.HasViewBox" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#magicclass.ext.pyqtgraph.widgets.HasDataItems" title="magicclass.ext.pyqtgraph.widgets.HasDataItems"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.pyqtgraph.widgets.HasDataItems</span></code></a></p>
-<dl class="py property">
-<dt class="sig sig-object py" id="magicclass.ext.pyqtgraph.widgets.HasViewBox.background_color">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">background_color</span></span><a class="headerlink" href="#magicclass.ext.pyqtgraph.widgets.HasViewBox.background_color" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 <dl class="py property">
 <dt class="sig sig-object py" id="magicclass.ext.pyqtgraph.widgets.HasViewBox.border">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">border</span></span><a class="headerlink" href="#magicclass.ext.pyqtgraph.widgets.HasViewBox.border" title="Permalink to this definition">¶</a></dt>
@@ -1066,7 +1072,7 @@ supports.</p></li>
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.ext.pyqtgraph.widgets.Qt2YPlotCanvas">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.pyqtgraph.widgets.</span></span><span class="sig-name descname"><span class="pre">Qt2YPlotCanvas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/ext/pyqtgraph/widgets.html#Qt2YPlotCanvas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.pyqtgraph.widgets.Qt2YPlotCanvas" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="magicclass.widgets.html#magicclass.widgets.utils.FreeWidget" title="magicclass.widgets.utils.FreeWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.widgets.utils.FreeWidget</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#magicclass.ext.pyqtgraph.widgets.HasBackground" title="magicclass.ext.pyqtgraph.widgets.HasBackground"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.pyqtgraph.widgets.HasBackground</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="magicclass.ext.pyqtgraph.widgets.Qt2YPlotCanvas.updateViews">
 <span class="sig-name descname"><span class="pre">updateViews</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/ext/pyqtgraph/widgets.html#Qt2YPlotCanvas.updateViews"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.pyqtgraph.widgets.Qt2YPlotCanvas.updateViews" title="Permalink to this definition">¶</a></dt>
@@ -1077,7 +1083,12 @@ supports.</p></li>
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.ext.pyqtgraph.widgets.QtImageCanvas">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.pyqtgraph.widgets.</span></span><span class="sig-name descname"><span class="pre">QtImageCanvas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lock_contrast_limits</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/ext/pyqtgraph/widgets.html#QtImageCanvas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.pyqtgraph.widgets.QtImageCanvas" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="magicclass.widgets.html#magicclass.widgets.utils.FreeWidget" title="magicclass.widgets.utils.FreeWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.widgets.utils.FreeWidget</span></code></a>, <a class="reference internal" href="#magicclass.ext.pyqtgraph.widgets.ImageItem" title="magicclass.ext.pyqtgraph.widgets.ImageItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.pyqtgraph.widgets.ImageItem</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#magicclass.ext.pyqtgraph.widgets.HasBackground" title="magicclass.ext.pyqtgraph.widgets.HasBackground"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.pyqtgraph.widgets.HasBackground</span></code></a>, <a class="reference internal" href="#magicclass.ext.pyqtgraph.widgets.ImageItem" title="magicclass.ext.pyqtgraph.widgets.ImageItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.pyqtgraph.widgets.ImageItem</span></code></a></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.ext.pyqtgraph.widgets.QtImageCanvas.background_color">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">background_color</span></span><a class="headerlink" href="#magicclass.ext.pyqtgraph.widgets.QtImageCanvas.background_color" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -1097,7 +1108,7 @@ supports.</p></li>
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.ext.pyqtgraph.widgets.QtPlotCanvas">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.pyqtgraph.widgets.</span></span><span class="sig-name descname"><span class="pre">QtPlotCanvas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/ext/pyqtgraph/widgets.html#QtPlotCanvas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.pyqtgraph.widgets.QtPlotCanvas" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="magicclass.widgets.html#magicclass.widgets.utils.FreeWidget" title="magicclass.widgets.utils.FreeWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.widgets.utils.FreeWidget</span></code></a>, <a class="reference internal" href="#magicclass.ext.pyqtgraph.widgets.PlotItem" title="magicclass.ext.pyqtgraph.widgets.PlotItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.pyqtgraph.widgets.PlotItem</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#magicclass.ext.pyqtgraph.widgets.HasBackground" title="magicclass.ext.pyqtgraph.widgets.HasBackground"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.pyqtgraph.widgets.HasBackground</span></code></a>, <a class="reference internal" href="#magicclass.ext.pyqtgraph.widgets.PlotItem" title="magicclass.ext.pyqtgraph.widgets.PlotItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.pyqtgraph.widgets.PlotItem</span></code></a></p>
 <p>A 1-D data viewer that have similar API as napari Viewer.</p>
 </dd></dl>
 
@@ -1161,7 +1172,7 @@ visualization.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.ext.pyqtgraph.Qt2YPlotCanvas">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.pyqtgraph.</span></span><span class="sig-name descname"><span class="pre">Qt2YPlotCanvas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/ext/pyqtgraph/widgets.html#Qt2YPlotCanvas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.pyqtgraph.Qt2YPlotCanvas" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="magicclass.widgets.html#magicclass.widgets.utils.FreeWidget" title="magicclass.widgets.utils.FreeWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.widgets.utils.FreeWidget</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#magicclass.ext.pyqtgraph.widgets.HasBackground" title="magicclass.ext.pyqtgraph.widgets.HasBackground"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.pyqtgraph.widgets.HasBackground</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="magicclass.ext.pyqtgraph.Qt2YPlotCanvas.updateViews">
 <span class="sig-name descname"><span class="pre">updateViews</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/ext/pyqtgraph/widgets.html#Qt2YPlotCanvas.updateViews"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.pyqtgraph.Qt2YPlotCanvas.updateViews" title="Permalink to this definition">¶</a></dt>
@@ -1172,7 +1183,12 @@ visualization.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.ext.pyqtgraph.QtImageCanvas">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.pyqtgraph.</span></span><span class="sig-name descname"><span class="pre">QtImageCanvas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lock_contrast_limits</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/ext/pyqtgraph/widgets.html#QtImageCanvas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.pyqtgraph.QtImageCanvas" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="magicclass.widgets.html#magicclass.widgets.utils.FreeWidget" title="magicclass.widgets.utils.FreeWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.widgets.utils.FreeWidget</span></code></a>, <a class="reference internal" href="#magicclass.ext.pyqtgraph.widgets.ImageItem" title="magicclass.ext.pyqtgraph.widgets.ImageItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.pyqtgraph.widgets.ImageItem</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#magicclass.ext.pyqtgraph.widgets.HasBackground" title="magicclass.ext.pyqtgraph.widgets.HasBackground"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.pyqtgraph.widgets.HasBackground</span></code></a>, <a class="reference internal" href="#magicclass.ext.pyqtgraph.widgets.ImageItem" title="magicclass.ext.pyqtgraph.widgets.ImageItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.pyqtgraph.widgets.ImageItem</span></code></a></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.ext.pyqtgraph.QtImageCanvas.background_color">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">background_color</span></span><a class="headerlink" href="#magicclass.ext.pyqtgraph.QtImageCanvas.background_color" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -1192,7 +1208,7 @@ visualization.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.ext.pyqtgraph.QtPlotCanvas">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.pyqtgraph.</span></span><span class="sig-name descname"><span class="pre">QtPlotCanvas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/ext/pyqtgraph/widgets.html#QtPlotCanvas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.pyqtgraph.QtPlotCanvas" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="magicclass.widgets.html#magicclass.widgets.utils.FreeWidget" title="magicclass.widgets.utils.FreeWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.widgets.utils.FreeWidget</span></code></a>, <a class="reference internal" href="#magicclass.ext.pyqtgraph.widgets.PlotItem" title="magicclass.ext.pyqtgraph.widgets.PlotItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.pyqtgraph.widgets.PlotItem</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#magicclass.ext.pyqtgraph.widgets.HasBackground" title="magicclass.ext.pyqtgraph.widgets.HasBackground"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.pyqtgraph.widgets.HasBackground</span></code></a>, <a class="reference internal" href="#magicclass.ext.pyqtgraph.widgets.PlotItem" title="magicclass.ext.pyqtgraph.widgets.PlotItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.pyqtgraph.widgets.PlotItem</span></code></a></p>
 <p>A 1-D data viewer that have similar API as napari Viewer.</p>
 </dd></dl>
 

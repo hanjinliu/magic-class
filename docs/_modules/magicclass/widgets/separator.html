@@ -3,9 +3,10 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.widgets.separator &mdash; magic-class 0.5.16 documentation</title>
+  <title>magicclass.widgets.separator &mdash; magic-class 0.5.20 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -27,7 +28,7 @@
             <a href="../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.16
+                0.5.20
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -46,8 +47,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../use_bind.html">Binding Values to Arguments</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../keybinding.html">Define Custom Keybindings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../customize_macro.html">Customize Macro Recording</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../special_methods.html">Special attributes in magic-class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../containers.html">Container Variations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../class_inheritance.html">Inherit Magic Class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../special_methods.html">Special Attributes in Magic class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api.html">API References</a></li>
 </ul>
 
@@ -84,8 +86,10 @@
 <div class="viewcode-block" id="Separator"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.separator.Separator">[docs]</a><span class="k">class</span> <span class="nc">Separator</span><span class="p">(</span><span class="n">FreeWidget</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A Separator widget that can be used in both widgets and menus.</span>
+<span class="sd">    This widget is not actually added to menus or toolbars.</span>
 <span class="sd">    &quot;&quot;&quot;</span>    
     <span class="n">btn_clicked</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
+    
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orientation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;horizontal&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> 
                  <span class="n">button</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
@@ -103,17 +107,24 @@
     <span class="nd">@btn_text</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">btn_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_qtitlebar</span><span class="o">.</span><span class="n">button</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+
         
 <span class="k">class</span> <span class="nc">_QTitleBar</span><span class="p">(</span><span class="n">QLabel</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    See also: napari/_qt/qt_main_window.py.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;See also: napari/_qt/qt_main_window.py.&quot;&quot;&quot;</span>
+    
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">button</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
 
         <span class="n">line</span> <span class="o">=</span> <span class="n">QFrame</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
         <span class="n">line</span><span class="o">.</span><span class="n">setFrameShape</span><span class="p">(</span><span class="n">QFrame</span><span class="o">.</span><span class="n">HLine</span><span class="p">)</span>
         <span class="n">line</span><span class="o">.</span><span class="n">setFrameShadow</span><span class="p">(</span><span class="n">QFrame</span><span class="o">.</span><span class="n">Sunken</span><span class="p">)</span>
+        <span class="n">line</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="s2">&quot;Separator&quot;</span><span class="p">)</span>
+        <span class="n">line</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            QFrame#Separator {</span>
+<span class="s2">                background-color: gray;</span>
+<span class="s2">            }</span>
+<span class="s2">        &quot;&quot;&quot;</span>
+        <span class="p">)</span>
 
         <span class="n">layout</span> <span class="o">=</span> <span class="n">QHBoxLayout</span><span class="p">()</span>
         <span class="n">layout</span><span class="o">.</span><span class="n">setSpacing</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>

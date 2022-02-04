@@ -3,9 +3,10 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.widgets.utils &mdash; magic-class 0.5.19.dev1 documentation</title>
+  <title>magicclass.widgets.utils &mdash; magic-class 0.5.20 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -27,7 +28,7 @@
             <a href="../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.19.dev1
+                0.5.20
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -79,12 +80,18 @@
   <h1>Source code for magicclass.widgets.utils</h1><div class="highlight"><pre>
 <span></span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
+<span class="kn">import</span> <span class="nn">weakref</span>
 <span class="kn">from</span> <span class="nn">qtpy.QtWidgets</span> <span class="kn">import</span> <span class="n">QWidget</span><span class="p">,</span> <span class="n">QVBoxLayout</span><span class="p">,</span> <span class="n">QGridLayout</span><span class="p">,</span> <span class="n">QHBoxLayout</span>
+<span class="kn">from</span> <span class="nn">qtpy.QtCore</span> <span class="kn">import</span> <span class="n">Qt</span>
 <span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">Widget</span>
 <span class="kn">from</span> <span class="nn">magicgui.backends._qtpy.widgets</span> <span class="kn">import</span> <span class="n">QBaseWidget</span>
 
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">..gui</span> <span class="kn">import</span> <span class="n">BaseGui</span><span class="p">,</span> <span class="n">ContextMenuGui</span>
 
 <span class="k">class</span> <span class="nc">_NotInitialized</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;This class helps better error handling.&quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">msg</span> <span class="o">=</span> <span class="n">msg</span>
 
@@ -113,13 +120,38 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">layout</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setContentsMargins</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-
+        <span class="bp">self</span><span class="o">.</span><span class="n">_magicclass_parent_ref</span> <span class="o">=</span> <span class="kc">None</span>
 
 <div class="viewcode-block" id="FreeWidget.set_widget"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.utils.FreeWidget.set_widget">[docs]</a>    <span class="k">def</span> <span class="nf">set_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">:</span> <span class="n">QWidget</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Set the central widget to the widget.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
         <span class="n">widget</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">central_widget</span> <span class="o">=</span> <span class="n">widget</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">central_widget</span> <span class="o">=</span> <span class="n">widget</span></div>
+        
+<div class="viewcode-block" id="FreeWidget.set_contextmenu"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.utils.FreeWidget.set_contextmenu">[docs]</a>    <span class="k">def</span> <span class="nf">set_contextmenu</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">contextmenugui</span><span class="p">:</span> <span class="n">ContextMenuGui</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">..gui</span> <span class="kn">import</span> <span class="n">ContextMenuGui</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">contextmenugui</span><span class="p">,</span> <span class="n">ContextMenuGui</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span>
+        <span class="kn">from</span> <span class="nn">..gui.utils</span> <span class="kn">import</span> <span class="n">define_context_menu</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setContextMenuPolicy</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">CustomContextMenu</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">customContextMenuRequested</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+            <span class="n">define_context_menu</span><span class="p">(</span><span class="n">contextmenugui</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="p">)</span>
+            <span class="p">)</span></div>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">__magicclass_parent__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseGui</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return parent magic class if exists.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_magicclass_parent_ref</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_magicclass_parent_ref</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">parent</span>
+    
+    <span class="nd">@__magicclass_parent__</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">__magicclass_parent__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">parent</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_magicclass_parent_ref</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span></div>
+
 
 <div class="viewcode-block" id="magicwidget"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.utils.magicwidget">[docs]</a><span class="k">def</span> <span class="nf">magicwidget</span><span class="p">(</span><span class="n">qcls</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">QWidget</span><span class="p">]):</span>
     <span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">iter_members</span>
