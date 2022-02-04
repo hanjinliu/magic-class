@@ -13,6 +13,8 @@ class QtTracebackDialog(QDialog):
         self._text.setReadOnly(True)
         self._text.setFontFamily("Consolas")
         layout.addWidget(self._text)
+        
+        self.resize(600, 400)
     
     def setText(self, text: str):
         self._text.setText(text)

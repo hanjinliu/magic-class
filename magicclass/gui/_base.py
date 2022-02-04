@@ -1015,7 +1015,7 @@ def _raise_error_in_msgbox(_func: Callable, parent: Widget = None):
             out = _func(*args, **kwargs)
         except Exception as e:
             from ._message_box import QtErrorMessageBox
-            QtErrorMessageBox.raise_(e, parent=parent)
+            QtErrorMessageBox.raise_(e, parent=parent.native)
             out = e
         return out
     
