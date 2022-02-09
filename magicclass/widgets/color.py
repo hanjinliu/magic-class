@@ -142,7 +142,6 @@ class QColorEdit(QWidget):
         self._line_edit.setText(color)
         color = self._line_edit.getQColor()
         self._color_swatch.setColor(color)
-        self.colorChanged.emit(self.color())
 
 
     def _on_line_edit_edited(self, _=None):
@@ -158,6 +157,7 @@ class QColorEdit(QWidget):
     def _on_swatch_changed(self, _=None):
         qcolor = self._color_swatch.getQColor()
         self._line_edit.setColor(qcolor)
+        self.colorChanged.emit(self.color())
 
 
 # See https://stackoverflow.com/questions/42820380/use-float-for-qslider
@@ -192,8 +192,7 @@ class QDoubleSlider(QSlider):
     def setSingleStep(self, value):
         return super().setSingleStep(value * self.scale)
 
-        
-        
+
 class QColorSlider(QWidget):
     colorChanged = QtSignal(tuple)
     
