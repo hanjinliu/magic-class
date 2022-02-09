@@ -49,10 +49,10 @@ class ListEdit(Container):
 
         self._child_options = options or {}
 
-        button_plus = PushButton(name="+")
+        button_plus = PushButton(text="+", name="plus")
         button_plus.changed.connect(lambda: self._append_value())
 
-        button_minus = PushButton(name="-")
+        button_minus = PushButton(text="-", name="minus")
         button_minus.changed.connect(self._pop_value)
 
         if layout == "horizontal":
