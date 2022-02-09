@@ -29,6 +29,7 @@ def wrap_container(cls: type[C] = None, base: type = None) -> Callable | type[C]
 
         cls.__init__ = __init__
         cls = merge_super_sigs(cls)
+        cls.__module__ = "magicclass.widgets"
         return cls
 
     return wrapper(cls) if cls else wrapper
