@@ -5,6 +5,7 @@ import weakref
 from qtpy.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QHBoxLayout
 from qtpy.QtCore import Qt
 from magicgui.widgets import Widget
+from magicgui.widgets._concrete import merge_super_sigs as _merge_super_sigs
 from magicgui.backends._qtpy.widgets import QBaseWidget
 
 if TYPE_CHECKING:
@@ -79,4 +80,8 @@ def magicwidget(qcls: type[QWidget]):
         def _(self: FreeWidget, *args, **kwargs):
             return attr(self.central_widget, *args, **kwargs)
     cls = type(qcls.__name__, (FreeWidget, ), {})
-    
+
+def merge_super_sigs(cls):
+    cls = _merge_super_sigs(cls)
+    cls.__module__ = "magicclass.widgets"
+    return cls

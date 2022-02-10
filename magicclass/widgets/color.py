@@ -15,9 +15,9 @@ from qtpy.QtGui import QColor
 from qtpy.QtCore import Qt, Signal as QtSignal
 
 from magicgui.widgets._bases.value_widget import ValueWidget
-from magicgui.widgets._concrete import merge_super_sigs
 from magicgui.backends._qtpy.widgets import QBaseValueWidget
 from magicgui.application import use_app
+from .utils import merge_super_sigs
 
 def rgba_to_qcolor(rgba: Iterable[float]) -> QColor:
     return QColor(*[255*c for c in rgba])

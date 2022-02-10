@@ -413,5 +413,3 @@ def _get_field(obj,
         f = field_class(default=obj, metadata=metadata, name=name, record=record)
     
     return f
-
-    

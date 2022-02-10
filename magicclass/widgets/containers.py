@@ -5,12 +5,14 @@ from qtpy import QtWidgets as QtW
 from qtpy.QtCore import Qt, QEvent, QSize
 from magicgui.application import use_app
 from magicgui.widgets._bases import Widget
-from magicgui.widgets._concrete import merge_super_sigs, ContainerWidget
+from magicgui.widgets._concrete import ContainerWidget
 from magicgui.backends._qtpy.widgets import (
     QBaseWidget, 
     Container as ContainerBase,
     MainWindow as MainWindowBase
     )
+
+from .utils import merge_super_sigs
 
 # Container variations that is useful in making GUI designs better.
 
@@ -29,10 +31,13 @@ def wrap_container(cls: type[C] = None, base: type = None) -> Callable | type[C]
 
         cls.__init__ = __init__
         cls = merge_super_sigs(cls)
-        cls.__module__ = "magicclass.widgets"
         return cls
 
     return wrapper(cls) if cls else wrapper
+
+def _btn_text_warning():
+    msg = "'btn_text' is deprecated and will be removed soon. Please use 'text'."
+    warnings.warn(msg, DeprecationWarning)
 
 class _Splitter(ContainerBase):
     _qwidget: QtW.QWidget
@@ -294,12 +299,33 @@ class _VCollapsibleContainer(_Collapsibles):
 class _HCollapsibleContainer(_Collapsibles):
     def _get_setting(self):
         self._setting = _HORIZONTAL_SETTING
-    
+
+
+class _QListWidget(QtW.QListWidget):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setAcceptDrops(True)
+        self.setDragEnabled(True)
+        self.setDragDropMode(QtW.QAbstractItemView.DragDropMode.InternalMove)
+        
+    def dropEvent(self, event):
+        widget = self.itemWidget(self.currentItem())
+        super().dropEvent(event)
+        
+        # It seems that QListView has a bug in drag-and-drop.
+        # When we tried to move the first item to the upper half region of the
+        # second item, the inner widget of the first item dissapears.
+        # This bug seemed to be solved to set the inner widget again.
+        item = self.itemAt(event.pos())
+        dest = self.itemWidget(item)
+        if dest is None:
+            self.setItemWidget(item, widget)
+
 
 class _ListContainer(ContainerBase):
     def __init__(self, layout="vertical"):
         QBaseWidget.__init__(self, QtW.QWidget)
-        self._listwidget = QtW.QListWidget(self._qwidget)
+        self._listwidget = _QListWidget(self._qwidget)
         if layout == "horizontal":
             self._layout: QtW.QLayout = QtW.QHBoxLayout()
         else:
@@ -308,9 +334,6 @@ class _ListContainer(ContainerBase):
         self._layout.addWidget(self._listwidget)
         self._qwidget.setLayout(self._layout)
         
-        self._listwidget.setAcceptDrops(True)
-        self._listwidget.setDragEnabled(True)
-        self._listwidget.setDragDropMode(QtW.QAbstractItemView.DragDropMode.InternalMove)
         if layout == "horizontal":
             self._listwidget.setFlow(QtW.QListView.LeftToRight)
         else:
@@ -445,10 +468,20 @@ class ButtonContainer(ContainerWidget):
     
     @property
     def btn_text(self):
+        _btn_text_warning()
         return self._widget._qwidget.text()
 
     @btn_text.setter
     def btn_text(self, text: str):
+        _btn_text_warning()
+        self._widget._qwidget.setText(text)
+    
+    @property
+    def text(self):
+        return self._widget._qwidget.text()
+
+    @text.setter
+    def text(self, text: str):
         self._widget._qwidget.setText(text)
 
 @wrap_container(base=_VCollapsibleContainer)
@@ -457,10 +490,20 @@ class CollapsibleContainer(ContainerWidget):
     
     @property
     def btn_text(self):
+        _btn_text_warning()
         return self._widget._expand_btn.text()
 
     @btn_text.setter
     def btn_text(self, text: str):
+        _btn_text_warning()
+        self._widget._expand_btn.setText(text)
+    
+    @property
+    def text(self):
+        return self._widget._expand_btn.text()
+
+    @text.setter
+    def text(self, text: str):
         self._widget._expand_btn.setText(text)
     
     @property
@@ -481,10 +524,20 @@ class HCollapsibleContainer(ContainerWidget):
     
     @property
     def btn_text(self):
+        _btn_text_warning()
         return self._widget._expand_btn.text()
 
     @btn_text.setter
     def btn_text(self, text: str):
+        _btn_text_warning()
+        self._widget._expand_btn.setText(text)
+    
+    @property
+    def text(self):
+        return self._widget._expand_btn.text()
+
+    @text.setter
+    def text(self, text: str):
         self._widget._expand_btn.setText(text)
         
     @property
