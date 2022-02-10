@@ -2,6 +2,7 @@ from __future__ import annotations
 from typing import Any, TYPE_CHECKING, Callable, TypeVar, overload, Generic, Union
 from pathlib import Path
 import datetime
+import sys
 from enum import Enum
 from dataclasses import Field, MISSING
 from magicgui.type_map import get_widget_class
@@ -16,8 +17,15 @@ if TYPE_CHECKING:
     from .gui._base import MagicTemplate
     _M = TypeVar("_M", bound=MagicTemplate)
 
+if sys.version_info >= (3, 10):
+    # From Python 3.10 the Field type takes an additional argument "kw_only".
+    class Field(Field):
+        def __init__(self, **kwargs):
+            super().__init__(**kwargs, kw_only=False)
+
 _W = TypeVar("_W", bound=Widget)
 _V = TypeVar("_V", bound=object)
+
 
 class MagicField(Field, Generic[_W, _V]):
     """
