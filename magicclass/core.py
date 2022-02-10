@@ -199,7 +199,7 @@ def magicclass(class_: type | None = None,
                 self.__post_init__()
             
             if widget_type in (WidgetType.collapsible, WidgetType.button):
-                self.btn_text = self.name
+                self.text = self.name
             
             macrowidget = self.macro.widget.native
             macrowidget.setParent(self.native, macrowidget.windowFlags())

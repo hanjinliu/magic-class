@@ -59,7 +59,7 @@ A push button widget is created. Contents of the container show up when the butt
 + *option*: ``widget_type="button"``
 + *base Qt class*: QPushButton
 + *additional properties*
-    ``btn_text`` ... Text of button.
+    ``text`` ... Text of button.
 
 CollapsibleContainer
 ^^^^^^^^^^^^^^^^^^^^
@@ -71,7 +71,8 @@ Collapsible/expandable widget is created.
 + *option*: ``widget_type="collapsible"``
 + *base Qt class*: QToolButton
 + *additional properties*
-    ``btn_text`` ... Text of button.
+    ``text`` ... Text of button.
+    ``collapsed`` ... Toggle visibility of the contents.
     
 
 DraggableContainer
@@ -111,6 +112,18 @@ Container is enclosed by a line. Widget name will be the title of the group box.
 + *base Qt class*: QGroupBox
 + *additional properties*
     None
+
+
+HCollapsibleContainer
+^^^^^^^^^^^^^^^^^^^^^
+
+An horizontal collapsible/expandable widget is created.
+
++ *option*: ``widget_type="hcollapsible"``
++ *base Qt class*: QToolButton
++ *additional properties*
+    ``collapsed`` ... Toggle visibility of the contents.
+
 
 ListContainer
 ^^^^^^^^^^^^^

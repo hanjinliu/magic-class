@@ -52,5 +52,6 @@ PopUpModeStr = Union[Literal["popup"],
 
 
 ErrorModeStr = Union[Literal["msgbox"],
-                     Literal["stderr"]
+                     Literal["stderr"],
+                     Literal["stdout"],
                      ]

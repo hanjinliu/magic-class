@@ -12,9 +12,7 @@ if TYPE_CHECKING:
     from matplotlib.axes import Axes
 
 class Figure(FreeWidget):
-    """
-    A matplotlib figure canvas.
-    """
+    """A matplotlib figure canvas."""
     def __init__(self, 
                  nrows: int = 1,
                  ncols: int = 1,

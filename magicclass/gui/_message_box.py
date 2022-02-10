@@ -2,6 +2,7 @@ from __future__ import annotations
 from qtpy.QtWidgets import QMessageBox, QTextEdit, QDialog, QVBoxLayout
 
 class QtTracebackDialog(QDialog):
+    """A dialog box that shows Python traceback."""
     def __init__(self, parent):
         super().__init__(parent)
         self.setWindowTitle("Traceback")

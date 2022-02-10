@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Container Variations &mdash; magic-class 0.5.20 documentation</title>
+  <title>Container Variations &mdash; magic-class 0.5.21.dev0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/columns.css" type="text/css" />
@@ -31,7 +31,7 @@
             <a href="index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.20
+                0.5.21.dev0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -60,6 +60,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#draggablecontainer">DraggableContainer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#framecontainer">FrameContainer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#groupboxcontainer">GroupBoxContainer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#hcollapsiblecontainer">HCollapsibleContainer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#listcontainer">ListContainer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#subwindowscontainer">SubWindowsContainer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#scrollablecontainer">ScrollableContainer</a></li>
@@ -148,7 +149,7 @@ tool bar will be added to appropriate spaces according to the container type.</p
 <li><p><em>option</em>: <code class="docutils literal notranslate"><span class="pre">widget_type=&quot;button&quot;</span></code></p></li>
 <li><p><em>base Qt class</em>: QPushButton</p></li>
 <li><dl class="simple">
-<dt><em>additional properties</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">btn_text</span></code> ... Text of button.</p>
+<dt><em>additional properties</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">text</span></code> ... Text of button.</p>
 </dd>
 </dl>
 </li>
@@ -162,7 +163,8 @@ tool bar will be added to appropriate spaces according to the container type.</p
 <li><p><em>option</em>: <code class="docutils literal notranslate"><span class="pre">widget_type=&quot;collapsible&quot;</span></code></p></li>
 <li><p><em>base Qt class</em>: QToolButton</p></li>
 <li><dl class="simple">
-<dt><em>additional properties</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">btn_text</span></code> ... Text of button.</p>
+<dt><em>additional properties</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">text</span></code> ... Text of button.
+<code class="docutils literal notranslate"><span class="pre">collapsed</span></code> ... Toggle visibility of the contents.</p>
 </dd>
 </dl>
 </li>
@@ -205,6 +207,19 @@ tool bar will be added to appropriate spaces according to the container type.</p
 <li><p><em>base Qt class</em>: QGroupBox</p></li>
 <li><dl class="simple">
 <dt><em>additional properties</em></dt><dd><p>None</p>
+</dd>
+</dl>
+</li>
+</ul>
+</section>
+<section id="hcollapsiblecontainer">
+<h3>HCollapsibleContainer<a class="headerlink" href="#hcollapsiblecontainer" title="Permalink to this headline">¶</a></h3>
+<p>An horizontal collapsible/expandable widget is created.</p>
+<ul class="simple">
+<li><p><em>option</em>: <code class="docutils literal notranslate"><span class="pre">widget_type=&quot;hcollapsible&quot;</span></code></p></li>
+<li><p><em>base Qt class</em>: QToolButton</p></li>
+<li><dl class="simple">
+<dt><em>additional properties</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">collapsed</span></code> ... Toggle visibility of the contents.</p>
 </dd>
 </dl>
 </li>

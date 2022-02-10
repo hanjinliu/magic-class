@@ -200,7 +200,7 @@ class _DraggableContainer(ContainerBase):
         self._scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
             
 class _ButtonContainer(ContainerBase):
-    def __init__(self, layout="vertical", btn_text=""):
+    def __init__(self, layout="vertical", text=""):
         QBaseWidget.__init__(self, QtW.QWidget)
         if layout == "horizontal":
             self._layout: QtW.QLayout = QtW.QHBoxLayout()
@@ -212,7 +212,7 @@ class _ButtonContainer(ContainerBase):
         self._inner_widget.setParent(self._qwidget, self._inner_widget.windowFlags())
         self._inner_widget.setLayout(self._layout)
         
-        self._qwidget.setText(btn_text)
+        self._qwidget.setText(text)
         self._qwidget.clicked.connect(lambda x: self._inner_widget.show())
 
 _VERTICAL_SETTING = {"expanded-arrow": Qt.ArrowType.DownArrow,
@@ -239,7 +239,7 @@ class _QCollapsible(QtW.QWidget):
 class _Collapsibles(ContainerBase):
     _setting: dict[str, Any]
     
-    def __init__(self, layout="vertical", btn_text=""):
+    def __init__(self, layout="vertical", text=""):
         QBaseWidget.__init__(self, QtW.QWidget)
         if layout == "horizontal":
             self._layout: QtW.QLayout = QtW.QHBoxLayout()
@@ -258,7 +258,7 @@ class _Collapsibles(ContainerBase):
         self._expand_btn = QtW.QToolButton(self._qwidget)
         self._expand_btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
         self._expand_btn.setArrowType(self._setting["collapsed-arrow"])
-        self._expand_btn.setText(btn_text)
+        self._expand_btn.setText(text)
         self._expand_btn.setCheckable(True)
         self._expand_btn.setChecked(False)
         self._expand_btn.setStyleSheet(f"""
@@ -526,25 +526,7 @@ class CollapsibleContainer(ContainerWidget):
 @wrap_container(base=_HCollapsibleContainer)
 class HCollapsibleContainer(ContainerWidget):
     """A collapsible Container Widget."""    
-    
-    @property
-    def btn_text(self):
-        _btn_text_warning()
-        return self._widget._expand_btn.text()
-
-    @btn_text.setter
-    def btn_text(self, text: str):
-        _btn_text_warning()
-        self._widget._expand_btn.setText(text)
-    
-    @property
-    def text(self):
-        return self._widget._expand_btn.text()
-
-    @text.setter
-    def text(self, text: str):
-        self._widget._expand_btn.setText(text)
-        
+            
     @property
     def collapsed(self) -> bool:
         return self._widget.collapsed
