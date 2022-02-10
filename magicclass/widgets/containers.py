@@ -152,8 +152,10 @@ class _ScrollableContainer(ContainerBase):
         self._scroll_area = QtW.QScrollArea(self._qwidget)
         if layout == "horizontal":
             self._layout: QtW.QLayout = QtW.QHBoxLayout()
+            self._layout.setAlignment(Qt.AlignCenter)
         else:
             self._layout = QtW.QVBoxLayout()
+            self._layout.setAlignment(Qt.AlignTop)
             
         self._scroll_area.setWidgetResizable(True)
         self._scroll_area.setContentsMargins(0, 0, 0, 0)
@@ -164,6 +166,7 @@ class _ScrollableContainer(ContainerBase):
         self._qwidget.setLayout(QtW.QVBoxLayout())
         self._qwidget.layout().addWidget(self._scroll_area)
         self._qwidget.layout().setContentsMargins(0, 0, 0, 0)
+        
 
 class _WheelDisabledScrollArea(QtW.QScrollArea):
     def eventFilter(self, source, event: QEvent):
@@ -177,8 +180,10 @@ class _DraggableContainer(ContainerBase):
         self._scroll_area = _WheelDisabledScrollArea(self._qwidget)
         if layout == "horizontal":
             self._layout: QtW.QLayout = QtW.QHBoxLayout()
+            self._layout.setAlignment(Qt.AlignCenter)
         else:
             self._layout = QtW.QVBoxLayout()
+            self._layout.setAlignment(Qt.AlignTop)
         
         self._scroll_area.setWidgetResizable(True)
         self._scroll_area.setContentsMargins(0, 0, 0, 0)
