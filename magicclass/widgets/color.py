@@ -20,7 +20,7 @@ from magicgui.application import use_app
 from .utils import merge_super_sigs
 
 def rgba_to_qcolor(rgba: Iterable[float]) -> QColor:
-    return QColor(*[255*c for c in rgba])
+    return QColor(*[int(round(255*c)) for c in rgba])
 
 def qcolor_to_rgba(qcolor: QColor) -> tuple[float, float, float, float]:
     return tuple(c/255 for c in qcolor.getRgb())
@@ -105,7 +105,7 @@ class QColorLineEdit(QLineEdit):
             color = self._color_converter(color)
         elif isinstance(color, QColor):
             color = qcolor_to_rgba(color)
-        code = "#" + "".join(hex(int(c*255))[2:].upper().zfill(2) for c in color)
+        code = "#" + "".join(hex(int(round(c*255)))[2:].upper().zfill(2) for c in color)
         if code.endswith("FF"):
             code = code[:-2]
         self.setText(code)
