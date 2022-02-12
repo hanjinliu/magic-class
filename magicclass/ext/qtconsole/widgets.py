@@ -1,4 +1,4 @@
-from magicgui.events import Signal
+from psygnal import Signal
 from ...widgets.utils import FreeWidget
 
 

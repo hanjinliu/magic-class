@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import Sequence, Tuple
 import numpy as np
 import pyqtgraph as pg
-from magicgui.events import Signal
+from psygnal import Signal
 from ._utils import convert_color_code, to_rgba
 
 

@@ -1,5 +1,5 @@
 from __future__ import annotations
-from magicgui.events import Signal
+from psygnal import Signal
 from qtpy.QtWidgets import QFrame, QLabel, QPushButton, QSizePolicy, QHBoxLayout
 from .utils import FreeWidget
 

@@ -21,7 +21,7 @@ from docstring_parser import parse, compose
 from qtpy.QtWidgets import QWidget, QDockWidget
 from qtpy.QtGui import QIcon
 
-from magicgui.events import Signal
+from psygnal import Signal
 from magicgui.signature import MagicParameter
 from magicgui.widgets import (
     FunctionGui,

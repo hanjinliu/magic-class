@@ -3,7 +3,7 @@ from typing import Callable, Iterable, Any, Generic, TypeVar
 from qtpy.QtWidgets import QPushButton, QAction, QWidgetAction, QToolButton, QWidget, QMenu
 from qtpy.QtGui import QIcon
 from qtpy.QtCore import QSize
-from magicgui.events import Signal
+from psygnal import Signal
 from magicgui.widgets import PushButton
 from magicgui.widgets._concrete import _LabeledWidget
 from magicgui.widgets._bases import Widget, ValueWidget
