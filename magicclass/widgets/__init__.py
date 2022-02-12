@@ -22,7 +22,7 @@ from .containers import (
     )
 from .pywidgets import ListWidget, DictWidget
 from .color import ColorEdit, ColorSlider
-from .misc import Figure, ConsoleTextEdit, CheckButton, SpreadSheet
+from .misc import Figure, OptionalWidget, ConsoleTextEdit, CheckButton, SpreadSheet
 from .separator import Separator
 from .sequence import ListEdit, TupleEdit
 from .utils import FreeWidget
@@ -30,6 +30,7 @@ from .utils import FreeWidget
 
 __all__ = ["ListWidget", 
            "Figure",
+           "OptionalWidget",
            "ColorEdit",
            "ColorSlider",
            "ConsoleTextEdit",

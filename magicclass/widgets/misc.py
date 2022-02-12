@@ -1,15 +1,54 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Iterable, MutableSequence
+from typing import TYPE_CHECKING, Iterable, MutableSequence, Any
 from qtpy.QtWidgets import QTabWidget, QLineEdit, QMenu
 from qtpy.QtGui import QTextCursor
 from qtpy.QtCore import Qt
-from magicgui.widgets import PushButton, TextEdit, Table
-
+from magicgui.widgets import PushButton, TextEdit, Table, Container, CheckBox
+from magicgui.widgets._bases.value_widget import ValueWidget, UNSET
 from .utils import FreeWidget
 
 if TYPE_CHECKING:
     from qtpy.QtWidgets import QTextEdit
     from matplotlib.axes import Axes
+
+
+class OptionalWidget(Container):
+    """A container that can represent optional argument."""
+    def __init__(self, widget: ValueWidget, text: str = None, layout="vertical", nullable=True, value=None, **kwargs):
+        if text is None:
+            text = f"set {kwargs.get('name', 'value')}"
+        self._checkbox = CheckBox(text=text, value=True)
+        self._inner_value_widget = widget
+        super().__init__(layout=layout, widgets=(self._checkbox, self._inner_value_widget,), 
+                         labels=True, **kwargs)
+        @self._checkbox.changed.connect
+        def _toggle_visibility(v: bool):
+            self._inner_value_widget.visible = v
+        self.value = value
+    
+    @property
+    def value(self) -> Any:
+        if self._checkbox.value:
+            return self._inner_value_widget.value
+        else:
+            return None
+    
+    @value.setter
+    def value(self, v: Any) -> None:
+        if v is None or v is UNSET:
+            self._checkbox.value = False
+        else:
+            self._inner_value_widget.value = v
+            self._checkbox.value = True
+    
+    @property
+    def text(self) -> str:
+        return self._checkbox.text
+    
+    @text.setter
+    def text(self, v: str) -> None:
+        self._checkbox.text = v 
+        
 
 class Figure(FreeWidget):
     """A matplotlib figure canvas."""
