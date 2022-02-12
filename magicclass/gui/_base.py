@@ -46,7 +46,8 @@ from .mgui_ext import (
     FunctionGuiPlus,
     PushButtonPlus,
     _LabeledWidgetAction,
-    mguiLike)
+    mguiLike
+    )
 from .utils import get_parameters, define_callback
 from ._macro import GuiMacro
 
