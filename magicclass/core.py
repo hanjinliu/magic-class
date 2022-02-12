@@ -5,6 +5,7 @@ from dataclasses import is_dataclass
 from weakref import WeakValueDictionary
 from typing import Any, TYPE_CHECKING
 from typing_extensions import Annotated, _AnnotatedAlias
+from magicgui.widgets import EmptyWidget
 
 from .gui.class_gui import (
     ClassGuiBase, 
@@ -28,6 +29,7 @@ from .gui._base import PopUpMode, ErrorMode, defaults, MagicTemplate, check_over
 from .gui import ContextMenuGui, MenuGui, ToolBarGui
 from ._app import get_app
 from ._typing import WidgetType
+from .fields import MagicField
 from . import _macrokit  # activate macrokit registration things.
 
 if TYPE_CHECKING:
@@ -71,11 +73,16 @@ def Bound(value: Any) -> _AnnotatedAlias:
     
     ``Bound(value)`` is identical to ``Annotated[Any, {"bind": value}]``.    
     """    
-    # It is better to annotate like Annotated[int, {...}] but some widgets does not
-    # support bind. Also, we must ensure that parameters annotated with "bind" creates
-    # EmptyWidget.
+    _type = Any
+    if callable(value):
+        annot: dict[str, Any] = getattr(value, "__annotations__", {})
+        _type = annot.get("return", Any)
+    elif isinstance(value, MagicField):
+        _type = value.annotation or Any
+    else:
+        _type = type(value)
     
-    return Annotated[Any, {"bind": value}]
+    return Annotated[_type, {"bind": value, "widget_type": EmptyWidget}]
 
 
 def magicclass(class_: type | None = None,
