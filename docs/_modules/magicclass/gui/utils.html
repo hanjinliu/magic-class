@@ -3,24 +3,24 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.gui.utils &mdash; magic-class 0.5.20 documentation</title>
+  <title>magicclass.gui.utils &mdash; magic-class 0.5.21.dev0 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
-  
+
         <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
         <script src="../../../_static/jquery.js"></script>
         <script src="../../../_static/underscore.js"></script>
         <script src="../../../_static/doctools.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
-    <link rel="search" title="Search" href="../../../search.html" /> 
+    <link rel="search" title="Search" href="../../../search.html" />
 </head>
 
-<body class="wy-body-for-nav"> 
+<body class="wy-body-for-nav">
   <div class="wy-grid-for-nav">
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
@@ -28,7 +28,7 @@
             <a href="../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.20
+                0.5.21.dev0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -76,7 +76,7 @@
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-             
+
   <h1>Source code for magicclass.gui.utils</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span>
@@ -104,13 +104,13 @@
         <span class="k">def</span> <span class="nf">_callback</span><span class="p">():</span>
             <span class="c1"># search for parent instances that have the same name.</span>
             <span class="n">current_self</span> <span class="o">=</span> <span class="bp">self</span>
-            <span class="k">while</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">hasattr</span><span class="p">(</span><span class="n">current_self</span><span class="p">,</span> <span class="n">funcname</span><span class="p">)</span> <span class="ow">and</span> 
+            <span class="k">while</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">hasattr</span><span class="p">(</span><span class="n">current_self</span><span class="p">,</span> <span class="n">funcname</span><span class="p">)</span> <span class="ow">and</span>
                     <span class="n">current_self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">==</span> <span class="n">clsname</span><span class="p">):</span>
                 <span class="n">current_self</span> <span class="o">=</span> <span class="n">current_self</span><span class="o">.</span><span class="n">__magicclass_parent__</span>
             <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">macro</span><span class="o">.</span><span class="n">blocked</span><span class="p">():</span>
                 <span class="nb">getattr</span><span class="p">(</span><span class="n">current_self</span><span class="p">,</span> <span class="n">funcname</span><span class="p">)()</span>
             <span class="k">return</span> <span class="kc">None</span>
-    
+
     <span class="k">return</span> <span class="n">_callback</span></div>
 
 <div class="viewcode-block" id="define_context_menu"><a class="viewcode-back" href="../../../magicclass.gui.html#magicclass.gui.utils.define_context_menu">[docs]</a><span class="k">def</span> <span class="nf">define_context_menu</span><span class="p">(</span><span class="n">contextmenu</span><span class="p">:</span> <span class="n">ContextMenuGui</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
@@ -137,7 +137,7 @@
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
+
 
 </footer>
         </div>
@@ -148,7 +148,7 @@
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
 
 </body>
 </html>

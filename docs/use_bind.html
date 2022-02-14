@@ -11,7 +11,7 @@
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
-  
+
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
@@ -20,10 +20,10 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Define Custom Keybindings" href="keybinding.html" />
-    <link rel="prev" title="Call Parent Methods from its Child" href="use_wraps.html" /> 
+    <link rel="prev" title="Call Parent Methods from its Child" href="use_wraps.html" />
 </head>
 
-<body class="wy-body-for-nav"> 
+<body class="wy-body-for-nav">
   <div class="wy-grid-for-nav">
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
@@ -84,7 +84,7 @@
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-             
+
   <section id="binding-values-to-arguments">
 <h1>Binding Values to Arguments<a class="headerlink" href="#binding-values-to-arguments" title="Permalink to this headline">¶</a></h1>
 <p>In <code class="docutils literal notranslate"><span class="pre">magicgui</span></code>, you can bind values to function arguments instead of annotating them.
@@ -212,7 +212,7 @@ and options are useless when bind option is specified.</p>
     <span class="n">a</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
     <span class="n">b</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x0</span><span class="p">:</span> <span class="n">Bound</span><span class="p">(</span><span class="n">a</span><span class="p">),</span> <span class="n">x1</span><span class="p">:</span> <span class="n">Bound</span><span class="p">(</span><span class="n">b</span><span class="p">)):</span>
+    <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x0</span><span class="p">:</span> <span class="n">Bound</span><span class="p">[</span><span class="n">a</span><span class="p">],</span> <span class="n">x1</span><span class="p">:</span> <span class="n">Bound</span><span class="p">[</span><span class="n">b</span><span class="p">]):</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">x0</span> <span class="o">+</span> <span class="n">x1</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -236,7 +236,7 @@ and options are useless when bind option is specified.</p>
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
+
 
 </footer>
         </div>
@@ -247,7 +247,7 @@ and options are useless when bind option is specified.</p>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
 
 </body>
 </html>

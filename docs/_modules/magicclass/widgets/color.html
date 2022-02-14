@@ -10,17 +10,17 @@
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
-  
+
         <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
         <script src="../../../_static/jquery.js"></script>
         <script src="../../../_static/underscore.js"></script>
         <script src="../../../_static/doctools.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
-    <link rel="search" title="Search" href="../../../search.html" /> 
+    <link rel="search" title="Search" href="../../../search.html" />
 </head>
 
-<body class="wy-body-for-nav"> 
+<body class="wy-body-for-nav">
   <div class="wy-grid-for-nav">
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
@@ -76,7 +76,7 @@
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-             
+
   <h1>Source code for magicclass.widgets.color</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterable</span>
@@ -100,7 +100,7 @@
 <span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">merge_super_sigs</span>
 
 <div class="viewcode-block" id="rgba_to_qcolor"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.color.rgba_to_qcolor">[docs]</a><span class="k">def</span> <span class="nf">rgba_to_qcolor</span><span class="p">(</span><span class="n">rgba</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">QColor</span><span class="p">:</span>
-    <span class="k">return</span> <span class="n">QColor</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="mi">255</span><span class="o">*</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">rgba</span><span class="p">])</span></div>
+    <span class="k">return</span> <span class="n">QColor</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="mi">255</span><span class="o">*</span><span class="n">c</span><span class="p">))</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">rgba</span><span class="p">])</span></div>
 
 <div class="viewcode-block" id="qcolor_to_rgba"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.color.qcolor_to_rgba">[docs]</a><span class="k">def</span> <span class="nf">qcolor_to_rgba</span><span class="p">(</span><span class="n">qcolor</span><span class="p">:</span> <span class="n">QColor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
     <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">c</span><span class="o">/</span><span class="mi">255</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">qcolor</span><span class="o">.</span><span class="n">getRgb</span><span class="p">())</span></div>
@@ -114,14 +114,14 @@
 <span class="c1"># modified from napari/_qt/widgets/qt_color_swatch.py</span>
 <div class="viewcode-block" id="QColorSwatch"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.color.QColorSwatch">[docs]</a><span class="k">class</span> <span class="nc">QColorSwatch</span><span class="p">(</span><span class="n">QFrame</span><span class="p">):</span>
     <span class="n">colorChanged</span> <span class="o">=</span> <span class="n">QtSignal</span><span class="p">()</span>
-    
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setCursor</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">PointingHandCursor</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_color</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">colorChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_update_swatch_style</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setMinimumWidth</span><span class="p">(</span><span class="mi">40</span><span class="p">)</span>
-    
+
 <div class="viewcode-block" id="QColorSwatch.heightForWidth"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.color.QColorSwatch.heightForWidth">[docs]</a>    <span class="k">def</span> <span class="nf">heightForWidth</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">w</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">w</span><span class="o">*</span><span class="mf">0.667</span><span class="p">)</span></div>
 
@@ -138,11 +138,11 @@
             <span class="n">ok</span> <span class="o">=</span> <span class="n">dlg</span><span class="o">.</span><span class="n">exec_</span><span class="p">()</span>
             <span class="k">if</span> <span class="n">ok</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">setColor</span><span class="p">(</span><span class="n">dlg</span><span class="o">.</span><span class="n">selectedColor</span><span class="p">())</span></div>
-            
+
 
 <div class="viewcode-block" id="QColorSwatch.getQColor"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.color.QColorSwatch.getQColor">[docs]</a>    <span class="k">def</span> <span class="nf">getQColor</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QColor</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">rgba_to_qcolor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_color</span><span class="p">)</span></div>
-        
+
 <div class="viewcode-block" id="QColorSwatch.setColor"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.color.QColorSwatch.setColor">[docs]</a>    <span class="k">def</span> <span class="nf">setColor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="p">:</span> <span class="n">QColor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">old_color</span> <span class="o">=</span> <span class="n">rgba_to_html</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_color</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_color</span> <span class="o">=</span> <span class="n">qcolor_to_rgba</span><span class="p">(</span><span class="n">color</span><span class="p">)</span>
@@ -172,28 +172,28 @@
             <span class="n">color</span> <span class="o">=</span> <span class="n">rgba_to_html</span><span class="p">(</span><span class="n">qcolor_to_rgba</span><span class="p">(</span><span class="n">color</span><span class="p">))</span>
         <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">color</span> <span class="o">=</span> <span class="n">rgba_to_html</span><span class="p">(</span><span class="n">color</span><span class="p">)</span>
-        
+
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">color</span><span class="p">)</span></div>
-    
+
 <div class="viewcode-block" id="QColorLineEdit.getQColor"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.color.QColorLineEdit.getQColor">[docs]</a>    <span class="k">def</span> <span class="nf">getQColor</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QColor</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Get color as QColor object&quot;&quot;&quot;</span>
         <span class="n">rgba</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_color_converter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
         <span class="k">return</span> <span class="n">rgba_to_qcolor</span><span class="p">(</span><span class="n">rgba</span><span class="p">)</span></div>
-        
+
 <div class="viewcode-block" id="QColorLineEdit.setColor"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.color.QColorLineEdit.setColor">[docs]</a>    <span class="k">def</span> <span class="nf">setColor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="p">:</span> <span class="n">QColor</span> <span class="o">|</span> <span class="nb">str</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">color</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_color_converter</span><span class="p">(</span><span class="n">color</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="n">QColor</span><span class="p">):</span>
             <span class="n">color</span> <span class="o">=</span> <span class="n">qcolor_to_rgba</span><span class="p">(</span><span class="n">color</span><span class="p">)</span>
-        <span class="n">code</span> <span class="o">=</span> <span class="s2">&quot;#&quot;</span> <span class="o">+</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">hex</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">c</span><span class="o">*</span><span class="mi">255</span><span class="p">))[</span><span class="mi">2</span><span class="p">:]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">color</span><span class="p">)</span>
+        <span class="n">code</span> <span class="o">=</span> <span class="s2">&quot;#&quot;</span> <span class="o">+</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">hex</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">c</span><span class="o">*</span><span class="mi">255</span><span class="p">)))[</span><span class="mi">2</span><span class="p">:]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">color</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">code</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;FF&quot;</span><span class="p">):</span>
             <span class="n">code</span> <span class="o">=</span> <span class="n">code</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">code</span><span class="p">)</span></div></div>
-        
+
 
 <div class="viewcode-block" id="QColorEdit"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.color.QColorEdit">[docs]</a><span class="k">class</span> <span class="nc">QColorEdit</span><span class="p">(</span><span class="n">QWidget</span><span class="p">):</span>
     <span class="n">colorChanged</span> <span class="o">=</span> <span class="n">QtSignal</span><span class="p">(</span><span class="nb">tuple</span><span class="p">)</span>
-    
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;white&quot;</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
         <span class="n">_layout</span> <span class="o">=</span> <span class="n">QHBoxLayout</span><span class="p">()</span>
@@ -202,19 +202,19 @@
         <span class="n">_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_color_swatch</span><span class="p">)</span>
         <span class="n">_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_line_edit</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">_layout</span><span class="p">)</span>
-        
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_color_swatch</span><span class="o">.</span><span class="n">colorChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_on_swatch_changed</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_line_edit</span><span class="o">.</span><span class="n">editingFinished</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_on_line_edit_edited</span><span class="p">)</span>
-        
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_line_edit</span><span class="o">.</span><span class="n">setColor</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_color_swatch</span><span class="o">.</span><span class="n">setColor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_line_edit</span><span class="o">.</span><span class="n">getQColor</span><span class="p">())</span>
-    
-    
+
+
 <div class="viewcode-block" id="QColorEdit.color"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.color.QColorEdit.color">[docs]</a>    <span class="k">def</span> <span class="nf">color</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the current color.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_color_swatch</span><span class="o">.</span><span class="n">_color</span></div>
-    
-    
+
+
 <div class="viewcode-block" id="QColorEdit.setColor"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.color.QColorEdit.setColor">[docs]</a>    <span class="k">def</span> <span class="nf">setColor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Set value as the current color.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="n">QColor</span><span class="p">):</span>
@@ -243,7 +243,7 @@
 <span class="c1"># See https://stackoverflow.com/questions/42820380/use-float-for-qslider</span>
 <div class="viewcode-block" id="QDoubleSlider"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.color.QDoubleSlider">[docs]</a><span class="k">class</span> <span class="nc">QDoubleSlider</span><span class="p">(</span><span class="n">QSlider</span><span class="p">):</span>
     <span class="n">changed</span> <span class="o">=</span> <span class="n">QtSignal</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
-    
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">decimals</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scale</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">decimals</span>
@@ -259,7 +259,7 @@
 
 <div class="viewcode-block" id="QDoubleSlider.setValue"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.color.QDoubleSlider.setValue">[docs]</a>    <span class="k">def</span> <span class="nf">setValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale</span><span class="p">))</span></div>
-        
+
 <div class="viewcode-block" id="QDoubleSlider.setMinimum"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.color.QDoubleSlider.setMinimum">[docs]</a>    <span class="k">def</span> <span class="nf">setMinimum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">setMinimum</span><span class="p">(</span><span class="n">value</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale</span><span class="p">)</span></div>
 
@@ -275,7 +275,7 @@
 
 <div class="viewcode-block" id="QColorSlider"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.color.QColorSlider">[docs]</a><span class="k">class</span> <span class="nc">QColorSlider</span><span class="p">(</span><span class="n">QWidget</span><span class="p">):</span>
     <span class="n">colorChanged</span> <span class="o">=</span> <span class="n">QtSignal</span><span class="p">(</span><span class="nb">tuple</span><span class="p">)</span>
-    
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
         <span class="kn">import</span> <span class="nn">matplotlib.colors</span>
@@ -289,21 +289,21 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">addSlider</span><span class="p">(</span><span class="s2">&quot;B&quot;</span><span class="p">),</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">addSlider</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">),</span>
         <span class="p">]</span>
-        
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_color_edit</span> <span class="o">=</span> <span class="n">QColorEdit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">)</span>
         <span class="nd">@self</span><span class="o">.</span><span class="n">_color_edit</span><span class="o">.</span><span class="n">_line_edit</span><span class="o">.</span><span class="n">editingFinished</span><span class="o">.</span><span class="n">connect</span>
         <span class="k">def</span> <span class="nf">_read_color_str</span><span class="p">(</span><span class="n">e</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">setColor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_color_edit</span><span class="o">.</span><span class="n">_line_edit</span><span class="o">.</span><span class="n">getQColor</span><span class="p">())</span>
-            
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_color_edit</span><span class="o">.</span><span class="n">_color_swatch</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
         <span class="nd">@self</span><span class="o">.</span><span class="n">colorChanged</span><span class="o">.</span><span class="n">connect</span>
         <span class="k">def</span> <span class="nf">_set_color_swatch</span><span class="p">(</span><span class="n">color</span><span class="p">:</span> <span class="n">QColor</span><span class="p">):</span>
             <span class="n">qcolor</span> <span class="o">=</span> <span class="n">rgba_to_qcolor</span><span class="p">(</span><span class="n">color</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_color_edit</span><span class="o">.</span><span class="n">_color_swatch</span><span class="o">.</span><span class="n">setColor</span><span class="p">(</span><span class="n">qcolor</span><span class="p">)</span>
-            
+
         <span class="n">_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_color_edit</span><span class="p">)</span>
-        
-    
+
+
 <div class="viewcode-block" id="QColorSlider.addSlider"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.color.QColorSlider.addSlider">[docs]</a>    <span class="k">def</span> <span class="nf">addSlider</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">qlabel</span> <span class="o">=</span> <span class="n">QLabel</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
         <span class="n">qlabel</span><span class="o">.</span><span class="n">setFixedWidth</span><span class="p">(</span><span class="mi">15</span><span class="p">)</span>
@@ -314,7 +314,7 @@
         <span class="n">qspinbox</span><span class="o">.</span><span class="n">setMaximum</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
         <span class="n">qspinbox</span><span class="o">.</span><span class="n">setSingleStep</span><span class="p">(</span><span class="mf">0.001</span><span class="p">)</span>
         <span class="n">qspinbox</span><span class="o">.</span><span class="n">setAlignment</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignRight</span><span class="p">)</span>
-        
+
         <span class="n">qspinbox</span><span class="o">.</span><span class="n">setButtonSymbols</span><span class="p">(</span><span class="n">QDoubleSpinBox</span><span class="o">.</span><span class="n">ButtonSymbols</span><span class="o">.</span><span class="n">NoButtons</span><span class="p">)</span>
         <span class="n">qspinbox</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="s2">&quot;background:transparent; border: 0;&quot;</span><span class="p">)</span>
 
@@ -330,16 +330,16 @@
         <span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">qlabel</span><span class="p">)</span>
         <span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">qslider</span><span class="p">)</span>
         <span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">qspinbox</span><span class="p">)</span>
-        
+
         <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">_container</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">qslider</span></div>
-    
-    
+
+
 <div class="viewcode-block" id="QColorSlider.color"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.color.QColorSlider.color">[docs]</a>    <span class="k">def</span> <span class="nf">color</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the current color.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">sl</span><span class="o">.</span><span class="n">value</span><span class="p">()</span> <span class="k">for</span> <span class="n">sl</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_qsliders</span><span class="p">)</span></div>
-    
-    
+
+
 <div class="viewcode-block" id="QColorSlider.setColor"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.color.QColorSlider.setColor">[docs]</a>    <span class="k">def</span> <span class="nf">setColor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Set value as the current color.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="n">QColor</span><span class="p">):</span>
@@ -350,20 +350,20 @@
         <span class="k">for</span> <span class="n">sl</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_qsliders</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
             <span class="n">sl</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">colorChanged</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">color</span><span class="p">())</span></div></div>
-            
+
 
 <span class="k">class</span> <span class="nc">_ColorEdit</span><span class="p">(</span><span class="n">QBaseValueWidget</span><span class="p">):</span>
     <span class="n">_qwidget</span><span class="p">:</span> <span class="n">QColorEdit</span>
-    
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">QColorEdit</span><span class="p">,</span> <span class="s2">&quot;color&quot;</span><span class="p">,</span> <span class="s2">&quot;setColor&quot;</span><span class="p">,</span> <span class="s2">&quot;colorChanged&quot;</span><span class="p">)</span>
-        
+
 <span class="k">class</span> <span class="nc">_ColorSlider</span><span class="p">(</span><span class="n">QBaseValueWidget</span><span class="p">):</span>
     <span class="n">_qwidget</span><span class="p">:</span> <span class="n">QColorSlider</span>
-    
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">QColorSlider</span><span class="p">,</span> <span class="s2">&quot;color&quot;</span><span class="p">,</span> <span class="s2">&quot;setColor&quot;</span><span class="p">,</span> <span class="s2">&quot;colorChanged&quot;</span><span class="p">)</span>
-    
+
 
 <span class="nd">@merge_super_sigs</span>
 <span class="k">class</span> <span class="nc">ColorEdit</span><span class="p">(</span><span class="n">ValueWidget</span><span class="p">):</span>
@@ -412,7 +412,7 @@
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
+
 
 </footer>
         </div>
@@ -423,7 +423,7 @@
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
 
 </body>
 </html>
