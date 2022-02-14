@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 from typing import TYPE_CHECKING
 import weakref
@@ -11,8 +10,10 @@ from magicgui.backends._qtpy.widgets import QBaseWidget
 if TYPE_CHECKING:
     from ..gui import BaseGui, ContextMenuGui
 
+
 class _NotInitialized:
     """This class helps better error handling."""
+
     def __init__(self, msg: str):
         self.msg = msg
 
@@ -22,14 +23,16 @@ class _NotInitialized:
 
 class FreeWidget(Widget):
     """A Widget class with any QWidget as a child."""
-    
+
     _widget = _NotInitialized(
         "Widget is not correctly initialized. Must call `super().__init__` before using "
         "the widget."
-        )
-    
+    )
+
     def __init__(self, layout="vertical", **kwargs):
-        super().__init__(widget_type=QBaseWidget, backend_kwargs={"qwidg": QWidget}, **kwargs)
+        super().__init__(
+            widget_type=QBaseWidget, backend_kwargs={"qwidg": QWidget}, **kwargs
+        )
         self.native: QWidget
         self.central_widget: QWidget
         if layout == "vertical":
@@ -48,17 +51,19 @@ class FreeWidget(Widget):
         self.native.layout().addWidget(widget, *args)
         widget.setParent(self.native)
         self.central_widget = widget
-        
+
     def set_contextmenu(self, contextmenugui: ContextMenuGui):
         from ..gui import ContextMenuGui
+
         if not isinstance(contextmenugui, ContextMenuGui):
             raise TypeError
         from ..gui.utils import define_context_menu
+
         self.native.setContextMenuPolicy(Qt.CustomContextMenu)
         self.native.customContextMenuRequested.connect(
             define_context_menu(contextmenugui, self.native)
-            )
-    
+        )
+
     @property
     def __magicclass_parent__(self) -> BaseGui | None:
         """Return parent magic class if exists."""
@@ -66,7 +71,7 @@ class FreeWidget(Widget):
             return None
         parent = self._magicclass_parent_ref()
         return parent
-    
+
     @__magicclass_parent__.setter
     def __magicclass_parent__(self, parent) -> None:
         if parent is None:
@@ -76,10 +81,14 @@ class FreeWidget(Widget):
 
 def magicwidget(qcls: type[QWidget]):
     from ..utils import iter_members
+
     for name, attr in iter_members(qcls):
+
         def _(self: FreeWidget, *args, **kwargs):
             return attr(self.central_widget, *args, **kwargs)
-    cls = type(qcls.__name__, (FreeWidget, ), {})
+
+    cls = type(qcls.__name__, (FreeWidget,), {})
+
 
 def merge_super_sigs(cls):
     cls = _merge_super_sigs(cls)

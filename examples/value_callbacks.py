@@ -10,9 +10,9 @@ class Plot:
     class parameters:
         a = field(int, options=options)
         b = field(int, options=options)
-    
+
     plt = field(Figure)
-    
+
     @parameters.a.connect
     @parameters.b.connect
     def _plot(self):

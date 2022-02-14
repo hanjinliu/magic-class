@@ -4,17 +4,17 @@ from magicclass.widgets import Figure
 
 @magicclass
 class RandomPlot:
-    """Plot random data or clear it."""    
+    """Plot random data or clear it."""
     plt = field(Figure)
-        
+
     def plot(self):
-        """Plot random data."""        
+        """Plot random data."""
         self.plt.plot(np.random.random(100))
-        
+
     def clear_plot(self):
-        """Clear current data."""        
+        """Clear current data."""
         self.plt.cla()
-        
+
 if __name__ == "__main__":
     ui = RandomPlot()
     ui.show()

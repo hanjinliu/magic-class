@@ -9,17 +9,17 @@
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
-  
+
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" /> 
+    <link rel="search" title="Search" href="../../search.html" />
 </head>
 
-<body class="wy-body-for-nav"> 
+<body class="wy-body-for-nav">
   <div class="wy-grid-for-nav">
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
@@ -74,7 +74,7 @@
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-             
+
   <h1>Source code for magicclass.help</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 <span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">FunctionGui</span><span class="p">,</span> <span class="n">Image</span><span class="p">,</span> <span class="n">Slider</span>
@@ -97,7 +97,7 @@
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-    
+
 <span class="c1"># TODO: find</span>
 <span class="c1"># TODO: key-binding</span>
 
@@ -105,9 +105,9 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A Qt widget that will show information of a magic-class widget, built from its</span>
 <span class="sd">    class structure, function docstrings and type annotations.</span>
-<span class="sd">    &quot;&quot;&quot;</span>    
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_initial_image_size</span> <span class="o">=</span> <span class="mi">250</span>
-    
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ui</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">orientation</span><span class="o">=</span><span class="n">Qt</span><span class="o">.</span><span class="n">Horizontal</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setWindowFlag</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">Window</span><span class="p">)</span>
@@ -117,7 +117,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_text</span><span class="o">.</span><span class="n">read_only</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_mgui_image</span> <span class="o">=</span> <span class="n">Image</span><span class="p">()</span>
         <span class="n">c</span> <span class="o">=</span> <span class="n">DraggableContainer</span><span class="p">(</span><span class="n">widgets</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_mgui_image</span><span class="p">])</span>
-        
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_mgui_slider</span> <span class="o">=</span> <span class="n">Slider</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_initial_image_size</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_mgui_slider</span><span class="o">.</span><span class="n">changed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_resize_image</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_mgui_slider</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">c</span>
@@ -126,20 +126,20 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_mgui_slider</span><span class="o">.</span><span class="n">max_width</span> <span class="o">=</span> <span class="mi">100</span>
         <span class="n">c</span><span class="o">.</span><span class="n">min_height</span> <span class="o">=</span> <span class="mi">120</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_resize_image</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_initial_image_size</span><span class="p">)</span>
-        
+
         <span class="n">widget_right</span> <span class="o">=</span> <span class="n">SplitterContainer</span><span class="p">(</span><span class="n">widgets</span><span class="o">=</span><span class="p">[</span><span class="n">c</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_text</span><span class="p">])</span>
-        
+
         <span class="bp">self</span><span class="o">.</span><span class="n">insertWidget</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tree</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">insertWidget</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">widget_right</span><span class="o">.</span><span class="n">native</span><span class="p">)</span>
-        
+
         <span class="k">if</span> <span class="n">ui</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">set_tree</span><span class="p">(</span><span class="n">ui</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_update_ui_view</span><span class="p">(</span><span class="n">ui</span><span class="p">)</span>
-            
+
         <span class="n">width</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">()</span>
         <span class="n">left_width</span> <span class="o">=</span> <span class="n">width</span><span class="o">//</span><span class="mi">3</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setSizes</span><span class="p">([</span><span class="n">left_width</span><span class="p">,</span> <span class="n">width</span> <span class="o">-</span> <span class="n">left_width</span><span class="p">])</span>
-    
+
     <span class="k">def</span> <span class="nf">set_tree</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ui</span><span class="p">:</span> <span class="n">MagicTemplate</span><span class="p">,</span> <span class="n">root</span><span class="p">:</span> <span class="n">UiBoundTreeItem</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="n">name</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">name</span>
         <span class="k">if</span> <span class="n">root</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -147,7 +147,7 @@
             <span class="n">root</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
             <span class="n">root</span><span class="o">.</span><span class="n">setExpanded</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_tree</span><span class="o">.</span><span class="n">invisibleRootItem</span><span class="p">()</span><span class="o">.</span><span class="n">addChild</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
-                
+
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">widget</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">_iter_unwrapped_children</span><span class="p">(</span><span class="n">ui</span><span class="p">)):</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="n">MagicTemplate</span><span class="p">):</span>
                 <span class="n">child</span> <span class="o">=</span> <span class="n">UiBoundTreeItem</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">ui</span><span class="o">=</span><span class="n">widget</span><span class="p">)</span>
@@ -160,31 +160,31 @@
                     <span class="n">child</span> <span class="o">=</span> <span class="n">grandchild</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">child</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">) </span><span class="si">{</span><span class="n">widget</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                    
+
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">child</span> <span class="o">=</span> <span class="n">UiBoundTreeItem</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">ui</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
                 <span class="n">child</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">) </span><span class="si">{</span><span class="n">widget</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            
+
             <span class="n">root</span><span class="o">.</span><span class="n">addChild</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
-    
+
     <span class="k">def</span> <span class="nf">_resize_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_mgui_image</span><span class="o">.</span><span class="n">min_height</span> <span class="o">=</span> <span class="n">v</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_mgui_image</span><span class="o">.</span><span class="n">max_height</span> <span class="o">=</span> <span class="n">v</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_mgui_image</span><span class="o">.</span><span class="n">min_width</span> <span class="o">=</span> <span class="n">v</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_mgui_image</span><span class="o">.</span><span class="n">max_width</span> <span class="o">=</span> <span class="n">v</span>
-    
+
     <span class="k">def</span> <span class="nf">_update_ui_view</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ui</span><span class="p">:</span> <span class="n">MagicTemplate</span><span class="p">):</span>
         <span class="n">img</span><span class="p">,</span> <span class="n">docs</span> <span class="o">=</span> <span class="n">get_help_info</span><span class="p">(</span><span class="n">ui</span><span class="p">)</span>
-        
+
         <span class="c1"># set image</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_mgui_image</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">img</span>
-        
+
         <span class="c1"># set text</span>
         <span class="n">htmls</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;&lt;h1&gt;</span><span class="si">{</span><span class="n">ui</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&lt;/h1&gt;&lt;p&gt;</span><span class="si">{</span><span class="n">extract_tooltip</span><span class="p">(</span><span class="n">ui</span><span class="p">)</span><span class="si">}</span><span class="s2">&lt;/p&gt;&quot;</span><span class="p">]</span>
-        
+
         <span class="k">if</span> <span class="n">docs</span><span class="p">:</span>
             <span class="n">htmls</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&lt;h2&gt;Contents&lt;/h2&gt;&quot;</span><span class="p">)</span>
-        
+
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">doc</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">docs</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
             <span class="n">htmls</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&lt;h3&gt;(</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">) </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&lt;/h3&gt;&lt;p&gt;</span><span class="si">{</span><span class="n">doc</span><span class="si">}</span><span class="s2">&lt;/p&gt;&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_text</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">htmls</span><span class="p">)</span>
@@ -197,16 +197,16 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_on_treeitem_clicked</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">parent</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_resize_image</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_initial_image_size</span><span class="p">)</span>
 
-    
+
 <div class="viewcode-block" id="UiBoundTreeItem"><a class="viewcode-back" href="../../magicclass.html#magicclass.help.UiBoundTreeItem">[docs]</a><span class="k">class</span> <span class="nc">UiBoundTreeItem</span><span class="p">(</span><span class="n">QTreeWidgetItem</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">ui</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ui</span> <span class="o">=</span> <span class="n">ui</span> <span class="c1"># TODO: use weakref?</span>
-    
+
 <div class="viewcode-block" id="UiBoundTreeItem.child"><a class="viewcode-back" href="../../magicclass.html#magicclass.help.UiBoundTreeItem.child">[docs]</a>    <span class="k">def</span> <span class="nf">child</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">UiBoundTreeItem</span><span class="p">:</span>
         <span class="c1"># Just for typing</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">child</span><span class="p">(</span><span class="n">index</span><span class="p">)</span></div>
-    
+
 <div class="viewcode-block" id="UiBoundTreeItem.takeChild"><a class="viewcode-back" href="../../magicclass.html#magicclass.help.UiBoundTreeItem.takeChild">[docs]</a>    <span class="k">def</span> <span class="nf">takeChild</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">UiBoundTreeItem</span><span class="p">:</span>
         <span class="c1"># Just for typing</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">takeChild</span><span class="p">(</span><span class="n">index</span><span class="p">)</span></div></div>
@@ -230,7 +230,7 @@
     <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
     <span class="n">backend</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">get_backend</span><span class="p">()</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">_has_inner_widget</span> <span class="o">=</span> <span class="p">(</span><span class="n">ScrollableClassGui</span><span class="p">,</span> <span class="n">DraggableClassGui</span><span class="p">,</span> <span class="n">CollapsibleClassGui</span><span class="p">,</span> 
+        <span class="n">_has_inner_widget</span> <span class="o">=</span> <span class="p">(</span><span class="n">ScrollableClassGui</span><span class="p">,</span> <span class="n">DraggableClassGui</span><span class="p">,</span> <span class="n">CollapsibleClassGui</span><span class="p">,</span>
                              <span class="n">ButtonClassGui</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ui</span><span class="p">,</span> <span class="n">_has_inner_widget</span><span class="p">):</span>
             <span class="n">inner_widget</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">_widget</span><span class="o">.</span><span class="n">_inner_widget</span>
@@ -258,13 +258,13 @@
                 <span class="n">docs</span><span class="p">[</span><span class="n">widget</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">_get_doc</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
             <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
             <span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
-            
+
             <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">renderer</span><span class="o">.</span><span class="n">buffer_rgba</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
-        
-        
+
+
     <span class="k">finally</span><span class="p">:</span>
         <span class="n">mpl</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">backend</span><span class="p">)</span>
-    
+
     <span class="k">return</span> <span class="n">data</span><span class="p">,</span> <span class="n">docs</span></div>
 
 <span class="k">def</span> <span class="nf">_screen_scale</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -308,7 +308,7 @@
             <span class="k">yield</span> <span class="n">widget</span>
 
 <span class="k">def</span> <span class="nf">_get_relative_pos</span><span class="p">(</span><span class="n">widget</span><span class="p">:</span> <span class="n">Widget</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;Get relative position of a widget seen from its parent.&quot;&quot;&quot;</span>    
+    <span class="sd">&quot;&quot;&quot;Get relative position of a widget seen from its parent.&quot;&quot;&quot;</span>
     <span class="n">w</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">_labeled_widget</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">w</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">w</span> <span class="o">=</span> <span class="n">widget</span>
@@ -319,14 +319,14 @@
     <span class="kn">from</span> <span class="nn">.signature</span> <span class="kn">import</span> <span class="n">get_additional_option</span>
     <span class="kn">from</span> <span class="nn">.gui.keybinding</span> <span class="kn">import</span> <span class="n">as_shortcut</span>
     <span class="n">keymap</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-    
+
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ui</span><span class="p">,</span> <span class="n">MagicTemplate</span><span class="p">):</span>
         <span class="bp">cls</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="vm">__class__</span>
     <span class="k">elif</span> <span class="n">_issubclass</span><span class="p">(</span><span class="n">ui</span><span class="p">,</span> <span class="n">MagicTemplate</span><span class="p">):</span>
         <span class="bp">cls</span> <span class="o">=</span> <span class="n">ui</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;&#39;get_keymap&#39; can only be called with MagicTemplate input.&quot;</span><span class="p">)</span>
-    
+
     <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">iter_members</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">exclude_prefix</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">MagicTemplate</span><span class="p">):</span>
             <span class="n">child_keymap</span> <span class="o">=</span> <span class="n">get_keymap</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
@@ -336,7 +336,7 @@
             <span class="k">if</span> <span class="n">kb</span><span class="p">:</span>
                 <span class="n">keystr</span> <span class="o">=</span> <span class="n">as_shortcut</span><span class="p">(</span><span class="n">kb</span><span class="p">)</span><span class="o">.</span><span class="n">toString</span><span class="p">()</span>
                 <span class="n">keymap</span><span class="p">[</span><span class="n">keystr</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">extract_tooltip</span><span class="p">(</span><span class="n">attr</span><span class="p">))</span>
-                
+
     <span class="k">return</span> <span class="n">keymap</span></div>
 </pre></div>
 
@@ -353,7 +353,7 @@
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
+
 
 </footer>
         </div>
@@ -364,7 +364,7 @@
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
 
 </body>
 </html>

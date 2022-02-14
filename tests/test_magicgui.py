@@ -7,12 +7,12 @@ def test_magicgui():
         @magicgui
         def f(self, a: int, b: str = "x"):
             self.a = a
-    
+
     ui = A()
     assert type(ui[0]) is widgets.FunctionGui
     assert ui[0].a.value == 0
     assert ui[0].b.value == "x"
-    
+
     # macro should be recorded after called
     ui[0].a.value = 10
     assert len(ui.macro) == 1
@@ -25,7 +25,7 @@ def test_magicgui():
     assert len(ui.macro) == 3
     assert str(ui.macro[-1]) == "ui.f(a=20, b='x')"
     assert str(ui.macro[-2]) == "ui.f(a=10, b='x')"
-    
+
 
 def test_autocall_macro():
     """Auto-called macro should be recorded once."""
@@ -34,7 +34,7 @@ def test_autocall_macro():
         @magicgui(auto_call=True)
         def f(self, a: int, b: str = "x"):
             self.a = a
-    
+
     ui = A()
     ui[0].a.value = 1
     assert str(ui.macro[-1]) == "ui.f(a=1, b='x')"
@@ -49,18 +49,18 @@ def test_wraps():
             def f1(self): ...
             def f2(self): ...
             def f3(self): ...
-        
+
         @B.wraps
         @magicgui
         def f2(self, a: int, b: str = "x"):
             self.a = a
-    
+
     ui = A()
     assert len(ui.B) == 3
     assert type(ui.B[1]) is widgets.FunctionGui
     assert ui.B[1].a.value == 0
     assert ui.B[1].b.value == "x"
-    
+
     # macro should be recorded after called
     ui.B[1].a.value = 10
     assert len(ui.macro) == 1

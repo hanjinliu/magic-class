@@ -7,10 +7,10 @@ import re
 
 QtKey = NewType("QtKey", int)
 QtModifier = NewType("QtModifier", int)
-KeyCombo = Union[Tuple[QtKey], 
-                 Tuple[QtModifier, QtKey], 
-                 Tuple[QtModifier, QtModifier, QtKey]
-                ]
+KeyCombo = Union[
+    Tuple[QtKey], Tuple[QtModifier, QtKey], Tuple[QtModifier, QtModifier, QtKey]
+]
+
 
 class Key(Enum):
     # keys
@@ -55,7 +55,7 @@ class Key(Enum):
     Greater = ">"
     Question = "?"
     At = "@"
-    
+
     # alphabets
     A = "a"
     B = "b"
@@ -83,7 +83,7 @@ class Key(Enum):
     X = "x"
     Y = "y"
     Z = "z"
-    
+
     # numbers
     _0 = "0"
     _1 = "1"
@@ -95,13 +95,13 @@ class Key(Enum):
     _7 = "7"
     _8 = "8"
     _9 = "9"
-    
+
     # modifiers
     Meta = "meta"
     Shift = "shift"
     Ctrl = "ctrl"
     Alt = "alt"
-    
+
     @classmethod
     def to_qtkey(cls, key: str | int | Key) -> QtKey:
         if isinstance(key, str):
@@ -125,7 +125,7 @@ class Key(Enum):
         else:
             raise TypeError(f"Unsupported type for a modifier: {type(key)}.")
         return getattr(Qt, key.name.upper())
-    
+
     # Add method enables expressions like ``Key.Ctrl + Key.A``.
     def __add__(self, other: str | Key) -> tuple[Key, Key]:
         cls = self.__class__
@@ -134,8 +134,8 @@ class Key(Enum):
         elif not isinstance(other, cls):
             raise TypeError(f"Cannot add type {type(other)} to Key object.")
         return (self, other)
-    
-    def __radd__(self, other: str | Key | tuple[str|Key, ...]) -> tuple[Key, ...]:
+
+    def __radd__(self, other: str | Key | tuple[str | Key, ...]) -> tuple[Key, ...]:
         cls = self.__class__
         if isinstance(other, str):
             other = cls(other.lower())
@@ -147,7 +147,9 @@ class Key(Enum):
         else:
             raise TypeError(f"Cannot add Key object to type {type(other)}.")
 
+
 MODIFIERS = (Key.Meta, Key.Shift, Key.Ctrl, Key.Alt)
+
 
 def ismodifier(s: str) -> bool:
     s = s.lower()
@@ -155,27 +157,27 @@ def ismodifier(s: str) -> bool:
         return True
     else:
         return Key(s) in MODIFIERS
-    
+
+
 def parse_key_combo(key_combo: str) -> QtKey:
     # For compatibility with napari
     parsed = re.split("-(?=.+)", key_combo)
     return strs2keycombo(*parsed)
 
-def strs2keycombo(*args: tuple[str|Key, ...]) -> KeyCombo:
+
+def strs2keycombo(*args: tuple[str | Key, ...]) -> KeyCombo:
     *modifiers, key = args
     if len(modifiers) > 2:
         raise ValueError("More than two modifiers found.")
     return tuple(Key.to_qtmodifier(m) for m in modifiers) + (Key.to_qtkey(key),)
 
+
 def as_shortcut(key_combo: tuple) -> QKeySequence:
     if not isinstance(key_combo, tuple):
         raise TypeError("Unsupported key combo.")
-    
+
     key0 = key_combo[0]
-    if (len(key_combo) == 1 and 
-        isinstance(key0, str) and
-        not hasattr(Key, key0.lower())
-        ):
+    if len(key_combo) == 1 and isinstance(key0, str) and not hasattr(Key, key0.lower()):
         qtkeycombo = parse_key_combo(*key_combo)
     else:
         qtkeycombo = strs2keycombo(*key_combo)

@@ -2,19 +2,22 @@ from __future__ import annotations
 import numpy as np
 from ...widgets.utils import FreeWidget
 
+
 class PyVistaCanvas(FreeWidget):
     def __init__(self, **kwargs):
         from pyvistaqt import QtInteractor
+
         super().__init__(**kwargs)
         widget = QtInteractor(parent=self.native)
         self.set_widget(widget)
         self.central_widget: QtInteractor
-    
+
     def add_mesh(self, mesh, **kwargs):
         self.central_widget.add_mesh(mesh, **kwargs)
-    
+
     def add_points(self, points: np.ndarray, **kwargs):
         self.central_widget.add_points(points, **kwargs)
+
 
 shared_doc = """
 
@@ -151,7 +154,7 @@ shared_doc = """
             the width with ``line_width``.
 
         smooth_shading : bool, optional
-            Enable smooth shading when ``True`` using either the 
+            Enable smooth shading when ``True`` using either the
             Gouraud or Phong shading algorithm.  When ``False``, use
             flat shading.
             Automatically enabled when ``pbr=True``.

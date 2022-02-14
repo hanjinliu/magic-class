@@ -3,7 +3,7 @@ Call Parent Methods from its Child
 ==================================
 
 When you want to define a function under the parent class while put its push button or action in the child
-widget for better widget design, code will look very complicated and will be hard to maintain. This problem 
+widget for better widget design, code will look very complicated and will be hard to maintain. This problem
 usually happens when you want a menu bar, since menu actions always execute something using the parameters
 of the parent and often update its parent.
 
@@ -35,10 +35,10 @@ Following example shows how to call ``set_param`` and ``print_param`` functions 
             # A frame of buttons
             def set_param(self): ...
             def print_param(self): ...
-        
+
         # a result widget
         result = field(widget_type="LineEdit", options={"enabled": False})
-        
+
         @Child.wraps
         def set_param(self, value: float):
             self.param = value
@@ -46,20 +46,20 @@ Following example shows how to call ``set_param`` and ``print_param`` functions 
         @Child.wraps
         def print_param(self):
             self.result.value = self.param
-    
+
     ui = Parent()
     ui.show()
 
 .. image:: images/fig_4-1.png
 
-The wrapped parent method will not appear in the parent widget because they already exist in the 
+The wrapped parent method will not appear in the parent widget because they already exist in the
 child widget.
 
 .. note::
 
     Method predefinition in Step 3. is not a must. It is recommended, however, in several reasons:
 
-    1. It plays as an "index" of functions. One can know what functions are implemented in the GUI, 
+    1. It plays as an "index" of functions. One can know what functions are implemented in the GUI,
        and in what order they will appear in widgets.
 
     2. If the widget is composed of nested magic classes and other widgets or fields, the order of
@@ -68,7 +68,7 @@ child widget.
 .. warning::
 
     In the current version (0.5.19), integer indexing is not safe if a magic class has wrapped
-    methods. To access chind widgets, use ``str`` (such as ``ui["X"]``) instead of ``int`` 
+    methods. To access chind widgets, use ``str`` (such as ``ui["X"]``) instead of ``int``
     (such as ``ui[1]``).
 
 Use Template Functions
@@ -79,9 +79,9 @@ Sometimes you may want to define many functions with same parameter names.
 A typical example is ``seaborn``. It has meny plot functions with identical arguments such as ``x``,
 ``y`` and ``hue``. If you annotate all the arguments, your code will look very "noisy".
 
-``magicclass`` provides a method that can copy annotations from a template function to some target 
-functions, and this function is integrated in ``wraps`` method (You might have noticed that 
-``functools.wraps`` does a similar thing. Yes, ``wraps`` method is named after ``functools.wraps``). 
+``magicclass`` provides a method that can copy annotations from a template function to some target
+functions, and this function is integrated in ``wraps`` method (You might have noticed that
+``functools.wraps`` does a similar thing. Yes, ``wraps`` method is named after ``functools.wraps``).
 ``magicclass`` also provides a non-method type ``wraps`` function for the most-parent class.
 
 .. code-block:: python
@@ -95,7 +95,7 @@ functions, and this function is integrated in ``wraps`` method (You might have n
         @magicclass
         class Child:
             def f1(self): ...
-        
+
         @Child.wraps(template=template)
         def f1(self, i, s): ...
 
@@ -104,7 +104,7 @@ functions, and this function is integrated in ``wraps`` method (You might have n
 
         @wraps(template=template)
         def f3(self, s): ... # method don't have to take all the arguments that template takes.
-    
+
     ui = Main()
     ui.show()
 
@@ -131,7 +131,7 @@ main widget ``Main``.
         @magictoolbar
         class Tools:
             def func(self): ...
-        
+
         @Menu.wraps(copy=True)
         @Tools.wraps(copy=True)
         def func(self):
@@ -177,7 +177,7 @@ Widget designs can be separetely set via pre-defined methods.
         class Tools:
             @set_design(text="func in Tools")
             def func(self): ...
-        
+
         @Menu.wraps
         @Tools.wraps
         def func(self):

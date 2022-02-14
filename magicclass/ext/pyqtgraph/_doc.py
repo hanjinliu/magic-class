@@ -27,9 +27,9 @@ shared_docs = {
             Line style of edge. One of "-", "--", ":" or "-.".""",
     "symbol": """
         symbol: str, optional
-            Symbol style. Currently supports circle ("o"), cross ("+", "x"), star ("*"), 
+            Symbol style. Currently supports circle ("o"), cross ("+", "x"), star ("*"),
             square ("s", "D") triangle ("^", "<", "v", ">") and others that ``pyqtgraph``
-            supports."""
+            supports.""",
 }
 
 
@@ -39,19 +39,17 @@ def write_docs(func):
         summary, params, rest = _split_doc(doc)
         for key, value in shared_docs.items():
             value = value.strip()
-            params = re.sub("{"+key+"}", value, params)
+            params = re.sub("{" + key + "}", value, params)
         doc = _merge_doc(summary, params, rest)
         func.__doc__ = doc
     return func
 
-def _split_doc(doc:str):
+
+def _split_doc(doc: str):
     summary, other = doc.split("Parameters\n")
     params, rest = other.split("Returns\n")
     return summary, params, rest
 
+
 def _merge_doc(summary, params, rest):
-    return summary + \
-           "Parameters\n" + \
-           params + \
-           "Returns\n" + \
-           rest
+    return summary + "Parameters\n" + params + "Returns\n" + rest

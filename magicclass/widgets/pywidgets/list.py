@@ -3,7 +3,8 @@ from typing import Any, Iterable, MutableSequence
 from qtpy.QtWidgets import QListWidget, QListWidgetItem, QAbstractItemView
 
 from .object import BaseWidget, ContextMenuMixin, PyObjectBound
-    
+
+
 class ListWidget(BaseWidget, MutableSequence):
     def __init__(self, value: Iterable[Any] = None, dragdrop: bool = True, **kwargs):
         """
@@ -17,12 +18,12 @@ class ListWidget(BaseWidget, MutableSequence):
             Python list.
         dragdrop : bool, default is True
             Allow drag and drop of list contents.
-        """        
+        """
         super().__init__(**kwargs)
         self._listwidget = PyListWidget(self.native)
         self._listwidget.setParentWidget(self)
         self.set_widget(self._listwidget)
-        
+
         @self._listwidget.itemDoubleClicked.connect
         def _(item: PyListWidgetItem):
             type_ = type(item.obj)
@@ -36,22 +37,24 @@ class ListWidget(BaseWidget, MutableSequence):
                         callback(item.obj)
             finally:
                 self.running = False
-        
+
         if dragdrop:
             self._listwidget.setAcceptDrops(True)
             self._listwidget.setDragEnabled(True)
-            self._listwidget.setDragDropMode(QAbstractItemView.DragDropMode.InternalMove)
-        
+            self._listwidget.setDragDropMode(
+                QAbstractItemView.DragDropMode.InternalMove
+            )
+
         if value is not None:
             for v in value:
                 self.append(v)
-        
+
     def __len__(self) -> int:
         """
         Length of widget contents.
-        """        
+        """
         return self._listwidget.count()
-    
+
     @property
     def value(self) -> list[Any]:
         """
@@ -61,9 +64,9 @@ class ListWidget(BaseWidget, MutableSequence):
         -------
         list
             Contents of the list widget.
-        """        
+        """
         return [self._listwidget.item(i).obj for i in range(len(self))]
-            
+
     def insert(self, i: int, obj: Any):
         """
         Insert object of any type to the list.
@@ -73,24 +76,24 @@ class ListWidget(BaseWidget, MutableSequence):
         item = PyListWidgetItem(self._listwidget, obj=obj, name=name)
         item.setToolTip(tooltip)
         self._listwidget.insertItem(i, item)
-        
+
     def __getitem__(self, i: int) -> Any:
         """
         Get i-th Python object (not widget item object!).
-        """        
+        """
         return self._listwidget.item(i).obj
-    
+
     def __setitem__(self, i: int, obj: Any):
         """
         Set i-th Python object.
-        """        
+        """
         self._listwidget.takeItem(i)
         self.insert(i, obj)
-    
+
     def __delitem__(self, i: int):
         """
         Delete i-th Python object from the list widget.
-        """        
+        """
         self._listwidget.takeItem(i)
 
     def clear(self):
@@ -98,7 +101,7 @@ class ListWidget(BaseWidget, MutableSequence):
         Clear all the items.
         """
         self._listwidget.clear()
-    
+
     def index(self, obj: Any, start: int = 0, stop: int = None) -> int:
         """
         Find object or list widget item from the list widget.
@@ -122,7 +125,7 @@ class ListWidget(BaseWidget, MutableSequence):
         ------
         ValueError
             If object was not found.
-        """        
+        """
         if isinstance(obj, PyListWidgetItem):
             f = self._listwidget.item
         else:
@@ -147,16 +150,16 @@ class ListWidget(BaseWidget, MutableSequence):
 class PyListWidget(ContextMenuMixin, QListWidget):
     def item(self, row: int) -> PyListWidgetItem:
         return super().item(row)
-    
+
     def itemAt(self, *p) -> PyListWidgetItem:
         return super().itemAt(*p)
-        
+
     def __init__(self, parent: None) -> None:
         super().__init__(parent=parent)
         self.setContextMenu()
-        
+
 
 class PyListWidgetItem(PyObjectBound, QListWidgetItem):
-    def __init__(self, parent: QListWidget=None, obj=None, name=None):
+    def __init__(self, parent: QListWidget = None, obj=None, name=None):
         super().__init__(parent)
         self.setObject(obj, name)

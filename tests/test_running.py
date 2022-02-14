@@ -7,10 +7,10 @@ def test_running():
     class A:
         def __init__(self):
             self.last_running = None
-        
+
         def func(self):
             self.last_running = self["func"].running
-    
+
     ui = A()
     ui.func()
     assert ui.last_running == False
@@ -27,11 +27,11 @@ def test_wrapped_running():
 
         def __init__(self):
             self.last_running = None
-        
+
         @B.wraps
         def func(self):
             self.last_running = self["func"].running
-    
+
     ui = A()
     ui.func()
     assert ui.last_running == False

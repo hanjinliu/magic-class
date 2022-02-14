@@ -20,8 +20,8 @@ if __name__ == "__main__":
             def Show_text(self, text: str):
                 self.parent_viewer.text_overlay.visible = True
                 self.parent_viewer.text_overlay.text = text
-            
+
             def Create_macro(self):
                 self.macro.widget.show()
-    
+
     napari.run()

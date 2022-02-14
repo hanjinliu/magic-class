@@ -48,7 +48,7 @@ class PlotData:
             File path
         """
         self.data = np.loadtxt(str(path))
-        
+
     def plot(self):
         """
         Plot data.

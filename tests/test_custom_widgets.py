@@ -14,7 +14,7 @@ def test_checkbutton():
     assert ui.b.native.isChecked()
     ui.b.value = False
     assert not ui.b.native.isChecked()
-    
+
     ui["f"].changed()
     assert isinstance(ui["f"].mgui[0], wdt.CheckButton)
 
@@ -22,7 +22,7 @@ def test_checkbutton():
 #     @magicclass
 #     class A:
 #         plt = field(wdt.Figure)
-    
+
 #     ui = A()
 #     ui.plt.plot([1,2,3,4])
 #     ui.plt.scatter([1,2,3,4], [1,2,3,4])

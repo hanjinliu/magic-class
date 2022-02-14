@@ -2,7 +2,7 @@
 Inherit Magic Class
 ===================
 
-Class inheritance is fundamental in object-oriented languages. It makes class 
+Class inheritance is fundamental in object-oriented languages. It makes class
 definition much clearer in many cases.
 
 Magic-class is designed to make GUI structures connected with the structure of
@@ -22,12 +22,12 @@ First, let's consider following example.
     class Base:
         def common_function(self):
             """Do some common things."""
-    
+
     @magicclass
     class Main(Base):
         def main_function(self):
             """Main one."""
-    
+
     ui = Main()
     ui.show()
 
@@ -36,7 +36,7 @@ First, let's consider following example.
     Do **NOT** decorate ``Base`` class with ``@magicclass``, otherwise constructor will
     raise ``TypeError``. You only have to decorate the final concrete classes.
 
-It is obvious that created GUI will have two buttons named "common function" and "main 
+It is obvious that created GUI will have two buttons named "common function" and "main
 function", but it is not clear which is upper and which is lower.
 
 In magic-class, methods defined in base classes will appear **upper** than those in
@@ -51,7 +51,7 @@ subclasses. In the case of example, GUI will look like:
 Field Objects in the Base Class
 ===============================
 
-You may want to add widgets using ``MagicField`` (see :doc:`use_field`). ``MagicField`` 
+You may want to add widgets using ``MagicField`` (see :doc:`use_field`). ``MagicField``
 behaves similarly as methods. In the following example,
 
 .. code-block:: python
@@ -60,14 +60,14 @@ behaves similarly as methods. In the following example,
 
     class Base:
         x = field(int)
-    
+
     @magicclass
     class Main(Base):
         y = field(str)
 
 Two widgets, ``x`` and ``y`` will be packed in the ``Main`` GUI, in order ``x``, ``y``.
 
-However, if you want to use ``Bound`` to bind parameter to method or connect callback 
+However, if you want to use ``Bound`` to bind parameter to method or connect callback
 function to a field, you must re-define fields in the subclasses.
 
 1. Bind methods
@@ -82,7 +82,7 @@ function to a field, you must re-define fields in the subclasses.
         .. code-block:: python
 
             from magicclass import magicclass, field, Bound
-            
+
             class Base:
                 x = field(int)
 
@@ -94,11 +94,11 @@ function to a field, you must re-define fields in the subclasses.
     .. container:: rightside
 
         *This will work*
-        
+
         .. code-block:: python
 
             from magicclass import magicclass, field, Bound
-            
+
             class Base:
                 x = field(int)
 
@@ -121,7 +121,7 @@ function to a field, you must re-define fields in the subclasses.
         .. code-block:: python
 
             from magicclass import magicclass, field
-            
+
             class Base:
                 x = field(int)
 
@@ -134,11 +134,11 @@ function to a field, you must re-define fields in the subclasses.
     .. container:: rightside
 
         *This will work*
-        
+
         .. code-block:: python
 
             from magicclass import magicclass, field
-            
+
             class Base:
                 x = field(int)
 
@@ -157,16 +157,16 @@ function to a field, you must re-define fields in the subclasses.
     until class definition finishes.
 
     .. code-block:: python
-        
+
         class A:
             x = 1
         class B(A):
             print(x)
-    
+
     .. code-block::
 
         NameError: name 'x' is not defined
-    
+
     This is because class inheritance has not finished yet in the line ``print(x)``.
 
 Nesting Magic Classes
@@ -198,7 +198,7 @@ Predefinition of Methods and Fields
 
 Most of the time you want to inherit a class is when you want to prepare a template
 of multipule GUIs. As mentioned above, methods and fields that are defined in the
-base class will packed **before** those in the subclasses. This is not desirable if 
+base class will packed **before** those in the subclasses. This is not desirable if
 you want the subclasses share same header and footer and make the middle widgets variable.
 
 Just like using ``wraps`` method (see :doc:`use_wraps`), the pre-definition strategy is
@@ -216,7 +216,7 @@ define the real widgets in the subclasses.
     class A(Base):
         def x(self):
             """Do something"""
-    
+
     @magicclass
     class B(Base):
         x = field(int)

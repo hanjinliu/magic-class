@@ -7,13 +7,13 @@ from datetime import datetime, date, time
 class Main:
     a = field(int)
     b = field(str)
-    
+
     @magicgui(auto_call=True, layout="horizontal")
     def func(self, u: date, v: time):
         print(u, v)
-    
+
     w = vfield(datetime)
-    
+
     def __post_init__(self):
         # To keep macro docked, append macro widget to main widget here
         self.append(self.macro.widget)

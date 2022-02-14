@@ -4,10 +4,10 @@ from .core import (
     magicclass,
     magicmenu,
     magiccontext,
-    magictoolbar, 
+    magictoolbar,
     Parameters,
-    build_help
-    )
+    build_help,
+)
 
 from .wrappers import (
     set_options,
@@ -17,7 +17,7 @@ from .wrappers import (
     bind_key,
     confirm,
     nogui,
-    )
+)
 
 from .fields import field, vfield
 from .gui._base import wraps, defaults, MagicTemplate, PopUpMode

@@ -13,7 +13,7 @@ as time, random value or parameters in other widgets.
 
     def get_time(w):
         return time.time()
-    
+
     @magicgui(t={"bind": get_time})
     def func(t):
         print(t)
@@ -43,18 +43,18 @@ as usual.
         def _get_time(self, w):
             # To avoid being added as a widget, make this method private.
             return time.time() - self.t_start
-        
+
         @set_options(t={"bind": _get_time})
         def print_time(self, t):
             print(t)
 
 One of the advantages of this method is reproducibility of macro. In the example above, values to
-be returned by ``_get_time`` will differ a lot depending on whether you are manually calling 
+be returned by ``_get_time`` will differ a lot depending on whether you are manually calling
 function on GUI or executing as a Python script. When parameters are bound from methods, the returned
 values will be recorded as a macro so that results are always the same.
 
 .. code-block:: python
-    
+
     ui = Main()
     ui.show()
     # click button once
@@ -77,10 +77,10 @@ values will be recorded as a macro so that results are always the same.
             def _get_last_shapes(self, w):
                 viewer = self.parent_viewer
                 # ndarray will not be recorded as concrete values by default, to avoid recording very
-                # large arrays. You have to convert it to a list, or use "register_type" function in 
+                # large arrays. You have to convert it to a list, or use "register_type" function in
                 # "magicclass.macro".
                 return viewer.layers["Shapes"].data[-1].tolist()
-            
+
             @set_options(rectangle={"bind": _get_last_shapes})
             def read_coordinates(self, rectangle):
                 ...
@@ -151,4 +151,3 @@ and options are useless when bind option is specified.
 
         def call(self, x0: Bound[a], x1: Bound[b]):
             print(x0 + x1)
-

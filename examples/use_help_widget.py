@@ -21,14 +21,14 @@ class Main:
         def print_operation(self, op: Operator):
             """
             Print operation such as "1.0 + 3.2" in the console.
-            
+
             Parameters
             ----------
             op : Operation
                 Operator. +, -, * or /.
             """
             print(f"{self.a.value} {op.value} {self.b.value}")
-        
+
     @magicclass(widget_type="scrollable")
     class TablePanel:
         """
@@ -37,13 +37,13 @@ class Main:
         table = field(Table, options={"value": np.random.random(size=(4, 3))})
         def print_dataframe(self):
             print(self.table.to_dataframe())
-    
+
     def show_help(self):
         """
         Using "build_help(ui)", you can make a help widget of "ui".
         """
         build_help(self).show()
-        
+
 if __name__ == "__main__":
     ui = Main()
     ui.show()

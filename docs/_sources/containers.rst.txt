@@ -73,7 +73,7 @@ Collapsible/expandable widget is created.
 + *additional properties*
     ``text`` ... Text of button.
     ``collapsed`` ... Toggle visibility of the contents.
-    
+
 
 DraggableContainer
 ^^^^^^^^^^^^^^^^^^
@@ -84,7 +84,7 @@ Container is packed in a scroll area. It can be scrolled by mouse drag.
 
 + *option*: ``widget_type="draggable"``
 + *base Qt class*: QScrollArea
-+ *additional properties* 
++ *additional properties*
     None
 
 
@@ -97,7 +97,7 @@ Container is enclosed by a line. It does not have its title unlike ``GroupBoxCon
 
 + *option*: ``widget_type="frame"``
 + *base Qt class*: QGroupBox
-+ *additional properties* 
++ *additional properties*
     None
 
 
@@ -149,7 +149,7 @@ All the child widgets are displayed as subwindows in this container.
 + *base Qt class*: QMdiArea
 + *additional properties*
     None
-        
+
 
 ScrollableContainer
 ^^^^^^^^^^^^^^^^^^^
@@ -162,7 +162,7 @@ Container is packed in a scroll area. It can be scrolled by scroll bars.
 + *base Qt class*: QScrollArea
 + *additional properties*
     None
-        
+
 
 SplitterContainer
 ^^^^^^^^^^^^^^^^^

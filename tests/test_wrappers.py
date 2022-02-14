@@ -8,17 +8,17 @@ def test_set_options():
         @set_options(layout="horizontal", call_button="OK", a={"widget_type": "Slider"})
         def f1(self, a: int):
             pass
-        
+
         @set_options(auto_call=True)
         def f2(self, a: int):
             self.a = a
-    
+
     ui = A()
     ui["f1"].changed()
     assert ui["f1"].mgui._layout == "horizontal"
     assert ui["f1"].mgui._call_button.text == "OK"
     assert ui["f1"].mgui["a"].widget_type == "Slider"
-    
+
     ui["f2"].changed()
     assert ui["f2"].mgui._auto_call == True
     ui["f2"].mgui["a"].value = 2
@@ -36,7 +36,7 @@ def test_set_design():
         @set_design(text="new-text")
         def f1(self, a: int):
             pass
-        
+
     ui = A()
     assert ui["f1"].text == "new-text"
 
@@ -45,7 +45,7 @@ def test_do_not_record():
     class A:
         @do_not_record
         def f(self): pass
-    
+
     ui = A()
     ui["f"].changed()
     assert len(ui.macro) == 1
@@ -56,23 +56,23 @@ def test_confirm():
         @magicclass
         class B:
             def g(self): ...
-            
+
         @confirm("really?")
         def f(self):
             self.a = 0
-        
+
         @B.wraps
         @confirm("really?")
         def g(self):
             self.a = 0
-    
+
     ui = A()
     ui["f"].changed()
     assert ui["f"].mgui[0].value == "really?"
     ui["f"].mgui[-1].changed()
     assert str(ui.macro[-1]) == "ui.f()"
-    
-    
+
+
     ui.B["g"].changed()
     assert ui["g"].mgui[0].value == "really?"
     ui["g"].mgui[-1].changed()
@@ -84,10 +84,10 @@ def test_nogui():
         @nogui
         def f(self):
             pass
-        
+
         def g(self):
             pass
-    
+
     ui = A()
     assert isinstance(ui["f"], MethodType)
     assert isinstance(ui["g"], PushButton)

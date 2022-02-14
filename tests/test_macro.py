@@ -14,7 +14,7 @@ class Y(Enum):
 
 def test_macro_rerun():
     mock = MagicMock()
-    
+
     @magicclass(error_mode="stderr")
     class A:
         def f0(self, x: X):
@@ -22,22 +22,22 @@ def test_macro_rerun():
                 x = X(x)  # this is the formal way to use Enum
             except Exception:
                 mock()
-        
+
         def f1(self, y: Y):
             try:
                 y = Y(y)  # this is the formal way to use Enum
             except Exception:
                 mock()
-        
+
         @set_options(x={"choices": [2, 3]},
                      y={"choices": ["a", "b"]})
         def f2(self, x, y):
             if not isinstance(x, int):
                 mock()
-                
+
             if not isinstance(y, str):
                 mock()
-        
+
         def f3(self, dt: datetime, d: date, t: time):
             try:
                 dt.strftime("")
@@ -45,10 +45,10 @@ def test_macro_rerun():
                 t.strftime("")
             except Exception:
                 mock()
-        
+
         def f4(self, path: Path, a=1):
             str(path)  # this is the formal way to use Path
-    
+
     ui = A()
     ui["f0"].changed()
     ui["f0"].mgui[-1].changed()
@@ -60,9 +60,9 @@ def test_macro_rerun():
     ui["f3"].mgui[-1].changed()
     ui["f4"].changed()
     ui["f4"].mgui[-1].changed()
-    
+
     mock.assert_not_called()
-    
+
     ui.macro.widget.execute_lines(0)
     mock.assert_not_called()
     ui.macro.widget.execute_lines(1)

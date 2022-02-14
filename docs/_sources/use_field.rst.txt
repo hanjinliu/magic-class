@@ -7,7 +7,7 @@ MagicFields
 
 When widgets are directly provided in a magic class as class variables, they should be considered as "fields".
 The concept of fields was actually introduced in Python as an standard library ``dataclasses`` as a ``Field``
-object. A field is in a state of "ready to be converted into a object", i.e., a new object is created for every 
+object. A field is in a state of "ready to be converted into a object", i.e., a new object is created for every
 instance construction.
 
 .. code-block:: python
@@ -23,11 +23,11 @@ instance construction.
     c
 
 .. code-block:: python
-    
+
     C(i=5, s='')
 
 Here, the arguments ``default`` and ``default_factory`` are reminiscent of "default value" and "type annotation"
-in ``magicgui``. To apply the concept of field to widget construction, ``magic-class`` has ``MagicField``, a 
+in ``magicgui``. To apply the concept of field to widget construction, ``magic-class`` has ``MagicField``, a
 subclass of ``Field``, which can store defaults as a object that is ready to be converted into a widget.
 
 .. code-block:: python
@@ -47,7 +47,7 @@ subclass of ``Field``, which can store defaults as a object that is ready to be 
 
 .. image:: images/fig_3-1.png
 
-``field`` can be used very similar to the ``create_widget`` fucntion in ``magicgui``. 
+``field`` can be used very similar to the ``create_widget`` fucntion in ``magicgui``.
 
 .. code-block:: python
 
@@ -65,7 +65,7 @@ The first argument of ``field`` can be type, value or widget type.
         i = field(int)
         s = field("abc")
         table = field(Table)
-    
+
     ui = MyClass()
     ui.show()
 
@@ -111,7 +111,6 @@ defined callbacks similar to ``MagicField``.
         @a.connect
         def _callback(self):
             print("value changed!")
-        
+
         def print_value(self):
             print(f"a = {self.a}") # instead of "self.a.value"!
-

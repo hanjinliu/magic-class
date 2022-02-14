@@ -9,17 +9,17 @@
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
-  
+
         <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
         <script src="../../../_static/jquery.js"></script>
         <script src="../../../_static/underscore.js"></script>
         <script src="../../../_static/doctools.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
-    <link rel="search" title="Search" href="../../../search.html" /> 
+    <link rel="search" title="Search" href="../../../search.html" />
 </head>
 
-<body class="wy-body-for-nav"> 
+<body class="wy-body-for-nav">
   <div class="wy-grid-for-nav">
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
@@ -74,7 +74,7 @@
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-             
+
   <h1>Source code for magicclass.ext.napari</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 <span class="kn">from</span> <span class="nn">..gui._base</span> <span class="kn">import</span> <span class="n">BaseGui</span>
@@ -84,24 +84,24 @@
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">napari</span>
 
-<div class="viewcode-block" id="to_napari"><a class="viewcode-back" href="../../../magicclass.ext.html#magicclass.ext.napari.to_napari">[docs]</a><span class="k">def</span> <span class="nf">to_napari</span><span class="p">(</span><span class="n">magic_class</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">BaseGui</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
-              <span class="o">*</span><span class="p">,</span> 
+<div class="viewcode-block" id="to_napari"><a class="viewcode-back" href="../../../magicclass.ext.html#magicclass.ext.napari.to_napari">[docs]</a><span class="k">def</span> <span class="nf">to_napari</span><span class="p">(</span><span class="n">magic_class</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">BaseGui</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+              <span class="o">*</span><span class="p">,</span>
               <span class="n">viewer</span><span class="p">:</span> <span class="s2">&quot;napari.Viewer&quot;</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
               <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Send magic class to current napari viewer. Classes decorated with ``@magicclass``</span>
 <span class="sd">    ``magicmenu`` and ``magictoolbar`` are supported.</span>
-<span class="sd">    &quot;&quot;&quot;</span>    
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">BaseGui</span><span class="p">]):</span>
         <span class="k">if</span> <span class="n">viewer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="kn">import</span> <span class="nn">napari</span>
             <span class="n">_viewer</span> <span class="o">=</span> <span class="n">napari</span><span class="o">.</span><span class="n">current_viewer</span><span class="p">()</span>
             <span class="k">if</span> <span class="n">_viewer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">_viewer</span> <span class="o">=</span> <span class="n">napari</span><span class="o">.</span><span class="n">Viewer</span><span class="p">()</span>
-        
+
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot decorate type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
-        
+
         <span class="n">ui</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
         <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ClassGui</span><span class="p">):</span>
             <span class="n">_viewer</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">add_dock_widget</span><span class="p">(</span><span class="n">ui</span><span class="p">)</span>
@@ -117,7 +117,7 @@
                 <span class="p">)</span>
         <span class="n">_viewer</span><span class="o">.</span><span class="n">update_console</span><span class="p">({</span><span class="s2">&quot;ui&quot;</span><span class="p">:</span> <span class="n">ui</span><span class="p">})</span>
         <span class="k">return</span> <span class="bp">cls</span>
-    
+
     <span class="k">if</span> <span class="n">magic_class</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">wrapper</span>
     <span class="k">else</span><span class="p">:</span>
@@ -137,7 +137,7 @@
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
+
 
 </footer>
         </div>
@@ -148,7 +148,7 @@
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
 
 </body>
 </html>

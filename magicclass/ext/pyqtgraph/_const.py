@@ -12,5 +12,6 @@ class Button(str, Enum):
     right = "right"
     middle = "middle"
 
+
 class Anchor(str, Enum):
     ...

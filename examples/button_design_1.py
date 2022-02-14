@@ -6,7 +6,7 @@ color_cycle = ["red", "green", "blue"]
 class Main:
     def __init__(self):
         self.i = 0
-        
+
     @set_design(background_color="red", font_family="Consolas")
     def change_color(self):
         self.i = (self.i + 1) % 3

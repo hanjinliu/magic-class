@@ -2,7 +2,7 @@ from magicclass import field, magicclass
 from magicclass.ext.pyqtgraph import QtPlotCanvas
 import numpy as np
 
-def test_plot_canvas():    
+def test_plot_canvas():
     @magicclass
     class A:
         plot = field(QtPlotCanvas)
@@ -10,7 +10,7 @@ def test_plot_canvas():
     ui = A()
     ndata = 100
     data = np.random.random(ndata)
-    
+
     # test curve
     ui.plot.add_curve(data)
     ui.plot.add_curve(np.arange(ndata)*2, data)
@@ -32,10 +32,10 @@ def test_plot_canvas():
     item.xdata = item.xdata + 1
     item.ydata = item.ydata + 1
     assert item.ndata == ndata
-    
+
     assert len(ui.plot.layers) == 3
     ui.plot.layers.clear()
-    
+
     # test scatter
     ui.plot.add_scatter(data)
     ui.plot.add_scatter(np.arange(ndata)*2, data)
@@ -56,10 +56,10 @@ def test_plot_canvas():
     item.xdata = item.xdata + 1
     item.ydata = item.ydata + 1
     assert item.ndata == ndata
-    
+
     assert len(ui.plot.layers) == 3
     ui.plot.layers.clear()
-    
+
     # test bar
     ui.plot.add_bar(data)
     ui.plot.add_bar(np.arange(ndata)*2, data)
@@ -78,10 +78,10 @@ def test_plot_canvas():
     item.xdata = item.xdata + 1
     item.ydata = item.ydata + 1
     assert item.ndata == ndata
-    
+
     assert len(ui.plot.layers) == 3
     ui.plot.layers.clear()
-    
+
     ui.plot.add_hist(data)
     item = ui.plot.add_hist(data, bins=14, range=[-0.5, 1.5], density=True)
     item.visible
@@ -95,9 +95,9 @@ def test_plot_canvas():
     item.ls
     for ls in ["-", "--", ":", "-."]:
         item.ls = ls
-        
+
     assert len(ui.plot.layers) == 2
-    
+
     # test region
     ui.plot.region.visible
     ui.plot.region.visible = True
@@ -107,7 +107,7 @@ def test_plot_canvas():
     ui.plot.region.enabled = True
     ui.plot.region.color
     ui.plot.region.color = "blue"
-    
+
     # test legend
     ui.plot.legend.visible
     ui.plot.legend.visible = True
@@ -119,4 +119,3 @@ def test_plot_canvas():
     ui.plot.legend.background_color = [1, 1, 1, 0.2]
     ui.plot.legend.border
     ui.plot.legend.border = "red"
-    

@@ -7,7 +7,7 @@ from qtconsole.rich_jupyter_widget import RichJupyterWidget
 class _Console(RichJupyterWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        
+
     def connect_parent(self, ui: Widget):
         from IPython import get_ipython
         from IPython.terminal.interactiveshell import TerminalInteractiveShell
@@ -16,18 +16,18 @@ class _Console(RichJupyterWidget):
         from ipykernel.zmqshell import ZMQInteractiveShell
         from qtconsole.client import QtKernelClient
         from qtconsole.inprocess import QtInProcessKernelManager
-        
+
         if not isinstance(ui, Widget):
             raise TypeError(f"Cannot connect QtConsole to {type(ui)}.")
-        
+
         shell = get_ipython()
-        
+
         if shell is None:
             # If there is no currently running instance create an in-process
             # kernel.
             kernel_manager = QtInProcessKernelManager()
             kernel_manager.start_kernel(show_banner=False)
-            kernel_manager.kernel.gui = 'qt'
+            kernel_manager.kernel.gui = "qt"
 
             kernel_client = kernel_manager.client()
             kernel_client.start_channels()
@@ -60,9 +60,7 @@ class _Console(RichJupyterWidget):
         elif isinstance(shell, ZMQInteractiveShell):
             # if launching from jupyter notebook, connect to the existing
             # kernel
-            kernel_client = QtKernelClient(
-                connection_file=get_connection_file()
-            )
+            kernel_client = QtKernelClient(connection_file=get_connection_file())
             kernel_client.load_connection_file()
             kernel_client.start_channels()
 
@@ -71,9 +69,7 @@ class _Console(RichJupyterWidget):
             self.shell = shell
             self.push = self.shell.push
         else:
-            raise ValueError(
-                'ipython shell not recognized; ' f'got {type(shell)}'
-            )
+            raise ValueError("ipython shell not recognized; " f"got {type(shell)}")
 
         self.parent_ui = ui
         self.shell.push({"ui": ui})

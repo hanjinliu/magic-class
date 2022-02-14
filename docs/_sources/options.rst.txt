@@ -2,7 +2,7 @@
 Options in magic-class
 ======================
 
-``@magicclass`` decorator has several options. 
+``@magicclass`` decorator has several options.
 
 These options are inherited from ``magicgui``:
 
@@ -24,7 +24,7 @@ These options are `magicclass` specific:
 * ``popup: bool = True`` ... Deprecated. Use ``popup_mode`` instead.
 
 * ``popup_mode: str | PopUpMode = None`` ... Specify how ``magicgui`` widgets are popped up.
-    
+
     + ``popup`` (default): Popped up as a new window, like a dialog.
     + ``first``: Appear on the first position of the container.
     + ``last``: Appear on the last position of the container.
@@ -46,6 +46,6 @@ To avoid writing the same options many times, you can change the default setting
 .. code-block:: python
 
     from magicclass import default
-    
+
     default["close_on_run"] = False
     default["popup_mode"] = "dock"

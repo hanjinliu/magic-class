@@ -5,16 +5,24 @@ from typing import Any
 from docstring_parser import parse
 from qtpy.QtWidgets import QApplication, QMessageBox
 
-__all__ = ["MessageBoxMode", "show_messagebox", "open_url", "screen_center", "to_clipboard",
-           "iter_members", "extract_tooltip", "get_signature"]
+__all__ = [
+    "MessageBoxMode",
+    "show_messagebox",
+    "open_url",
+    "screen_center",
+    "to_clipboard",
+    "iter_members",
+    "extract_tooltip",
+    "get_signature",
+]
 
 
 def iter_members(cls: type, exclude_prefix: str = "__") -> list[str, Any]:
     """
-    Iterate over all the members in the order of source code line number. 
+    Iterate over all the members in the order of source code line number.
     This function is identical to inspect.getmembers except for the order
     of the results. We have to sort the name in the order of line number.
-    """    
+    """
     mro = (cls,) + inspect.getmro(cls)
     processed = set()
     names: list[str] = list(cls.__dict__.keys())
@@ -23,10 +31,10 @@ def iter_members(cls: type, exclude_prefix: str = "__") -> list[str, Any]:
             for k in base.__dict__.keys():
                 if k not in names:
                     names.append(k)
-                    
+
     except AttributeError:
         pass
-    
+
     for key in names:
         try:
             value = getattr(cls, key)
@@ -59,12 +67,13 @@ def extract_tooltip(obj: Any) -> str:
 def get_signature(func):
     """
     Similar to ``inspect.signature`` but safely returns ``MagicMethodSignature``.
-    """    
+    """
     if hasattr(func, "__signature__"):
         sig = func.__signature__
     else:
         sig = inspect.signature(func)
     return sig
+
 
 class MessageBoxMode(Enum):
     ERROR = "error"
@@ -72,6 +81,7 @@ class MessageBoxMode(Enum):
     INFO = "info"
     QUESTION = "question"
     ABOUT = "about"
+
 
 _QMESSAGE_MODES = {
     MessageBoxMode.ERROR: QMessageBox.critical,
@@ -81,11 +91,13 @@ _QMESSAGE_MODES = {
     MessageBoxMode.ABOUT: QMessageBox.about,
 }
 
-def show_messagebox(mode: str | MessageBoxMode = MessageBoxMode.INFO,
-                    title: str = None,
-                    text: str = None,
-                    parent=None
-                    ) -> bool:
+
+def show_messagebox(
+    mode: str | MessageBoxMode = MessageBoxMode.INFO,
+    title: str = None,
+    text: str = None,
+    parent=None,
+) -> bool:
     """
     Freeze the GUI and open a messagebox dialog.
 
@@ -104,7 +116,7 @@ def show_messagebox(mode: str | MessageBoxMode = MessageBoxMode.INFO,
     -------
     bool
         If "OK" or "Yes" is clicked, return True. Otherwise return False.
-    """    
+    """
     show_dialog = _QMESSAGE_MODES[MessageBoxMode(mode)]
     result = show_dialog(parent, title, text)
     return result in (QMessageBox.Ok, QMessageBox.Yes)
@@ -118,9 +130,10 @@ def open_url(link: str) -> None:
     ----------
     link : str
         Link to the home page.
-    """    
+    """
     from qtpy.QtGui import QDesktopServices
     from qtpy.QtCore import QUrl
+
     QDesktopServices.openUrl(QUrl(link))
 
 
@@ -133,12 +146,13 @@ def to_clipboard(obj: Any) -> None:
     ----------
     obj : Any
         Object to be copied.
-    """    
+    """
     from qtpy.QtGui import QGuiApplication, QImage, qRgb
     import numpy as np
     import pandas as pd
+
     clipboard = QGuiApplication.clipboard()
-    
+
     if isinstance(obj, str):
         clipboard.setText(obj)
     elif isinstance(obj, np.ndarray):
@@ -160,5 +174,5 @@ def to_clipboard(obj: Any) -> None:
 def screen_center():
     """
     Get the center coordinate of the screen.
-    """    
+    """
     return QApplication.desktop().screen().rect().center()

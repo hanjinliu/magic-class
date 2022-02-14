@@ -9,17 +9,17 @@
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
-  
+
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" /> 
+    <link rel="search" title="Search" href="../../search.html" />
 </head>
 
-<body class="wy-body-for-nav"> 
+<body class="wy-body-for-nav">
   <div class="wy-grid-for-nav">
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
@@ -75,7 +75,7 @@
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-             
+
   <h1>Source code for magicclass.signature</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
@@ -95,8 +95,8 @@
     <span class="n">gui</span><span class="p">:</span> <span class="nb">bool</span></div>
 
 
-<div class="viewcode-block" id="upgrade_signature"><a class="viewcode-back" href="../../magicclass.html#magicclass.signature.upgrade_signature">[docs]</a><span class="k">def</span> <span class="nf">upgrade_signature</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> 
-                      <span class="n">gui_options</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+<div class="viewcode-block" id="upgrade_signature"><a class="viewcode-back" href="../../magicclass.html#magicclass.signature.upgrade_signature">[docs]</a><span class="k">def</span> <span class="nf">upgrade_signature</span><span class="p">(</span><span class="n">func</span><span class="p">,</span>
+                      <span class="n">gui_options</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                       <span class="n">caller_options</span><span class="p">:</span> <span class="n">WidgetOptions</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                       <span class="n">additional_options</span><span class="p">:</span> <span class="n">AdditionalOptions</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -122,12 +122,12 @@
     <span class="n">gui_options</span> <span class="o">=</span> <span class="n">gui_options</span> <span class="ow">or</span> <span class="p">{}</span>
     <span class="n">caller_options</span> <span class="o">=</span> <span class="n">caller_options</span> <span class="ow">or</span> <span class="p">{}</span>
     <span class="n">additional_options</span> <span class="o">=</span> <span class="n">additional_options</span> <span class="ow">or</span> <span class="p">{}</span>
-    
+
     <span class="n">sig</span> <span class="o">=</span> <span class="n">get_signature</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-    
+
     <span class="n">new_gui_options</span> <span class="o">=</span> <span class="n">MagicMethodSignature</span><span class="o">.</span><span class="n">get_gui_options</span><span class="p">(</span><span class="n">sig</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="n">new_gui_options</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">gui_options</span><span class="p">)</span>
-    
+
     <span class="n">new_caller_options</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">sig</span><span class="p">,</span> <span class="s2">&quot;caller_options&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="n">new_caller_options</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">caller_options</span><span class="p">)</span>
 
@@ -135,8 +135,8 @@
     <span class="n">new_additional_options</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">additional_options</span><span class="p">)</span>
 
     <span class="n">func</span><span class="o">.</span><span class="n">__signature__</span> <span class="o">=</span> <span class="n">MagicMethodSignature</span><span class="o">.</span><span class="n">from_signature</span><span class="p">(</span>
-            <span class="n">sig</span><span class="p">,</span> 
-            <span class="n">gui_options</span><span class="o">=</span><span class="n">new_gui_options</span><span class="p">,</span> 
+            <span class="n">sig</span><span class="p">,</span>
+            <span class="n">gui_options</span><span class="o">=</span><span class="n">new_gui_options</span><span class="p">,</span>
             <span class="n">caller_options</span><span class="o">=</span><span class="n">new_caller_options</span><span class="p">,</span>
             <span class="n">additional_options</span><span class="o">=</span><span class="n">new_additional_options</span>
             <span class="p">)</span>
@@ -165,7 +165,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This class also retains parameter options for PushButton itself, aside from the FunctionGui options</span>
 <span class="sd">    that will be needed when the button is pushed.</span>
-<span class="sd">    &quot;&quot;&quot;</span>    
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -178,20 +178,20 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parameters</span><span class="o">=</span><span class="n">parameters</span><span class="p">,</span> <span class="n">return_annotation</span><span class="o">=</span><span class="n">return_annotation</span><span class="p">,</span> <span class="n">gui_options</span><span class="o">=</span><span class="n">gui_options</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">caller_options</span> <span class="o">=</span> <span class="n">caller_options</span> <span class="ow">or</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">additional_options</span> <span class="o">=</span> <span class="n">additional_options</span> <span class="ow">or</span> <span class="p">{}</span>
-    
+
 <div class="viewcode-block" id="MagicMethodSignature.from_signature"><a class="viewcode-back" href="../../magicclass.html#magicclass.signature.MagicMethodSignature.from_signature">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_signature</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">sig</span><span class="p">:</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Signature</span><span class="p">,</span> <span class="n">gui_options</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">caller_options</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                        <span class="n">additional_options</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicMethodSignature</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sig</span><span class="p">,</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Signature</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;&#39;sig&#39; must be an instance of &#39;inspect.Signature&#39;&quot;</span><span class="p">)</span>
-        
+
         <span class="c1"># prepare parameters again</span>
         <span class="n">parameters</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
                                            <span class="n">param</span><span class="o">.</span><span class="n">kind</span><span class="p">,</span>
                                            <span class="n">default</span><span class="o">=</span><span class="n">param</span><span class="o">.</span><span class="n">default</span><span class="p">,</span>
-                                           <span class="n">annotation</span><span class="o">=</span><span class="n">param</span><span class="o">.</span><span class="n">annotation</span><span class="p">)</span> 
+                                           <span class="n">annotation</span><span class="o">=</span><span class="n">param</span><span class="o">.</span><span class="n">annotation</span><span class="p">)</span>
                       <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">sig</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
-        
+
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
             <span class="nb">list</span><span class="p">(</span><span class="n">parameters</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span>
             <span class="n">return_annotation</span><span class="o">=</span><span class="n">sig</span><span class="o">.</span><span class="n">return_annotation</span><span class="p">,</span>
@@ -199,14 +199,14 @@
             <span class="n">caller_options</span><span class="o">=</span><span class="n">caller_options</span><span class="p">,</span>
             <span class="n">additional_options</span><span class="o">=</span><span class="n">additional_options</span><span class="p">,</span>
             <span class="p">)</span></div>
-    
+
 <div class="viewcode-block" id="MagicMethodSignature.get_gui_options"><a class="viewcode-back" href="../../magicclass.html#magicclass.signature.MagicMethodSignature.get_gui_options">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">get_gui_options</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="bp">self</span><span class="p">:</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Signature</span><span class="o">|</span><span class="n">MagicSignature</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="ow">is</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Signature</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">{}</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="o">.</span><span class="n">options</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span></div>
-    
+
 <div class="viewcode-block" id="MagicMethodSignature.replace"><a class="viewcode-back" href="../../magicclass.html#magicclass.signature.MagicMethodSignature.replace">[docs]</a>    <span class="k">def</span> <span class="nf">replace</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
@@ -244,7 +244,7 @@
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
+
 
 </footer>
         </div>
@@ -255,7 +255,7 @@
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
 
 </body>
 </html>

@@ -6,13 +6,13 @@ Keybindings are very useful in many situations, especially when some functions w
 many times. In most cases, you will have to set shortcuts to a push button or an action in the
 menu so that bound function will be accessible via GUI.
 
-Magic class provides a wrapper function which makes it easy to implement custom Keybindings, and 
+Magic class provides a wrapper function which makes it easy to implement custom Keybindings, and
 like other wrappers, you don't have to worry about reducing code readability.
 
 How to Define Keybindings
 -------------------------
 
-All you have to do is to wrap methods with ``bind_key`` function. There are several ways to 
+All you have to do is to wrap methods with ``bind_key`` function. There are several ways to
 describe keybindings.
 
 .. code-block:: python
@@ -61,7 +61,7 @@ to change widget values with shortcut.
         @do_not_record
         def _increment(self):
             self.a.value = min(self.a.value + 1, self.a.max)
-        
+
         @bind_key("Down")
         @do_not_record
         def _decrement(self):
@@ -86,7 +86,7 @@ You can call parent methods by combining with ``wraps`` method (see :doc:`use_wr
         @magicmenu
         class Menu:
             def some_function(self): ...
-        
+
         @Menu.wraps
         @bind_key("Ctrl-A")
         def some_function(self):
@@ -106,7 +106,7 @@ You can also bind values of fields or other methods (see :doc:`use_bind`).
     class Main:
         a = field(int)
         @bind_key("Ctrl-A")
-        def print_value(self, a: Bound(a)):
+        def print_value(self, a: Bound[a]):
             print(a)
 
 Function calls triggered by shortcut are also recorded in macro because triggered event

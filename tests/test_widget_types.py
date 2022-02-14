@@ -6,25 +6,25 @@ def _make_class(t: WidgetType):
         @magicmenu
         class Menu:
             pass
-        
+
         @magictoolbar
         class Tool1:
             pass
-        
+
         @magictoolbar
         class Tool2:
             pass
-        
+
         @magicclass
         class B:
             def b1(self, a: int): ...
             def b2(self, a: int): ...
-        
+
         def a1(self, a: int): ...
-        
+
         @B.wraps
         def b1(self, a: int): ...
-    
+
     return A
 
 

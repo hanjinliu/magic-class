@@ -4,7 +4,10 @@ import re
 import weakref
 from magicgui.widgets._concrete import _LabeledWidget
 from magicgui.widgets._bases import ValueWidget, ButtonWidget, ContainerWidget
-from magicgui.widgets._function_gui import FunctionGui, _function_name_pointing_to_widget
+from magicgui.widgets._function_gui import (
+    FunctionGui,
+    _function_name_pointing_to_widget,
+)
 from ..widgets import Separator
 
 if TYPE_CHECKING:
@@ -14,9 +17,9 @@ if TYPE_CHECKING:
 
 class FunctionGuiPlus(FunctionGui):
     """FunctionGui class with a parameter recording functionality etc."""
-    
+
     _magicclass_parent_ref: weakref.ReferenceType[BaseGui] | None = None
-    
+
     def __call__(self, *args: Any, **kwargs: Any):
         sig = self.__signature__
         try:
@@ -36,9 +39,9 @@ class FunctionGuiPlus(FunctionGui):
                 raise TypeError(msg) from None
             else:
                 raise
-                    
+
         bound.apply_defaults()
-        
+
         # 1. Parameter recording
         # This is important when bound function set by {"bind": f} updates something.
         # When the value is referred via "__signature__" the bound function get called
@@ -70,7 +73,6 @@ class FunctionGuiPlus(FunctionGui):
         self.called.emit(value)
         return value
 
-
     def insert(self, key: int, widget: Widget):
         """Insert widget at ``key``."""
         if isinstance(widget, (ValueWidget, ContainerWidget)):
@@ -98,7 +100,7 @@ class FunctionGuiPlus(FunctionGui):
             return None
         parent = self._magicclass_parent_ref()
         return parent
-    
+
     @__magicclass_parent__.setter
     def __magicclass_parent__(self, parent) -> None:
         self._magicclass_parent_ref = weakref.ref(parent)

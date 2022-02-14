@@ -4,16 +4,16 @@ from magicclass import magicclass, set_design
 class Main:
     def __init__(self):
         self.refresh()
-        
+
     @set_design(text="🔍", font_size=30)
-    def search(self, keyword:str): 
+    def search(self, keyword:str):
         print(magicclass.__doc__.find(keyword))
-    
+
     @set_design(text="🔄", font_size=30)
-    def refresh(self): 
+    def refresh(self):
         self.a = 0
         self.b = True
-    
+
     @set_design(text="⚙", font_size=30)
     def settings(self, a=0, b=True):
         self.a = a

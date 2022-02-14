@@ -3,10 +3,10 @@ from setuptools import setup, find_packages
 with open("magicclass/__init__.py", encoding="utf-8") as f:
     line = next(iter(f))
     VERSION = line.strip().split()[-1][1:-1]
-      
-with open("README.md", "r") as f:
+
+with open("README.md") as f:
     readme = f.read()
-    
+
 setup(
     name="magic-class",
     version=VERSION,
@@ -20,9 +20,9 @@ setup(
     packages=find_packages(exclude=["docs", "examples", "rst", "tests", "tests.*"]),
     package_data={"magicclass": ["**/*.pyi", "*.pyi"]},
     install_requires=[
-          "magicgui>=0.3.4",
-          "qtpy>=1.10.0",
-          "macro-kit>=0.3.5",
+        "magicgui>=0.3.4",
+        "qtpy>=1.10.0",
+        "macro-kit>=0.3.5",
     ],
     python_requires=">=3.8",
-    )
+)

@@ -19,14 +19,14 @@ In ``magicgui``, you can convert functions into widgets. For instance,
     @magicgui
     def print_text(text: str):
         print(text)
-    
+
     print_text.show()
 
-will create a widget that is composed of a line edit (for the input argument ``text``) and a 
+will create a widget that is composed of a line edit (for the input argument ``text``) and a
 call button.
 
-Similarly, with ``magicclass`` decorator, you can convert a Python class into a ``magicgui``'s 
-``Container`` widget and its methods appear as push buttons. When a button is clicked, the 
+Similarly, with ``magicclass`` decorator, you can convert a Python class into a ``magicgui``'s
+``Container`` widget and its methods appear as push buttons. When a button is clicked, the
 corresponding magicgui will be popped up.
 
 .. code-block:: python
@@ -37,7 +37,7 @@ corresponding magicgui will be popped up.
     class MyClass:
         def set_value(self, value: str):
             self.value = value
-        
+
         def print_value(self):
             print(self.value)
 
@@ -79,8 +79,8 @@ Magic classes can also detect other ``magicgui``'s widgets.
     I highly recommend using ``field`` function to create widgets in magic classes.
     See :doc:`use_field`.
 
-If a method is decorated with ``@magicgui``, it will directly added in the container widget, 
-in place of a push button. This is natural because decorated methods are no longer functions, 
+If a method is decorated with ``@magicgui``, it will directly added in the container widget,
+in place of a push button. This is natural because decorated methods are no longer functions,
 but ``FunctionGui`` widgets.
 
 .. code-block:: python
@@ -107,11 +107,11 @@ but ``FunctionGui`` widgets.
 Macro Recording
 ---------------
 
-Another outstanding feature of magic class is its **macro recorder functionalities**. 
+Another outstanding feature of magic class is its **macro recorder functionalities**.
 Function calls and value changes in child widgets are all recorded and you can generate
 executable Python script at any time.
 
-Recorded macro is stored in the ``macro`` attribute. You can generate Python script as 
+Recorded macro is stored in the ``macro`` attribute. You can generate Python script as
 string just by passing it to ``str``.
 
 .. code-block:: python
@@ -120,17 +120,17 @@ string just by passing it to ``str``.
     print(macro_string)
 
 A macro editor widget is always tagged at ``macro.widget``. It is a ``magicgui`` widget
-so you can open it by ``show()`` method or directly append it to GUI. 
+so you can open it by ``show()`` method or directly append it to GUI.
 
 .. code-block:: python
 
     ui.macro.widget.show() # show widget as a separate window.
     ui.append(ui.macro.widget) # append macro as a child widget.
 
-By default, the script shown in the macro editor is synchronized, that is, automatically 
+By default, the script shown in the macro editor is synchronized, that is, automatically
 updated whenever macro itself is updated.
 
-Occasionally, you may want some functions not to record macro (such as a function that 
+Occasionally, you may want some functions not to record macro (such as a function that
 only shows a help window). It could also be redundant to record value changes of some
 widgets. You can prevent macro recording with ``do_not_record`` decorator for methods
 (or ``record=False`` option for fields; see :doc:`use_field`).
@@ -144,7 +144,7 @@ widgets. You can prevent macro recording with ``do_not_record`` decorator for me
         @do_not_record
         def f(self):
             """this function will never be recorded"""
-    
+
     ui = Main()
     ui.show()
 
@@ -177,16 +177,16 @@ and parameter annotations of functions are summerized with rich texts.
 Add Functions after Construction
 --------------------------------
 
-Making a button or menu action dynamically is also useful, especially when you already have a 
+Making a button or menu action dynamically is also useful, especially when you already have a
 UI platform but you still want some extensions like plugin system. You don't have to worry
-about that since magic class construction itself is dynamic. Just ``append`` well-typed 
+about that since magic class construction itself is dynamic. Just ``append`` well-typed
 functions to magic class object.
 
 .. code-block:: python
 
     def new_function(i: int, s: str):
         ...
-    
+
     ui.append(new_function) # then a proper widget appears in the GUI
 
 
@@ -229,7 +229,7 @@ However, magic classes need another way to do this because ``magicgui`` will nev
     class Main:
         @set_options(a={"widget_type": "Slider", "step": 10})
         def f(self, a: int): ...
-    
+
     ui = Main()
     ui.show()
 
@@ -261,7 +261,7 @@ Code Completion
 ---------------
 
 A problem of using decorators to overwrite classes is code completion. When you are coding, the classes
-do not inherits magic classes yet, so IDE and console don't know they will have attributes such as 
+do not inherits magic classes yet, so IDE and console don't know they will have attributes such as
 ``self.parent_viewer`` or ``self.name``.
 
 All the magic classes inherits ``MagicTemplate`` class. This class is designed in a way which does not

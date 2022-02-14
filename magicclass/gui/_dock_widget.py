@@ -24,13 +24,15 @@ class QtDockWidget(_QDockWidget):
     ):
         super().__init__(name, parent)
         areas = self.__class__.areas
-        
+
         if allowed_areas:
             if not isinstance(allowed_areas, (list, tuple)):
                 raise TypeError("`allowed_areas` must be a list or tuple")
 
             if any(area not in areas for area in allowed_areas):
-                raise ValueError(f"all allowed_areas argument must be in {set(areas.keys())}")
+                raise ValueError(
+                    f"all allowed_areas argument must be in {set(areas.keys())}"
+                )
             allowed_areas = reduce(ior, [areas[a] for a in allowed_areas])
         else:
             allowed_areas = Qt.AllDockWidgetAreas
@@ -39,4 +41,3 @@ class QtDockWidget(_QDockWidget):
         self.setWidget(widget)
         self.setMinimumHeight(50)
         self.setMinimumWidth(50)
-        
