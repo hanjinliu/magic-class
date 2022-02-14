@@ -14,12 +14,13 @@ if TYPE_CHECKING:
 
 class OptionalWidget(Container):
     """A container that can represent optional argument."""
-    def __init__(self, widget: ValueWidget, text: str = None, layout="vertical", nullable=True, value=None, **kwargs):
+    def __init__(self, widget: ValueWidget, text: str = None, layout="vertical", 
+                 nullable=True, value=None, options=None, **kwargs):
         if text is None:
             text = f"set {kwargs.get('name', 'value')}"
         self._checkbox = CheckBox(text=text, value=True)
         self._inner_value_widget = widget
-        super().__init__(layout=layout, widgets=(self._checkbox, self._inner_value_widget,), 
+        super().__init__(layout=layout, widgets=(self._checkbox, self._inner_value_widget), 
                          labels=True, **kwargs)
         @self._checkbox.changed.connect
         def _toggle_visibility(v: bool):
