@@ -133,12 +133,12 @@ clearer.
     from typing_extensions import Annotated
 
     @magicgui
-    def func(i: Annotated(int, {"max": 10})):
+    def func(i: Annotated[int, {"max": 10}]):
         ...
 
 In magic-class, you can also use ``Annotated`` for bind options. But when you bind field to parameters
-you can use ``Bound`` helper function instead because all the options are already defined in the field
-and options are useless when bind option is specified.
+you can use ``Bound`` type instead because all the options are already defined in the field and options
+are useless when bind option is specified.
 
 .. code-block:: python
 
