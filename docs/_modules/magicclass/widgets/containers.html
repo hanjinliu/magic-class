@@ -89,8 +89,8 @@
 <span class="kn">from</span> <span class="nn">magicgui.backends._qtpy.widgets</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">QBaseWidget</span><span class="p">,</span>
     <span class="n">Container</span> <span class="k">as</span> <span class="n">ContainerBase</span><span class="p">,</span>
-    <span class="n">MainWindow</span> <span class="k">as</span> <span class="n">MainWindowBase</span>
-    <span class="p">)</span>
+    <span class="n">MainWindow</span> <span class="k">as</span> <span class="n">MainWindowBase</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">merge_super_sigs</span>
 
@@ -98,10 +98,12 @@
 
 <span class="n">C</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">ContainerWidget</span><span class="p">)</span>
 
+
 <div class="viewcode-block" id="wrap_container"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.containers.wrap_container">[docs]</a><span class="k">def</span> <span class="nf">wrap_container</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">C</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">base</span><span class="p">:</span> <span class="nb">type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span> <span class="o">|</span> <span class="nb">type</span><span class="p">[</span><span class="n">C</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Provide a wrapper for a new container widget with a new protocol.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">[</span><span class="n">Widget</span><span class="p">]:</span>
         <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
             <span class="n">app</span> <span class="o">=</span> <span class="n">use_app</span><span class="p">()</span>
@@ -115,12 +117,15 @@
 
     <span class="k">return</span> <span class="n">wrapper</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="k">if</span> <span class="bp">cls</span> <span class="k">else</span> <span class="n">wrapper</span></div>
 
+
 <span class="k">def</span> <span class="nf">_btn_text_warning</span><span class="p">():</span>
     <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;&#39;btn_text&#39; is deprecated and will be removed soon. Please use &#39;text&#39;.&quot;</span>
     <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="ne">DeprecationWarning</span><span class="p">)</span>
 
+
 <span class="k">class</span> <span class="nc">_Splitter</span><span class="p">(</span><span class="n">ContainerBase</span><span class="p">):</span>
     <span class="n">_qwidget</span><span class="p">:</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QWidget</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="s2">&quot;vertical&quot;</span><span class="p">):</span>
         <span class="n">QBaseWidget</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QWidget</span><span class="p">)</span>
         <span class="c1"># SetLayout is not supported for QSplitter.</span>
@@ -138,7 +143,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_splitter</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">setContentsMargins</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 
-
     <span class="k">def</span> <span class="nf">_mgui_insert_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">widget</span><span class="p">:</span> <span class="n">Widget</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_splitter</span><span class="o">.</span><span class="n">insertWidget</span><span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="n">widget</span><span class="o">.</span><span class="n">native</span><span class="p">)</span>
 
@@ -154,6 +158,7 @@
 
 <span class="k">class</span> <span class="nc">_ToolBox</span><span class="p">(</span><span class="n">ContainerBase</span><span class="p">):</span>
     <span class="n">_qwidget</span><span class="p">:</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QToolBox</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="s2">&quot;vertical&quot;</span><span class="p">):</span>
         <span class="n">QBaseWidget</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QToolBox</span><span class="p">)</span>
 
@@ -174,6 +179,7 @@
                 <span class="k">break</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Widget </span><span class="si">{</span><span class="n">widget</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> not found.&quot;</span><span class="p">)</span>
+
 
 <span class="k">class</span> <span class="nc">_Tab</span><span class="p">(</span><span class="n">ContainerBase</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="s2">&quot;vertical&quot;</span><span class="p">):</span>
@@ -226,6 +232,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_stacked_widget</span><span class="o">.</span><span class="n">removeWidget</span><span class="p">(</span><span class="n">widget</span><span class="o">.</span><span class="n">native</span><span class="p">)</span>
         <span class="n">widget</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
 
+
 <span class="k">class</span> <span class="nc">_ScrollableContainer</span><span class="p">(</span><span class="n">ContainerBase</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="s2">&quot;vertical&quot;</span><span class="p">):</span>
         <span class="n">QBaseWidget</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QWidget</span><span class="p">)</span>
@@ -254,6 +261,7 @@
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">eventFilter</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">event</span><span class="p">)</span>
 
+
 <span class="k">class</span> <span class="nc">_DraggableContainer</span><span class="p">(</span><span class="n">ContainerBase</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="s2">&quot;vertical&quot;</span><span class="p">):</span>
         <span class="n">QBaseWidget</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QWidget</span><span class="p">)</span>
@@ -274,10 +282,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">QtW</span><span class="o">.</span><span class="n">QVBoxLayout</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scroll_area</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">setContentsMargins</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-        <span class="n">QtW</span><span class="o">.</span><span class="n">QScroller</span><span class="o">.</span><span class="n">grabGesture</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scroll_area</span><span class="p">,</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QScroller</span><span class="o">.</span><span class="n">LeftMouseButtonGesture</span><span class="p">)</span>
+        <span class="n">QtW</span><span class="o">.</span><span class="n">QScroller</span><span class="o">.</span><span class="n">grabGesture</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_area</span><span class="p">,</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QScroller</span><span class="o">.</span><span class="n">LeftMouseButtonGesture</span>
+        <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_area</span><span class="o">.</span><span class="n">setVerticalScrollBarPolicy</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">ScrollBarAlwaysOff</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_area</span><span class="o">.</span><span class="n">setHorizontalScrollBarPolicy</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">ScrollBarAlwaysOff</span><span class="p">)</span>
+
 
 <span class="k">class</span> <span class="nc">_ButtonContainer</span><span class="p">(</span><span class="n">ContainerBase</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="s2">&quot;vertical&quot;</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
@@ -295,18 +306,22 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inner_widget</span><span class="o">.</span><span class="n">show</span><span class="p">())</span>
 
-<span class="n">_VERTICAL_SETTING</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;expanded-arrow&quot;</span><span class="p">:</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ArrowType</span><span class="o">.</span><span class="n">DownArrow</span><span class="p">,</span>
-                     <span class="s2">&quot;collapsed-arrow&quot;</span><span class="p">:</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ArrowType</span><span class="o">.</span><span class="n">RightArrow</span><span class="p">,</span>
-                     <span class="s2">&quot;align&quot;</span><span class="p">:</span> <span class="n">Qt</span><span class="o">.</span><span class="n">AlignTop</span><span class="p">,</span>
-                     <span class="s2">&quot;text-align&quot;</span><span class="p">:</span> <span class="s2">&quot;left&quot;</span><span class="p">,</span>
-                     <span class="s2">&quot;layout&quot;</span><span class="p">:</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QVBoxLayout</span>
-                     <span class="p">}</span>
-<span class="n">_HORIZONTAL_SETTING</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;expanded-arrow&quot;</span><span class="p">:</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ArrowType</span><span class="o">.</span><span class="n">RightArrow</span><span class="p">,</span>
-                       <span class="s2">&quot;collapsed-arrow&quot;</span><span class="p">:</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ArrowType</span><span class="o">.</span><span class="n">LeftArrow</span><span class="p">,</span>
-                       <span class="s2">&quot;align&quot;</span><span class="p">:</span> <span class="n">Qt</span><span class="o">.</span><span class="n">AlignLeft</span><span class="p">,</span>
-                       <span class="s2">&quot;text-align&quot;</span><span class="p">:</span> <span class="s2">&quot;center&quot;</span><span class="p">,</span>
-                       <span class="s2">&quot;layout&quot;</span><span class="p">:</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QHBoxLayout</span>
-                       <span class="p">}</span>
+
+<span class="n">_VERTICAL_SETTING</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;expanded-arrow&quot;</span><span class="p">:</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ArrowType</span><span class="o">.</span><span class="n">DownArrow</span><span class="p">,</span>
+    <span class="s2">&quot;collapsed-arrow&quot;</span><span class="p">:</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ArrowType</span><span class="o">.</span><span class="n">RightArrow</span><span class="p">,</span>
+    <span class="s2">&quot;align&quot;</span><span class="p">:</span> <span class="n">Qt</span><span class="o">.</span><span class="n">AlignTop</span><span class="p">,</span>
+    <span class="s2">&quot;text-align&quot;</span><span class="p">:</span> <span class="s2">&quot;left&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;layout&quot;</span><span class="p">:</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QVBoxLayout</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="n">_HORIZONTAL_SETTING</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;expanded-arrow&quot;</span><span class="p">:</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ArrowType</span><span class="o">.</span><span class="n">RightArrow</span><span class="p">,</span>
+    <span class="s2">&quot;collapsed-arrow&quot;</span><span class="p">:</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ArrowType</span><span class="o">.</span><span class="n">LeftArrow</span><span class="p">,</span>
+    <span class="s2">&quot;align&quot;</span><span class="p">:</span> <span class="n">Qt</span><span class="o">.</span><span class="n">AlignLeft</span><span class="p">,</span>
+    <span class="s2">&quot;text-align&quot;</span><span class="p">:</span> <span class="s2">&quot;center&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;layout&quot;</span><span class="p">:</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QHBoxLayout</span><span class="p">,</span>
+<span class="p">}</span>
+
 
 <span class="k">class</span> <span class="nc">_QCollapsible</span><span class="p">(</span><span class="n">QtW</span><span class="o">.</span><span class="n">QWidget</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">sizeHint</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QSize</span><span class="p">:</span>
@@ -341,12 +356,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_expand_btn</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_expand_btn</span><span class="o">.</span><span class="n">setCheckable</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_expand_btn</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_expand_btn</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">            QToolButton </span><span class="se">{{</span><span class="s2"> </span>
-<span class="s2">                border: none; </span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_expand_btn</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            QToolButton </span><span class="se">{{</span><span class="s2"></span>
+<span class="s2">                border: none;</span>
 <span class="s2">                text-align: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_setting</span><span class="p">[</span><span class="s1">&#39;text-align&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">;</span>
 <span class="s2">                </span><span class="se">}}</span><span class="s2"></span>
-<span class="s2">            &quot;&quot;&quot;</span><span class="p">)</span>
+<span class="s2">            &quot;&quot;&quot;</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_expand_btn</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mgui_change_expand</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_mgui_change_expand</span><span class="p">()</span>
 
@@ -443,10 +460,13 @@
 
         <span class="n">widget</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
 
+
 <span class="k">class</span> <span class="nc">_SubWindowsContainer</span><span class="p">(</span><span class="n">ContainerBase</span><span class="p">):</span>
     <span class="c1"># The close button in QMdiArea completely deletes the sub window widget. This accident</span>
     <span class="c1"># can be avoided by defining a custom window flag.</span>
-    <span class="n">_NoCloseButtonFlag</span> <span class="o">=</span> <span class="n">Qt</span><span class="o">.</span><span class="n">CustomizeWindowHint</span> <span class="o">|</span> <span class="n">Qt</span><span class="o">.</span><span class="n">WindowTitleHint</span> <span class="o">|</span> <span class="n">Qt</span><span class="o">.</span><span class="n">WindowMinMaxButtonsHint</span>
+    <span class="n">_NoCloseButtonFlag</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">Qt</span><span class="o">.</span><span class="n">CustomizeWindowHint</span> <span class="o">|</span> <span class="n">Qt</span><span class="o">.</span><span class="n">WindowTitleHint</span> <span class="o">|</span> <span class="n">Qt</span><span class="o">.</span><span class="n">WindowMinMaxButtonsHint</span>
+    <span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="s2">&quot;vertical&quot;</span><span class="p">):</span>
         <span class="n">QBaseWidget</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QWidget</span><span class="p">)</span>
@@ -466,6 +486,7 @@
     <span class="k">def</span> <span class="nf">_mgui_remove_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">:</span> <span class="n">Widget</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_mdiarea</span><span class="o">.</span><span class="n">removeSubWindow</span><span class="p">(</span><span class="n">widget</span><span class="o">.</span><span class="n">native</span><span class="p">)</span>
         <span class="n">widget</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+
 
 <span class="k">class</span> <span class="nc">_GroupBoxContainer</span><span class="p">(</span><span class="n">ContainerBase</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="s2">&quot;vertical&quot;</span><span class="p">):</span>
@@ -490,6 +511,7 @@
     <span class="k">def</span> <span class="nf">_set_title</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_groupbox</span><span class="o">.</span><span class="n">setTitle</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
 
+
 <span class="k">class</span> <span class="nc">_FrameContainer</span><span class="p">(</span><span class="n">_GroupBoxContainer</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="s2">&quot;vertical&quot;</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">layout</span><span class="o">=</span><span class="n">layout</span><span class="p">)</span>
@@ -498,9 +520,11 @@
 
 <span class="c1"># Container Widgets</span>
 
+
 <span class="nd">@wrap_container</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="n">_Splitter</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">SplitterContainer</span><span class="p">(</span><span class="n">ContainerWidget</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A Container equipped with splitter&quot;&quot;&quot;</span>
+
 
 <span class="nd">@wrap_container</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="n">_ToolBox</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">ToolBoxContainer</span><span class="p">(</span><span class="n">ContainerWidget</span><span class="p">):</span>
@@ -514,6 +538,7 @@
     <span class="k">def</span> <span class="nf">current_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
 
+
 <span class="nd">@wrap_container</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="n">_Tab</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">TabbedContainer</span><span class="p">(</span><span class="n">ContainerWidget</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A tab categorized Container Widget.&quot;&quot;&quot;</span>
@@ -525,6 +550,7 @@
     <span class="nd">@current_index</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">current_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_widget</span><span class="o">.</span><span class="n">_tab_widget</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+
 
 <span class="nd">@wrap_container</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="n">_Stack</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">StackedContainer</span><span class="p">(</span><span class="n">ContainerWidget</span><span class="p">):</span>
@@ -543,9 +569,11 @@
 <span class="k">class</span> <span class="nc">ScrollableContainer</span><span class="p">(</span><span class="n">ContainerWidget</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A scrollable Container Widget.&quot;&quot;&quot;</span>
 
+
 <span class="nd">@wrap_container</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="n">_DraggableContainer</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">DraggableContainer</span><span class="p">(</span><span class="n">ContainerWidget</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A draggable Container Widget.&quot;&quot;&quot;</span>
+
 
 <span class="nd">@wrap_container</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="n">_ButtonContainer</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">ButtonContainer</span><span class="p">(</span><span class="n">ContainerWidget</span><span class="p">):</span>
@@ -568,6 +596,7 @@
     <span class="nd">@text</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_widget</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
 
 <span class="nd">@wrap_container</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="n">_VCollapsibleContainer</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">CollapsibleContainer</span><span class="p">(</span><span class="n">ContainerWidget</span><span class="p">):</span>
@@ -622,6 +651,7 @@
 <span class="nd">@wrap_container</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="n">_ListContainer</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">ListContainer</span><span class="p">(</span><span class="n">ContainerWidget</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A Container Widget that support drag and drop.&quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="nf">_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_widget</span><span class="o">.</span><span class="n">_listwidget</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">rowsMoved</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_drag_and_drop_happened</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_post_init</span><span class="p">()</span>
@@ -650,13 +680,16 @@
     <span class="k">def</span> <span class="nf">current_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_widget</span><span class="o">.</span><span class="n">_listwidget</span><span class="o">.</span><span class="n">setCurrentRow</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
 
+
 <span class="nd">@wrap_container</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="n">_SubWindowsContainer</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">SubWindowsContainer</span><span class="p">(</span><span class="n">ContainerWidget</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A window-in-window container&quot;&quot;&quot;</span>
 
+
 <span class="nd">@wrap_container</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="n">_GroupBoxContainer</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">GroupBoxContainer</span><span class="p">(</span><span class="n">ContainerWidget</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A QGroupBox like container&quot;&quot;&quot;</span>
+
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
@@ -665,6 +698,7 @@
     <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">value</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_widget</span><span class="o">.</span><span class="n">_set_title</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">))</span>
+
 
 <span class="nd">@wrap_container</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="n">_FrameContainer</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">FrameContainer</span><span class="p">(</span><span class="n">ContainerWidget</span><span class="p">):</span>

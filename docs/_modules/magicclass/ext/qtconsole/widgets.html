@@ -84,8 +84,10 @@
 
 <div class="viewcode-block" id="QtConsole"><a class="viewcode-back" href="../../../../magicclass.ext.qtconsole.html#magicclass.ext.qtconsole.widgets.QtConsole">[docs]</a><span class="k">class</span> <span class="nc">QtConsole</span><span class="p">(</span><span class="n">FreeWidget</span><span class="p">):</span>
     <span class="n">executed</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="kn">from</span> <span class="nn">._qt</span> <span class="kn">import</span> <span class="n">_Console</span>
+
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">console</span> <span class="o">=</span> <span class="n">_Console</span><span class="p">()</span>
@@ -117,16 +119,14 @@
         <span class="n">lines</span> <span class="o">=</span> <span class="n">code</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
             <span class="n">cursor</span><span class="o">.</span><span class="n">insertText</span><span class="p">(</span><span class="n">line</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">_insert_continuation_prompt</span><span class="p">(</span><span class="n">cursor</span><span class="p">)</span> <span class="c1"># insert &quot;...:&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">_insert_continuation_prompt</span><span class="p">(</span><span class="n">cursor</span><span class="p">)</span>  <span class="c1"># insert &quot;...:&quot;</span>
         <span class="n">cursor</span><span class="o">.</span><span class="n">insertText</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-
 
 <div class="viewcode-block" id="QtConsole.execute"><a class="viewcode-back" href="../../../../magicclass.ext.qtconsole.html#magicclass.ext.qtconsole.widgets.QtConsole.execute">[docs]</a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Execute current code block.&quot;&quot;&quot;</span>
         <span class="n">code</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">executed</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">code</span><span class="p">)</span></div></div>
-
 </pre></div>
 
            </div>

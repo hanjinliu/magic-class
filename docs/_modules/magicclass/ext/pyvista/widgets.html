@@ -82,9 +82,11 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">...widgets.utils</span> <span class="kn">import</span> <span class="n">FreeWidget</span>
 
+
 <div class="viewcode-block" id="PyVistaCanvas"><a class="viewcode-back" href="../../../../magicclass.ext.pyvista.html#magicclass.ext.pyvista.widgets.PyVistaCanvas">[docs]</a><span class="k">class</span> <span class="nc">PyVistaCanvas</span><span class="p">(</span><span class="n">FreeWidget</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="kn">from</span> <span class="nn">pyvistaqt</span> <span class="kn">import</span> <span class="n">QtInteractor</span>
+
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">widget</span> <span class="o">=</span> <span class="n">QtInteractor</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_widget</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
@@ -95,6 +97,7 @@
 
 <div class="viewcode-block" id="PyVistaCanvas.add_points"><a class="viewcode-back" href="../../../../magicclass.ext.pyvista.html#magicclass.ext.pyvista.widgets.PyVistaCanvas.add_points">[docs]</a>    <span class="k">def</span> <span class="nf">add_points</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">central_widget</span><span class="o">.</span><span class="n">add_points</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
+
 
 <span class="n">shared_doc</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
 
@@ -231,7 +234,7 @@
 <span class="s2">            the width with ``line_width``.</span>
 
 <span class="s2">        smooth_shading : bool, optional</span>
-<span class="s2">            Enable smooth shading when ``True`` using either the </span>
+<span class="s2">            Enable smooth shading when ``True`` using either the</span>
 <span class="s2">            Gouraud or Phong shading algorithm.  When ``False``, use</span>
 <span class="s2">            flat shading.</span>
 <span class="s2">            Automatically enabled when ``pbr=True``.</span>

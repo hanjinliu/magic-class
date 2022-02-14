@@ -90,6 +90,7 @@
 
 <span class="n">_Callback</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="n">Any</span><span class="p">]</span>
 
+
 <div class="viewcode-block" id="BaseWidget"><a class="viewcode-back" href="../../../../magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.object.BaseWidget">[docs]</a><span class="k">class</span> <span class="nc">BaseWidget</span><span class="p">(</span><span class="n">FreeWidget</span><span class="p">):</span>
     <span class="c1"># Abstract class for PyObject-like widgets.</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -125,38 +126,46 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Register a double-click callback function for items of certain type.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_callbacks</span><span class="p">[</span><span class="n">type_</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">func</span>
+
         <span class="k">return</span> <span class="n">wrapper</span></div>
 
 <div class="viewcode-block" id="BaseWidget.register_delegate"><a class="viewcode-back" href="../../../../magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.object.BaseWidget.register_delegate">[docs]</a>    <span class="k">def</span> <span class="nf">register_delegate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_</span><span class="p">:</span> <span class="nb">type</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Register a custom display.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_delegates</span><span class="p">[</span><span class="n">type_</span><span class="p">]</span> <span class="o">=</span> <span class="n">func</span>
             <span class="k">return</span> <span class="n">func</span>
+
         <span class="k">return</span> <span class="n">wrapper</span></div>
 
 <div class="viewcode-block" id="BaseWidget.register_contextmenu"><a class="viewcode-back" href="../../../../magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.object.BaseWidget.register_contextmenu">[docs]</a>    <span class="k">def</span> <span class="nf">register_contextmenu</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_</span><span class="p">:</span> <span class="nb">type</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Register a custom context menu for items of certain type.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_contextmenu</span><span class="p">[</span><span class="n">type_</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">func</span>
+
         <span class="k">return</span> <span class="n">wrapper</span></div>
 
 <div class="viewcode-block" id="BaseWidget.register_tooltip"><a class="viewcode-back" href="../../../../magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.object.BaseWidget.register_tooltip">[docs]</a>    <span class="k">def</span> <span class="nf">register_tooltip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_</span><span class="p">:</span> <span class="nb">type</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Register a custom tooltipfor items of certain type.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">|</span> <span class="nb">str</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
                 <span class="n">func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">func</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_tooltip</span><span class="p">[</span><span class="n">type_</span><span class="p">]</span> <span class="o">=</span> <span class="n">func</span>
             <span class="k">return</span> <span class="n">func</span>
+
         <span class="k">return</span> <span class="n">wrapper</span></div></div>
 
 
@@ -164,6 +173,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This class defines custom contextmenu with type dispatching.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
 <div class="viewcode-block" id="ContextMenuMixin.setContextMenu"><a class="viewcode-back" href="../../../../magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.object.ContextMenuMixin.setContextMenu">[docs]</a>    <span class="k">def</span> <span class="nf">setContextMenu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setContextMenuPolicy</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">CustomContextMenu</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">customContextMenuRequested</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contextMenu</span><span class="p">)</span></div>
@@ -190,11 +200,14 @@
 
         <span class="n">menu</span><span class="o">.</span><span class="n">exec_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mapToGlobal</span><span class="p">(</span><span class="n">point</span><span class="p">))</span></div></div>
 
+
 <div class="viewcode-block" id="partial_event"><a class="viewcode-back" href="../../../../magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.object.partial_event">[docs]</a><span class="k">def</span> <span class="nf">partial_event</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
     <span class="nd">@wraps</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">_func</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+
     <span class="k">return</span> <span class="n">_func</span></div>
+
 
 <div class="viewcode-block" id="PyObjectBound"><a class="viewcode-back" href="../../../../magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.object.PyObjectBound">[docs]</a><span class="k">class</span> <span class="nc">PyObjectBound</span><span class="p">:</span>
 <div class="viewcode-block" id="PyObjectBound.setObject"><a class="viewcode-back" href="../../../../magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.object.PyObjectBound.setObject">[docs]</a>    <span class="k">def</span> <span class="nf">setObject</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>

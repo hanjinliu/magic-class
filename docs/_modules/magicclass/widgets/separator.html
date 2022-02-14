@@ -83,22 +83,29 @@
 <span class="kn">from</span> <span class="nn">qtpy.QtWidgets</span> <span class="kn">import</span> <span class="n">QFrame</span><span class="p">,</span> <span class="n">QLabel</span><span class="p">,</span> <span class="n">QPushButton</span><span class="p">,</span> <span class="n">QSizePolicy</span><span class="p">,</span> <span class="n">QHBoxLayout</span>
 <span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">FreeWidget</span>
 
+
 <div class="viewcode-block" id="Separator"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.separator.Separator">[docs]</a><span class="k">class</span> <span class="nc">Separator</span><span class="p">(</span><span class="n">FreeWidget</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A Separator widget that can be used in both widgets and menus.</span>
 <span class="sd">    This widget is not actually added to menus or toolbars.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">btn_clicked</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orientation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;horizontal&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-                 <span class="n">button</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">orientation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;horizontal&quot;</span><span class="p">,</span>
+        <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">button</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_qtitlebar</span> <span class="o">=</span> <span class="n">_QTitleBar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">button</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_widget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_qtitlebar</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">button</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_qtitlebar</span><span class="o">.</span><span class="n">button</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
                 <span class="k">lambda</span> <span class="n">e</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">btn_clicked</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_qtitlebar</span><span class="o">.</span><span class="n">button</span><span class="o">.</span><span class="n">isDown</span><span class="p">())</span>
-                <span class="p">)</span>
+            <span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">btn_text</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -119,11 +126,12 @@
         <span class="n">line</span><span class="o">.</span><span class="n">setFrameShape</span><span class="p">(</span><span class="n">QFrame</span><span class="o">.</span><span class="n">HLine</span><span class="p">)</span>
         <span class="n">line</span><span class="o">.</span><span class="n">setFrameShadow</span><span class="p">(</span><span class="n">QFrame</span><span class="o">.</span><span class="n">Sunken</span><span class="p">)</span>
         <span class="n">line</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="s2">&quot;Separator&quot;</span><span class="p">)</span>
-        <span class="n">line</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">            QFrame#Separator {</span>
-<span class="s2">                background-color: gray;</span>
-<span class="s2">            }</span>
-<span class="s2">        &quot;&quot;&quot;</span>
+        <span class="n">line</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span>
+            <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            QFrame#Separator {</span>
+<span class="sd">                background-color: gray;</span>
+<span class="sd">            }</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="p">)</span>
 
         <span class="n">layout</span> <span class="o">=</span> <span class="n">QHBoxLayout</span><span class="p">()</span>
@@ -133,12 +141,14 @@
         <span class="k">if</span> <span class="n">button</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">button</span> <span class="o">=</span> <span class="n">QPushButton</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">button</span><span class="o">.</span><span class="n">setFixedWidth</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">button</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="s2">&quot;QPushButton {&quot;</span>
-                                      <span class="s2">&quot;border: 1px solid #555;&quot;</span>
-                                      <span class="s2">&quot;border-radius: 10px;&quot;</span>
-                                      <span class="s2">&quot;border-style: outset;&quot;</span>
-                                      <span class="s2">&quot;padding: 5px&quot;</span>
-                                      <span class="s2">&quot;}&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">button</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span>
+                <span class="s2">&quot;QPushButton {&quot;</span>
+                <span class="s2">&quot;border: 1px solid #555;&quot;</span>
+                <span class="s2">&quot;border-radius: 10px;&quot;</span>
+                <span class="s2">&quot;border-style: outset;&quot;</span>
+                <span class="s2">&quot;padding: 5px&quot;</span>
+                <span class="s2">&quot;}&quot;</span>
+            <span class="p">)</span>
             <span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">button</span><span class="p">)</span>
 
         <span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
@@ -156,7 +166,6 @@
         <span class="n">szh</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">sizeHint</span><span class="p">()</span>
         <span class="n">szh</span><span class="o">.</span><span class="n">setHeight</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">szh</span>
-
 </pre></div>
 
            </div>

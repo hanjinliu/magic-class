@@ -86,17 +86,21 @@
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">napari</span>
 
-<div class="viewcode-block" id="to_napari"><a class="viewcode-back" href="../../../../magicclass.ext.napari.html#magicclass.ext.napari.utils.to_napari">[docs]</a><span class="k">def</span> <span class="nf">to_napari</span><span class="p">(</span><span class="n">magic_class</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">BaseGui</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-              <span class="o">*</span><span class="p">,</span>
-              <span class="n">viewer</span><span class="p">:</span> <span class="s2">&quot;napari.Viewer&quot;</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-              <span class="p">):</span>
+
+<div class="viewcode-block" id="to_napari"><a class="viewcode-back" href="../../../../magicclass.ext.napari.html#magicclass.ext.napari.utils.to_napari">[docs]</a><span class="k">def</span> <span class="nf">to_napari</span><span class="p">(</span>
+    <span class="n">magic_class</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">BaseGui</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">viewer</span><span class="p">:</span> <span class="n">napari</span><span class="o">.</span><span class="n">Viewer</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Send magic class to current napari viewer. Classes decorated with ``@magicclass``</span>
 <span class="sd">    ``magicmenu`` and ``magictoolbar`` are supported.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">BaseGui</span><span class="p">]):</span>
         <span class="k">if</span> <span class="n">viewer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="kn">import</span> <span class="nn">napari</span>
+
             <span class="n">_viewer</span> <span class="o">=</span> <span class="n">napari</span><span class="o">.</span><span class="n">current_viewer</span><span class="p">()</span>
             <span class="k">if</span> <span class="n">_viewer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">_viewer</span> <span class="o">=</span> <span class="n">napari</span><span class="o">.</span><span class="n">Viewer</span><span class="p">()</span>
@@ -116,7 +120,7 @@
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Class </span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> is not a magic-class. Maybe you forgot decorating&quot;</span>
                 <span class="s2">&quot;the class with &#39;@magicclass&#39;?&quot;</span>
-                <span class="p">)</span>
+            <span class="p">)</span>
         <span class="n">_viewer</span><span class="o">.</span><span class="n">update_console</span><span class="p">({</span><span class="s2">&quot;ui&quot;</span><span class="p">:</span> <span class="n">ui</span><span class="p">})</span>
         <span class="k">return</span> <span class="bp">cls</span>
 
