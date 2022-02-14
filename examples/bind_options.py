@@ -2,7 +2,7 @@
 # constant value or a callback function to the parameter. In magicclass you can also
 # bind class method or MagicField object. Since the bind option is very useful for
 # reproducible macro recording, magicclass also provides helper function "Bound".
-# Bound(x) is equivalent to Annotated[X, {"bind": x}]. Type "X" is determined from x.
+# Bound[x] is equivalent to Annotated[X, {"bind": x}]. Type "X" is determined from x.
 
 from magicclass import magicclass, Bound, field, set_options
 from typing_extensions import Annotated
@@ -28,10 +28,10 @@ class Main:
     def print_2(self, v: Annotated[float, {"bind": _get_random_value}]):
         print(v)
     
-    def print_3(self, v: Bound(_get_random_value)):
+    def print_3(self, v: Bound[_get_random_value]):
         print(v)
     
-    def print_parameters(self, mean: Bound(mean), sd: Bound(sd)):
+    def print_parameters(self, mean: Bound[mean], sd: Bound[sd]):
         print(f"{mean} +/- {sd}")
         
 if __name__ == "__main__":

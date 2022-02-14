@@ -149,6 +149,6 @@ and options are useless when bind option is specified.
         a = field(float)
         b = field(float)
 
-        def call(self, x0: Bound(a), x1: Bound(b)):
+        def call(self, x0: Bound[a], x1: Bound[b]):
             print(x0 + x1)
 

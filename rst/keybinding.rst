@@ -106,7 +106,7 @@ You can also bind values of fields or other methods (see :doc:`use_bind`).
     class Main:
         a = field(int)
         @bind_key("Ctrl-A")
-        def print_value(self, a: Bound(a)):
+        def print_value(self, a: Bound[a]):
             print(a)
 
 Function calls triggered by shortcut are also recorded in macro because triggered event

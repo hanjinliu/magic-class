@@ -88,7 +88,7 @@ function to a field, you must re-define fields in the subclasses.
 
             @magicclass
             class Main(Base):
-                def func(self, value: Bound(x)):
+                def func(self, value: Bound[x]):
                     """Do something"""
 
     .. container:: rightside
@@ -106,7 +106,7 @@ function to a field, you must re-define fields in the subclasses.
             class Main(Base):
                 x = field(int)
 
-                def func(self, value: Bound(x)):
+                def func(self, value: Bound[x]):
                     """Do something"""
 
 2. Define Callbacks
