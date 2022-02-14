@@ -11,7 +11,7 @@ def test_single_wraps():
             def f2(self): ...
             def f3(self): ...
         @B.wraps
-        def f2(self, a: Bound(a)):
+        def f2(self, a: Bound[a]):
             self.new_attr = a
     
     ui = A()
@@ -39,7 +39,7 @@ def test_double_wrap():
                 def f2(self): ...
                 def f3(self): ...
         @B.C.wraps
-        def f2(self, a: Bound(a)):
+        def f2(self, a: Bound[a]):
             self.new_attr = a
     
     ui = A()
@@ -68,7 +68,7 @@ def test_copy():
             def f2(self): ...
         @B.wraps
         @B.C.wraps
-        def f2(self, a: Bound(a)):
+        def f2(self, a: Bound[a]):
             self.new_attr = a
     
     ui = A()

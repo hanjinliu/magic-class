@@ -4,8 +4,6 @@ import inspect
 from dataclasses import is_dataclass
 from weakref import WeakValueDictionary
 from typing import Any, TYPE_CHECKING
-from typing_extensions import Annotated, _AnnotatedAlias
-from magicgui.widgets import EmptyWidget
 
 from .gui.class_gui import (
     ClassGuiBase, 
@@ -30,7 +28,7 @@ from .gui import ContextMenuGui, MenuGui, ToolBarGui
 from ._app import get_app
 from ._typing import WidgetType
 from .fields import MagicField
-from . import _macrokit  # activate macrokit registration things.
+from . import _register  # activate type registration things.
 
 if TYPE_CHECKING:
     from .stylesheets import StyleSheet
@@ -56,33 +54,6 @@ _TYPE_MAP = {
     WidgetType.subwindows: SubWindowsClassGui,
     WidgetType.mainwindow: MainWindowClassGui,
 }
-
-def Bound(value: Any) -> _AnnotatedAlias:
-    """
-    Make Annotated type from a MagicField or a method, such as:
-    
-    .. code-block:: python
-        
-        from magicclass import magicclass, field
-        
-        @magicclass
-        class MyClass:
-            i = field(int)
-            def func(self, v: Bound(i)):
-                ...
-    
-    ``Bound(value)`` is identical to ``Annotated[Any, {"bind": value}]``.    
-    """    
-    _type = Any
-    if callable(value):
-        annot: dict[str, Any] = getattr(value, "__annotations__", {})
-        _type = annot.get("return", Any)
-    elif isinstance(value, MagicField):
-        _type = value.annotation or Any
-    else:
-        _type = type(value)
-    
-    return Annotated[_type, {"bind": value, "widget_type": EmptyWidget}]
 
 
 def magicclass(class_: type | None = None,

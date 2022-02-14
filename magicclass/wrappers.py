@@ -5,6 +5,8 @@ from typing import Callable, Iterable, Iterator, Union, TYPE_CHECKING, TypeVar, 
 from typing_extensions import ParamSpec
 from magicgui.widgets import Label
 from macrokit import Expr
+
+from ._typing import Color
 from .signature import upgrade_signature
 
 if TYPE_CHECKING:
@@ -12,7 +14,6 @@ if TYPE_CHECKING:
     from .gui.mgui_ext import Action
     from magicgui.widgets._bases import ButtonWidget
 
-Color = Union[str, Iterable[float]]
 nStrings = Union[str, Iterable[str]]
 P = ParamSpec("P")
 R = TypeVar("R")
@@ -60,7 +61,7 @@ def set_options(layout: str = "vertical",
 
 def set_design(width: int = None, height: int = None, min_width: int = None, min_height: int = None,
                max_width: int = None, max_height: int = None, text: str = None, 
-               icon_path: str = None, icon_size: tuple [ int,int]=None,
+               icon_path: str = None, icon_size: tuple [int, int]=None,
                font_size: int = None, font_family: int = None, font_color: Color = None,
                background_color: Color = None, visible: bool = True):
     """

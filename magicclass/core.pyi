@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Callable, TypeVar, Union, overload, Any
-from typing_extensions import Literal, _AnnotatedAlias
+from typing_extensions import Literal
 
 from .gui.menu_gui import ContextMenuGui, MenuGui
 from .gui.toolbar import ToolBarGui
@@ -18,7 +18,6 @@ Layout = Union[Literal["vertical"], Literal["horizontal"]]
 _C = TypeVar("_C", bound=type)
 _V = TypeVar("_V")
 
-def Bound(value: Any) -> _AnnotatedAlias: ...
 def build_help(ui: MagicTemplate, parent: QWidget | None = None): ...
 
 @overload

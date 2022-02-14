@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 class OptionalWidget(Container):
     """A container that can represent optional argument."""
     def __init__(self, widget: ValueWidget, text: str = None, layout="vertical", 
-                 nullable=True, value=None, options=None, **kwargs):
+                 nullable=True, value=None, **kwargs):
         if text is None:
             text = f"set {kwargs.get('name', 'value')}"
         self._checkbox = CheckBox(text=text, value=True)

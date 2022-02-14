@@ -76,7 +76,7 @@ def test_Bound():
     
         a = field("a")
         
-        def func(self, x: Bound(_get_param), y: Bound(a)):
+        def func(self, x: Bound[_get_param], y: Bound[a]):
             return x, y
     
     ui = A()
@@ -98,11 +98,11 @@ def test_wrapped():
         def _a(self, w=None):
             return "a"
         
-        def func_1(self, x: Bound(_a), y: Bound(B.field_b)):
+        def func_1(self, x: Bound[_a], y: Bound[B.field_b]):
             self.returned = x, y
         
         @B.wraps
-        def func_2(self, x: Bound(field_a), y: Bound(B._b)):
+        def func_2(self, x: Bound[field_a], y: Bound[B._b]):
             self.returned = x, y
         
     ui = A()

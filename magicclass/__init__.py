@@ -6,7 +6,6 @@ from .core import (
     magiccontext,
     magictoolbar, 
     Parameters,
-    Bound,
     build_help
     )
 
@@ -22,7 +21,7 @@ from .wrappers import (
 
 from .fields import field, vfield
 from .gui._base import wraps, defaults, MagicTemplate, PopUpMode
-from ._typing import WidgetType
+from ._typing import WidgetType, Bound, Color
 from .gui.keybinding import Key
 from . import widgets, utils
 
