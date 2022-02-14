@@ -9,7 +9,7 @@ from .gui.class_gui import ClassGuiBase
 from .gui._base import PopUpMode, ErrorMode, MagicTemplate
 
 if TYPE_CHECKING:
-    from ._typing import WidgetType, WidgetTypeStr, PopUpModeStr, ErrorModeStr
+    from .types import WidgetType, WidgetTypeStr, PopUpModeStr, ErrorModeStr
     from .stylesheets import StyleSheet
     from qtpy.QtWidgets import QWidget
 

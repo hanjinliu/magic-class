@@ -5,7 +5,7 @@ import magicgui as mgui
 from enum import Enum
 from pathlib import Path
 import datetime
-from ._typing import Color
+from .types import Color
 from .widgets import ColorEdit
 from .widgets.sequence import ListDataView
 from .gui._base import MagicTemplate

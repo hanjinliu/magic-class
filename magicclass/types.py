@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from enum import Enum
+import typing
 from typing import Any, Union, Iterable
 from typing_extensions import Literal, Annotated, _AnnotatedAlias
 
@@ -100,3 +101,37 @@ class Bound:
 
     def __init_subclass__(cls, *args, **kwargs):
         raise TypeError(f"Cannot subclass {cls.__module__}.Bound")
+
+
+class Optional:
+    def __new__(cls, *args, **kwargs):
+        raise TypeError("Type Bound cannot be instantiated.")
+
+    @_tp_cache
+    def __class_getitem__(cls, value) -> _AnnotatedAlias:
+        if isinstance(value, tuple):
+            type_, options = value
+        else:
+            type_, options = value, {}
+
+        if not isinstance(type_, type):
+            raise TypeError(
+                "The first argument of Optional must be a type but "
+                f"got {type(type_)}."
+            )
+        if not isinstance(options, dict):
+            raise TypeError(
+                "The second argument of Optional must be a dict but "
+                f"got {type(options)}."
+            )
+        from .widgets import OptionalWidget
+
+        opt = dict(
+            widget_type=OptionalWidget,
+            annotation=type_,
+            options=options,
+        )
+        return Annotated[typing.Optional[type_], opt]
+
+    def __init_subclass__(cls, *args, **kwargs):
+        raise TypeError(f"Cannot subclass {cls.__module__}.Optional")

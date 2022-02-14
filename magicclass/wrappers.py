@@ -6,7 +6,7 @@ from typing_extensions import ParamSpec
 from magicgui.widgets import Label
 from macrokit import Expr
 
-from ._typing import Color
+from .types import Color
 from .signature import upgrade_signature
 
 if TYPE_CHECKING:

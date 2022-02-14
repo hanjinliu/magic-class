@@ -21,7 +21,7 @@ from .wrappers import (
 
 from .fields import field, vfield
 from .gui._base import wraps, defaults, MagicTemplate, PopUpMode
-from ._typing import WidgetType, Bound, Color
+from .types import WidgetType, Bound, Color, Optional
 from .gui.keybinding import Key
 from . import widgets, utils
 

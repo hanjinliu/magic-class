@@ -26,14 +26,14 @@ from .gui.class_gui import (
 from .gui._base import PopUpMode, ErrorMode, defaults, MagicTemplate, check_override
 from .gui import ContextMenuGui, MenuGui, ToolBarGui
 from ._app import get_app
-from ._typing import WidgetType
+from .types import WidgetType
 from .fields import MagicField
 from . import _register  # activate type registration things.
 
 if TYPE_CHECKING:
     from .stylesheets import StyleSheet
     from .gui import MenuGuiBase
-    from ._typing import WidgetTypeStr, PopUpModeStr, ErrorModeStr
+    from .types import WidgetTypeStr, PopUpModeStr, ErrorModeStr
 
 _BASE_CLASS_SUFFIX = "_Base"
 

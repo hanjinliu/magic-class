@@ -3,31 +3,66 @@ from typing import TYPE_CHECKING, Iterable, MutableSequence, Any
 from qtpy.QtWidgets import QTabWidget, QLineEdit, QMenu
 from qtpy.QtGui import QTextCursor
 from qtpy.QtCore import Qt
-from magicgui.widgets import PushButton, TextEdit, Table, Container, CheckBox
+from magicgui.widgets import (
+    PushButton,
+    TextEdit,
+    Table,
+    Container,
+    CheckBox,
+    create_widget,
+)
 from magicgui.widgets._bases.value_widget import ValueWidget, UNSET
-from .utils import FreeWidget
+from .utils import FreeWidget, merge_super_sigs
 
 if TYPE_CHECKING:
     from qtpy.QtWidgets import QTextEdit
     from matplotlib.axes import Axes
 
 
+@merge_super_sigs
 class OptionalWidget(Container):
-    """A container that can represent optional argument."""
+    """
+    A container that can represent optional argument.
+
+    Parameters
+    ----------
+    widget_type : ValueWidget type
+        Type of inner value widget.
+    text : str, optional
+        Text of checkbox.
+    value : Any
+        Initial value.
+    options : dict, optional
+        Widget options of the inner value widget.
+    """
 
     def __init__(
         self,
-        widget: ValueWidget,
+        widget_type: type[ValueWidget] | None = None,
         text: str = None,
         layout="vertical",
         nullable=True,
-        value=None,
+        value=UNSET,
+        options=None,
         **kwargs,
     ):
         if text is None:
-            text = f"set {kwargs.get('name', 'value')}"
+            text = "Use default value"
+        if options is None:
+            options = {}
         self._checkbox = CheckBox(text=text, value=True)
-        self._inner_value_widget = widget
+
+        if widget_type is None:
+            self._inner_value_widget = create_widget(
+                annotation=kwargs["annotation"],
+                options=options,
+            )
+        else:
+            self._inner_value_widget = create_widget(
+                widget_type=widget_type,
+                options=options,
+            )
+
         super().__init__(
             layout=layout,
             widgets=(self._checkbox, self._inner_value_widget),
@@ -37,13 +72,13 @@ class OptionalWidget(Container):
 
         @self._checkbox.changed.connect
         def _toggle_visibility(v: bool):
-            self._inner_value_widget.visible = v
+            self._inner_value_widget.visible = not v
 
         self.value = value
 
     @property
     def value(self) -> Any:
-        if self._checkbox.value:
+        if not self._checkbox.value:
             return self._inner_value_widget.value
         else:
             return None
@@ -51,10 +86,12 @@ class OptionalWidget(Container):
     @value.setter
     def value(self, v: Any) -> None:
         if v is None or v is UNSET:
-            self._checkbox.value = False
+            self._checkbox.value = True
+            self._inner_value_widget.visible = False
         else:
             self._inner_value_widget.value = v
-            self._checkbox.value = True
+            self._checkbox.value = False
+            self._inner_value_widget.visible = True
 
     @property
     def text(self) -> str:
