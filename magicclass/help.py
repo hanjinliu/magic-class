@@ -14,22 +14,28 @@ from magicclass.widgets.misc import ConsoleTextEdit
 from .gui.mgui_ext import Action, PushButtonPlus, WidgetAction
 from .gui._base import MagicTemplate
 from .widgets import DraggableContainer, FreeWidget
-from .gui.class_gui import CollapsibleClassGui, DraggableClassGui, ScrollableClassGui, ButtonClassGui
+from .gui.class_gui import (
+    CollapsibleClassGui,
+    DraggableClassGui,
+    ScrollableClassGui,
+    ButtonClassGui,
+)
 from .utils import iter_members, extract_tooltip, get_signature
 
 if TYPE_CHECKING:
     import numpy as np
-    
-# TODO: find
-# TODO: key-binding
+
+# TODO: find, key-binding
+
 
 class _HelpWidget(QSplitter):
     """
     A Qt widget that will show information of a magic-class widget, built from its
     class structure, function docstrings and type annotations.
-    """    
+    """
+
     _initial_image_size = 250
-    
+
     def __init__(self, ui=None, parent=None) -> None:
         super().__init__(orientation=Qt.Horizontal, parent=parent)
         self.setWindowFlag(Qt.Window)
@@ -39,8 +45,10 @@ class _HelpWidget(QSplitter):
         self._text.read_only = True
         self._mgui_image = Image()
         c = DraggableContainer(widgets=[self._mgui_image])
-        
-        self._mgui_slider = Slider(value=self._initial_image_size, min=50, max=1000, step=50)
+
+        self._mgui_slider = Slider(
+            value=self._initial_image_size, min=50, max=1000, step=50
+        )
         self._mgui_slider.changed.connect(self._resize_image)
         self._mgui_slider.parent = c
         self._mgui_slider.native.setGeometry(4, 4, 100, 20)
@@ -48,20 +56,20 @@ class _HelpWidget(QSplitter):
         self._mgui_slider.max_width = 100
         c.min_height = 120
         self._resize_image(self._initial_image_size)
-        
+
         widget_right = SplitterContainer(widgets=[c, self._text])
-        
+
         self.insertWidget(0, self._tree)
         self.insertWidget(1, widget_right.native)
-        
+
         if ui is not None:
             self.set_tree(ui)
             self._update_ui_view(ui)
-            
+
         width = self.width()
-        left_width = width//3
+        left_width = width // 3
         self.setSizes([left_width, width - left_width])
-    
+
     def set_tree(self, ui: MagicTemplate, root: UiBoundTreeItem = None):
         name = ui.name
         if root is None:
@@ -69,44 +77,48 @@ class _HelpWidget(QSplitter):
             root.setText(0, name)
             root.setExpanded(True)
             self._tree.invisibleRootItem().addChild(root)
-                
+
         for i, widget in enumerate(_iter_unwrapped_children(ui)):
             if isinstance(widget, MagicTemplate):
                 child = UiBoundTreeItem(root, ui=widget)
                 self.set_tree(widget, root=child)
-                if child.childCount() == 1 and isinstance(child.child(0).ui, MagicTemplate):
+                if child.childCount() == 1 and isinstance(
+                    child.child(0).ui, MagicTemplate
+                ):
                     # If only one magic class is nested, we don't create redundant items
                     grandchild = child.takeChild(0)
-                    grandchild.setText(0, f"({i+1}) {widget.name} > {grandchild.ui.name}")
+                    grandchild.setText(
+                        0, f"({i+1}) {widget.name} > {grandchild.ui.name}"
+                    )
                     root.removeChild(child)
                     child = grandchild
                 else:
                     child.setText(0, f"({i+1}) {widget.name}")
-                    
+
             else:
                 child = UiBoundTreeItem(root, ui=None)
                 child.setText(0, f"({i+1}) {widget.name}")
-            
+
             root.addChild(child)
-    
+
     def _resize_image(self, v: float):
         self._mgui_image.min_height = v
         self._mgui_image.max_height = v
         self._mgui_image.min_width = v
         self._mgui_image.max_width = v
-    
+
     def _update_ui_view(self, ui: MagicTemplate):
         img, docs = get_help_info(ui)
-        
+
         # set image
         self._mgui_image.value = img
-        
+
         # set text
         htmls = [f"<h1>{ui.name}</h1><p>{extract_tooltip(ui)}</p>"]
-        
+
         if docs:
             htmls.append("<h2>Contents</h2>")
-        
+
         for i, (name, doc) in enumerate(docs.items()):
             htmls.append(f"<h3>({i+1}) {name}</h3><p>{doc}</p>")
         self._text.value = "".join(htmls)
@@ -119,19 +131,20 @@ class _HelpWidget(QSplitter):
             self._on_treeitem_clicked(item.parent())
         self._resize_image(self._initial_image_size)
 
-    
+
 class UiBoundTreeItem(QTreeWidgetItem):
     def __init__(self, parent, ui=None):
         super().__init__(parent)
-        self.ui = ui # TODO: use weakref?
-    
+        self.ui = ui  # TODO: use weakref?
+
     def child(self, index: int) -> UiBoundTreeItem:
         # Just for typing
         return super().child(index)
-    
+
     def takeChild(self, index: int) -> UiBoundTreeItem:
         # Just for typing
         return super().takeChild(index)
+
 
 class HelpWidget(FreeWidget):
     def __init__(self, ui=None, parent=None):
@@ -140,20 +153,27 @@ class HelpWidget(FreeWidget):
         self.set_widget(self._help_widget)
         self.native.setWindowTitle("Help")
 
+
 def _issubclass(child: Any, parent: Any):
     try:
         return issubclass(child, parent)
     except TypeError:
         return False
 
+
 def get_help_info(ui: MagicTemplate) -> tuple[np.ndarray, dict[str, str]]:
     import numpy as np
     import matplotlib as mpl
     import matplotlib.pyplot as plt
+
     backend = mpl.get_backend()
     try:
-        _has_inner_widget = (ScrollableClassGui, DraggableClassGui, CollapsibleClassGui, 
-                             ButtonClassGui)
+        _has_inner_widget = (
+            ScrollableClassGui,
+            DraggableClassGui,
+            CollapsibleClassGui,
+            ButtonClassGui,
+        )
         if isinstance(ui, _has_inner_widget):
             inner_widget = ui._widget._inner_widget
             visible = inner_widget.isVisible()
@@ -174,25 +194,34 @@ def get_help_info(ui: MagicTemplate) -> tuple[np.ndarray, dict[str, str]]:
             ax.imshow(img)
             for i, widget in enumerate(_iter_unwrapped_children(ui)):
                 x, y = _get_relative_pos(widget)
-                ax.text(x*scale, y*scale, f"({i+1})",
-                        ha="center", va="center", color="white",
-                        backgroundcolor="black", fontfamily="Arial")
+                ax.text(
+                    x * scale,
+                    y * scale,
+                    f"({i+1})",
+                    ha="center",
+                    va="center",
+                    color="white",
+                    backgroundcolor="black",
+                    fontfamily="Arial",
+                )
                 docs[widget.name] = _get_doc(widget)
             fig.tight_layout()
             fig.canvas.draw()
-            
+
             data = np.asarray(fig.canvas.renderer.buffer_rgba(), dtype=np.uint8)
-        
-        
+
     finally:
         mpl.use(backend)
-    
+
     return data, docs
+
 
 def _screen_scale() -> float:
     from qtpy.QtGui import QGuiApplication
+
     screen = QGuiApplication.screens()[0]
     return screen.devicePixelRatio()
+
 
 def _get_doc(widget) -> str:
     if isinstance(widget, MagicTemplate):
@@ -205,14 +234,16 @@ def _get_doc(widget) -> str:
         doc = widget.tooltip or ""
     else:
         raise TypeError(type(widget))
-    doc = doc.rstrip("<h3>Parameters</h3><ul></ul>") # If parameter info was not given
+    doc = doc.rstrip("<h3>Parameters</h3><ul></ul>")  # If parameter info was not given
     if doc == "":
         doc = "(No document found)"
     return doc
 
+
 def _render(qwidget: QWidget) -> np.ndarray:
     """Render Qt widgets. Used in certain type of containers."""
     import numpy as np
+
     img = qwidget.grab().toImage()
     bits = img.constBits()
     h, w, c = img.height(), img.width(), 4
@@ -224,31 +255,35 @@ def _render(qwidget: QWidget) -> np.ndarray:
 
     return arr[:, :, [2, 1, 0, 3]]
 
+
 def _iter_unwrapped_children(ui: MagicTemplate) -> Iterator[Widget]:
     for widget in ui:
         if not getattr(widget, "_unwrapped", False):
             yield widget
 
+
 def _get_relative_pos(widget: Widget) -> tuple[int, int]:
-    """Get relative position of a widget seen from its parent."""    
+    """Get relative position of a widget seen from its parent."""
     w = widget._labeled_widget()
     if w is None:
         w = widget
     qpos = w.native.mapToParent(w.native.rect().topLeft())
     return qpos.x(), qpos.y()
 
+
 def get_keymap(ui: MagicTemplate | type[MagicTemplate]):
     from .signature import get_additional_option
     from .gui.keybinding import as_shortcut
+
     keymap: dict[str, Callable] = {}
-    
+
     if isinstance(ui, MagicTemplate):
         cls = ui.__class__
     elif _issubclass(ui, MagicTemplate):
         cls = ui
     else:
         raise TypeError("'get_keymap' can only be called with MagicTemplate input.")
-    
+
     for name, attr in iter_members(cls, exclude_prefix=" "):
         if isinstance(attr, type) and issubclass(attr, MagicTemplate):
             child_keymap = get_keymap(attr)
@@ -258,5 +293,5 @@ def get_keymap(ui: MagicTemplate | type[MagicTemplate]):
             if kb:
                 keystr = as_shortcut(kb).toString()
                 keymap[keystr] = (name, extract_tooltip(attr))
-                
+
     return keymap

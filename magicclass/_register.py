@@ -19,9 +19,19 @@ _time = Expr(Head.getattr, [datetime, datetime.time])
 mk.register_type(Enum, lambda e: symbol(e.value))
 mk.register_type(Path, lambda e: f"r'{e}'")
 mk.register_type(ListDataView, lambda e: list(e))
-mk.register_type(datetime.datetime, lambda e: Expr.parse_call(_datetime, (e.year, e.month, e.day, e.hour, e.minute), {}))
-mk.register_type(datetime.date, lambda e: Expr.parse_call(_date, (e.year, e.month, e.day), {}))
-mk.register_type(datetime.time, lambda e: Expr.parse_call(_time, (e.hour, e.minute), {}))
+mk.register_type(
+    datetime.datetime,
+    lambda e: Expr.parse_call(
+        _datetime, (e.year, e.month, e.day, e.hour, e.minute), {}
+    ),
+)
+mk.register_type(
+    datetime.date, lambda e: Expr.parse_call(_date, (e.year, e.month, e.day), {})
+)
+mk.register_type(
+    datetime.time, lambda e: Expr.parse_call(_time, (e.hour, e.minute), {})
+)
+
 
 @mk.register_type(MagicTemplate)
 def find_myname(gui: MagicTemplate):
@@ -31,6 +41,7 @@ def find_myname(gui: MagicTemplate):
         return gui._my_symbol
     else:
         return Expr(Head.getattr, [find_myname(parent), gui._my_symbol])
+
 
 # magicgui bug??
 # mgui.register_type(Color, widget_type=ColorEdit)

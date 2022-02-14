@@ -1,3 +1,4 @@
+# Most of the part copied from "magicgui.tqdm".
 from __future__ import annotations
 from typing import Iterable, cast
 import inspect
@@ -8,18 +9,17 @@ from magicgui.tqdm import _find_calling_function_gui
 try:
     from tqdm import tqdm as _tqdm_std
 except ImportError as e:  # pragma: no cover
-    msg = (
-        f"{e}. To use magicclass with tqdm please `pip install tqdm`"
-    )
+    msg = f"{e}. To use magicclass with tqdm please `pip install tqdm`"
     raise type(e)(msg)
+
 
 class ProgressBar(_ProgressBar):
     def tqdm(self, iterable=None, *args, **kwargs):
         return tqdm(iterable=iterable, *args, pbar=self, **kwargs)
-    
+
     def trange(self, *args, **kwargs):
         return self.tqdm(range(*args), **kwargs)
-    
+
 
 _tqdm_kwargs = {
     p.name
@@ -27,21 +27,25 @@ _tqdm_kwargs = {
     if p.kind is not inspect.Parameter.VAR_KEYWORD and p.name != "self"
 }
 
+
 class tqdm(_tqdm_std):
     """
     Re-implementation of ``magicgui``'s ``tqdm``.
     """
+
     disable: bool
 
-    def __init__(self, iterable: Iterable = None, *args, pbar: _ProgressBar = None, **kwargs) -> None:
+    def __init__(
+        self, iterable: Iterable = None, *args, pbar: _ProgressBar = None, **kwargs
+    ) -> None:
         kwargs = kwargs.copy()
         pbar_kwargs = {k: kwargs.pop(k) for k in set(kwargs) - _tqdm_kwargs}
         self._mgui = _find_calling_function_gui(max_depth=10)
-        
+
         kwargs["gui"] = True
         kwargs.setdefault("mininterval", 0.025)
         super().__init__(iterable, *args, **kwargs)
-        
+
         self.prefix = kwargs.get("prefix", "")
         self.sp = lambda x: None  # no-op status printer, required for older tqdm compat
 
@@ -55,10 +59,10 @@ class tqdm(_tqdm_std):
 
         if self.disable:
             return
-        
+
         self._pbar_was_visible = self.progressbar.visible
         self._pbar_old_label = self.progressbar.label
-        
+
         self._app = use_app()
 
         if self.total is not None:
@@ -103,7 +107,7 @@ class tqdm(_tqdm_std):
         """Update the display."""
         if not (self._in_visible_gui or self.progressbar.visible):
             return super().display(msg=msg, pos=pos)
-        
+
         self.progressbar.value = self.n
         if self.prefix:
             self.progressbar.label = self.prefix
@@ -139,7 +143,7 @@ class tqdm(_tqdm_std):
 
     def __enter__(self):
         return self.progressbar
-    
+
 
 def trange(*args, **kwargs) -> tqdm:
     """Shortcut for ``tqdm(range(*args), **kwargs)``."""
