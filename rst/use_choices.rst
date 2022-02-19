@@ -74,3 +74,37 @@ choices every time current directory is changed, the ``"chocies"`` options is ve
 
         def show_current_directory(self):
             print(self._cd)
+
+
+Choices in MagicField
+---------------------
+
+Unlike the ``"bind"`` option, ``"choices"`` option is sometimes useful in ``MagicField``
+(if you are not familiar with fields, see :doc:`use_field`). Methods defined in a magic class
+can also be used in ``MagicField`` object.
+
+Following example is a file explorer similar to the previous one but defined using ``MagicField``.
+
+.. code-block:: python
+
+    import os
+    from magicclass import magicclass, set_options, field
+    from magicgui.widgets import RadioButtons
+
+    RETURN = "../"
+
+    @magicclass
+    class Main:
+        def _get_files(self, w=None):
+            return os.listdir(self.cd.value) + [RETURN]
+
+        cd = field(os.getcwd())
+        files = field(RadioButtons, options={"choices": _get_files})
+
+        def goto(self):
+            f = self.files.value
+            if f == RETURN:
+                self.cd.value = os.path.dirname(self.cd.value)  # move back to the parent directory
+            else:
+                self.cd.value = os.path.join(self.cd.value, f)  # go to new directory
+            self.reset_choices()
