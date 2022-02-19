@@ -77,6 +77,7 @@ class MagicField(Field, Generic[_W, _V]):
         )
 
     def _resolve_choices(self, obj: Any):
+        """If method is given as choices, get generate method from it."""
         from .gui._base import _is_instance_method, _method_as_getter
 
         _arg_choices = self.options["choices"]
