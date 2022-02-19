@@ -31,7 +31,11 @@ _V = TypeVar("_V", bound=object)
 
 class MagicField(Field, Generic[_W, _V]):
     """
-    Field class for magicgui construction. This object is compatible with dataclass.
+    Field class for magicgui construction.
+
+
+    This object is compatible with dataclass. MagicField object is in "ready for
+    widget construction" state.
     """
 
     def __init__(
@@ -72,6 +76,13 @@ class MagicField(Field, Generic[_W, _V]):
             self.default, self.default_factory, self.metadata, self.name, self.record
         )
 
+    def _resolve_choices(self, obj: Any):
+        from .gui._base import _is_instance_method, _method_as_getter
+
+        _arg_choices = self.options["choices"]
+        if _is_instance_method(obj, _arg_choices):
+            self.options["choices"] = _method_as_getter(obj, _arg_choices)
+
     def get_widget(self, obj: Any) -> _W:
         """
         Get a widget from ``obj``. This function will be called every time MagicField is referred
@@ -82,6 +93,8 @@ class MagicField(Field, Generic[_W, _V]):
         if obj_id in self.guis.keys():
             widget = self.guis[obj_id]
         else:
+            if "choices" in self.options:
+                self._resolve_choices(obj)
             widget = self.to_widget()
             self.guis[obj_id] = widget
             if self.parent_class is None:
@@ -99,6 +112,8 @@ class MagicField(Field, Generic[_W, _V]):
         if obj_id in self.guis.keys():
             action = self.guis[obj_id]
         else:
+            if "choices" in self.options:
+                self._resolve_choices(obj)
             action = self.to_action()
             self.guis[obj_id] = action
             if self.parent_class is None:
