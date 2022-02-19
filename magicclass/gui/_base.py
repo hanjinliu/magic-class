@@ -536,38 +536,42 @@ class MagicTemplate:
         widget.tooltip = extract_tooltip(func)
         widget._doc = func.__doc__
 
-        # Get the number of parameters except for empty widgets.
-        # With these lines, "bind" method of magicgui works inside magicclass.
-        fgui = FunctionGuiPlus.from_callable(obj)
-        n_empty = len([_widget for _widget in fgui if isinstance(_widget, EmptyWidget)])
-        nparams = _n_parameters(func) - n_empty
-
         # This block enables instance methods in "bind" method of ValueWidget.
         all_params = []
         for param in func.__signature__.parameters.values():
             if isinstance(param.annotation, _AnnotatedAlias):
                 # TODO: after magicgui supports pydantic, something needs update here.
                 param = MagicParameter.from_parameter(param)
+
             if isinstance(param, MagicParameter):
-                bound_value = param.options.get("bind", None)
+                _arg_bind = param.options.get("bind", None)
+                _arg_choices = param.options.get("choices", None)
 
                 # If bound method is a class method, use self.method(widget) as the value.
-                # "_n_parameters(bound_value) == 2" seems a indirect way to determine that
-                # "bound_value" is a class method but "_method_as_getter" raises ValueError
-                # if "bound_value" is defined in a wrong namespace.
-                if (
-                    isinstance(bound_value, Callable)
-                    and _n_parameters(bound_value) == 2
-                ):
-                    param.options["bind"] = _method_as_getter(self, bound_value)
+                # "_n_parameters(_arg_bind) == 2" seems a indirect way to determine that
+                # "_arg_bind" is a class method but "_method_as_getter" raises ValueError
+                # if "_arg_bind" is defined in a wrong namespace.
+                if isinstance(_arg_bind, Callable) and _n_parameters(_arg_bind) == 2:
+                    param.options["bind"] = _method_as_getter(self, _arg_bind)
 
                 # If a MagicFiled is bound, bind the value of the connected widget.
-                elif isinstance(bound_value, MagicField):
-                    param.options["bind"] = _field_as_getter(self, bound_value)
+                elif isinstance(_arg_bind, MagicField):
+                    param.options["bind"] = _field_as_getter(self, _arg_bind)
+
+                if (
+                    isinstance(_arg_choices, Callable)
+                    and _n_parameters(_arg_choices) == 2
+                ):
+                    param.options["choices"] = _method_as_getter(self, _arg_choices)
 
             all_params.append(param)
 
+        # Get the number of parameters except for empty widgets.
+        # With these lines, "bind" method of magicgui works inside magicclass.
         func.__signature__ = func.__signature__.replace(parameters=all_params)
+        fgui = FunctionGuiPlus.from_callable(obj)
+        n_empty = len([_widget for _widget in fgui if isinstance(_widget, EmptyWidget)])
+        nparams = _n_parameters(func) - n_empty
 
         obj_sig = get_signature(obj)
         if isinstance(func.__signature__, MagicMethodSignature):
@@ -1209,6 +1213,11 @@ def _field_as_getter(self: BaseGui, bound_value: MagicField):
 
 def _need_record(func: Callable):
     return get_additional_option(func, "record", True)
+
+
+def _is_instance_method(self: MagicTemplate, func: Callable) -> bool:
+    classes = func.__qualname__.split(".")[:-1]
+    return self.__class__.__name__ in classes
 
 
 def value_widget_callback(

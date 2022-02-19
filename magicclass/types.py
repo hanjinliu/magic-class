@@ -109,6 +109,15 @@ class Optional:
 
     @_tp_cache
     def __class_getitem__(cls, value) -> _AnnotatedAlias:
+        """
+        Make Annotated type similar to ``typing.Optional``.
+
+        Arguments annotated with ``Optional[int]`` will create a
+        ``OptionalWidget`` with a ``SpinBox`` as an inner widget.
+        Arguments annotated with ``Optional[X, {...}]`` will create a
+        ``OptionalWidget`` with a widget constructed using widget option
+        ``{...}``.
+        """
         if isinstance(value, tuple):
             type_, options = value
         else:

@@ -219,9 +219,12 @@ class ClassGuiBase(BaseGui):
                             continue
                         try:
                             widget = self._create_widget_from_method(widget)
-                        except AttributeError:
-                            msg = f"Could not convert {widget!r} into a widget."
-                            warnings.warn(msg, UserWarning)
+                        except AttributeError as e:
+                            warnings.warn(
+                                f"Could not convert {widget!r} into a widget "
+                                f"due to AttributeError: {e}",
+                                UserWarning,
+                            )
                             continue
 
                     elif hasattr(widget, "__magicclass_parent__") or hasattr(
