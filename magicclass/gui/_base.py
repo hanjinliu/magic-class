@@ -536,7 +536,7 @@ class MagicTemplate:
         widget.tooltip = extract_tooltip(func)
         widget._doc = func.__doc__
 
-        # This block enables instance methods in "bind" method of ValueWidget.
+        # This block enables instance methods in "bind" or "choices" of ValueWidget.
         all_params = []
         for param in func.__signature__.parameters.values():
             if isinstance(param.annotation, _AnnotatedAlias):
@@ -547,28 +547,24 @@ class MagicTemplate:
                 _arg_bind = param.options.get("bind", None)
                 _arg_choices = param.options.get("choices", None)
 
-                # If bound method is a class method, use self.method(widget) as the value.
-                # "_n_parameters(_arg_bind) == 2" seems a indirect way to determine that
-                # "_arg_bind" is a class method but "_method_as_getter" raises ValueError
-                # if "_arg_bind" is defined in a wrong namespace.
-                if isinstance(_arg_bind, Callable) and _n_parameters(_arg_bind) == 2:
+                # If bound method is a class method, use self.method(widget).
+                if _is_instance_method(self, _arg_bind):
                     param.options["bind"] = _method_as_getter(self, _arg_bind)
 
                 # If a MagicFiled is bound, bind the value of the connected widget.
                 elif isinstance(_arg_bind, MagicField):
                     param.options["bind"] = _field_as_getter(self, _arg_bind)
 
-                if (
-                    isinstance(_arg_choices, Callable)
-                    and _n_parameters(_arg_choices) == 2
-                ):
+                # If choices are provided by a class method, use self.method(widget).
+                if _is_instance_method(self, _arg_choices):
                     param.options["choices"] = _method_as_getter(self, _arg_choices)
 
             all_params.append(param)
 
+        func.__signature__ = func.__signature__.replace(parameters=all_params)
+
         # Get the number of parameters except for empty widgets.
         # With these lines, "bind" method of magicgui works inside magicclass.
-        func.__signature__ = func.__signature__.replace(parameters=all_params)
         fgui = FunctionGuiPlus.from_callable(obj)
         n_empty = len([_widget for _widget in fgui if isinstance(_widget, EmptyWidget)])
         nparams = _n_parameters(func) - n_empty
@@ -1216,6 +1212,8 @@ def _need_record(func: Callable):
 
 
 def _is_instance_method(self: MagicTemplate, func: Callable) -> bool:
+    if not callable(func):
+        return False
     classes = func.__qualname__.split(".")[:-1]
     return self.__class__.__name__ in classes
 
