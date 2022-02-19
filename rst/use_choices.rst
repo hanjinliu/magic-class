@@ -98,7 +98,7 @@ Following example is a file explorer similar to the previous one but defined usi
         def _get_files(self, w=None):
             return os.listdir(self.cd.value) + [RETURN]
 
-        cd = field(os.getcwd())
+        cd = field(os.getcwd(), enabled=False)
         files = field(RadioButtons, options={"choices": _get_files})
 
         def goto(self):

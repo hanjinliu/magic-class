@@ -44,6 +44,7 @@ class MagicField(Field, Generic[_W, _V]):
         default_factory=MISSING,
         metadata: dict = {},
         name: str = None,
+        enabled: bool = True,
         record: bool = True,
     ):
         metadata = metadata.copy()
@@ -61,6 +62,7 @@ class MagicField(Field, Generic[_W, _V]):
         self.callbacks: list[Callable] = []
         self.guis: dict[int, _M] = {}
         self.name = name
+        self.enabled = enabled
         self.record = record
 
         # MagicField has to remenber the first class that referred to itself so that it can
@@ -100,6 +102,7 @@ class MagicField(Field, Generic[_W, _V]):
             self.guis[obj_id] = widget
             if self.parent_class is None:
                 self.parent_class = objtype
+            widget.enabled = self.enabled
 
         return widget
 
@@ -119,6 +122,7 @@ class MagicField(Field, Generic[_W, _V]):
             self.guis[obj_id] = action
             if self.parent_class is None:
                 self.parent_class = objtype
+            action.enabled = self.enabled
 
         return action
 
@@ -312,6 +316,7 @@ def field(
     name: str = "",
     widget_type: str | type[WidgetProtocol] | None = None,
     options: dict[str, Any] = {},
+    enabled: bool = True,
     record: bool = True,
 ) -> MagicField[ValueWidget, _X]:
     ...
@@ -324,6 +329,7 @@ def field(
     name: str = "",
     widget_type: str | type[WidgetProtocol] | None = None,
     options: dict[str, Any] = {},
+    enabled: bool = True,
     record: bool = True,
 ) -> MagicField[_W, Any]:
     ...
@@ -336,6 +342,7 @@ def field(
     name: str = "",
     widget_type: str | type[WidgetProtocol] | None = None,
     options: dict[str, Any] = {},
+    enabled: bool = True,
     record: bool = True,
 ) -> MagicField[ValueWidget, _X]:
     ...
@@ -348,6 +355,7 @@ def field(
     name: str = "",
     widget_type: str | type[WidgetProtocol] | None = None,
     options: dict[str, Any] = {},
+    enabled: bool = True,
     record: bool = True,
 ) -> MagicField[_M, Any]:
     ...
@@ -360,6 +368,7 @@ def field(
     name: str = "",
     widget_type: str | type[WidgetProtocol] | None = None,
     options: dict[str, Any] = {},
+    enabled: bool = True,
     record: bool = True,
 ) -> MagicField[Widget, Any]:
     ...
@@ -371,6 +380,7 @@ def field(
     name: str = "",
     widget_type: str | type[WidgetProtocol] | None = None,
     options: dict[str, Any] = {},
+    enabled: bool = True,
     record: bool = True,
 ) -> MagicField[Widget, Any]:
     """
@@ -391,6 +401,8 @@ def field(
         Widget type. This argument will be sent to ``create_widget`` function.
     options : WidgetOptions, optional
         Widget options. This parameter will always be used in ``widget(**options)`` form.
+    enabled : bool, default is True,
+        Set whether widget is initially enabled.
     record : bool, default is True
         Record value changes as macro.
 
@@ -398,7 +410,7 @@ def field(
     -------
     MagicField
     """
-    return _get_field(obj, name, widget_type, options, record, MagicField)
+    return _get_field(obj, name, widget_type, options, enabled, record, MagicField)
 
 
 @overload
@@ -408,6 +420,7 @@ def vfield(
     name: str = "",
     widget_type: str | type[WidgetProtocol] | None = None,
     options: dict[str, Any] = {},
+    enabled: bool = True,
     record: bool = True,
 ) -> MagicValueField[Widget, _V]:
     ...
@@ -420,6 +433,7 @@ def vfield(
     name: str = "",
     widget_type: str | type[WidgetProtocol] | None = None,
     options: dict[str, Any] = {},
+    enabled: bool = True,
     record: bool = True,
 ) -> MagicValueField[Widget, _V]:
     ...
@@ -432,6 +446,7 @@ def vfield(
     name: str = "",
     widget_type: str | type[WidgetProtocol] | None = None,
     options: dict[str, Any] = {},
+    enabled: bool = True,
     record: bool = True,
 ) -> MagicValueField[Widget, Any]:
     ...
@@ -443,6 +458,7 @@ def vfield(
     name: str = "",
     widget_type: str | type[WidgetProtocol] | None = None,
     options: dict[str, Any] = {},
+    enabled: bool = True,
     record: bool = True,
 ) -> MagicValueField[Widget, Any]:
     """
@@ -468,12 +484,16 @@ def vfield(
         Widget type. This argument will be sent to ``create_widget`` function.
     options : WidgetOptions, optional
         Widget options. This parameter will always be used in ``widget(**options)`` form.
+    enabled : bool, default is True,
+        Set whether widget is initially enabled.
+    record : bool, default is True
+        Record value changes as macro.
 
     Returns
     -------
     MagicValueField
     """
-    return _get_field(obj, name, widget_type, options, record, MagicValueField)
+    return _get_field(obj, name, widget_type, options, enabled, record, MagicValueField)
 
 
 def _get_field(
@@ -481,19 +501,19 @@ def _get_field(
     name: str,
     widget_type: str | type[WidgetProtocol] | None,
     options: dict[str, Any],
+    enabled: bool,
     record: bool,
     field_class: type[MagicField],
 ) -> type[MagicField]:
     options = options.copy()
     metadata = dict(widget_type=widget_type, options=options)
 
+    kwargs = dict(metadata=metadata, name=name, enabled=enabled, record=record)
     if isinstance(obj, type):
-        f = field_class(
-            default_factory=obj, metadata=metadata, name=name, record=record
-        )
+        f = field_class(default_factory=obj, **kwargs)
     elif obj is MISSING:
-        f = field_class(metadata=metadata, name=name, record=record)
+        f = field_class(**kwargs)
     else:
-        f = field_class(default=obj, metadata=metadata, name=name, record=record)
+        f = field_class(default=obj, **kwargs)
 
     return f
