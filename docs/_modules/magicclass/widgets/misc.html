@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.widgets.misc &mdash; magic-class 0.5.21.dev0 documentation</title>
+  <title>magicclass.widgets.misc &mdash; magic-class 0.5.21 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.21.dev0
+                0.5.21
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -45,6 +45,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../use_field.html">Use Fields in magic-class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../use_wraps.html">Call Parent Methods from its Child</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../use_bind.html">Binding Values to Arguments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../use_choices.html">Set Choices Dynamically</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../keybinding.html">Define Custom Keybindings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../customize_macro.html">Customize Macro Recording</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../containers.html">Container Variations</a></li>
@@ -83,31 +84,66 @@
 <span class="kn">from</span> <span class="nn">qtpy.QtWidgets</span> <span class="kn">import</span> <span class="n">QTabWidget</span><span class="p">,</span> <span class="n">QLineEdit</span><span class="p">,</span> <span class="n">QMenu</span>
 <span class="kn">from</span> <span class="nn">qtpy.QtGui</span> <span class="kn">import</span> <span class="n">QTextCursor</span>
 <span class="kn">from</span> <span class="nn">qtpy.QtCore</span> <span class="kn">import</span> <span class="n">Qt</span>
-<span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">PushButton</span><span class="p">,</span> <span class="n">TextEdit</span><span class="p">,</span> <span class="n">Table</span><span class="p">,</span> <span class="n">Container</span><span class="p">,</span> <span class="n">CheckBox</span>
+<span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">PushButton</span><span class="p">,</span>
+    <span class="n">TextEdit</span><span class="p">,</span>
+    <span class="n">Table</span><span class="p">,</span>
+    <span class="n">Container</span><span class="p">,</span>
+    <span class="n">CheckBox</span><span class="p">,</span>
+    <span class="n">create_widget</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">magicgui.widgets._bases.value_widget</span> <span class="kn">import</span> <span class="n">ValueWidget</span><span class="p">,</span> <span class="n">UNSET</span>
-<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">FreeWidget</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">FreeWidget</span><span class="p">,</span> <span class="n">merge_super_sigs</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">qtpy.QtWidgets</span> <span class="kn">import</span> <span class="n">QTextEdit</span>
     <span class="kn">from</span> <span class="nn">matplotlib.axes</span> <span class="kn">import</span> <span class="n">Axes</span>
 
 
-<div class="viewcode-block" id="OptionalWidget"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.misc.OptionalWidget">[docs]</a><span class="k">class</span> <span class="nc">OptionalWidget</span><span class="p">(</span><span class="n">Container</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A container that can represent optional argument.&quot;&quot;&quot;</span>
+<span class="nd">@merge_super_sigs</span>
+<span class="k">class</span> <span class="nc">OptionalWidget</span><span class="p">(</span><span class="n">Container</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A container that can represent optional argument.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    widget_type : ValueWidget type</span>
+<span class="sd">        Type of inner value widget.</span>
+<span class="sd">    text : str, optional</span>
+<span class="sd">        Text of checkbox.</span>
+<span class="sd">    value : Any</span>
+<span class="sd">        Initial value.</span>
+<span class="sd">    options : dict, optional</span>
+<span class="sd">        Widget options of the inner value widget.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">widget</span><span class="p">:</span> <span class="n">ValueWidget</span><span class="p">,</span>
+        <span class="n">widget_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">ValueWidget</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">layout</span><span class="o">=</span><span class="s2">&quot;vertical&quot;</span><span class="p">,</span>
         <span class="n">nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">value</span><span class="o">=</span><span class="n">UNSET</span><span class="p">,</span>
+        <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="k">if</span> <span class="n">text</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;set </span><span class="si">{</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;Use default value&quot;</span>
+        <span class="k">if</span> <span class="n">options</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">options</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_checkbox</span> <span class="o">=</span> <span class="n">CheckBox</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_inner_value_widget</span> <span class="o">=</span> <span class="n">widget</span>
+
+        <span class="k">if</span> <span class="n">widget_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_inner_value_widget</span> <span class="o">=</span> <span class="n">create_widget</span><span class="p">(</span>
+                <span class="n">annotation</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;annotation&quot;</span><span class="p">],</span>
+                <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_inner_value_widget</span> <span class="o">=</span> <span class="n">create_widget</span><span class="p">(</span>
+                <span class="n">widget_type</span><span class="o">=</span><span class="n">widget_type</span><span class="p">,</span>
+                <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span>
+            <span class="p">)</span>
+
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">layout</span><span class="o">=</span><span class="n">layout</span><span class="p">,</span>
             <span class="n">widgets</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_checkbox</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inner_value_widget</span><span class="p">),</span>
@@ -117,13 +153,13 @@
 
         <span class="nd">@self</span><span class="o">.</span><span class="n">_checkbox</span><span class="o">.</span><span class="n">changed</span><span class="o">.</span><span class="n">connect</span>
         <span class="k">def</span> <span class="nf">_toggle_visibility</span><span class="p">(</span><span class="n">v</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_inner_value_widget</span><span class="o">.</span><span class="n">visible</span> <span class="o">=</span> <span class="n">v</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_inner_value_widget</span><span class="o">.</span><span class="n">visible</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">v</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_checkbox</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_checkbox</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inner_value_widget</span><span class="o">.</span><span class="n">value</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
@@ -131,10 +167,12 @@
     <span class="nd">@value</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">v</span> <span class="ow">is</span> <span class="n">UNSET</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_checkbox</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_checkbox</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_inner_value_widget</span><span class="o">.</span><span class="n">visible</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_inner_value_widget</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">v</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_checkbox</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_checkbox</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_inner_value_widget</span><span class="o">.</span><span class="n">visible</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">text</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -142,7 +180,7 @@
 
     <span class="nd">@text</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_checkbox</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">v</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_checkbox</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">v</span>
 
 
 <div class="viewcode-block" id="Figure"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.misc.Figure">[docs]</a><span class="k">class</span> <span class="nc">Figure</span><span class="p">(</span><span class="n">FreeWidget</span><span class="p">):</span>

@@ -56,6 +56,14 @@ magicclass.tqdm module
    :undoc-members:
    :show-inheritance:
 
+magicclass.types module
+-----------------------
+
+.. automodule:: magicclass.types
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 magicclass.wrappers module
 --------------------------
 

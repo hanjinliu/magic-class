@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Binding Values to Arguments &mdash; magic-class 0.5.21.dev0 documentation</title>
+  <title>Binding Values to Arguments &mdash; magic-class 0.5.21 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/columns.css" type="text/css" />
@@ -19,7 +19,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Define Custom Keybindings" href="keybinding.html" />
+    <link rel="next" title="Set Choices Dynamically" href="use_choices.html" />
     <link rel="prev" title="Call Parent Methods from its Child" href="use_wraps.html" />
 </head>
 
@@ -31,7 +31,7 @@
             <a href="index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.21.dev0
+                0.5.21
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -53,6 +53,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#use-annotated-type">Use Annotated Type</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="use_choices.html">Set Choices Dynamically</a></li>
 <li class="toctree-l1"><a class="reference internal" href="keybinding.html">Define Custom Keybindings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="customize_macro.html">Customize Macro Recording</a></li>
 <li class="toctree-l1"><a class="reference internal" href="containers.html">Container Variations</a></li>
@@ -198,13 +199,13 @@ clearer.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Annotated</span>
 
 <span class="nd">@magicgui</span>
-<span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">i</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">})):</span>
+<span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">i</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">}]):</span>
     <span class="o">...</span>
 </pre></div>
 </div>
 <p>In magic-class, you can also use <code class="docutils literal notranslate"><span class="pre">Annotated</span></code> for bind options. But when you bind field to parameters
-you can use <code class="docutils literal notranslate"><span class="pre">Bound</span></code> helper function instead because all the options are already defined in the field
-and options are useless when bind option is specified.</p>
+you can use <code class="docutils literal notranslate"><span class="pre">Bound</span></code> type instead because all the options are already defined in the field and options
+are useless when bind option is specified.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">Bound</span>
 
 <span class="nd">@magicclass</span>
@@ -224,7 +225,7 @@ and options are useless when bind option is specified.</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="use_wraps.html" class="btn btn-neutral float-left" title="Call Parent Methods from its Child" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="keybinding.html" class="btn btn-neutral float-right" title="Define Custom Keybindings" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="use_choices.html" class="btn btn-neutral float-right" title="Set Choices Dynamically" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

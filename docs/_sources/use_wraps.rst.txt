@@ -67,7 +67,7 @@ child widget.
 
 .. warning::
 
-    In the current version (0.5.19), integer indexing is not safe if a magic class has wrapped
+    In the current version (0.5.21), integer indexing is not safe if a magic class has wrapped
     methods. To access chind widgets, use ``str`` (such as ``ui["X"]``) instead of ``int``
     (such as ``ui[1]``).
 
@@ -144,10 +144,10 @@ If push button in ``Main`` is not needed, delete ``copy=True`` from the first de
 .. code-block:: python
 
     # in class Main
-        @Menu.wraps(copy=True)
-        @Tools.wraps
-        def func(self):
-            """write program here."""
+    @Menu.wraps(copy=True)
+    @Tools.wraps
+    def func(self):
+        """write program here."""
 
 In this case, even the second ``copy=True`` option can be omitted because you'll never have to wrap
 same method twice. Magic classes automatically make copies if a method is already wrapped.
@@ -155,10 +155,10 @@ same method twice. Magic classes automatically make copies if a method is alread
 .. code-block:: python
 
     # in class Main
-        @Menu.wraps
-        @Tools.wraps
-        def func(self):
-            """write program here."""
+    @Menu.wraps
+    @Tools.wraps
+    def func(self):
+        """write program here."""
 
 Widget designs can be separetely set via pre-defined methods.
 
@@ -182,3 +182,42 @@ Widget designs can be separetely set via pre-defined methods.
         @Tools.wraps
         def func(self):
             """write program here."""
+
+Find Ancestor Widgets
+---------------------
+
+If your purpose is just to get the ancestor widget, you can call ``find_ancestor`` method instead.
+``self.find_ancestor(X)`` will iteratively search for the widget parent until it reaches an instance
+of ``X``.
+
+.. code-block:: python
+
+    @magicclass
+    class Main:
+        @magicclass
+        class A:
+            def func(self):
+                ancestor = self.find_ancestor(Main)
+                # do something on the ancestor widget
+
+In terms of calling parent methods, ``find_ancestor`` works very similar to ``@wraps``. However, there
+are pros and cons between ``@wraps`` and ``find_ancestor``.
+
+- You can define child widget class outside the parent widget class.
+
+    .. code-block:: python
+
+        @magicmenu
+        class A:
+            def func(self):
+                ancestor = self.find_ancestor(Main)
+                # do something on the ancestor widget
+
+        @magicclass
+        class Main:
+            A = A
+
+- Recorded macro will be different. In the case of calling ``find_ancestor``,
+  macro will be recorded as ``"ui.ChildClass.method(...)"`` while it will be
+  ``"ui.method(...)"`` if you used ``@wraps``. In terms of readability,
+  usually ``@wraps`` will be better.

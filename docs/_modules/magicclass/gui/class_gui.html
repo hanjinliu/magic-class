@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.gui.class_gui &mdash; magic-class 0.5.21.dev0 documentation</title>
+  <title>magicclass.gui.class_gui &mdash; magic-class 0.5.21 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.21.dev0
+                0.5.21
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -45,6 +45,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../use_field.html">Use Fields in magic-class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../use_wraps.html">Call Parent Methods from its Child</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../use_bind.html">Binding Values to Arguments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../use_choices.html">Set Choices Dynamically</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../keybinding.html">Define Custom Keybindings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../customize_macro.html">Customize Macro Recording</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../containers.html">Container Variations</a></li>
@@ -191,11 +192,9 @@
 
         <span class="n">_hist</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># for traceback</span>
         <span class="n">_annot</span> <span class="o">=</span> <span class="n">ClassGuiBase</span><span class="o">.</span><span class="vm">__annotations__</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-
+        <span class="n">_ignore_types</span> <span class="o">=</span> <span class="p">(</span><span class="nb">property</span><span class="p">,</span> <span class="nb">classmethod</span><span class="p">,</span> <span class="nb">staticmethod</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">attr</span> <span class="ow">in</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">base_members</span><span class="p">,</span> <span class="n">iter_members</span><span class="p">(</span><span class="bp">cls</span><span class="p">)):</span>
-            <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">_annot</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span>
-                <span class="n">attr</span><span class="p">,</span> <span class="p">(</span><span class="nb">property</span><span class="p">,</span> <span class="nb">classmethod</span><span class="p">,</span> <span class="nb">staticmethod</span><span class="p">)</span>
-            <span class="p">):</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">_annot</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">_ignore_types</span><span class="p">):</span>
                 <span class="k">continue</span>
 
             <span class="k">try</span><span class="p">:</span>
@@ -242,7 +241,7 @@
                             <span class="k">else</span><span class="p">:</span>
                                 <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
                                     <span class="s2">&quot;Cannot add menubar after adding a toolbar in a non-main window. &quot;</span>
-                                    <span class="s2">&quot;Use maigcclass(widget_type=&#39;mainwindow&#39;) instead, or define the&quot;</span>
+                                    <span class="s2">&quot;Use maigcclass(widget_type=&#39;mainwindow&#39;) instead, or define the &quot;</span>
                                     <span class="s2">&quot;menu class before toolbar class.&quot;</span>
                                 <span class="p">)</span>
 
@@ -299,9 +298,12 @@
                             <span class="k">continue</span>
                         <span class="k">try</span><span class="p">:</span>
                             <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_widget_from_method</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
-                        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-                            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Could not convert </span><span class="si">{</span><span class="n">widget</span><span class="si">!r}</span><span class="s2"> into a widget.&quot;</span>
-                            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="ne">UserWarning</span><span class="p">)</span>
+                        <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                                <span class="sa">f</span><span class="s2">&quot;Could not convert </span><span class="si">{</span><span class="n">widget</span><span class="si">!r}</span><span class="s2"> into a widget &quot;</span>
+                                <span class="sa">f</span><span class="s2">&quot;due to AttributeError: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                                <span class="ne">UserWarning</span><span class="p">,</span>
+                            <span class="p">)</span>
                             <span class="k">continue</span>
 
                     <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="s2">&quot;__magicclass_parent__&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">hasattr</span><span class="p">(</span>
