@@ -65,9 +65,7 @@ def extract_tooltip(obj: Any) -> str:
 
 
 def get_signature(func):
-    """
-    Similar to ``inspect.signature`` but safely returns ``MagicMethodSignature``.
-    """
+    """Similar to ``inspect.signature`` but safely returns ``Signature``."""
     if hasattr(func, "__signature__"):
         sig = func.__signature__
     else:

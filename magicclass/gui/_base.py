@@ -368,10 +368,17 @@ class MagicTemplate:
 
             predefined = getattr(cls, func.__name__, None)
             if predefined is not None:
-                # update signature to the parent one.
+                # Update signature to the parent one. This step is necessary when widget design
+                # is defined on the parent side. Parameters should be replaced with a simplest
+                # one to avoid creating useless widgets.
                 parent_sig = get_signature(func)
+                _simple_param = inspect.Parameter(
+                    "self", inspect.Parameter.POSITIONAL_OR_KEYWORD
+                )
                 if not hasattr(predefined, "__signature__"):
-                    predefined.__signature__ = parent_sig
+                    predefined.__signature__ = parent_sig.replace(
+                        parameters=(_simple_param,),
+                    )
                 else:
                     sig: inspect.Signature = predefined.__signature__
                     predefined.__signature__ = sig.replace(
@@ -1164,8 +1171,9 @@ def _method_as_getter(self, bound_value: Callable):
         while clsnames[0] != ins.__class__.__name__:
             ins = getattr(ins, "__magicclass_parent__", None)
             if ins is None:
+                ns = ".".join(clsnames)
                 raise ValueError(
-                    f"Method {qualname} is invisible"
+                    f"Method {funcname} is in namespace {ns}, so it is invisible "
                     f"from magicclass {self.__class__.__qualname__}"
                 )
 
@@ -1212,10 +1220,12 @@ def _need_record(func: Callable):
 
 
 def _is_instance_method(self: MagicTemplate, func: Callable) -> bool:
-    if not callable(func):
-        return False
-    classes = func.__qualname__.split(".")[:-1]
-    return self.__class__.__name__ in classes
+    # NOTE: following implementation is not compatible with @wraps
+    # if not callable(func):
+    #     return False
+    # classes = func.__qualname__.split(".")[:-1]
+    # return self.__class__.__name__ in classes
+    return isinstance(func, Callable) and _n_parameters(func) == 2
 
 
 def value_widget_callback(

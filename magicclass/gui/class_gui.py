@@ -111,11 +111,9 @@ class ClassGuiBase(BaseGui):
 
         _hist: list[tuple[str, str, str]] = []  # for traceback
         _annot = ClassGuiBase.__annotations__.keys()
-
+        _ignore_types = (property, classmethod, staticmethod)
         for name, attr in filter(lambda x: x[0] not in base_members, iter_members(cls)):
-            if name in _annot or isinstance(
-                attr, (property, classmethod, staticmethod)
-            ):
+            if name in _annot or isinstance(attr, _ignore_types):
                 continue
 
             try:
@@ -162,7 +160,7 @@ class ClassGuiBase(BaseGui):
                             else:
                                 raise RuntimeError(
                                     "Cannot add menubar after adding a toolbar in a non-main window. "
-                                    "Use maigcclass(widget_type='mainwindow') instead, or define the"
+                                    "Use maigcclass(widget_type='mainwindow') instead, or define the "
                                     "menu class before toolbar class."
                                 )
 
