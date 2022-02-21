@@ -153,6 +153,7 @@ class ToolBarGui(ContainerLikeGui):
                     if isinstance(widget, MenuGui):
                         tb = ToolButtonPlus(widget.name)
                         tb.set_menu(widget.native)
+                        widget.native.setParent(tb.native, widget.native.windowFlags())
                         tb.tooltip = widget.__doc__
                         widget = WidgetAction(tb)
 

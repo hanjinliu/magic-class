@@ -6,7 +6,8 @@
 Welcome to magic-class documentation!
 =====================================
 
-``magic-class`` is an extension of `magicgui <https://napari.org/magicgui/>`_. You can make multi-functional GUI from a Python class.
+``magic-class`` is an extension of `magicgui <https://napari.org/magicgui/>`_.
+You can make multi-functional GUI from a Python class.
 
 Source
 ------
@@ -15,6 +16,8 @@ Source
 
 Installation
 ------------
+
+``magic-class`` is available on PyPI.
 
 .. code-block:: shell
 
@@ -27,9 +30,23 @@ Contents
    :maxdepth: 1
 
    quick_start
+
+Basics
+^^^^^^
+
+.. toctree::
+   :maxdepth: 1
+
    options
    nest
    use_field
+
+Make Your GUI Better
+^^^^^^^^^^^^^^^^^^^^
+
+.. toctree::
+   :maxdepth: 1
+
    use_wraps
    use_bind
    use_choices
