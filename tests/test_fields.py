@@ -303,3 +303,19 @@ def test_icon():
 
     assert _icon_byte(ui.Menu.a) > 0
     assert _icon_byte(ui.Menu["func"]) > 0
+
+def test_enabled():
+    @magicclass
+    class A:
+        @magicclass
+        class B:
+            a1 = field(int, enabled=False)
+            a2 = vfield(int, enabled=False)
+        b1 = field("b1", enabled=False)
+        b2 = field("b2", enabled=False)
+
+    ui = A()
+    assert not ui[1].enabled
+    assert not ui[2].enabled
+    assert not ui.B[0].enabled
+    assert not ui.B[1].enabled
