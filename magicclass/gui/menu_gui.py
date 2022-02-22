@@ -251,7 +251,7 @@ def insert_action_like(qmenu: QMenu, key: int, obj):
         key = key + l
     if key == l:
         if isinstance(obj, QMenu):
-            qmenu.addMenu(obj)
+            qmenu.addMenu(obj).setText(obj.objectName().replace("_", " "))
         elif obj == "sep":
             qmenu.addSeparator()
         else:
@@ -260,7 +260,7 @@ def insert_action_like(qmenu: QMenu, key: int, obj):
         new_action = actions[key]
         before = new_action
         if isinstance(obj, QMenu):
-            qmenu.insertMenu(before, obj)
+            qmenu.insertMenu(before, obj).setText(obj.objectName().replace("_", " "))
         elif obj == "sep":
             qmenu.insertSeparator(before)
         else:

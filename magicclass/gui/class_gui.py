@@ -165,7 +165,9 @@ class ClassGuiBase(BaseGui):
                                 )
 
                     widget.native.setParent(self._menubar, widget.native.windowFlags())
-                    self._menubar.addMenu(widget.native)
+                    self._menubar.addMenu(widget.native).setText(
+                        widget.name.replace("_", " ")
+                    )
                     _hist.append((name, type(attr), "MenuGui"))
 
                 elif isinstance(widget, ContextMenuGui):
