@@ -2,15 +2,17 @@ from __future__ import annotations
 
 from enum import Enum
 import typing
-from typing import Any, Union, Iterable
-from typing_extensions import Literal, Annotated, _AnnotatedAlias
+from typing import Any, Union, Iterable, overload, TYPE_CHECKING, TypeVar, Callable
+from typing_extensions import Literal, Annotated, _AnnotatedAlias, ParamSpec
+from magicgui.widgets import Widget
 
 try:
     from typing import _tp_cache
 except ImportError:
+    _tp_cache = lambda x: x
 
-    def _tp_cache(x):
-        return x
+if TYPE_CHECKING:
+    from .fields import MagicField
 
 
 class WidgetType(Enum):
@@ -68,14 +70,28 @@ ErrorModeStr = Union[
 ]
 
 Color = Union[str, Iterable[float]]
+_W = TypeVar("_W", bound=Widget)
+_V = TypeVar("_V", bound=object)
+_P = ParamSpec("_P")
 
 
 class Bound:
-    def __new__(cls, *args, **kwargs):
-        raise TypeError("Type Bound cannot be instantiated.")
+    def __new__(cls, *args):
+        raise TypeError(
+            "`Bound(...)` is deprecated since 0.5.21. Bound is now a generic alias instead "
+            "of a function. Please use `Bound[...]`."
+        )
+
+    @overload
+    def __class_getitem__(cls, value: MagicField[_W, _V]) -> _AnnotatedAlias[_V]:
+        ...
+
+    @overload
+    def __class_getitem__(cls, value: Callable[_P, _V]) -> _AnnotatedAlias[_V]:
+        ...
 
     @_tp_cache
-    def __class_getitem__(cls, value) -> _AnnotatedAlias:
+    def __class_getitem__(cls, value):
         """
         Make Annotated type from a MagicField or a method, such as:
 

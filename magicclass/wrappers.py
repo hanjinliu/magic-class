@@ -3,6 +3,7 @@ from functools import wraps
 import inspect
 from typing import Callable, Iterable, Iterator, Union, TYPE_CHECKING, TypeVar, overload
 from typing_extensions import ParamSpec
+import warnings
 from magicgui.widgets import Label
 from macrokit import Expr
 
@@ -53,6 +54,14 @@ def set_options(
     """
 
     def wrapper(func: Callable[P, R]) -> Callable[P, R]:
+        sig = inspect.signature(func)
+        rem = options.keys() - sig.parameters.keys()
+        if rem:
+            warnings.warn(
+                f"Unknown arguments found in set_options of {func.__name__}: {rem}",
+                UserWarning,
+            )
+
         upgrade_signature(
             func,
             gui_options=options,
