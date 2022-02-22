@@ -12,13 +12,14 @@ if TYPE_CHECKING:
     from .types import WidgetType, WidgetTypeStr, PopUpModeStr, ErrorModeStr
     from .stylesheets import StyleSheet
     from qtpy.QtWidgets import QWidget
+    from .help import HelpWidget
 
 Layout = Union[Literal["vertical"], Literal["horizontal"]]
 
 _C = TypeVar("_C", bound=type)
 _V = TypeVar("_V")
 
-def build_help(ui: MagicTemplate, parent: QWidget | None = None): ...
+def build_help(ui: MagicTemplate, parent: QWidget | None = None) -> "HelpWidget": ...
 @overload
 def magicclass(
     class_: _C,

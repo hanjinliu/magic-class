@@ -34,6 +34,7 @@ if TYPE_CHECKING:
     from .stylesheets import StyleSheet
     from .gui import MenuGuiBase
     from .types import WidgetTypeStr, PopUpModeStr, ErrorModeStr
+    from .help import HelpWidget
 
 _BASE_CLASS_SUFFIX = "_Base"
 
@@ -447,7 +448,7 @@ magiccontext.__doc__ += _call_magicmenu.__doc__
 _HELPS: WeakValueDictionary[int, MagicTemplate] = WeakValueDictionary()
 
 
-def build_help(ui: MagicTemplate, parent=None):
+def build_help(ui: MagicTemplate, parent=None) -> HelpWidget:
     """
     Build a widget for user guide. Once it is built, widget will be cached.
 
