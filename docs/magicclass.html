@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass package &mdash; magic-class 0.5.21 documentation</title>
+  <title>magicclass package &mdash; magic-class 0.5.22.dev0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/columns.css" type="text/css" />
@@ -31,7 +31,7 @@
             <a href="index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.21
+                0.5.22.dev0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -43,15 +43,21 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="quick_start.html">Quick Start</a></li>
+</ul>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="options.html">Options in magic-class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="nest.html">Nest magic-classes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="use_field.html">Use Fields in magic-class</a></li>
+</ul>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="use_wraps.html">Call Parent Methods from its Child</a></li>
 <li class="toctree-l1"><a class="reference internal" href="use_bind.html">Binding Values to Arguments</a></li>
 <li class="toctree-l1"><a class="reference internal" href="use_choices.html">Set Choices Dynamically</a></li>
+<li class="toctree-l1"><a class="reference internal" href="containers.html">Container Variations</a></li>
+</ul>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="keybinding.html">Define Custom Keybindings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="customize_macro.html">Customize Macro Recording</a></li>
-<li class="toctree-l1"><a class="reference internal" href="containers.html">Container Variations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="class_inheritance.html">Inherit Magic Class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="special_methods.html">Special Attributes in Magic class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API References</a></li>
@@ -117,6 +123,13 @@
 <li class="toctree-l4"><a class="reference internal" href="magicclass.ext.qtconsole.html#submodules">Submodules</a></li>
 <li class="toctree-l4"><a class="reference internal" href="magicclass.ext.qtconsole.html#module-magicclass.ext.qtconsole.widgets">magicclass.ext.qtconsole.widgets module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="magicclass.ext.qtconsole.html#module-magicclass.ext.qtconsole">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vispy.html">magicclass.ext.vispy package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#module-magicclass.ext.vispy.image">magicclass.ext.vispy.image module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#module-magicclass.ext.vispy.widgets">magicclass.ext.vispy.widgets module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#module-magicclass.ext.vispy">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -225,7 +238,7 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="magicclass.core.build_help">
-<span class="sig-prename descclassname"><span class="pre">magicclass.core.</span></span><span class="sig-name descname"><span class="pre">build_help</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ui</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">magicclass.gui._base.MagicTemplate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/core.html#build_help"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.core.build_help" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">magicclass.core.</span></span><span class="sig-name descname"><span class="pre">build_help</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ui</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">MagicTemplate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">HelpWidget</span></span></span><a class="reference internal" href="_modules/magicclass/core.html#build_help"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.core.build_help" title="Permalink to this definition">¶</a></dt>
 <dd><p>Build a widget for user guide. Once it is built, widget will be cached.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -835,7 +848,7 @@ a inspect.Signature or magicgui.signature.Magicsignature.</p>
 <span id="magicclass-types-module"></span><h2>magicclass.types module<a class="headerlink" href="#module-magicclass.types" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.types.Bound">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.types.</span></span><span class="sig-name descname"><span class="pre">Bound</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/types.html#Bound"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.types.Bound" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.types.</span></span><span class="sig-name descname"><span class="pre">Bound</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/types.html#Bound"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.types.Bound" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 </dd></dl>
 

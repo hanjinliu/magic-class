@@ -11,6 +11,7 @@ Subpackages
    magicclass.ext.pyqtgraph
    magicclass.ext.pyvista
    magicclass.ext.qtconsole
+   magicclass.ext.vispy
 
 Module contents
 ---------------

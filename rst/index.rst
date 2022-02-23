@@ -7,7 +7,7 @@ Welcome to magic-class documentation!
 =====================================
 
 ``magic-class`` is an extension of `magicgui <https://napari.org/magicgui/>`_.
-You can make multi-functional GUI from a Python class.
+You can make multi-functional GUI from Python classes.
 
 Source
 ------
@@ -34,6 +34,8 @@ Contents
 Basics
 ^^^^^^
 
+Here's some basics for widget creation in ``magic-class``.
+
 .. toctree::
    :maxdepth: 1
 
@@ -44,6 +46,10 @@ Basics
 Make Your GUI Better
 ^^^^^^^^^^^^^^^^^^^^
 
+It is important to make your GUI user friendly and intuitive. ``magic-class`` provides many
+methods that can improve widget appearance and interactivity without disturbing readability
+and tidiness of the source code.
+
 .. toctree::
    :maxdepth: 1
 
@@ -52,8 +58,24 @@ Make Your GUI Better
    use_choices
    containers
 
+Data Visualization
+^^^^^^^^^^^^^^^^^^
+
+Data visualization is one of the main reasons why we have to rely on GUIs. ``magic-class``
+has prepared some custom magic widgets (widgets that follow ``magicgui`` protocols) that
+can directly used as components of your GUI.
+
+.. toctree::
+   :maxdepth: 1
+
+   matplotlib
+   pyqtgraph
+   vispy
+
 Advanced Topics
 ^^^^^^^^^^^^^^^
+
+Learn more about ``magic-class`` here!
 
 .. toctree::
    :maxdepth: 1

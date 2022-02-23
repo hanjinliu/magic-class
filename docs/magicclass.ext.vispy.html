@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="English" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>magicclass.ext.vispy package &mdash; magic-class 0.5.22.dev0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/columns.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="magicclass.gui package" href="magicclass.gui.html" />
+    <link rel="prev" title="magicclass.ext.qtconsole package" href="magicclass.ext.qtconsole.html" />
+</head>
+
+<body class="wy-body-for-nav">
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> magic-class
+          </a>
+              <div class="version">
+                0.5.22.dev0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="quick_start.html">Quick Start</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="options.html">Options in magic-class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nest.html">Nest magic-classes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="use_field.html">Use Fields in magic-class</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="use_wraps.html">Call Parent Methods from its Child</a></li>
+<li class="toctree-l1"><a class="reference internal" href="use_bind.html">Binding Values to Arguments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="use_choices.html">Set Choices Dynamically</a></li>
+<li class="toctree-l1"><a class="reference internal" href="containers.html">Container Variations</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="keybinding.html">Define Custom Keybindings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="customize_macro.html">Customize Macro Recording</a></li>
+<li class="toctree-l1"><a class="reference internal" href="class_inheritance.html">Inherit Magic Class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="special_methods.html">Special Attributes in Magic class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API References</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">magic-class</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="api.html">API References</a> &raquo;</li>
+          <li><a href="magicclass.html">magicclass package</a> &raquo;</li>
+          <li><a href="magicclass.ext.html">magicclass.ext package</a> &raquo;</li>
+      <li>magicclass.ext.vispy package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/magicclass.ext.vispy.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+
+  <section id="magicclass-ext-vispy-package">
+<h1>magicclass.ext.vispy package<a class="headerlink" href="#magicclass-ext-vispy-package" title="Permalink to this headline">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="module-magicclass.ext.vispy.image">
+<span id="magicclass-ext-vispy-image-module"></span><h2>magicclass.ext.vispy.image module<a class="headerlink" href="#module-magicclass.ext.vispy.image" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.ext.vispy.image.Image">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vispy.image.</span></span><span class="sig-name descname"><span class="pre">Image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">viewbox</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">vispy.scene.widgets.viewbox.ViewBox</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contrast_limits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rendering</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mip'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iso_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attenuation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'grays'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interpolation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/ext/vispy/image.html#Image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.image.Image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.ext.vispy.image.Image.attenuation">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">attenuation</span></span><em class="property"><span class="pre">:</span> <span class="pre">float</span></em><a class="headerlink" href="#magicclass.ext.vispy.image.Image.attenuation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.ext.vispy.image.Image.contrast_limits">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">contrast_limits</span></span><em class="property"><span class="pre">:</span> <span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#magicclass.ext.vispy.image.Image.contrast_limits" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.ext.vispy.image.Image.data">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">data</span></span><em class="property"><span class="pre">:</span> <span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#magicclass.ext.vispy.image.Image.data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.ext.vispy.image.Image.gamma">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">gamma</span></span><em class="property"><span class="pre">:</span> <span class="pre">float</span></em><a class="headerlink" href="#magicclass.ext.vispy.image.Image.gamma" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.ext.vispy.image.Image.interpolation">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">interpolation</span></span><em class="property"><span class="pre">:</span> <span class="pre">float</span></em><a class="headerlink" href="#magicclass.ext.vispy.image.Image.interpolation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.ext.vispy.image.Image.iso_threshold">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">iso_threshold</span></span><em class="property"><span class="pre">:</span> <span class="pre">float</span></em><a class="headerlink" href="#magicclass.ext.vispy.image.Image.iso_threshold" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.ext.vispy.image.Image.rendering">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">rendering</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#magicclass.ext.vispy.image.Image.rendering" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-magicclass.ext.vispy.widgets">
+<span id="magicclass-ext-vispy-widgets-module"></span><h2>magicclass.ext.vispy.widgets module<a class="headerlink" href="#module-magicclass.ext.vispy.widgets" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.ext.vispy.widgets.VispyCanvas">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vispy.widgets.</span></span><span class="sig-name descname"><span class="pre">VispyCanvas</span></span><a class="reference internal" href="_modules/magicclass/ext/vispy/widgets.html#VispyCanvas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.widgets.VispyCanvas" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="magicclass.widgets.html#magicclass.widgets.utils.FreeWidget" title="magicclass.widgets.utils.FreeWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.widgets.utils.FreeWidget</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.ext.vispy.widgets.VispyCanvas.add_image">
+<span class="sig-name descname"><span class="pre">add_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contrast_limits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rendering</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mip'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iso_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attenuation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'grays'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interpolation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/ext/vispy/widgets.html#VispyCanvas.add_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.widgets.VispyCanvas.add_image" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.ext.vispy.widgets.VispyCanvas.camera">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">camera</span></span><a class="headerlink" href="#magicclass.ext.vispy.widgets.VispyCanvas.camera" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.ext.vispy.widgets.VispyCanvas.layers">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">layers</span></span><a class="headerlink" href="#magicclass.ext.vispy.widgets.VispyCanvas.layers" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-magicclass.ext.vispy">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-magicclass.ext.vispy" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="magicclass.ext.qtconsole.html" class="btn btn-neutral float-left" title="magicclass.ext.qtconsole package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="magicclass.gui.html" class="btn btn-neutral float-right" title="magicclass.gui package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Hanjin Liu.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+</body>
+</html>
