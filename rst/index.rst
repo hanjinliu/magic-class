@@ -50,13 +50,19 @@ Make Your GUI Better
    use_wraps
    use_bind
    use_choices
+   containers
+
+Advanced Topics
+^^^^^^^^^^^^^^^
+
+.. toctree::
+   :maxdepth: 1
+
    keybinding
    customize_macro
-   containers
    class_inheritance
    special_methods
    api
-
 
 Indices and tables
 ==================

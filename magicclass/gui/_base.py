@@ -641,23 +641,19 @@ class MagicTemplate:
                     # deal with popup mode.
                     if self._popup_mode not in (PopUpMode.popup, PopUpMode.dock):
                         mgui.label = ""
-                        mgui.name = (
-                            f"mgui-{id(mgui._function)}"  # to avoid name collision
-                        )
+                        # to avoid name collision
+                        mgui.name = f"mgui-{id(mgui._function)}"
                         mgui.margins = (0, 0, 0, 0)
                         title = Separator(
                             orientation="horizontal", text=text, button=True
                         )
                         title.btn_text = "-"
-                        title.btn_clicked.connect(
-                            mgui.hide
-                        )  # TODO: should remove mgui from self?
+                        # TODO: should remove mgui from self?
+                        title.btn_clicked.connect(mgui.hide)
                         mgui.insert(0, title)
                         mgui.append(Separator(orientation="horizontal"))
 
-                        if self._popup_mode == PopUpMode.popup:
-                            pass
-                        elif self._popup_mode == PopUpMode.parentlast:
+                        if self._popup_mode == PopUpMode.parentlast:
                             parent_self = self._search_parent_magicclass()
                             parent_self.append(mgui)
                         elif self._popup_mode == PopUpMode.first:
@@ -769,6 +765,8 @@ class BaseGui(MagicTemplate):
 
 
 class ContainerLikeGui(BaseGui, mguiLike, MutableSequence):
+    # This class enables similar API between magicgui widgets and additional widgets
+    # in magicclass such as menu and toolbar.
     _component_class = Action
     changed = Signal(object)
     _list: list[AbstractAction | ContainerLikeGui]
