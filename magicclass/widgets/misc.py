@@ -134,6 +134,7 @@ class Figure(FreeWidget):
         self.figure = fig
         self.min_height = 40
 
+        # Update docstrings
         for name, method in self.__class__.__dict__.items():
             if name.startswith("_") or getattr(method, "__doc__", None) is None:
                 continue
@@ -240,6 +241,48 @@ class Figure(FreeWidget):
         ylabel = self.ax.set_ylabel(*args, **kwargs)
         self.draw()
         return ylabel
+
+    def xticks(self, ticks=None, labels=None, **kwargs):
+        """Copy of ``plt.xticks``."""
+        if ticks is None:
+            locs = self.ax.get_xticks()
+            if labels is not None:
+                raise TypeError(
+                    "xticks(): Parameter 'labels' can't be set "
+                    "without setting 'ticks'"
+                )
+        else:
+            locs = self.ax.set_xticks(ticks)
+
+        if labels is None:
+            labels = self.ax.get_xticklabels()
+        else:
+            labels = self.ax.set_xticklabels(labels, **kwargs)
+        for l in labels:
+            l.update(kwargs)
+        self.draw()
+        return locs, labels
+
+    def yticks(self, ticks=None, labels=None, **kwargs):
+        """Copy of ``plt.xticks``."""
+        if ticks is None:
+            locs = self.ax.get_yticks()
+            if labels is not None:
+                raise TypeError(
+                    "xticks(): Parameter 'labels' can't be set "
+                    "without setting 'ticks'"
+                )
+        else:
+            locs = self.ax.set_yticks(ticks)
+
+        if labels is None:
+            labels = self.ax.get_yticklabels()
+        else:
+            labels = self.ax.set_yticklabels(labels, **kwargs)
+        for l in labels:
+            l.update(kwargs)
+        self.draw()
+        return locs, labels
 
 
 class ConsoleTextEdit(TextEdit):
