@@ -12,7 +12,7 @@ class VispyCanvas(FreeWidget):
         self._scene = scene.SceneCanvas()
         grid = self._scene.central_widget.add_grid()
         self._viewbox = grid.add_view()
-        self._viewbox.camera = scene.TurntableCamera(elevation=30, azimuth=30)
+        self._viewbox.camera = scene.ArcballCamera(fov=0)
         self._layers = []
 
         self._scene.create_native()
