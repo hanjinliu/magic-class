@@ -2,7 +2,7 @@ from __future__ import annotations
 import numpy as np
 from vispy import scene
 
-from .image import Image
+from .image import Image, IsoSurface
 from ...widgets import FreeWidget
 
 
@@ -51,5 +51,27 @@ class VispyCanvas(FreeWidget):
         )
 
         self._layers.append(image)
+        self._viewbox.camera.scale_factor = max(data.shape)
+        self._viewbox.camera.center = [s / 2 - 0.5 for s in data.shape]
+
+    def add_isosurface(
+        self,
+        data: np.ndarray,
+        *,
+        contrast_limits=None,
+        iso_threshold=None,
+        wire_color=None,
+        face_color=None,
+    ):
+        surface = IsoSurface(
+            data,
+            self._viewbox,
+            contrast_limits=contrast_limits,
+            iso_threshold=iso_threshold,
+            wire_color=wire_color,
+            face_color=face_color,
+        )
+
+        self._layers.append(surface)
         self._viewbox.camera.scale_factor = max(data.shape)
         self._viewbox.camera.center = [s / 2 - 0.5 for s in data.shape]
