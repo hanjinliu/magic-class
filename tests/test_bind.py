@@ -110,3 +110,31 @@ def test_wrapped():
     ui["func_2"].changed()
     assert str(ui.macro[-2]) == "ui.func_1(x='a', y='b')"
     assert str(ui.macro[-1]) == "ui.func_2(x='a', y='b')"
+
+def test_nesting():
+    @magicclass
+    class A:
+        @magicclass
+        class B:
+            def __init__(self):
+                self._a = 0
+
+            def _get_value(self, w=None):
+                return self._a
+
+            def func(self, x: Bound[_get_value]):
+                self.returned = x
+
+        def func(self, x: Bound[B._get_value]):
+            self.returned = x
+
+    ui = A()
+    ui["func"].changed()
+    ui.B["func"].changed()
+    assert ui.returned == 0
+    assert ui.B.returned == 0
+    ui.B._a = 1
+    ui["func"].changed()
+    ui.B["func"].changed()
+    assert ui.returned == 1
+    assert ui.B.returned == 1

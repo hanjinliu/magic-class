@@ -36,17 +36,26 @@ def test_nesting(widget_type):
             def _get_choices(self, w=None):
                 return self._a
 
+            @set_options(x={"widget_type": widget_type, "choices": _get_choices})
+            def func(self, x):
+                pass
+
         @set_options(x={"widget_type": widget_type, "choices": B._get_choices})
         def func(self, x):
             pass
 
     ui = A()
     ui["func"].changed()
+    ui.B["func"].changed()
     assert ui["func"].mgui.x.widget_type == widget_type
     assert ui["func"].mgui.x.choices == (0, 1, 2)
+    assert ui.B["func"].mgui.x.widget_type == widget_type
+    assert ui.B["func"].mgui.x.choices == (0, 1, 2)
     ui.B._a = [3, 4]
     ui.reset_choices()
     assert ui["func"].mgui.x.choices == (3, 4)
+    assert ui.B["func"].mgui.x.choices == (3, 4)
+
 
 def test_wraps():
     @magicclass

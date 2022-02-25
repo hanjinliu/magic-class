@@ -1157,8 +1157,8 @@ def _child_that_has_widget(
     return child_instance
 
 
-def _method_as_getter(self, bound_value: Callable):
-    qualname = bound_value.__qualname__
+def _method_as_getter(self, getter: Callable):
+    qualname = getter.__qualname__
     _locals = "<locals>."
     if _locals in qualname:
         qualname = qualname.split(_locals)[-1]
@@ -1166,16 +1166,16 @@ def _method_as_getter(self, bound_value: Callable):
 
     def _func(w):
         ins = self
-        while clsnames[0] != ins.__class__.__name__:
-            ins = getattr(ins, "__magicclass_parent__", None)
-            if ins is None:
-                ns = ".".join(clsnames)
-                raise ValueError(
-                    f"Method {funcname} is in namespace {ns}, so it is invisible "
-                    f"from magicclass {self.__class__.__qualname__}"
-                )
+        self_cls = ins.__class__.__name__
+        if self_cls not in clsnames:
+            ns = ".".join(clsnames)
+            raise ValueError(
+                f"Method {funcname} is in namespace {ns}, so it is invisible "
+                f"from magicclass {self.__class__.__qualname__}"
+            )
+        i = clsnames.index(self_cls)
 
-        for clsname in clsnames[1:]:
+        for clsname in clsnames[i + 1 :]:
             ins = getattr(ins, clsname)
         return getattr(ins, funcname)(w)
 
