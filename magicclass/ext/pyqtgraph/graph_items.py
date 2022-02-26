@@ -377,7 +377,7 @@ class InfLine(LayerItem):
     ):
         if edge_color is None:
             edge_color = "yellow"
-
+        edge_color = convert_color_code(edge_color)
         pen = pg.mkPen(edge_color, width=lw, style=_LINE_STYLE[ls])
         self.native = pg.InfiniteLine(pos, angle, pen=pen, name=name)
         self.name = name
@@ -752,6 +752,10 @@ class TextItemView:
 def _set_default_colors(face_color, edge_color, default_f, default_e):
     if face_color is None:
         face_color = default_f
+    else:
+        face_color = convert_color_code(face_color)
     if edge_color is None:
         edge_color = default_e
+    else:
+        edge_color = convert_color_code(edge_color)
     return face_color, edge_color
