@@ -292,7 +292,9 @@ def make_gui(container: type[_C], no_margin: bool = True) -> type[_C | ClassGuiB
     """
 
     def wrapper(cls_: type[ClassGuiBase]):
-        cls = type(cls_.__name__, (container, ClassGuiBase), {})
+        cls: type[_C | ClassGuiBase] = type(
+            cls_.__name__, (container, ClassGuiBase), {}
+        )
 
         def __init__(
             self: cls,
@@ -368,7 +370,12 @@ def make_gui(container: type[_C], no_margin: bool = True) -> type[_C | ClassGuiB
                 if isinstance(widget, ClassGuiBase):
                     if self._remove_child_margins:
                         widget.margins = (0, 0, 0, 0)
-                    self.__magicclass_children__.append(widget)
+                    if (
+                        len(self.__magicclass_children__) > 0
+                        and widget is not self.__magicclass_children__[-1]
+                    ):
+                        # nested magic classes are already in
+                        self.__magicclass_children__.append(widget)
                     widget._my_symbol = Symbol(widget.name)
                     # NOTE: This is not safe. Attributes could collision and macro recording
                     # may break if not correctly named.
@@ -426,12 +433,17 @@ def make_gui(container: type[_C], no_margin: bool = True) -> type[_C | ClassGuiB
 
         def reset_choices(self: cls, *_: Any):
             """Reset child Categorical widgets"""
-            for widget in self:
-                if hasattr(widget, "reset_choices"):
-                    widget.reset_choices()
+            all_widgets: set[Widget] = set()
+
+            for item in self._list:
+                widget = getattr(item, "_inner_widget", item)
+                all_widgets.add(widget)
             for widget in self.__magicclass_children__:
-                if hasattr(widget, "reset_choices"):
-                    widget.reset_choices()
+                all_widgets.add(widget)
+
+            for w in all_widgets:
+                if hasattr(w, "reset_choices"):
+                    w.reset_choices()
 
         def close(self: cls):
             current_self = self._search_parent_magicclass()
