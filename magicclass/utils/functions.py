@@ -1,9 +1,12 @@
 from __future__ import annotations
 import inspect
 from enum import Enum
-from typing import Any
+from typing import Any, TYPE_CHECKING
 from docstring_parser import parse
 from qtpy.QtWidgets import QApplication, QMessageBox
+
+if TYPE_CHECKING:
+    from ..gui import BaseGui
 
 __all__ = [
     "MessageBoxMode",
@@ -170,7 +173,24 @@ def to_clipboard(obj: Any) -> None:
 
 
 def screen_center():
-    """
-    Get the center coordinate of the screen.
-    """
+    """Get the center coordinate of the screen."""
     return QApplication.desktop().screen().rect().center()
+
+
+def show_tree(ui: BaseGui) -> str:
+    return _get_tree(ui)
+
+
+def _get_tree(ui: BaseGui, depth: int = 0):
+    pref = "\t" * depth
+    children_str_list: list[str] = []
+    for i, child in enumerate(ui.__magicclass_children__):
+        text = _get_tree(child, depth=depth + 1)
+        children_str_list.append(pref + f"\t{i:>3}: {text}")
+
+    if children_str_list:
+        children_str = "\n".join(children_str_list)
+        out = f"'{ui.name}'\n{children_str}"
+    else:
+        out = f"'{ui.name}'"
+    return out

@@ -7,4 +7,5 @@ from .functions import (
     iter_members,
     extract_tooltip,
     get_signature,
+    show_tree,
 )
