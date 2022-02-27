@@ -59,6 +59,7 @@ def magicmenu(
     popup_mode: str | PopUpMode | None = None,
     error_mode: str | ErrorMode | None = None,
     labels: bool = True,
+    name: str | None = None,
     icon_path: str | None = None,
     parent=None,
 ) -> type[MenuGui | _C]: ...
@@ -69,6 +70,7 @@ def magicmenu(
     popup_mode: str | PopUpMode | None = None,
     error_mode: str | ErrorMode | None = None,
     labels: bool = True,
+    name: str | None = None,
     icon_path: str | None = None,
     parent=None,
 ) -> Callable[[_C], type[MenuGui | _C]]: ...
@@ -80,6 +82,7 @@ def magiccontext(
     popup_mode: str | PopUpMode | None = None,
     error_mode: str | ErrorMode | None = None,
     labels: bool = True,
+    name: str | None = None,
     icon_path: str | None = None,
     parent=None,
 ) -> type[ContextMenuGui | _C]: ...
@@ -90,6 +93,7 @@ def magiccontext(
     popup_mode: str | PopUpMode | None = None,
     error_mode: str | ErrorMode | None = None,
     labels: bool = True,
+    name: str | None = None,
     icon_path: str | None = None,
     parent=None,
 ) -> Callable[[_C], type[ContextMenuGui | _C]]: ...
@@ -101,6 +105,7 @@ def magictoolbar(
     popup_mode: str | PopUpMode | None = None,
     error_mode: str | ErrorMode | None = None,
     labels: bool = True,
+    name: str | None = None,
     icon_path: str | None = None,
     parent=None,
 ) -> type[ToolBarGui | _C]: ...
@@ -111,6 +116,7 @@ def magictoolbar(
     popup_mode: str | PopUpMode | None = None,
     error_mode: str | ErrorMode | None = None,
     labels: bool = True,
+    name: str | None = None,
     icon_path: str | None = None,
     parent=None,
 ) -> Callable[[_C], type[ToolBarGui | _C]]: ...

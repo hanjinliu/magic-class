@@ -2,76 +2,80 @@ from __future__ import annotations
 import numpy as np
 from vispy import scene
 
-from .image import Image, IsoSurface
 from ...widgets import FreeWidget
 
 
-class VispyCanvas(FreeWidget):
+class VispyPlotCanvas(FreeWidget):
     def __init__(self):
         super().__init__()
         self._scene = scene.SceneCanvas()
         grid = self._scene.central_widget.add_grid()
-        self._viewbox = grid.add_view()
-        self._viewbox.camera = scene.ArcballCamera(fov=0)
-        self._layers = []
+        self._viewbox = grid.add_view(row=0, col=1, camera="panzoom")
+        x_axis = scene.AxisWidget(orientation="bottom")
+        x_axis.stretch = (1, 0.1)
+        grid.add_widget(x_axis, row=1, col=1)
+        x_axis.link_view(self._viewbox)
+        y_axis = scene.AxisWidget(orientation="left")
+        y_axis.stretch = (0.1, 1)
+        grid.add_widget(y_axis, row=0, col=0)
+        y_axis.link_view(self._viewbox)
+        self._items = []
 
         self._scene.create_native()
         self.set_widget(self._scene.native)
 
     @property
     def layers(self):
-        return self._layers
+        return self._items
 
-    @property
-    def camera(self):
-        return self._viewbox.camera
-
-    def add_image(
+    def add_curve(
         self,
-        data: np.ndarray,
-        *,
-        contrast_limits=None,
-        rendering="mip",
-        iso_threshold=None,
-        attenuation=1.0,
-        cmap="grays",
-        gamma=1.0,
-        interpolation="linear",
-    ):
-        image = Image(
-            data,
-            self._viewbox,
-            contrast_limits=contrast_limits,
-            rendering=rendering,
-            iso_threshold=iso_threshold,
-            attenuation=attenuation,
-            cmap=cmap,
-            gamma=gamma,
-            interpolation=interpolation,
-        )
-
-        self._layers.append(image)
-        self._viewbox.camera.scale_factor = max(data.shape)
-        self._viewbox.camera.center = [s / 2 - 0.5 for s in data.shape]
-
-    def add_isosurface(
-        self,
-        data: np.ndarray,
-        *,
-        contrast_limits=None,
-        iso_threshold=None,
-        wire_color=None,
+        x=None,
+        y=None,
         face_color=None,
+        edge_color=None,
+        color=None,
+        size: float = 7,
+        name: str | None = None,
+        lw: float = 1,
+        ls: str = "-",
+        symbol=None,
     ):
-        surface = IsoSurface(
-            data,
-            self._viewbox,
-            contrast_limits=contrast_limits,
-            iso_threshold=iso_threshold,
-            wire_color=wire_color,
-            face_color=face_color,
-        )
+        from vispy.scene.visuals import Line
 
-        self._layers.append(surface)
-        self._viewbox.camera.scale_factor = max(data.shape)
-        self._viewbox.camera.center = [s / 2 - 0.5 for s in data.shape]
+        x, y = _check_xy(x, y)
+        face_color, edge_color = _check_colors(face_color, edge_color, color)
+        if isinstance(edge_color, np.ndarray) and edge_color.ndim == 1:
+            edge_color = np.stack([edge_color] * y.size, axis=0)
+        line = Line(
+            np.stack([x, y], axis=1),
+            color=edge_color,
+            parent=self._viewbox.scene,
+            width=lw,
+        )
+        return line
+
+
+def _check_xy(x, y):
+    if y is None:
+        if x is None:
+            x = []
+            y = []
+        else:
+            y = x
+            x = np.arange(len(y))
+
+    return x, y
+
+
+def _check_colors(face_color, edge_color, color):
+    if color is None:
+        return face_color, edge_color
+    else:
+        if face_color is None and edge_color is None:
+            return color, color
+        else:
+            raise ValueError(
+                "Cannot set 'color' and either 'face_color' or "
+                "'edge_color' at the same time."
+            )

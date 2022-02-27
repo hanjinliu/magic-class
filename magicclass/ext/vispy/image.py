@@ -6,7 +6,7 @@ from vispy.visuals import Visual, VolumeVisual, ImageVisual, IsosurfaceVisual
 from vispy.visuals.filters import WireframeFilter
 
 
-class Layer:
+class LayerItem:
     _visual: Visual
 
     @property
@@ -18,7 +18,7 @@ class Layer:
         self._visual.visible = v
 
 
-class Image(Layer):
+class Image(LayerItem):
     def __init__(
         self,
         data,
@@ -157,7 +157,7 @@ class Image(Layer):
         self._visual.update()
 
 
-class IsoSurface(Layer):
+class IsoSurface(LayerItem):
     def __init__(
         self,
         data,

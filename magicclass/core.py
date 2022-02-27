@@ -27,7 +27,6 @@ from .gui._base import PopUpMode, ErrorMode, defaults, MagicTemplate, check_over
 from .gui import ContextMenuGui, MenuGui, ToolBarGui
 from ._app import get_app
 from .types import WidgetType
-from .fields import MagicField
 from . import _register  # activate type registration things.
 
 if TYPE_CHECKING:
@@ -173,7 +172,7 @@ def magicclass(
                 popup_mode=PopUpMode(popup_mode),
                 error_mode=ErrorMode(error_mode),
                 labels=labels,
-                name=name or cls.__name__.replace("_", " "),
+                name=name or cls.__name__,
                 visible=visible,
             )
             super(oldclass, self).__init__(*args, **kwargs)
@@ -213,6 +212,7 @@ def magicmenu(
     popup_mode: str | PopUpMode = None,
     error_mode: str | ErrorMode = None,
     labels: bool = True,
+    name: str | None = None,
     icon_path: str = None,
     parent=None,
 ):
@@ -229,6 +229,7 @@ def magiccontext(
     popup_mode: str | PopUpMode = None,
     error_mode: str | ErrorMode = None,
     labels: bool = True,
+    name: str | None = None,
     icon_path: str = None,
     parent=None,
 ):
@@ -245,6 +246,7 @@ def magictoolbar(
     popup_mode: str | PopUpMode = None,
     error_mode: str | ErrorMode = None,
     labels: bool = True,
+    name: str | None = None,
     icon_path: str = None,
     parent=None,
 ):
@@ -345,6 +347,7 @@ def _call_magicmenu(
     popup_mode: str | PopUpMode = None,
     error_mode: str | ErrorMode = None,
     labels: bool = True,
+    name: str = None,
     icon_path: str = None,
     parent=None,
     menugui_class: type[MenuGuiBase] = None,
@@ -419,6 +422,7 @@ def _call_magicmenu(
                 popup_mode=PopUpMode(popup_mode),
                 error_mode=ErrorMode(error_mode),
                 labels=labels,
+                name=name or cls.__name__,
             )
             super(oldclass, self).__init__(*args, **kwargs)
             self._convert_attributes_into_widgets()

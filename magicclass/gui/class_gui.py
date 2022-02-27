@@ -374,9 +374,10 @@ def make_gui(container: type[_C], no_margin: bool = True) -> type[_C | ClassGuiB
                         len(self.__magicclass_children__) > 0
                         and widget is not self.__magicclass_children__[-1]
                     ):
-                        # nested magic classes are already in
+                        # nested magic classes are already in the list
                         self.__magicclass_children__.append(widget)
-                    widget._my_symbol = Symbol(widget.name)
+                        widget._my_symbol = Symbol(widget.name)
+
                     # NOTE: This is not safe. Attributes could collision and macro recording
                     # may break if not correctly named.
 

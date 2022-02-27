@@ -238,3 +238,28 @@ def test_labels_arg():
 
     assert ui.Menu.a._labeled_widget() is None
     assert ui.Tool.a._labeled_widget() is None
+
+
+@magicmenu(name="Menu 1")
+class Menu1:
+    def m(self): ...
+
+@magicclass(name="My Widget")
+class MyWidget:
+    def f(self): ...
+
+@magicclass
+class Main:
+    @magicmenu
+    class Menu:
+        menu1 = Menu1
+    MyWidget = MyWidget
+
+def test_names():
+    ui = Main()
+    assert ui.MyWidget.name == "My Widget"
+    assert ui.Menu.menu1.name == "Menu 1"
+    ui.MyWidget["f"].changed()
+    assert str(ui.macro[-1]) == "ui.MyWidget.f()"
+    ui.Menu.menu1["m"].changed()
+    assert str(ui.macro[-1]) == "ui.Menu.menu1.m()"
