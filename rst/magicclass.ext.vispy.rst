@@ -20,6 +20,14 @@ magicclass.ext.vispy.widgets module
    :undoc-members:
    :show-inheritance:
 
+magicclass.ext.vispy.widgets3d module
+-------------------------------------
+
+.. automodule:: magicclass.ext.vispy.widgets3d
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Module contents
 ---------------
 
