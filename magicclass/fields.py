@@ -10,11 +10,12 @@ from magicgui.widgets import create_widget
 from magicgui.widgets._bases import Widget, ValueWidget
 from magicgui.widgets._bases.value_widget import UNSET
 
-from .gui.mgui_ext import AbstractAction, Action, WidgetAction
+from .gui.mgui_ext import Action, WidgetAction
 
 if TYPE_CHECKING:
     from magicgui.widgets._protocols import WidgetProtocol
     from .gui._base import MagicTemplate
+    from .gui.mgui_ext import AbstractAction
 
     _M = TypeVar("_M", bound=MagicTemplate)
 

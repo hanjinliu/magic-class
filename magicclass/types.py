@@ -1,10 +1,11 @@
 from __future__ import annotations
-
 from enum import Enum
 import typing
 from typing import Any, Union, Iterable, overload, TYPE_CHECKING, TypeVar, Callable
-from typing_extensions import Literal, Annotated, _AnnotatedAlias, ParamSpec
-from magicgui.widgets import Widget
+from typing_extensions import Literal, Annotated, ParamSpec
+from magicgui.widgets import Widget, EmptyWidget
+
+from .fields import MagicField
 
 try:
     from typing import _tp_cache
@@ -12,7 +13,7 @@ except ImportError:
     _tp_cache = lambda x: x
 
 if TYPE_CHECKING:
-    from .fields import MagicField
+    from typing_extensions import _AnnotatedAlias
 
 
 class WidgetType(Enum):
@@ -75,23 +76,69 @@ _V = TypeVar("_V", bound=object)
 _P = ParamSpec("_P")
 
 
-class Bound:
-    def __new__(cls, *args):
-        raise TypeError(
-            "`Bound(...)` is deprecated since 0.5.21. Bound is now a generic alias instead "
-            "of a function. Please use `Bound[...]`."
-        )
+@overload
+def bound(obj: Callable[[_W], _V]) -> type[_V]:
+    ...
+
+
+@overload
+def bound(obj: Callable[[Any, _W], _V]) -> type[_V]:
+    ...
+
+
+@overload
+def bound(obj: MagicField[_W, _V]) -> type[_V]:
+    ...
+
+
+@overload
+def bound(obj: type[_W]) -> type:
+    ...
+
+
+def bound(obj):
+    if callable(obj):
+        outtype = obj.__annotations__.get("return", Any)
+    elif isinstance(obj, MagicField):
+        outtype = obj.annotation or Any
+    elif isinstance(obj, type):
+        outtype = Any
+    else:
+        raise TypeError("'bound' can only convert callable, MagicField or type objects")
+    return Annotated[outtype, {"bind": obj, "widget_type": EmptyWidget}]
+
+
+class _BoundAlias(type):
+    """
+    This metaclass is necessary for ``mypy`` to reveal type.
+
+    For instance, if type annotation is added like this
+
+    .. code-block:: python
+
+        def _get_int(self, _=None) -> int:
+            return 0
+
+        def func(self, x: Bound[_get_int]):
+            # do something
+
+    ``x`` will be considered to be ``Bound`` type otherwise.
+    """
 
     @overload
-    def __class_getitem__(cls, value: MagicField[_W, _V]) -> _AnnotatedAlias[_V]:
+    def __getitem__(cls, value: MagicField[_W, _V]) -> type[_V]:
         ...
 
     @overload
-    def __class_getitem__(cls, value: Callable[_P, _V]) -> _AnnotatedAlias[_V]:
+    def __getitem__(cls, value: Callable[_P, _V]) -> type[_V]:
+        ...
+
+    @overload
+    def __getitem__(cls, value: type[_V]) -> type[_V]:
         ...
 
     @_tp_cache
-    def __class_getitem__(cls, value):
+    def __getitem__(cls, value):
         """
         Make Annotated type from a MagicField or a method, such as:
 
@@ -113,7 +160,15 @@ class Bound:
                 "Bound[...] should be used with only one "
                 "argument (the object to be bound)."
             )
-        return Annotated[Any, {"bind": value}]
+        return bound(value)
+
+
+class Bound(metaclass=_BoundAlias):
+    def __new__(cls, *args):
+        raise TypeError(
+            "`Bound(...)` is deprecated since 0.5.21. Bound is now a generic alias instead "
+            "of a function. Please use `Bound[...]`."
+        )
 
     def __init_subclass__(cls, *args, **kwargs):
         raise TypeError(f"Cannot subclass {cls.__module__}.Bound")
