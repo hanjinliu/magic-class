@@ -1,4 +1,6 @@
 from __future__ import annotations
+import weakref
+
 from magicgui.widgets import FunctionGui, Image, Slider
 from magicgui.widgets._bases.widget import Widget
 from magicgui.widgets._function_gui import _docstring_to_html
@@ -8,8 +10,8 @@ from qtpy.QtWidgets import QWidget, QTreeWidget, QTreeWidgetItem, QSplitter
 from qtpy.QtCore import Qt
 from typing import Any, Callable, Iterator, TYPE_CHECKING
 
-from magicclass.widgets.containers import SplitterContainer
-from magicclass.widgets.misc import ConsoleTextEdit
+from .widgets.containers import SplitterContainer
+from .widgets.misc import ConsoleTextEdit
 
 from .gui.mgui_ext import Action, PushButtonPlus, WidgetAction
 from .gui._base import MagicTemplate
@@ -46,14 +48,17 @@ class _HelpWidget(QSplitter):
         self._mgui_image = Image()
         c = DraggableContainer(widgets=[self._mgui_image])
 
-        self._mgui_slider = Slider(
-            value=self._initial_image_size, min=50, max=1000, step=50
-        )
-        self._mgui_slider.changed.connect(self._resize_image)
-        self._mgui_slider.parent = c
-        self._mgui_slider.native.setGeometry(4, 4, 100, 20)
-        self._mgui_slider.max_height = 20
-        self._mgui_slider.max_width = 100
+        def wheelEvent(event):
+            ang = event.angleDelta().y()
+            v0 = self._mgui_image.min_height
+            if ang > 0:
+                v = v0 * 1.1
+            else:
+                v = v0 / 1.1
+            self._resize_image(int(v))
+
+        self._mgui_image.native.wheelEvent = wheelEvent
+
         c.min_height = 120
         self._resize_image(self._initial_image_size)
 
@@ -135,7 +140,16 @@ class _HelpWidget(QSplitter):
 class UiBoundTreeItem(QTreeWidgetItem):
     def __init__(self, parent, ui=None):
         super().__init__(parent)
-        self.ui = ui  # TODO: use weakref?
+        if ui is not None:
+            self._ui = weakref.ref(ui)
+        else:
+            self._ui = None
+
+    @property
+    def ui(self):
+        if self._ui is None:
+            return None
+        return self._ui()
 
     def child(self, index: int) -> UiBoundTreeItem:
         # Just for typing

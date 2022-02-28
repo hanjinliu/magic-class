@@ -5,7 +5,7 @@ from typing import Any, Union, Iterable, overload, TYPE_CHECKING, TypeVar, Calla
 from typing_extensions import Literal, Annotated, ParamSpec
 from magicgui.widgets import Widget, EmptyWidget
 
-from .fields import MagicField, MagicValueField
+from .fields import MagicField
 
 try:
     from typing import _tp_cache
@@ -97,6 +97,8 @@ def bound(obj: type[_W]) -> type:
 
 
 def bound(obj):
+    """Function version of Bound[...]."""
+    # NOTE: This could be more useful than Bound??
     if callable(obj):
         outtype = obj.__annotations__.get("return", Any)
     elif isinstance(obj, MagicField):
