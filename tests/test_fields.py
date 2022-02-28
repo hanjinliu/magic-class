@@ -319,3 +319,13 @@ def test_enabled():
     assert not ui[2].enabled
     assert not ui.B[0].enabled
     assert not ui.B[1].enabled
+
+def test_get_value_field_widget():
+    @magicclass
+    class A:
+        x = field(int)
+        y = vfield(int)
+    ui = A()
+    assert type(ui.y) is int
+    assert type(ui["x"]) is widgets.SpinBox
+    assert type(ui["y"]) is widgets.SpinBox

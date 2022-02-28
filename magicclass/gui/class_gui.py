@@ -330,13 +330,23 @@ def make_gui(container: type[_C], no_margin: bool = True) -> type[_C | ClassGuiB
             self.native.setObjectName(self.name)
             self.native.setWindowTitle(self.name)
 
-        def __setattr__(self: cls, name: str, value: Any):
+        # ui["x"] will not return widget if x is a MagicValueField.
+        # To ensure __getitem__ returns a Widget, this method should be overriden.
+        def __getitem__(self, key):
+            """Get item by integer, str, or slice."""
+            if isinstance(key, str):
+                for widget in self:
+                    if key == widget.name:
+                        return widget
+            return container.__getattr__(self, key)
+
+        def __setattr__(self: cls, name: str, value: Any) -> None:
             if not isinstance(getattr(self.__class__, name, None), MagicField):
                 container.__setattr__(self, name, value)
             else:
                 object.__setattr__(self, name, value)
 
-        def _fast_insert(self: cls, key: int, widget: Widget | Callable):
+        def _fast_insert(self: cls, key: int, widget: Widget | Callable) -> None:
             if isinstance(widget, Callable):
                 # Sometimes uses want to dynamically add new functions to GUI.
                 method_name = getattr(widget, "__name__", None)
