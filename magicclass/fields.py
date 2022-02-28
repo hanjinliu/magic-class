@@ -1,5 +1,6 @@
 from __future__ import annotations
 from typing import Any, TYPE_CHECKING, Callable, TypeVar, overload, Generic, Union
+from typing_extensions import Literal
 from pathlib import Path
 import datetime
 import sys
@@ -131,19 +132,15 @@ class MagicField(Field, Generic[_W, _V]):
         """Make a function that get the value of Widget or Action."""
         return lambda w: self.guis[id(obj)].value
 
-    # NOTE: Ideally these overload is needed for
-    # >>> @B.field.connect
-    # but in tern this will disable
-    # >>> self.B.field.value
-    # @overload
-    # def __get__(self, obj: Literal[None], objtype=None) -> MagicField[_W, _V]:
-    #     ...
+    @overload
+    def __get__(self, obj: Literal[None], objtype=None) -> MagicField[_W, _V] | _W:
+        ...
 
-    # @overload
-    # def __get__(self, obj: Any, objtype=None) -> _W:
-    #     ...
-
+    @overload
     def __get__(self, obj: Any, objtype=None) -> _W:
+        ...
+
+    def __get__(self, obj, objtype=None):
         """Get widget for the object."""
         if obj is None:
             return self
@@ -321,7 +318,15 @@ class MagicValueField(MagicField[_W, _V]):
 
         return widget
 
+    @overload
+    def __get__(self, obj: Literal[None], objtype=None) -> MagicValueField[_W, _V]:
+        ...
+
+    @overload
     def __get__(self, obj: Any, objtype=None) -> _V:
+        ...
+
+    def __get__(self, obj, objtype=None):
         if obj is None:
             return self
         return self.get_widget(obj).value
