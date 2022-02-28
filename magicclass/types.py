@@ -5,7 +5,7 @@ from typing import Any, Union, Iterable, overload, TYPE_CHECKING, TypeVar, Calla
 from typing_extensions import Literal, Annotated, ParamSpec
 from magicgui.widgets import Widget, EmptyWidget
 
-from .fields import MagicField
+from .fields import MagicField, MagicValueField
 
 try:
     from typing import _tp_cache

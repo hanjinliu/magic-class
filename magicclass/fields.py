@@ -232,6 +232,56 @@ class MagicField(Field, Generic[_W, _V]):
         self.callbacks.pop(i)
         return None
 
+    def wraps(
+        self,
+        method: Callable | None = None,
+        *,
+        template: Callable | None = None,
+        copy: bool = False,
+    ):
+        """
+        Call the ``wraps`` class method of magic class.
+
+        This method is needed when a child magic class is defined outside the main magic
+        class, and integrated into the main magic class by ``field`` function, like below
+
+        .. code-block:: python
+
+            @magicclass
+            class B:
+                def func(self): ...  # pre-definition
+
+            @magicclass
+            class A:
+                b = field(B)
+
+                @b.wraps
+                def func(self):
+                    # do something
+
+        Parameters
+        ----------
+        method : Callable, optional
+            Method of parent class.
+        template : Callable, optional
+            Function template for signature.
+        copy: bool, default is False
+            If true, wrapped method is still enabled.
+
+        Returns
+        -------
+        Callable
+            Same method as input, but has updated signature.
+        """
+        from .gui._base import BaseGui
+
+        cls = self.default_factory
+        if not (isinstance(cls, type) and issubclass(cls, BaseGui)):
+            raise TypeError(
+                "The wraps method cannot be used for any objects but magic class."
+            )
+        return cls.wraps(method=method, template=template, copy=copy)
+
     @property
     def value(self) -> Any:
         return UNSET if self.default is MISSING else self.default
@@ -255,7 +305,7 @@ class MagicField(Field, Generic[_W, _V]):
         return wcls.__name__
 
 
-class MagicValueField(MagicField, Generic[_W, _V]):
+class MagicValueField(MagicField[_W, _V]):
     """
     Field class for magicgui construction. Unlike MagicField, object of this class always
     returns value itself.
@@ -407,27 +457,40 @@ def field(
 
 @overload
 def vfield(
-    obj: type[_V],
+    obj: _X,
     *,
     name: str = "",
     widget_type: str | type[WidgetProtocol] | None = None,
     options: dict[str, Any] = {},
     enabled: bool = True,
     record: bool = True,
-) -> MagicValueField[Widget, _V]:
+) -> MagicValueField[ValueWidget, _X]:
     ...
 
 
 @overload
 def vfield(
-    obj: _V,
+    obj: type[_W],
     *,
     name: str = "",
     widget_type: str | type[WidgetProtocol] | None = None,
     options: dict[str, Any] = {},
     enabled: bool = True,
     record: bool = True,
-) -> MagicValueField[Widget, _V]:
+) -> MagicValueField[_W, Any]:
+    ...
+
+
+@overload
+def vfield(
+    obj: type[_X],
+    *,
+    name: str = "",
+    widget_type: str | type[WidgetProtocol] | None = None,
+    options: dict[str, Any] = {},
+    enabled: bool = True,
+    record: bool = True,
+) -> MagicValueField[ValueWidget, _X]:
     ...
 
 

@@ -1,4 +1,4 @@
-from magicclass import magicclass, magicmenu, Bound, vfield, set_design
+from magicclass import magicclass, magicmenu, Bound, field, vfield, set_design
 from unittest.mock import MagicMock
 
 def test_single_wraps():
@@ -81,3 +81,22 @@ def test_copy():
     ui.a = 1
     ui.B.C["f2"].changed()
     assert ui.new_attr == 1
+
+def test_field_wraps():
+    @magicclass
+    class B:
+        def f(self): ...
+
+    @magicclass
+    class A:
+        b = field(B)
+        a = vfield(int)
+
+        @b.wraps
+        def f(self, a: Bound[a]):
+            self.new_attr = a
+
+    ui = A()
+    assert not ui["f"].visible
+    ui.b["f"].changed()
+    assert ui.new_attr == 0

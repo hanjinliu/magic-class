@@ -346,11 +346,13 @@ class MagicTemplate:
             Method of parent class.
         template : Callable, optional
             Function template for signature.
+        copy: bool, default is False
+            If true, wrapped method is still enabled.
 
         Returns
         -------
         Callable
-            Same method as input, but has updated signature to hide the button.
+            Same method as input, but has updated signature.
         """
         if (not copy) and get_additional_option(method, "into", None) is not None:
             # If method is already wrapped, wraps should create a copy.

@@ -68,6 +68,11 @@ class ClassGuiBase(BaseGui):
         fld.name = fld.name or name.replace("_", " ")
         widget = fld.get_widget(self)
 
+        if isinstance(widget, BaseGui):
+            widget.__magicclass_parent__ = self
+            self.__magicclass_children__.append(widget)
+            widget._my_symbol = Symbol(name)
+
         if isinstance(widget, (ValueWidget, ContainerWidget)):
             # If the field has callbacks, connect it to the newly generated widget.
             if (
