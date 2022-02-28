@@ -65,7 +65,7 @@ class ClassGuiBase(BaseGui):
                 f"MagicField {name} does not contain enough information for widget creation"
             )
 
-        fld.name = fld.name or name.replace("_", " ")
+        fld.name = fld.name or name
         widget = fld.get_widget(self)
 
         if isinstance(widget, BaseGui):

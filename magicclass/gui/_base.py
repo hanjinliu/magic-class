@@ -807,7 +807,7 @@ class ContainerLikeGui(BaseGui, mguiLike, MutableSequence):
                 f"MagicField {name} does not contain enough information for widget creation"
             )
 
-        fld.name = fld.name or name.replace("_", " ")
+        fld.name = fld.name or name
         action = fld.get_action(self)
 
         if action.support_value:

@@ -323,9 +323,9 @@ def test_enabled():
 def test_get_value_field_widget():
     @magicclass
     class A:
-        x = field(int)
-        y = vfield(int)
+        x_1 = field(int)
+        y_1 = vfield(int)
     ui = A()
-    assert type(ui.y) is int
-    assert type(ui["x"]) is widgets.SpinBox
-    assert type(ui["y"]) is widgets.SpinBox
+    assert type(ui.y_1) is int
+    assert type(ui["x_1"]) is widgets.SpinBox
+    assert type(ui["y_1"]) is widgets.SpinBox
