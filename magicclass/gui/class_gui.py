@@ -60,12 +60,10 @@ class ClassGuiBase(BaseGui):
     native: QWidget
 
     def _create_widget_from_field(self, name: str, fld: MagicField):
-        cls = self.__class__
         if fld.not_ready():
-            try:
-                fld.decode_string_annotation(cls.__annotations__[name])
-            except (AttributeError, KeyError):
-                pass
+            raise TypeError(
+                f"MagicField {name} does not contain enough information for widget creation"
+            )
 
         fld.name = fld.name or name.replace("_", " ")
         widget = fld.get_widget(self)

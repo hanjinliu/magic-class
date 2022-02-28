@@ -254,15 +254,6 @@ class MagicField(Field, Generic[_W, _V]):
             wcls = get_widget_class(value=self.value, annotation=self.annotation)
         return wcls.__name__
 
-    def decode_string_annotation(self, annot: str) -> MagicField:
-        """Convert string type annotation into field info."""
-        self.default_factory = annot
-        # Sometimes annotation is not type but str.
-        from pydoc import locate
-
-        self.default_factory = locate(self.default_factory)
-        return self
-
 
 class MagicValueField(MagicField, Generic[_W, _V]):
     """
