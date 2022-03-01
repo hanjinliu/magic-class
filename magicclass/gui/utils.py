@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import Callable, TYPE_CHECKING, TypeVar
 from magicgui.widgets import FunctionGui
+from qtpy.QtCore import Qt
 
 if TYPE_CHECKING:
     from ._base import BaseGui
@@ -41,11 +42,14 @@ def define_callback(self: BaseGui, callback: Callable):
     return _callback
 
 
-def define_context_menu(contextmenu: ContextMenuGui, parent):
-    def rightClickContextMenu(point):
-        contextmenu.native.exec_(parent.mapToGlobal(point))
+def set_context_menu(contextmenu: ContextMenuGui, parent: BaseGui) -> None:
+    parent.native.setContextMenuPolicy(Qt.CustomContextMenu)
 
-    return rightClickContextMenu
+    @parent.native.customContextMenuRequested.connect
+    def rightClickContextMenu(point):
+        contextmenu.native.exec_(parent.native.mapToGlobal(point))
+
+    return None
 
 
 _C = TypeVar("_C", bound=type)

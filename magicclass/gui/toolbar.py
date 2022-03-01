@@ -7,7 +7,6 @@ from magicgui.widgets._bases import ButtonWidget
 from magicgui.widgets._bases.widget import Widget
 from macrokit import Symbol
 from qtpy.QtWidgets import QToolBar, QMenu, QWidgetAction, QTabWidget
-from qtpy.QtCore import Qt
 
 from .mgui_ext import AbstractAction, _LabeledWidgetAction, WidgetAction, ToolButtonPlus
 from ._base import (
@@ -17,7 +16,7 @@ from ._base import (
     ContainerLikeGui,
     nested_function_gui_callback,
 )
-from .utils import MagicClassConstructionError, copy_class, define_context_menu
+from .utils import MagicClassConstructionError, copy_class, set_context_menu
 from .menu_gui import ContextMenuGui, MenuGui, MenuGuiBase, insert_action_like
 
 from ..signature import get_additional_option
@@ -162,10 +161,7 @@ class ToolBarGui(ContainerLikeGui):
 
                     elif isinstance(widget, ContextMenuGui):
                         # Add context menu to toolbar
-                        self.native.setContextMenuPolicy(Qt.CustomContextMenu)
-                        self.native.customContextMenuRequested.connect(
-                            define_context_menu(widget, self.native)
-                        )
+                        set_context_menu(widget, self)
                         _hist.append((name, type(attr), "ContextMenuGui"))
 
                     elif isinstance(widget, ToolBarGui):

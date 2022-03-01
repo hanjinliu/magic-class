@@ -23,7 +23,7 @@ from .utils import (
     copy_class,
     define_callback,
     MagicClassConstructionError,
-    define_context_menu,
+    set_context_menu,
 )
 from ..widgets import (
     ButtonContainer,
@@ -183,10 +183,7 @@ class ClassGuiBase(BaseGui):
 
                 elif isinstance(widget, ContextMenuGui):
                     # Add context menu to container
-                    self.native.setContextMenuPolicy(Qt.CustomContextMenu)
-                    self.native.customContextMenuRequested.connect(
-                        define_context_menu(widget, self.native)
-                    )
+                    set_context_menu(widget, self)
                     _hist.append((name, type(attr), "ContextMenuGui"))
 
                 elif isinstance(widget, ToolBarGui):

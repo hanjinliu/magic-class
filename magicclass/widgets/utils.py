@@ -2,7 +2,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 import weakref
 from qtpy.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QHBoxLayout
-from qtpy.QtCore import Qt
 from magicgui.widgets import Widget
 from magicgui.widgets._concrete import merge_super_sigs as _merge_super_sigs
 from magicgui.backends._qtpy.widgets import QBaseWidget
@@ -57,12 +56,9 @@ class FreeWidget(Widget):
 
         if not isinstance(contextmenugui, ContextMenuGui):
             raise TypeError
-        from ..gui.utils import define_context_menu
+        from ..gui.utils import set_context_menu
 
-        self.native.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.native.customContextMenuRequested.connect(
-            define_context_menu(contextmenugui, self.native)
-        )
+        set_context_menu(contextmenugui, self)
 
     @property
     def __magicclass_parent__(self) -> BaseGui | None:
