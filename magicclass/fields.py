@@ -319,7 +319,7 @@ class MagicValueField(MagicField[_W, _V]):
         return widget
 
     @overload
-    def __get__(self, obj: Literal[None], objtype=None) -> MagicValueField[_W, _V]:
+    def __get__(self, obj: Literal[None], objtype=None) -> MagicValueField[_W, _V] | _V:
         ...
 
     @overload
