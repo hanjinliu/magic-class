@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Callable, TYPE_CHECKING
+from typing import Callable, TYPE_CHECKING, TypeVar
 from magicgui.widgets import FunctionGui
 
 if TYPE_CHECKING:
@@ -46,6 +46,13 @@ def define_context_menu(contextmenu: ContextMenuGui, parent):
         contextmenu.native.exec_(parent.mapToGlobal(point))
 
     return rightClickContextMenu
+
+
+_C = TypeVar("_C", bound=type)
+
+
+def copy_class(cls: _C) -> _C:
+    return type(cls.__name__, cls.__bases__, dict(cls.__dict__))
 
 
 class MagicClassConstructionError(Exception):

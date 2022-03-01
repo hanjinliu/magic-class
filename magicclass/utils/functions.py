@@ -1,7 +1,7 @@
 from __future__ import annotations
 import inspect
 from enum import Enum
-from typing import Any, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING, Iterable
 from docstring_parser import parse
 from qtpy.QtWidgets import QApplication, QMessageBox
 
@@ -20,7 +20,7 @@ __all__ = [
 ]
 
 
-def iter_members(cls: type, exclude_prefix: str = "__") -> list[str, Any]:
+def iter_members(cls: type, exclude_prefix: str = "__") -> Iterable[tuple[str, Any]]:
     """
     Iterate over all the members in the order of source code line number.
     This function is identical to inspect.getmembers except for the order

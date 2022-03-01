@@ -138,3 +138,26 @@ def test_nesting():
     ui.B["func"].changed()
     assert ui.returned == 1
     assert ui.B.returned == 1
+
+def test_external_field():
+    @magicclass
+    class B:
+        x = field(int)
+
+    @magicclass
+    class A:
+        _a = -1
+        b = B
+        @b.x.connect
+        def _callback(self):
+            self._a = 1
+
+        def func(self, x: Bound[b.x]):
+            self._a = x
+
+    ui = A()
+    assert ui._a == -1
+    ui.b.x.value = 10
+    assert ui._a == 1
+    ui["func"].changed()
+    assert ui._a == 10

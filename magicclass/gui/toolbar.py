@@ -17,7 +17,7 @@ from ._base import (
     ContainerLikeGui,
     nested_function_gui_callback,
 )
-from .utils import MagicClassConstructionError, define_context_menu
+from .utils import MagicClassConstructionError, copy_class, define_context_menu
 from .menu_gui import ContextMenuGui, MenuGui, MenuGuiBase, insert_action_like
 
 from ..signature import get_additional_option
@@ -128,6 +128,9 @@ class ToolBarGui(ContainerLikeGui):
                     if not issubclass(attr, BaseGui):
                         continue
                     # Nested magic-menu
+                    if cls.__name__ not in attr.__qualname__.split("."):
+                        attr = copy_class(attr)
+                        attr.__qualname__ = f"{cls.__qualname__}.{attr.__name__}"
                     widget = attr()
                     object.__setattr__(self, name, widget)
 

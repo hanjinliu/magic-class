@@ -1157,11 +1157,13 @@ def _child_that_has_widget(
     return child_instance
 
 
+_LOCALS = "<locals>."
+
+
 def _method_as_getter(self, getter: Callable):
     qualname = getter.__qualname__
-    _locals = "<locals>."
-    if _locals in qualname:
-        qualname = qualname.split(_locals)[-1]
+    if _LOCALS in qualname:
+        qualname = qualname.split(_LOCALS)[-1]
     *clsnames, funcname = qualname.split(".")
 
     def _func(w):
@@ -1173,42 +1175,45 @@ def _method_as_getter(self, getter: Callable):
                 f"Method {funcname} is in namespace {ns}, so it is invisible "
                 f"from magicclass {self.__class__.__qualname__}"
             )
-        i = clsnames.index(self_cls)
+        i = clsnames.index(self_cls) + 1
 
-        for clsname in clsnames[i + 1 :]:
+        for clsname in clsnames[i:]:
             ins = getattr(ins, clsname)
-        return getattr(ins, funcname)(w)
+        getter = getattr(ins, funcname)
+        return getter(w)
 
     return _func
 
 
-def _field_as_getter(self: BaseGui, bound_value: MagicField):
+def _field_as_getter(bgui: BaseGui, fld: MagicField):
     """Called when a MagicField is used in Bound method."""
+    qualname = fld.parent_class.__qualname__
+    if _LOCALS in qualname:
+        qualname = qualname.split(_LOCALS)[-1]
+    clsnames = qualname.split(".")
 
     def _func(w):
         # First we have to know where (which instance) MagicField came from.
-        namespace = bound_value.parent_class.__qualname__
-        clsnames = namespace.split(".")
-        ins = self
-        while type(ins).__name__ not in clsnames:
-            ins = getattr(ins, "__magicclass_parent__", None)
-            if ins is None:
-                raise ValueError(
-                    f"MagicField {namespace}.{bound_value.name} is invisible"
-                    f"from magicclass {self.__class__.__qualname__}"
-                )
-        i = clsnames.index(type(ins).__name__)
+        if bgui.__class__.__name__ not in clsnames:
+            ns = ".".join(clsnames)
+            raise ValueError(
+                f"Method {fld.name} is in namespace {ns}, so it is invisible "
+                f"from magicclass {bgui.__class__.__qualname__}"
+            )
+        i = clsnames.index(type(bgui).__name__) + 1
+        ins = bgui
         for clsname in clsnames[i:]:
             ins = getattr(ins, clsname, ins)
 
+        # Now, ins is an instance of parent_class.
         # Extract correct widget from MagicField
-        _field_widget = bound_value.get_widget(ins)
+        _field_widget = fld.get_widget(ins)
         if not hasattr(_field_widget, "value"):
             raise TypeError(
-                f"MagicField {bound_value.name} does not return ValueWidget "
+                f"MagicField {fld.name} does not return ValueWidget "
                 "thus cannot be used as a bound value."
             )
-        return bound_value.as_getter(ins)(w)
+        return fld.as_getter(ins)(w)
 
     return _func
 

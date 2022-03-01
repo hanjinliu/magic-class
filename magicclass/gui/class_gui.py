@@ -19,7 +19,12 @@ from ._base import (
     value_widget_callback,
     nested_function_gui_callback,
 )
-from .utils import define_callback, MagicClassConstructionError, define_context_menu
+from .utils import (
+    copy_class,
+    define_callback,
+    MagicClassConstructionError,
+    define_context_menu,
+)
 from ..widgets import (
     ButtonContainer,
     GroupBoxContainer,
@@ -124,6 +129,9 @@ class ClassGuiBase(BaseGui):
                     if not issubclass(attr, BaseGui):
                         continue
                     # Nested magic-class
+                    if cls.__name__ not in attr.__qualname__.split("."):
+                        attr = copy_class(attr)
+                        attr.__qualname__ = f"{cls.__qualname__}.{attr.__name__}"
                     widget = attr()
                     object.__setattr__(self, name, widget)
 
@@ -189,6 +197,7 @@ class ClassGuiBase(BaseGui):
                             self.native.addToolBar(self._toolbar)
                         else:
                             # self is not a main window object
+                            # TODO: these codes are too dirty...
                             if isinstance(self, _USE_OUTER_LAYOUT):
                                 _layout: QBoxLayout = self._widget._qwidget.layout()
                             else:

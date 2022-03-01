@@ -16,7 +16,7 @@ from ._base import (
     ContainerLikeGui,
     nested_function_gui_callback,
 )
-from .utils import MagicClassConstructionError
+from .utils import MagicClassConstructionError, copy_class
 
 from ..signature import get_additional_option
 from ..fields import MagicField
@@ -86,6 +86,9 @@ class MenuGuiBase(ContainerLikeGui):
                     if not issubclass(attr, BaseGui):
                         continue
                     # Nested magic-menu
+                    if cls.__name__ not in attr.__qualname__.split("."):
+                        attr = copy_class(attr)
+                        attr.__qualname__ = f"{cls.__qualname__}.{attr.__name__}"
                     widget = attr()
                     object.__setattr__(self, name, widget)
 
