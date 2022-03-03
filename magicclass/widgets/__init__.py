@@ -26,10 +26,11 @@ from .misc import Figure, OptionalWidget, ConsoleTextEdit, CheckButton, SpreadSh
 from .separator import Separator
 from .sequence import ListEdit, TupleEdit
 from .utils import FreeWidget
-
+from .logger import Logger
 
 __all__ = [
     "ListWidget",
+    "Logger",
     "Figure",
     "OptionalWidget",
     "ColorEdit",
