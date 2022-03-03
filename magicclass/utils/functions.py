@@ -2,6 +2,7 @@ from __future__ import annotations
 import inspect
 from enum import Enum
 from typing import Any, TYPE_CHECKING, Iterable
+import warnings
 from docstring_parser import parse
 from qtpy.QtWidgets import QApplication, QMessageBox
 
@@ -194,3 +195,23 @@ def _get_tree(ui: BaseGui, depth: int = 0):
     else:
         out = f"'{ui.name}'"
     return out
+
+def rst_to_html(rst: str) -> str:
+    """Convert rST string into HTML."""
+    try:
+        from docutils.examples import html_body
+        from xml.sax.saxutils import unescape
+        html = unescape(
+            html_body(
+                rst,
+                input_encoding='utf-8', 
+                output_encoding='utf-8'
+            ).strip()
+        )
+    except Exception as e:
+        warnings.warn(
+            f"Could not convert string into HTML due to {type(e).__name__}: {e}",
+            UserWarning,
+        )
+        html = rst
+    return html
