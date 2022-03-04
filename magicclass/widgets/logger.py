@@ -6,18 +6,27 @@ from qtpy import QtWidgets as QtW, QtGui
 from magicgui.backends._qtpy.widgets import QBaseWidget
 from magicgui.widgets import Widget
 import logging
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import numpy as np
 
 # See https://stackoverflow.com/questions/28655198/best-way-to-display-logs-in-pyqt
 
 
-class QtLogger(QtW.QPlainTextEdit):
+class QtLogger(QtW.QTextEdit):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.setReadOnly(True)
 
-    def printText(self, text: str):
+    def appendText(self, text: str):
         self.moveCursor(QtGui.QTextCursor.End)
         self.insertPlainText(text)
+        self.moveCursor(QtGui.QTextCursor.End)
+
+    def appendHtml(self, html: str):
+        self.moveCursor(QtGui.QTextCursor.End)
+        self.insertHtml(html)
         self.moveCursor(QtGui.QTextCursor.End)
 
 
@@ -80,10 +89,19 @@ class Logger(Widget, logging.Handler):
         self.print(msg)
 
     def print(self, *msg, sep=" ", end="\n"):
-        self._widget._qwidget.printText(sep.join(msg) + end)
+        self._widget._qwidget.appendText(sep.join(msg) + end)
 
     def print_html(self, html: str):
-        self._widget._qwidget.addHtml(html)
+        self._widget._qwidget.appendHtml(html)
+
+    def print_table(self, table):
+        import pandas as pd
+
+        df = pd.DataFrame(table)
+        self._widget._qwidget.appendHtml(df.to_html())
+
+    def print_image(self, image: np.ndarray):
+        raise NotImplementedError()
 
     def write(self, msg):
         self.print(msg, end="")
