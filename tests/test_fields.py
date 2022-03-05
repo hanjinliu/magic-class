@@ -24,10 +24,24 @@ def test_field_types():
         a_str = field(widgets.LineEdit)
         a_bool = field(widgets.CheckBox)
 
+    @magicclass
+    class D:
+        a_int = field(widget_type=widgets.SpinBox)
+        a_float = field(widget_type=widgets.FloatSpinBox)
+        a_str = field(widget_type=widgets.LineEdit)
+        a_bool = field(widget_type=widgets.CheckBox)
+
+    @magicclass
+    class E:
+        a_int = field(widget_type="SpinBox")
+        a_float = field(widget_type="FloatSpinBox")
+        a_str = field(widget_type="LineEdit")
+        a_bool = field(widget_type="CheckBox")
+
     answers = [widgets.SpinBox, widgets.FloatSpinBox,
                widgets.LineEdit, widgets.CheckBox]
 
-    for cls in [A, B, C]:
+    for cls in [A, B, C, D, E]:
         ui = cls()
         assert len(ui) == 4
         for i in range(4):

@@ -44,8 +44,8 @@ class MagicField(Field, Generic[_W, _V]):
         self,
         default=MISSING,
         default_factory=MISSING,
-        metadata: dict = {},
-        name: str = None,
+        metadata: dict[str, Any] = {},
+        name: str | None = None,
         enabled: bool = True,
         record: bool = True,
     ):
@@ -153,6 +153,8 @@ class MagicField(Field, Generic[_W, _V]):
         return not self.not_ready()
 
     def not_ready(self) -> bool:
+        if "widget_type" in self.metadata:
+            return False
         return self.default is MISSING and self.default_factory is MISSING
 
     def to_widget(self) -> _W:
