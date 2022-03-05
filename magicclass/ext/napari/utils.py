@@ -1,10 +1,19 @@
 from __future__ import annotations
+import sys
+from typing import Union, Callable, TYPE_CHECKING
+
+if sys.version_info < (3, 10):
+    from typing_extensions import ParamSpec
+else:
+    from typing import ParamSpec
+from functools import wraps
 from ...gui._base import BaseGui
 from ...gui import MenuGui, ToolBarGui, ClassGui
-from typing import TYPE_CHECKING
+
 
 if TYPE_CHECKING:
     import napari
+    from napari.qt.threading import GeneratorWorker, FunctionWorker
 
 
 def to_napari(
@@ -48,3 +57,34 @@ def to_napari(
         return wrapper
     else:
         return wrapper(magic_class)
+
+
+Worker = Union[FunctionWorker, GeneratorWorker]
+
+_P = ParamSpec("_P")
+
+
+def process_worker(f: Callable[_P, Worker]) -> Callable[_P, None]:
+    """
+    Process returned worker of ``napari.qt.threading`` in a proper way.
+
+    Open a progress bar and start worker in a parallel thread if function is called from GUI.
+    Otherwise (if function is called from script), the worker will be executed as if the
+    function is directly called. This function is useful in napari because when you are
+    running workers in tandem the second one does not wait for the first one to finish, which
+    causes inconsistency between operations on GUI and on Python interpreter.
+    """
+
+    @wraps(f)
+    def wrapper(self: BaseGui, *args, **kwargs):
+        worker: Worker = f(self, *args, **kwargs)
+        if self[f.__name__].running:
+            worker.start()
+        else:
+            worker.run()
+        return None
+
+    f.__annotations__["return"] = None
+    if hasattr(f, "__signature__"):
+        f.__signature__ = f.__signature__.replace(return_annotation=None)
+    return wrapper
