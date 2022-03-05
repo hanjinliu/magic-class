@@ -15,19 +15,44 @@ if TYPE_CHECKING:
 
 
 class QtLogger(QtW.QTextEdit):
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, max_history: int = 500):
         super().__init__(parent=parent)
         self.setReadOnly(True)
+        self.setWordWrapMode(QtGui.QTextOption.WordWrap)
+        self._max_history = int(max_history)
+        self._n_lines = 0
 
     def appendText(self, text: str):
         self.moveCursor(QtGui.QTextCursor.End)
         self.insertPlainText(text)
         self.moveCursor(QtGui.QTextCursor.End)
+        self._post_append()
 
     def appendHtml(self, html: str):
         self.moveCursor(QtGui.QTextCursor.End)
         self.insertHtml(html)
         self.moveCursor(QtGui.QTextCursor.End)
+        self._post_append()
+
+    def appendImage(self, qimage):
+        cursor = self.textCursor()
+        cursor.insertImage(qimage)
+        self.insertPlainText("\n\n")
+        self._post_append()
+
+    def _post_append(self):
+        if self._n_lines < self._max_history:
+            self._n_lines += 1
+            return None
+        cursor = self.textCursor()
+        cursor.movePosition(QtGui.QTextCursor.Start)
+        cursor.select(QtGui.QTextCursor.LineUnderCursor)
+        cursor.removeSelectedText()
+        cursor.movePosition(QtGui.QTextCursor.Down)
+        cursor.deletePreviousChar()
+        cursor.movePosition(QtGui.QTextCursor.End)
+        self.setTextCursor(cursor)
+        return None
 
 
 class Logger(Widget, logging.Handler):
@@ -62,7 +87,7 @@ class Logger(Widget, logging.Handler):
         logger.print("text")
 
         # a context manager that change the destination of print function.
-        with logger.set_stdout():
+        with logger.set_as_stdout():
             print("text")
             function_that_print_something()
 
@@ -73,7 +98,7 @@ class Logger(Widget, logging.Handler):
 
     .. code-block:: python
 
-        with logger.set_logger():
+        with logger.set_as_logger():
             function_that_log_something()
 
         logging.getLogger().addHandler(logger)
@@ -88,36 +113,74 @@ class Logger(Widget, logging.Handler):
         msg = self.format(record)
         self.print(msg)
 
+    def clear(self):
+        self._widget._qwidget.clear()
+        return None
+
     def print(self, *msg, sep=" ", end="\n"):
-        self._widget._qwidget.appendText(sep.join(msg) + end)
+        self._widget._qwidget.appendText(sep.join(map(str, msg)) + end)
+        return None
 
     def print_html(self, html: str):
         self._widget._qwidget.appendHtml(html)
+        return None
 
     def print_table(self, table):
         import pandas as pd
 
         df = pd.DataFrame(table)
         self._widget._qwidget.appendHtml(df.to_html())
+        return None
 
-    def print_image(self, image: np.ndarray):
-        raise NotImplementedError()
+    def print_image(
+        self,
+        arr: np.ndarray,
+        vmin=None,
+        vmax=None,
+        cmap=None,
+        norm=None,
+        width=None,
+        height=None,
+    ):
+        from magicgui import _mpl_image
+
+        img = _mpl_image.Image()
+
+        img.set_data(arr)
+        img.set_clim(vmin, vmax)
+        img.set_cmap(cmap)
+        img.set_norm(norm)
+
+        val = img.make_image()
+        image = QtGui.QImage(
+            val, val.shape[1], val.shape[0], QtGui.QImage.Format_RGBA8888
+        )
+        if width is None:
+            if height is None:
+                height = 300
+            image = image.scaledToHeight(height)
+        else:
+            image = image.scaledToWidth(width)
+
+        self._widget._qwidget.appendImage(image)
+        return None
 
     def write(self, msg):
         self.print(msg, end="")
+        return None
 
     def flush(self):
         pass
 
     @contextmanager
-    def set_stdout(self):
+    def set_as_stdout(self):
         """A context manager for printing things in this widget."""
         sys.stdout = self
         yield self
         sys.stdout = sys.__stdout__
 
     @contextmanager
-    def set_logger(self):
+    def set_as_logger(self):
         """A context manager for logging things in this widget."""
         logging.getLogger().addHandler(self)
         yield self

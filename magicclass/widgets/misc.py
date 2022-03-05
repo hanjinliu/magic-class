@@ -17,6 +17,7 @@ from .utils import FreeWidget, merge_super_sigs
 if TYPE_CHECKING:
     from qtpy.QtWidgets import QTextEdit
     from matplotlib.axes import Axes
+    from numpy.typing import ArrayLike
 
 
 @merge_super_sigs
@@ -182,15 +183,41 @@ class Figure(FreeWidget):
         self.draw()
         return self.ax
 
-    def hist(self, *args, **kwargs):
+    def hist(
+        self, *args, **kwargs
+    ) -> tuple[ArrayLike | list[ArrayLike], ArrayLike, list | list[list]]:
         """Copy of ``plt.hist``."""
-        self.ax.hist(*args, **kwargs)
+        out = self.ax.hist(*args, **kwargs)
         self.draw()
-        return self.ax
+        return out
 
     def text(self, *args, **kwargs):
         """Copy of ``plt.text``."""
         self.ax.text(*args, **kwargs)
+        self.draw()
+        return self.ax
+
+    def quiver(self, *args, data=None, **kwargs):
+        """Copy of ``plt.quiver``."""
+        self.ax.quiver(*args, data=data, **kwargs)
+        self.draw()
+        return self.ax
+
+    def axline(self, xy1, xy2=None, *, slope=None, **kwargs):
+        """Copy of ``plt.axline``."""
+        self.ax.axline(xy1, xy2=xy2, slope=slope, **kwargs)
+        self.draw()
+        return self.ax
+
+    def axhline(self, y=0, xmin=0, xmax=1, **kwargs):
+        """Copy of ``plt.axhline``."""
+        self.ax.axhline(y, xmin, xmax, **kwargs)
+        self.draw()
+        return self.ax
+
+    def axvline(self, x=0, ymin=0, ymax=1, **kwargs):
+        """Copy of ``plt.axvline``."""
+        self.ax.axvline(x, ymin, ymax, **kwargs)
         self.draw()
         return self.ax
 
