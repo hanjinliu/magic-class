@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Any, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING, TypeVar
 import re
 import weakref
 from magicgui.widgets._concrete import _LabeledWidget
@@ -14,13 +14,15 @@ if TYPE_CHECKING:
     from magicgui.widgets._bases import Widget
     from ._base import BaseGui
 
+_R = TypeVar("_R")
 
-class FunctionGuiPlus(FunctionGui):
+
+class FunctionGuiPlus(FunctionGui[_R]):
     """FunctionGui class with a parameter recording functionality etc."""
 
     _magicclass_parent_ref: weakref.ReferenceType[BaseGui] | None = None
 
-    def __call__(self, *args: Any, **kwargs: Any):
+    def __call__(self, *args: Any, update_widget: bool = False, **kwargs: Any) -> _R:
         sig = self.__signature__
         try:
             bound = sig.bind(*args, **kwargs)
@@ -39,6 +41,13 @@ class FunctionGuiPlus(FunctionGui):
                 raise TypeError(msg) from None
             else:
                 raise
+
+        if update_widget:
+            self._auto_call, before = False, self._auto_call
+            try:
+                self.update(bound.arguments)
+            finally:
+                self._auto_call = before
 
         bound.apply_defaults()
 
@@ -92,15 +101,3 @@ class FunctionGuiPlus(FunctionGui):
         # it's possible that indices will be off.
         self._widget._mgui_insert_widget(key, _widget)
         self._unify_label_widths()
-
-    @property
-    def __magicclass_parent__(self) -> BaseGui | None:
-        """Return parent magic class if exists."""
-        if self._magicclass_parent_ref is None:
-            return None
-        parent = self._magicclass_parent_ref()
-        return parent
-
-    @__magicclass_parent__.setter
-    def __magicclass_parent__(self, parent) -> None:
-        self._magicclass_parent_ref = weakref.ref(parent)
