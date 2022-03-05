@@ -438,17 +438,20 @@ def make_gui(container: type[_C], no_margin: bool = True) -> type[_C | ClassGuiB
             if viewer is not None and self.parent is not None:
                 name = self.parent.objectName()
                 if name in viewer.window._dock_widgets:
-                    viewer.window._dock_widgets[name].show()
+                    viewer.window._dock_widgets[name].show(run=False)
                 else:
                     dock = viewer.window.add_dock_widget(
-                        self, area="right", allowed_areas=["left", "right"]
+                        self,
+                        name=self.name.replace("_", " ").strip(),
+                        area="right",
+                        allowed_areas=["left", "right"],
                     )
                     dock.setFloating(self._popup_mode == PopUpMode.popup)
             else:
                 container.show(self, run=False)
                 self.native.activateWindow()
-            if run:
-                run_app()
+                if run:
+                    run_app()
             return None
 
         def reset_choices(self: cls, *_: Any):
