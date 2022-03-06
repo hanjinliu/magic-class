@@ -1222,11 +1222,11 @@ def _inject_recorder(func: Callable, is_method: bool = True) -> Callable:
         def _func(self, *args, **kwargs):
             return func(*args, **kwargs)
 
-        # _self_param = inspect.Parameter("self", inspect.Parameter.POSITIONAL_OR_KEYWORD)
-        # _func.__signature__ = sig.replace(
-        #     parameters=[_self_param] + list(sig.parameters.values()),
-        #     return_annotation=sig.return_annotation,
-        # )
+        _self_param = inspect.Parameter("self", inspect.Parameter.POSITIONAL_OR_KEYWORD)
+        _func.__signature__ = sig.replace(
+            parameters=[_self_param] + list(sig.parameters.values()),
+            return_annotation=sig.return_annotation,
+        )
 
     if isinstance(sig, MagicMethodSignature):
         opt = sig.additional_options

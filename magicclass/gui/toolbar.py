@@ -234,28 +234,30 @@ class ToolBarGui(ContainerLikeGui):
             Object to insert.
         """
         if isinstance(obj, Callable):
-            # Sometimes uses want to dynamically add new functions to GUI.
-            method_name = getattr(obj, "__name__", None)
-            if method_name and not hasattr(self, method_name):
-                object.__setattr__(self, method_name, obj)
-
+            # Sometimes users want to dynamically add new functions to GUI.
             if isinstance(obj, FunctionGui):
                 if obj.parent is None:
                     f = nested_function_gui_callback(self, obj)
                     obj.called.connect(f)
+                _obj = obj
             else:
-                obj = self._create_widget_from_method(
-                    _inject_recorder(obj, is_method=False)
-                )
+                obj = _inject_recorder(obj, is_method=False).__get__(self)
+                _obj = self._create_widget_from_method(obj)
+
+            method_name = getattr(obj, "__name__", None)
+            if method_name and not hasattr(self, method_name):
+                object.__setattr__(self, method_name, obj)
+        else:
+            _obj = obj
 
         # _hide_labels should not contain Container because some ValueWidget like widgets
         # are Containers.
-        if isinstance(obj, self._component_class):
-            insert_action_like(self.native, key, obj.native)
-            self._list.insert(key, obj)
+        if isinstance(_obj, self._component_class):
+            insert_action_like(self.native, key, _obj.native)
+            self._list.insert(key, _obj)
 
-        elif isinstance(obj, WidgetAction):
-            if isinstance(obj.widget, Separator):
+        elif isinstance(_obj, WidgetAction):
+            if isinstance(_obj.widget, Separator):
                 insert_action_like(self.native, key, "sep")
 
             else:
@@ -268,14 +270,14 @@ class ToolBarGui(ContainerLikeGui):
                     Image,
                     Table,
                 )
-                _obj = obj
-                if (not isinstance(obj.widget, _hide_labels)) and self.labels:
-                    _obj = _LabeledWidgetAction.from_action(obj)
+                _obj = _obj
+                if (not isinstance(_obj.widget, _hide_labels)) and self.labels:
+                    _obj = _LabeledWidgetAction.from_action(_obj)
                 _obj.parent = self
                 insert_action_like(self.native, key, _obj.native)
-            self._list.insert(key, obj)
+            self._list.insert(key, _obj)
         else:
-            raise TypeError(f"{type(obj)} is not supported.")
+            raise TypeError(f"{type(_obj)} is not supported.")
 
     def insert(self, key: int, obj: AbstractAction) -> None:
         self._fast_insert(key, obj)
