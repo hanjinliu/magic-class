@@ -20,11 +20,6 @@ There are some special attributes that will be recognized differently by magic c
 
             def func(self): ...
 
-* ``__call__``
-
-    Magic classes do not convert methods into widgets if the name start with "_" but this is an
-    exception.
-
 * ``__magicclass_parent__``
 
     The parent magic class object is stored in this attribute. This parameter is needed because

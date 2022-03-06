@@ -281,12 +281,6 @@ class ClassGuiBase(BaseGui):
                         f"\n{hist_str}\n\n{type(e).__name__}: {e}"
                     ) from e
 
-        # convert __call__ into a button
-        if hasattr(self, "__call__"):
-            widget = self._create_widget_from_method(self.__call__)
-            self._fast_insert(n_insert, widget)
-            n_insert += 1
-
         self._unify_label_widths()
         return None
 
