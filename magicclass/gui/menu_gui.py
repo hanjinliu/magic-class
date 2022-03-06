@@ -15,6 +15,7 @@ from ._base import (
     ErrorMode,
     ContainerLikeGui,
     nested_function_gui_callback,
+    _inject_recorder,
 )
 from .utils import MagicClassConstructionError, copy_class
 
@@ -181,7 +182,9 @@ class MenuGuiBase(ContainerLikeGui):
                     f = nested_function_gui_callback(self, obj)
                     obj.called.connect(f)
             else:
-                obj = self._create_widget_from_method(obj)
+                obj = self._create_widget_from_method(
+                    _inject_recorder(obj, is_method=False)
+                )
 
         if isinstance(obj, (self._component_class, MenuGuiBase)):
             insert_action_like(self.native, key, obj.native)

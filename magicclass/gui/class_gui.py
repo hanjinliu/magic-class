@@ -18,6 +18,7 @@ from ._base import (
     ErrorMode,
     value_widget_callback,
     nested_function_gui_callback,
+    _inject_recorder,
 )
 from .utils import (
     copy_class,
@@ -364,7 +365,9 @@ def make_gui(container: type[_C], no_margin: bool = True) -> type[_C | ClassGuiB
                         f = nested_function_gui_callback(self, widget)
                         widget.called.connect(f)
                 else:
-                    widget = self._create_widget_from_method(widget)
+                    widget = self._create_widget_from_method(
+                        _inject_recorder(widget, is_method=False)
+                    )
 
             # _hide_labels should not contain Container because some ValueWidget like widgets
             # are Containers.

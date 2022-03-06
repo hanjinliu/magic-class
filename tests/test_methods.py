@@ -58,11 +58,15 @@ def test_post_append():
     def g(): pass
 
     assert isinstance(ui.g, FunctionType)
+    ui["g"]
     assert isinstance(ui.Menu.g, FunctionType)
+    ui.Menu["g"]
     assert isinstance(ui.Tool.g, FunctionType)
+    ui.Tool["g"]
 
     @ui.append
     def f(): pass
 
+    # the original method should not be updated
     ui.f()
     assert ui.a == 1

@@ -15,6 +15,7 @@ from ._base import (
     ErrorMode,
     ContainerLikeGui,
     nested_function_gui_callback,
+    _inject_recorder,
 )
 from .utils import MagicClassConstructionError, copy_class, set_context_menu
 from .menu_gui import ContextMenuGui, MenuGui, MenuGuiBase, insert_action_like
@@ -243,7 +244,9 @@ class ToolBarGui(ContainerLikeGui):
                     f = nested_function_gui_callback(self, obj)
                     obj.called.connect(f)
             else:
-                obj = self._create_widget_from_method(obj)
+                obj = self._create_widget_from_method(
+                    _inject_recorder(obj, is_method=False)
+                )
 
         # _hide_labels should not contain Container because some ValueWidget like widgets
         # are Containers.
