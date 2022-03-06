@@ -153,7 +153,7 @@ def magicclass(
         mod = cls.__module__
         qualname = cls.__qualname__
 
-        new_attrs = convert_attributes(cls)
+        new_attrs = convert_attributes(cls, hide=class_gui.__mro__)
         oldclass = type(cls.__name__ + _BASE_CLASS_SUFFIX, (cls,), {})
         newclass = type(cls.__name__, (class_gui, oldclass), new_attrs)
 
@@ -408,7 +408,7 @@ def _call_magicmenu(
         mod = cls.__module__
         qualname = cls.__qualname__
 
-        new_attrs = convert_attributes(cls)
+        new_attrs = convert_attributes(cls, hide=menugui_class.__mro__)
         oldclass = type(cls.__name__ + _BASE_CLASS_SUFFIX, (cls,), {})
         newclass = type(cls.__name__, (menugui_class, oldclass), new_attrs)
 

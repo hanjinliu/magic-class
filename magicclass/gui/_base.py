@@ -1173,9 +1173,7 @@ def value_widget_callback(
 
 
 def nested_function_gui_callback(gui: MagicTemplate, fgui: FunctionGui):
-    """
-    Define a FunctionGui callback, including macro recording.
-    """
+    """Define a FunctionGui callback, including macro recording."""
     fgui_name = Symbol(fgui.name)
 
     def _after_run():
@@ -1209,6 +1207,7 @@ def nested_function_gui_callback(gui: MagicTemplate, fgui: FunctionGui):
 
 
 def _inject_recorder(func: Callable, is_method: bool = True) -> Callable:
+    """Inject macro recording functionality into a function."""
     sig = get_signature(func)
     if is_method:
         sig = sig.replace(
@@ -1269,17 +1268,38 @@ def _inject_recorder(func: Callable, is_method: bool = True) -> Callable:
 _T = TypeVar("_T", bound=BaseGui)
 
 
-def convert_attributes(cls: type[_T]):
-    # update methods
-    _dict: dict[str, Callable] = {}
-    _pass = (property, classmethod, staticmethod, type, Widget)
-    for name, obj in cls.__dict__.items():
-        if name.startswith("_") or isinstance(obj, _pass) or not callable(obj):
-            new_attr = obj
-        elif callable(obj) and get_additional_option(obj, "record", True):
-            new_attr = _inject_recorder(obj)
-        else:
-            new_attr = obj
+def convert_attributes(cls: type[_T], hide: tuple[type, ...]) -> dict[str, Any]:
+    """
+    Convert class attributes into macro recordable ones.
 
-        _dict[name] = new_attr
+    Returned dictionary can be directly used for the third argument of
+    ``type`` constructor. To avoid converting all the callables in
+    subclasses, subclasses that will be iterated over can be restricted
+    using ``hide`` argument.
+
+    Parameters
+    ----------
+    cls : BaseGui type
+        Class that will be converted.
+    hide : tuple of types
+        MROs that will be ignored during iteration.
+
+    Returns
+    -------
+    dict
+        New namespace.
+    """
+    _dict: dict[str, Callable] = {}
+    _pass_type = (property, classmethod, staticmethod, type, Widget)
+    mro = [c for c in cls.__mro__ if c not in hide]
+    for subcls in reversed(mro):
+        for name, obj in subcls.__dict__.items():
+            if name.startswith("_") or isinstance(obj, _pass_type) or not callable(obj):
+                new_attr = obj
+            elif callable(obj) and get_additional_option(obj, "record", True):
+                new_attr = _inject_recorder(obj)
+            else:
+                new_attr = obj
+
+            _dict[name] = new_attr
     return _dict
