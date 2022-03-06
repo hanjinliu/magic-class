@@ -182,22 +182,26 @@ def magicclass(
                 name=name or cls.__name__,
                 visible=visible,
             )
-            super(oldclass, self).__init__(*args, **kwargs)
-            self._convert_attributes_into_widgets()
-            if hasattr(self, "__post_init__"):
-                self.__post_init__()
-
-            if widget_type in (WidgetType.collapsible, WidgetType.button):
-                self.text = self.name
-
+            # prepare macro
             macrowidget = self.macro.widget.native
             macrowidget.setParent(self.native, macrowidget.windowFlags())
             self.macro.widget.__magicclass_parent__ = self
+
+            with self.macro.blocked():
+                super(oldclass, self).__init__(*args, **kwargs)
+
+            self._convert_attributes_into_widgets()
+
+            if widget_type in (WidgetType.collapsible, WidgetType.button):
+                self.text = self.name
 
             if icon_path:
                 self.icon_path = icon_path
             if stylesheet:
                 self.native.setStyleSheet(str(stylesheet))
+            if hasattr(self, "__post_init__"):
+                with self.macro.blocked():
+                    self.__post_init__()
 
         newclass.__init__ = __init__
 
@@ -431,17 +435,21 @@ def _call_magicmenu(
                 labels=labels,
                 name=name or cls.__name__,
             )
-            super(oldclass, self).__init__(*args, **kwargs)
-            self._convert_attributes_into_widgets()
-            if hasattr(self, "__post_init__"):
-                self.__post_init__()
-
-            if icon_path:
-                self.icon_path = icon_path
 
             macrowidget = self.macro.widget.native
             macrowidget.setParent(self.native, macrowidget.windowFlags())
             self.macro.widget.__magicclass_parent__ = self
+
+            with self.macro.blocked():
+                super(oldclass, self).__init__(*args, **kwargs)
+
+            self._convert_attributes_into_widgets()
+
+            if icon_path:
+                self.icon_path = icon_path
+            if hasattr(self, "__post_init__"):
+                with self.macro.blocked():
+                    self.__post_init__()
 
         newclass.__init__ = __init__
 

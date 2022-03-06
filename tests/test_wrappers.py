@@ -30,6 +30,24 @@ def test_set_options():
     assert str(ui.macro[-1]) == "ui.f2(a=4)"
     assert str(ui.macro[-2]) != "ui.f2(a=2)" # for auto_call, macro should be recorded once.
 
+def test_mgui_options():
+    @magicclass
+    class A:
+        @set_options(layout="horizontal", auto_call=True)
+        def f(self, a: int):
+            self._a = a
+
+    ui = A()
+    ui["f"].changed()
+    assert ui["f"].mgui.layout == "horizontal"
+    ui["f"].mgui[0].value = 3
+    assert ui._a == 3
+    assert str(ui.macro[-1]) == "ui.f(a=3)"
+    ui["f"].mgui[0].value = 5
+    assert ui._a == 5
+    assert str(ui.macro[-1]) == "ui.f(a=5)"
+    assert str(ui.macro[-2]) != "ui.f(a=3)"
+
 def test_set_design():
     @magicclass
     class A:

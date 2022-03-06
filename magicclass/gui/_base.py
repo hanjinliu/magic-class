@@ -1236,7 +1236,7 @@ def _inject_recorder(func: Callable, is_method: bool = True) -> Callable:
         _auto_call = opt.get("auto_call", False)
     else:
         _auto_call = False
-
+    # TODO: if function has a return_annotation, macro should be recorded like ui["f"](...)
     @functools_wraps(_func)
     def _recordable(bgui: MagicTemplate, *args, **kwargs):
         with bgui.macro.blocked():
