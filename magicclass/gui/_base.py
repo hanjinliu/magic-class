@@ -83,6 +83,7 @@ defaults = {
     "popup_mode": PopUpMode.popup,
     "error_mode": ErrorMode.msgbox,
     "close_on_run": True,
+    "macro-max-history": 1000,
 }
 
 _RESERVED = {
@@ -721,7 +722,10 @@ class MagicTemplate:
 
 class BaseGui(MagicTemplate):
     def __init__(self, close_on_run, popup_mode, error_mode):
-        self._macro_instance = GuiMacro(flags={"Get": False, "Return": False})
+        self._macro_instance = GuiMacro(
+            max_lines=defaults["macro-max-history"],
+            flags={"Get": False, "Return": False},
+        )
         self.__magicclass_parent__: BaseGui | None = None
         self.__magicclass_children__: list[MagicTemplate] = []
         self._close_on_run = close_on_run

@@ -297,9 +297,10 @@ class MacroEdit(FreeWidget):
 
 
 class GuiMacro(Macro):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, max_lines: int, flags={}):
+        super().__init__(flags=flags)
         self._widget = None
+        self._max_lines = max_lines
         self.callbacks.append(self._update_widget)
 
     @property
@@ -316,6 +317,8 @@ class GuiMacro(Macro):
     def _update_widget(self, expr=None):
         if self.widget.synchronize:
             self.widget.textedit.append(str(self.args[-1]))
+        if len(self) > self._max_lines:
+            del self[0]
 
     def _erase_last(self):
         if self.widget.synchronize:

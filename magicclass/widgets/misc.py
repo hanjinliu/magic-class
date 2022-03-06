@@ -352,6 +352,17 @@ class ConsoleTextEdit(TextEdit):
         cursor.deletePreviousChar()
         self.native.setTextCursor(cursor)
 
+    def erase_first(self):
+        """Erase the first line."""
+        cursor = self.native.textCursor()
+        cursor.movePosition(QTextCursor.Start)
+        cursor.select(QTextCursor.LineUnderCursor)
+        cursor.removeSelectedText()
+        cursor.movePosition(QTextCursor.Down)
+        cursor.deletePreviousChar()
+        cursor.movePosition(QTextCursor.End)
+        self.native.setTextCursor(cursor)
+
     @property
     def selected(self) -> str:
         """Return selected string."""
