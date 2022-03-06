@@ -1,8 +1,9 @@
-from magicclass import magicclass, set_options, defaults
+from magicclass import magicclass, magicmenu, set_options, defaults
 from enum import Enum
 from pathlib import Path
 from datetime import datetime, date, time
 from unittest.mock import MagicMock
+
 
 class X(Enum):
     a = 1
@@ -109,3 +110,24 @@ def test_max_history():
     assert len(ui.macro) == max_hist
     ui.f()
     assert len(ui.macro) == max_hist
+
+def test_init():
+    """test macro is blocked during __init__ and __post_init__"""
+    @magicclass
+    class A:
+        @magicmenu
+        class Menu:
+            def __init__(self):
+                self.f()
+            def __post_init__(self):
+                self.f()
+            def f(self): pass
+
+        def __init__(self):
+            self.f()
+        def __post_init__(self):
+            self.f()
+        def f(self): pass
+
+    ui = A()
+    assert len(ui.macro) == 1
