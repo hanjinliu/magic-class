@@ -1,4 +1,4 @@
-from magicclass import magicclass, set_options
+from magicclass import magicclass, set_options, defaults
 from enum import Enum
 from pathlib import Path
 from datetime import datetime, date, time
@@ -73,3 +73,39 @@ def test_macro_rerun():
     mock.assert_not_called()
     ui.macro.widget.execute_lines(4)
     mock.assert_not_called()
+
+
+def test_blocked():
+    @magicclass
+    class A:
+        def f(self, a: int = 1):
+            self._a = a
+        def g(self):
+            return self.f(0)
+
+    ui = A()
+    ui["f"].changed()
+    ui["f"].mgui[-1].changed()
+    assert ui._a == 1
+    ui["g"].changed()
+    assert ui._a == 0
+    ui.f(2)
+    assert ui._a == 2
+    ui.g()
+    assert ui._a == 0
+    assert str(ui.macro[1]) == "ui.f(a=1)"
+    assert str(ui.macro[2]) == "ui.g()"
+    assert str(ui.macro[3]) == "ui.f(a=2)"
+    assert str(ui.macro[4]) == "ui.g()"
+
+def test_max_history():
+    @magicclass
+    class A:
+        def f(self): pass
+    max_hist = defaults["macro-max-history"]
+    ui = A()
+    for i in range(max_hist + 10):
+        ui.f()
+    assert len(ui.macro) == max_hist
+    ui.f()
+    assert len(ui.macro) == max_hist

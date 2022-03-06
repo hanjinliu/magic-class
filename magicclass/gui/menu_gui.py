@@ -15,6 +15,7 @@ from ._base import (
     ErrorMode,
     ContainerLikeGui,
     nested_function_gui_callback,
+    _inject_recorder,
 )
 from .utils import MagicClassConstructionError, copy_class
 
@@ -171,33 +172,37 @@ class MenuGuiBase(ContainerLikeGui):
         self, key: int, obj: Callable | MenuGuiBase | AbstractAction
     ) -> None:
         if isinstance(obj, Callable):
-            # Sometimes uses want to dynamically add new functions to GUI.
-            method_name = getattr(obj, "__name__", None)
-            if method_name and not hasattr(self, method_name):
-                object.__setattr__(self, method_name, obj)
-
+            # Sometimes users want to dynamically add new functions to GUI.
             if isinstance(obj, FunctionGui):
                 if obj.parent is None:
                     f = nested_function_gui_callback(self, obj)
                     obj.called.connect(f)
+                _obj = obj
             else:
-                obj = self._create_widget_from_method(obj)
+                obj = _inject_recorder(obj, is_method=False).__get__(self)
+                _obj = self._create_widget_from_method(obj)
 
-        if isinstance(obj, (self._component_class, MenuGuiBase)):
-            insert_action_like(self.native, key, obj.native)
-            self._list.insert(key, obj)
+            method_name = getattr(obj, "__name__", None)
+            if method_name and not hasattr(self, method_name):
+                object.__setattr__(self, method_name, obj)
+        else:
+            _obj = obj
 
-        elif isinstance(obj, WidgetAction):
+        if isinstance(_obj, (self._component_class, MenuGuiBase)):
+            insert_action_like(self.native, key, _obj.native)
+            self._list.insert(key, _obj)
+
+        elif isinstance(_obj, WidgetAction):
             from .toolbar import ToolBarGui
 
-            if isinstance(obj.widget, Separator):
+            if isinstance(_obj.widget, Separator):
                 insert_action_like(self.native, key, "sep")
 
-            elif isinstance(obj.widget, ToolBarGui):
-                qmenu = QMenu(obj.widget.name, self.native)
-                qmenu.addAction(obj.native)
-                if obj.widget._icon_path is not None:
-                    qmenu.setIcon(obj.widget.native.windowIcon())
+            elif isinstance(_obj.widget, ToolBarGui):
+                qmenu = QMenu(_obj.widget.name, self.native)
+                qmenu.addAction(_obj.native)
+                if _obj.widget._icon_path is not None:
+                    qmenu.setIcon(_obj.widget.native.windowIcon())
                 insert_action_like(self.native, key, qmenu)
 
             else:
@@ -210,15 +215,15 @@ class MenuGuiBase(ContainerLikeGui):
                     Image,
                     Table,
                 )
-                _obj = obj
-                if (not isinstance(obj.widget, _hide_labels)) and self.labels:
-                    _obj = _LabeledWidgetAction.from_action(obj)
+                _obj = _obj
+                if (not isinstance(_obj.widget, _hide_labels)) and self.labels:
+                    _obj = _LabeledWidgetAction.from_action(_obj)
                 _obj.parent = self
                 insert_action_like(self.native, key, _obj.native)
 
-            self._list.insert(key, obj)
+            self._list.insert(key, _obj)
         else:
-            raise TypeError(f"{type(obj)} is not supported.")
+            raise TypeError(f"{type(_obj)} is not supported.")
 
     def insert(self, key: int, obj: Callable | MenuGuiBase | AbstractAction) -> None:
         """

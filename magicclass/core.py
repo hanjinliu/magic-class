@@ -23,7 +23,14 @@ from .gui.class_gui import (
     ToolBoxClassGui,
     ListClassGui,
 )
-from .gui._base import PopUpMode, ErrorMode, defaults, MagicTemplate, check_override
+from .gui._base import (
+    PopUpMode,
+    ErrorMode,
+    defaults,
+    MagicTemplate,
+    check_override,
+    convert_attributes,
+)
 from .gui import ContextMenuGui, MenuGui, ToolBarGui
 from ._app import get_app
 from .types import WidgetType
@@ -146,8 +153,9 @@ def magicclass(
         mod = cls.__module__
         qualname = cls.__qualname__
 
+        new_attrs = convert_attributes(cls, hide=class_gui.__mro__)
         oldclass = type(cls.__name__ + _BASE_CLASS_SUFFIX, (cls,), {})
-        newclass = type(cls.__name__, (class_gui, oldclass), {})
+        newclass = type(cls.__name__, (class_gui, oldclass), new_attrs)
 
         newclass.__signature__ = sig
         newclass.__doc__ = doc
@@ -160,9 +168,8 @@ def magicclass(
 
         @functools_wraps(oldclass.__init__)
         def __init__(self: MagicTemplate, *args, **kwargs):
-            app = (
-                get_app()
-            )  # Without "app = " Jupyter freezes after closing the window!
+            # Without "app = " Jupyter freezes after closing the window!
+            app = get_app()
 
             class_gui.__init__(
                 self,
@@ -401,8 +408,9 @@ def _call_magicmenu(
         mod = cls.__module__
         qualname = cls.__qualname__
 
+        new_attrs = convert_attributes(cls, hide=menugui_class.__mro__)
         oldclass = type(cls.__name__ + _BASE_CLASS_SUFFIX, (cls,), {})
-        newclass = type(cls.__name__, (menugui_class, oldclass), {})
+        newclass = type(cls.__name__, (menugui_class, oldclass), new_attrs)
 
         newclass.__signature__ = sig
         newclass.__doc__ = doc
@@ -411,9 +419,8 @@ def _call_magicmenu(
 
         @functools_wraps(oldclass.__init__)
         def __init__(self: MagicTemplate, *args, **kwargs):
-            app = (
-                get_app()
-            )  # Without "app = " Jupyter freezes after closing the window!
+            # Without "app = " Jupyter freezes after closing the window!
+            app = get_app()
 
             menugui_class.__init__(
                 self,

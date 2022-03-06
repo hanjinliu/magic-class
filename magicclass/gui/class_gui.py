@@ -18,6 +18,7 @@ from ._base import (
     ErrorMode,
     value_widget_callback,
     nested_function_gui_callback,
+    _inject_recorder,
 )
 from .utils import (
     copy_class,
@@ -352,19 +353,23 @@ def make_gui(container: type[_C], no_margin: bool = True) -> type[_C | ClassGuiB
             else:
                 object.__setattr__(self, name, value)
 
-        def _fast_insert(self: cls, key: int, widget: Widget | Callable) -> None:
-            if isinstance(widget, Callable):
+        def _fast_insert(self: cls, key: int, obj: Widget | Callable) -> None:
+            if isinstance(obj, Callable):
                 # Sometimes uses want to dynamically add new functions to GUI.
-                method_name = getattr(widget, "__name__", None)
-                if method_name and not hasattr(self, method_name):
-                    object.__setattr__(self, method_name, widget)
-
-                if isinstance(widget, FunctionGui):
-                    if widget.parent is None:
-                        f = nested_function_gui_callback(self, widget)
-                        widget.called.connect(f)
+                if isinstance(obj, FunctionGui):
+                    if obj.parent is None:
+                        f = nested_function_gui_callback(self, obj)
+                        obj.called.connect(f)
+                    widget = obj
                 else:
-                    widget = self._create_widget_from_method(widget)
+                    obj = _inject_recorder(obj, is_method=False).__get__(self)
+                    widget = self._create_widget_from_method(obj)
+
+                method_name = getattr(obj, "__name__", None)
+                if method_name and not hasattr(self, method_name):
+                    object.__setattr__(self, method_name, obj)
+            else:
+                widget = obj
 
             # _hide_labels should not contain Container because some ValueWidget like widgets
             # are Containers.

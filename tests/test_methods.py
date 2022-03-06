@@ -33,7 +33,7 @@ def test_add_dock_widget():
 
 
 def test_post_append():
-    from types import FunctionType
+    from types import MethodType
 
     @magicclass
     class A:
@@ -57,12 +57,16 @@ def test_post_append():
     @ui.Tool.append
     def g(): pass
 
-    assert isinstance(ui.g, FunctionType)
-    assert isinstance(ui.Menu.g, FunctionType)
-    assert isinstance(ui.Tool.g, FunctionType)
+    assert isinstance(ui.g, MethodType)
+    ui["g"]
+    assert isinstance(ui.Menu.g, MethodType)
+    ui.Menu["g"]
+    assert isinstance(ui.Tool.g, MethodType)
+    ui.Tool["g"]
 
     @ui.append
     def f(): pass
 
+    # the original method should not be updated
     ui.f()
     assert ui.a == 1

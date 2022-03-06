@@ -10,6 +10,7 @@ from typing import (
     overload,
     MutableSequence,
 )
+from types import MethodType
 from typing_extensions import _AnnotatedAlias
 import inspect
 import warnings
@@ -82,6 +83,7 @@ defaults = {
     "popup_mode": PopUpMode.popup,
     "error_mode": ErrorMode.msgbox,
     "close_on_run": True,
+    "macro-max-history": 1000,
 }
 
 _RESERVED = {
@@ -506,7 +508,7 @@ class MagicTemplate:
         """
         raise NotImplementedError()
 
-    def _create_widget_from_method(self, obj: Callable):
+    def _create_widget_from_method(self, obj: MethodType):
         """Convert instance methods into GUI objects, such as push buttons or actions."""
         text = obj.__name__.replace("_", " ")
         widget = self._component_class(name=obj.__name__, text=text, gui_only=True)
@@ -522,24 +524,12 @@ class MagicTemplate:
             raise ValueError(self._error_mode)
 
         # Wrap function to block macro recording.
-        _inner_func = wrapper(obj, parent=self)
-        if _need_record(obj):
-
-            @functools_wraps(obj)
-            def func(*args, **kwargs):
-                with self.macro.blocked():
-                    out = _inner_func(*args, **kwargs)
-                return out
-
-        else:
-
-            @functools_wraps(obj)
-            def func(*args, **kwargs):
-                return _inner_func(*args, **kwargs)
+        func = functools_wraps(obj)(wrapper(obj, parent=self))
 
         # Signature must be updated like this. Otherwise, already wrapped member function
         # will have signature with "self".
-        func.__signature__ = inspect.signature(obj)
+        obj_sig = inspect.signature(obj)
+        func.__signature__ = obj_sig
 
         # Prepare a button or action
         widget.tooltip = extract_tooltip(func)
@@ -578,15 +568,11 @@ class MagicTemplate:
         n_empty = len([_widget for _widget in fgui if isinstance(_widget, EmptyWidget)])
         nparams = _n_parameters(func) - n_empty
 
-        obj_sig = get_signature(obj)
         if isinstance(func.__signature__, MagicMethodSignature):
-            # NOTE: I don't know the reason why "additional_options" is lost.
             func.__signature__.additional_options = getattr(
                 obj_sig, "additional_options", {}
             )
 
-        # TODO: "update_widget" argument is useful.
-        # see https://github.com/napari/magicgui/pull/309
         if nparams == 0:
             # We don't want a dialog with a single widget "Run" to show up.
             def run_function():
@@ -594,14 +580,6 @@ class MagicTemplate:
                 # "compiled" otherwise function wrappings are not ready!
                 mgui = _build_mgui(widget, func, self)
                 mgui.native.setParent(self.native, mgui.native.windowFlags())
-                if (
-                    mgui.call_count == 0
-                    and len(mgui.called._slots) == 0
-                    and _need_record(func)
-                ):
-                    callback = _temporal_function_gui_callback(self, mgui, widget)
-                    mgui.called.connect(callback)
-
                 out = mgui()
 
                 return out
@@ -611,14 +589,6 @@ class MagicTemplate:
             def run_function():
                 mgui = _build_mgui(widget, func, self)
                 mgui.native.setParent(self.native, mgui.native.windowFlags())
-                if (
-                    mgui.call_count == 0
-                    and len(mgui.called._slots) == 0
-                    and _need_record(func)
-                ):
-                    callback = _temporal_function_gui_callback(self, mgui, widget)
-                    mgui.called.connect(callback)
-
                 fdialog: FileEdit = mgui[0]
                 result = fdialog._show_file_dialog(
                     fdialog.mode,
@@ -707,10 +677,6 @@ class MagicTemplate:
                             # If FunctioGui is docked, we should close QDockWidget.
                             mgui.called.connect(lambda: mgui.parent.hide())
 
-                    if _need_record(func):
-                        callback = _temporal_function_gui_callback(self, mgui, widget)
-                        mgui.called.connect(callback)
-
                 if self._popup_mode != PopUpMode.dock:
                     widget.mgui.show()
                 else:
@@ -756,7 +722,10 @@ class MagicTemplate:
 
 class BaseGui(MagicTemplate):
     def __init__(self, close_on_run, popup_mode, error_mode):
-        self._macro_instance = GuiMacro(flags={"Get": False, "Return": False})
+        self._macro_instance = GuiMacro(
+            max_lines=defaults["macro-max-history"],
+            flags={"Get": False, "Return": False},
+        )
         self.__magicclass_parent__: BaseGui | None = None
         self.__magicclass_children__: list[MagicTemplate] = []
         self._close_on_run = close_on_run
@@ -919,76 +888,19 @@ def _get_widget_name(widget: Widget):
     return widget.name
 
 
-def _temporal_function_gui_callback(
-    bgui: MagicTemplate, fgui: FunctionGuiPlus, widget: PushButtonPlus
-):
-    if isinstance(fgui, FunctionGui):
-        _function = fgui._function
-    else:
-        raise TypeError("fgui must be FunctionGui object.")
-
-    return_type = fgui.return_annotation
-    result_required = return_type is not inspect.Parameter.empty
-
-    def _after_run(e: Exception = None):
-        if isinstance(e, Exception):
-            # If function call ended with an exception, don't record macro.
-            return
-        bound = fgui._previous_bound
-        result = Symbol("result")
-        # Standard button will be connected with two callbacks.
-        # 1. Build FunctionGui
-        # 2. Emit value changed signal.
-        # But if there are more, they also have to be called.
-        if len(widget.changed._slots) > 2:
-            b = Expr(head=Head.getitem, args=[symbol(bgui), widget.name])
-            ev = Expr(head=Head.getattr, args=[b, Symbol("changed")])
-            expr = Expr(head=Head.call, args=[ev])
-        else:
-            kwargs = {k: v for k, v in bound.arguments.items()}
-            expr = Expr.parse_method(bgui, _function, (), kwargs)
-
-        if fgui._auto_call:
-            # Auto-call will cause many redundant macros. To avoid this, only the last input
-            # will be recorded in magic-class.
-            last_expr = bgui.macro[-1]
-            if (
-                last_expr.head == Head.call
-                and last_expr.args[0].head == Head.getattr
-                and last_expr.at(0, 1) == expr.at(0, 1)
-                and len(bgui.macro) > 0
-            ):
-                bgui.macro.pop()
-                bgui.macro._erase_last()
-
-        if result_required:
-            expr = Expr(Head.assign, [result, expr])
-        bgui.macro.append(expr)
-
-        # Deal with return annotation
-
-        if result_required:
-            from magicgui.type_map import _type2callback
-
-            for callback in _type2callback(return_type):
-                b = Expr(head=Head.getitem, args=[symbol(bgui), widget.name])
-                _gui = Expr(head=Head.getattr, args=[b, Symbol("mgui")])
-                line = Expr.parse_call(callback, (_gui, result, return_type), {})
-                bgui.macro.append(line)
-        bgui.macro._last_setval = None
-        return None
-
-    return _after_run
-
-
 def _build_mgui(widget_: Action | PushButtonPlus, func: Callable, parent: BaseGui):
     if widget_.mgui is not None:
         return widget_.mgui
     try:
-        call_button = get_additional_option(func, "call_button", None)
-        layout = get_additional_option(func, "layout", "vertical")
-        labels = get_additional_option(func, "labels", True)
-        auto_call = get_additional_option(func, "auto_call", False)
+        sig = getattr(func, "__signature__", None)
+        if isinstance(sig, MagicMethodSignature):
+            opt = sig.additional_options
+        else:
+            opt = {}
+        call_button = opt.get("call_button", None)
+        layout = opt.get("layout", "vertical")
+        labels = opt.get("labels", True)
+        auto_call = opt.get("auto_call", False)
         mgui = FunctionGuiPlus(
             func, call_button, layout=layout, labels=labels, auto_call=auto_call
         )
@@ -1001,7 +913,7 @@ def _build_mgui(widget_: Action | PushButtonPlus, func: Callable, parent: BaseGu
 
     widget_.mgui = mgui
     name = widget_.name or ""
-    mgui.native.setWindowTitle(name.replace("_", " "))
+    mgui.native.setWindowTitle(name.replace("_", " ").strip())
     mgui._magicclass_parent_ref = weakref.ref(parent)
     return mgui
 
@@ -1218,10 +1130,6 @@ def _field_as_getter(bgui: BaseGui, fld: MagicField):
     return _func
 
 
-def _need_record(func: Callable):
-    return get_additional_option(func, "record", True)
-
-
 def _is_instance_method(self: MagicTemplate, func: Callable) -> bool:
     # NOTE: following implementation is not compatible with @wraps
     # if not callable(func):
@@ -1269,9 +1177,7 @@ def value_widget_callback(
 
 
 def nested_function_gui_callback(gui: MagicTemplate, fgui: FunctionGui):
-    """
-    Define a FunctionGui callback, including macro recording.
-    """
+    """Define a FunctionGui callback, including macro recording."""
     fgui_name = Symbol(fgui.name)
 
     def _after_run():
@@ -1302,3 +1208,102 @@ def nested_function_gui_callback(gui: MagicTemplate, fgui: FunctionGui):
         gui.macro._last_setval = None
 
     return _after_run
+
+
+def _inject_recorder(func: Callable, is_method: bool = True) -> Callable:
+    """Inject macro recording functionality into a function."""
+    sig = get_signature(func)
+    if is_method:
+        sig = sig.replace(
+            parameters=list(sig.parameters.values())[1:],
+            return_annotation=sig.return_annotation,
+        )
+        _func = func
+    else:
+
+        @functools_wraps(func)
+        def _func(self, *args, **kwargs):
+            return func(*args, **kwargs)
+
+        _self_param = inspect.Parameter("self", inspect.Parameter.POSITIONAL_OR_KEYWORD)
+        _func.__signature__ = sig.replace(
+            parameters=[_self_param] + list(sig.parameters.values()),
+            return_annotation=sig.return_annotation,
+        )
+
+    if isinstance(sig, MagicMethodSignature):
+        opt = sig.additional_options
+        _auto_call = opt.get("auto_call", False)
+    else:
+        _auto_call = False
+
+    @functools_wraps(_func)
+    def _recordable(bgui: MagicTemplate, *args, **kwargs):
+        with bgui.macro.blocked():
+            out = _func(bgui, *args, **kwargs)
+        if not bgui.macro.active:
+            return out
+        bound = sig.bind(*args, **kwargs)
+        kwargs = dict(bound.arguments.items())
+        expr = Expr.parse_method(bgui, _func, (), kwargs)
+
+        if _auto_call:
+            # Auto-call will cause many redundant macros. To avoid this, only the last input
+            # will be recorded in magic-class.
+            last_expr = bgui.macro[-1]
+            if (
+                last_expr.head == Head.call
+                and last_expr.args[0].head == Head.getattr
+                and last_expr.at(0, 1) == expr.at(0, 1)
+                and len(bgui.macro) > 0
+            ):
+                bgui.macro.pop()
+                bgui.macro._erase_last()
+
+        bgui.macro.append(expr)
+        bgui.macro._last_setval = None
+        return out
+
+    if hasattr(_func, "__signature__"):
+        _recordable.__signature__ = _func.__signature__
+    return _recordable
+
+
+_T = TypeVar("_T", bound=BaseGui)
+
+
+def convert_attributes(cls: type[_T], hide: tuple[type, ...]) -> dict[str, Any]:
+    """
+    Convert class attributes into macro recordable ones.
+
+    Returned dictionary can be directly used for the third argument of
+    ``type`` constructor. To avoid converting all the callables in
+    subclasses, subclasses that will be iterated over can be restricted
+    using ``hide`` argument.
+
+    Parameters
+    ----------
+    cls : BaseGui type
+        Class that will be converted.
+    hide : tuple of types
+        MROs that will be ignored during iteration.
+
+    Returns
+    -------
+    dict
+        New namespace.
+    """
+    _dict: dict[str, Callable] = {}
+    _pass_type = (property, classmethod, staticmethod, type, Widget)
+    mro = [c for c in cls.__mro__ if c not in hide]
+    for subcls in reversed(mro):
+        for name, obj in subcls.__dict__.items():
+            if name.startswith("_") or isinstance(obj, _pass_type) or not callable(obj):
+                new_attr = obj
+            elif callable(obj) and get_additional_option(obj, "record", True):
+                new_attr = _inject_recorder(obj)
+            else:
+                new_attr = obj
+
+            _dict[name] = new_attr
+    return _dict
