@@ -1,5 +1,5 @@
-from magicclass import magicclass, Bound, set_options, field, vfield
-from magicclass.core import magictoolbar
+from magicclass import magicclass, set_options, field, vfield, magictoolbar
+from magicclass.types import Bound
 
 def test_bind_value():
     # test binding an invariable

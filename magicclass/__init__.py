@@ -22,8 +22,21 @@ from .wrappers import (
 
 from .fields import field, vfield
 from .gui._base import wraps, defaults, MagicTemplate, PopUpMode
-from .types import WidgetType, Bound, Color, Optional
 from .gui.keybinding import Key
-from . import widgets, utils
+from . import widgets, utils, types
 
 from magicgui import *
+
+
+def __getattr__(name):
+    if name in ("WidgetType", "Bound", "Color", "Optional"):
+        import warnings
+        from . import types
+
+        warnings.warn(
+            f"{name} should be imported from 'magicclass.types'. This will raise "
+            "error in future version.",
+            DeprecationWarning,
+        )
+        return getattr(types, name)
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

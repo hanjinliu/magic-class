@@ -142,7 +142,8 @@ are useless when bind option is specified.
 
 .. code-block:: python
 
-    from magicclass import magicclass, field, Bound
+    from magicclass import magicclass, field
+    from magicclass.types import Bound
 
     @magicclass
     class Add:

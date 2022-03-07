@@ -1,4 +1,5 @@
-from magicclass import magicclass, magicmenu, Bound, field, vfield, set_design
+from magicclass import magicclass, magicmenu, field, vfield, set_design
+from magicclass.types import Bound
 from unittest.mock import MagicMock
 
 def test_single_wraps():

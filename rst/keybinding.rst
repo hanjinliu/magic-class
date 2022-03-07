@@ -100,7 +100,8 @@ You can also bind values of fields or other methods (see :doc:`use_bind`).
 
 .. code-block:: python
 
-    from magicclass import magicclass, bind_key, Bound, field
+    from magicclass import magicclass, bind_key, field
+    from magicclass.types import Bound
 
     @magicclass
     class Main:
