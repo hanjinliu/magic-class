@@ -37,6 +37,7 @@ def __getattr__(name):
             f"{name} should be imported from 'magicclass.types'. This will raise "
             "error in future version.",
             DeprecationWarning,
+            stacklevel=2,
         )
         return getattr(types, name)
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

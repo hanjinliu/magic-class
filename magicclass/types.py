@@ -178,7 +178,7 @@ class Bound(metaclass=_BoundAlias):
 
 class Optional:
     def __new__(cls, *args, **kwargs):
-        raise TypeError("Type Bound cannot be instantiated.")
+        raise TypeError("Type Optional cannot be instantiated.")
 
     def __class_getitem__(cls, value) -> _AnnotatedAlias:
         """
@@ -215,4 +215,75 @@ class Optional:
         return Annotated[typing.Optional[type_], opt]
 
     def __init_subclass__(cls, *args, **kwargs):
-        raise TypeError(f"Cannot subclass {cls.__module__}.Optional")
+        raise TypeError(f"Cannot subclass {cls.__module__}.Optional.")
+
+
+class Tuple:
+    def __new__(cls, *args, **kwargs):
+        raise TypeError("Type Tuple cannot be instantiated.")
+
+    def __class_getitem__(cls, value) -> _AnnotatedAlias:
+        """
+        Make Annotated type similar to ``typing.Tuple``.
+
+        Arguments annotated with ``Tuple[...]`` will create a
+        ``TupleEdit`` with a annotated sub types.
+        """
+        from .widgets import TupleEdit
+
+        type_ = typing.Tuple[value]
+        opt = dict(
+            widget_type=TupleEdit,
+            annotation=type_,
+        )
+        return Annotated[type_, opt]
+
+    def __init_subclass__(cls, *args, **kwargs):
+        raise TypeError(f"Cannot subclass {cls.__module__}.Tuple.")
+
+
+class List:
+    def __new__(cls, *args, **kwargs):
+        raise TypeError("Type Tuple cannot be instantiated.")
+
+    def __class_getitem__(cls, value) -> _AnnotatedAlias:
+        """
+        Make Annotated type similar to ``typing.List``.
+
+        Arguments annotated with ``List[...]`` will create a
+        ``ListEdit`` with a annotated sub types.
+        """
+        from .widgets import ListEdit
+
+        type_ = typing.List[value]
+        opt = dict(
+            widget_type=ListEdit,
+            annotation=type_,
+        )
+        return Annotated[type_, opt]
+
+    def __init_subclass__(cls, *args, **kwargs):
+        raise TypeError(f"Cannot subclass {cls.__module__}.List.")
+
+
+"""
+Examples
+--------
+
+from magicclass import magicclass, set_options
+from magicclass.types import Tuple, List, Optional
+@magicclass
+class A:
+    @set_options(a={"options": {"min": -1}})
+    def f(self, a: Tuple[int, int]):
+        print(a)
+    @set_options(a={"options": {"min": -1}})
+    def g(self, a: List[float]):
+        print(a)
+    @set_options(a={"options": {"min": -1}})
+    def h(self, a: Optional[int]):
+        print(a)
+ui = A()
+ui.show()
+
+"""
