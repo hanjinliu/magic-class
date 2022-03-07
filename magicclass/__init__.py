@@ -7,6 +7,7 @@ from .core import (
     magictoolbar,
     Parameters,
     build_help,
+    get_function_gui,
 )
 
 from .wrappers import (

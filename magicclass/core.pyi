@@ -10,6 +10,7 @@ from .gui._base import PopUpMode, ErrorMode, MagicTemplate
 
 if TYPE_CHECKING:
     from .types import WidgetType, WidgetTypeStr, PopUpModeStr, ErrorModeStr
+    from .gui._function_gui import FunctionGuiPlus
     from .stylesheets import StyleSheet
     from qtpy.QtWidgets import QWidget
     from .help import HelpWidget
@@ -20,6 +21,7 @@ _C = TypeVar("_C", bound=type)
 _V = TypeVar("_V")
 
 def build_help(ui: MagicTemplate, parent: QWidget | None = None) -> "HelpWidget": ...
+def get_function_gui(ui: MagicTemplate, name: str) -> FunctionGuiPlus: ...
 @overload
 def magicclass(
     class_: _C,

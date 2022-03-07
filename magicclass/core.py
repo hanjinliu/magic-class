@@ -39,6 +39,7 @@ from . import _register  # activate type registration things.
 if TYPE_CHECKING:
     from .stylesheets import StyleSheet
     from .gui import MenuGuiBase
+    from .gui._function_gui import FunctionGuiPlus
     from .types import WidgetTypeStr, PopUpModeStr, ErrorModeStr
     from .help import HelpWidget
 
@@ -492,6 +493,32 @@ def build_help(ui: MagicTemplate, parent=None) -> HelpWidget:
         help_widget = HelpWidget(ui, parent=parent)
         _HELPS[ui_id] = help_widget
     return help_widget
+
+
+def get_function_gui(ui: MagicTemplate, name: str) -> FunctionGuiPlus:
+    """
+    Get the FunctionGui object hidden beneath push button or menu.
+
+    This function is a helper function for magicclass.
+
+    Parameters
+    ----------
+    ui : MagicTemplate
+        Any of a magic-class instance.
+    name : str
+        Name of method (or strictly speaking, the name of PushButton).
+
+    Returns
+    -------
+    FunctionGuiPlus
+        FunctionGui object.
+    """
+    widget = ui[name]
+    if not hasattr(widget, "mgui"):
+        raise TypeError(f"Widget {widget} does not have FunctionGui inside it.")
+    if widget.mgui is None:
+        widget.changed()
+    return widget.mgui
 
 
 class Parameters:
