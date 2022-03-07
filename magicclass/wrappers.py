@@ -33,7 +33,21 @@ def set_options(
     Set MagicSignature to functions.
 
     By decorating a method with this function, ``magicgui`` will create a widget with these
-    options.
+    options. These codes are similar in appearance.
+
+    .. code-block:: python
+
+        # A magicgui way
+        @magicgui(a={...})
+        def func(a):
+            ...
+
+        # A magicclass way
+        @magicclass
+        class A:
+            @set_options(a={...})
+            def func(self, a):
+                ...
 
     Parameters
     ----------
@@ -72,6 +86,7 @@ def set_options(
                 "auto_call": auto_call,
             },
         )
+
         return func
 
     return wrapper

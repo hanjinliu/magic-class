@@ -1,7 +1,6 @@
 from __future__ import annotations
 import macrokit as mk
 from macrokit import Expr, Head, symbol
-import magicgui as mgui
 from enum import Enum
 from pathlib import Path
 import datetime
@@ -43,5 +42,8 @@ def find_myname(gui: MagicTemplate):
         return Expr(Head.getattr, [find_myname(parent), gui._my_symbol])
 
 
-# magicgui bug??
+# magicgui<0.3.7 has bug in type registration
 # mgui.register_type(Color, widget_type=ColorEdit)
+from magicgui.type_map import _TYPE_DEFS
+
+_TYPE_DEFS[Color] = (ColorEdit, {})

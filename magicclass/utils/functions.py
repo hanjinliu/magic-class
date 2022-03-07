@@ -196,17 +196,15 @@ def _get_tree(ui: BaseGui, depth: int = 0):
         out = f"'{ui.name}'"
     return out
 
+
 def rst_to_html(rst: str) -> str:
     """Convert rST string into HTML."""
     try:
         from docutils.examples import html_body
         from xml.sax.saxutils import unescape
+
         html = unescape(
-            html_body(
-                rst,
-                input_encoding='utf-8', 
-                output_encoding='utf-8'
-            ).strip()
+            html_body(rst, input_encoding="utf-8", output_encoding="utf-8").strip()
         )
     except Exception as e:
         warnings.warn(

@@ -1,10 +1,10 @@
 from __future__ import annotations
-from typing import Any
-from magicgui.signature import MagicSignature
+from typing import Any, TypedDict
+from typing_extensions import _AnnotatedAlias
+from magicgui.signature import MagicSignature, split_annotated_type
 from magicgui.widgets import FunctionGui
 from magicgui.types import WidgetOptions
 import inspect
-from typing import TypedDict
 from .utils import get_signature
 
 
@@ -51,6 +51,14 @@ def upgrade_signature(
 
     new_gui_options = MagicMethodSignature.get_gui_options(sig).copy()
     new_gui_options.update(gui_options)
+
+    # Annotated options should also be updated
+    for k, v in sig.parameters.items():
+        annot = v.annotation
+        if isinstance(annot, _AnnotatedAlias):
+            _, widget_option = split_annotated_type(annot)
+            if k in new_gui_options:
+                widget_option.update(new_gui_options[k])
 
     new_caller_options = getattr(sig, "caller_options", {}).copy()
     new_caller_options.update(caller_options)
@@ -139,11 +147,17 @@ class MagicMethodSignature(MagicSignature):
         )
 
     @classmethod
-    def get_gui_options(cls, self: inspect.Signature | MagicSignature):
-        if type(self) is inspect.Signature:
-            return {}
+    def get_gui_options(cls, sig: inspect.Signature | MagicSignature) -> WidgetOptions:
+        if type(sig) is inspect.Signature:
+            out: WidgetOptions = {}
+            for k, v in sig.parameters.items():
+                annot = v.annotation
+                if isinstance(annot, _AnnotatedAlias):
+                    _, widget_option = split_annotated_type(annot)
+                    out[k] = widget_option
+            return out
         else:
-            return {k: v.options for k, v in self.parameters.items()}
+            return {k: v.options for k, v in sig.parameters.items()}
 
     def replace(
         self,

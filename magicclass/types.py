@@ -180,7 +180,6 @@ class Optional:
     def __new__(cls, *args, **kwargs):
         raise TypeError("Type Bound cannot be instantiated.")
 
-    @_tp_cache
     def __class_getitem__(cls, value) -> _AnnotatedAlias:
         """
         Make Annotated type similar to ``typing.Optional``.

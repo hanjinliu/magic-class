@@ -48,6 +48,20 @@ def test_mgui_options():
     assert str(ui.macro[-1]) == "ui.f(a=5)"
     assert str(ui.macro[-2]) != "ui.f(a=3)"
 
+def test_annotated():
+    """Test Annotated type is correctly updated."""
+    from typing_extensions import Annotated
+    @magicclass
+    class A:
+        @set_options(a={"max": 5})
+        def f(self, a: Annotated[int, {"min": -5}]):
+            pass
+
+    ui = A()
+    ui["f"].changed()
+    assert ui["f"].mgui.a.min == -5
+    assert ui["f"].mgui.a.max == 5
+
 def test_set_design():
     @magicclass
     class A:
