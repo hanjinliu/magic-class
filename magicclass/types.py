@@ -70,7 +70,8 @@ ErrorModeStr = Union[
     Literal["stdout"],
 ]
 
-Color = Union[str, Iterable[float]]
+Color = Union[Iterable[float], str]
+
 _W = TypeVar("_W", bound=Widget)
 _V = TypeVar("_V", bound=object)
 _P = ParamSpec("_P")
