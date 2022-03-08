@@ -142,22 +142,6 @@ class _BoundAlias(type):
 
     @_tp_cache
     def __getitem__(cls, value):
-        """
-        Make Annotated type from a MagicField or a method, such as:
-
-        .. code-block:: python
-
-            from magicclass import magicclass, field
-
-            @magicclass
-            class MyClass:
-                i = field(int)
-                def func(self, v: Bound[i]):
-                    ...
-
-        ``Bound[value]`` is identical to ``Annotated[Any, {"bind": value}]``.
-        """
-
         if isinstance(value, tuple):
             raise TypeError(
                 "Bound[...] should be used with only one "
@@ -167,6 +151,22 @@ class _BoundAlias(type):
 
 
 class Bound(metaclass=_BoundAlias):
+    """
+    Make Annotated type from a MagicField or a method, such as:
+
+    .. code-block:: python
+
+        from magicclass import magicclass, field
+
+        @magicclass
+        class MyClass:
+            i = field(int)
+            def func(self, v: Bound[i]):
+                ...
+
+    ``Bound[value]`` is identical to ``Annotated[Any, {"bind": value}]``.
+    """
+
     def __new__(cls, *args):
         raise TypeError(
             "`Bound(...)` is deprecated since 0.5.21. Bound is now a generic alias instead "
@@ -177,26 +177,25 @@ class Bound(metaclass=_BoundAlias):
         raise TypeError(f"Cannot subclass {cls.__module__}.Bound")
 
 
-class Optional:
-    def __new__(cls, *args, **kwargs):
-        raise TypeError("Type Optional cannot be instantiated.")
+_T = TypeVar("_T", bound=type)
 
-    def __class_getitem__(cls, value) -> _AnnotatedAlias:
-        """
-        Make Annotated type similar to ``typing.Optional``.
 
-        Arguments annotated with ``Optional[int]`` will create a
-        ``OptionalWidget`` with a ``SpinBox`` as an inner widget.
-        Arguments annotated with ``Optional[X, {...}]`` will create a
-        ``OptionalWidget`` with a widget constructed using widget option
-        ``{...}``.
-        """
+class _OptionalAlias(type):
+    @overload
+    def __getitem__(cls, value: _T) -> type[typing.Optional[_T]]:
+        ...
+
+    @overload
+    def __getitem__(cls, value: tuple[_T, dict[str, Any]]) -> type[typing.Optional[_T]]:
+        ...
+
+    def __getitem__(cls, value):
         if isinstance(value, tuple):
             type_, options = value
         else:
             type_, options = value, {}
 
-        if not isinstance(type_, type):
+        if not isinstance(type_, (type, typing._GenericAlias)):
             raise TypeError(
                 "The first argument of Optional must be a type but "
                 f"got {type(type_)}."
@@ -215,21 +214,30 @@ class Optional:
         )
         return Annotated[typing.Optional[type_], opt]
 
+
+class Optional(metaclass=_OptionalAlias):
+    """
+    Make Annotated type similar to ``typing.Optional``.
+
+    Arguments annotated with ``Optional[int]`` will create a
+    ``OptionalWidget`` with a ``SpinBox`` as an inner widget.
+    Arguments annotated with ``Optional[X, {...}]`` will create a
+    ``OptionalWidget`` with a widget constructed using widget option
+    ``{...}``.
+    """
+
+    def __new__(cls, *args, **kwargs):
+        raise TypeError("Type Optional cannot be instantiated.")
+
     def __init_subclass__(cls, *args, **kwargs):
         raise TypeError(f"Cannot subclass {cls.__module__}.Optional.")
 
 
-class Tuple:
-    def __new__(cls, *args, **kwargs):
-        raise TypeError("Type Tuple cannot be instantiated.")
+_S = TypeVar("_S", bound=tuple)
 
-    def __class_getitem__(cls, value) -> _AnnotatedAlias:
-        """
-        Make Annotated type similar to ``typing.Tuple``.
 
-        Arguments annotated with ``Tuple[...]`` will create a
-        ``TupleEdit`` with a annotated sub types.
-        """
+class _TupleAlias(type):
+    def __getitem__(cls, value: _S) -> type[_S]:
         from .widgets import TupleEdit
 
         type_ = typing.Tuple[value]
@@ -239,21 +247,24 @@ class Tuple:
         )
         return Annotated[type_, opt]
 
+
+class Tuple(metaclass=_TupleAlias):
+    """
+    Make Annotated type similar to ``typing.Tuple``.
+
+    Arguments annotated with ``Tuple[...]`` will create a
+    ``TupleEdit`` with a annotated sub types.
+    """
+
+    def __new__(cls, *args, **kwargs):
+        raise TypeError("Type Tuple cannot be instantiated.")
+
     def __init_subclass__(cls, *args, **kwargs):
         raise TypeError(f"Cannot subclass {cls.__module__}.Tuple.")
 
 
-class List:
-    def __new__(cls, *args, **kwargs):
-        raise TypeError("Type Tuple cannot be instantiated.")
-
-    def __class_getitem__(cls, value) -> _AnnotatedAlias:
-        """
-        Make Annotated type similar to ``typing.List``.
-
-        Arguments annotated with ``List[...]`` will create a
-        ``ListEdit`` with a annotated sub types.
-        """
+class _ListAlias(type):
+    def __getitem__(cls, value: _T) -> type[list[_T]]:
         from .widgets import ListEdit
 
         type_ = typing.List[value]
@@ -262,6 +273,18 @@ class List:
             annotation=type_,
         )
         return Annotated[type_, opt]
+
+
+class List(metaclass=_ListAlias):
+    """
+    Make Annotated type similar to ``typing.List``.
+
+    Arguments annotated with ``List[...]`` will create a
+    ``ListEdit`` with a annotated sub types.
+    """
+
+    def __new__(cls, *args, **kwargs):
+        raise TypeError("Type List cannot be instantiated.")
 
     def __init_subclass__(cls, *args, **kwargs):
         raise TypeError(f"Cannot subclass {cls.__module__}.List.")

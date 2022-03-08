@@ -437,7 +437,7 @@ def make_gui(container: type[_C], no_margin: bool = True) -> type[_C | ClassGuiB
             if viewer is not None and self.parent is not None:
                 name = self.parent.objectName()
                 if name in viewer.window._dock_widgets:
-                    viewer.window._dock_widgets[name].show(run=False)
+                    viewer.window._dock_widgets[name].show()
                 else:
                     dock = viewer.window.add_dock_widget(
                         self,
