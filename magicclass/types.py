@@ -1,8 +1,9 @@
 from __future__ import annotations
 from enum import Enum
 import typing
-from typing import Any, Union, Iterable, overload, TYPE_CHECKING, TypeVar, Callable
-from typing_extensions import Literal, Annotated, ParamSpec
+from typing import Any, Union, Iterable, overload, TypeVar, Callable
+from typing_extensions import Literal, Annotated, ParamSpec, _AnnotatedAlias
+from magicgui.signature import split_annotated_type
 from magicgui.widgets import Widget, EmptyWidget
 
 from .fields import MagicField
@@ -11,9 +12,6 @@ try:
     from typing import _tp_cache
 except ImportError:
     _tp_cache = lambda x: x
-
-if TYPE_CHECKING:
-    from typing_extensions import _AnnotatedAlias
 
 
 class WidgetType(Enum):
@@ -190,29 +188,22 @@ class _OptionalAlias(type):
         ...
 
     def __getitem__(cls, value):
-        if isinstance(value, tuple):
-            type_, options = value
-        else:
-            type_, options = value, {}
-
-        if not isinstance(type_, (type, typing._GenericAlias)):
+        if not isinstance(value, (type, typing._GenericAlias)):
             raise TypeError(
                 "The first argument of Optional must be a type but "
-                f"got {type(type_)}."
-            )
-        if not isinstance(options, dict):
-            raise TypeError(
-                "The second argument of Optional must be a dict but "
-                f"got {type(options)}."
+                f"got {type(value)}."
             )
         from .widgets import OptionalWidget
 
-        opt = dict(
-            widget_type=OptionalWidget,
-            annotation=type_,
-            options=options,
-        )
-        return Annotated[typing.Optional[type_], opt]
+        opt = dict(widget_type=OptionalWidget)
+        if isinstance(value, _AnnotatedAlias):
+            type0, opt0 = split_annotated_type(value)
+            type_ = typing.Optional[type0]
+            opt.update(annotation=type_, options=opt0)
+            return Annotated[type_, opt]
+        else:
+            opt.update(annotation=typing.Optional[value])
+            return Annotated[typing.Optional[value], opt]
 
 
 class Optional(metaclass=_OptionalAlias):
@@ -221,9 +212,6 @@ class Optional(metaclass=_OptionalAlias):
 
     Arguments annotated with ``Optional[int]`` will create a
     ``OptionalWidget`` with a ``SpinBox`` as an inner widget.
-    Arguments annotated with ``Optional[X, {...}]`` will create a
-    ``OptionalWidget`` with a widget constructed using widget option
-    ``{...}``.
     """
 
     def __new__(cls, *args, **kwargs):
@@ -240,12 +228,18 @@ class _TupleAlias(type):
     def __getitem__(cls, value: _S) -> type[_S]:
         from .widgets import TupleEdit
 
-        type_ = typing.Tuple[value]
         opt = dict(
             widget_type=TupleEdit,
-            annotation=type_,
         )
-        return Annotated[type_, opt]
+        if isinstance(value, _AnnotatedAlias):
+            type0, opt0 = split_annotated_type(value)
+            type_ = typing.Tuple[type0]
+            opt.update(annotation=type_, **opt0)
+            return Annotated[typing.Optional[type0], opt0]
+        else:
+            type_ = typing.Tuple[value]
+            opt.update(annotation=type_)
+            return Annotated[type_, opt]
 
 
 class Tuple(metaclass=_TupleAlias):

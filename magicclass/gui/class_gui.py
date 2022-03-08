@@ -336,7 +336,7 @@ def make_gui(container: type[_C], no_margin: bool = True) -> type[_C | ClassGuiB
         def __getitem__(self, key):
             """Get item by integer, str, or slice."""
             if isinstance(key, str):
-                for widget in self:
+                for widget in self._list:
                     if key == widget.name:
                         return widget
             return container.__getattr__(self, key)

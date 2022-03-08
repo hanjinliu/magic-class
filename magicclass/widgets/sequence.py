@@ -1,9 +1,10 @@
 from __future__ import annotations
 from typing import Any, Iterable, TypeVar, overload, Iterator, Tuple, Sequence
-from typing_extensions import get_args, get_origin
+from typing_extensions import get_args, get_origin, _AnnotatedAlias
 import inspect
-from magicgui.widgets import create_widget, Container, PushButton, EmptyWidget
 from magicgui.types import WidgetOptions
+from magicgui.signature import split_annotated_type
+from magicgui.widgets import create_widget, Container, PushButton, EmptyWidget
 from magicgui.widgets._bases.value_widget import UNSET, ValueWidget, _Unset
 from magicgui.widgets._concrete import merge_super_sigs
 
@@ -34,6 +35,8 @@ class ListEdit(Container):
     ):
         self._args_type: type | None = None
         self._nullable = nullable
+        self._child_options = options or {}
+
         super().__init__(layout=layout, labels=False, **kwargs)
         self.margins = (0, 0, 0, 0)
 
@@ -47,8 +50,6 @@ class ListEdit(Container):
             _value: Iterable[_V] = value
         else:
             _value = []
-
-        self._child_options = options or {}
 
         button_plus = PushButton(text="+", name="plus")
         button_plus.changed.connect(lambda: self._append_value())
@@ -102,6 +103,14 @@ class ListEdit(Container):
                 arg = args[0]
             else:
                 arg = None
+
+        if isinstance(arg, _AnnotatedAlias):
+            arg, metadata = split_annotated_type(arg)
+            if self._child_options and metadata:
+                raise ValueError(
+                    "Cannot set options from 'options' argument and Annotated type."
+                )
+            self._child_options = metadata
 
         self._annotation = value
         self._args_type = arg
@@ -278,12 +287,17 @@ class TupleEdit(Container):
             )
 
         for i, a in enumerate(_value):
-            i = len(self)
+            annot = self._args_types[i]
+            if isinstance(annot, _AnnotatedAlias):
+                annot, metadata = split_annotated_type(annot)
+                options = self._child_options | metadata
+            else:
+                options = self._child_options
             widget = create_widget(
                 value=a,
-                annotation=self._args_types[i],
+                annotation=annot,
                 name=f"value_{i}",
-                options=self._child_options,
+                options=options,
             )
             self.insert(i, widget)
 

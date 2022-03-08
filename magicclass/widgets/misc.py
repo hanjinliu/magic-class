@@ -1,8 +1,10 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Iterable, MutableSequence, Any
+from typing_extensions import _AnnotatedAlias, get_args
 from qtpy.QtWidgets import QTabWidget, QLineEdit, QMenu
 from qtpy.QtGui import QTextCursor
 from qtpy.QtCore import Qt
+from magicgui.signature import split_annotated_type
 from magicgui.widgets import (
     PushButton,
     TextEdit,
@@ -39,7 +41,7 @@ class OptionalWidget(Container):
 
     def __init__(
         self,
-        widget_type: type[ValueWidget] | None = None,
+        inner_widget: type[ValueWidget] | None = None,
         text: str = None,
         layout="vertical",
         nullable=True,
@@ -53,16 +55,16 @@ class OptionalWidget(Container):
             options = {}
         self._checkbox = CheckBox(text=text, value=True)
 
-        if widget_type is None:
-            self._inner_value_widget = create_widget(
-                annotation=kwargs["annotation"],
-                options=options,
-            )
-        else:
-            self._inner_value_widget = create_widget(
-                widget_type=widget_type,
-                options=options,
-            )
+        annot = get_args(kwargs["annotation"])[0]
+
+        if isinstance(annot, _AnnotatedAlias):
+            annot, metadata = split_annotated_type(annot)
+            options.update(metadata)
+
+        self._inner_value_widget = create_widget(
+            annotation=annot,
+            options=options,
+        )
 
         super().__init__(
             layout=layout,
