@@ -135,20 +135,26 @@ class Logger(Widget, logging.Handler):
 
     def clear(self):
         """Clear all the histories."""
-        self._widget._qwidget.clear()
+        self.native.clear()
         return None
 
     def print(self, *msg, sep=" ", end="\n"):
         """Print things in the end of the logger widget."""
-        self._widget._qwidget.appendText(sep.join(map(str, msg)) + end)
+        self.native.appendText(sep.join(map(str, msg)) + end)
         return None
 
     def print_html(self, html: str, end="<br></br>"):
         """Print things in the end of the logger widget as a HTML string."""
-        self._widget._qwidget.appendHtml(html + end)
+        self.native.appendHtml(html + end)
         return None
 
-    def print_table(self, table, header: bool = True, index: bool = True):
+    def print_table(
+        self,
+        table,
+        header: bool = True,
+        index: bool = True,
+        precision: int | None = None,
+    ):
         """
         Print object as a table in the logger widget.
 
@@ -156,13 +162,23 @@ class Logger(Widget, logging.Handler):
         ----------
         table : table-like object
             Any object that can be passed to ``pandas.DataFrame`` can be used.
+        header : bool, default is True
+            Whether to show the header row.
         index : bool, default is True
             Whether to show the index column.
+        precision: int, options
+            If given, float value will be rounded by this parameter.
         """
         import pandas as pd
 
         df = pd.DataFrame(table)
-        self._widget._qwidget.appendHtml(df.to_html(header=header, index=index))
+        if precision is None:
+            formatter = None
+        else:
+            formatter = lambda x: f"{x:.{precision}f}"
+        self.native.appendHtml(
+            df.to_html(header=header, index=index, float_format=formatter)
+        )
         return None
 
     def print_image(
@@ -195,7 +211,7 @@ class Logger(Widget, logging.Handler):
         else:
             image = image.scaledToWidth(width)
 
-        self._widget._qwidget.appendImage(image)
+        self.native.appendImage(image)
         return None
 
     def print_figure(self, fig: Figure) -> None:
@@ -256,8 +272,8 @@ class Logger(Widget, logging.Handler):
         return None
 
     def _get_proper_plt_style(self) -> dict[str, Any]:
-        color = self._widget._qwidget._get_background_color()
-        is_dark = sum(color[:3]) < 382.5
+        color = self._widget._qwidget._get_background_color()[:3]
+        is_dark = sum(color) < 382.5
         if is_dark:
             params = plt.style.library["dark_background"]
         else:
@@ -267,8 +283,9 @@ class Logger(Widget, logging.Handler):
                 rcparams = plt.rcParams
                 for key in keys:
                     params[key] = rcparams[key]
-        params["figure.facecolor"] = "#00000000"
-        params["axes.facecolor"] = "#00000000"
+        bg = "#00000000"
+        params["figure.facecolor"] = bg
+        params["axes.facecolor"] = bg
         return params
 
 
