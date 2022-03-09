@@ -56,6 +56,7 @@ and tidiness of the source code.
    use_wraps
    use_bind
    use_choices
+   additional_types
    containers
 
 Data Visualization

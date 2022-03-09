@@ -147,7 +147,7 @@ def check_override(cls: type):
         )
 
 
-_T = TypeVar("_T")
+_T = TypeVar("_T", bound="MagicTemplate")
 
 
 class MagicTemplate:
@@ -1267,9 +1267,6 @@ def _inject_recorder(func: Callable, is_method: bool = True) -> Callable:
     if hasattr(_func, "__signature__"):
         _recordable.__signature__ = _func.__signature__
     return _recordable
-
-
-_T = TypeVar("_T", bound=BaseGui)
 
 
 def convert_attributes(cls: type[_T], hide: tuple[type, ...]) -> dict[str, Any]:
