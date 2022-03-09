@@ -125,7 +125,9 @@ class Logger(Widget, logging.Handler):
 
     def __init__(self):
         logging.Handler.__init__(self)
-        super().__init__(widget_type=QBaseWidget, backend_kwargs={"qwidg": QtLogger})
+        Widget.__init__(
+            self, widget_type=QBaseWidget, backend_kwargs={"qwidg": QtLogger}
+        )
 
     def emit(self, record):
         msg = self.format(record)
@@ -203,12 +205,15 @@ class Logger(Widget, logging.Handler):
 
         return None
 
-    def write(self, msg):
+    def write(self, msg) -> None:
         self.print(msg, end="")
         return None
 
     def flush(self):
         pass
+
+    def close(self) -> None:
+        return logging.Handler.close(self)
 
     @contextmanager
     def set_stdout(self):
