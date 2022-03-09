@@ -290,7 +290,8 @@ class TupleEdit(Container):
             annot = self._args_types[i]
             if isinstance(annot, _AnnotatedAlias):
                 annot, metadata = split_annotated_type(annot)
-                options = self._child_options | metadata
+                options = self._child_options.copy()
+                options.update(metadata)
             else:
                 options = self._child_options
             widget = create_widget(
