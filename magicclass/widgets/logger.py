@@ -141,12 +141,12 @@ class Logger(Widget, logging.Handler):
         self._widget._qwidget.appendText(sep.join(map(str, msg)) + end)
         return None
 
-    def print_html(self, html: str):
+    def print_html(self, html: str, end="<br></br>"):
         """Print things in the end of the logger widget as a HTML string."""
-        self._widget._qwidget.appendHtml(html)
+        self._widget._qwidget.appendHtml(html + end)
         return None
 
-    def print_table(self, table, index: bool = True):
+    def print_table(self, table, header: bool = True, index: bool = True):
         """
         Print object as a table in the logger widget.
 
@@ -160,7 +160,7 @@ class Logger(Widget, logging.Handler):
         import pandas as pd
 
         df = pd.DataFrame(table)
-        self._widget._qwidget.appendHtml(df.to_html(index=index))
+        self._widget._qwidget.appendHtml(df.to_html(header=header, index=index))
         return None
 
     def print_image(
