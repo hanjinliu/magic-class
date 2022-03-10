@@ -22,38 +22,48 @@ from .containers import (
 )
 from .pywidgets import ListWidget, DictWidget
 from .color import ColorEdit, ColorSlider
-from .misc import Figure, OptionalWidget, ConsoleTextEdit, CheckButton, SpreadSheet
+from .misc import (
+    Figure,
+    OptionalWidget,
+    ConsoleTextEdit,
+    CheckButton,
+    RangeSlider,
+    FloatRangeSlider,
+    SpreadSheet,
+)
 from .separator import Separator
 from .sequence import ListEdit, TupleEdit
 from .utils import FreeWidget
 from .logger import Logger
 
 __all__ = [
-    "ListWidget",
-    "Logger",
-    "Figure",
-    "OptionalWidget",
+    "ButtonContainer",
     "ColorEdit",
     "ColorSlider",
     "ConsoleTextEdit",
     "CheckButton",
-    "Separator",
-    "ListEdit",
-    "DictWidget",
-    "TupleEdit",
-    "FreeWidget",
-    "ButtonContainer",
-    "GroupBoxContainer",
-    "FrameContainer",
-    "ListContainer",
-    "SubWindowsContainer",
-    "ScrollableContainer",
-    "DraggableContainer",
     "CollapsibleContainer",
+    "DictWidget",
+    "DraggableContainer",
+    "FrameContainer",
+    "Figure",
+    "FloatRangeSlider",
+    "FreeWidget",
+    "GroupBoxContainer",
     "HCollapsibleContainer",
+    "ListEdit",
+    "ListContainer",
+    "ListWidget",
+    "Logger",
+    "OptionalWidget",
+    "RangeSlider",
+    "Separator",
+    "ScrollableContainer",
+    "SubWindowsContainer",
     "SplitterContainer",
     "SpreadSheet",
     "StackedContainer",
     "TabbedContainer",
     "ToolBoxContainer",
+    "TupleEdit",
 ]

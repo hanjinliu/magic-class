@@ -1,6 +1,7 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Iterable, MutableSequence, Any
+from typing import TYPE_CHECKING, Generic, Iterable, MutableSequence, Any, TypeVar
 from typing_extensions import _AnnotatedAlias, get_args
+from psygnal import Signal
 from qtpy.QtWidgets import QTabWidget, QLineEdit, QMenu
 from qtpy.QtGui import QTextCursor
 from qtpy.QtCore import Qt
@@ -20,6 +21,7 @@ if TYPE_CHECKING:
     from qtpy.QtWidgets import QTextEdit
     from matplotlib.axes import Axes
     from numpy.typing import ArrayLike
+    from superqt import QLabeledRangeSlider
 
 
 @merge_super_sigs
@@ -378,6 +380,112 @@ class CheckButton(PushButton):
     def __init__(self, text: str | None = None, **kwargs):
         super().__init__(text=text, **kwargs)
         self.native.setCheckable(True)
+
+
+_V = TypeVar("_V")
+
+
+class AbstractRangeSlider(FreeWidget, Generic[_V]):
+    """
+    A slider widget that represent a range like (2, 5).
+
+    This class is a temporary one and may be substituted by magicgui widget soon.
+    See https://github.com/napari/magicgui/pull/337.
+    """
+
+    changed = Signal(tuple)
+
+    def __init__(
+        self,
+        value=UNSET,
+        min=0,
+        max=1000,
+        orientation: str = "horizontal",
+        nullable: bool = True,
+        **kwargs,
+    ):
+        super().__init__(**kwargs)
+        sl = self._construct_qt()
+        sl.setMinimum(min)
+        sl.setMaximum(max)
+        sl.valueChanged.connect(self.changed)
+        if orientation == "horizontal":
+            sl.setOrientation(Qt.Horizontal)
+        elif orientation == "vertical":
+            sl.setOrientation(Qt.Vertical)
+        else:
+            raise ValueError(
+                "Only horizontal and vertical orientation are currently supported"
+            )
+        self._slider = sl
+        if value is not UNSET:
+            self.value = value
+        self.set_widget(sl)
+
+    @classmethod
+    def _construct_qt(cls, *args, **kwargs) -> QLabeledRangeSlider:
+        raise NotImplementedError()
+
+    @property
+    def value(self) -> tuple[_V, _V]:
+        return self._slider.value()
+
+    @value.setter
+    def value(self, rng: tuple[_V, _V]) -> None:
+        x0, x1 = rng
+        if x0 > x1:
+            raise ValueError(f"lower value exceeds higher value ({x0} > {x1}).")
+        self._slider.setValue((x0, x1))
+
+    @property
+    def range(self) -> tuple[_V, _V]:
+        return self._slider.minimum(), self._slider.maximum()
+
+    @range.setter
+    def range(self, rng: tuple[_V, _V]) -> None:
+        x0, x1 = rng
+        if x0 > x1:
+            raise ValueError(f"Minimum value exceeds maximum value ({x0} > {x1}).")
+        self._slider.setMinimum(x0)
+        self._slider.setMaximum(x1)
+
+    @property
+    def min(self) -> _V:
+        return self._slider.minimum()
+
+    @min.setter
+    def min(self, value: _V) -> None:
+        self._slider.setMinimum(value)
+
+    @property
+    def max(self) -> _V:
+        return self._slider.maximum()
+
+    @max.setter
+    def max(self, value: _V) -> None:
+        self._slider.setMaximum(value)
+
+
+class RangeSlider(AbstractRangeSlider[int]):
+    @classmethod
+    def _construct_qt(cls, *args, **kwargs):
+        from superqt import QLabeledRangeSlider
+
+        sl = QLabeledRangeSlider()
+        sl.setHandleLabelPosition(QLabeledRangeSlider.LabelPosition.NoLabel)
+        sl.setEdgeLabelMode(QLabeledRangeSlider.EdgeLabelMode.LabelIsValue)
+        return sl
+
+
+class FloatRangeSlider(AbstractRangeSlider[float]):
+    @classmethod
+    def _construct_qt(cls, *args, **kwargs):
+        from superqt import QLabeledDoubleRangeSlider
+
+        sl = QLabeledDoubleRangeSlider()
+        sl.setHandleLabelPosition(QLabeledDoubleRangeSlider.LabelPosition.NoLabel)
+        sl.setEdgeLabelMode(QLabeledDoubleRangeSlider.EdgeLabelMode.LabelIsValue)
+        return sl
 
 
 class _QtSpreadSheet(QTabWidget):

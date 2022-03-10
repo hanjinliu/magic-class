@@ -3,10 +3,11 @@ import sys
 import logging
 from contextlib import contextmanager
 from qtpy import QtWidgets as QtW, QtGui
+from qtpy.QtCore import Signal
 from magicgui.backends._qtpy.widgets import QBaseWidget
 from magicgui.widgets import Widget
 import logging
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Union
 
 try:
     import numpy as np
@@ -27,31 +28,52 @@ if TYPE_CHECKING:
 # See https://stackoverflow.com/questions/28655198/best-way-to-display-logs-in-pyqt
 
 
+class Output:
+    TEXT = 0
+    HTML = 1
+    IMAGE = 2
+
+
+Printable = Union[str, QtGui.QImage]
+
+
 class QtLogger(QtW.QTextEdit):
+    process = Signal(tuple)
+
     def __init__(self, parent=None, max_history: int = 500):
         super().__init__(parent=parent)
         self.setReadOnly(True)
         self.setWordWrapMode(QtGui.QTextOption.WordWrap)
         self._max_history = int(max_history)
         self._n_lines = 0
+        self.process.connect(self.update)
+
+    def update(self, output: tuple[int, Printable]):
+        output_type, obj = output
+        if output_type == Output.TEXT:
+            self.moveCursor(QtGui.QTextCursor.End)
+            self.insertPlainText(obj)
+            self.moveCursor(QtGui.QTextCursor.End)
+        elif output_type == Output.HTML:
+            self.moveCursor(QtGui.QTextCursor.End)
+            self.insertHtml(obj)
+            self.moveCursor(QtGui.QTextCursor.End)
+        elif output_type == Output.IMAGE:
+            cursor = self.textCursor()
+            cursor.insertImage(obj)
+            self.insertPlainText("\n\n")
+        else:
+            raise TypeError("Wrong type.")
+        self._post_append()
 
     def appendText(self, text: str):
-        self.moveCursor(QtGui.QTextCursor.End)
-        self.insertPlainText(text)
-        self.moveCursor(QtGui.QTextCursor.End)
-        self._post_append()
+        self.process.emit((Output.TEXT, text))
 
     def appendHtml(self, html: str):
-        self.moveCursor(QtGui.QTextCursor.End)
-        self.insertHtml(html)
-        self.moveCursor(QtGui.QTextCursor.End)
-        self._post_append()
+        self.process.emit((Output.HTML, html))
 
-    def appendImage(self, qimage):
-        cursor = self.textCursor()
-        cursor.insertImage(qimage)
-        self.insertPlainText("\n\n")
-        self._post_append()
+    def appendImage(self, qimage: QtGui.QImage):
+        self.process.emit((Output.IMAGE, qimage))
 
     def _post_append(self):
         if self._n_lines < self._max_history:
