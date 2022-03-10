@@ -8,6 +8,7 @@ from magicgui.backends._qtpy.widgets import QBaseWidget
 from magicgui.widgets import Widget
 import logging
 from typing import TYPE_CHECKING, Any, Union
+from ..utils import rst_to_html, screen_scale
 
 try:
     import numpy as np
@@ -43,7 +44,6 @@ class QtLogger(QtW.QTextEdit):
     def __init__(self, parent=None, max_history: int = 500):
         super().__init__(parent=parent)
         self.setReadOnly(True)
-        self.setWordWrapMode(QtGui.QTextOption.WordWrap)
         self._max_history = int(max_history)
         self._n_lines = 0
         self.process.connect(self.update)
@@ -167,6 +167,13 @@ class Logger(Widget, logging.Handler):
 
     def print_html(self, html: str, end="<br></br>"):
         """Print things in the end of the logger widget as a HTML string."""
+        self.native.appendHtml(html + end)
+        return None
+
+    def print_rst(self, rst: str, end="\n"):
+        html = rst_to_html(rst, unescape=False)
+        if end == "\n":
+            end = "<br></br>"
         self.native.appendHtml(html + end)
         return None
 

@@ -178,6 +178,14 @@ def screen_center():
     return QApplication.desktop().screen().rect().center()
 
 
+def screen_scale() -> float:
+    """Get the scale of main screen."""
+    from qtpy.QtGui import QGuiApplication
+
+    screen = QGuiApplication.screens()[0]
+    return screen.devicePixelRatio()
+
+
 def show_tree(ui: BaseGui) -> str:
     return _get_tree(ui)
 
@@ -197,15 +205,18 @@ def _get_tree(ui: BaseGui, depth: int = 0):
     return out
 
 
-def rst_to_html(rst: str) -> str:
+def rst_to_html(rst: str, unescape: bool = True) -> str:
     """Convert rST string into HTML."""
-    try:
-        from docutils.examples import html_body
-        from xml.sax.saxutils import unescape
+    from docutils.examples import html_body
 
-        html = unescape(
-            html_body(rst, input_encoding="utf-8", output_encoding="utf-8").strip()
-        )
+    try:
+        body: bytes = html_body(rst, input_encoding="utf-8", output_encoding="utf-8")
+        html = body.decode(encoding="utf-8")
+        if unescape:
+            from xml.sax.saxutils import unescape as _unescape
+
+            html = _unescape(html)
+
     except Exception as e:
         warnings.warn(
             f"Could not convert string into HTML due to {type(e).__name__}: {e}",

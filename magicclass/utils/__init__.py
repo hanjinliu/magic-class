@@ -8,4 +8,6 @@ from .functions import (
     extract_tooltip,
     get_signature,
     show_tree,
+    rst_to_html,
+    screen_scale,
 )
