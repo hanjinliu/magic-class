@@ -241,9 +241,9 @@ class Logger(Widget, logging.Handler):
         # set scale of image
         if width is None and height is None:
             if w / 3 > h / 2:
-                width = 300
+                width = 480
             else:
-                height = 200
+                height = 320
         
         if width is None:
             image = image.scaledToHeight(height, Qt.SmoothTransformation)
