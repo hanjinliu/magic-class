@@ -3,11 +3,11 @@ import sys
 import logging
 from contextlib import contextmanager
 from qtpy import QtWidgets as QtW, QtGui
-from qtpy.QtCore import Signal
+from qtpy.QtCore import Signal, Qt
 from magicgui.backends._qtpy.widgets import QBaseWidget
 from magicgui.widgets import Widget
 import logging
-from typing import TYPE_CHECKING, Any, Iterable, Union
+from typing import TYPE_CHECKING, Any, Union
 from ..utils import rst_to_html
 
 try:
@@ -233,15 +233,22 @@ class Logger(Widget, logging.Handler):
         img.set_norm(norm)
 
         val = img.make_image()
+        h, w, _ = val.shape
         image = QtGui.QImage(
-            val, val.shape[1], val.shape[0], QtGui.QImage.Format_RGBA8888
+            val, w, h, QtGui.QImage.Format_RGBA8888
         )
+        
+        # set scale of image
+        if width is None and height is None:
+            if w / 3 > h / 2:
+                width = 300
+            else:
+                height = 200
+        
         if width is None:
-            if height is None:
-                height = 300
-            image = image.scaledToHeight(height)
+            image = image.scaledToHeight(height, Qt.SmoothTransformation)
         else:
-            image = image.scaledToWidth(width)
+            image = image.scaledToWidth(width, Qt.SmoothTransformation)
 
         self.native.appendImage(image)
         return None
@@ -284,7 +291,7 @@ class Logger(Widget, logging.Handler):
             logging.getLogger(name).removeHandler(self)
 
     @contextmanager
-    def set_plt(self, style=None):
+    def set_plt(self, style=None, rc_context: dict[str, Any] = {}):
         """A context manager for inline plot in the logger widget."""
         if not MATPLOTLIB_AVAILABLE:
             yield self
@@ -296,7 +303,7 @@ class Logger(Widget, logging.Handler):
         show._called = False
         try:
             mpl.use("module://magicclass.widgets.logger")
-            with plt.style.context(style):
+            with plt.style.context(style), plt.rc_context(rc_context):
                 yield self
         finally:
             if not show._called:
