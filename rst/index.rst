@@ -85,7 +85,6 @@ Learn more about ``magic-class`` here!
    keybinding
    customize_macro
    class_inheritance
-   special_methods
    api
 
 Indices and tables
