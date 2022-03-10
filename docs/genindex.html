@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Index &mdash; magic-class 0.5.22 documentation</title>
+  <title>Index &mdash; magic-class 0.6.0.dev1 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.22
+                0.6.0.dev1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -50,6 +50,7 @@
 <li class="toctree-l1"><a class="reference internal" href="use_wraps.html">Call Parent Methods from its Child</a></li>
 <li class="toctree-l1"><a class="reference internal" href="use_bind.html">Binding Values to Arguments</a></li>
 <li class="toctree-l1"><a class="reference internal" href="use_choices.html">Set Choices Dynamically</a></li>
+<li class="toctree-l1"><a class="reference internal" href="additional_types.html">Additional types</a></li>
 <li class="toctree-l1"><a class="reference internal" href="containers.html">Container Variations</a></li>
 </ul>
 <ul>
@@ -58,10 +59,10 @@
 <li class="toctree-l1"><a class="reference internal" href="vispy.html">Vispy Canvas</a></li>
 </ul>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="freewidget.html">Convert QtWidgets into a Magic Widget</a></li>
 <li class="toctree-l1"><a class="reference internal" href="keybinding.html">Define Custom Keybindings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="customize_macro.html">Customize Macro Recording</a></li>
 <li class="toctree-l1"><a class="reference internal" href="class_inheritance.html">Inherit Magic Class</a></li>
-<li class="toctree-l1"><a class="reference internal" href="special_methods.html">Special Attributes in Magic class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API References</a></li>
 </ul>
 
@@ -129,6 +130,8 @@
 </li>
       <li><a href="magicclass.gui.html#magicclass.gui.mgui_ext.AbstractAction">AbstractAction (class in magicclass.gui.mgui_ext)</a>
 </li>
+      <li><a href="magicclass.widgets.html#magicclass.widgets.misc.AbstractRangeSlider">AbstractRangeSlider (class in magicclass.widgets.misc)</a>
+</li>
       <li><a href="magicclass.gui.html#magicclass.gui.mgui_ext.Action">Action (class in magicclass.gui.mgui_ext)</a>
 </li>
       <li><a href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.PlotDataLayer.add">add() (magicclass.ext.pyqtgraph.graph_items.PlotDataLayer method)</a>
@@ -177,8 +180,6 @@
 </li>
       <li><a href="magicclass.gui.html#magicclass.gui.keybinding.Key.Ampersand">Ampersand (magicclass.gui.keybinding.Key attribute)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.components.TextItem.anchor">anchor (magicclass.ext.pyqtgraph.components.TextItem property)</a>
 
       <ul>
@@ -189,6 +190,8 @@
       </ul></li>
       <li><a href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.InfLine.angle">angle (magicclass.ext.pyqtgraph.graph_items.InfLine property)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="magicclass.html#magicclass.fields.MagicField.annotation">annotation (magicclass.fields.MagicField property)</a>
 
       <ul>
@@ -207,6 +210,12 @@
         <li><a href="magicclass.widgets.html#magicclass.widgets.misc.ConsoleTextEdit.append">(magicclass.widgets.misc.ConsoleTextEdit method)</a>
 </li>
       </ul></li>
+      <li><a href="magicclass.widgets.html#magicclass.widgets.logger.QtLogger.appendHtml">appendHtml() (magicclass.widgets.logger.QtLogger method)</a>
+</li>
+      <li><a href="magicclass.widgets.html#magicclass.widgets.logger.QtLogger.appendImage">appendImage() (magicclass.widgets.logger.QtLogger method)</a>
+</li>
+      <li><a href="magicclass.widgets.html#magicclass.widgets.logger.QtLogger.appendText">appendText() (magicclass.widgets.logger.QtLogger method)</a>
+</li>
       <li><a href="magicclass.html#magicclass.core.Parameters.as_dict">as_dict() (magicclass.core.Parameters method)</a>
 </li>
       <li><a href="magicclass.html#magicclass.fields.MagicField.as_getter">as_getter() (magicclass.fields.MagicField method)</a>
@@ -237,6 +246,24 @@
 
       <ul>
         <li><a href="magicclass.widgets.html#magicclass.widgets.misc.Figure.axes">(magicclass.widgets.misc.Figure property)</a>
+</li>
+      </ul></li>
+      <li><a href="magicclass.widgets.html#magicclass.widgets.Figure.axhline">axhline() (magicclass.widgets.Figure method)</a>
+
+      <ul>
+        <li><a href="magicclass.widgets.html#magicclass.widgets.misc.Figure.axhline">(magicclass.widgets.misc.Figure method)</a>
+</li>
+      </ul></li>
+      <li><a href="magicclass.widgets.html#magicclass.widgets.Figure.axline">axline() (magicclass.widgets.Figure method)</a>
+
+      <ul>
+        <li><a href="magicclass.widgets.html#magicclass.widgets.misc.Figure.axline">(magicclass.widgets.misc.Figure method)</a>
+</li>
+      </ul></li>
+      <li><a href="magicclass.widgets.html#magicclass.widgets.Figure.axvline">axvline() (magicclass.widgets.Figure method)</a>
+
+      <ul>
+        <li><a href="magicclass.widgets.html#magicclass.widgets.misc.Figure.axvline">(magicclass.widgets.misc.Figure method)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -332,6 +359,14 @@
       <li><a href="magicclass.ext.qtconsole.html#magicclass.ext.qtconsole.QtConsole.central_widget">central_widget (magicclass.ext.qtconsole.QtConsole attribute)</a>
 
       <ul>
+        <li><a href="magicclass.widgets.html#magicclass.widgets.FloatRangeSlider.central_widget">(magicclass.widgets.FloatRangeSlider attribute)</a>
+</li>
+        <li><a href="magicclass.widgets.html#magicclass.widgets.misc.FloatRangeSlider.central_widget">(magicclass.widgets.misc.FloatRangeSlider attribute)</a>
+</li>
+        <li><a href="magicclass.widgets.html#magicclass.widgets.misc.RangeSlider.central_widget">(magicclass.widgets.misc.RangeSlider attribute)</a>
+</li>
+        <li><a href="magicclass.widgets.html#magicclass.widgets.RangeSlider.central_widget">(magicclass.widgets.RangeSlider attribute)</a>
+</li>
         <li><a href="magicclass.widgets.html#magicclass.widgets.Separator.central_widget">(magicclass.widgets.Separator attribute)</a>
 </li>
       </ul></li>
@@ -341,6 +376,8 @@
         <li><a href="magicclass.gui.html#magicclass.gui.mgui_ext.AbstractAction.changed">(magicclass.gui.mgui_ext.AbstractAction attribute)</a>
 </li>
         <li><a href="magicclass.widgets.html#magicclass.widgets.color.QDoubleSlider.changed">(magicclass.widgets.color.QDoubleSlider attribute)</a>
+</li>
+        <li><a href="magicclass.widgets.html#magicclass.widgets.misc.AbstractRangeSlider.changed">(magicclass.widgets.misc.AbstractRangeSlider attribute)</a>
 </li>
       </ul></li>
       <li><a href="magicclass.widgets.html#magicclass.widgets.CheckButton">CheckButton (class in magicclass.widgets)</a>
@@ -366,6 +403,10 @@
 </li>
         <li><a href="magicclass.widgets.html#magicclass.widgets.ListWidget.clear">(magicclass.widgets.ListWidget method)</a>
 </li>
+        <li><a href="magicclass.widgets.html#magicclass.widgets.Logger.clear">(magicclass.widgets.Logger method)</a>
+</li>
+        <li><a href="magicclass.widgets.html#magicclass.widgets.logger.Logger.clear">(magicclass.widgets.logger.Logger method)</a>
+</li>
         <li><a href="magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.dict.DictWidget.clear">(magicclass.widgets.pywidgets.dict.DictWidget method)</a>
 </li>
         <li><a href="magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.DictWidget.clear">(magicclass.widgets.pywidgets.DictWidget method)</a>
@@ -386,7 +427,13 @@
       <li><a href="magicclass.html#magicclass.wrappers.click">click() (in module magicclass.wrappers)</a>
 </li>
       <li><a href="magicclass.html#magicclass.tqdm.tqdm.close">close() (magicclass.tqdm.tqdm method)</a>
+
+      <ul>
+        <li><a href="magicclass.widgets.html#magicclass.widgets.Logger.close">(magicclass.widgets.Logger method)</a>
 </li>
+        <li><a href="magicclass.widgets.html#magicclass.widgets.logger.Logger.close">(magicclass.widgets.logger.Logger method)</a>
+</li>
+      </ul></li>
       <li><a href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.ImageItem.cmap">cmap (magicclass.ext.pyqtgraph.widgets.ImageItem property)</a>
 </li>
       <li><a href="magicclass.widgets.html#magicclass.widgets.CollapsibleContainer.collapsed">collapsed (magicclass.widgets.CollapsibleContainer property)</a>
@@ -399,6 +446,8 @@
 </li>
       <li><a href="magicclass.widgets.html#magicclass.widgets.CollapsibleContainer">CollapsibleContainer (class in magicclass.widgets)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="magicclass.gui.html#magicclass.gui.keybinding.Key.Colon">Colon (magicclass.gui.keybinding.Key attribute)</a>
 </li>
       <li><a href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.components.Legend.color">color (magicclass.ext.pyqtgraph.components.Legend property)</a>
@@ -419,8 +468,6 @@
         <li><a href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.TextItemView.color">(magicclass.ext.pyqtgraph.graph_items.TextItemView property)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="magicclass.widgets.html#magicclass.widgets.color.QColorEdit.color">color() (magicclass.widgets.color.QColorEdit method)</a>
 
       <ul>
@@ -473,6 +520,8 @@
       </ul></li>
       <li><a href="magicclass.html#magicclass.fields.MagicField.copy">copy() (magicclass.fields.MagicField method)</a>
 </li>
+      <li><a href="magicclass.gui.html#magicclass.gui.utils.copy_class">copy_class() (in module magicclass.gui.utils)</a>
+</li>
       <li><a href="magicclass.html#magicclass.signature.AdditionalOptions.copyto">copyto (magicclass.signature.AdditionalOptions attribute)</a>
 </li>
       <li><a href="magicclass.gui.html#magicclass.gui.keybinding.Key.Ctrl">Ctrl (magicclass.gui.keybinding.Key attribute)</a>
@@ -485,6 +534,12 @@
         <li><a href="magicclass.widgets.html#magicclass.widgets.TabbedContainer.current_index">(magicclass.widgets.TabbedContainer property)</a>
 </li>
         <li><a href="magicclass.widgets.html#magicclass.widgets.ToolBoxContainer.current_index">(magicclass.widgets.ToolBoxContainer property)</a>
+</li>
+      </ul></li>
+      <li><a href="magicclass.widgets.html#magicclass.widgets.Logger.current_logger">current_logger (magicclass.widgets.Logger attribute)</a>
+
+      <ul>
+        <li><a href="magicclass.widgets.html#magicclass.widgets.logger.Logger.current_logger">(magicclass.widgets.logger.Logger attribute)</a>
 </li>
       </ul></li>
       <li><a href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.Curve">Curve (class in magicclass.ext.pyqtgraph.graph_items)</a>
@@ -518,8 +573,6 @@
 </li>
       </ul></li>
       <li><a href="magicclass.gui.html#magicclass.gui.utils.define_callback">define_callback() (in module magicclass.gui.utils)</a>
-</li>
-      <li><a href="magicclass.gui.html#magicclass.gui.utils.define_context_menu">define_context_menu() (in module magicclass.gui.utils)</a>
 </li>
       <li><a href="magicclass.gui.html#magicclass.gui.keybinding.Key.Delete">Delete (magicclass.gui.keybinding.Key attribute)</a>
 </li>
@@ -589,6 +642,12 @@
         <li><a href="magicclass.ext.vispy.html#magicclass.ext.vispy.image.IsoSurface.edge_color">(magicclass.ext.vispy.image.IsoSurface property)</a>
 </li>
       </ul></li>
+      <li><a href="magicclass.widgets.html#magicclass.widgets.Logger.emit">emit() (magicclass.widgets.Logger method)</a>
+
+      <ul>
+        <li><a href="magicclass.widgets.html#magicclass.widgets.logger.Logger.emit">(magicclass.widgets.logger.Logger method)</a>
+</li>
+      </ul></li>
       <li><a href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.components.Region.enabled">enabled (magicclass.ext.pyqtgraph.components.Region property)</a>
 
       <ul>
@@ -601,6 +660,12 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="magicclass.gui.html#magicclass.gui.keybinding.Key.Equal">Equal (magicclass.gui.keybinding.Key attribute)</a>
 </li>
+      <li><a href="magicclass.widgets.html#magicclass.widgets.ConsoleTextEdit.erase_first">erase_first() (magicclass.widgets.ConsoleTextEdit method)</a>
+
+      <ul>
+        <li><a href="magicclass.widgets.html#magicclass.widgets.misc.ConsoleTextEdit.erase_first">(magicclass.widgets.misc.ConsoleTextEdit method)</a>
+</li>
+      </ul></li>
       <li><a href="magicclass.widgets.html#magicclass.widgets.ConsoleTextEdit.erase_last">erase_last() (magicclass.widgets.ConsoleTextEdit method)</a>
 
       <ul>
@@ -681,6 +746,18 @@
       </ul></li>
       <li><a href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.FillBetween">FillBetween (class in magicclass.ext.pyqtgraph.graph_items)</a>
 </li>
+      <li><a href="magicclass.widgets.html#magicclass.widgets.FloatRangeSlider">FloatRangeSlider (class in magicclass.widgets)</a>
+
+      <ul>
+        <li><a href="magicclass.widgets.html#magicclass.widgets.misc.FloatRangeSlider">(class in magicclass.widgets.misc)</a>
+</li>
+      </ul></li>
+      <li><a href="magicclass.widgets.html#magicclass.widgets.Logger.flush">flush() (magicclass.widgets.Logger method)</a>
+
+      <ul>
+        <li><a href="magicclass.widgets.html#magicclass.widgets.logger.Logger.flush">(magicclass.widgets.logger.Logger method)</a>
+</li>
+      </ul></li>
       <li><a href="magicclass.gui.html#magicclass.gui.mgui_ext.PushButtonPlus.font_color">font_color (magicclass.gui.mgui_ext.PushButtonPlus property)</a>
 </li>
       <li><a href="magicclass.gui.html#magicclass.gui.mgui_ext.PushButtonPlus.font_family">font_family (magicclass.gui.mgui_ext.PushButtonPlus property)</a>
@@ -730,6 +807,8 @@
       <li><a href="magicclass.html#magicclass.fields.MagicField.get_action">get_action() (magicclass.fields.MagicField method)</a>
 </li>
       <li><a href="magicclass.html#magicclass.signature.get_additional_option">get_additional_option() (in module magicclass.signature)</a>
+</li>
+      <li><a href="magicclass.html#magicclass.core.get_function_gui">get_function_gui() (in module magicclass.core)</a>
 </li>
       <li><a href="magicclass.html#magicclass.signature.MagicMethodSignature.get_gui_options">get_gui_options() (magicclass.signature.MagicMethodSignature class method)</a>
 </li>
@@ -807,6 +886,8 @@
 </li>
       <li><a href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.ViewBoxExt.hoverEvent">hoverEvent() (magicclass.ext.pyqtgraph.widgets.ViewBoxExt method)</a>
 </li>
+      <li><a href="magicclass.widgets.html#magicclass.widgets.logger.Output.HTML">HTML (magicclass.widgets.logger.Output attribute)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -826,6 +907,8 @@
       <li><a href="magicclass.ext.vispy.html#magicclass.ext.vispy.image.Image">Image (class in magicclass.ext.vispy.image)</a>
 </li>
       <li><a href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.ImageItem.image">image (magicclass.ext.pyqtgraph.widgets.ImageItem property)</a>
+</li>
+      <li><a href="magicclass.widgets.html#magicclass.widgets.logger.Output.IMAGE">IMAGE (magicclass.widgets.logger.Output attribute)</a>
 </li>
       <li><a href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.ImageItem">ImageItem (class in magicclass.ext.pyqtgraph.widgets)</a>
 </li>
@@ -1001,8 +1084,6 @@
         <li><a href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.PlotDataLayer.linestyle">(magicclass.ext.pyqtgraph.graph_items.PlotDataLayer property)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.FillBetween.linewidth">linewidth (magicclass.ext.pyqtgraph.graph_items.FillBetween property)</a>
 
       <ul>
@@ -1011,6 +1092,10 @@
         <li><a href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.PlotDataLayer.linewidth">(magicclass.ext.pyqtgraph.graph_items.PlotDataLayer property)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="magicclass.html#magicclass.types.List">List (class in magicclass.types)</a>
+</li>
       <li><a href="magicclass.html#magicclass.types.WidgetType.list">list (magicclass.types.WidgetType attribute)</a>
 </li>
       <li><a href="magicclass.widgets.html#magicclass.widgets.ListContainer">ListContainer (class in magicclass.widgets)</a>
@@ -1029,6 +1114,12 @@
       </ul></li>
       <li><a href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.ImageItem.lock_contrast_limits">lock_contrast_limits (magicclass.ext.pyqtgraph.widgets.ImageItem property)</a>
 </li>
+      <li><a href="magicclass.widgets.html#magicclass.widgets.Logger">Logger (class in magicclass.widgets)</a>
+
+      <ul>
+        <li><a href="magicclass.widgets.html#magicclass.widgets.logger.Logger">(class in magicclass.widgets.logger)</a>
+</li>
+      </ul></li>
       <li><a href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.FillBetween.ls">ls (magicclass.ext.pyqtgraph.graph_items.FillBetween property)</a>
 
       <ul>
@@ -1074,27 +1165,6 @@
 
       <ul>
         <li><a href="magicclass.ext.html#module-magicclass.ext">module</a>
-</li>
-      </ul></li>
-      <li>
-    magicclass.ext.napari
-
-      <ul>
-        <li><a href="magicclass.ext.napari.html#module-magicclass.ext.napari">module</a>
-</li>
-      </ul></li>
-      <li>
-    magicclass.ext.napari.utils
-
-      <ul>
-        <li><a href="magicclass.ext.napari.html#module-magicclass.ext.napari.utils">module</a>
-</li>
-      </ul></li>
-      <li>
-    magicclass.ext.napari.widgets
-
-      <ul>
-        <li><a href="magicclass.ext.napari.html#module-magicclass.ext.napari.widgets">module</a>
 </li>
       </ul></li>
       <li>
@@ -1329,6 +1399,13 @@
 </li>
       </ul></li>
       <li>
+    magicclass.widgets.logger
+
+      <ul>
+        <li><a href="magicclass.widgets.html#module-magicclass.widgets.logger">module</a>
+</li>
+      </ul></li>
+      <li>
     magicclass.widgets.misc
 
       <ul>
@@ -1356,8 +1433,6 @@
         <li><a href="magicclass.widgets.pywidgets.html#module-magicclass.widgets.pywidgets.list">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     magicclass.widgets.pywidgets.object
 
@@ -1365,6 +1440,8 @@
         <li><a href="magicclass.widgets.pywidgets.html#module-magicclass.widgets.pywidgets.object">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     magicclass.widgets.pywidgets.tree
 
@@ -1416,11 +1493,11 @@
 </li>
       <li><a href="magicclass.html#magicclass.fields.MagicValueField">MagicValueField (class in magicclass.fields)</a>
 </li>
-      <li><a href="magicclass.widgets.html#magicclass.widgets.utils.magicwidget">magicwidget() (in module magicclass.widgets.utils)</a>
-</li>
       <li><a href="magicclass.html#magicclass.types.WidgetType.mainwindow">mainwindow (magicclass.types.WidgetType attribute)</a>
 </li>
       <li><a href="magicclass.gui.html#magicclass.gui.class_gui.make_gui">make_gui() (in module magicclass.gui.class_gui)</a>
+</li>
+      <li><a href="magicclass.widgets.html#magicclass.widgets.misc.AbstractRangeSlider.max">max (magicclass.widgets.misc.AbstractRangeSlider property)</a>
 </li>
       <li><a href="magicclass.gui.html#magicclass.gui.menu_gui.MenuGui">MenuGui (class in magicclass.gui.menu_gui)</a>
 </li>
@@ -1440,6 +1517,8 @@
       </ul></li>
       <li><a href="magicclass.gui.html#magicclass.gui.mgui_ext.mguiLike">mguiLike (class in magicclass.gui.mgui_ext)</a>
 </li>
+      <li><a href="magicclass.widgets.html#magicclass.widgets.misc.AbstractRangeSlider.min">min (magicclass.widgets.misc.AbstractRangeSlider property)</a>
+</li>
       <li><a href="magicclass.gui.html#magicclass.gui.keybinding.Key.Minus">Minus (magicclass.gui.keybinding.Key attribute)</a>
 </li>
       <li><a href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.mouse_event.MouseClickEvent.modifiers">modifiers() (magicclass.ext.pyqtgraph.mouse_event.MouseClickEvent method)</a>
@@ -1453,12 +1532,6 @@
         <li><a href="magicclass.html#module-magicclass.core">magicclass.core</a>
 </li>
         <li><a href="magicclass.ext.html#module-magicclass.ext">magicclass.ext</a>
-</li>
-        <li><a href="magicclass.ext.napari.html#module-magicclass.ext.napari">magicclass.ext.napari</a>
-</li>
-        <li><a href="magicclass.ext.napari.html#module-magicclass.ext.napari.utils">magicclass.ext.napari.utils</a>
-</li>
-        <li><a href="magicclass.ext.napari.html#module-magicclass.ext.napari.widgets">magicclass.ext.napari.widgets</a>
 </li>
         <li><a href="magicclass.ext.pyqtgraph.html#module-magicclass.ext.pyqtgraph">magicclass.ext.pyqtgraph</a>
 </li>
@@ -1526,6 +1599,8 @@
 </li>
         <li><a href="magicclass.widgets.html#module-magicclass.widgets.containers">magicclass.widgets.containers</a>
 </li>
+        <li><a href="magicclass.widgets.html#module-magicclass.widgets.logger">magicclass.widgets.logger</a>
+</li>
         <li><a href="magicclass.widgets.html#module-magicclass.widgets.misc">magicclass.widgets.misc</a>
 </li>
         <li><a href="magicclass.widgets.pywidgets.html#module-magicclass.widgets.pywidgets">magicclass.widgets.pywidgets</a>
@@ -1578,15 +1653,17 @@
 </li>
         <li><a href="magicclass.gui.html#magicclass.gui.mgui_ext.mguiLike.name">(magicclass.gui.mgui_ext.mguiLike property)</a>
 </li>
+        <li><a href="magicclass.widgets.html#magicclass.widgets.FloatRangeSlider.name">(magicclass.widgets.FloatRangeSlider attribute)</a>
+</li>
         <li><a href="magicclass.widgets.html#magicclass.widgets.GroupBoxContainer.name">(magicclass.widgets.GroupBoxContainer property)</a>
 </li>
-        <li><a href="magicclass.widgets.html#magicclass.widgets.Separator.name">(magicclass.widgets.Separator attribute)</a>
+        <li><a href="magicclass.widgets.html#magicclass.widgets.misc.FloatRangeSlider.name">(magicclass.widgets.misc.FloatRangeSlider attribute)</a>
 </li>
-      </ul></li>
-      <li><a href="magicclass.ext.napari.html#magicclass.ext.napari.NapariCanvas">NapariCanvas (class in magicclass.ext.napari)</a>
-
-      <ul>
-        <li><a href="magicclass.ext.napari.html#magicclass.ext.napari.widgets.NapariCanvas">(class in magicclass.ext.napari.widgets)</a>
+        <li><a href="magicclass.widgets.html#magicclass.widgets.misc.RangeSlider.name">(magicclass.widgets.misc.RangeSlider attribute)</a>
+</li>
+        <li><a href="magicclass.widgets.html#magicclass.widgets.RangeSlider.name">(magicclass.widgets.RangeSlider attribute)</a>
+</li>
+        <li><a href="magicclass.widgets.html#magicclass.widgets.Separator.name">(magicclass.widgets.Separator attribute)</a>
 </li>
       </ul></li>
       <li><a href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.components.GraphicComponent.native">native (magicclass.ext.pyqtgraph.components.GraphicComponent attribute)</a>
@@ -1651,13 +1728,15 @@
 </li>
       <li><a href="magicclass.utils.html#magicclass.utils.functions.open_url">open_url() (in module magicclass.utils.functions)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="magicclass.html#magicclass.types.Optional">Optional (class in magicclass.types)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="magicclass.widgets.html#magicclass.widgets.OptionalWidget">OptionalWidget (class in magicclass.widgets)</a>
 </li>
       <li><a href="magicclass.html#magicclass.fields.MagicField.options">options (magicclass.fields.MagicField property)</a>
+</li>
+      <li><a href="magicclass.widgets.html#magicclass.widgets.logger.Output">Output (class in magicclass.widgets.logger)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -1701,8 +1780,6 @@
 </li>
       <li><a href="magicclass.gui.html#magicclass.gui.keybinding.Key.Plus">Plus (magicclass.gui.keybinding.Key attribute)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="magicclass.widgets.html#magicclass.widgets.DictWidget.pop">pop() (magicclass.widgets.DictWidget method)</a>
 
       <ul>
@@ -1719,7 +1796,41 @@
         <li><a href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.InfLine.pos">(magicclass.ext.pyqtgraph.graph_items.InfLine property)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.mouse_event.MouseClickEvent.pos">pos() (magicclass.ext.pyqtgraph.mouse_event.MouseClickEvent method)</a>
+</li>
+      <li><a href="magicclass.widgets.html#magicclass.widgets.Logger.print">print() (magicclass.widgets.Logger method)</a>
+
+      <ul>
+        <li><a href="magicclass.widgets.html#magicclass.widgets.logger.Logger.print">(magicclass.widgets.logger.Logger method)</a>
+</li>
+      </ul></li>
+      <li><a href="magicclass.widgets.html#magicclass.widgets.Logger.print_figure">print_figure() (magicclass.widgets.Logger method)</a>
+
+      <ul>
+        <li><a href="magicclass.widgets.html#magicclass.widgets.logger.Logger.print_figure">(magicclass.widgets.logger.Logger method)</a>
+</li>
+      </ul></li>
+      <li><a href="magicclass.widgets.html#magicclass.widgets.Logger.print_html">print_html() (magicclass.widgets.Logger method)</a>
+
+      <ul>
+        <li><a href="magicclass.widgets.html#magicclass.widgets.logger.Logger.print_html">(magicclass.widgets.logger.Logger method)</a>
+</li>
+      </ul></li>
+      <li><a href="magicclass.widgets.html#magicclass.widgets.Logger.print_image">print_image() (magicclass.widgets.Logger method)</a>
+
+      <ul>
+        <li><a href="magicclass.widgets.html#magicclass.widgets.logger.Logger.print_image">(magicclass.widgets.logger.Logger method)</a>
+</li>
+      </ul></li>
+      <li><a href="magicclass.widgets.html#magicclass.widgets.Logger.print_table">print_table() (magicclass.widgets.Logger method)</a>
+
+      <ul>
+        <li><a href="magicclass.widgets.html#magicclass.widgets.logger.Logger.print_table">(magicclass.widgets.logger.Logger method)</a>
+</li>
+      </ul></li>
+      <li><a href="magicclass.widgets.html#magicclass.widgets.logger.QtLogger.process">process (magicclass.widgets.logger.QtLogger attribute)</a>
 </li>
       <li><a href="magicclass.html#magicclass.tqdm.ProgressBar">ProgressBar (class in magicclass.tqdm)</a>
 </li>
@@ -1777,14 +1888,16 @@
         <li><a href="magicclass.ext.qtconsole.html#magicclass.ext.qtconsole.widgets.QtConsole">(class in magicclass.ext.qtconsole.widgets)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.QtImageCanvas">QtImageCanvas (class in magicclass.ext.pyqtgraph)</a>
 
       <ul>
         <li><a href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.QtImageCanvas">(class in magicclass.ext.pyqtgraph.widgets)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="magicclass.widgets.html#magicclass.widgets.logger.QtLogger">QtLogger (class in magicclass.widgets.logger)</a>
+</li>
       <li><a href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.QtMultiImageCanvas">QtMultiImageCanvas (class in magicclass.ext.pyqtgraph)</a>
 
       <ul>
@@ -1809,6 +1922,12 @@
 </li>
       <li><a href="magicclass.utils.html#magicclass.utils.functions.MessageBoxMode.QUESTION">QUESTION (magicclass.utils.functions.MessageBoxMode attribute)</a>
 </li>
+      <li><a href="magicclass.widgets.html#magicclass.widgets.Figure.quiver">quiver() (magicclass.widgets.Figure method)</a>
+
+      <ul>
+        <li><a href="magicclass.widgets.html#magicclass.widgets.misc.Figure.quiver">(magicclass.widgets.misc.Figure method)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -1817,6 +1936,14 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="magicclass.gui.html#magicclass.gui.keybinding.Key.R">R (magicclass.gui.keybinding.Key attribute)</a>
 </li>
+      <li><a href="magicclass.widgets.html#magicclass.widgets.misc.AbstractRangeSlider.range">range (magicclass.widgets.misc.AbstractRangeSlider property)</a>
+</li>
+      <li><a href="magicclass.widgets.html#magicclass.widgets.RangeSlider">RangeSlider (class in magicclass.widgets)</a>
+
+      <ul>
+        <li><a href="magicclass.widgets.html#magicclass.widgets.misc.RangeSlider">(class in magicclass.widgets.misc)</a>
+</li>
+      </ul></li>
       <li><a href="magicclass.html#magicclass.fields.MagicField.ready">ready() (magicclass.fields.MagicField method)</a>
 </li>
       <li><a href="magicclass.html#magicclass.signature.AdditionalOptions.record">record (magicclass.signature.AdditionalOptions attribute)</a>
@@ -1841,10 +1968,10 @@
         <li><a href="magicclass.widgets.html#magicclass.widgets.SpreadSheet.rename">(magicclass.widgets.SpreadSheet method)</a>
 </li>
       </ul></li>
-      <li><a href="magicclass.gui.html#magicclass.gui.mgui_ext.WidgetAction.render">render() (magicclass.gui.mgui_ext.WidgetAction method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="magicclass.gui.html#magicclass.gui.mgui_ext.WidgetAction.render">render() (magicclass.gui.mgui_ext.WidgetAction method)</a>
+</li>
       <li><a href="magicclass.ext.vispy.html#magicclass.ext.vispy.image.Image.rendering">rendering (magicclass.ext.vispy.image.Image property)</a>
 </li>
       <li><a href="magicclass.html#magicclass.signature.MagicMethodSignature.replace">replace() (magicclass.signature.MagicMethodSignature method)</a>
@@ -1919,6 +2046,8 @@
         <li><a href="magicclass.widgets.html#magicclass.widgets.separator.Separator">(class in magicclass.widgets.separator)</a>
 </li>
       </ul></li>
+      <li><a href="magicclass.gui.html#magicclass.gui.utils.set_context_menu">set_context_menu() (in module magicclass.gui.utils)</a>
+</li>
       <li><a href="magicclass.widgets.html#magicclass.widgets.FreeWidget.set_contextmenu">set_contextmenu() (magicclass.widgets.FreeWidget method)</a>
 
       <ul>
@@ -1929,16 +2058,34 @@
 </li>
       <li><a href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.Histogram.set_hist">set_hist() (magicclass.ext.pyqtgraph.graph_items.Histogram method)</a>
 </li>
+      <li><a href="magicclass.widgets.html#magicclass.widgets.Logger.set_logger">set_logger() (magicclass.widgets.Logger method)</a>
+
+      <ul>
+        <li><a href="magicclass.widgets.html#magicclass.widgets.logger.Logger.set_logger">(magicclass.widgets.logger.Logger method)</a>
+</li>
+      </ul></li>
       <li><a href="magicclass.gui.html#magicclass.gui.mgui_ext.ToolButtonPlus.set_menu">set_menu() (magicclass.gui.mgui_ext.ToolButtonPlus method)</a>
 </li>
       <li><a href="magicclass.html#magicclass.wrappers.set_options">set_options() (in module magicclass.wrappers)</a>
 </li>
+      <li><a href="magicclass.widgets.html#magicclass.widgets.Logger.set_plt">set_plt() (magicclass.widgets.Logger method)</a>
+
+      <ul>
+        <li><a href="magicclass.widgets.html#magicclass.widgets.logger.Logger.set_plt">(magicclass.widgets.logger.Logger method)</a>
+</li>
+      </ul></li>
       <li><a href="magicclass.gui.html#magicclass.gui.mgui_ext.Action.set_shortcut">set_shortcut() (magicclass.gui.mgui_ext.Action method)</a>
 
       <ul>
         <li><a href="magicclass.gui.html#magicclass.gui.mgui_ext.PushButtonPlus.set_shortcut">(magicclass.gui.mgui_ext.PushButtonPlus method)</a>
 </li>
         <li><a href="magicclass.gui.html#magicclass.gui.mgui_ext.ToolButtonPlus.set_shortcut">(magicclass.gui.mgui_ext.ToolButtonPlus method)</a>
+</li>
+      </ul></li>
+      <li><a href="magicclass.widgets.html#magicclass.widgets.Logger.set_stdout">set_stdout() (magicclass.widgets.Logger method)</a>
+
+      <ul>
+        <li><a href="magicclass.widgets.html#magicclass.widgets.logger.Logger.set_stdout">(magicclass.widgets.logger.Logger method)</a>
 </li>
       </ul></li>
       <li><a href="magicclass.widgets.html#magicclass.widgets.FreeWidget.set_widget">set_widget() (magicclass.widgets.FreeWidget method)</a>
@@ -1957,10 +2104,10 @@
         <li><a href="magicclass.widgets.html#magicclass.widgets.color.QColorSwatch.setColor">(magicclass.widgets.color.QColorSwatch method)</a>
 </li>
       </ul></li>
-      <li><a href="magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.object.ContextMenuMixin.setContextMenu">setContextMenu() (magicclass.widgets.pywidgets.object.ContextMenuMixin method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.object.ContextMenuMixin.setContextMenu">setContextMenu() (magicclass.widgets.pywidgets.object.ContextMenuMixin method)</a>
+</li>
       <li><a href="magicclass.widgets.html#magicclass.widgets.color.QDoubleSlider.setMaximum">setMaximum() (magicclass.widgets.color.QDoubleSlider method)</a>
 </li>
       <li><a href="magicclass.widgets.html#magicclass.widgets.color.QDoubleSlider.setMinimum">setMinimum() (magicclass.widgets.color.QDoubleSlider method)</a>
@@ -1976,6 +2123,8 @@
       <li><a href="magicclass.widgets.html#magicclass.widgets.color.QDoubleSlider.setValue">setValue() (magicclass.widgets.color.QDoubleSlider method)</a>
 </li>
       <li><a href="magicclass.gui.html#magicclass.gui.keybinding.Key.Shift">Shift (magicclass.gui.keybinding.Key attribute)</a>
+</li>
+      <li><a href="magicclass.widgets.html#magicclass.widgets.logger.show">show() (in module magicclass.widgets.logger)</a>
 </li>
       <li><a href="magicclass.utils.html#magicclass.utils.functions.show_messagebox">show_messagebox() (in module magicclass.utils.functions)</a>
 </li>
@@ -2070,9 +2219,11 @@
 </li>
         <li><a href="magicclass.widgets.html#magicclass.widgets.CollapsibleContainer.text">(magicclass.widgets.CollapsibleContainer property)</a>
 </li>
-        <li><a href="magicclass.widgets.html#magicclass.widgets.OptionalWidget.text">(magicclass.widgets.OptionalWidget property)</a>
-</li>
       </ul></li>
+      <li><a href="magicclass.widgets.html#magicclass.widgets.logger.Output.TEXT">TEXT (magicclass.widgets.logger.Output attribute)</a>
+</li>
+      <li><a href="magicclass.widgets.html#magicclass.widgets.OptionalWidget.text">text (magicclass.widgets.OptionalWidget property)</a>
+</li>
       <li><a href="magicclass.widgets.html#magicclass.widgets.Figure.text">text() (magicclass.widgets.Figure method)</a>
 
       <ul>
@@ -2087,10 +2238,10 @@
 </li>
       <li><a href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.components.TextItem">TextItem (class in magicclass.ext.pyqtgraph.components)</a>
 </li>
-      <li><a href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.TextItemView">TextItemView (class in magicclass.ext.pyqtgraph.graph_items)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.TextItemView">TextItemView (class in magicclass.ext.pyqtgraph.graph_items)</a>
+</li>
       <li><a href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.ImageItem.title">title (magicclass.ext.pyqtgraph.widgets.ImageItem property)</a>
 
       <ul>
@@ -2109,12 +2260,6 @@
 </li>
       <li><a href="magicclass.utils.html#magicclass.utils.functions.to_clipboard">to_clipboard() (in module magicclass.utils.functions)</a>
 </li>
-      <li><a href="magicclass.ext.napari.html#magicclass.ext.napari.to_napari">to_napari() (in module magicclass.ext.napari)</a>
-
-      <ul>
-        <li><a href="magicclass.ext.napari.html#magicclass.ext.napari.utils.to_napari">(in module magicclass.ext.napari.utils)</a>
-</li>
-      </ul></li>
       <li><a href="magicclass.gui.html#magicclass.gui.keybinding.Key.to_qtkey">to_qtkey() (magicclass.gui.keybinding.Key class method)</a>
 </li>
       <li><a href="magicclass.gui.html#magicclass.gui.keybinding.Key.to_qtmodifier">to_qtmodifier() (magicclass.gui.keybinding.Key class method)</a>
@@ -2141,6 +2286,8 @@
         <li><a href="magicclass.html#magicclass.tqdm.ProgressBar.trange">(magicclass.tqdm.ProgressBar method)</a>
 </li>
       </ul></li>
+      <li><a href="magicclass.html#magicclass.types.Tuple">Tuple (class in magicclass.types)</a>
+</li>
       <li><a href="magicclass.widgets.html#magicclass.widgets.TupleEdit">TupleEdit (class in magicclass.widgets)</a>
 </li>
       <li><a href="magicclass.html#magicclass.fields.MagicField.type">type (magicclass.fields.MagicField attribute)</a>
@@ -2169,6 +2316,8 @@
 
       <ul>
         <li><a href="magicclass.widgets.html#magicclass.widgets.DictWidget.update">(magicclass.widgets.DictWidget method)</a>
+</li>
+        <li><a href="magicclass.widgets.html#magicclass.widgets.logger.QtLogger.update">(magicclass.widgets.logger.QtLogger method)</a>
 </li>
         <li><a href="magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.dict.DictWidget.update">(magicclass.widgets.pywidgets.dict.DictWidget method)</a>
 </li>
@@ -2215,6 +2364,8 @@
         <li><a href="magicclass.widgets.html#magicclass.widgets.ListEdit.value">(magicclass.widgets.ListEdit property)</a>
 </li>
         <li><a href="magicclass.widgets.html#magicclass.widgets.ListWidget.value">(magicclass.widgets.ListWidget property)</a>
+</li>
+        <li><a href="magicclass.widgets.html#magicclass.widgets.misc.AbstractRangeSlider.value">(magicclass.widgets.misc.AbstractRangeSlider property)</a>
 </li>
         <li><a href="magicclass.widgets.html#magicclass.widgets.OptionalWidget.value">(magicclass.widgets.OptionalWidget property)</a>
 </li>
@@ -2293,6 +2444,12 @@
 </li>
       <li><a href="magicclass.html#magicclass.fields.MagicField.wraps">wraps() (magicclass.fields.MagicField method)</a>
 </li>
+      <li><a href="magicclass.widgets.html#magicclass.widgets.Logger.write">write() (magicclass.widgets.Logger method)</a>
+
+      <ul>
+        <li><a href="magicclass.widgets.html#magicclass.widgets.logger.Logger.write">(magicclass.widgets.logger.Logger method)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 

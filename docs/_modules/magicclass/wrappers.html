@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.wrappers &mdash; magic-class 0.5.21 documentation</title>
+  <title>magicclass.wrappers &mdash; magic-class 0.6.0.dev1 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.21
+                0.6.0.dev1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -40,17 +40,29 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../quick_start.html">Quick Start</a></li>
+</ul>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../../options.html">Options in magic-class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../nest.html">Nest magic-classes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../use_field.html">Use Fields in magic-class</a></li>
+</ul>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../../use_wraps.html">Call Parent Methods from its Child</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../use_bind.html">Binding Values to Arguments</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../use_choices.html">Set Choices Dynamically</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../additional_types.html">Additional types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../containers.html">Container Variations</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../matplotlib.html">Use Matplotlib Figure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../pyqtgraph.html">Use PyQtGraph Canvas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../vispy.html">Vispy Canvas</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../freewidget.html">Convert QtWidgets into a Magic Widget</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../keybinding.html">Define Custom Keybindings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../customize_macro.html">Customize Macro Recording</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../containers.html">Container Variations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../class_inheritance.html">Inherit Magic Class</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../special_methods.html">Special Attributes in Magic class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api.html">API References</a></li>
 </ul>
 
@@ -84,6 +96,7 @@
 <span class="kn">import</span> <span class="nn">inspect</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">overload</span>
 <span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">ParamSpec</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">Label</span>
 <span class="kn">from</span> <span class="nn">macrokit</span> <span class="kn">import</span> <span class="n">Expr</span>
 
@@ -113,7 +126,21 @@
 <span class="sd">    Set MagicSignature to functions.</span>
 
 <span class="sd">    By decorating a method with this function, ``magicgui`` will create a widget with these</span>
-<span class="sd">    options.</span>
+<span class="sd">    options. These codes are similar in appearance.</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        # A magicgui way</span>
+<span class="sd">        @magicgui(a={...})</span>
+<span class="sd">        def func(a):</span>
+<span class="sd">            ...</span>
+
+<span class="sd">        # A magicclass way</span>
+<span class="sd">        @magicclass</span>
+<span class="sd">        class A:</span>
+<span class="sd">            @set_options(a={...})</span>
+<span class="sd">            def func(self, a):</span>
+<span class="sd">                ...</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -134,6 +161,14 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="n">P</span><span class="p">,</span> <span class="n">R</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[</span><span class="n">P</span><span class="p">,</span> <span class="n">R</span><span class="p">]:</span>
+        <span class="n">sig</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+        <span class="n">rem</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">-</span> <span class="n">sig</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">rem</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Unknown arguments found in set_options of </span><span class="si">{</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">rem</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="ne">UserWarning</span><span class="p">,</span>
+            <span class="p">)</span>
+
         <span class="n">upgrade_signature</span><span class="p">(</span>
             <span class="n">func</span><span class="p">,</span>
             <span class="n">gui_options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span>
@@ -144,6 +179,7 @@
                 <span class="s2">&quot;auto_call&quot;</span><span class="p">:</span> <span class="n">auto_call</span><span class="p">,</span>
             <span class="p">},</span>
         <span class="p">)</span>
+
         <span class="k">return</span> <span class="n">func</span>
 
     <span class="k">return</span> <span class="n">wrapper</span></div>

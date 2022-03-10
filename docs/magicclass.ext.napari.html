@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.ext.napari package &mdash; magic-class 0.5.22 documentation</title>
+  <title>magicclass.ext.napari package &mdash; magic-class 0.6.0.dev1 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/columns.css" type="text/css" />
@@ -31,7 +31,7 @@
             <a href="index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.22
+                0.6.0.dev1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -53,6 +53,7 @@
 <li class="toctree-l1"><a class="reference internal" href="use_wraps.html">Call Parent Methods from its Child</a></li>
 <li class="toctree-l1"><a class="reference internal" href="use_bind.html">Binding Values to Arguments</a></li>
 <li class="toctree-l1"><a class="reference internal" href="use_choices.html">Set Choices Dynamically</a></li>
+<li class="toctree-l1"><a class="reference internal" href="additional_types.html">Additional types</a></li>
 <li class="toctree-l1"><a class="reference internal" href="containers.html">Container Variations</a></li>
 </ul>
 <ul>
@@ -61,10 +62,10 @@
 <li class="toctree-l1"><a class="reference internal" href="vispy.html">Vispy Canvas</a></li>
 </ul>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="freewidget.html">Convert QtWidgets into a Magic Widget</a></li>
 <li class="toctree-l1"><a class="reference internal" href="keybinding.html">Define Custom Keybindings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="customize_macro.html">Customize Macro Recording</a></li>
 <li class="toctree-l1"><a class="reference internal" href="class_inheritance.html">Inherit Magic Class</a></li>
-<li class="toctree-l1"><a class="reference internal" href="special_methods.html">Special Attributes in Magic class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API References</a></li>
 </ul>
 
@@ -100,40 +101,14 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </section>
-<section id="module-magicclass.ext.napari.utils">
-<span id="magicclass-ext-napari-utils-module"></span><h2>magicclass.ext.napari.utils module<a class="headerlink" href="#module-magicclass.ext.napari.utils" title="Permalink to this headline">¶</a></h2>
-<dl class="py function">
-<dt class="sig sig-object py" id="magicclass.ext.napari.utils.to_napari">
-<span class="sig-prename descclassname"><span class="pre">magicclass.ext.napari.utils.</span></span><span class="sig-name descname"><span class="pre">to_napari</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">magic_class</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">type</span><span class="p"><span class="pre">[</span></span><span class="pre">BaseGui</span><span class="p"><span class="pre">]</span></span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">viewer</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">napari.Viewer</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/ext/napari/utils.html#to_napari"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.napari.utils.to_napari" title="Permalink to this definition">¶</a></dt>
-<dd><p>Send magic class to current napari viewer. Classes decorated with <code class="docutils literal notranslate"><span class="pre">&#64;magicclass</span></code>
-<code class="docutils literal notranslate"><span class="pre">magicmenu</span></code> and <code class="docutils literal notranslate"><span class="pre">magictoolbar</span></code> are supported.</p>
-</dd></dl>
-
+<section id="magicclass-ext-napari-utils-module">
+<h2>magicclass.ext.napari.utils module<a class="headerlink" href="#magicclass-ext-napari-utils-module" title="Permalink to this headline">¶</a></h2>
 </section>
-<section id="module-magicclass.ext.napari.widgets">
-<span id="magicclass-ext-napari-widgets-module"></span><h2>magicclass.ext.napari.widgets module<a class="headerlink" href="#module-magicclass.ext.napari.widgets" title="Permalink to this headline">¶</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="magicclass.ext.napari.widgets.NapariCanvas">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.napari.widgets.</span></span><span class="sig-name descname"><span class="pre">NapariCanvas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ndisplay</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis_labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/ext/napari/widgets.html#NapariCanvas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.napari.widgets.NapariCanvas" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="magicclass.widgets.html#magicclass.widgets.utils.FreeWidget" title="magicclass.widgets.utils.FreeWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.widgets.utils.FreeWidget</span></code></a></p>
-</dd></dl>
-
+<section id="magicclass-ext-napari-widgets-module">
+<h2>magicclass.ext.napari.widgets module<a class="headerlink" href="#magicclass-ext-napari-widgets-module" title="Permalink to this headline">¶</a></h2>
 </section>
-<section id="module-magicclass.ext.napari">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-magicclass.ext.napari" title="Permalink to this headline">¶</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="magicclass.ext.napari.NapariCanvas">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.napari.</span></span><span class="sig-name descname"><span class="pre">NapariCanvas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ndisplay</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis_labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/ext/napari/widgets.html#NapariCanvas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.napari.NapariCanvas" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="magicclass.widgets.html#magicclass.widgets.utils.FreeWidget" title="magicclass.widgets.utils.FreeWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.widgets.utils.FreeWidget</span></code></a></p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="magicclass.ext.napari.to_napari">
-<span class="sig-prename descclassname"><span class="pre">magicclass.ext.napari.</span></span><span class="sig-name descname"><span class="pre">to_napari</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">magic_class</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">type</span><span class="p"><span class="pre">[</span></span><span class="pre">BaseGui</span><span class="p"><span class="pre">]</span></span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">viewer</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">napari.Viewer</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/ext/napari/utils.html#to_napari"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.napari.to_napari" title="Permalink to this definition">¶</a></dt>
-<dd><p>Send magic class to current napari viewer. Classes decorated with <code class="docutils literal notranslate"><span class="pre">&#64;magicclass</span></code>
-<code class="docutils literal notranslate"><span class="pre">magicmenu</span></code> and <code class="docutils literal notranslate"><span class="pre">magictoolbar</span></code> are supported.</p>
-</dd></dl>
-
+<section id="module-contents">
+<h2>Module contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
 </section>
 </section>
 

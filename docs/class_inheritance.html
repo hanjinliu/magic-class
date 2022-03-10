@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Inherit Magic Class &mdash; magic-class 0.5.22 documentation</title>
+  <title>Inherit Magic Class &mdash; magic-class 0.6.0.dev1 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/columns.css" type="text/css" />
@@ -19,7 +19,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Special Attributes in Magic class" href="special_methods.html" />
+    <link rel="next" title="API References" href="api.html" />
     <link rel="prev" title="Customize Macro Recording" href="customize_macro.html" />
 </head>
 
@@ -31,7 +31,7 @@
             <a href="index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.22
+                0.6.0.dev1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -53,6 +53,7 @@
 <li class="toctree-l1"><a class="reference internal" href="use_wraps.html">Call Parent Methods from its Child</a></li>
 <li class="toctree-l1"><a class="reference internal" href="use_bind.html">Binding Values to Arguments</a></li>
 <li class="toctree-l1"><a class="reference internal" href="use_choices.html">Set Choices Dynamically</a></li>
+<li class="toctree-l1"><a class="reference internal" href="additional_types.html">Additional types</a></li>
 <li class="toctree-l1"><a class="reference internal" href="containers.html">Container Variations</a></li>
 </ul>
 <ul>
@@ -61,20 +62,20 @@
 <li class="toctree-l1"><a class="reference internal" href="vispy.html">Vispy Canvas</a></li>
 </ul>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="freewidget.html">Convert QtWidgets into a Magic Widget</a></li>
 <li class="toctree-l1"><a class="reference internal" href="keybinding.html">Define Custom Keybindings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="customize_macro.html">Customize Macro Recording</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Inherit Magic Class</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#the-order-of-widget">The Order of Widget</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#field-objects-in-the-base-class">Field Objects in the Base Class</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#bind-methods">1. Bind methods</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#define-callbacks">2. Define Callbacks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#define-callbacks">1. Define Callbacks</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#nesting-magic-classes">Nesting Magic Classes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#predefinition-of-methods-and-fields">Predefinition of Methods and Fields</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="special_methods.html">Special Attributes in Magic class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API References</a></li>
 </ul>
 
@@ -164,7 +165,8 @@ function to a field, you must re-define fields in the subclasses.</p>
 <div class="twocol docutils container">
 <div class="leftside docutils container">
 <p><em>This will not work</em></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">Bound</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span> <span class="nn">magicclass.types</span> <span class="kn">import</span> <span class="n">Bound</span>
 
 <span class="k">class</span> <span class="nc">Base</span><span class="p">:</span>
     <span class="n">x</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
@@ -178,7 +180,8 @@ function to a field, you must re-define fields in the subclasses.</p>
 </div>
 <div class="rightside docutils container">
 <p><em>This will work</em></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">Bound</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span> <span class="nn">magicclass.types</span> <span class="kn">import</span> <span class="n">Bound</span>
 
 <span class="k">class</span> <span class="nc">Base</span><span class="p">:</span>
     <span class="n">x</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
@@ -195,7 +198,7 @@ function to a field, you must re-define fields in the subclasses.</p>
 </div>
 </section>
 <section id="define-callbacks">
-<h3>2. Define Callbacks<a class="headerlink" href="#define-callbacks" title="Permalink to this headline">¶</a></h3>
+<h3>1. Define Callbacks<a class="headerlink" href="#define-callbacks" title="Permalink to this headline">¶</a></h3>
 <div class="twocol docutils container">
 <div class="leftside docutils container">
 <p><em>This will not work</em></p>
@@ -303,7 +306,7 @@ define the real widgets in the subclasses.</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="customize_macro.html" class="btn btn-neutral float-left" title="Customize Macro Recording" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="special_methods.html" class="btn btn-neutral float-right" title="Special Attributes in Magic class" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="api.html" class="btn btn-neutral float-right" title="API References" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

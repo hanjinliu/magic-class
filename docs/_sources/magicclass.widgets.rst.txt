@@ -28,6 +28,14 @@ magicclass.widgets.containers module
    :undoc-members:
    :show-inheritance:
 
+magicclass.widgets.logger module
+--------------------------------
+
+.. automodule:: magicclass.widgets.logger
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 magicclass.widgets.misc module
 ------------------------------
 

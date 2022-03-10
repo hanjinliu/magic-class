@@ -81,7 +81,8 @@ function to a field, you must re-define fields in the subclasses.
 
         .. code-block:: python
 
-            from magicclass import magicclass, field, Bound
+            from magicclass import magicclass, field
+            from magicclass.types import Bound
 
             class Base:
                 x = field(int)
@@ -97,7 +98,8 @@ function to a field, you must re-define fields in the subclasses.
 
         .. code-block:: python
 
-            from magicclass import magicclass, field, Bound
+            from magicclass import magicclass, field
+            from magicclass.types import Bound
 
             class Base:
                 x = field(int)
@@ -109,7 +111,7 @@ function to a field, you must re-define fields in the subclasses.
                 def func(self, value: Bound[x]):
                     """Do something"""
 
-2. Define Callbacks
+1. Define Callbacks
 -------------------
 
 .. container:: twocol

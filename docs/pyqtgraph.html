@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Use PyQtGraph Canvas &mdash; magic-class 0.5.22 documentation</title>
+  <title>Use PyQtGraph Canvas &mdash; magic-class 0.6.0.dev1 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/columns.css" type="text/css" />
@@ -31,7 +31,7 @@
             <a href="index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.22
+                0.6.0.dev1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -53,6 +53,7 @@
 <li class="toctree-l1"><a class="reference internal" href="use_wraps.html">Call Parent Methods from its Child</a></li>
 <li class="toctree-l1"><a class="reference internal" href="use_bind.html">Binding Values to Arguments</a></li>
 <li class="toctree-l1"><a class="reference internal" href="use_choices.html">Set Choices Dynamically</a></li>
+<li class="toctree-l1"><a class="reference internal" href="additional_types.html">Additional types</a></li>
 <li class="toctree-l1"><a class="reference internal" href="containers.html">Container Variations</a></li>
 </ul>
 <ul class="current">
@@ -61,10 +62,10 @@
 <li class="toctree-l1"><a class="reference internal" href="vispy.html">Vispy Canvas</a></li>
 </ul>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="freewidget.html">Convert QtWidgets into a Magic Widget</a></li>
 <li class="toctree-l1"><a class="reference internal" href="keybinding.html">Define Custom Keybindings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="customize_macro.html">Customize Macro Recording</a></li>
 <li class="toctree-l1"><a class="reference internal" href="class_inheritance.html">Inherit Magic Class</a></li>
-<li class="toctree-l1"><a class="reference internal" href="special_methods.html">Special Attributes in Magic class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API References</a></li>
 </ul>
 
@@ -94,10 +95,18 @@
 
   <section id="use-pyqtgraph-canvas">
 <h1>Use PyQtGraph Canvas<a class="headerlink" href="#use-pyqtgraph-canvas" title="Permalink to this headline">¶</a></h1>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass.ext.pyqtgraph</span> <span class="kn">import</span> <span class="n">QtPlotCanvas</span>
-<span class="kn">from</span> <span class="nn">magicclass.ext.pyqtgraph</span> <span class="kn">import</span> <span class="n">QtImageCanvas</span>
-<span class="kn">from</span> <span class="nn">magicclass.ext.pyqtgraph</span> <span class="kn">import</span> <span class="n">QtMultiPlotCanvas</span>
-<span class="kn">from</span> <span class="nn">magicclass.ext.pyqtgraph</span> <span class="kn">import</span> <span class="n">QtMultiPlotCanvas</span>
+<p>PyQtGraph is a data visualization library based on Qt. It provides variety of plot
+canvases and plot items that can be operated in a interactive way. The
+<code class="docutils literal notranslate"><span class="pre">magicclass.ext.pyqtgraph</span></code> submodule tries to integrate many of the <code class="docutils literal notranslate"><span class="pre">pyqtgraph</span></code>
+widgets to provide a consistent, <code class="docutils literal notranslate"><span class="pre">magicgui</span></code>-like API.</p>
+<p>You have to install <code class="docutils literal notranslate"><span class="pre">pyqtgraph</span></code> in advance.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">pyqtgraph</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass.ext.pyqtgraph</span> <span class="kn">import</span> <span class="n">QtPlotCanvas</span>  <span class="c1"># 1-D plot, like plt.plot</span>
+<span class="kn">from</span> <span class="nn">magicclass.ext.pyqtgraph</span> <span class="kn">import</span> <span class="n">QtImageCanvas</span>  <span class="c1"># 2-D image, like plt.imshow</span>
+<span class="kn">from</span> <span class="nn">magicclass.ext.pyqtgraph</span> <span class="kn">import</span> <span class="n">QtMultiPlotCanvas</span>  <span class="c1"># multiple QtPlotCanvas</span>
+<span class="kn">from</span> <span class="nn">magicclass.ext.pyqtgraph</span> <span class="kn">import</span> <span class="n">QtMultiImageCanvas</span>  <span class="c1"># multiple QtImageCanvas</span>
 </pre></div>
 </div>
 </section>

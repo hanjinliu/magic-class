@@ -56,6 +56,7 @@ and tidiness of the source code.
    use_wraps
    use_bind
    use_choices
+   additional_types
    containers
 
 Data Visualization
@@ -80,10 +81,10 @@ Learn more about ``magic-class`` here!
 .. toctree::
    :maxdepth: 1
 
+   freewidget
    keybinding
    customize_macro
    class_inheritance
-   special_methods
    api
 
 Indices and tables

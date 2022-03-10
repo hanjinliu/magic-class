@@ -256,6 +256,28 @@ the design of button itself. ``magicclass`` uses ``set_design`` decorator to do 
 
 ``set_design`` can take properties of ``PushButton`` as arguments.
 
+Post Initialization
+-------------------
+
+Widgets are constructed only after ``__init__`` is called. To change widget designs or geometries,
+you should not call those methods in ``__init__`` because they are not constructed yet.
+
+Similar to the builtin ``dataclass``, ``__post_init__`` method is used as the post initalization
+procedure. It is called after widget is completely built.
+
+.. code-block:: python
+
+    @magicclass
+    class Main:
+        def __init__(self):
+            # self["func"] <-- this is not correct. Button "func" is not ready!
+            ...
+
+        def __post_init__(self):
+            self["func"].min_height = 100
+
+        def func(self): ...
+
 
 Code Completion
 ---------------

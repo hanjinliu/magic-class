@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vispy Canvas &mdash; magic-class 0.6.0.dev1 documentation</title>
+  <title>Additional types &mdash; magic-class 0.6.0.dev1 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/columns.css" type="text/css" />
@@ -19,8 +19,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Convert QtWidgets into a Magic Widget" href="freewidget.html" />
-    <link rel="prev" title="Use PyQtGraph Canvas" href="pyqtgraph.html" />
+    <link rel="next" title="Container Variations" href="containers.html" />
+    <link rel="prev" title="Set Choices Dynamically" href="use_choices.html" />
 </head>
 
 <body class="wy-body-for-nav">
@@ -49,17 +49,20 @@
 <li class="toctree-l1"><a class="reference internal" href="nest.html">Nest magic-classes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="use_field.html">Use Fields in magic-class</a></li>
 </ul>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="use_wraps.html">Call Parent Methods from its Child</a></li>
 <li class="toctree-l1"><a class="reference internal" href="use_bind.html">Binding Values to Arguments</a></li>
 <li class="toctree-l1"><a class="reference internal" href="use_choices.html">Set Choices Dynamically</a></li>
-<li class="toctree-l1"><a class="reference internal" href="additional_types.html">Additional types</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Additional types</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#optional-types">Optional types</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="containers.html">Container Variations</a></li>
 </ul>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="matplotlib.html">Use Matplotlib Figure</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pyqtgraph.html">Use PyQtGraph Canvas</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Vispy Canvas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vispy.html">Vispy Canvas</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="freewidget.html">Convert QtWidgets into a Magic Widget</a></li>
@@ -83,9 +86,9 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Vispy Canvas</li>
+      <li>Additional types</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="_sources/vispy.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/additional_types.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -93,30 +96,22 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
 
-  <section id="vispy-canvas">
-<h1>Vispy Canvas<a class="headerlink" href="#vispy-canvas" title="Permalink to this headline">¶</a></h1>
-<p>Mostly work in progress but the basic image layer works.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass.ext.vispy</span> <span class="kn">import</span> <span class="n">Vispy3DCanvas</span>
-<span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">field</span>
-
-<span class="nd">@magicclass</span>
-<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
-    <span class="n">canvas</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">Vispy3DCanvas</span><span class="p">)</span>
-
-<span class="n">ui</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
-<span class="n">ui</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">add_image</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">((</span><span class="mi">60</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">60</span><span class="p">)))</span>
-<span class="n">ui</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+  <section id="additional-types">
+<h1>Additional types<a class="headerlink" href="#additional-types" title="Permalink to this headline">¶</a></h1>
+<section id="optional-types">
+<h2>Optional types<a class="headerlink" href="#optional-types" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass.types</span> <span class="kn">import</span> <span class="n">Optional</span>
 </pre></div>
 </div>
-<p>This widget is useful in providing a mini-viewer as a <code class="docutils literal notranslate"><span class="pre">napari</span></code> dock widget.</p>
+</section>
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="pyqtgraph.html" class="btn btn-neutral float-left" title="Use PyQtGraph Canvas" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="freewidget.html" class="btn btn-neutral float-right" title="Convert QtWidgets into a Magic Widget" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="use_choices.html" class="btn btn-neutral float-left" title="Set Choices Dynamically" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="containers.html" class="btn btn-neutral float-right" title="Container Variations" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

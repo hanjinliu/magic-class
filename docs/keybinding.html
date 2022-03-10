@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Define Custom Keybindings &mdash; magic-class 0.5.22 documentation</title>
+  <title>Define Custom Keybindings &mdash; magic-class 0.6.0.dev1 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/columns.css" type="text/css" />
@@ -20,7 +20,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Customize Macro Recording" href="customize_macro.html" />
-    <link rel="prev" title="Vispy Canvas" href="vispy.html" />
+    <link rel="prev" title="Convert QtWidgets into a Magic Widget" href="freewidget.html" />
 </head>
 
 <body class="wy-body-for-nav">
@@ -31,7 +31,7 @@
             <a href="index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.22
+                0.6.0.dev1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -53,6 +53,7 @@
 <li class="toctree-l1"><a class="reference internal" href="use_wraps.html">Call Parent Methods from its Child</a></li>
 <li class="toctree-l1"><a class="reference internal" href="use_bind.html">Binding Values to Arguments</a></li>
 <li class="toctree-l1"><a class="reference internal" href="use_choices.html">Set Choices Dynamically</a></li>
+<li class="toctree-l1"><a class="reference internal" href="additional_types.html">Additional types</a></li>
 <li class="toctree-l1"><a class="reference internal" href="containers.html">Container Variations</a></li>
 </ul>
 <ul>
@@ -61,6 +62,7 @@
 <li class="toctree-l1"><a class="reference internal" href="vispy.html">Vispy Canvas</a></li>
 </ul>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="freewidget.html">Convert QtWidgets into a Magic Widget</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Define Custom Keybindings</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#how-to-define-keybindings">How to Define Keybindings</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#decorate-private-functions">Decorate Private Functions</a></li>
@@ -69,7 +71,6 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="customize_macro.html">Customize Macro Recording</a></li>
 <li class="toctree-l1"><a class="reference internal" href="class_inheritance.html">Inherit Magic Class</a></li>
-<li class="toctree-l1"><a class="reference internal" href="special_methods.html">Special Attributes in Magic class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API References</a></li>
 </ul>
 
@@ -181,7 +182,8 @@ without clicking the spin box.</p>
 <p>In this example, shortcut description appears in the menu.</p>
 <img alt="_images/fig_6-1.png" src="_images/fig_6-1.png" />
 <p>You can also bind values of fields or other methods (see <a class="reference internal" href="use_bind.html"><span class="doc">Binding Values to Arguments</span></a>).</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">bind_key</span><span class="p">,</span> <span class="n">Bound</span><span class="p">,</span> <span class="n">field</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">bind_key</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span> <span class="nn">magicclass.types</span> <span class="kn">import</span> <span class="n">Bound</span>
 
 <span class="nd">@magicclass</span>
 <span class="k">class</span> <span class="nc">Main</span><span class="p">:</span>
@@ -200,7 +202,7 @@ is actually evoked inside Qt.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="vispy.html" class="btn btn-neutral float-left" title="Vispy Canvas" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="freewidget.html" class="btn btn-neutral float-left" title="Convert QtWidgets into a Magic Widget" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="customize_macro.html" class="btn btn-neutral float-right" title="Customize Macro Recording" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

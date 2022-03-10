@@ -3,9 +3,10 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.signature &mdash; magic-class 0.5.19.dev1 documentation</title>
+  <title>magicclass.signature &mdash; magic-class 0.6.0.dev1 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/columns.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -27,7 +28,7 @@
             <a href="../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.19.dev1
+                0.6.0.dev1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -39,16 +40,29 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../quick_start.html">Quick Start</a></li>
+</ul>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../../options.html">Options in magic-class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../nest.html">Nest magic-classes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../use_field.html">Use Fields in magic-class</a></li>
+</ul>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../../use_wraps.html">Call Parent Methods from its Child</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../use_bind.html">Binding Values to Arguments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../use_choices.html">Set Choices Dynamically</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../additional_types.html">Additional types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../containers.html">Container Variations</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../matplotlib.html">Use Matplotlib Figure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../pyqtgraph.html">Use PyQtGraph Canvas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../vispy.html">Vispy Canvas</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../freewidget.html">Convert QtWidgets into a Magic Widget</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../keybinding.html">Define Custom Keybindings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../customize_macro.html">Customize Macro Recording</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../containers.html">Container Variations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../class_inheritance.html">Inherit Magic Class</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../special_methods.html">Special Attributes in Magic class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api.html">API References</a></li>
 </ul>
 
@@ -78,13 +92,14 @@
 
   <h1>Source code for magicclass.signature</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
-<span class="kn">from</span> <span class="nn">magicgui.signature</span> <span class="kn">import</span> <span class="n">MagicSignature</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">TypedDict</span>
+<span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">_AnnotatedAlias</span>
+<span class="kn">from</span> <span class="nn">magicgui.signature</span> <span class="kn">import</span> <span class="n">MagicSignature</span><span class="p">,</span> <span class="n">split_annotated_type</span>
 <span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">FunctionGui</span>
 <span class="kn">from</span> <span class="nn">magicgui.types</span> <span class="kn">import</span> <span class="n">WidgetOptions</span>
 <span class="kn">import</span> <span class="nn">inspect</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TypedDict</span>
 <span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">get_signature</span>
+
 
 <div class="viewcode-block" id="AdditionalOptions"><a class="viewcode-back" href="../../magicclass.html#magicclass.signature.AdditionalOptions">[docs]</a><span class="k">class</span> <span class="nc">AdditionalOptions</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
     <span class="n">record</span><span class="p">:</span> <span class="nb">bool</span>
@@ -95,10 +110,12 @@
     <span class="n">gui</span><span class="p">:</span> <span class="nb">bool</span></div>
 
 
-<div class="viewcode-block" id="upgrade_signature"><a class="viewcode-back" href="../../magicclass.html#magicclass.signature.upgrade_signature">[docs]</a><span class="k">def</span> <span class="nf">upgrade_signature</span><span class="p">(</span><span class="n">func</span><span class="p">,</span>
-                      <span class="n">gui_options</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                      <span class="n">caller_options</span><span class="p">:</span> <span class="n">WidgetOptions</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                      <span class="n">additional_options</span><span class="p">:</span> <span class="n">AdditionalOptions</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="upgrade_signature"><a class="viewcode-back" href="../../magicclass.html#magicclass.signature.upgrade_signature">[docs]</a><span class="k">def</span> <span class="nf">upgrade_signature</span><span class="p">(</span>
+    <span class="n">func</span><span class="p">,</span>
+    <span class="n">gui_options</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">caller_options</span><span class="p">:</span> <span class="n">WidgetOptions</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">additional_options</span><span class="p">:</span> <span class="n">AdditionalOptions</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Upgrade function signature to MagicMethodSignature. The input function may have</span>
 <span class="sd">    a inspect.Signature or magicgui.signature.Magicsignature.</span>
@@ -128,6 +145,14 @@
     <span class="n">new_gui_options</span> <span class="o">=</span> <span class="n">MagicMethodSignature</span><span class="o">.</span><span class="n">get_gui_options</span><span class="p">(</span><span class="n">sig</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="n">new_gui_options</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">gui_options</span><span class="p">)</span>
 
+    <span class="c1"># Annotated options should also be updated</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">sig</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">annot</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">annotation</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">annot</span><span class="p">,</span> <span class="n">_AnnotatedAlias</span><span class="p">):</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">widget_option</span> <span class="o">=</span> <span class="n">split_annotated_type</span><span class="p">(</span><span class="n">annot</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">new_gui_options</span><span class="p">:</span>
+                <span class="n">widget_option</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">new_gui_options</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+
     <span class="n">new_caller_options</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">sig</span><span class="p">,</span> <span class="s2">&quot;caller_options&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="n">new_caller_options</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">caller_options</span><span class="p">)</span>
 
@@ -135,11 +160,11 @@
     <span class="n">new_additional_options</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">additional_options</span><span class="p">)</span>
 
     <span class="n">func</span><span class="o">.</span><span class="n">__signature__</span> <span class="o">=</span> <span class="n">MagicMethodSignature</span><span class="o">.</span><span class="n">from_signature</span><span class="p">(</span>
-            <span class="n">sig</span><span class="p">,</span>
-            <span class="n">gui_options</span><span class="o">=</span><span class="n">new_gui_options</span><span class="p">,</span>
-            <span class="n">caller_options</span><span class="o">=</span><span class="n">new_caller_options</span><span class="p">,</span>
-            <span class="n">additional_options</span><span class="o">=</span><span class="n">new_additional_options</span>
-            <span class="p">)</span>
+        <span class="n">sig</span><span class="p">,</span>
+        <span class="n">gui_options</span><span class="o">=</span><span class="n">new_gui_options</span><span class="p">,</span>
+        <span class="n">caller_options</span><span class="o">=</span><span class="n">new_caller_options</span><span class="p">,</span>
+        <span class="n">additional_options</span><span class="o">=</span><span class="n">new_additional_options</span><span class="p">,</span>
+    <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">func</span></div>
 
@@ -166,31 +191,45 @@
 <span class="sd">    This class also retains parameter options for PushButton itself, aside from the FunctionGui options</span>
 <span class="sd">    that will be needed when the button is pushed.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
-        <span class="n">return_annotation</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Signature</span><span class="o">.</span><span class="n">empty</span><span class="p">,</span>
+        <span class="n">return_annotation</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">Signature</span><span class="o">.</span><span class="n">empty</span><span class="p">,</span>
         <span class="n">gui_options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">caller_options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">additional_options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parameters</span><span class="o">=</span><span class="n">parameters</span><span class="p">,</span> <span class="n">return_annotation</span><span class="o">=</span><span class="n">return_annotation</span><span class="p">,</span> <span class="n">gui_options</span><span class="o">=</span><span class="n">gui_options</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">parameters</span><span class="o">=</span><span class="n">parameters</span><span class="p">,</span>
+            <span class="n">return_annotation</span><span class="o">=</span><span class="n">return_annotation</span><span class="p">,</span>
+            <span class="n">gui_options</span><span class="o">=</span><span class="n">gui_options</span><span class="p">,</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">caller_options</span> <span class="o">=</span> <span class="n">caller_options</span> <span class="ow">or</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">additional_options</span> <span class="o">=</span> <span class="n">additional_options</span> <span class="ow">or</span> <span class="p">{}</span>
 
 <div class="viewcode-block" id="MagicMethodSignature.from_signature"><a class="viewcode-back" href="../../magicclass.html#magicclass.signature.MagicMethodSignature.from_signature">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_signature</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">sig</span><span class="p">:</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Signature</span><span class="p">,</span> <span class="n">gui_options</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">caller_options</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                       <span class="n">additional_options</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicMethodSignature</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">from_signature</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">sig</span><span class="p">:</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Signature</span><span class="p">,</span>
+        <span class="n">gui_options</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">caller_options</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">additional_options</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicMethodSignature</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sig</span><span class="p">,</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Signature</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;&#39;sig&#39; must be an instance of &#39;inspect.Signature&#39;&quot;</span><span class="p">)</span>
 
         <span class="c1"># prepare parameters again</span>
-        <span class="n">parameters</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-                                           <span class="n">param</span><span class="o">.</span><span class="n">kind</span><span class="p">,</span>
-                                           <span class="n">default</span><span class="o">=</span><span class="n">param</span><span class="o">.</span><span class="n">default</span><span class="p">,</span>
-                                           <span class="n">annotation</span><span class="o">=</span><span class="n">param</span><span class="o">.</span><span class="n">annotation</span><span class="p">)</span>
-                      <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">sig</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="n">parameters</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">k</span><span class="p">:</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span>
+                <span class="n">param</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">param</span><span class="o">.</span><span class="n">kind</span><span class="p">,</span>
+                <span class="n">default</span><span class="o">=</span><span class="n">param</span><span class="o">.</span><span class="n">default</span><span class="p">,</span>
+                <span class="n">annotation</span><span class="o">=</span><span class="n">param</span><span class="o">.</span><span class="n">annotation</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">sig</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">}</span>
 
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
             <span class="nb">list</span><span class="p">(</span><span class="n">parameters</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span>
@@ -198,14 +237,20 @@
             <span class="n">gui_options</span><span class="o">=</span><span class="n">gui_options</span><span class="p">,</span>
             <span class="n">caller_options</span><span class="o">=</span><span class="n">caller_options</span><span class="p">,</span>
             <span class="n">additional_options</span><span class="o">=</span><span class="n">additional_options</span><span class="p">,</span>
-            <span class="p">)</span></div>
+        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="MagicMethodSignature.get_gui_options"><a class="viewcode-back" href="../../magicclass.html#magicclass.signature.MagicMethodSignature.get_gui_options">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">get_gui_options</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="bp">self</span><span class="p">:</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Signature</span><span class="o">|</span><span class="n">MagicSignature</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="ow">is</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Signature</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">{}</span>
+    <span class="k">def</span> <span class="nf">get_gui_options</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">sig</span><span class="p">:</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Signature</span> <span class="o">|</span> <span class="n">MagicSignature</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WidgetOptions</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">sig</span><span class="p">)</span> <span class="ow">is</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Signature</span><span class="p">:</span>
+            <span class="n">out</span><span class="p">:</span> <span class="n">WidgetOptions</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">sig</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">annot</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">annotation</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">annot</span><span class="p">,</span> <span class="n">_AnnotatedAlias</span><span class="p">):</span>
+                    <span class="n">_</span><span class="p">,</span> <span class="n">widget_option</span> <span class="o">=</span> <span class="n">split_annotated_type</span><span class="p">(</span><span class="n">annot</span><span class="p">)</span>
+                    <span class="n">out</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">widget_option</span>
+            <span class="k">return</span> <span class="n">out</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="o">.</span><span class="n">options</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span></div>
+            <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="o">.</span><span class="n">options</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">sig</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span></div>
 
 <div class="viewcode-block" id="MagicMethodSignature.replace"><a class="viewcode-back" href="../../magicclass.html#magicclass.signature.MagicMethodSignature.replace">[docs]</a>    <span class="k">def</span> <span class="nf">replace</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -224,11 +269,13 @@
         <span class="k">if</span> <span class="n">return_annotation</span> <span class="ow">is</span> <span class="n">_void</span><span class="p">:</span>
             <span class="n">return_annotation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">return_annotation</span>
         <span class="bp">cls</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span>
-                   <span class="n">return_annotation</span><span class="o">=</span><span class="n">return_annotation</span><span class="p">,</span>
-                   <span class="n">gui_options</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_gui_options</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span>
-                   <span class="n">caller_options</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">caller_options</span><span class="p">,</span>
-                   <span class="n">additional_options</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">additional_options</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">parameters</span><span class="p">,</span>
+            <span class="n">return_annotation</span><span class="o">=</span><span class="n">return_annotation</span><span class="p">,</span>
+            <span class="n">gui_options</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">get_gui_options</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span>
+            <span class="n">caller_options</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">caller_options</span><span class="p">,</span>
+            <span class="n">additional_options</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">additional_options</span><span class="p">,</span>
+        <span class="p">)</span></div></div>
 </pre></div>
 
            </div>
