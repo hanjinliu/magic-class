@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Generic, Iterable, MutableSequence, Any, TypeVar
 from typing_extensions import _AnnotatedAlias, get_args
 from psygnal import Signal
-from qtpy.QtWidgets import QTabWidget, QLineEdit, QMenu
+from qtpy.QtWidgets import QTabWidget, QLineEdit, QMenu, QVBoxLayout, QWidget
 from qtpy.QtGui import QTextCursor
 from qtpy.QtCore import Qt
 from magicgui.signature import split_annotated_type
@@ -15,6 +15,7 @@ from magicgui.widgets import (
     create_widget,
 )
 from magicgui.widgets._bases.value_widget import ValueWidget, UNSET
+from magicgui.backends._qtpy.widgets import QBaseWidget
 from .utils import FreeWidget, merge_super_sigs
 
 if TYPE_CHECKING:
@@ -390,7 +391,20 @@ class CheckButton(PushButton):
 _V = TypeVar("_V")
 
 
-class AbstractRangeSlider(FreeWidget, Generic[_V]):
+class QRangeSlider(QBaseWidget):
+    _qwidget: QLabeledRangeSlider
+
+    def _mgui_get_value(self):
+        pass
+
+    def _mgui_bind_change_callback(self, callback):
+        pass
+
+    def _mgui_set_value(self, rng):
+        pass
+
+
+class AbstractRangeSlider(ValueWidget, Generic[_V]):
     """
     A slider widget that represent a range like (2, 5).
 
@@ -409,7 +423,6 @@ class AbstractRangeSlider(FreeWidget, Generic[_V]):
         nullable: bool = True,
         **kwargs,
     ):
-        super().__init__(**kwargs)
         sl = self._construct_qt()
         sl.setMinimum(min)
         sl.setMaximum(max)
@@ -423,9 +436,15 @@ class AbstractRangeSlider(FreeWidget, Generic[_V]):
                 "Only horizontal and vertical orientation are currently supported"
             )
         self._slider = sl
-        if value is not UNSET:
-            self.value = value
-        self.set_widget(sl)
+        super().__init__(
+            value=value,
+            widget_type=QRangeSlider,
+            backend_kwargs={"qwidg": QWidget},
+            **kwargs,
+        )
+        self.native.setLayout(QVBoxLayout())
+        self.native.setContentsMargins(0, 0, 0, 0)
+        self.native.layout().addWidget(sl)
 
     @classmethod
     def _construct_qt(cls, *args, **kwargs) -> QLabeledRangeSlider:
@@ -477,8 +496,8 @@ class RangeSlider(AbstractRangeSlider[int]):
         from superqt import QLabeledRangeSlider
 
         sl = QLabeledRangeSlider()
-        sl.setHandleLabelPosition(QLabeledRangeSlider.LabelPosition.NoLabel)
-        sl.setEdgeLabelMode(QLabeledRangeSlider.EdgeLabelMode.LabelIsValue)
+        sl.setHandleLabelPosition(QLabeledRangeSlider.LabelPosition.LabelsAbove)
+        sl.setEdgeLabelMode(QLabeledRangeSlider.EdgeLabelMode.NoLabel)
         return sl
 
 
@@ -488,8 +507,8 @@ class FloatRangeSlider(AbstractRangeSlider[float]):
         from superqt import QLabeledDoubleRangeSlider
 
         sl = QLabeledDoubleRangeSlider()
-        sl.setHandleLabelPosition(QLabeledDoubleRangeSlider.LabelPosition.NoLabel)
-        sl.setEdgeLabelMode(QLabeledDoubleRangeSlider.EdgeLabelMode.LabelIsValue)
+        sl.setHandleLabelPosition(QLabeledDoubleRangeSlider.LabelPosition.LabelsAbove)
+        sl.setEdgeLabelMode(QLabeledDoubleRangeSlider.EdgeLabelMode.NoLabel)
         return sl
 
 
