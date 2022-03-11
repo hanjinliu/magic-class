@@ -3,19 +3,18 @@ import sys
 import logging
 from contextlib import contextmanager
 from qtpy import QtWidgets as QtW, QtGui
-from qtpy.QtCore import Signal
+from qtpy.QtCore import Signal, Qt
 from magicgui.backends._qtpy.widgets import QBaseWidget
 from magicgui.widgets import Widget
 import logging
 from typing import TYPE_CHECKING, Any, Union
-from ..utils import rst_to_html, screen_scale
+from ..utils import rst_to_html
 
 try:
     import numpy as np
     import matplotlib as mpl
     import matplotlib.pyplot as plt
     from matplotlib.backends.backend_agg import FigureCanvasAgg
-
     FigureCanvas = FigureCanvasAgg
     MATPLOTLIB_AVAILABLE = True
 
@@ -25,7 +24,9 @@ except ImportError:
 if TYPE_CHECKING:
     import numpy as np
     from matplotlib.figure import Figure
-
+    from PIL import Image
+    from pathlib import Path
+    
 # See https://stackoverflow.com/questions/28655198/best-way-to-display-logs-in-pyqt
 
 
@@ -44,6 +45,7 @@ class QtLogger(QtW.QTextEdit):
     def __init__(self, parent=None, max_history: int = 500):
         super().__init__(parent=parent)
         self.setReadOnly(True)
+        self.setWordWrapMode(QtGui.QTextOption.NoWrap)
         self._max_history = int(max_history)
         self._n_lines = 0
         self.process.connect(self.update)
@@ -212,7 +214,7 @@ class Logger(Widget, logging.Handler):
 
     def print_image(
         self,
-        arr: np.ndarray,
+        arr: str | Path | np.ndarray | Image,
         vmin=None,
         vmax=None,
         cmap=None,
@@ -220,6 +222,7 @@ class Logger(Widget, logging.Handler):
         width=None,
         height=None,
     ) -> None:
+        """Print an array as an image in the logger widget. Can be a path."""
         from magicgui import _mpl_image
 
         img = _mpl_image.Image()
@@ -230,15 +233,22 @@ class Logger(Widget, logging.Handler):
         img.set_norm(norm)
 
         val = img.make_image()
+        h, w, _ = val.shape
         image = QtGui.QImage(
-            val, val.shape[1], val.shape[0], QtGui.QImage.Format_RGBA8888
+            val, w, h, QtGui.QImage.Format_RGBA8888
         )
+        
+        # set scale of image
+        if width is None and height is None:
+            if w / 3 > h / 2:
+                width = 480
+            else:
+                height = 320
+        
         if width is None:
-            if height is None:
-                height = 300
-            image = image.scaledToHeight(height)
+            image = image.scaledToHeight(height, Qt.SmoothTransformation)
         else:
-            image = image.scaledToWidth(width)
+            image = image.scaledToWidth(width, Qt.SmoothTransformation)
 
         self.native.appendImage(image)
         return None
@@ -258,6 +268,8 @@ class Logger(Widget, logging.Handler):
         pass
 
     def close(self) -> None:
+        # This method collides between magicgui.widgets.Widget and logging.Handler.
+        # Since the close method in Widget is rarely used, here just call the latter.
         return logging.Handler.close(self)
 
     @contextmanager
@@ -270,16 +282,16 @@ class Logger(Widget, logging.Handler):
             sys.stdout = sys.__stdout__
 
     @contextmanager
-    def set_logger(self):
+    def set_logger(self, name=None):
         """A context manager for logging things in this widget."""
         try:
-            logging.getLogger().addHandler(self)
+            logging.getLogger(name).addHandler(self)
             yield self
         finally:
-            logging.getLogger().removeHandler(self)
+            logging.getLogger(name).removeHandler(self)
 
     @contextmanager
-    def set_plt(self, style=None):
+    def set_plt(self, style=None, rc_context: dict[str, Any] = {}):
         """A context manager for inline plot in the logger widget."""
         if not MATPLOTLIB_AVAILABLE:
             yield self
@@ -291,7 +303,7 @@ class Logger(Widget, logging.Handler):
         show._called = False
         try:
             mpl.use("module://magicclass.widgets.logger")
-            with plt.style.context(style):
+            with plt.style.context(style), plt.rc_context(rc_context):
                 yield self
         finally:
             if not show._called:
