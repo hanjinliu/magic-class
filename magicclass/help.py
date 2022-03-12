@@ -1,7 +1,7 @@
 from __future__ import annotations
 import weakref
 
-from magicgui.widgets import FunctionGui, Image, Slider
+from magicgui.widgets import FunctionGui, Image
 from magicgui.widgets._bases.widget import Widget
 from magicgui.widgets._function_gui import _docstring_to_html
 

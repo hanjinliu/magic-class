@@ -17,4 +17,10 @@ Mostly work in progress but the basic image layer works.
     ui.canvas.add_image(np.random.random((60, 60, 60)))
     ui.show()
 
+You have to programatically adjust parameters.
+
+.. code-block:: python
+
+    ui.canvas.layers[0].contrast_limits = (0.2, 0.7)
+
 This widget is useful in providing a mini-viewer as a ``napari`` dock widget.

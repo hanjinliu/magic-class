@@ -70,15 +70,19 @@ class QtLogger(QtW.QTextEdit):
         self._post_append()
 
     def appendText(self, text: str):
+        """Append text in the main thread."""
         self.process.emit((Output.TEXT, text))
 
     def appendHtml(self, html: str):
+        """Append HTML in the main thread."""
         self.process.emit((Output.HTML, html))
 
     def appendImage(self, qimage: QtGui.QImage):
+        """Append image in the main thread."""
         self.process.emit((Output.IMAGE, qimage))
 
     def _post_append(self):
+        """Check the history length."""
         if self._n_lines < self._max_history:
             self._n_lines += 1
             return None
@@ -142,7 +146,14 @@ class Logger(Widget, logging.Handler):
         with logger.set_logger():
             function_that_log_something()
 
-        logging.getLogger().addHandler(logger)
+        logging.getLogger(__name__).addHandler(logger)
+
+    Inline plot in the widget
+
+    .. code-block:: python
+
+        with logger.set_plt():
+            plt.plot(np.random.random(100))
 
     """
 
@@ -241,9 +252,9 @@ class Logger(Widget, logging.Handler):
         # set scale of image
         if width is None and height is None:
             if w / 3 > h / 2:
-                width = 480
+                width = 360
             else:
-                height = 320
+                height = 240
 
         if width is None:
             image = image.scaledToHeight(height, Qt.SmoothTransformation)
