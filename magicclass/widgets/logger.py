@@ -7,7 +7,7 @@ from qtpy.QtCore import Signal, Qt
 from magicgui.backends._qtpy.widgets import QBaseWidget
 from magicgui.widgets import Widget
 import logging
-from typing import TYPE_CHECKING, Any, Union
+from typing import TYPE_CHECKING, Any, Union, overload
 from ..utils import rst_to_html
 
 try:
@@ -15,6 +15,7 @@ try:
     import matplotlib as mpl
     import matplotlib.pyplot as plt
     from matplotlib.backends.backend_agg import FigureCanvasAgg
+
     FigureCanvas = FigureCanvasAgg
     MATPLOTLIB_AVAILABLE = True
 
@@ -26,7 +27,7 @@ if TYPE_CHECKING:
     from matplotlib.figure import Figure
     from PIL import Image
     from pathlib import Path
-    
+
 # See https://stackoverflow.com/questions/28655198/best-way-to-display-logs-in-pyqt
 
 
@@ -168,11 +169,12 @@ class Logger(Widget, logging.Handler):
         return None
 
     def print_html(self, html: str, end="<br></br>"):
-        """Print things in the end of the logger widget as a HTML string."""
+        """Print things in the end of the logger widget using HTML string."""
         self.native.appendHtml(html + end)
         return None
 
     def print_rst(self, rst: str, end="\n"):
+        """Print things in the end of the logger widget using rST string."""
         html = rst_to_html(rst, unescape=False)
         if end == "\n":
             end = "<br></br>"
@@ -234,17 +236,15 @@ class Logger(Widget, logging.Handler):
 
         val = img.make_image()
         h, w, _ = val.shape
-        image = QtGui.QImage(
-            val, w, h, QtGui.QImage.Format_RGBA8888
-        )
-        
+        image = QtGui.QImage(val, w, h, QtGui.QImage.Format_RGBA8888)
+
         # set scale of image
         if width is None and height is None:
             if w / 3 > h / 2:
                 width = 480
             else:
                 height = 320
-        
+
         if width is None:
             image = image.scaledToHeight(height, Qt.SmoothTransformation)
         else:
@@ -254,6 +254,7 @@ class Logger(Widget, logging.Handler):
         return None
 
     def print_figure(self, fig: Figure) -> None:
+        """Print matplotlib Figure object like inline plot."""
         fig.canvas.draw()
         data = np.asarray(fig.canvas.renderer.buffer_rgba(), dtype=np.uint8)
         self.print_image(data)
@@ -290,15 +291,31 @@ class Logger(Widget, logging.Handler):
         finally:
             logging.getLogger(name).removeHandler(self)
 
+    @overload
+    def set_plt(self, style: str | None) -> None:
+        ...
+
+    @overload
+    def set_plt(self, rc_context: dict[str, Any]) -> None:
+        ...
+
     @contextmanager
-    def set_plt(self, style=None, rc_context: dict[str, Any] = {}):
+    def set_plt(self, style: str = None, rc_context: dict[str, Any] = {}):
         """A context manager for inline plot in the logger widget."""
         if not MATPLOTLIB_AVAILABLE:
             yield self
             return None
         self.__class__.current_logger = self
+
+        if isinstance(style, dict):
+            if rc_context:
+                raise TypeError("style must be str.")
+            rc_context = style
+            style = None
+
         if style is None:
             style = self._get_proper_plt_style()
+
         backend = mpl.get_backend()
         show._called = False
         try:

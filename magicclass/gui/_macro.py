@@ -15,9 +15,7 @@ if TYPE_CHECKING:
 
 
 class MacroEdit(FreeWidget):
-    """
-    A text edit embeded with a custom menu bar.
-    """
+    """A text edit embeded with a custom menu bar."""
 
     count = 0
 
@@ -313,6 +311,12 @@ class GuiMacro(Macro):
             now = datetime.now()
             self.append(Expr(Head.comment, [now.strftime("%Y/%m/%d %H:%M:%S")]))
         return self._widget
+
+    def copy(self) -> Macro:
+        """GuiMacro does not support deepcopy (and apparently _widget should not be copied)."""
+        from copy import deepcopy
+
+        return Macro(deepcopy(self.args), flags=self._flags)
 
     def _update_widget(self, expr=None):
         if self.widget.synchronize:
