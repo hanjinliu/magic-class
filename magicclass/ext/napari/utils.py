@@ -9,11 +9,11 @@ else:
 from functools import wraps
 from ...gui._base import BaseGui
 from ...gui import MenuGui, ToolBarGui, ClassGui
+from napari.qt.threading import GeneratorWorker, FunctionWorker
 
 
 if TYPE_CHECKING:
     import napari
-    from napari.qt.threading import GeneratorWorker, FunctionWorker
 
 
 def to_napari(
