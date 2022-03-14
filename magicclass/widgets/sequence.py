@@ -29,6 +29,7 @@ class ListEdit(Container):
         self,
         value: Iterable[_V] | _Unset = UNSET,
         layout: str = "horizontal",
+        labels: bool = False,
         nullable: bool = False,
         options: WidgetOptions = None,
         **kwargs,
@@ -37,7 +38,7 @@ class ListEdit(Container):
         self._nullable = nullable
         self._child_options = options or {}
 
-        super().__init__(layout=layout, labels=False, **kwargs)
+        super().__init__(layout=layout, labels=labels, **kwargs)
         self.margins = (0, 0, 0, 0)
 
         if not isinstance(value, _Unset):
@@ -122,6 +123,7 @@ class ListEdit(Container):
         widget = create_widget(
             annotation=self._args_type,
             name=f"value_{i}",
+            label=f"({i})",
             options=self._child_options,
         )
 
@@ -143,6 +145,16 @@ class ListEdit(Container):
             self.pop(-3)
         except IndexError:
             pass
+
+    @property
+    def buttons_visible(self) -> bool:
+        """Toggle visibility of +/- buttons."""
+        return self.btn_plus.visible
+
+    @buttons_visible.setter
+    def buttons_visible(self, v: bool) -> None:
+        self.btn_plus.visible = v
+        self.btn_minus.visible = v
 
     @property
     def value(self) -> list:
