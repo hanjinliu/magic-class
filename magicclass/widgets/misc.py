@@ -445,7 +445,7 @@ class FloatEdit(LineEdit):
 _V = TypeVar("_V")
 
 
-class QRangeSlider(QBaseValueWidget):
+class QRangeSlider(QBaseWidget):
     _qwidget: QLabeledRangeSlider
 
     def _mgui_get_value(self):

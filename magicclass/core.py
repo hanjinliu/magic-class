@@ -525,6 +525,10 @@ def get_function_gui(ui: MagicTemplate, name: str) -> FunctionGuiPlus:
     return mgui
 
 
+# def capitalize(cls: type[MagicTemplate]):
+#     ...
+
+
 class Parameters:
     def __init__(self):
         self.__name__ = self.__class__.__name__
