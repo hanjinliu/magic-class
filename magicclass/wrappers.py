@@ -4,8 +4,7 @@ import inspect
 from typing import Callable, Iterable, Iterator, Union, TYPE_CHECKING, TypeVar, overload
 from typing_extensions import ParamSpec
 import warnings
-from magicgui.widgets import Label
-from macrokit import Expr
+from .utils import show_messagebox
 
 from .types import Color
 from .signature import upgrade_signature
@@ -253,7 +252,11 @@ def bind_key(*key) -> Callable[[Callable[P, R]], Callable[P, R]]:
     return wrapper
 
 
-def confirm(text: str, call_button_text: str = "OK"):
+class Canceled(RuntimeError):
+    """Raised when a function is canceled"""
+
+
+def confirm(text: str):
     """
     Confirm if it is OK to run function in GUI. Useful when the function will irreversibly
     delete or update something in GUI.
@@ -262,8 +265,6 @@ def confirm(text: str, call_button_text: str = "OK"):
     ----------
     text : str
         Confirmation text, such as "Are you sure to run this function?".
-    call_button_text : str, default is "OK"
-        Text shown on the call button.
     """
     if not isinstance(text, str):
         raise TypeError(
@@ -271,27 +272,20 @@ def confirm(text: str, call_button_text: str = "OK"):
         )
 
     def _decorator(method: Callable[P, R]) -> Callable[P, R]:
-        sig = inspect.signature(method)
-        if len(sig.parameters) != 1:
-            raise ValueError(
-                "Currently 'confirm' only supports methods that take no argument."
-            )
+        _name = method.__name__
 
-        @do_not_record
-        @set_options(
-            call_button=call_button_text,
-            labels=False,
-            label={"widget_type": Label, "value": text},
-        )
-        def _method(self: BaseGui, label=None):
-            out = method(self)
-            expr = Expr.parse_method(self, method, (), {})
-            self.macro.append(expr)
-            return out
+        @wraps(method)
+        def _method(self: BaseGui, *args, **kwargs):
+            if self[_name].running:
+                ok = show_messagebox(
+                    mode="question", title="Confirmation", text=text, parent=self.native
+                )
+                if not ok:
+                    raise Canceled("Canceled")
+            return method(self, *args, **kwargs)
 
-        _method.__name__ = method.__name__
-        _method.__qualname__ = method.__qualname__
-        _method.__module__ = method.__module__
+        if hasattr(method, "__signature__"):
+            _method.__signature__ = method.__signature__
         return _method
 
     return _decorator
