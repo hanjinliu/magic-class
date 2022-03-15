@@ -14,8 +14,14 @@ from magicgui.widgets import (
     CheckBox,
     create_widget,
 )
+from magicgui.application import use_app
+from magicgui.widgets import LineEdit
 from magicgui.widgets._bases.value_widget import ValueWidget, UNSET
-from magicgui.backends._qtpy.widgets import QBaseWidget
+from magicgui.backends._qtpy.widgets import (
+    QBaseWidget,
+    QBaseValueWidget,
+    LineEdit as BaseLineEdit,
+)
 from .utils import FreeWidget, merge_super_sigs
 
 if TYPE_CHECKING:
@@ -388,10 +394,58 @@ class CheckButton(PushButton):
         self.native.setCheckable(True)
 
 
+class QIntEdit(BaseLineEdit):
+    _qwidget: QLineEdit
+
+    def _post_get_hook(self, value):
+        if value == "":
+            return None
+        return int(value)
+
+    def _pre_set_hook(self, value):
+        return str(value)
+
+
+class IntEdit(LineEdit):
+    def __init__(self, value=UNSET, **kwargs):
+        app = use_app()
+        assert app.native
+        ValueWidget.__init__(
+            self,
+            value=value,
+            widget_type=QIntEdit,
+            **kwargs,
+        )
+
+
+class QFloatEdit(BaseLineEdit):
+    _qwidget: QLineEdit
+
+    def _post_get_hook(self, value):
+        if value == "":
+            return None
+        return float(value)
+
+    def _pre_set_hook(self, value):
+        return str(value)
+
+
+class FloatEdit(LineEdit):
+    def __init__(self, value=UNSET, **kwargs):
+        app = use_app()
+        assert app.native
+        ValueWidget.__init__(
+            self,
+            value=value,
+            widget_type=QFloatEdit,
+            **kwargs,
+        )
+
+
 _V = TypeVar("_V")
 
 
-class QRangeSlider(QBaseWidget):
+class QRangeSlider(QBaseValueWidget):
     _qwidget: QLabeledRangeSlider
 
     def _mgui_get_value(self):

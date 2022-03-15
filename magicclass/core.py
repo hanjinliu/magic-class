@@ -513,12 +513,16 @@ def get_function_gui(ui: MagicTemplate, name: str) -> FunctionGuiPlus:
     FunctionGuiPlus
         FunctionGui object.
     """
+    func = getattr(ui, name)
     widget = ui[name]
+
     if not hasattr(widget, "mgui"):
         raise TypeError(f"Widget {widget} does not have FunctionGui inside it.")
-    if widget.mgui is None:
-        widget.changed()
-    return widget.mgui
+
+    from .gui._base import _build_mgui
+
+    mgui = _build_mgui(widget, func, ui)
+    return mgui
 
 
 class Parameters:
