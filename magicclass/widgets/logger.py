@@ -2,8 +2,7 @@ from __future__ import annotations
 import sys
 import logging
 from contextlib import contextmanager
-from qtpy import QtWidgets as QtW, QtGui
-from qtpy.QtCore import Signal, Qt
+from qtpy import QtWidgets as QtW, QtGui, QtCore
 from magicgui.backends._qtpy.widgets import QBaseWidget
 from magicgui.widgets import Widget
 import logging
@@ -41,7 +40,7 @@ Printable = Union[str, QtGui.QImage]
 
 
 class QtLogger(QtW.QTextEdit):
-    process = Signal(tuple)
+    process = QtCore.Signal(tuple)
 
     def __init__(self, parent=None, max_history: int = 500):
         super().__init__(parent=parent)
@@ -50,6 +49,13 @@ class QtLogger(QtW.QTextEdit):
         self._max_history = int(max_history)
         self._n_lines = 0
         self.process.connect(self.update)
+
+        self.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+
+        @self.customContextMenuRequested.connect
+        def rightClickContextMenu(point):
+            menu = self._make_contextmenu(point)
+            menu.exec_(self.mapToGlobal(point))
 
     def update(self, output: tuple[int, Printable]):
         output_type, obj = output
@@ -98,6 +104,41 @@ class QtLogger(QtW.QTextEdit):
 
     def _get_background_color(self) -> tuple[int, int, int, int]:
         return self.palette().color(self.backgroundRole()).getRgb()
+
+    # These methods below are modified from qtconsole.rich_jupyter_widget.py
+
+    def _make_contextmenu(self, pos):
+        """Reimplemented to return a custom context menu for images."""
+        format = self.cursorForPosition(pos).charFormat()
+        name = format.stringProperty(QtGui.QTextFormat.ImageName)
+        if name:
+            menu = QtW.QMenu(self)
+
+            menu.addAction("Copy Image", lambda: self._copy_image(name))
+            menu.addAction("Save Image As...", lambda: self._save_image(name))
+            menu.addSeparator()
+            return menu
+
+    def _copy_image(self, name):
+        image = self._get_image(name)
+        QtW.QApplication.clipboard().setImage(image)
+
+    def _save_image(self, name, format="PNG"):
+        """Shows a save dialog for the ImageResource with 'name'."""
+        dialog = QtW.QFileDialog(self, "Save Image")
+        dialog.setAcceptMode(QtW.QFileDialog.AcceptSave)
+        dialog.setDefaultSuffix(format.lower())
+        dialog.setNameFilter(f"{format} file (*.{format.lower()})")
+        if dialog.exec_():
+            filename = dialog.selectedFiles()[0]
+            image = self._get_image(name)
+            image.save(filename, format)
+
+    def _get_image(self, name):
+        """Returns the QImage stored as the ImageResource with 'name'."""
+        document = self.document()
+        image = document.resource(QtGui.QTextDocument.ImageResource, QtCore.QUrl(name))
+        return image
 
 
 class Logger(Widget, logging.Handler):
@@ -257,9 +298,9 @@ class Logger(Widget, logging.Handler):
                 height = 240
 
         if width is None:
-            image = image.scaledToHeight(height, Qt.SmoothTransformation)
+            image = image.scaledToHeight(height, QtCore.Qt.SmoothTransformation)
         else:
-            image = image.scaledToWidth(width, Qt.SmoothTransformation)
+            image = image.scaledToWidth(width, QtCore.Qt.SmoothTransformation)
 
         self.native.appendImage(image)
         return None
@@ -342,7 +383,7 @@ class Logger(Widget, logging.Handler):
 
     def _get_proper_plt_style(self) -> dict[str, Any]:
         color = self._widget._qwidget._get_background_color()[:3]
-        is_dark = sum(color) < 382.5
+        is_dark = sum(color) < 382.5  # 255*3/2
         if is_dark:
             params = plt.style.library["dark_background"]
         else:
@@ -352,7 +393,7 @@ class Logger(Widget, logging.Handler):
                 rcparams = plt.rcParams
                 for key in keys:
                     params[key] = rcparams[key]
-        bg = "#00000000"
+        bg = _tuple_to_color(color)
         params["figure.facecolor"] = bg
         params["axes.facecolor"] = bg
         return params
@@ -372,3 +413,7 @@ def show(close=True, block=None):
         show._called = True
         if close and Gcf.get_all_fig_managers():
             plt.close("all")
+
+
+def _tuple_to_color(tup: tuple[int, int, int]):
+    return "#" + "".join(hex(int(t))[2:] for t in tup)
