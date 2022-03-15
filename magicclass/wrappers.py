@@ -256,38 +256,108 @@ class Canceled(RuntimeError):
     """Raised when a function is canceled"""
 
 
-def confirm(text: str):
+@overload
+def confirm(
+    *,
+    text: str | None,
+    condition: Callable[P, bool] | str | None,
+) -> Callable[[Callable[P, R]], Callable[P, R]]:
+    ...
+
+
+@overload
+def confirm(
+    f: Callable[P, R],
+    *,
+    text: str | None,
+    condition: Callable[P, bool] | str | None,
+) -> Callable[P, R]:
+    ...
+
+
+def confirm(
+    f: Callable[P, R] | None = None,
+    *,
+    text: str | None = None,
+    condition: Callable[[BaseGui], bool] | str = None,
+):
     """
-    Confirm if it is OK to run function in GUI. Useful when the function will irreversibly
-    delete or update something in GUI.
+    Confirm if it is OK to run function in GUI.
+
+    Useful when the function will irreversibly delete or update something in GUI.
+    Confirmation will be executed only when function is called in GUI.
 
     Parameters
     ----------
-    text : str
-        Confirmation text, such as "Are you sure to run this function?".
+    text : str, optional
+        Confirmation message, such as "Are you sure to run this function?". Format
+        string can also be used here, in which case arguments will be passed. For
+        instance, to execute confirmation on function ``f(a, b)``, you can use
+        format string ``"Running with a = {a} and b = {b}"`` then confirmation
+        message will be "Running with a = 1, b = 2" if ``f(1, 2)`` is called.
+        By default, message will be "Do you want to run {name}?" where "name" is
+        the function name.
+    condition : callable or str, optional
+        Condition of when confirmation will show up. If callable, it must accept
+        ``condition(self)`` and return boolean object. If string, it must be
+        evaluable as literal with input arguments as local namespace. For instance,
+        function ``f(a, b)`` decorated by ``confirm(condition="a < b + 1")`` will
+        evaluate ``a < b + 1`` to check if confirmation is needed. Always true by
+        default.
     """
-    if not isinstance(text, str):
-        raise TypeError(
-            f"The first argument of 'confirm' must be a str bug got {type(text)}"
-        )
+    if condition is None:
+        condition = lambda x: True
 
     def _decorator(method: Callable[P, R]) -> Callable[P, R]:
         _name = method.__name__
 
+        # set text
+        if text is None:
+            _text = f"Do you want to run {_name}?"
+        elif isinstance(text, str):
+            _text = text
+        else:
+            raise TypeError(
+                f"The first argument of 'confirm' must be a str but got {type(text)}."
+            )
+
+        sig = inspect.signature(method)
+
         @wraps(method)
         def _method(self: BaseGui, *args, **kwargs):
             if self[_name].running:
-                ok = show_messagebox(
-                    mode="question", title="Confirmation", text=text, parent=self.native
-                )
-                if not ok:
-                    raise Canceled("Canceled")
+                arguments = sig.bind(self, *args, **kwargs)
+                arguments.apply_defaults()
+                all_args = arguments.arguments
+                need_confirmation = False
+                if isinstance(condition, str):
+                    need_confirmation = eval(condition, {}, all_args)
+                elif callable(condition):
+                    need_confirmation = condition(self)
+                else:
+                    warnings.warn(
+                        f"Condition {condition} should be callable or string but got type "
+                        f"{type(condition)}. No confirmation was executed.",
+                        UserWarning,
+                    )
+                if need_confirmation:
+                    ok = show_messagebox(
+                        mode="question",
+                        title="Confirmation",
+                        text=_text.format(**all_args),
+                        parent=self.native,
+                    )
+                    if not ok:
+                        raise Canceled("Canceled")
+
             return method(self, *args, **kwargs)
 
         if hasattr(method, "__signature__"):
             _method.__signature__ = method.__signature__
         return _method
 
+    if f is not None:
+        _decorator(f)
     return _decorator
 
 

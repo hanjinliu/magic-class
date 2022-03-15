@@ -1,5 +1,5 @@
 from types import MethodType
-from magicclass import magicclass, set_options, set_design, do_not_record, confirm, nogui
+from magicclass import magicclass, set_options, set_design, do_not_record, nogui
 from magicgui.widgets import PushButton
 
 def test_set_options():
@@ -81,34 +81,6 @@ def test_do_not_record():
     ui = A()
     ui["f"].changed()
     assert len(ui.macro) == 1
-
-def test_confirm():
-    @magicclass
-    class A:
-        @magicclass
-        class B:
-            def g(self): ...
-
-        @confirm("really?")
-        def f(self):
-            self.a = 0
-
-        @B.wraps
-        @confirm("really?")
-        def g(self):
-            self.a = 0
-
-    ui = A()
-    ui["f"].changed()
-    assert ui["f"].mgui[0].value == "really?"
-    ui["f"].mgui[-1].changed()
-    assert str(ui.macro[-1]) == "ui.f()"
-
-
-    ui.B["g"].changed()
-    assert ui["g"].mgui[0].value == "really?"
-    ui["g"].mgui[-1].changed()
-    assert str(ui.macro[-1]) == "ui.g()"
 
 def test_nogui():
     @magicclass
