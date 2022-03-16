@@ -1,6 +1,6 @@
 from __future__ import annotations
 from macrokit import Symbol, Expr, Head, Macro, parse, symbol
-from typing import TYPE_CHECKING, Iterable
+from typing import TYPE_CHECKING, Iterable, overload
 from qtpy.QtWidgets import QMenuBar, QMenu, QAction
 from magicgui.widgets import FileEdit
 
@@ -316,6 +316,19 @@ class GuiMacro(Macro):
         from copy import deepcopy
 
         return Macro(deepcopy(self.args), flags=self._flags)
+
+    @overload
+    def __getitem__(self, key: int) -> Expr:
+        ...
+
+    @overload
+    def __getitem__(self, key: slice) -> Macro:
+        ...
+
+    def __getitem__(self, key):
+        if isinstance(key, slice):
+            return Macro(self._args, flags=self.flags)
+        return super().__getitem__(key)
 
     def _update_widget(self, expr=None):
         if self.widget.synchronize:
