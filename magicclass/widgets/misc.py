@@ -19,7 +19,6 @@ from magicgui.widgets import LineEdit
 from magicgui.widgets._bases.value_widget import ValueWidget, UNSET
 from magicgui.backends._qtpy.widgets import (
     QBaseWidget,
-    QBaseValueWidget,
     LineEdit as BaseLineEdit,
 )
 from .utils import FreeWidget, merge_super_sigs
@@ -126,13 +125,13 @@ class Figure(FreeWidget):
         self,
         nrows: int = 1,
         ncols: int = 1,
-        figsize: tuple[int, int] = (4, 3),
+        figsize: tuple[float, float] = (4., 3.),
         style=None,
         **kwargs,
     ):
         import matplotlib as mpl
         import matplotlib.pyplot as plt
-        from matplotlib.backends.backend_qt5agg import FigureCanvas
+        from ._mpl_canvas import InteractiveFigureCanvas
 
         backend = mpl.get_backend()
         try:
@@ -146,7 +145,7 @@ class Figure(FreeWidget):
             mpl.use(backend)
 
         super().__init__(**kwargs)
-        canvas = FigureCanvas(fig)
+        canvas = InteractiveFigureCanvas(fig)
         self.set_widget(canvas)
         self.figure = fig
         self.min_height = 40
