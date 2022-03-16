@@ -70,8 +70,7 @@ class MacroEdit(FreeWidget):
                 # substitute :ui and :viewer to the actual objects
                 code = parse(self.textedit.value)
                 _ui = Symbol.var("ui")
-                _viewer = symbol(parent.parent_viewer)
-                code.eval({_ui: parent, _viewer: parent.parent_viewer})
+                code.eval({_ui: parent})
             except Exception as e:
                 show_messagebox(
                     "error", title=e.__class__.__name__, text=str(e), parent=self.native

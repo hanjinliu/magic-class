@@ -1,4 +1,4 @@
-__version__ = "0.6.1.dev0"
+__version__ = "0.6.1.dev1"
 
 from .core import (
     magicclass,
@@ -8,6 +8,7 @@ from .core import (
     Parameters,
     build_help,
     get_function_gui,
+    redo,
 )
 
 from .wrappers import (

@@ -529,6 +529,12 @@ def get_function_gui(ui: MagicTemplate, name: str) -> FunctionGuiPlus:
 #     ...
 
 
+def redo(ui: MagicTemplate, index: int = -1) -> None:
+    line = ui.macro[index]
+    line.eval({"ui": ui})
+    return None
+
+
 class Parameters:
     def __init__(self):
         self.__name__ = self.__class__.__name__
