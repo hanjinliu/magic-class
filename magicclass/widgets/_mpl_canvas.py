@@ -23,18 +23,18 @@ class InteractiveFigureCanvas(FigureCanvas):
         self.lastx = None
         self.lasty = None
         self.last_axis: Axes | None = None
+        self._interactive = True
 
     def wheelEvent(self, event):
         """
         Resize figure by changing axes xlim and ylim. If there are subplots, only the subplot
         in which cursor exists will be resized.
         """
+        ax = self.last_axis
+        if not self._interactive or not ax:
+            return
         delta = event.angleDelta().y() / 120
         event = self.get_mouse_event(event)
-
-        ax = self.last_axis
-        if not ax:
-            return None
 
         x0, x1 = ax.get_xlim()
         y0, y1 = ax.get_ylim()
@@ -71,16 +71,16 @@ class InteractiveFigureCanvas(FigureCanvas):
         Translate axes focus while dragging. If there are subplots, only the subplot in which
         cursor exists will be translated.
         """
+        ax = self.last_axis
         if (
             self.pressed not in (MouseButton.LEFT, MouseButton.RIGHT)
             or self.lastx_pressed is None
+            or not self._interactive
+            or not ax
         ):
-            return None
+            return
 
         event = self.get_mouse_event(event)
-        ax = self.last_axis
-        if not ax:
-            return None
         x, y = event.xdata, event.ydata
 
         if x is None or y is None:
@@ -118,6 +118,8 @@ class InteractiveFigureCanvas(FigureCanvas):
         """
         Adjust layout upon dougle click.
         """
+        if not self._interactive:
+            return
         self.figure.tight_layout()
         self.figure.canvas.draw()
         return None

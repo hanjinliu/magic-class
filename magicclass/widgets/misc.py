@@ -125,7 +125,7 @@ class Figure(FreeWidget):
         self,
         nrows: int = 1,
         ncols: int = 1,
-        figsize: tuple[float, float] = (4., 3.),
+        figsize: tuple[float, float] = (4.0, 3.0),
         style=None,
         **kwargs,
     ):
@@ -144,8 +144,9 @@ class Figure(FreeWidget):
         finally:
             mpl.use(backend)
 
-        super().__init__(**kwargs)
         canvas = InteractiveFigureCanvas(fig)
+        self.canvas = canvas
+        super().__init__(**kwargs)
         self.set_widget(canvas)
         self.figure = fig
         self.min_height = 40
@@ -162,7 +163,18 @@ class Figure(FreeWidget):
     def draw(self):
         """Copy of ``plt.draw()``."""
         self.figure.tight_layout()
-        self.figure.canvas.draw()
+        self.canvas.draw()
+
+    @property
+    def enabled(self) -> bool:
+        """toggle interactivity of the figure canvas."""
+        return self.canvas._interactive
+
+    @enabled.setter
+    def enabled(self, v: bool):
+        self.canvas._interactive = bool(v)
+
+    interactive = enabled  # alias
 
     def clf(self):
         """Copy of ``plt.clf``."""
