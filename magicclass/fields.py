@@ -1,4 +1,5 @@
 from __future__ import annotations
+from contextlib import contextmanager
 from typing import Any, TYPE_CHECKING, Callable, TypeVar, overload, Generic, Union
 from typing_extensions import Literal
 from pathlib import Path
@@ -80,13 +81,19 @@ class MagicField(Field, Generic[_W, _V]):
             self.default, self.default_factory, self.metadata, self.name, self.record
         )
 
-    def _resolve_choices(self, obj: Any):
+    @contextmanager
+    def _resolve_choices(self, obj: Any) -> dict[str, Any]:
         """If method is given as choices, get generate method from it."""
         from .gui._base import _is_instance_method, _method_as_getter
 
-        _arg_choices = self.options["choices"]
+        _arg_choices = self.options.get("choices", None)
         if _is_instance_method(obj, _arg_choices):
             self.options["choices"] = _method_as_getter(obj, _arg_choices)
+        try:
+            yield self
+        finally:
+            if _arg_choices is not None:
+                self.options["choices"] = _arg_choices
 
     def get_widget(self, obj: Any) -> _W:
         """
@@ -98,10 +105,9 @@ class MagicField(Field, Generic[_W, _V]):
         if obj_id in self.guis.keys():
             widget = self.guis[obj_id]
         else:
-            if "choices" in self.options:
-                self._resolve_choices(obj)
-            widget = self.to_widget()
-            self.guis[obj_id] = widget
+            with self._resolve_choices(obj):
+                widget = self.to_widget()
+                self.guis[obj_id] = widget
             if self.parent_class is None:
                 self.parent_class = objtype
             widget.enabled = self.enabled
@@ -118,10 +124,9 @@ class MagicField(Field, Generic[_W, _V]):
         if obj_id in self.guis.keys():
             action = self.guis[obj_id]
         else:
-            if "choices" in self.options:
-                self._resolve_choices(obj)
-            action = self.to_action()
-            self.guis[obj_id] = action
+            with self._resolve_choices(obj):
+                action = self.to_action()
+                self.guis[obj_id] = action
             if self.parent_class is None:
                 self.parent_class = objtype
             action.enabled = self.enabled
@@ -567,6 +572,8 @@ def _get_field(
     record: bool,
     field_class: type[MagicField],
 ) -> type[MagicField]:
+    if not isinstance(options, dict):
+        raise TypeError(f"Field options must be a dict, got {type(options)}")
     options = options.copy()
     metadata = dict(widget_type=widget_type, options=options)
 
