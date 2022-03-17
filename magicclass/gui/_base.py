@@ -23,7 +23,7 @@ from qtpy.QtWidgets import QWidget, QDockWidget
 from qtpy.QtGui import QIcon
 
 from psygnal import Signal
-from magicgui.signature import MagicParameter
+from magicgui.signature import MagicParameter, split_annotated_type
 from magicgui.widgets import (
     FunctionGui,
     FileEdit,
@@ -536,35 +536,43 @@ class MagicTemplate:
         widget._doc = func.__doc__
 
         # This block enables instance methods in "bind" or "choices" of ValueWidget.
-        all_params = []
+        all_params: list[inspect.Parameter] = []
         for param in func.__signature__.parameters.values():
             if isinstance(param.annotation, _AnnotatedAlias):
                 # TODO: after magicgui supports pydantic, something needs update here.
                 param = MagicParameter.from_parameter(param)
 
             if isinstance(param, MagicParameter):
-                _arg_bind = param.options.get("bind", None)
-                _arg_choices = param.options.get("choices", None)
+                _param = MagicParameter(
+                    name=param.name,
+                    default=param.default,
+                    annotation=split_annotated_type(param.annotation)[0],
+                    gui_options=param.options.copy(),
+                )
+                _arg_bind = _param.options.get("bind", None)
+                _arg_choices = _param.options.get("choices", None)
 
                 # If bound method is a class method, use self.method(widget).
                 if _is_instance_method(self, _arg_bind):
-                    param.options["bind"] = _method_as_getter(self, _arg_bind)
+                    _param.options["bind"] = _method_as_getter(self, _arg_bind)
 
                 # If a MagicFiled is bound, bind the value of the connected widget.
                 elif isinstance(_arg_bind, MagicField):
-                    param.options["bind"] = _field_as_getter(self, _arg_bind)
+                    _param.options["bind"] = _field_as_getter(self, _arg_bind)
 
                 # If choices are provided by a class method, use self.method(widget).
                 if _is_instance_method(self, _arg_choices):
-                    param.options["choices"] = _method_as_getter(self, _arg_choices)
+                    _param.options["choices"] = _method_as_getter(self, _arg_choices)
 
-            all_params.append(param)
+            else:
+                _param = param
+
+            all_params.append(_param)
 
         func.__signature__ = func.__signature__.replace(parameters=all_params)
-
         # Get the number of parameters except for empty widgets.
         # With these lines, "bind" method of magicgui works inside magicclass.
-        fgui = FunctionGuiPlus.from_callable(obj)
+        fgui = FunctionGuiPlus.from_callable(func)
         n_empty = len([_widget for _widget in fgui if isinstance(_widget, EmptyWidget)])
         nparams = _n_parameters(func) - n_empty
 
@@ -1077,22 +1085,21 @@ def _method_as_getter(self, getter: Callable):
     if _LOCALS in qualname:
         qualname = qualname.split(_LOCALS)[-1]
     *clsnames, funcname = qualname.split(".")
+    ins = self
+    self_cls = ins.__class__.__name__
+    if self_cls not in clsnames:
+        ns = ".".join(clsnames)
+        raise ValueError(
+            f"Method {funcname} is in namespace {ns}, so it is invisible "
+            f"from magicclass {self.__class__.__qualname__}"
+        )
+    i = clsnames.index(self_cls) + 1
+
+    for clsname in clsnames[i:]:
+        ins = getattr(ins, clsname)
 
     def _func(w):
-        ins = self
-        self_cls = ins.__class__.__name__
-        if self_cls not in clsnames:
-            ns = ".".join(clsnames)
-            raise ValueError(
-                f"Method {funcname} is in namespace {ns}, so it is invisible "
-                f"from magicclass {self.__class__.__qualname__}"
-            )
-        i = clsnames.index(self_cls) + 1
-
-        for clsname in clsnames[i:]:
-            ins = getattr(ins, clsname)
-        getter = getattr(ins, funcname)
-        return getter(w)
+        return getter(ins, w)
 
     return _func
 
