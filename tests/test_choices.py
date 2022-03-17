@@ -104,3 +104,27 @@ def test_field():
     assert ui[0].choices == (3,)
     assert ui[1].choices == (3,)
     assert ui[2].choices == (0, 1)
+
+def test_multi_gui():
+    @magicclass
+    class A:
+        def _get_choices(self, w=None):
+            return [id(self), id(w)]
+        choices = field(widget_type="Select", options={"choices": _get_choices})
+        @set_options(c={"choices": _get_choices})
+        def f(self, c):
+            pass
+
+    a0 = A()
+    a1 = A()
+
+    assert a0.choices.choices[0] == id(a0)
+    assert a1.choices.choices[0] == id(a1)
+    assert a0.choices.choices[1] != a1.choices.choices[1]
+
+    a0["f"].changed()
+    a1["f"].changed()
+
+    assert a0["f"].mgui.c.choices[0] == id(a0)
+    assert a1["f"].mgui.c.choices[0] == id(a1)
+    assert a0["f"].mgui.c.choices[1] != a1["f"].mgui.c.choices[1]

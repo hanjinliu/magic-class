@@ -161,3 +161,22 @@ def test_external_field():
     assert ui._a == 1
     ui["func"].changed()
     assert ui._a == 10
+
+def test_multi_gui():
+    @magicclass
+    class A:
+        def _bind(self, w=None):
+            return id(self)
+
+        def f(self, a: Bound[_bind]):
+            self._a = a
+
+    a0 = A()
+    a1 = A()
+
+
+    a0["f"].changed()
+    a1["f"].changed()
+
+    assert a0._a == id(a0)
+    assert a1._a == id(a1)
