@@ -1,13 +1,13 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
+import numpy as np
 from matplotlib.backends.backend_qt5agg import FigureCanvas
 from matplotlib.backend_bases import MouseEvent, MouseButton
+from qtpy import QtWidgets as QtW, QtGui
 
 if TYPE_CHECKING:
     from matplotlib.figure import Figure
     from matplotlib.axes import Axes
-
-# TODO: use event loop, add callbacks
 
 
 class InteractiveFigureCanvas(FigureCanvas):
@@ -24,6 +24,7 @@ class InteractiveFigureCanvas(FigureCanvas):
         self.lasty = None
         self.last_axis: Axes | None = None
         self._interactive = True
+        self._mouse_click_callbacks = []
 
     def wheelEvent(self, event):
         """
@@ -111,13 +112,20 @@ class InteractiveFigureCanvas(FigureCanvas):
 
     def mouseReleaseEvent(self, event):
         """Stop dragging state."""
+        pos = event.pos()
+        event = self.get_mouse_event(event)
+        if self.lastx == event.xdata and self.lasty == event.ydata:
+            if self.pressed == MouseButton.LEFT:
+                for callbacks in self._mouse_click_callbacks:
+                    callbacks(event)
+            elif self.pressed == MouseButton.RIGHT:
+                menu = self._make_context_menu()
+                menu.exec_(self.mapToGlobal(pos))
         self.pressed = None
         return None
 
     def mouseDoubleClickEvent(self, event):
-        """
-        Adjust layout upon dougle click.
-        """
+        """Adjust layout upon dougle click."""
         if not self._interactive:
             return
         self.figure.tight_layout()
@@ -139,3 +147,37 @@ class InteractiveFigureCanvas(FigureCanvas):
             button = None
         mouse_event = MouseEvent(name, self, x, y, button=button, guiEvent=event)
         return mouse_event
+
+    def _make_context_menu(self):
+        """Make a QMenu object with default actions."""
+        menu = QtW.QMenu(self)
+        menu.addAction("Copy ...", self._copy_canvas)
+        menu.addAction("Save As...", self._save_canvas_dialog)
+        menu.addSeparator()
+        return menu
+
+    def _save_canvas_dialog(self, format="PNG"):
+        """Open a file dialog and save the current canvas state."""
+        dialog = QtW.QFileDialog(self, "Save Image")
+        dialog.setAcceptMode(QtW.QFileDialog.AcceptSave)
+        dialog.setDefaultSuffix(format.lower())
+        dialog.setNameFilter(f"{format} file (*.{format.lower()})")
+        if dialog.exec_():
+            filename = dialog.selectedFiles()[0]
+            self._save_canvas(filename)
+
+    def _save_canvas(self, path: str):
+        """Save current canvas state at the specified path."""
+        self.figure.savefig(path)
+
+    def _asarray(self) -> np.ndarray:
+        """Convert current canvas state into RGBA numpy array."""
+        return np.asarray(self.renderer.buffer_rgba(), dtype=np.uint8)
+
+    def _copy_canvas(self):
+        """Copy current canvas state into clipboard."""
+        arr = self._asarray()
+        clipboard = QtW.QApplication.clipboard()
+        h, w, _ = arr.shape
+        image = QtGui.QImage(arr, w, h, QtGui.QImage.Format_RGBA8888)
+        clipboard.setImage(image)

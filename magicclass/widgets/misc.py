@@ -1,5 +1,13 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Generic, Iterable, MutableSequence, Any, TypeVar
+from typing import (
+    TYPE_CHECKING,
+    Callable,
+    Generic,
+    Iterable,
+    MutableSequence,
+    Any,
+    TypeVar,
+)
 from typing_extensions import _AnnotatedAlias, get_args
 from psygnal import Signal
 from qtpy.QtWidgets import QTabWidget, QLineEdit, QMenu, QVBoxLayout, QWidget
@@ -173,6 +181,10 @@ class Figure(FreeWidget):
     @enabled.setter
     def enabled(self, v: bool):
         self.canvas._interactive = bool(v)
+
+    @property
+    def mouse_click_callbacks(self) -> list[Callable]:
+        return self.canvas._mouse_click_callbacks
 
     interactive = enabled  # alias
 
