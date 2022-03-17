@@ -210,6 +210,10 @@ class Figure(FreeWidget):
             _ax = self.figure.add_subplot(111)
         return _ax
 
+    def savefig(self, *args, **kwargs):
+        """Copy of ``plt.savefig``."""
+        return self.figure.savefig(*args, **kwargs)
+
     def plot(self, *args, **kwargs) -> Axes:
         """Copy of ``plt.plot``."""
         self.ax.plot(*args, **kwargs)
@@ -349,6 +353,20 @@ class Figure(FreeWidget):
             l.update(kwargs)
         self.draw()
         return locs, labels
+
+    def twinx(self) -> Axes:
+        """Copy of ``plt.twinx``."""
+        return self.ax.twinx()
+
+    def twiny(self) -> Axes:
+        """Copy of ``plt.twiny``."""
+        return self.ax.twiny()
+
+    def box(self, on=None) -> None:
+        """Copy of ``plt.box``."""
+        if on is None:
+            on = not self.ax.get_frame_on()
+        self.ax.set_frame_on(on)
 
 
 class ConsoleTextEdit(TextEdit):
