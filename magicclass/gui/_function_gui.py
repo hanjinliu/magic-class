@@ -1,7 +1,7 @@
 from __future__ import annotations
+from contextlib import contextmanager
 from typing import Any, TYPE_CHECKING, TypeVar
 import re
-import weakref
 from magicgui.widgets._concrete import _LabeledWidget
 from magicgui.widgets._bases import ValueWidget, ButtonWidget, ContainerWidget
 from magicgui.widgets._function_gui import (
@@ -12,7 +12,6 @@ from ..widgets import Separator
 
 if TYPE_CHECKING:
     from magicgui.widgets._bases import Widget
-    from ._base import BaseGui
 
 _R = TypeVar("_R")
 
@@ -20,7 +19,7 @@ _R = TypeVar("_R")
 class FunctionGuiPlus(FunctionGui[_R]):
     """FunctionGui class with a parameter recording functionality etc."""
 
-    _magicclass_parent_ref: weakref.ReferenceType[BaseGui] | None = None
+    _CODING_MODE = False
 
     def __call__(self, *args: Any, update_widget: bool = False, **kwargs: Any) -> _R:
         sig = self.__signature__
@@ -57,28 +56,30 @@ class FunctionGuiPlus(FunctionGui[_R]):
         # and updated againg.
         self._previous_bound = bound
 
-        self._tqdm_depth = 0  # reset the tqdm stack count
-        with _function_name_pointing_to_widget(self):
-            # 2. Running flag
-            # We sometimes want to know if the function is called programmatically or
-            # from GUI. The "running" argument is True only when it's called via GUI.
-            self.running = True
-            try:
-                value = self._function(*bound.args, **bound.kwargs)
-            finally:
-                self.running = False
+        if not self._CODING_MODE:
+            self._tqdm_depth = 0  # reset the tqdm stack count
+            with _function_name_pointing_to_widget(self):
+                # 2. Running flag
+                # We sometimes want to know if the function is called programmatically or
+                # from GUI. The "running" argument is True only when it's called via GUI.
+                self.running = True
+                try:
+                    value = self._function(*bound.args, **bound.kwargs)
+                finally:
+                    self.running = False
 
-        self._call_count += 1
-        if self._result_widget is not None:
-            with self._result_widget.changed.blocked():
-                self._result_widget.value = value
+            self._call_count += 1
+            if self._result_widget is not None:
+                with self._result_widget.changed.blocked():
+                    self._result_widget.value = value
 
-        return_type = sig.return_annotation
-        if return_type:
-            from magicgui.type_map import _type2callback
+            return_type = sig.return_annotation
+            if return_type:
+                from magicgui.type_map import _type2callback
 
-            for callback in _type2callback(return_type):
-                callback(self, value, return_type)
+                for callback in _type2callback(return_type):
+                    callback(self, value, return_type)
+
         self.called.emit(value)
         return value
 
@@ -101,3 +102,17 @@ class FunctionGuiPlus(FunctionGui[_R]):
         # it's possible that indices will be off.
         self._widget._mgui_insert_widget(key, _widget)
         self._unify_label_widths()
+
+    @classmethod
+    def set_coding_mode(cls, v: bool):
+        cls._CODING_MODE = bool(v)
+        return None
+
+    @contextmanager
+    @classmethod
+    def coding(cls):
+        try:
+            cls.set_coding_mode(True)
+            yield
+        finally:
+            cls.set_coding_mode(False)
