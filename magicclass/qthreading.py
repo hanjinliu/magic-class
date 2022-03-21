@@ -73,7 +73,7 @@ class thread_worker:
             if isinstance(progress, bool):
                 progress = {}
 
-            desc = progress.get("desc", None)
+            desc = progress.get("desc", "Progress")
             total = progress.get("total", 0)
             pbar = progress.get("pbar", None)
             if not callable(desc):
@@ -121,7 +121,7 @@ class thread_worker:
 
         def _create_worker(*args, **kwargs):
             worker: FunctionWorker | GeneratorWorker = create_worker(
-                self._func, obj, *args, **kwargs
+                self._func.__get__(obj), *args, **kwargs
             )
             for c in self._started.iter_as_method(obj):
                 worker.started.connect(c)
@@ -145,8 +145,8 @@ class thread_worker:
                         total=self._progress["total"](obj),
                     )
 
-                worker.started.connect(pbar.show)
-                worker.finished.connect(pbar.close)
+                worker.started.connect(init_pbar.__get__(pbar))
+                # worker.finished.connect(pbar.show)
                 if pbar.max != 0 and isinstance(worker, GeneratorWorker):
                     worker.yielded.connect(increment.__get__(pbar))
 
@@ -184,8 +184,7 @@ class thread_worker:
             raise TypeError(f"Cannot set type {type(sig)}.")
         self._func.__signature__ = sig
 
-    def _find_progressbar(self, obj: BaseGui, desc: str = "progress", total: int = 0):
-        print(desc, total)
+    def _find_progressbar(self, obj: BaseGui, desc: str = "Progress", total: int = 0):
         obj_id = id(obj)
         if obj_id in self._progressbars:
             _pbar = self._progressbars[obj_id]
@@ -238,8 +237,15 @@ class thread_worker:
         return self._aborted
 
 
+def init_pbar(pbar: ProgressBar):
+    pbar.value = 0
+    pbar.show()
+    return None
+
+
 def increment(pbar: ProgressBar):
     if pbar.value == pbar.max:
         pbar.max = 0
     else:
         pbar.value += 1
+    return None
