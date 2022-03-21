@@ -1247,7 +1247,7 @@ def _inject_recorder(func: Callable, is_method: bool = True) -> Callable:
     @functools_wraps(_func)
     def _recordable(bgui: MagicTemplate, *args, **kwargs):
         with bgui.macro.blocked():
-            out = _func(bgui, *args, **kwargs)
+            out = _func.__get__(bgui)(*args, **kwargs)
         if not bgui.macro.active:
             return out
         bound = sig.bind(*args, **kwargs)
