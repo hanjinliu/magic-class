@@ -368,6 +368,18 @@ class Figure(FreeWidget):
             on = not self.ax.get_frame_on()
         self.ax.set_frame_on(on)
 
+    def xscale(self, scale):
+        """Copy of ``plt.xscale``."""
+        self.ax.set_xscale(scale)
+        self.enabled = False
+        self.draw()
+
+    def yscale(self, scale):
+        """Copy of ``plt.yscale``."""
+        self.ax.set_yscale(scale)
+        self.enabled = False
+        self.draw()
+
 
 class ConsoleTextEdit(TextEdit):
     """A text edit with console-like setting."""

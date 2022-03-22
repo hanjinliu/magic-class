@@ -9,6 +9,8 @@ if TYPE_CHECKING:
     from matplotlib.figure import Figure
     from matplotlib.axes import Axes
 
+# TODO: log-scale and interactivity is not compatible
+
 
 class InteractiveFigureCanvas(FigureCanvas):
     """A figure canvas implemented with mouse callbacks."""
