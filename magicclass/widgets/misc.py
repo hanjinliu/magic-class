@@ -386,15 +386,18 @@ class Figure(FreeWidget):
         self.ax.set_frame_on(on)
 
     @_inject_mpl_docs
-    def xscale(self, scale):
+    def xscale(self, scale=None):
         self.ax.set_xscale(scale)
-        self.enabled = False
         self.draw()
 
     @_inject_mpl_docs
-    def yscale(self, scale):
+    def yscale(self, scale=None):
         self.ax.set_yscale(scale)
-        self.enabled = False
+        self.draw()
+
+    @_inject_mpl_docs
+    def autoscale(self, enable=True, axis="both", tight=None):
+        self.ax.autoscale(enable=enable, axis=axis, tight=tight)
         self.draw()
 
 
