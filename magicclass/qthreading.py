@@ -8,14 +8,13 @@ except ImportError as e:  # pragma: no cover
     msg = f"{e}. To use magicclass with threading please `pip install superqt`"
     raise type(e)(msg)
 
-from magicgui.widgets import ProgressBar, Container
+from magicgui.widgets import ProgressBar
 from .fields import MagicField
 from .utils.functions import get_signature
 
 if TYPE_CHECKING:
     from .gui import BaseGui
     from .gui.mgui_ext import PushButtonPlus
-    from napari.utils import progress
 
 
 class Callbacks:
@@ -52,8 +51,9 @@ class NapariProgressBar:
     def __init__(self, value=0, max=1000):
         from napari.utils import progress
 
-        self._pbar = progress(total=max)
-        self._pbar.n = value
+        with progress._all_instances.events.changed.blocker():
+            self._pbar = progress(total=max)
+            self._pbar.n = value
 
     @property
     def value(self) -> int:
@@ -70,7 +70,7 @@ class NapariProgressBar:
 
     @max.setter
     def max(self, v) -> None:
-        self._pbar.n = v
+        self._pbar.total = v
 
     @property
     def label(self) -> str:
@@ -193,6 +193,7 @@ class thread_worker:
                 worker.started.connect(init_pbar.__get__(pbar))
                 worker.finished.connect(close_pbar.__get__(pbar))
                 if pbar.max != 0 and isinstance(worker, GeneratorWorker):
+                    worker.pbar = pbar  # avoid garbage collection
                     worker.yielded.connect(increment.__get__(pbar))
 
             _push_button: PushButtonPlus = obj[self._func.__name__]
