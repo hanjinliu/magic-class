@@ -9,6 +9,7 @@ except ImportError as e:  # pragma: no cover
     raise type(e)(msg)
 
 from magicgui.widgets import ProgressBar
+
 from .fields import MagicField
 from .utils.functions import get_signature
 
@@ -40,9 +41,26 @@ class Callbacks:
             raise TypeError("Can only connect callable object.")
         self._callbacks.append(callback)
 
+    def disconnect(self, callback: Callable):
+        """
+        Remove callback function from the callback list.
+
+        Parameters
+        ----------
+        callback : Callable
+            Callback function to be removed.
+        """
+        self._callbacks.remove(callback)
+
     def iter_as_method(self, obj: BaseGui):
         for callback in self._callbacks:
-            yield callback.__get__(obj)
+
+            def f(*args, **kwargs):
+                with obj.macro.blocked():
+                    out = callback.__get__(obj)(*args, **kwargs)
+                return out
+
+            yield f
 
 
 class NapariProgressBar:
@@ -118,7 +136,7 @@ class thread_worker:
             if isinstance(progress, bool):
                 progress = {}
 
-            desc = progress.get("desc", "Progress")
+            desc = progress.get("desc", None)
             total = progress.get("total", 0)
             pbar = progress.get("pbar", None)
             if not callable(desc):
@@ -152,6 +170,8 @@ class thread_worker:
             self._func = f
             self.__name__ = f.__name__
             self.__qualname__ = f.__qualname__
+            self.__doc__ = f.__doc__
+            self.__annotations__ = f.__annotations__
             return self
         else:
             return self._func(*args, **kwargs)
@@ -230,7 +250,7 @@ class thread_worker:
             raise TypeError(f"Cannot set type {type(sig)}.")
         self._func.__signature__ = sig
 
-    def _find_progressbar(self, obj: BaseGui, desc: str = "Progress", total: int = 0):
+    def _find_progressbar(self, obj: BaseGui, desc: str | None = None, total: int = 0):
         obj_id = id(obj)
         if obj_id in self._progressbars:
             _pbar = self._progressbars[obj_id]
@@ -239,11 +259,15 @@ class thread_worker:
         for name, attr in gui_cls.__dict__.items():
             if isinstance(attr, MagicField):
                 attr = attr.get_widget(obj)
-            if isinstance(attr, (ProgressBar, NapariProgressBar)):
+            if isinstance(attr, ProgressBar):
                 _pbar = self._progressbars[obj_id] = attr
+                if desc is None:
+                    desc = name
                 break
         else:
             _pbar = self._progressbars[obj_id] = None
+            if desc is None:
+                desc = "Progress"
 
         if _pbar is None:
             if obj.parent_viewer is not None:
@@ -259,36 +283,44 @@ class thread_worker:
 
     @property
     def started(self) -> Callbacks:
+        """Event that will be emitted on started."""
         return self._started
 
     @property
     def returned(self) -> Callbacks:
+        """Event that will be emitted on returned."""
         return self._returned
 
     @property
     def errored(self) -> Callbacks:
+        """Event that will be emitted on errored."""
         return self._errored
 
     @property
     def yielded(self) -> Callbacks:
+        """Event that will be emitted on yielded."""
         return self._yielded
 
     @property
     def finished(self) -> Callbacks:
+        """Event that will be emitted on finished."""
         return self._finished
 
     @property
     def aborted(self) -> Callbacks:
+        """Event that will be emitted on aborted."""
         return self._aborted
 
 
 def init_pbar(pbar: _SupportProgress):
+    """Initialize progressbar."""
     pbar.value = 0
     pbar.show()
     return None
 
 
 def close_pbar(pbar: _SupportProgress):
+    """Close progressbar."""
     if isinstance(pbar, ProgressBar):
         pbar = pbar._labeled_widget()
     pbar.close()
@@ -296,6 +328,7 @@ def close_pbar(pbar: _SupportProgress):
 
 
 def increment(pbar: _SupportProgress):
+    """Increment progressbar."""
     if pbar.value == pbar.max:
         pbar.max = 0
     else:
