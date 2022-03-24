@@ -29,7 +29,7 @@ class Callbacks:
     def callbacks(self) -> tuple[Callable, ...]:
         return tuple(self._callbacks)
 
-    def connect(self, callback: Callable) -> None:
+    def connect(self, callback: Callable) -> Callable:
         """
         Append a callback function to the callback list.
 
@@ -41,7 +41,7 @@ class Callbacks:
         if not callable(callback):
             raise TypeError("Can only connect callable object.")
         self._callbacks.append(callback)
-        return None
+        return callback
 
     def disconnect(self, callback: Callable) -> None:
         """

@@ -1,4 +1,4 @@
-from magicclass import magicclass, magicmenu, set_options, set_design, vfield, get_function_gui
+from magicclass import magicclass, magicmenu, set_options, do_not_record, vfield, get_function_gui
 from magicclass.types import Bound
 from magicclass.qthreading import thread_worker
 import time
@@ -97,3 +97,58 @@ def test_bind():
     assert ui.a == 0
     assert not get_function_gui(ui, "f").a.visible
     ui["f"].changed()
+
+def test_choice():
+    mock = MagicMock()
+    @magicclass
+    class A:
+        def _get_choice(self, _=None):
+            return [0, 1]
+
+        @thread_worker
+        @set_options(a={"choices": _get_choice})
+        def f(self, a):
+            pass
+
+        @set_options(a={"choices": _get_choice})
+        @thread_worker
+        def g(self, a):
+            pass
+
+        @f.returned.connect
+        @g.returned.connect
+        def _on_returned(self, _=None):
+            mock()
+
+    ui = A()
+    assert get_function_gui(ui, "f").a.choices == (0, 1)
+    assert get_function_gui(ui, "g").a.choices == (0, 1)
+    mock.assert_not_called()
+    ui.f(0)
+    mock.assert_called_once()
+    mock.reset_mock()
+    mock.assert_not_called()
+    ui.g(0)
+    mock.assert_called_once()
+
+def test_do_not_record():
+    @magicclass
+    class A:
+        def xx(self):
+            ...
+
+        @thread_worker
+        @do_not_record
+        def f(self):
+            pass
+
+        @do_not_record
+        @thread_worker
+        def g(self):
+            pass
+
+    ui = A()
+    ui.xx()
+    ui.f()
+    ui.g()
+    assert str(ui.macro[-1]) == "ui.xx()"
