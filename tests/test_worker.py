@@ -1,6 +1,4 @@
-from magicclass import magicclass, field, set_options, set_design
-from magicclass.core import magicmenu
-from magicclass.fields import vfield
+from magicclass import magicclass, magicmenu, set_options, set_design, vfield, get_function_gui
 from magicclass.types import Bound
 from magicclass.qthreading import thread_worker
 import time
@@ -58,6 +56,44 @@ def test_wraps():
     assert not ui["g"].visible
     ui.f()
     mock.assert_called_once()
+    assert ui.a == 0
     ui.g(1)
     assert ui.a == 1
     assert str(ui.macro[-1]) == "ui.g(x=1)"
+
+def test_options():
+    @magicclass
+    class A:
+        @set_options(a={"widget_type": "LogSlider"})
+        @thread_worker
+        def f(self, a):
+            pass
+
+        @thread_worker
+        @set_options(a={"widget_type": "LogSlider"})
+        def g(self, a):
+            pass
+
+    ui = A()
+    assert get_function_gui(ui, "f").a.widget_type == "LogSlider"
+    assert get_function_gui(ui, "g").a.widget_type == "LogSlider"
+
+def test_bind():
+    @magicclass(error_mode="stderr")
+    class A:
+        a = vfield(int)
+        def _get(self, _=None):
+            return 10
+
+        @thread_worker
+        def f(self, a: Bound[_get]):
+            self.a = a
+
+        @f.finished.connect
+        def _check(self):
+            assert self.a == 10
+
+    ui = A()
+    assert ui.a == 0
+    assert not get_function_gui(ui, "f").a.visible
+    ui["f"].changed()
