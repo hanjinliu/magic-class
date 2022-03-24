@@ -1,7 +1,7 @@
 from __future__ import annotations
 import inspect
 from functools import wraps
-from typing import Any, Callable, TYPE_CHECKING, Iterable, Union, overload
+from typing import Any, Callable, TYPE_CHECKING, Iterable, Union, overload, TypeVar
 
 try:
     from superqt.utils import create_worker, GeneratorWorker, FunctionWorker
@@ -18,6 +18,8 @@ if TYPE_CHECKING:
     from .gui import BaseGui
     from .gui.mgui_ext import PushButtonPlus
 
+_F = TypeVar("_F", bound=Callable)
+
 
 class Callbacks:
     """List of callback functions."""
@@ -29,7 +31,7 @@ class Callbacks:
     def callbacks(self) -> tuple[Callable, ...]:
         return tuple(self._callbacks)
 
-    def connect(self, callback: Callable) -> Callable:
+    def connect(self, callback: _F) -> _F:
         """
         Append a callback function to the callback list.
 
@@ -43,7 +45,7 @@ class Callbacks:
         self._callbacks.append(callback)
         return callback
 
-    def disconnect(self, callback: Callable) -> None:
+    def disconnect(self, callback: _F) -> _F:
         """
         Remove callback function from the callback list.
 
@@ -53,7 +55,7 @@ class Callbacks:
             Callback function to be removed.
         """
         self._callbacks.remove(callback)
-        return None
+        return callback
 
     def _iter_as_method(self, obj: BaseGui) -> Iterable[Callable]:
         for callback in self._callbacks:
