@@ -323,10 +323,10 @@ def test_enabled():
     class A:
         @magicclass
         class B:
-            a1 = field(int, enabled=False)
-            a2 = vfield(int, enabled=False)
-        b1 = field("b1", enabled=False)
-        b2 = field("b2", enabled=False)
+            a1 = field(int, options={"enabled": False})
+            a2 = vfield(int, options={"enabled": False})
+        b1 = field("b1", options={"enabled": False})
+        b2 = field("b2", options={"enabled": False})
 
     ui = A()
     assert not ui[1].enabled
