@@ -1,6 +1,7 @@
 from __future__ import annotations
 import inspect
-from typing import Any, Callable, TYPE_CHECKING, Union, overload
+from functools import wraps
+from typing import Any, Callable, TYPE_CHECKING, Iterable, Union, overload
 
 try:
     from superqt.utils import create_worker, GeneratorWorker, FunctionWorker
@@ -28,7 +29,7 @@ class Callbacks:
     def callbacks(self) -> tuple[Callable, ...]:
         return tuple(self._callbacks)
 
-    def connect(self, callback: Callable):
+    def connect(self, callback: Callable) -> None:
         """
         Append a callback function to the callback list.
 
@@ -40,8 +41,9 @@ class Callbacks:
         if not callable(callback):
             raise TypeError("Can only connect callable object.")
         self._callbacks.append(callback)
+        return None
 
-    def disconnect(self, callback: Callable):
+    def disconnect(self, callback: Callable) -> None:
         """
         Remove callback function from the callback list.
 
@@ -51,8 +53,9 @@ class Callbacks:
             Callback function to be removed.
         """
         self._callbacks.remove(callback)
+        return None
 
-    def iter_as_method(self, obj: BaseGui):
+    def _iter_as_method(self, obj: BaseGui) -> Iterable[Callable]:
         for callback in self._callbacks:
 
             def f(*args, **kwargs):
@@ -66,7 +69,7 @@ class Callbacks:
 class NapariProgressBar:
     """A progressbar class that provides napari progress bar with same API."""
 
-    def __init__(self, value=0, max=1000):
+    def __init__(self, value: int = 0, max: int = 1000):
         from napari.utils import progress
 
         with progress._all_instances.events.changed.blocker():
@@ -168,46 +171,47 @@ class thread_worker:
         if self.not_ready:
             f = args[0]
             self._func = f
-            self.__name__ = f.__name__
-            self.__qualname__ = f.__qualname__
-            self.__doc__ = f.__doc__
-            self.__annotations__ = f.__annotations__
+            wraps(f)(self)
             return self
         else:
             return self._func(*args, **kwargs)
 
-    def __get__(self, obj: BaseGui, objtype=None):
-        if obj is None:
-            return self._func
+    def __get__(self, gui: BaseGui, objtype=None):
+        if gui is None:
+            return self
 
-        obj_id = id(obj)
-        if obj_id in self._objects:
-            return self._objects[obj_id]
+        gui_id = id(gui)
+        if gui_id in self._objects:
+            return self._objects[gui_id]
 
+        @wraps(self)
         def _create_worker(*args, **kwargs):
             worker: FunctionWorker | GeneratorWorker = create_worker(
-                self._func.__get__(obj), *args, **kwargs
+                self._func.__get__(gui),
+                _ignore_errors=self._ignore_errors,
+                *args,
+                **kwargs,
             )
-            for c in self._started.iter_as_method(obj):
+            for c in self._started._iter_as_method(gui):
                 worker.started.connect(c)
-            for c in self._returned.iter_as_method(obj):
+            for c in self._returned._iter_as_method(gui):
                 worker.returned.connect(c)
-            for c in self._errored.iter_as_method(obj):
+            for c in self._errored._iter_as_method(gui):
                 worker.errored.connect(c)
-            for c in self._yielded.iter_as_method(obj):
+            for c in self._yielded._iter_as_method(gui):
                 worker.yielded.connect(c)
-            for c in self._finished.iter_as_method(obj):
+            for c in self._finished._iter_as_method(gui):
                 worker.finished.connect(c)
-            for c in self._aborted.iter_as_method(obj):
+            for c in self._aborted._iter_as_method(gui):
                 worker.aborted.connect(c)
 
             if self._progress:
                 pbar: _SupportProgress = self._progress["pbar"]
                 if pbar is None:
                     pbar = self._find_progressbar(
-                        obj,
-                        desc=self._progress["desc"](obj),
-                        total=self._progress["total"](obj),
+                        gui,
+                        desc=self._progress["desc"](gui),
+                        total=self._progress["total"](gui),
                     )
 
                 worker.started.connect(init_pbar.__get__(pbar))
@@ -216,7 +220,7 @@ class thread_worker:
                     worker.pbar = pbar  # avoid garbage collection
                     worker.yielded.connect(increment.__get__(pbar))
 
-            _push_button: PushButtonPlus = obj[self._func.__name__]
+            _push_button: PushButtonPlus = gui[self._func.__name__]
             if _push_button.running:
                 _push_button.enabled = False
 
@@ -230,9 +234,8 @@ class thread_worker:
             return None
 
         _create_worker.__signature__ = self._get_method_signature()
-        _create_worker.__name__ = self.__name__
-        _create_worker.__qualname__ = self.__qualname__
-        self._objects[obj_id] = _create_worker  # cache
+
+        self._objects[gui_id] = _create_worker  # cache
         return _create_worker
 
     def _get_method_signature(self) -> inspect.Signature:
@@ -242,39 +245,43 @@ class thread_worker:
 
     @property
     def __signature__(self) -> inspect.Signature:
+        """Get the signature of the bound function."""
         return get_signature(self._func)
 
     @__signature__.setter
     def __signature__(self, sig: inspect.Signature) -> None:
+        """Update signature of the bound function."""
         if not isinstance(sig, inspect.Signature):
             raise TypeError(f"Cannot set type {type(sig)}.")
         self._func.__signature__ = sig
+        return None
 
-    def _find_progressbar(self, obj: BaseGui, desc: str | None = None, total: int = 0):
-        obj_id = id(obj)
-        if obj_id in self._progressbars:
-            _pbar = self._progressbars[obj_id]
+    def _find_progressbar(self, gui: BaseGui, desc: str | None = None, total: int = 0):
+        """Find available progressbar. Create a new one if not found."""
 
-        gui_cls = obj.__class__
-        for name, attr in gui_cls.__dict__.items():
+        gui_id = id(gui)
+        if gui_id in self._progressbars:
+            _pbar = self._progressbars[gui_id]
+
+        for name, attr in gui.__class__.__dict__.items():
             if isinstance(attr, MagicField):
-                attr = attr.get_widget(obj)
+                attr = attr.get_widget(gui)
             if isinstance(attr, ProgressBar):
-                _pbar = self._progressbars[obj_id] = attr
+                _pbar = self._progressbars[gui_id] = attr
                 if desc is None:
                     desc = name
                 break
         else:
-            _pbar = self._progressbars[obj_id] = None
+            _pbar = self._progressbars[gui_id] = None
             if desc is None:
                 desc = "Progress"
 
         if _pbar is None:
-            if obj.parent_viewer is not None:
+            if gui.parent_viewer is not None:
                 _pbar = NapariProgressBar(value=0, max=total)
             else:
                 _pbar = ProgressBar(value=0, max=total)
-                _pbar.native.setParent(obj.native, _pbar.native.windowFlags())
+                _pbar.native.setParent(gui.native, _pbar.native.windowFlags())
         else:
             _pbar.max = total
 
