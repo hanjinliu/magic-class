@@ -19,6 +19,7 @@ nStrings = Union[str, Iterable[str]]
 P = ParamSpec("P")
 R = TypeVar("R")
 T = TypeVar("T")
+F = TypeVar("F", bound=Callable)
 
 
 def set_options(
@@ -27,7 +28,7 @@ def set_options(
     call_button: bool | str | None = None,
     auto_call: bool = False,
     **options,
-) -> Callable[[Callable[P, R]], Callable[P, R]]:
+) -> Callable[[F], F]:
     """
     Set MagicSignature to functions.
 
@@ -66,7 +67,7 @@ def set_options(
         Parameter options.
     """
 
-    def wrapper(func: Callable[P, R]) -> Callable[P, R]:
+    def wrapper(func: F) -> F:
         sig = inspect.signature(func)
         rem = options.keys() - sig.parameters.keys()
         if rem:
@@ -149,7 +150,7 @@ def set_design(
         ...
 
     @overload
-    def wrapper(obj: Callable[P, R]) -> Callable[P, R]:
+    def wrapper(obj: F) -> F:
         ...
 
     def wrapper(obj):
@@ -223,13 +224,13 @@ def click(
     return wrapper
 
 
-def do_not_record(method: Callable[P, R]) -> Callable[P, R]:
+def do_not_record(method: F) -> F:
     """Wrapped method will not be recorded in macro."""
     upgrade_signature(method, additional_options={"record": False})
     return method
 
 
-def bind_key(*key) -> Callable[[Callable[P, R]], Callable[P, R]]:
+def bind_key(*key) -> Callable[[F], F]:
     """
     Define a keybinding to a button or an action.
     This function accepts several styles of shortcut expression.
@@ -243,9 +244,7 @@ def bind_key(*key) -> Callable[[Callable[P, R]], Callable[P, R]]:
     if isinstance(key[0], tuple):
         key = key[0]
 
-    def wrapper(
-        method: Callable[P, R],
-    ) -> Callable[P, R]:
+    def wrapper(method: F) -> F:
         upgrade_signature(method, additional_options={"keybinding": key})
         return method
 
@@ -261,22 +260,22 @@ def confirm(
     *,
     text: str | None,
     condition: Callable[P, bool] | str | None,
-) -> Callable[[Callable[P, R]], Callable[P, R]]:
+) -> Callable[[F], F]:
     ...
 
 
 @overload
 def confirm(
-    f: Callable[P, R],
+    f: F,
     *,
     text: str | None,
     condition: Callable[P, bool] | str | None,
-) -> Callable[P, R]:
+) -> F:
     ...
 
 
 def confirm(
-    f: Callable[P, R] | None = None,
+    f: F | None = None,
     *,
     text: str | None = None,
     condition: Callable[[BaseGui], bool] | str = None,
@@ -308,7 +307,7 @@ def confirm(
     if condition is None:
         condition = lambda x: True
 
-    def _decorator(method: Callable[P, R]) -> Callable[P, R]:
+    def _decorator(method: F) -> F:
         _name = method.__name__
 
         # set text
@@ -361,7 +360,7 @@ def confirm(
     return _decorator
 
 
-def nogui(method: Callable[P, R]) -> Callable[P, R]:
+def nogui(method: F) -> F:
     """Wrapped method will not be converted into a widget."""
     upgrade_signature(method, additional_options={"gui": False})
     return method
