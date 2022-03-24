@@ -12,7 +12,8 @@ For data visualization of simple data set, your can use the ``Figure`` widget.
     from magicclass.widgets import Figure
 
 It has very simple API inherited from the original functions, such as
-``plt.plot(x, y)`` or ``plt.xlim(0, 100)``.
+``plt.plot(x, y)`` or ``plt.xlim(0, 100)``. It also support interactive plot
+since ``v0.6.1``.
 
 Basic Usage
 -----------

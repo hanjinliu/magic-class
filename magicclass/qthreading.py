@@ -103,6 +103,10 @@ class NapariProgressBar:
     def label(self, v) -> None:
         self._pbar.set_description(v)
 
+    @property
+    def visible(self) -> bool:
+        return False
+
     def show(self):
         type(self._pbar)._all_instances.events.changed(added={self._pbar}, removed={})
 
@@ -215,9 +219,14 @@ class thread_worker:
                         desc=self._progress["desc"](gui),
                         total=self._progress["total"](gui),
                     )
+                elif isinstance(pbar, MagicField):
+                    pbar = pbar.get_widget(gui)
+                    pbar.label = self._progress["desc"](gui) or pbar.name
+                    pbar.max = self._progress["total"](gui)
 
                 worker.started.connect(init_pbar.__get__(pbar))
-                worker.finished.connect(close_pbar.__get__(pbar))
+                if not pbar.visible:
+                    worker.finished.connect(close_pbar.__get__(pbar))
                 if pbar.max != 0 and isinstance(worker, GeneratorWorker):
                     worker.pbar = pbar  # avoid garbage collection
                     worker.yielded.connect(increment.__get__(pbar))
