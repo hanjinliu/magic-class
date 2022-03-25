@@ -14,16 +14,10 @@ class QtVtkCanvas(QtW.QWidget):
         _layout = QtW.QVBoxLayout()
         self.setLayout(_layout)
         self._vtk_widget = QVTKRenderWindowInteractor(parent=self)
-        self.plt = vedo.Plotter(qtWidget=self._vtk_widget, bg="black")
+        self.plt = vedo.Plotter(qtWidget=self._vtk_widget, bg="black", axes=0)
         self.plt.show()
 
         _layout.addWidget(self._vtk_widget)
-
-    def add(self, actors):
-        self.plt.add(actors)
-
-    def remove(self, actors):
-        self.plt.remove(actors)
 
 
 class VtkCanvas(FreeWidget):
@@ -32,7 +26,6 @@ class VtkCanvas(FreeWidget):
         self._qwidget = QtVtkCanvas()
         self.set_widget(self._qwidget)
         self._layers = []
-        self._axes = AxesMode.none
 
     @property
     def layers(self):
@@ -41,12 +34,24 @@ class VtkCanvas(FreeWidget):
     def add_volume(self, data):
         vol = Volume(data, self)
         self.layers.append(vol)
-        self._qwidget.add(vol._current_obj)
+        self._qwidget.plt.add(vol._current_obj)
+        if len(self.layers) == 1:
+            self._qwidget.plt.show(zoom=True)
 
     @property
     def axes(self):
-        return self._axes.name
+        return AxesMode(self._qwidget.plt.axes).name
 
     @axes.setter
     def axes(self, v):
-        self._qwidget.plt.axes = AxesMode(v).toint()
+        if self._qwidget.plt.axes_instances:
+            current_axes = self._qwidget.plt.axes_instances[0]
+        else:
+            current_axes = None
+        a = getattr(AxesMode, v).value
+        try:
+            self._qwidget.plt.remove(current_axes)
+        except TypeError:
+            current_axes.EnabledOff()
+        self._qwidget.plt.axes_instances = [None]
+        self._qwidget.plt.show(axes=a)

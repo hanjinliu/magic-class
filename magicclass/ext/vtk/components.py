@@ -45,6 +45,7 @@ class Volume(Layer):
     def data(self, v):
         self._obj._update(v)
         self._update_actor()
+        self._data = v
 
     @property
     def canvas(self) -> VtkCanvas:
@@ -56,8 +57,9 @@ class Volume(Layer):
 
     @color.setter
     def color(self, c):
-        self._current_obj.c(color=c)
+        self._obj.c(color=c)
         self._color = c
+        self._update_actor()
 
     @property
     def alpha(self):
@@ -66,8 +68,9 @@ class Volume(Layer):
     @alpha.setter
     def alpha(self, v):
         v = np.asarray(v)
-        self._current_obj.alpha(v)
+        self._obj.alpha(v)
         self._alpha = v
+        self._update_actor()
 
     @property
     def rendering(self):
@@ -75,9 +78,10 @@ class Volume(Layer):
 
     @rendering.setter
     def rendering(self, v):
-        r = Rendering(v)
-        self._obj.mode(r.toint())
+        r: Rendering = getattr(Rendering, v)
+        self._obj.mode(r.value)
         self._rendering = r
+        self._update_actor()
 
     @property
     def iso_threshold(self) -> float:
@@ -95,6 +99,8 @@ class Volume(Layer):
             actor = self._obj.tomesh()
         elif self._mode == Mode.iso:
             actor = self._obj.isosurface(threshold=self._iso_threshold)
+        elif self._mode == Mode.wireframe:
+            actor = self._obj.isosurface(threshold=self._iso_threshold).wireframe()
         elif self._mode == Mode.lego:
             actor = self._obj.legosurface(
                 vmin=self._contrast_limits[0], vmax=self._contrast_limits[1]
@@ -116,3 +122,12 @@ class Volume(Layer):
     def mode(self, v):
         self._mode = Mode(v)
         self._update_actor()
+
+    @property
+    def contrast_limits(self) -> tuple[float, float]:
+        return self._contrast_limits
+
+    @contrast_limits.setter
+    def contrast_limits(self, v):
+        x0, x1 = v
+        self._contrast_limits = (x0, x1)
