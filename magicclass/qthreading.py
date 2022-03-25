@@ -18,6 +18,8 @@ if TYPE_CHECKING:
     from .gui import BaseGui
     from .gui.mgui_ext import PushButtonPlus
 
+__all__ = ["thread_worker"]
+
 _F = TypeVar("_F", bound=Callable)
 
 
