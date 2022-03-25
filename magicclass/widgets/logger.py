@@ -55,7 +55,8 @@ class QtLogger(QtW.QTextEdit):
         @self.customContextMenuRequested.connect
         def rightClickContextMenu(point):
             menu = self._make_contextmenu(point)
-            menu.exec_(self.mapToGlobal(point))
+            if menu:
+                menu.exec_(self.mapToGlobal(point))
 
     def update(self, output: tuple[int, Printable]):
         output_type, obj = output
