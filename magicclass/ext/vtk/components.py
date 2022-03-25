@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 import vedo
+from vedo import shapes
 import numpy as np
 import weakref
 
@@ -11,8 +12,10 @@ if TYPE_CHECKING:
 
 
 class Layer:
-    def __init__(self, data):
-        ...
+    def __init__(self, data, parent):
+        self._parent_ref = weakref.ref(parent)
+        data = np.asarray(data)
+        self._data = data
 
     @property
     def visible(self) -> bool:
@@ -22,19 +25,27 @@ class Layer:
     def visible(self, v):
         ...
 
+    def _update(self):
+        pass
+
+    @property
+    def canvas(self) -> VtkCanvas:
+        return self._parent_ref()
+
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}<{id(self)}>"
+
 
 class Volume(Layer):
     def __init__(self, data, parent):
-        self._parent_ref = weakref.ref(parent)
-        data = np.asarray(data)
-        self._data = data
-        self._obj = vedo.Volume(data)
+        super().__init__(data, parent)
+        self._obj = vedo.Volume(self._data)
         self._current_obj = self._obj
         self._color = None
         self._alpha = None
         self._rendering = Rendering.composite
         self._mode = Mode.volume
-        self._contrast_limits = (data.min(), data.max())
+        self._contrast_limits = (self._data.min(), self._data.max())
         self._iso_threshold = np.mean(self._contrast_limits)
 
     @property
@@ -109,8 +120,8 @@ class Volume(Layer):
             raise RuntimeError()
 
         canvas = self.canvas
-        canvas._qwidget.remove(self._current_obj)
-        canvas._qwidget.add(actor)
+        canvas._qwidget.plt.remove(self._current_obj)
+        canvas._qwidget.plt.add(actor)
         self._current_obj = actor
         return None
 
@@ -131,3 +142,25 @@ class Volume(Layer):
     def contrast_limits(self, v):
         x0, x1 = v
         self._contrast_limits = (x0, x1)
+
+
+class Path(Layer):
+    def __init__(self, data, parent):
+        super().__init__(data, parent)
+        self._obj = shapes.Line(self._data)
+
+    @property
+    def color(self):
+        return self._obj.color()
+
+    @color.setter
+    def color(self, v):
+        self._obj.color(v)
+
+    @property
+    def linewidth(self) -> float:
+        return self._obj.lineWidth()
+
+    @linewidth.setter
+    def linewidth(self, v):
+        self._obj.lineWidth(v)
