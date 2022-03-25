@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Use Matplotlib Figure &mdash; magic-class 0.6.0 documentation</title>
+  <title>Use Matplotlib Figure &mdash; magic-class 0.6.1 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/columns.css" type="text/css" />
@@ -31,7 +31,7 @@
             <a href="index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.0
+                0.6.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -53,6 +53,7 @@
 <li class="toctree-l1"><a class="reference internal" href="use_wraps.html">Call Parent Methods from its Child</a></li>
 <li class="toctree-l1"><a class="reference internal" href="use_bind.html">Binding Values to Arguments</a></li>
 <li class="toctree-l1"><a class="reference internal" href="use_choices.html">Set Choices Dynamically</a></li>
+<li class="toctree-l1"><a class="reference internal" href="use_worker.html">Multi-threading</a></li>
 <li class="toctree-l1"><a class="reference internal" href="additional_types.html">Additional types</a></li>
 <li class="toctree-l1"><a class="reference internal" href="containers.html">Container Variations</a></li>
 </ul>
@@ -107,7 +108,8 @@ guess most of the Python users know the basics of the library.</p>
 </pre></div>
 </div>
 <p>It has very simple API inherited from the original functions, such as
-<code class="docutils literal notranslate"><span class="pre">plt.plot(x,</span> <span class="pre">y)</span></code> or <code class="docutils literal notranslate"><span class="pre">plt.xlim(0,</span> <span class="pre">100)</span></code>.</p>
+<code class="docutils literal notranslate"><span class="pre">plt.plot(x,</span> <span class="pre">y)</span></code> or <code class="docutils literal notranslate"><span class="pre">plt.xlim(0,</span> <span class="pre">100)</span></code>. It also support interactive plot
+since <code class="docutils literal notranslate"><span class="pre">v0.6.1</span></code>.</p>
 <section id="basic-usage">
 <h2>Basic Usage<a class="headerlink" href="#basic-usage" title="Permalink to this headline">¶</a></h2>
 <p>If you are using <code class="docutils literal notranslate"><span class="pre">Figure</span></code> widget independent of <code class="docutils literal notranslate"><span class="pre">magic-class</span></code>, it's just

@@ -209,10 +209,12 @@ class Figure(FreeWidget):
 
     @property
     def axes(self) -> list[Axes]:
+        """List of matplotlib axes."""
         return self.figure.axes
 
     @property
     def ax(self) -> Axes:
+        """The first matplotlib axis."""
         try:
             _ax = self.axes[0]
         except IndexError:

@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Customize Macro Recording &mdash; magic-class 0.6.0 documentation</title>
+  <title>Customize Macro Recording &mdash; magic-class 0.6.1 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/columns.css" type="text/css" />
@@ -31,7 +31,7 @@
             <a href="index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.0
+                0.6.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -53,6 +53,7 @@
 <li class="toctree-l1"><a class="reference internal" href="use_wraps.html">Call Parent Methods from its Child</a></li>
 <li class="toctree-l1"><a class="reference internal" href="use_bind.html">Binding Values to Arguments</a></li>
 <li class="toctree-l1"><a class="reference internal" href="use_choices.html">Set Choices Dynamically</a></li>
+<li class="toctree-l1"><a class="reference internal" href="use_worker.html">Multi-threading</a></li>
 <li class="toctree-l1"><a class="reference internal" href="additional_types.html">Additional types</a></li>
 <li class="toctree-l1"><a class="reference internal" href="containers.html">Container Variations</a></li>
 </ul>
@@ -118,18 +119,6 @@ in the standard <code class="docutils literal notranslate"><span class="pre">np.
 <span class="k">def</span> <span class="nf">numpy_to_str</span><span class="p">(</span><span class="n">arr</span><span class="p">):</span>
     <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;np.array(</span><span class="si">{</span><span class="n">arr</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span><span class="si">}</span><span class="s2">)&quot;</span>
 </pre></div>
-</div>
-<div class="admonition tip">
-<p class="admonition-title">Tip</p>
-<p>It would be useful to register <code class="docutils literal notranslate"><span class="pre">Image</span></code> type to make <code class="docutils literal notranslate"><span class="pre">napari</span></code> plugin widget reproducible.
-In following example you can record <code class="docutils literal notranslate"><span class="pre">Image</span></code> inputs in the form of <code class="docutils literal notranslate"><span class="pre">viewer.layers[&quot;&lt;name&gt;&quot;]</span></code>.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">napari.layers</span> <span class="kn">import</span> <span class="n">Image</span>
-
-<span class="nd">@register_type</span><span class="p">(</span><span class="n">Image</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">get_layer</span><span class="p">(</span><span class="n">layer</span><span class="p">):</span>
-    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;viewer.layers[</span><span class="si">{</span><span class="n">layer</span><span class="o">.</span><span class="n">name</span><span class="si">!r}</span><span class="s2">]&quot;</span>
-</pre></div>
-</div>
 </div>
 </section>
 </section>

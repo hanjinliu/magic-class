@@ -40,6 +40,14 @@ magicclass.help module
    :undoc-members:
    :show-inheritance:
 
+magicclass.qthreading module
+----------------------------
+
+.. automodule:: magicclass.qthreading
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 magicclass.signature module
 ---------------------------
 
