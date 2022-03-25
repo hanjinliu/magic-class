@@ -148,16 +148,8 @@ class thread_worker:
             desc = progress.get("desc", None)
             total = progress.get("total", 0)
             pbar = progress.get("pbar", None)
-            if not callable(desc):
-                _desc = lambda x: desc
-            else:
-                _desc = desc
-            if not callable(total):
-                _total = lambda x: total
-            else:
-                _total = total
 
-            progress = {"desc": _desc, "total": _total, "pbar": pbar}
+            progress = {"desc": desc, "total": total, "pbar": pbar}
 
         self._progress = progress
 
@@ -212,17 +204,45 @@ class thread_worker:
                 worker.aborted.connect(c)
 
             if self._progress:
-                pbar: _SupportProgress = self._progress["pbar"]
-                if pbar is None:
+                _desc = self._progress["desc"]
+                _total = self._progress["total"]
+
+                if callable(_desc):
+                    desc = _desc(gui)
+                else:
+                    desc = str(_desc)
+
+                if isinstance(_total, str):
+                    arguments = self.__signature__.bind(gui, *args, **kwargs)
+                    arguments.apply_defaults()
+                    all_args = arguments.arguments
+                    total = eval(_total, {}, all_args)
+                elif callable(_total):
+                    total = _total(gui)
+                elif isinstance(_total, int):
+                    total = _total
+                else:
+                    raise TypeError(
+                        "'total' must be int, callable or evaluatable string."
+                    )
+
+                _pbar = self._progress["pbar"]
+                if _pbar is None:
                     pbar = self._find_progressbar(
                         gui,
-                        desc=self._progress["desc"](gui),
-                        total=self._progress["total"](gui),
+                        desc=desc,
+                        total=total,
                     )
-                elif isinstance(pbar, MagicField):
-                    pbar = pbar.get_widget(gui)
-                    pbar.label = self._progress["desc"](gui) or pbar.name
-                    pbar.max = self._progress["total"](gui)
+                elif isinstance(_pbar, MagicField):
+                    pbar = _pbar.get_widget(gui)
+                    if not isinstance(pbar, ProgressBar):
+                        raise TypeError(f"{_pbar.name} does not create a ProgressBar.")
+                    pbar.label = desc or _pbar.name
+                    pbar.max = total
+                else:
+                    if not isinstance(_pbar, ProgressBar):
+                        raise TypeError(f"{_pbar} is not a ProgressBar.")
+                    pbar = _pbar
 
                 worker.started.connect(init_pbar.__get__(pbar))
                 if not pbar.visible:
@@ -340,7 +360,9 @@ def init_pbar(pbar: _SupportProgress):
 def close_pbar(pbar: _SupportProgress):
     """Close progressbar."""
     if isinstance(pbar, ProgressBar):
-        pbar = pbar._labeled_widget()
+        _labeled_widget = pbar._labeled_widget()
+        if _labeled_widget is not None:
+            pbar = _labeled_widget
     pbar.close()
     return None
 

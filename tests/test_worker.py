@@ -152,3 +152,34 @@ def test_do_not_record():
     ui.f()
     ui.g()
     assert str(ui.macro[-1]) == "ui.xx()"
+
+def test_progressbar():
+    from magicgui.widgets import ProgressBar
+
+    @magicclass
+    class A:
+        # a progress bar widget is newly created
+        @thread_worker(progress=True)
+        def f(self):
+            time.sleep(0.2)
+
+    @magicclass
+    class B:
+        # use pbar
+        pbar = vfield(ProgressBar)
+        @thread_worker(progress=True)
+        def f(self):
+            time.sleep(0.2)
+
+    @magicclass
+    class C:
+        @magicmenu
+        class Menu:
+            @thread_worker
+            def f(self):
+                time.sleep(0.2)
+
+    a = A()
+    a.f()
+    b = B()
+    b.f()
