@@ -19,6 +19,12 @@ class Mode(Enum):
     wireframe = "wireframe"
 
 
+class Representation(Enum):
+    points = 0
+    wireframe = 1
+    surface = 2
+
+
 class AxesMode(Enum):
     none = 0
     wall = 1

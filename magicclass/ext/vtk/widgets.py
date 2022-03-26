@@ -3,7 +3,8 @@ import vedo
 from qtpy import QtWidgets as QtW
 from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 from .const import AxesMode
-from .components import Path, Volume
+from .volume import Volume
+from .components import get_object_type
 
 from ...widgets import FreeWidget
 
@@ -38,12 +39,12 @@ class VtkCanvas(FreeWidget):
         if len(self.layers) == 1:
             self._qwidget.plt.show(zoom=True)
 
-    def add_path(self, data):
-        path = Path(data, self)
-        self.layers.append(path)
-        self._qwidget.plt.add(path._obj)
+    def add_object(self, *args, object_type=None, **kwargs):
+        obj = get_object_type(object_type)(*args, **kwargs, _parent=self._qwidget.plt)
+        self.layers.append(obj)
+        self._qwidget.plt.add(obj._obj)
         if len(self.layers) == 1:
-            self._qwidget.plt.show(zoom=True)
+            self._qwidget.plt.show()
 
     @property
     def axes(self):

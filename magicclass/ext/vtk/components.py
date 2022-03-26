@@ -1,166 +1,259 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
-import vedo
-from vedo import shapes
-import numpy as np
+from typing import Callable, Generic, Sequence, TypeVar, overload
+from typing_extensions import ParamSpec
 import weakref
+import vedo
+import numpy as np
+from .const import Representation
 
-from .const import Mode, Rendering
-
-if TYPE_CHECKING:
-    from .widgets import VtkCanvas
+_VtkType = TypeVar("_VtkType", bound=vedo.BaseActor)
+_P = ParamSpec("_P")
 
 
-class Layer:
-    def __init__(self, data, parent):
-        self._parent_ref = weakref.ref(parent)
-        data = np.asarray(data)
-        self._data = data
+class VtkComponent:
+    _vtk_type: type[_VtkType] | Callable[_P, _VtkType]
+
+    def __init__(self, *args, _parent: vedo.Plotter = None, **kwargs):
+        if self._vtk_type is None:
+            raise TypeError("Base VTK type is unknown.")
+        self._obj = self._vtk_type(*args, **kwargs)
+        self._visible = True
+        self._parent_ref = weakref.ref(_parent)
+
+        self._set_properties()
+
+    def _set_properties(self):
+        pass
+
+    @overload
+    def __init_subclass__(cls, base: _VtkType = None) -> None:  # noqa
+        ...
+
+    @overload
+    def __init_subclass__(cls, base: Callable[_P, _VtkType] = None) -> None:  # noqa
+        ...
+
+    def __init_subclass__(cls, base=None) -> None:
+        cls._vtk_type = base
 
     @property
     def visible(self) -> bool:
-        ...
+        return self._visible
 
     @visible.setter
     def visible(self, v):
-        ...
+        v = bool(v)
+        if v:
+            self._obj.on()
+        else:
+            self._obj.off()
+        self._visible = v
+        self._update()
 
     def _update(self):
-        pass
-
-    @property
-    def canvas(self) -> VtkCanvas:
-        return self._parent_ref()
+        self._parent_ref().window.Render()
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}<{id(self)}>"
+        return f"{self.__class__.__name__}<{hex(id(self))}>"
 
 
-class Volume(Layer):
-    def __init__(self, data, parent):
-        super().__init__(data, parent)
-        self._obj = vedo.Volume(self._data)
-        self._current_obj = self._obj
-        self._color = None
-        self._alpha = None
-        self._rendering = Rendering.composite
-        self._mode = Mode.volume
-        self._contrast_limits = (self._data.min(), self._data.max())
-        self._iso_threshold = np.mean(self._contrast_limits)
+_L = TypeVar("_L", bound="Points")
+_V = TypeVar("_V")
 
-    @property
-    def data(self) -> np.ndarray:
-        return self._data
 
-    @data.setter
-    def data(self, v):
-        self._obj._update(v)
-        self._update_actor()
-        self._data = v
+class VtkProperty(property, Generic[_L, _V]):
+    def __init__(
+        self,
+        vedo_fname: str | None = None,
+        vtk_fname: str | None = None,
+        converter: type | None = None,
+        doc: str | None = None,
+        **kwargs,
+    ):
+        if converter is None:
+            converter = lambda x: x
+        self._converter = converter
 
-    @property
-    def canvas(self) -> VtkCanvas:
-        return self._parent_ref()
-
-    @property
-    def color(self):
-        return self._color
-
-    @color.setter
-    def color(self, c):
-        self._obj.c(color=c)
-        self._color = c
-        self._update_actor()
-
-    @property
-    def alpha(self):
-        return self._alpha
-
-    @alpha.setter
-    def alpha(self, v):
-        v = np.asarray(v)
-        self._obj.alpha(v)
-        self._alpha = v
-        self._update_actor()
-
-    @property
-    def rendering(self):
-        return self._rendering.name
-
-    @rendering.setter
-    def rendering(self, v):
-        r: Rendering = getattr(Rendering, v)
-        self._obj.mode(r.value)
-        self._rendering = r
-        self._update_actor()
-
-    @property
-    def iso_threshold(self) -> float:
-        return self._iso_threshold
-
-    @iso_threshold.setter
-    def iso_threshold(self, v):
-        self._iso_threshold = float(v)
-        self._update_actor()
-
-    def _update_actor(self):
-        if self._mode == Mode.volume:
-            actor = self._obj
-        elif self._mode == Mode.mesh:
-            actor = self._obj.tomesh()
-        elif self._mode == Mode.iso:
-            actor = self._obj.isosurface(threshold=self._iso_threshold)
-        elif self._mode == Mode.wireframe:
-            actor = self._obj.isosurface(threshold=self._iso_threshold).wireframe()
-        elif self._mode == Mode.lego:
-            actor = self._obj.legosurface(
-                vmin=self._contrast_limits[0], vmax=self._contrast_limits[1]
-            )
+        if vedo_fname is not None:
+            fget, fset = self._from_vedo(vedo_fname, **kwargs)
         else:
-            raise RuntimeError()
+            fget, fset = self._from_vtk(f"Get{vtk_fname}", f"Set{vtk_fname}", **kwargs)
 
-        canvas = self.canvas
-        canvas._qwidget.plt.remove(self._current_obj)
-        canvas._qwidget.plt.add(actor)
-        self._current_obj = actor
-        return None
+        super().__init__(fget, fset, doc=doc)
+
+    def _from_vedo(self, vedo_fname: str, **kwargs):
+        # getter function
+        def fget(x: _L) -> _V:
+            return self._converter(getattr(x._obj, vedo_fname)())
+
+        # setter function
+        def fset(x: _L, value: _V) -> None:
+            getattr(x._obj, vedo_fname)(self._converter(value), **kwargs)
+            x._update()
+
+        return fget, fset
+
+    def _from_vtk(self, fget_name: str, fset_name: str, **kwargs):
+        # getter function
+        def fget(x: _L) -> _V:
+            return self._converter(getattr(x._obj.property, fget_name)())
+
+        # setter function
+        def fset(x: _L, value: _V) -> None:
+            getattr(x._obj.property, fset_name)(self._converter(value), **kwargs)
+            x._update()
+
+        return fget, fset
+
+
+class Points(VtkComponent, base=vedo.Points):
+    color: VtkProperty[Points, np.ndarray] = VtkProperty(
+        "color", doc="Point color."
+    )  # noqa
+    point_size: VtkProperty[Points, float] = VtkProperty(
+        vtk_fname="PointSize", converter=float, doc="Size of points."
+    )  # noqa
+    spherical: VtkProperty[Points, float] = VtkProperty(
+        vtk_fname="RenderPointsAsSpheres",
+        converter=float,
+        doc="Render points to look spherical",
+    )  # noqa
+    occlusion: VtkProperty[Points, float] = VtkProperty(
+        "occlusion", doc="Occlusion strength."
+    )  # noqa
+    pos: VtkProperty[Points, Sequence[float]] = VtkProperty(
+        "pos", doc="position the points."
+    )  # noqa
+    scale: VtkProperty[Points, float] = VtkProperty(
+        "scale", absolute=True, doc="scale of the layer."
+    )  # noqa
+
+
+class Mesh(Points, base=vedo.Mesh):
+    def _set_properties(self):
+        super()._set_properties()
+        self._representation = Representation.surface
+
+    linewidth: VtkProperty[Mesh, float] = VtkProperty(
+        "lineWidth", doc="Line width of edges."
+    )  # noqa
+    backface_color: VtkProperty[Mesh, np.ndarray] = VtkProperty(
+        "backColor", doc="Color of the backside of polygons."
+    )  # noqa
 
     @property
-    def mode(self) -> str:
-        return self._mode.value
+    def representation(self) -> Representation:
+        """
+        Representation mode of mesh.
 
-    @mode.setter
-    def mode(self, v):
-        self._mode = Mode(v)
-        self._update_actor()
+        One of "points", "wireframe", "surface".
+        """
+        return self._representation.name
 
-    @property
-    def contrast_limits(self) -> tuple[float, float]:
-        return self._contrast_limits
+    @representation.setter
+    def representation(self, value) -> None:
+        rep: Representation = getattr(Representation, value)
+        self._obj.property.SetRepresentation(rep.value)
+        self._representation = rep
+        self._update()
 
-    @contrast_limits.setter
-    def contrast_limits(self, v):
-        x0, x1 = v
-        self._contrast_limits = (x0, x1)
+    frontface_culling: VtkProperty[Points, bool] = VtkProperty(
+        vtk_fname="FrontfaceCulling", converter=bool, doc="Culling of front face."
+    )  # noqa
+    backface_culling: VtkProperty[Points, bool] = VtkProperty(
+        vtk_fname="BackfaceCulling", converter=bool, doc="Culling of back face."
+    )  # noqa
+    lines_as_tubes: VtkProperty[Points, bool] = VtkProperty(
+        vtk_fname="RenderLinesAsTubes",
+        converter=bool,
+        doc="Render mesh lines as tubes.",
+    )  # noqa
 
 
-class Path(Layer):
-    def __init__(self, data, parent):
-        super().__init__(data, parent)
-        self._obj = shapes.Line(self._data)
+class Path(Mesh, base=vedo.Line):
+    ...
 
-    @property
-    def color(self):
-        return self._obj.color()
 
-    @color.setter
-    def color(self, v):
-        self._obj.color(v)
+class Sphere(Mesh, base=vedo.Sphere):
+    ...
 
-    @property
-    def linewidth(self) -> float:
-        return self._obj.lineWidth()
 
-    @linewidth.setter
-    def linewidth(self, v):
-        self._obj.lineWidth(v)
+class Spheres(Mesh, base=vedo.Spheres):
+    ...
+
+
+class Spline(Mesh, base=vedo.Spline):
+    ...
+
+
+class KSpline(Mesh, base=vedo.KSpline):
+    ...
+
+
+class CSpline(Mesh, base=vedo.CSpline):
+    ...
+
+
+class Tube(Mesh, base=vedo.Tube):
+    ...
+
+
+class Ribbon(Mesh, base=vedo.Ribbon):
+    ...
+
+
+class Arrow(Mesh, base=vedo.Arrow):
+    ...
+
+
+class Arrows(Mesh, base=vedo.Arrows):
+    ...
+
+
+class Circle(Mesh, base=vedo.Circle):
+    ...
+
+
+class Disc(Mesh, base=vedo.Disc):
+    ...
+
+
+class Earth(Mesh, base=vedo.Earth):
+    ...
+
+
+class Ellipsoid(Mesh, base=vedo.Ellipsoid):
+    ...
+
+
+class Box(Mesh, base=vedo.Box):
+    ...
+
+
+class Cube(Mesh, base=vedo.Cube):
+    ...
+
+
+class Spring(Mesh, base=vedo.Spring):
+    ...
+
+
+class Cylinder(Mesh, base=vedo.Cylinder):
+    ...
+
+
+class Cone(Mesh, base=vedo.Cone):
+    ...
+
+
+class Text(Mesh, base=vedo.Text3D):
+    ...
+
+
+def get_object_type(name: str) -> type[VtkComponent]:
+    t = globals().get(name, None)
+    if not isinstance(t, (type, Generic)):
+        raise ValueError(f"Object type {t} not found.")
+    elif not issubclass(t, VtkComponent):
+        raise ValueError(f"Object type {t} not found.")
+    return t
