@@ -18,7 +18,7 @@ class Volume(VtkComponent, base=vedo.Volume):
         self._mode = Mode.volume
         self._contrast_limits = (self._data.min(), self._data.max())
         self._iso_threshold = np.mean(self._contrast_limits)
-        self.color = "gray"
+        self.color = np.array([0.7, 0.7, 0.7])
 
     @property
     def data(self) -> np.ndarray:
@@ -37,6 +37,7 @@ class Volume(VtkComponent, base=vedo.Volume):
 
     @property
     def color(self) -> np.ndarray:
+        """Color of the volume."""
         return self._color
 
     @color.setter
@@ -44,11 +45,12 @@ class Volume(VtkComponent, base=vedo.Volume):
         self._obj.color(
             col, vmin=self._contrast_limits[0], vmax=self._contrast_limits[0]
         )
-        self._update_actor()
         self._color = col
+        self._update_actor()
 
     @property
     def rendering(self):
+        """Rendering mode of the volume."""
         return self._rendering.name
 
     @rendering.setter
@@ -60,6 +62,11 @@ class Volume(VtkComponent, base=vedo.Volume):
 
     @property
     def iso_threshold(self) -> float:
+        """
+        Threshold value to generate isosurface.
+
+        This property only has effect on "iso" and "wireframe" rendering.
+        """
         return self._iso_threshold
 
     @iso_threshold.setter
@@ -69,8 +76,9 @@ class Volume(VtkComponent, base=vedo.Volume):
             self._update_actor()
 
     def _update_actor(self):
+        vmin, vmax = self._contrast_limits
         if self._mode == Mode.volume:
-            actor = self._obj
+            actor = self._obj.color(self.color, vmin=vmin, vmax=vmax)
         elif self._mode == Mode.mesh:
             actor = self._obj.tomesh()
         elif self._mode == Mode.iso:
@@ -84,8 +92,8 @@ class Volume(VtkComponent, base=vedo.Volume):
                 .wireframe()
             )
         elif self._mode == Mode.lego:
-            actor = self._obj.legosurface(
-                vmin=self._contrast_limits[0], vmax=self._contrast_limits[1]
+            actor = self._obj.legosurface(vmin=vmin, vmax=vmax).color(
+                self._color, vmin=vmin, vmax=vmax
             )
         else:
             raise RuntimeError()
@@ -99,6 +107,7 @@ class Volume(VtkComponent, base=vedo.Volume):
 
     @property
     def mode(self) -> str:
+        """Projection mode of volume."""
         return self._mode.value
 
     @mode.setter
@@ -108,11 +117,13 @@ class Volume(VtkComponent, base=vedo.Volume):
 
     @property
     def contrast_limits(self) -> tuple[float, float]:
+        """Contrast limits of volume."""
         return self._contrast_limits
 
     @contrast_limits.setter
     def contrast_limits(self, v):
         x0, x1 = v
         self._contrast_limits = (x0, x1)
+
         if self._mode == Mode.lego:
             self._update_actor()

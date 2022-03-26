@@ -40,8 +40,10 @@ class VtkCanvas(FreeWidget):
             self._qwidget.plt.show(zoom=True)
         return vol
 
-    def add_object(self, *args, object_type=None, **kwargs):
-        obj = get_object_type(object_type)(*args, **kwargs, _parent=self._qwidget.plt)
+    def add_object(self, *args, object_type: str = None, **kwargs):
+        obj = get_object_type(object_type.capitalize())(
+            *args, **kwargs, _parent=self._qwidget.plt
+        )
         self.layers.append(obj)
         self._qwidget.plt.add(obj._obj)
         if len(self.layers) == 1:
@@ -50,6 +52,7 @@ class VtkCanvas(FreeWidget):
 
     @property
     def axes(self):
+        """The axes object."""
         return AxesMode(self._qwidget.plt.axes).name
 
     @axes.setter
