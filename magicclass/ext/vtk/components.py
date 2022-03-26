@@ -8,56 +8,7 @@ from .const import Representation
 
 _VtkType = TypeVar("_VtkType", bound=vedo.BaseActor)
 _P = ParamSpec("_P")
-
-
-class VtkComponent:
-    _vtk_type: type[_VtkType] | Callable[_P, _VtkType]
-
-    def __init__(self, *args, _parent: vedo.Plotter = None, **kwargs):
-        if self._vtk_type is None:
-            raise TypeError("Base VTK type is unknown.")
-        self._obj = self._vtk_type(*args, **kwargs)
-        self._visible = True
-        self._parent_ref = weakref.ref(_parent)
-
-        self._set_properties()
-
-    def _set_properties(self):
-        pass
-
-    @overload
-    def __init_subclass__(cls, base: _VtkType = None) -> None:  # noqa
-        ...
-
-    @overload
-    def __init_subclass__(cls, base: Callable[_P, _VtkType] = None) -> None:  # noqa
-        ...
-
-    def __init_subclass__(cls, base=None) -> None:
-        cls._vtk_type = base
-
-    @property
-    def visible(self) -> bool:
-        return self._visible
-
-    @visible.setter
-    def visible(self, v):
-        v = bool(v)
-        if v:
-            self._obj.on()
-        else:
-            self._obj.off()
-        self._visible = v
-        self._update()
-
-    def _update(self):
-        self._parent_ref().window.Render()
-
-    def __repr__(self) -> str:
-        return f"{self.__class__.__name__}<{hex(id(self))}>"
-
-
-_L = TypeVar("_L", bound="Points")
+_L = TypeVar("_L", bound="VtkComponent")
 _V = TypeVar("_V")
 
 
@@ -96,14 +47,50 @@ class VtkProperty(property, Generic[_L, _V]):
     def _from_vtk(self, fget_name: str, fset_name: str, **kwargs):
         # getter function
         def fget(x: _L) -> _V:
-            return self._converter(getattr(x._obj.property, fget_name)())
+            return self._converter(getattr(x._obj.GetProperty(), fget_name)())
 
         # setter function
         def fset(x: _L, value: _V) -> None:
-            getattr(x._obj.property, fset_name)(self._converter(value), **kwargs)
+            getattr(x._obj.GetProperty(), fset_name)(self._converter(value), **kwargs)
             x._update()
 
         return fget, fset
+
+
+class VtkComponent:
+    _vtk_type: type[_VtkType] | Callable[_P, _VtkType]
+
+    def __init__(self, *args, _parent: vedo.Plotter = None, **kwargs):
+        if self._vtk_type is None:
+            raise TypeError("Base VTK type is unknown.")
+        self._obj = self._vtk_type(*args, **kwargs)
+        self._parent_ref = weakref.ref(_parent)
+
+        self._set_properties()
+
+    def _set_properties(self):
+        pass
+
+    @overload
+    def __init_subclass__(cls, base: type[_VtkType] = None) -> None:  # noqa
+        ...
+
+    @overload
+    def __init_subclass__(cls, base: Callable[_P, _VtkType] = None) -> None:  # noqa
+        ...
+
+    def __init_subclass__(cls, base=None) -> None:
+        cls._vtk_type = base
+
+    visible: VtkProperty[VtkComponent, bool] = VtkProperty(
+        vtk_fname="Visibility", converter=bool, doc="Visibility of the object."
+    )
+
+    def _update(self):
+        self._parent_ref().window.Render()
+
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}<{hex(id(self))}>"
 
 
 class Points(VtkComponent, base=vedo.Points):

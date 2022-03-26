@@ -33,11 +33,12 @@ class VtkCanvas(FreeWidget):
         return self._layers
 
     def add_volume(self, data):
-        vol = Volume(data, self)
+        vol = Volume(data, _parent=self._qwidget.plt)
         self.layers.append(vol)
         self._qwidget.plt.add(vol._current_obj)
         if len(self.layers) == 1:
             self._qwidget.plt.show(zoom=True)
+        return vol
 
     def add_object(self, *args, object_type=None, **kwargs):
         obj = get_object_type(object_type)(*args, **kwargs, _parent=self._qwidget.plt)
@@ -45,6 +46,7 @@ class VtkCanvas(FreeWidget):
         self._qwidget.plt.add(obj._obj)
         if len(self.layers) == 1:
             self._qwidget.plt.show()
+        return obj
 
     @property
     def axes(self):
