@@ -107,26 +107,14 @@ class VtkProperty(property, Generic[_L, _V]):
 
 
 class Points(VtkComponent, base=vedo.Points):
-    color: VtkProperty[Points, np.ndarray] = VtkProperty(
-        "color", doc="Point color."
-    )  # noqa
-    point_size: VtkProperty[Points, float] = VtkProperty(
-        vtk_fname="PointSize", converter=float, doc="Size of points."
-    )  # noqa
-    spherical: VtkProperty[Points, float] = VtkProperty(
-        vtk_fname="RenderPointsAsSpheres",
-        converter=float,
-        doc="Render points to look spherical",
-    )  # noqa
-    occlusion: VtkProperty[Points, float] = VtkProperty(
-        "occlusion", doc="Occlusion strength."
-    )  # noqa
-    pos: VtkProperty[Points, Sequence[float]] = VtkProperty(
-        "pos", doc="position the points."
-    )  # noqa
-    scale: VtkProperty[Points, float] = VtkProperty(
-        "scale", absolute=True, doc="scale of the layer."
-    )  # noqa
+    # fmt: off
+    color: VtkProperty[Points, np.ndarray] = VtkProperty("color", doc="Point color.")  # noqa
+    point_size: VtkProperty[Points, float] = VtkProperty(vtk_fname="PointSize", converter=float, doc="Size of points.")  # noqa
+    spherical: VtkProperty[Points, float] = VtkProperty(vtk_fname="RenderPointsAsSpheres", converter=float, doc="Render points to look spherical")  # noqa
+    occlusion: VtkProperty[Points, float] = VtkProperty("occlusion", doc="Occlusion strength.")  # noqa
+    pos: VtkProperty[Points, Sequence[float]] = VtkProperty("pos", doc="position the points.")  # noqa
+    scale: VtkProperty[Points, float] = VtkProperty("scale", absolute=True, doc="scale of the layer.")  # noqa
+    # fmt: on
 
 
 class Mesh(Points, base=vedo.Mesh):
@@ -134,12 +122,13 @@ class Mesh(Points, base=vedo.Mesh):
         super()._set_properties()
         self._representation = Representation.surface
 
-    linewidth: VtkProperty[Mesh, float] = VtkProperty(
-        "lineWidth", doc="Line width of edges."
-    )  # noqa
-    backface_color: VtkProperty[Mesh, np.ndarray] = VtkProperty(
-        "backColor", doc="Color of the backside of polygons."
-    )  # noqa
+    # fmt: off
+    linewidth: VtkProperty[Mesh, float] = VtkProperty("lineWidth", doc="Line width of edges.")  # noqa
+    backface_color: VtkProperty[Mesh, np.ndarray] = VtkProperty("backColor", doc="Color of the backside of polygons.")  # noqa
+    frontface_culling: VtkProperty[Points, bool] = VtkProperty(vtk_fname="FrontfaceCulling", converter=bool, doc="Culling of front face.")  # noqa
+    backface_culling: VtkProperty[Points, bool] = VtkProperty(vtk_fname="BackfaceCulling", converter=bool, doc="Culling of back face.")  # noqa
+    lines_as_tubes: VtkProperty[Points, bool] = VtkProperty(vtk_fname="RenderLinesAsTubes", converter=bool, doc="Render mesh lines as tubes.")  # noqa
+    # fmt: on
 
     @property
     def representation(self) -> Representation:
@@ -157,97 +146,29 @@ class Mesh(Points, base=vedo.Mesh):
         self._representation = rep
         self._update()
 
-    frontface_culling: VtkProperty[Points, bool] = VtkProperty(
-        vtk_fname="FrontfaceCulling", converter=bool, doc="Culling of front face."
-    )  # noqa
-    backface_culling: VtkProperty[Points, bool] = VtkProperty(
-        vtk_fname="BackfaceCulling", converter=bool, doc="Culling of back face."
-    )  # noqa
-    lines_as_tubes: VtkProperty[Points, bool] = VtkProperty(
-        vtk_fname="RenderLinesAsTubes",
-        converter=bool,
-        doc="Render mesh lines as tubes.",
-    )  # noqa
 
-
-class Path(Mesh, base=vedo.Line):
-    ...
-
-
-class Sphere(Mesh, base=vedo.Sphere):
-    ...
-
-
-class Spheres(Mesh, base=vedo.Spheres):
-    ...
-
-
-class Spline(Mesh, base=vedo.Spline):
-    ...
-
-
-class KSpline(Mesh, base=vedo.KSpline):
-    ...
-
-
-class CSpline(Mesh, base=vedo.CSpline):
-    ...
-
-
-class Tube(Mesh, base=vedo.Tube):
-    ...
-
-
-class Ribbon(Mesh, base=vedo.Ribbon):
-    ...
-
-
-class Arrow(Mesh, base=vedo.Arrow):
-    ...
-
-
-class Arrows(Mesh, base=vedo.Arrows):
-    ...
-
-
-class Circle(Mesh, base=vedo.Circle):
-    ...
-
-
-class Disc(Mesh, base=vedo.Disc):
-    ...
-
-
-class Earth(Mesh, base=vedo.Earth):
-    ...
-
-
-class Ellipsoid(Mesh, base=vedo.Ellipsoid):
-    ...
-
-
-class Box(Mesh, base=vedo.Box):
-    ...
-
-
-class Cube(Mesh, base=vedo.Cube):
-    ...
-
-
-class Spring(Mesh, base=vedo.Spring):
-    ...
-
-
-class Cylinder(Mesh, base=vedo.Cylinder):
-    ...
-
-
-class Cone(Mesh, base=vedo.Cone):
-    ...
-
-
-class Text(Mesh, base=vedo.Text3D):
-    ...
+# fmt: off
+class Path(Mesh, base=vedo.Line): ...
+class Sphere(Mesh, base=vedo.Sphere): ...
+class Spheres(Mesh, base=vedo.Spheres): ...
+class Spline(Mesh, base=vedo.Spline): ...
+class KSpline(Mesh, base=vedo.KSpline): ...
+class CSpline(Mesh, base=vedo.CSpline): ...
+class Tube(Mesh, base=vedo.Tube): ...
+class Ribbon(Mesh, base=vedo.Ribbon): ...
+class Arrow(Mesh, base=vedo.Arrow): ...
+class Arrows(Mesh, base=vedo.Arrows): ...
+class Circle(Mesh, base=vedo.Circle): ...
+class Disc(Mesh, base=vedo.Disc): ...
+class Earth(Mesh, base=vedo.Earth): ...
+class Ellipsoid(Mesh, base=vedo.Ellipsoid): ...
+class Box(Mesh, base=vedo.Box): ...
+class Cube(Mesh, base=vedo.Cube): ...
+class Spring(Mesh, base=vedo.Spring): ...
+class Cylinder(Mesh, base=vedo.Cylinder): ...
+class Cone(Mesh, base=vedo.Cone): ...
+class Text(Mesh, base=vedo.Text3D): ...
+# fmt: on
 
 
 def get_object_type(name: str) -> type[VtkComponent]:
