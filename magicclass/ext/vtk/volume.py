@@ -1,12 +1,22 @@
 from __future__ import annotations
 import vedo
 import numpy as np
+from psygnal import Signal, SignalGroup
+from magicgui.widgets import FloatSlider
+
 from .components import VtkProperty, VtkComponent
 from .const import Mode, Rendering
 
 
+class VolumeSignalGroup(SignalGroup):
+    color = Signal(object)
+    rendering = Signal(object)
+    iso_threshold = Signal(float)
+
+
 class Volume(VtkComponent, base=vedo.Volume):
     _obj: vedo.Volume
+    events = VolumeSignalGroup()
 
     def __init__(self, data, _parent):
         super().__init__(data, _parent=_parent)
@@ -74,6 +84,7 @@ class Volume(VtkComponent, base=vedo.Volume):
         self._iso_threshold = float(v)
         if self._mode in (Mode.iso, Mode.wireframe):
             self._update_actor()
+        self.events.iso_threshold.emit(v)
 
     def _update_actor(self):
         vmin, vmax = self._contrast_limits
@@ -127,3 +138,14 @@ class Volume(VtkComponent, base=vedo.Volume):
 
         if self._mode == Mode.lego:
             self._update_actor()
+
+    def create_iso_threshold_slider(
+        self, name: str = "iso threshold", **kwargs
+    ) -> FloatSlider:
+        vmin, vmax = self._contrast_limits
+        sl = FloatSlider(
+            name=name, min=vmin, max=vmax, value=self.iso_threshold, **kwargs
+        )
+        sl.changed.connect_setattr(self, "iso_threshold")
+        self.events.iso_threshold.connect_setattr(sl, "value")
+        return sl
