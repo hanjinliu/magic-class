@@ -21,7 +21,7 @@ from .wrappers import (
     nogui,
 )
 
-from .fields import field, vfield
+from .fields import field, vfield, FieldGroup
 from .gui._base import wraps, defaults, MagicTemplate, PopUpMode
 from .gui.keybinding import Key
 from . import widgets, utils, types

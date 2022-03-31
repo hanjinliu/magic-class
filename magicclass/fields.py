@@ -1,6 +1,15 @@
 from __future__ import annotations
 from contextlib import contextmanager
-from typing import Any, TYPE_CHECKING, Callable, TypeVar, overload, Generic, Union
+from typing import (
+    Any,
+    TYPE_CHECKING,
+    Callable,
+    Sequence,
+    TypeVar,
+    overload,
+    Generic,
+    Union,
+)
 from typing_extensions import Literal
 from pathlib import Path
 import datetime
@@ -8,7 +17,7 @@ import sys
 from enum import Enum
 from dataclasses import Field, MISSING
 from magicgui.type_map import get_widget_class
-from magicgui.widgets import create_widget
+from magicgui.widgets import create_widget, Container
 from magicgui.widgets._bases import Widget, ValueWidget
 from magicgui.widgets._bases.value_widget import UNSET
 
@@ -71,7 +80,7 @@ class MagicField(Field, Generic[_W, _V]):
         self.parent_class: type = None
 
     def __repr__(self):
-        return self.__class__.__name__.rstrip("Field") + super().__repr__()
+        return self.__class__.__name__ + super().__repr__().lstrip("Field")
 
     def copy(self) -> MagicField:
         """Copy object."""
@@ -565,3 +574,81 @@ def _get_field(
         f = field_class(default=obj, **kwargs)
 
     return f
+
+
+class _FieldGroupMeta(type):
+    _fields: dict[str, MagicField]
+
+    def __new__(
+        fcls: type,
+        name: str,
+        bases: tuple,
+        namespace: dict,
+        value_field: bool = False,
+        **kwds,
+    ) -> _FieldGroupMeta:
+        if value_field:
+            # define value getter/setter
+            def _get_(self: _FieldGroupMeta, obj, objtype=None):
+                if obj is None:
+                    return self
+                values = []
+                for v in self.__class__._fields.values():
+                    if isinstance(v, MagicValueField):
+                        values.append(v.__get__(self))
+                    else:
+                        values.append(v.__get__(self).value)
+                return tuple(values)
+
+            def _set_(self: _FieldGroupMeta, obj, values: Sequence[Any]):
+                for fld, value in zip(self.__class__._fields.values(), values):
+                    if isinstance(fld, MagicValueField):
+                        fld.__set__(self, value)
+                    else:
+                        setattr(fld.__get__(self), "value", value)
+                return None
+
+            namespace.update({"__get__": _get_, "__set__": _set_})
+
+        cls: _FieldGroupMeta = type.__new__(fcls, name, bases, namespace, **kwds)
+        _fields: dict[str, MagicField] = {}
+        for k, v in namespace.items():
+            if isinstance(v, MagicField):
+                v.name = k
+                _fields[k] = v
+        cls._fields = _fields
+
+        return cls
+
+
+_C = TypeVar("_C", bound=Container)
+
+
+class FieldGroup(MagicField[_C], metaclass=_FieldGroupMeta):
+    def __init__(
+        self,
+        default=MISSING,
+        default_factory: type[_C] = Container,
+        metadata: dict[str, Any] = {},
+        name: str | None = None,
+        record: bool = True,
+    ):
+        metadata = metadata.copy()
+        super().__init__(
+            default=default,
+            default_factory=default_factory,
+            metadata=metadata,
+            name=name,
+            record=record,
+        )
+
+    def to_widget(self) -> _C:
+        # TODO: macro recording
+        container = super().to_widget()
+        children = [fld.get_widget(self) for fld in self.__class__._fields.values()]
+        container.extend(children)
+        return container
+
+    def to_action(self) -> WidgetAction[_C]:
+        container = self.to_widget()
+        return WidgetAction(container)
