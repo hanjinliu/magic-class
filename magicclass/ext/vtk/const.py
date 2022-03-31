@@ -2,7 +2,7 @@ from enum import Enum
 
 
 class Rendering(Enum):
-    """Rendering mode suppored in vtk."""
+    """Volume rendering mode suppored in vtk."""
 
     composite = 0
     mip = 1

@@ -1,10 +1,13 @@
 from __future__ import annotations
+import weakref
+import numpy as np
 import vedo
 from qtpy import QtWidgets as QtW
 from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
+from psygnal.containers import EventedList
 from .const import AxesMode
 from .volume import Volume
-from .components import get_object_type
+from .components import Mesh, VtkComponent, get_object_type
 
 from ...widgets import FreeWidget
 
@@ -21,19 +24,49 @@ class QtVtkCanvas(QtW.QWidget):
         _layout.addWidget(self._vtk_widget)
 
 
+class LayerList(EventedList):
+    def __init__(self, data=(), parent: VtkCanvas = None):
+        super().__init__(data=data)
+        self._parent_ref = weakref.ref(parent)
+        self.events.inserted.connect(self._on_inserted)
+        self.events.removed.connect(self._on_removed)
+
+    @property
+    def parent(self) -> VtkCanvas:
+        return self._parent_ref()
+
+    def _on_inserted(self, i: int, obj: VtkComponent):
+        self.parent._qwidget.plt.add(obj._obj)
+        self.parent._qwidget.plt.window.Render()
+        if len(self) == 1:
+            self.parent._qwidget.plt.show(zoom=True)
+
+    def _on_removed(self, i: int, obj: VtkComponent):
+        self.parent._qwidget.plt.remove(obj._obj)
+        self.parent._qwidget.plt.window.Render()
+        if len(self) == 1:
+            self.parent._qwidget.plt.show(zoom=True)
+
+
 class VtkCanvas(FreeWidget):
     def __init__(self):
         super().__init__()
         self._qwidget = QtVtkCanvas()
         self.set_widget(self._qwidget)
-        self._layers = []
+        self._layers = LayerList(parent=self)
 
     @property
     def layers(self):
         return self._layers
 
-    def add_volume(self, data):
-        vol = Volume(data, _parent=self._qwidget.plt)
+    def screenshot(self) -> np.ndarray:
+        """Get screenshot as a numpy array."""
+        pic: vedo.Picture = self._qwidget.plt.topicture()
+        img = pic.tonumpy()
+        return img
+
+    def add_volume(self, volume):
+        vol = Volume(volume, _parent=self._qwidget.plt)
         self.layers.append(vol)
         self._qwidget.plt.add(vol._current_obj)
         if len(self.layers) == 1:
@@ -45,10 +78,16 @@ class VtkCanvas(FreeWidget):
             *args, **kwargs, _parent=self._qwidget.plt
         )
         self.layers.append(obj)
-        self._qwidget.plt.add(obj._obj)
         if len(self.layers) == 1:
             self._qwidget.plt.show()
         return obj
+
+    def add_surface(self, data):
+        mesh = Mesh(data, _parent=self._qwidget.plt)
+        self.layers.append(mesh)
+        if len(self.layers) == 1:
+            self._qwidget.plt.show(zoom=True)
+        return mesh
 
     @property
     def axes(self):
