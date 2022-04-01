@@ -56,6 +56,7 @@ and tidiness of the source code.
    use_wraps
    use_bind
    use_choices
+   use_worker
    additional_types
    containers
 

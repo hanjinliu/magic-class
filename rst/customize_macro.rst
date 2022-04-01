@@ -28,16 +28,3 @@ in the standard ``np.array([...])`` style.
     @register_type(np.ndarray)
     def numpy_to_str(arr):
         return f"np.array({arr.tolist()})"
-
-.. tip::
-
-    It would be useful to register ``Image`` type to make ``napari`` plugin widget reproducible.
-    In following example you can record ``Image`` inputs in the form of ``viewer.layers["<name>"]``.
-
-    .. code-block:: python
-
-        from napari.layers import Image
-
-        @register_type(Image)
-        def get_layer(layer):
-            return f"viewer.layers[{layer.name!r}]"

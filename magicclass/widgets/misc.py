@@ -1,6 +1,14 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Generic, Iterable, MutableSequence, Any, TypeVar
-from typing_extensions import _AnnotatedAlias, get_args
+from typing import (
+    TYPE_CHECKING,
+    Callable,
+    Generic,
+    Iterable,
+    MutableSequence,
+    Any,
+    TypeVar,
+)
+from typing_extensions import _AnnotatedAlias, get_args, ParamSpec
 from psygnal import Signal
 from qtpy.QtWidgets import QTabWidget, QLineEdit, QMenu, QVBoxLayout, QWidget
 from qtpy.QtGui import QTextCursor
@@ -19,7 +27,6 @@ from magicgui.widgets import LineEdit
 from magicgui.widgets._bases.value_widget import ValueWidget, UNSET
 from magicgui.backends._qtpy.widgets import (
     QBaseWidget,
-    QBaseValueWidget,
     LineEdit as BaseLineEdit,
 )
 from .utils import FreeWidget, merge_super_sigs
@@ -119,6 +126,28 @@ class OptionalWidget(Container):
         self._checkbox.text = v
 
 
+try:
+    import matplotlib as mpl
+    import matplotlib.pyplot as plt
+    from ._mpl_canvas import InteractiveFigureCanvas
+
+    _P = ParamSpec("_P")
+    _R = TypeVar("_R")
+
+    def _inject_mpl_docs(f: Callable[_P, _R]) -> Callable[_P, _R]:
+        plt_func = getattr(plt, f.__name__)
+        f.__annotations__ = {"self": "Figure"}.update(plt_func.__annotations__)
+        plt_doc = getattr(plt_func, "__doc__", "")
+        if plt_doc:
+            f.__doc__ = f"Copy of ``plt.{f.__name__}()``. Original docstring is ...\n\n{plt_doc}"
+        return f
+
+except ImportError as e:
+
+    def _inject_mpl_docs(f: Callable[_P, _R]) -> Callable[_P, _R]:
+        return f
+
+
 class Figure(FreeWidget):
     """A matplotlib figure canvas."""
 
@@ -126,14 +155,10 @@ class Figure(FreeWidget):
         self,
         nrows: int = 1,
         ncols: int = 1,
-        figsize: tuple[int, int] = (4, 3),
+        figsize: tuple[float, float] = (4.0, 3.0),
         style=None,
         **kwargs,
     ):
-        import matplotlib as mpl
-        import matplotlib.pyplot as plt
-        from matplotlib.backends.backend_qt5agg import FigureCanvas
-
         backend = mpl.get_backend()
         try:
             mpl.use("Agg")
@@ -145,100 +170,121 @@ class Figure(FreeWidget):
         finally:
             mpl.use(backend)
 
+        canvas = InteractiveFigureCanvas(fig)
+        self.canvas = canvas
         super().__init__(**kwargs)
-        canvas = FigureCanvas(fig)
         self.set_widget(canvas)
         self.figure = fig
         self.min_height = 40
 
-        # Update docstrings
-        for name, method in self.__class__.__dict__.items():
-            if name.startswith("_") or getattr(method, "__doc__", None) is None:
-                continue
-            plt_method = getattr(plt, name, None)
-            plt_doc = getattr(plt_method, "__doc__", "")
-            if plt_doc:
-                method.__doc__ += f"\nOriginal docstring:\n\n{plt_doc}"
-
+    @_inject_mpl_docs
     def draw(self):
-        """Copy of ``plt.draw()``."""
         self.figure.tight_layout()
-        self.figure.canvas.draw()
+        self.canvas.draw()
 
+    @property
+    def enabled(self) -> bool:
+        """toggle interactivity of the figure canvas."""
+        return self.canvas._interactive
+
+    @enabled.setter
+    def enabled(self, v: bool):
+        self.canvas._interactive = bool(v)
+
+    @property
+    def mouse_click_callbacks(self) -> list[Callable]:
+        return self.canvas._mouse_click_callbacks
+
+    interactive = enabled  # alias
+
+    @_inject_mpl_docs
     def clf(self):
-        """Copy of ``plt.clf``."""
         self.figure.clf()
         self.draw()
 
+    @_inject_mpl_docs
     def cla(self):
-        """Copy of ``plt.cla``."""
         self.ax.cla()
         self.draw()
 
     @property
     def axes(self) -> list[Axes]:
+        """List of matplotlib axes."""
         return self.figure.axes
 
     @property
     def ax(self) -> Axes:
+        """The first matplotlib axis."""
         try:
             _ax = self.axes[0]
         except IndexError:
             _ax = self.figure.add_subplot(111)
         return _ax
 
+    @_inject_mpl_docs
+    def subplots(self, *args, **kwargs):
+        self.clf()
+        fig = self.figure
+        axs = fig.subplots(*args, **kwargs)
+        self.draw()
+        return fig, axs
+
+    @_inject_mpl_docs
+    def savefig(self, *args, **kwargs):
+        return self.figure.savefig(*args, **kwargs)
+
+    @_inject_mpl_docs
     def plot(self, *args, **kwargs) -> Axes:
-        """Copy of ``plt.plot``."""
         self.ax.plot(*args, **kwargs)
         self.draw()
         return self.ax
 
+    @_inject_mpl_docs
     def scatter(self, *args, **kwargs) -> Axes:
-        """Copy of ``plt.scatter``."""
         self.ax.scatter(*args, **kwargs)
         self.draw()
         return self.ax
 
+    @_inject_mpl_docs
     def hist(
         self, *args, **kwargs
     ) -> tuple[ArrayLike | list[ArrayLike], ArrayLike, list | list[list]]:
-        """Copy of ``plt.hist``."""
         out = self.ax.hist(*args, **kwargs)
         self.draw()
         return out
 
+    @_inject_mpl_docs
     def text(self, *args, **kwargs):
-        """Copy of ``plt.text``."""
         self.ax.text(*args, **kwargs)
         self.draw()
         return self.ax
 
+    @_inject_mpl_docs
     def quiver(self, *args, data=None, **kwargs):
-        """Copy of ``plt.quiver``."""
         self.ax.quiver(*args, data=data, **kwargs)
         self.draw()
         return self.ax
 
+    @_inject_mpl_docs
     def axline(self, xy1, xy2=None, *, slope=None, **kwargs):
-        """Copy of ``plt.axline``."""
         self.ax.axline(xy1, xy2=xy2, slope=slope, **kwargs)
         self.draw()
         return self.ax
 
+    @_inject_mpl_docs
     def axhline(self, y=0, xmin=0, xmax=1, **kwargs):
-        """Copy of ``plt.axhline``."""
         self.ax.axhline(y, xmin, xmax, **kwargs)
         self.draw()
         return self.ax
 
+    @_inject_mpl_docs
     def axvline(self, x=0, ymin=0, ymax=1, **kwargs):
-        """Copy of ``plt.axvline``."""
         self.ax.axvline(x, ymin, ymax, **kwargs)
         self.draw()
         return self.ax
 
+    @_inject_mpl_docs
     def xlim(self, *args, **kwargs):
-        """Copy of ``plt.xlim``."""
         ax = self.ax
         if not args and not kwargs:
             return ax.get_xlim()
@@ -246,8 +292,8 @@ class Figure(FreeWidget):
         self.draw()
         return ret
 
+    @_inject_mpl_docs
     def ylim(self, *args, **kwargs):
-        """Copy of ``plt.ylim``."""
         ax = self.ax
         if not args and not kwargs:
             return ax.get_ylim()
@@ -255,38 +301,38 @@ class Figure(FreeWidget):
         self.draw()
         return ret
 
+    @_inject_mpl_docs
     def imshow(self, *args, **kwargs) -> Axes:
-        """Copy of ``plt.imshow``."""
         self.ax.imshow(*args, **kwargs)
         self.draw()
         return self.ax
 
+    @_inject_mpl_docs
     def legend(self, *args, **kwargs):
-        """Copy of ``plt.legend``."""
         leg = self.ax.legend(*args, **kwargs)
         self.draw()
         return leg
 
+    @_inject_mpl_docs
     def title(self, *args, **kwargs):
-        """Copy of ``plt.title``."""
         title = self.ax.set_title(*args, **kwargs)
         self.draw()
         return title
 
+    @_inject_mpl_docs
     def xlabel(self, *args, **kwargs):
-        """Copy of ``plt.xlabel``."""
         xlabel = self.ax.set_xlabel(*args, **kwargs)
         self.draw()
         return xlabel
 
+    @_inject_mpl_docs
     def ylabel(self, *args, **kwargs):
-        """Copy of ``plt.ylabel``."""
         ylabel = self.ax.set_ylabel(*args, **kwargs)
         self.draw()
         return ylabel
 
+    @_inject_mpl_docs
     def xticks(self, ticks=None, labels=None, **kwargs):
-        """Copy of ``plt.xticks``."""
         if ticks is None:
             locs = self.ax.get_xticks()
             if labels is not None:
@@ -306,8 +352,8 @@ class Figure(FreeWidget):
         self.draw()
         return locs, labels
 
+    @_inject_mpl_docs
     def yticks(self, ticks=None, labels=None, **kwargs):
-        """Copy of ``plt.xticks``."""
         if ticks is None:
             locs = self.ax.get_yticks()
             if labels is not None:
@@ -326,6 +372,35 @@ class Figure(FreeWidget):
             l.update(kwargs)
         self.draw()
         return locs, labels
+
+    @_inject_mpl_docs
+    def twinx(self) -> Axes:
+        return self.ax.twinx()
+
+    @_inject_mpl_docs
+    def twiny(self) -> Axes:
+        return self.ax.twiny()
+
+    @_inject_mpl_docs
+    def box(self, on=None) -> None:
+        if on is None:
+            on = not self.ax.get_frame_on()
+        self.ax.set_frame_on(on)
+
+    @_inject_mpl_docs
+    def xscale(self, scale=None):
+        self.ax.set_xscale(scale)
+        self.draw()
+
+    @_inject_mpl_docs
+    def yscale(self, scale=None):
+        self.ax.set_yscale(scale)
+        self.draw()
+
+    @_inject_mpl_docs
+    def autoscale(self, enable=True, axis="both", tight=None):
+        self.ax.autoscale(enable=enable, axis=axis, tight=tight)
+        self.draw()
 
 
 class ConsoleTextEdit(TextEdit):

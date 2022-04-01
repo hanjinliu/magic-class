@@ -1,4 +1,4 @@
-__version__ = "0.6.1.dev1"
+__version__ = "0.6.2.dev0"
 
 from .core import (
     magicclass,
