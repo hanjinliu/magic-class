@@ -19,7 +19,8 @@ except ImportError as e:  # pragma: no cover
     msg = f"{e}. To use magicclass with threading please `pip install superqt`"
     raise type(e)(msg)
 
-from magicgui.widgets import ProgressBar, Container
+from qtpy.QtCore import Qt
+from magicgui.widgets import ProgressBar, Container, Widget, PushButton
 
 from .fields import MagicField
 from .utils import get_signature, move_to_screen_center
@@ -35,6 +36,11 @@ _F = TypeVar("_F", bound=Callable)
 
 @runtime_checkable
 class _SupportProgress(Protocol):
+    """A progress protocol."""
+
+    def __init__(self, max: int = 1, **kwargs):
+        raise NotImplementedError()
+
     @property
     def value(self) -> int:
         raise NotImplementedError()
@@ -150,10 +156,19 @@ class NapariProgressBar(_SupportProgress):
 
 
 class DefaultProgressBar(Container, _SupportProgress):
+    """The default progressbar widget."""
+
     def __init__(self, max: int = 1):
         self.pbar = ProgressBar(value=0, max=max)
+        self.pause_button = PushButton(text="Pause")
+        self.abort_button = PushButton(text="Abort")
+        cnt = Container(
+            layout="horizontal", widgets=[self.pause_button, self.abort_button]
+        )
+        cnt.margins = (0, 0, 0, 0)
         self.pbar.min_width = 200
-        super().__init__(widgets=[self.pbar])
+        self._paused = False
+        super().__init__(widgets=[self.pbar, cnt])
 
     @property
     def value(self) -> int:
@@ -172,7 +187,50 @@ class DefaultProgressBar(Container, _SupportProgress):
         self.pbar.max = v
 
     def set_description(self, desc: str):
+        """Set description as the label of the progressbar."""
         self.pbar.label = desc
+        return None
+
+    def set_worker(self, worker: GeneratorWorker | FunctionWorker):
+        """Set currently running worker."""
+        self._worker = worker
+        # initialize abort_button
+        self.abort_button.changed.connect(self._abort_worker)
+        self.abort_button.enabled = True
+
+        # initialize pause_button
+        if not isinstance(self._worker, GeneratorWorker):
+            self.pause_button.enabled = False
+            return None
+        self.pause_button.enabled = True
+        self.pause_button.changed.connect(self._toggle_pause)
+
+        @self._worker.paused.connect
+        def _on_pause():
+            self.pause_button.text = "Resume"
+            self.pause_button.enabled = True
+
+        return None
+
+    def _toggle_pause(self):
+        if self._paused:
+            self._worker.resume()
+            self.pause_button.text = "Pause"
+        else:
+            self._worker.pause()
+            self.pause_button.text = "Pausing"
+            self.pause_button.enabled = False
+
+        self._paused = not self._paused
+        return None
+
+    def _abort_worker(self):
+        self._paused = False
+        self.pause_button.text = "Pause"
+        self.abort_button.text = "Aborting"
+        self.pause_button.enabled = False
+        self.abort_button.enabled = False
+        self._worker.quit()
         return None
 
 
@@ -181,6 +239,8 @@ ProgressBarLike = Union[ProgressBar, _SupportProgress]
 
 class thread_worker:
     """Create a worker in a superqt/napari style."""
+
+    _DEFAULT_PROGRESS_BAR = DefaultProgressBar
 
     def __init__(
         self,
@@ -215,9 +275,34 @@ class thread_worker:
 
         self._progress = progress
 
-    @property
-    def not_ready(self) -> bool:
-        return self._func is None
+    @classmethod
+    def set_default(cls, pbar_cls: Callable | str):
+        """
+        Set the default progressbar class.
+
+        This class method is useful when there is an user-defined class that
+        follows ``_SupportProgress`` protocol.
+
+        Parameters
+        ----------
+        pbar_cls : callable or str
+            The default class. In principle this parameter does not have to be a
+            class. As long as ``pbar_cls(max=...)`` returns a ``_SupportProgress``
+            object it works. Either "default" or "napari" is also accepted.
+
+        """
+        if isinstance(pbar_cls, str):
+            if pbar_cls == "napari":
+                pbar_cls = NapariProgressBar
+            elif pbar_cls == "default":
+                pbar_cls = DefaultProgressBar
+            else:
+                raise ValueError(
+                    f"Unknown progress bar {pbar_cls!r}. Must be either 'default' or "
+                    "'napari', or a proper type object."
+                )
+        cls._DEFAULT_PROGRESS_BAR = pbar_cls
+        return pbar_cls
 
     @overload
     def __call__(self, f: Callable) -> thread_worker:
@@ -228,7 +313,7 @@ class thread_worker:
         ...
 
     def __call__(self, *args, **kwargs):
-        if self.not_ready:
+        if self._func is None:
             f = args[0]
             self._func = f
             wraps(f)(self)
@@ -314,6 +399,8 @@ class thread_worker:
                     worker.yielded.connect(increment.__get__(pbar))
 
             _push_button: PushButtonPlus = gui[self._func.__name__]
+            if hasattr(pbar, "set_worker"):
+                pbar.set_worker(worker)
             if _push_button.running:
                 _push_button.enabled = False
 
@@ -370,15 +457,15 @@ class thread_worker:
                 desc = "Progress"
 
         if _pbar is None:
-            if gui.parent_viewer is not None:
-                _pbar = NapariProgressBar(value=0, max=total)
-            else:
-                _pbar = DefaultProgressBar(max=total)
-                _pbar.native.setParent(gui.native, _pbar.native.windowFlags())
+            _pbar = self.__class__._DEFAULT_PROGRESS_BAR(max=total)
+            if isinstance(_pbar, Widget) and _pbar.parent is None:
+                # Popup progressbar as a splashscreen if it is not a child widget.
+                _pbar.native.setParent(gui.native, Qt.SplashScreen)
                 move_to_screen_center(_pbar.native)
         else:
             _pbar.max = total
 
+        # try to set description
         if hasattr(_pbar, "set_description"):
             _pbar.set_description(desc)
         else:
