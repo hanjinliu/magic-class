@@ -42,8 +42,13 @@ def find_myname(gui: MagicTemplate):
         return Expr(Head.getattr, [find_myname(parent), gui._my_symbol])
 
 
-# magicgui<0.3.7 has bug in type registration
-# mgui.register_type(Color, widget_type=ColorEdit)
-from magicgui.type_map import _TYPE_DEFS
+import magicgui as mgui
 
-_TYPE_DEFS[Color] = (ColorEdit, {})
+if tuple(int(v) for v in mgui.__version__.split(".")[:2]) < (0, 4):
+    # magicgui<0.4 has bug in type registration
+    # mgui.register_type(Color, widget_type=ColorEdit)
+    from magicgui.type_map import _TYPE_DEFS
+
+    _TYPE_DEFS[Color] = (ColorEdit, {})
+else:
+    mgui.register_type(Color, widget_type=ColorEdit)
