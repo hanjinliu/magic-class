@@ -356,7 +356,7 @@ def confirm(
         return _method
 
     if f is not None:
-        _decorator(f)
+        return _decorator(f)
     return _decorator
 
 

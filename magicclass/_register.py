@@ -46,7 +46,6 @@ import magicgui as mgui
 
 if tuple(int(v) for v in mgui.__version__.split(".")[:2]) < (0, 4):
     # magicgui<0.4 has bug in type registration
-    # mgui.register_type(Color, widget_type=ColorEdit)
     from magicgui.type_map import _TYPE_DEFS
 
     _TYPE_DEFS[Color] = (ColorEdit, {})
