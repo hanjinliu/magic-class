@@ -195,10 +195,12 @@ class DefaultProgressBar(Container, _SupportProgress):
         """Set currently running worker."""
         self._worker = worker
         # initialize abort_button
+        self.abort_button.text = "Abort"
         self.abort_button.changed.connect(self._abort_worker)
         self.abort_button.enabled = True
 
         # initialize pause_button
+        self.pause_button.text = "Pause"
         if not isinstance(self._worker, GeneratorWorker):
             self.pause_button.enabled = False
             return None
