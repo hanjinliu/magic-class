@@ -366,6 +366,46 @@ def nogui(method: F) -> F:
     return method
 
 
+def mark_preview(function: F, text: str = "Preview") -> F:
+    """
+    Define a preview of a function.
+
+    This decorator is useful for advanced magicgui creation. A "Preview" button
+    appears in the bottom of the widget built from the input function and the
+    decorated function will be called with the same arguments.
+    Following example shows how to define a previewer that prints the content of
+    the selected file.
+
+    .. code-block:: python
+
+        def func(self, path: Path):
+            ...
+
+        @mark_preview(func)
+        def _func_prev(self, path: Path):
+            with open(path, mode="r") as f:
+                print(f.read())
+
+    Parameters
+    ----------
+    function : callable
+        To which function previewer will be defined.
+    text : str, optional
+        Text of preview button.
+    """
+
+    def _wrapper(preview):
+        if len(inspect.signature(preview).parameters) != len(
+            inspect.signature(function).parameters
+        ):
+            raise TypeError("Preview and method has different number of parameters.")
+
+        upgrade_signature(function, additional_options={"preview": (text, preview)})
+        return function
+
+    return _wrapper
+
+
 def _assert_iterable(obj):
     if obj is None:
         obj = []

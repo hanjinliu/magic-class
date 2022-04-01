@@ -400,9 +400,9 @@ class thread_worker:
                     worker.pbar = pbar  # avoid garbage collection
                     worker.yielded.connect(increment.__get__(pbar))
 
+                if hasattr(pbar, "set_worker"):
+                    pbar.set_worker(worker)
             _push_button: PushButtonPlus = gui[self._func.__name__]
-            if hasattr(pbar, "set_worker"):
-                pbar.set_worker(worker)
             if _push_button.running:
                 _push_button.enabled = False
 
@@ -462,7 +462,9 @@ class thread_worker:
             _pbar = self.__class__._DEFAULT_PROGRESS_BAR(max=total)
             if isinstance(_pbar, Widget) and _pbar.parent is None:
                 # Popup progressbar as a splashscreen if it is not a child widget.
-                _pbar.native.setParent(gui.native, Qt.SplashScreen)
+                _pbar.native.setParent(
+                    gui.native, Qt.WindowTitleHint | Qt.WindowMinimizeButtonHint
+                )
                 move_to_screen_center(_pbar.native)
         else:
             _pbar.max = total
