@@ -1,7 +1,17 @@
 from __future__ import annotations
 import inspect
 from functools import wraps
-from typing import Any, Callable, TYPE_CHECKING, Iterable, Union, overload, TypeVar
+from typing import (
+    Any,
+    Callable,
+    TYPE_CHECKING,
+    Iterable,
+    Union,
+    overload,
+    TypeVar,
+    Protocol,
+    runtime_checkable,
+)
 
 try:
     from superqt.utils import create_worker, GeneratorWorker, FunctionWorker
@@ -9,10 +19,10 @@ except ImportError as e:  # pragma: no cover
     msg = f"{e}. To use magicclass with threading please `pip install superqt`"
     raise type(e)(msg)
 
-from magicgui.widgets import ProgressBar
+from magicgui.widgets import ProgressBar, Container
 
 from .fields import MagicField
-from .utils.functions import get_signature
+from .utils import get_signature, move_to_screen_center
 
 if TYPE_CHECKING:
     from .gui import BaseGui
@@ -21,6 +31,34 @@ if TYPE_CHECKING:
 __all__ = ["thread_worker"]
 
 _F = TypeVar("_F", bound=Callable)
+
+
+@runtime_checkable
+class _SupportProgress(Protocol):
+    @property
+    def value(self) -> int:
+        raise NotImplementedError()
+
+    @value.setter
+    def value(self, v) -> None:
+        raise NotImplementedError()
+
+    @property
+    def max(self) -> int:
+        raise NotImplementedError()
+
+    @max.setter
+    def max(self, v) -> None:
+        raise NotImplementedError()
+
+    def set_description(self, desc: str):
+        raise NotImplementedError()
+
+    def show(self):
+        raise NotImplementedError()
+
+    def close(self):
+        raise NotImplementedError()
 
 
 class Callbacks:
@@ -70,7 +108,7 @@ class Callbacks:
             yield f
 
 
-class NapariProgressBar:
+class NapariProgressBar(_SupportProgress):
     """A progressbar class that provides napari progress bar with same API."""
 
     def __init__(self, value: int = 0, max: int = 1000):
@@ -97,12 +135,7 @@ class NapariProgressBar:
     def max(self, v) -> None:
         self._pbar.total = v
 
-    @property
-    def label(self) -> str:
-        return self._pbar.desc
-
-    @label.setter
-    def label(self, v) -> None:
+    def set_description(self, v: str) -> None:
         self._pbar.set_description(v)
 
     @property
@@ -116,7 +149,34 @@ class NapariProgressBar:
         self._pbar.close()
 
 
-_SupportProgress = Union[ProgressBar, NapariProgressBar]
+class DefaultProgressBar(Container, _SupportProgress):
+    def __init__(self, max: int = 1):
+        self.pbar = ProgressBar(value=0, max=max)
+        self.pbar.min_width = 200
+        super().__init__(widgets=[self.pbar])
+
+    @property
+    def value(self) -> int:
+        return self.pbar.value
+
+    @value.setter
+    def value(self, v):
+        self.pbar.value = v
+
+    @property
+    def max(self) -> int:
+        return self.pbar.max
+
+    @max.setter
+    def max(self, v):
+        self.pbar.max = v
+
+    def set_description(self, desc: str):
+        self.pbar.label = desc
+        return None
+
+
+ProgressBarLike = Union[ProgressBar, _SupportProgress]
 
 
 class thread_worker:
@@ -138,7 +198,7 @@ class thread_worker:
         self._aborted = Callbacks()
         self._ignore_errors = ignore_errors
         self._objects: dict[int, BaseGui] = {}
-        self._progressbars: dict[int, _SupportProgress | None] = {}
+        self._progressbars: dict[int, ProgressBarLike | None] = {}
 
         if f is not None:
             self(f)
@@ -237,17 +297,17 @@ class thread_worker:
                     )
                 elif isinstance(_pbar, MagicField):
                     pbar = _pbar.get_widget(gui)
-                    if not isinstance(pbar, ProgressBar):
+                    if not isinstance(pbar, ProgressBarLike):
                         raise TypeError(f"{_pbar.name} does not create a ProgressBar.")
                     pbar.label = desc or _pbar.name
                     pbar.max = total
                 else:
-                    if not isinstance(_pbar, ProgressBar):
+                    if not isinstance(_pbar, ProgressBarLike):
                         raise TypeError(f"{_pbar} is not a ProgressBar.")
                     pbar = _pbar
 
                 worker.started.connect(init_pbar.__get__(pbar))
-                if not pbar.visible:
+                if not getattr(pbar, "visible", False):
                     worker.finished.connect(close_pbar.__get__(pbar))
                 if pbar.max != 0 and isinstance(worker, GeneratorWorker):
                     worker.pbar = pbar  # avoid garbage collection
@@ -313,12 +373,16 @@ class thread_worker:
             if gui.parent_viewer is not None:
                 _pbar = NapariProgressBar(value=0, max=total)
             else:
-                _pbar = ProgressBar(value=0, max=total)
+                _pbar = DefaultProgressBar(max=total)
                 _pbar.native.setParent(gui.native, _pbar.native.windowFlags())
+                move_to_screen_center(_pbar.native)
         else:
             _pbar.max = total
 
-        _pbar.label = desc
+        if hasattr(_pbar, "set_description"):
+            _pbar.set_description(desc)
+        else:
+            _pbar.label = desc
         return _pbar
 
     @property
@@ -352,14 +416,14 @@ class thread_worker:
         return self._aborted
 
 
-def init_pbar(pbar: _SupportProgress):
+def init_pbar(pbar: ProgressBarLike):
     """Initialize progressbar."""
     pbar.value = 0
     pbar.show()
     return None
 
 
-def close_pbar(pbar: _SupportProgress):
+def close_pbar(pbar: ProgressBarLike):
     """Close progressbar."""
     if isinstance(pbar, ProgressBar):
         _labeled_widget = pbar._labeled_widget()
@@ -369,7 +433,7 @@ def close_pbar(pbar: _SupportProgress):
     return None
 
 
-def increment(pbar: _SupportProgress):
+def increment(pbar: ProgressBarLike):
     """Increment progressbar."""
     if pbar.value == pbar.max:
         pbar.max = 0
