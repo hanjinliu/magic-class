@@ -463,7 +463,8 @@ class thread_worker:
             if isinstance(_pbar, Widget) and _pbar.parent is None:
                 # Popup progressbar as a splashscreen if it is not a child widget.
                 _pbar.native.setParent(
-                    gui.native, Qt.WindowTitleHint | Qt.WindowMinimizeButtonHint
+                    gui.native,
+                    Qt.WindowTitleHint | Qt.WindowMinimizeButtonHint | Qt.Window,
                 )
                 move_to_screen_center(_pbar.native)
         else:
