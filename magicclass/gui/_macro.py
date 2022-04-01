@@ -155,10 +155,10 @@ class MacroEdit(FreeWidget):
         return new
 
     def show(self):
-        from ..utils import screen_center
+        from ..utils import move_to_screen_center
 
         super().show()
-        self.native.move(screen_center() - self.native.rect().center())
+        move_to_screen_center(self.native)
 
     def _execute(self, e=None):
         """Run macro."""

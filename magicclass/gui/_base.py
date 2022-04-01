@@ -52,7 +52,7 @@ from .mgui_ext import (
 from .utils import get_parameters, define_callback
 from ._macro import GuiMacro
 
-from ..utils import get_signature, iter_members, extract_tooltip, screen_center
+from ..utils import get_signature, iter_members, extract_tooltip, move_to_screen_center
 from ..widgets import Separator, FreeWidget
 from ..fields import MagicField
 from ..signature import MagicMethodSignature, get_additional_option
@@ -676,7 +676,7 @@ class MagicTemplate:
                         # To be popped up correctly, window flags of FunctionGui should be
                         # "windowFlags" and should appear at the center.
                         mgui.native.setParent(self.native, mgui.native.windowFlags())
-                        mgui.native.move(screen_center() - mgui.native.rect().center())
+                        move_to_screen_center(mgui.native)
 
                     if self._close_on_run and not mgui._auto_call:
                         if self._popup_mode != PopUpMode.dock:
