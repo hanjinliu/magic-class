@@ -12,6 +12,7 @@ from typing import (
     Protocol,
     runtime_checkable,
 )
+from typing_extensions import TypedDict
 import weakref
 
 try:
@@ -32,6 +33,12 @@ if TYPE_CHECKING:
 __all__ = ["thread_worker"]
 
 _F = TypeVar("_F", bound=Callable)
+
+
+class ProgressDict(TypedDict):
+    desc: str | Callable
+    total: str | Callable
+    pbar: Any
 
 
 @runtime_checkable
@@ -200,6 +207,7 @@ class DefaultProgressBar(Container, _SupportProgress):
     def set_description(self, desc: str):
         """Set description as the label of the progressbar."""
         self.pbar.label = desc
+        self._unify_label_widths()
         return None
 
     def set_worker(self, worker: GeneratorWorker | FunctionWorker):
@@ -260,7 +268,7 @@ class thread_worker:
         f: Callable | None = None,
         *,
         ignore_errors: bool = False,
-        progress: dict[str, Any] | None = None,
+        progress: ProgressDict | None = None,
     ) -> None:
         self._func: Callable | None = None
         self._started = Callbacks()

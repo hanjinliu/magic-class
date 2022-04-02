@@ -11,7 +11,8 @@ from typing import (
     MutableSequence,
 )
 from types import MethodType
-from typing_extensions import _AnnotatedAlias
+from abc import ABCMeta
+from typing_extensions import _AnnotatedAlias, Literal
 import inspect
 import warnings
 import os
@@ -150,7 +151,22 @@ _T = TypeVar("_T", bound="MagicTemplate")
 _F = TypeVar("_F", bound=Callable)
 
 
-class MagicTemplate:
+class _MagicTemplateMeta(ABCMeta):
+    """This metaclass enables type checking of nested magicclasses."""
+
+    @overload
+    def __get__(self: type[_T], obj: Any, objtype=None) -> _T:
+        ...
+
+    @overload
+    def __get__(self: type[_T], obj: Literal[None], objtype=None) -> type[_T]:
+        ...
+
+    def __get__(self, obj, objtype=None):
+        return self
+
+
+class MagicTemplate(metaclass=_MagicTemplateMeta):
     __doc__ = ""
     __magicclass_parent__: None | MagicTemplate
     __magicclass_children__: list[MagicTemplate]
