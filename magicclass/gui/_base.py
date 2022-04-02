@@ -580,7 +580,9 @@ class MagicTemplate:
                 obj_sig, "additional_options", {}
             )
 
-        if nparams == 0:
+        has_preview = get_additional_option(func, "preview", None) is not None
+
+        if nparams == 0 and not has_preview:
             # We don't want a dialog with a single widget "Run" to show up.
             def run_function():
                 # NOTE: callback must be defined inside function. Magic class must be
@@ -591,11 +593,7 @@ class MagicTemplate:
 
                 return out
 
-        elif (
-            nparams == 1
-            and isinstance(fgui[0], FileEdit)
-            and get_additional_option(func, "preview", None) is None
-        ):
+        elif nparams == 1 and isinstance(fgui[0], FileEdit) and not has_preview:
             # We don't want to open a magicgui dialog and again open a file dialog.
             def run_function():
                 mgui = _build_mgui(widget, func, self)
