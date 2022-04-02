@@ -204,6 +204,11 @@ class DefaultProgressBar(Container, _SupportProgress):
     def set_worker(self, worker: GeneratorWorker | FunctionWorker):
         """Set currently running worker."""
         self._worker = worker
+        if not isinstance(self._worker, GeneratorWorker):
+            # FunctionWorker does not have yielded/aborted signals.
+            self.pause_button.enabled = False
+            self.abort_button.enabled = False
+            return None
         # initialize abort_button
         self.abort_button.text = "Abort"
         self.abort_button.changed.connect(self._abort_worker)
@@ -211,9 +216,6 @@ class DefaultProgressBar(Container, _SupportProgress):
 
         # initialize pause_button
         self.pause_button.text = "Pause"
-        if not isinstance(self._worker, GeneratorWorker):
-            self.pause_button.enabled = False
-            return None
         self.pause_button.enabled = True
         self.pause_button.changed.connect(self._toggle_pause)
 
@@ -244,6 +246,16 @@ class DefaultProgressBar(Container, _SupportProgress):
         self.abort_button.enabled = False
         self._worker.quit()
         return None
+
+
+class Aborted(RuntimeError):
+    """Raised when worker is aborted."""
+
+    @classmethod
+    def raise_(cls, *args):
+        if not args:
+            args = ("Function call is aborted.",)
+        raise cls(*args)
 
 
 ProgressBarLike = Union[ProgressBar, _SupportProgress]
@@ -366,15 +378,18 @@ class thread_worker:
                 worker.returned.connect(c)
             for c in self._errored._iter_as_method(gui):
                 worker.errored.connect(c)
-            for c in self._yielded._iter_as_method(gui):
-                worker.yielded.connect(c)
             for c in self._finished._iter_as_method(gui):
                 worker.finished.connect(c)
             for c in self._aborted._iter_as_method(gui):
                 worker.aborted.connect(c)
 
-            handler = partial(gui._error_mode.get_handler(), parent=gui)
-            worker.errored.connect(handler)
+            worker.errored.connect(partial(gui._error_mode.get_handler(), parent=gui))
+            if isinstance(worker, GeneratorWorker):
+                for c in self._yielded._iter_as_method(gui):
+                    worker.yielded.connect(c)
+                worker.aborted.connect(
+                    gui._error_mode.wrap_handler(Aborted.raise_, parent=gui)
+                )
 
             if self._progress:
                 _desc = self._progress["desc"]
