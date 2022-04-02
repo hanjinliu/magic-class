@@ -125,13 +125,18 @@ def test_mark_preview():
     f0_gui[-2].changed()
     mock.assert_called_with(x=0, preview=True)
     assert str(ui.macro[-1]).startswith("#")
+    mock.reset_mock()
+
     f0_gui[-1].changed()
     mock.assert_called_with(x=0, y="v")
     assert str(ui.macro[-1]) == "ui.f0(x=0, y='v')"
+    mock.reset_mock()
 
     f1_gui[-2].changed()
     mock.assert_called_with(x=10, preview=True)
     assert str(ui.macro[-1]) == "ui.f0(x=0, y='v')"
+    mock.reset_mock()
+
     f1_gui[-1].changed()
     mock.assert_called_with(x=10)
     assert str(ui.macro[-1]) == "ui.f1(x=10)"
@@ -164,13 +169,18 @@ def test_mark_preview():
     f0_gui[-2].changed()
     mock.assert_called_with(type=A, x=0, preview=True)
     assert str(ui.macro[-1]).startswith("#")
+    mock.reset_mock()
+
     f0_gui[-1].changed()
     mock.assert_called_with(type=type(ui.B), x=0, y="v")
     assert str(ui.macro[-1]) == "ui.B.f0(x=0, y='v')"
+    mock.reset_mock()
 
     f1_gui[-2].changed()
     mock.assert_called_with(type=A, x=10, preview=True)
+    mock.reset_mock()
     assert str(ui.macro[-1]) == "ui.B.f0(x=0, y='v')"
+
     f1_gui[-1].changed()
     mock.assert_called_with(type=type(ui.B), x=10)
     assert str(ui.macro[-1]) == "ui.B.f1(x=10)"

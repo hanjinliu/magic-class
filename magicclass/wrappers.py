@@ -405,7 +405,7 @@ def mark_preview(function: F, text: str = "Preview") -> F:
         if less == 0:
             if params_preview.keys() != params_func.keys():
                 raise TypeError(
-                    f"Arguments mismatch between {sig_preview} and {sig_func}."
+                    f"Arguments mismatch between {sig_preview!r} and {sig_func!r}."
                 )
             # If argument names are identical, input arguments don't have to be filtered.
             _filter = lambda a: a
@@ -413,11 +413,13 @@ def mark_preview(function: F, text: str = "Preview") -> F:
         elif less > 0:
             idx: list[int] = []
             for i, param in enumerate(params_func.keys()):
+                if i == 0:
+                    continue
                 if param in params_preview:
-                    idx.append(i)
+                    idx.append(i - 1)
             # If argument names are not identical, input arguments have to be filtered so
             # that arguments match the inputs.
-            _filter = lambda a: filter(lambda x: x in idx, a)
+            _filter = lambda _args: (a for i, a in enumerate(_args) if i in idx)
 
         else:
             raise TypeError(

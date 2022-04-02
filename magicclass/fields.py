@@ -555,7 +555,8 @@ def _get_field(
         raise TypeError(f"Field options must be a dict, got {type(options)}")
     options = options.copy()
     metadata = dict(widget_type=widget_type, options=options)
-
+    if "name" in options.keys():
+        name = options["name"]
     kwargs = dict(metadata=metadata, name=name, record=record)
     if isinstance(obj, type):
         f = field_class(default_factory=obj, **kwargs)
