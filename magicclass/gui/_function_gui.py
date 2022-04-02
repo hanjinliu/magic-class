@@ -1,7 +1,6 @@
 from __future__ import annotations
 from typing import Any, TYPE_CHECKING, TypeVar
 import re
-import weakref
 from magicgui.widgets._concrete import _LabeledWidget
 from magicgui.widgets._bases import ValueWidget, ButtonWidget, ContainerWidget
 from magicgui.widgets._function_gui import (
@@ -12,15 +11,12 @@ from ..widgets import Separator
 
 if TYPE_CHECKING:
     from magicgui.widgets._bases import Widget
-    from ._base import BaseGui
 
 _R = TypeVar("_R")
 
 
 class FunctionGuiPlus(FunctionGui[_R]):
     """FunctionGui class with a parameter recording functionality etc."""
-
-    _magicclass_parent_ref: weakref.ReferenceType[BaseGui] | None = None
 
     def __call__(self, *args: Any, update_widget: bool = False, **kwargs: Any) -> _R:
         sig = self.__signature__
@@ -79,6 +75,7 @@ class FunctionGuiPlus(FunctionGui[_R]):
 
             for callback in _type2callback(return_type):
                 callback(self, value, return_type)
+
         self.called.emit(value)
         return value
 
