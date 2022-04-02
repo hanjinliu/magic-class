@@ -22,12 +22,12 @@ except ImportError as e:  # pragma: no cover
 from qtpy.QtCore import Qt
 from magicgui.widgets import ProgressBar, Container, Widget, PushButton
 
-from .fields import MagicField
-from .utils import get_signature, move_to_screen_center
+from ..fields import MagicField
+from . import get_signature, move_to_screen_center
 
 if TYPE_CHECKING:
-    from .gui import BaseGui
-    from .gui.mgui_ext import PushButtonPlus
+    from ..gui import BaseGui
+    from ..gui.mgui_ext import PushButtonPlus
 
 __all__ = ["thread_worker"]
 

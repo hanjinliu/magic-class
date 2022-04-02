@@ -1,6 +1,6 @@
 from magicclass import magicclass, magicmenu, set_options, do_not_record, vfield, get_function_gui
 from magicclass.types import Bound
-from magicclass.qthreading import thread_worker
+from magicclass.utils.qthreading import thread_worker
 import time
 from unittest.mock import MagicMock
 

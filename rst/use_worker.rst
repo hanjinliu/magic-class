@@ -18,7 +18,7 @@ Then it is available in:
 
 .. code-block:: python
 
-    from magicclass.qthreading import thread_worker
+    from magicclass.utils import thread_worker
 
 .. note::
 
@@ -53,7 +53,7 @@ Decorate the methods you want to be multi-threaded and that's it!
 
     import time
     from magicclass import magicclass
-    from magicclass.qthreading import thread_worker
+    from magicclass.utils import thread_worker
 
     @magicclass
     class Main:
@@ -84,7 +84,7 @@ In the following example:
 
     import time
     from magicclass import magicclass
-    from magicclass.qthreading import thread_worker
+    from magicclass.utils import thread_worker
 
     @magicclass
     class Main:
@@ -124,7 +124,7 @@ Following example shows how you can update widget every 0.3 second.
 
     import time
     from magicclass import magicclass, vfield
-    from magicclass.qthreading import thread_worker
+    from magicclass.utils import thread_worker
 
     @magicclass
     class Main:
