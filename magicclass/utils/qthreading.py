@@ -1,6 +1,6 @@
 from __future__ import annotations
 import inspect
-from functools import wraps
+from functools import partial, wraps
 from typing import (
     Any,
     Callable,
@@ -13,7 +13,6 @@ from typing import (
     runtime_checkable,
 )
 from typing_extensions import TypedDict
-import weakref
 
 try:
     from superqt.utils import create_worker, GeneratorWorker, FunctionWorker
@@ -78,11 +77,11 @@ class Callbacks:
     """List of callback functions."""
 
     def __init__(self):
-        self._callback_refs: list[Callable] = []
+        self._callbacks: list[Callable] = []
 
     @property
     def callbacks(self) -> tuple[Callable, ...]:
-        return tuple(self._callback_refs)
+        return tuple(self._callbacks)
 
     def connect(self, callback: _F) -> _F:
         """
@@ -95,7 +94,7 @@ class Callbacks:
         """
         if not callable(callback):
             raise TypeError("Can only connect callable object.")
-        self._callback_refs.append(weakref.ref(callback))
+        self._callbacks.append(callback)
         return callback
 
     def disconnect(self, callback: _F) -> _F:
@@ -107,23 +106,15 @@ class Callbacks:
         callback : Callable
             Callback function to be removed.
         """
-        for i, ref in enumerate(self._callback_refs):
-            f = ref()
-            if f is callback:
-                break
-        else:
-            raise ValueError(f"Function {callback} not found.")
-        self._callback_refs.pop(i)
+        self._callbacks.remove(callback)
         return callback
 
     def _iter_as_method(self, obj: BaseGui) -> Iterable[Callable]:
-        for ref in self._callback_refs:
+        for ref in self._callbacks:
             yield _make_method(ref, obj)
 
 
-def _make_method(ref, obj: BaseGui):
-    func = ref()
-
+def _make_method(func, obj: BaseGui):
     def f(*args, **kwargs):
         with obj.macro.blocked():
             out = func.__get__(obj)(*args, **kwargs)
@@ -280,6 +271,7 @@ class thread_worker:
         self._ignore_errors = ignore_errors
         self._objects: dict[int, BaseGui] = {}
         self._progressbars: dict[int, ProgressBarLike | None] = {}
+        self._last_arguments = tuple(), dict()
 
         if f is not None:
             self(f)
@@ -343,14 +335,21 @@ class thread_worker:
             return self._func(*args, **kwargs)
 
     def __get__(self, gui: BaseGui, objtype=None):
-        from ..fields import MagicField
-
         if gui is None:
             return self
 
         gui_id = id(gui)
         if gui_id in self._objects:
             return self._objects[gui_id]
+
+        _create_worker = self._create_method(gui)
+        _create_worker.__signature__ = self._get_method_signature()
+
+        self._objects[gui_id] = _create_worker  # cache
+        return _create_worker
+
+    def _create_method(self, gui: BaseGui):
+        from ..fields import MagicField
 
         @wraps(self)
         def _create_worker(*args, **kwargs):
@@ -360,6 +359,7 @@ class thread_worker:
                 *args,
                 **kwargs,
             )
+            self._last_arguments = args, kwargs
             for c in self._started._iter_as_method(gui):
                 worker.started.connect(c)
             for c in self._returned._iter_as_method(gui):
@@ -372,6 +372,9 @@ class thread_worker:
                 worker.finished.connect(c)
             for c in self._aborted._iter_as_method(gui):
                 worker.aborted.connect(c)
+
+            handler = partial(gui._error_mode.get_handler(), parent=gui)
+            worker.errored.connect(handler)
 
             if self._progress:
                 _desc = self._progress["desc"]
@@ -436,9 +439,6 @@ class thread_worker:
                 worker.run()
             return None
 
-        _create_worker.__signature__ = self._get_method_signature()
-
-        self._objects[gui_id] = _create_worker  # cache
         return _create_worker
 
     def _get_method_signature(self) -> inspect.Signature:

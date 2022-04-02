@@ -52,7 +52,13 @@ from .mgui_ext import (
 from .utils import get_parameters, define_callback
 from ._macro import GuiMacro
 
-from ..utils import get_signature, iter_members, extract_tooltip, move_to_screen_center
+from ..utils import (
+    get_signature,
+    iter_members,
+    extract_tooltip,
+    move_to_screen_center,
+    thread_worker,
+)
 from ..widgets import Separator, FreeWidget
 from ..fields import MagicField
 from ..signature import MagicMethodSignature, get_additional_option
@@ -73,10 +79,55 @@ class PopUpMode(Enum):
     parentlast = "parentlast"
 
 
+def _msgbox_raising(e, parent):
+    from ._message_box import QtErrorMessageBox
+
+    return QtErrorMessageBox.raise_(e, parent=parent.native)
+
+
+def _stderr_raising(e, parent):
+    pass
+
+
+def _stdout_raising(e, parent):
+    print(f"{e.__class__.__name__}: {e}")
+
+
 class ErrorMode(Enum):
     msgbox = "msgbox"
     stderr = "stderr"
     stdout = "stdout"
+
+    def get_handler(self):
+        """Get error handler."""
+        return ErrorModeHandlers[self]
+
+    def wrap_handler(self, func: Callable, parent):
+        """Wrap function with the error handler."""
+        handler = self.get_handler()
+
+        def wrapped_func(*args, **kwargs):
+            try:
+                out = func(*args, **kwargs)
+            except Exception as e:
+                handler(e, parent=parent)
+                out = e
+            return out
+
+        wrapped_func.__annotations__ = func.__annotations__
+        # wrapped_func.__name__ = func.__name__  # this is not allowed!
+        wrapped_func.__qualname__ = func.__qualname__
+        wrapped_func.__doc__ = func.__doc__
+        wrapped_func.__module__ = func.__module__
+
+        return wrapped_func
+
+
+ErrorModeHandlers = {
+    ErrorMode.msgbox: _msgbox_raising,
+    ErrorMode.stderr: _stderr_raising,
+    ErrorMode.stdout: _stdout_raising,
+}
 
 
 defaults = {
@@ -251,6 +302,7 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
 
     @property
     def macro(self) -> GuiMacro:
+        """The macro object bound to the ancestor widget."""
         if self.__magicclass_parent__ is None:
             return self._macro_instance
         else:
@@ -258,9 +310,7 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
 
     @property
     def parent_viewer(self) -> napari.Viewer | None:
-        """
-        Return napari.Viewer if magic class is a dock widget of a viewer.
-        """
+        """Return napari.Viewer if magic class is a dock widget of a viewer."""
         parent_self = self._search_parent_magicclass()
         if parent_self.native.parent() is None:
             return None
@@ -530,17 +580,7 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
         widget = self._component_class(name=obj.__name__, text=text, gui_only=True)
 
         # Wrap function to deal with errors in a right way.
-        if self._error_mode == ErrorMode.msgbox:
-            wrapper = _raise_error_in_msgbox
-        elif self._error_mode == ErrorMode.stderr:
-            wrapper = _identity_wrapper
-        elif self._error_mode == ErrorMode.stdout:
-            wrapper = _print_error
-        else:
-            raise ValueError(self._error_mode)
-
-        # Wrap function to block macro recording.
-        func = functools_wraps(obj)(wrapper(obj, parent=self))
+        func = self._error_mode.wrap_handler(obj, parent=self)
 
         # Signature must be updated like this. Otherwise, already wrapped member function
         # will have signature with "self".
@@ -1032,7 +1072,7 @@ def wraps(template: Callable | inspect.Signature) -> Callable[[_C], _C]:
     return wrapper
 
 
-def _raise_error_in_msgbox(_func: Callable, parent: Widget = None):
+def _raise_error_in_msgbox(_func: Callable, parent: BaseGui = None):
     """If exception happened inside function, then open a message box."""
 
     def wrapped_func(*args, **kwargs):
@@ -1048,7 +1088,7 @@ def _raise_error_in_msgbox(_func: Callable, parent: Widget = None):
     return wrapped_func
 
 
-def _print_error(_func: Callable, parent: Widget = None):
+def _print_error(_func: Callable, parent: BaseGui = None):
     """If exception happened inside function, then print it."""
 
     def wrapped_func(*args, **kwargs):
@@ -1062,7 +1102,7 @@ def _print_error(_func: Callable, parent: Widget = None):
     return wrapped_func
 
 
-def _identity_wrapper(_func: Callable, parent: Widget = None):
+def _identity_wrapper(_func: Callable, parent: BaseGui = None):
     """Do nothing."""
 
     def wrapped_func(*args, **kwargs):
@@ -1247,6 +1287,9 @@ def nested_function_gui_callback(gui: MagicTemplate, fgui: FunctionGui):
     return _after_run
 
 
+_SELF = inspect.Parameter("self", inspect.Parameter.POSITIONAL_OR_KEYWORD)
+
+
 def _inject_recorder(func: Callable, is_method: bool = True) -> Callable:
     """Inject macro recording functionality into a function."""
     sig = get_signature(func)
@@ -1262,9 +1305,8 @@ def _inject_recorder(func: Callable, is_method: bool = True) -> Callable:
         def _func(self, *args, **kwargs):
             return func(*args, **kwargs)
 
-        _self_param = inspect.Parameter("self", inspect.Parameter.POSITIONAL_OR_KEYWORD)
         _func.__signature__ = sig.replace(
-            parameters=[_self_param] + list(sig.parameters.values()),
+            parameters=[_SELF] + list(sig.parameters.values()),
             return_annotation=sig.return_annotation,
         )
 
@@ -1273,20 +1315,15 @@ def _inject_recorder(func: Callable, is_method: bool = True) -> Callable:
         _auto_call = opt.get("auto_call", False)
     else:
         _auto_call = False
+
     # TODO: if function has a return_annotation, macro should be recorded like ui["f"](...)
-    @functools_wraps(_func)
-    def _recordable(bgui: MagicTemplate, *args, **kwargs):
-        with bgui.macro.blocked():
-            out = _func.__get__(bgui)(*args, **kwargs)
-        if not bgui.macro.active:
-            return out
+    def _record_macro(bgui: MagicTemplate, *args, **kwargs):
         bound = sig.bind(*args, **kwargs)
         kwargs = dict(bound.arguments.items())
         expr = Expr.parse_method(bgui, _func, (), kwargs)
-
         if _auto_call:
-            # Auto-call will cause many redundant macros. To avoid this, only the last input
-            # will be recorded in magic-class.
+            # Auto-call will cause many redundant macros. To avoid this, only the last
+            # input will be recorded in magic-class.
             last_expr = bgui.macro[-1]
             if (
                 last_expr.head == Head.call
@@ -1299,11 +1336,39 @@ def _inject_recorder(func: Callable, is_method: bool = True) -> Callable:
 
         bgui.macro.append(expr)
         bgui.macro._last_setval = None
-        return out
+        return None
 
-    if hasattr(_func, "__signature__"):
-        _recordable.__signature__ = _func.__signature__
-    return _recordable
+    if not isinstance(_func, thread_worker):
+
+        @functools_wraps(_func)
+        def _recordable(bgui: MagicTemplate, *args, **kwargs):
+            with bgui.macro.blocked():
+                out = _func.__get__(bgui)(*args, **kwargs)
+            if bgui.macro.active:
+                _record_macro(bgui, *args, **kwargs)
+            return out
+
+        if hasattr(_func, "__signature__"):
+            _recordable.__signature__ = _func.__signature__
+        return _recordable
+
+    else:
+        _func.returned.connect(_define_returned_callback(_func, _record_macro))
+        return _func
+
+
+def _define_returned_callback(worker: thread_worker, recorder):
+    """
+    Define a returned callback function for macro-recording of a
+    thread_worker object.
+    """
+
+    def _on_return(bgui: MagicTemplate, _=None):
+        args, kwargs = worker._last_arguments
+        recorder(bgui, *args, **kwargs)
+        return None
+
+    return _on_return
 
 
 def convert_attributes(cls: type[_T], hide: tuple[type, ...]) -> dict[str, Any]:
@@ -1333,6 +1398,7 @@ def convert_attributes(cls: type[_T], hide: tuple[type, ...]) -> dict[str, Any]:
     for subcls in reversed(mro):
         for name, obj in subcls.__dict__.items():
             if name.startswith("_") or isinstance(obj, _pass_type) or not callable(obj):
+                # private method, non-action-like object, not-callable object are passed.
                 new_attr = obj
             elif callable(obj) and get_additional_option(obj, "record", True):
                 new_attr = _inject_recorder(obj)
