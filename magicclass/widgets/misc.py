@@ -698,12 +698,13 @@ class _QtSpreadSheet(QTabWidget):
 class SpreadSheet(FreeWidget, MutableSequence[Table]):
     """A simple spread sheet widget."""
 
-    def __init__(self):
+    def __init__(self, read_only: bool = False):
         super().__init__()
         spreadsheet = _QtSpreadSheet()
         self.set_widget(spreadsheet)
         self.central_widget: _QtSpreadSheet
         self._tables: list[Table] = []
+        self.read_only = read_only
 
     def __len__(self) -> int:
         return self.central_widget.count()
@@ -749,7 +750,19 @@ class SpreadSheet(FreeWidget, MutableSequence[Table]):
         table = Table(value=value)
         self.central_widget.addTable(table.native)
         self._tables.insert(key, table)
+        return None
 
     def rename(self, index: int, name: str):
+        """Rename tab at index `index` with name `name`."""
         self.central_widget.renameTab(index, name)
         return None
+
+    @property
+    def read_only(self):
+        return self._read_only
+
+    @read_only.setter
+    def read_only(self, v: bool):
+        for table in self._tables:
+            table.read_only = v
+        self._read_only = v
