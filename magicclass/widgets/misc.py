@@ -745,9 +745,11 @@ class SpreadSheet(FreeWidget, MutableSequence[Table]):
         return iter(self._tables)
 
     def insert(self, key: int, value):
+        """Insert a table-like data as a new sheet."""
         if key < 0:
             key += len(self)
         table = Table(value=value)
+        table.read_only = self.read_only
         self.central_widget.addTable(table.native)
         self._tables.insert(key, table)
         return None
