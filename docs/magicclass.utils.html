@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.utils package &mdash; magic-class 0.6.1 documentation</title>
+  <title>magicclass.utils package &mdash; magic-class 0.6.2.dev0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/columns.css" type="text/css" />
@@ -31,7 +31,7 @@
             <a href="index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.1
+                0.6.2.dev0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -53,6 +53,7 @@
 <li class="toctree-l1"><a class="reference internal" href="use_wraps.html">Call Parent Methods from its Child</a></li>
 <li class="toctree-l1"><a class="reference internal" href="use_bind.html">Binding Values to Arguments</a></li>
 <li class="toctree-l1"><a class="reference internal" href="use_choices.html">Set Choices Dynamically</a></li>
+<li class="toctree-l1"><a class="reference internal" href="use_preview.html">Add Preview Functionalities</a></li>
 <li class="toctree-l1"><a class="reference internal" href="use_worker.html">Multi-threading</a></li>
 <li class="toctree-l1"><a class="reference internal" href="additional_types.html">Additional types</a></li>
 <li class="toctree-l1"><a class="reference internal" href="containers.html">Container Variations</a></li>
@@ -103,38 +104,6 @@
 </section>
 <section id="module-magicclass.utils.functions">
 <span id="magicclass-utils-functions-module"></span><h2>magicclass.utils.functions module<a class="headerlink" href="#module-magicclass.utils.functions" title="Permalink to this headline">¶</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="magicclass.utils.functions.MessageBoxMode">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.utils.functions.</span></span><span class="sig-name descname"><span class="pre">MessageBoxMode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/utils/functions.html#MessageBoxMode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.utils.functions.MessageBoxMode" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
-<p>An enumeration.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.utils.functions.MessageBoxMode.ABOUT">
-<span class="sig-name descname"><span class="pre">ABOUT</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'about'</span></em><a class="headerlink" href="#magicclass.utils.functions.MessageBoxMode.ABOUT" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.utils.functions.MessageBoxMode.ERROR">
-<span class="sig-name descname"><span class="pre">ERROR</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'error'</span></em><a class="headerlink" href="#magicclass.utils.functions.MessageBoxMode.ERROR" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.utils.functions.MessageBoxMode.INFO">
-<span class="sig-name descname"><span class="pre">INFO</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'info'</span></em><a class="headerlink" href="#magicclass.utils.functions.MessageBoxMode.INFO" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.utils.functions.MessageBoxMode.QUESTION">
-<span class="sig-name descname"><span class="pre">QUESTION</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'question'</span></em><a class="headerlink" href="#magicclass.utils.functions.MessageBoxMode.QUESTION" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.utils.functions.MessageBoxMode.WARNING">
-<span class="sig-name descname"><span class="pre">WARNING</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'warn'</span></em><a class="headerlink" href="#magicclass.utils.functions.MessageBoxMode.WARNING" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
 <dl class="py function">
 <dt class="sig sig-object py" id="magicclass.utils.functions.extract_tooltip">
 <span class="sig-prename descclassname"><span class="pre">magicclass.utils.functions.</span></span><span class="sig-name descname"><span class="pre">extract_tooltip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/magicclass/utils/functions.html#extract_tooltip"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.utils.functions.extract_tooltip" title="Permalink to this definition">¶</a></dt>
@@ -156,8 +125,60 @@ of the results. We have to sort the name in the order of line number.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="magicclass.utils.functions.open_url">
-<span class="sig-prename descclassname"><span class="pre">magicclass.utils.functions.</span></span><span class="sig-name descname"><span class="pre">open_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">link</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/magicclass/utils/functions.html#open_url"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.utils.functions.open_url" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="magicclass.utils.functions.rst_to_html">
+<span class="sig-prename descclassname"><span class="pre">magicclass.utils.functions.</span></span><span class="sig-name descname"><span class="pre">rst_to_html</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rst</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unescape</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/magicclass/utils/functions.html#rst_to_html"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.utils.functions.rst_to_html" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert rST string into HTML.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="magicclass.utils.functions.show_tree">
+<span class="sig-prename descclassname"><span class="pre">magicclass.utils.functions.</span></span><span class="sig-name descname"><span class="pre">show_tree</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ui</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">BaseGui</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/magicclass/utils/functions.html#show_tree"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.utils.functions.show_tree" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-magicclass.utils.qt">
+<span id="magicclass-utils-qt-module"></span><h2>magicclass.utils.qt module<a class="headerlink" href="#module-magicclass.utils.qt" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.utils.qt.MessageBoxMode">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.utils.qt.</span></span><span class="sig-name descname"><span class="pre">MessageBoxMode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/utils/qt.html#MessageBoxMode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.utils.qt.MessageBoxMode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>An enumeration.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.utils.qt.MessageBoxMode.ABOUT">
+<span class="sig-name descname"><span class="pre">ABOUT</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'about'</span></em><a class="headerlink" href="#magicclass.utils.qt.MessageBoxMode.ABOUT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.utils.qt.MessageBoxMode.ERROR">
+<span class="sig-name descname"><span class="pre">ERROR</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'error'</span></em><a class="headerlink" href="#magicclass.utils.qt.MessageBoxMode.ERROR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.utils.qt.MessageBoxMode.INFO">
+<span class="sig-name descname"><span class="pre">INFO</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'info'</span></em><a class="headerlink" href="#magicclass.utils.qt.MessageBoxMode.INFO" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.utils.qt.MessageBoxMode.QUESTION">
+<span class="sig-name descname"><span class="pre">QUESTION</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'question'</span></em><a class="headerlink" href="#magicclass.utils.qt.MessageBoxMode.QUESTION" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.utils.qt.MessageBoxMode.WARNING">
+<span class="sig-name descname"><span class="pre">WARNING</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'warn'</span></em><a class="headerlink" href="#magicclass.utils.qt.MessageBoxMode.WARNING" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="magicclass.utils.qt.move_to_screen_center">
+<span class="sig-prename descclassname"><span class="pre">magicclass.utils.qt.</span></span><span class="sig-name descname"><span class="pre">move_to_screen_center</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qwidget</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">PyQt5.QtWidgets.QWidget</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/magicclass/utils/qt.html#move_to_screen_center"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.utils.qt.move_to_screen_center" title="Permalink to this definition">¶</a></dt>
+<dd><p>Move a QWidget to the center of screen.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="magicclass.utils.qt.open_url">
+<span class="sig-prename descclassname"><span class="pre">magicclass.utils.qt.</span></span><span class="sig-name descname"><span class="pre">open_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">link</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/magicclass/utils/qt.html#open_url"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.utils.qt.open_url" title="Permalink to this definition">¶</a></dt>
 <dd><p>Open the link with the default browser.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -167,19 +188,25 @@ of the results. We have to sort the name in the order of line number.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="magicclass.utils.functions.screen_center">
-<span class="sig-prename descclassname"><span class="pre">magicclass.utils.functions.</span></span><span class="sig-name descname"><span class="pre">screen_center</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/utils/functions.html#screen_center"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.utils.functions.screen_center" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="magicclass.utils.qt.screen_center">
+<span class="sig-prename descclassname"><span class="pre">magicclass.utils.qt.</span></span><span class="sig-name descname"><span class="pre">screen_center</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/magicclass/utils/qt.html#screen_center"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.utils.qt.screen_center" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the center coordinate of the screen.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="magicclass.utils.functions.show_messagebox">
-<span class="sig-prename descclassname"><span class="pre">magicclass.utils.functions.</span></span><span class="sig-name descname"><span class="pre">show_messagebox</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <a class="reference internal" href="#magicclass.utils.functions.MessageBoxMode" title="magicclass.utils.functions.MessageBoxMode"><span class="pre">MessageBoxMode</span></a></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">MessageBoxMode.INFO</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/magicclass/utils/functions.html#show_messagebox"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.utils.functions.show_messagebox" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="magicclass.utils.qt.screen_scale">
+<span class="sig-prename descclassname"><span class="pre">magicclass.utils.qt.</span></span><span class="sig-name descname"><span class="pre">screen_scale</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/magicclass/utils/qt.html#screen_scale"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.utils.qt.screen_scale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the scale of main screen.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="magicclass.utils.qt.show_messagebox">
+<span class="sig-prename descclassname"><span class="pre">magicclass.utils.qt.</span></span><span class="sig-name descname"><span class="pre">show_messagebox</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <a class="reference internal" href="#magicclass.utils.qt.MessageBoxMode" title="magicclass.utils.qt.MessageBoxMode"><span class="pre">MessageBoxMode</span></a></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">MessageBoxMode.INFO</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/magicclass/utils/qt.html#show_messagebox"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.utils.qt.show_messagebox" title="Permalink to this definition">¶</a></dt>
 <dd><p>Freeze the GUI and open a messagebox dialog.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>mode</strong> (<em>str</em><em> or </em><a class="reference internal" href="#magicclass.utils.functions.MessageBoxMode" title="magicclass.utils.functions.MessageBoxMode"><em>MessageBoxMode</em></a><em>, </em><em>default is MessageBoxMode.INFO</em>) -- Mode of message box. Must be &quot;error&quot;, &quot;warn&quot;, &quot;info&quot;, &quot;question&quot; or &quot;about&quot;.</p></li>
+<li><p><strong>mode</strong> (<em>str</em><em> or </em><a class="reference internal" href="#magicclass.utils.qt.MessageBoxMode" title="magicclass.utils.qt.MessageBoxMode"><em>MessageBoxMode</em></a><em>, </em><em>default is MessageBoxMode.INFO</em>) -- Mode of message box. Must be &quot;error&quot;, &quot;warn&quot;, &quot;info&quot;, &quot;question&quot; or &quot;about&quot;.</p></li>
 <li><p><strong>title</strong> (<em>str</em><em>, </em><em>optional</em>) -- Title of messagebox.</p></li>
 <li><p><strong>text</strong> (<em>str</em><em>, </em><em>optional</em>) -- Text in messagebox.</p></li>
 <li><p><strong>parent</strong> (<em>QWidget</em><em>, </em><em>optional</em>) -- Parent widget.</p></li>
@@ -195,8 +222,8 @@ of the results. We have to sort the name in the order of line number.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="magicclass.utils.functions.to_clipboard">
-<span class="sig-prename descclassname"><span class="pre">magicclass.utils.functions.</span></span><span class="sig-name descname"><span class="pre">to_clipboard</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/magicclass/utils/functions.html#to_clipboard"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.utils.functions.to_clipboard" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="magicclass.utils.qt.to_clipboard">
+<span class="sig-prename descclassname"><span class="pre">magicclass.utils.qt.</span></span><span class="sig-name descname"><span class="pre">to_clipboard</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/magicclass/utils/qt.html#to_clipboard"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.utils.qt.to_clipboard" title="Permalink to this definition">¶</a></dt>
 <dd><p>Copy an object of any type to the clipboard.
 You can copy text, ndarray as an image or data frame as a table data.</p>
 <dl class="field-list simple">
