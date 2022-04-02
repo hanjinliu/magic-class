@@ -22,7 +22,6 @@ except ImportError as e:  # pragma: no cover
 from qtpy.QtCore import Qt
 from magicgui.widgets import ProgressBar, Container, Widget, PushButton
 
-from ..fields import MagicField
 from . import get_signature, move_to_screen_center
 
 if TYPE_CHECKING:
@@ -324,6 +323,8 @@ class thread_worker:
             return self._func(*args, **kwargs)
 
     def __get__(self, gui: BaseGui, objtype=None):
+        from ..fields import MagicField
+
         if gui is None:
             return self
 
@@ -440,6 +441,7 @@ class thread_worker:
 
     def _find_progressbar(self, gui: BaseGui, desc: str | None = None, total: int = 0):
         """Find available progressbar. Create a new one if not found."""
+        from ..fields import MagicField
 
         gui_id = id(gui)
         if gui_id in self._progressbars:

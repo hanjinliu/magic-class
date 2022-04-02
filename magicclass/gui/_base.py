@@ -147,6 +147,7 @@ def check_override(cls: type):
 
 
 _T = TypeVar("_T", bound="MagicTemplate")
+_F = TypeVar("_F", bound=Callable)
 
 
 class MagicTemplate:
@@ -320,11 +321,11 @@ class MagicTemplate:
     @classmethod
     def wraps(
         cls,
-        method: Callable | None = None,
+        method: _F | None = None,
         *,
         template: Callable | None = None,
         copy: bool = False,
-    ) -> Callable:
+    ) -> _F:
         """
         Wrap a parent method in a child magic-class.
 
@@ -359,7 +360,7 @@ class MagicTemplate:
             # If method is already wrapped, wraps should create a copy.
             copy = True
 
-        def wrapper(method: Callable):
+        def wrapper(method: _F):
             # Base function to get access to the original function
             if isinstance(method, FunctionGui):
                 func = method._function
