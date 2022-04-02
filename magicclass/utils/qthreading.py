@@ -12,6 +12,7 @@ from typing import (
     Protocol,
     runtime_checkable,
 )
+import weakref
 
 try:
     from superqt.utils import create_worker, GeneratorWorker, FunctionWorker
@@ -70,11 +71,11 @@ class Callbacks:
     """List of callback functions."""
 
     def __init__(self):
-        self._callbacks: list[Callable] = []
+        self._callback_refs: list[Callable] = []
 
     @property
     def callbacks(self) -> tuple[Callable, ...]:
-        return tuple(self._callbacks)
+        return tuple(self._callback_refs)
 
     def connect(self, callback: _F) -> _F:
         """
@@ -87,7 +88,7 @@ class Callbacks:
         """
         if not callable(callback):
             raise TypeError("Can only connect callable object.")
-        self._callbacks.append(callback)
+        self._callback_refs.append(weakref.ref(callback))
         return callback
 
     def disconnect(self, callback: _F) -> _F:
@@ -99,18 +100,29 @@ class Callbacks:
         callback : Callable
             Callback function to be removed.
         """
-        self._callbacks.remove(callback)
+        for i, ref in enumerate(self._callback_refs):
+            f = ref()
+            if f is callback:
+                break
+        else:
+            raise ValueError(f"Function {callback} not found.")
+        self._callback_refs.pop(i)
         return callback
 
     def _iter_as_method(self, obj: BaseGui) -> Iterable[Callable]:
-        for callback in self._callbacks:
+        for ref in self._callback_refs:
+            yield _make_method(ref, obj)
 
-            def f(*args, **kwargs):
-                with obj.macro.blocked():
-                    out = callback.__get__(obj)(*args, **kwargs)
-                return out
 
-            yield f
+def _make_method(ref, obj: BaseGui):
+    func = ref()
+
+    def f(*args, **kwargs):
+        with obj.macro.blocked():
+            out = func.__get__(obj)(*args, **kwargs)
+        return out
+
+    return f
 
 
 class NapariProgressBar(_SupportProgress):
