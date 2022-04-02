@@ -599,14 +599,12 @@ class MagicTemplate:
                 mgui = _build_mgui(widget, func, self)
                 mgui.native.setParent(self.native, mgui.native.windowFlags())
                 fdialog: FileEdit = mgui[0]
-                result = fdialog._show_file_dialog(
+                if result := fdialog._show_file_dialog(
                     fdialog.mode,
                     caption=fdialog._btn_text,
                     start_path=str(fdialog.value),
                     filter=fdialog.filter,
-                )
-
-                if result:
+                ):
                     fdialog.value = result
                     out = mgui(result)
                 else:
@@ -691,6 +689,16 @@ class MagicTemplate:
                 else:
                     # show dock widget
                     mgui.parent.show()
+
+                if nparams == 1 and isinstance(fgui[0], FileEdit):
+                    fdialog: FileEdit = mgui[0]
+                    if result := fdialog._show_file_dialog(
+                        fdialog.mode,
+                        caption=fdialog._btn_text,
+                        start_path=str(fdialog.value),
+                        filter=fdialog.filter,
+                    ):
+                        fdialog.value = result
 
                 return None
 
