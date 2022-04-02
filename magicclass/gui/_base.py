@@ -11,7 +11,7 @@ from typing import (
     MutableSequence,
 )
 from types import MethodType
-from typing_extensions import _AnnotatedAlias
+from typing_extensions import _AnnotatedAlias, Self
 import inspect
 import warnings
 import os
@@ -51,6 +51,7 @@ from .mgui_ext import (
 )
 from .utils import get_parameters, define_callback
 from ._macro import GuiMacro
+from ._coder import MacroCoder
 
 from ..utils import get_signature, iter_members, extract_tooltip, move_to_screen_center
 from ..widgets import Separator, FreeWidget
@@ -152,8 +153,8 @@ _T = TypeVar("_T", bound="MagicTemplate")
 
 class MagicTemplate:
     __doc__ = ""
-    __magicclass_parent__: None | MagicTemplate
-    __magicclass_children__: list[MagicTemplate]
+    __magicclass_parent__: None | Self
+    __magicclass_children__: list[Self]
     _close_on_run: bool
     _component_class: type[Action | Widget]
     _error_mode: ErrorMode
@@ -712,7 +713,7 @@ class MagicTemplate:
 
         return widget
 
-    def _search_parent_magicclass(self) -> MagicTemplate:
+    def _search_parent_magicclass(self) -> Self:
         """Find the ancestor."""
         current_self = self
         while (
@@ -721,7 +722,7 @@ class MagicTemplate:
             current_self = parent
         return current_self
 
-    def _iter_child_magicclasses(self) -> Iterable[MagicTemplate]:
+    def _iter_child_magicclasses(self) -> Iterable[Self]:
         """Iterate over all the child magic classes"""
         for child in self.__magicclass_children__:
             yield child
@@ -735,7 +736,7 @@ class BaseGui(MagicTemplate):
             flags={"Get": False, "Return": False},
         )
         self.__magicclass_parent__: BaseGui | None = None
-        self.__magicclass_children__: list[MagicTemplate] = []
+        self.__magicclass_children__: list[BaseGui] = []
         self._close_on_run = close_on_run
         self._popup_mode = popup_mode
         self._error_mode = error_mode
@@ -1247,7 +1248,10 @@ def _inject_recorder(func: Callable, is_method: bool = True) -> Callable:
     @functools_wraps(_func)
     def _recordable(bgui: MagicTemplate, *args, **kwargs):
         with bgui.macro.blocked():
-            out = _func.__get__(bgui)(*args, **kwargs)
+            if not MacroCoder.CODING:
+                out = _func.__get__(bgui)(*args, **kwargs)
+            else:
+                out = None
         if not bgui.macro.active:
             return out
         bound = sig.bind(*args, **kwargs)
@@ -1255,8 +1259,8 @@ def _inject_recorder(func: Callable, is_method: bool = True) -> Callable:
         expr = Expr.parse_method(bgui, _func, (), kwargs)
 
         if _auto_call:
-            # Auto-call will cause many redundant macros. To avoid this, only the last input
-            # will be recorded in magic-class.
+            # Auto-call will cause many redundant macros. To avoid this, only the last
+            # input will be recorded in magic-class.
             last_expr = bgui.macro[-1]
             if (
                 last_expr.head == Head.call
