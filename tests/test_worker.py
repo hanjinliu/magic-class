@@ -183,3 +183,18 @@ def test_progressbar():
     a.f()
     b = B()
     b.f()
+
+def test_error(qtbot):
+    @magicclass(error_mode="stderr")
+    class A:
+        @thread_worker
+        def f(self, n: int = 3):
+            if n > 10:
+                raise ValueError
+
+    ui = A()
+    ui.f(3)
+    assert str(ui.macro[-1]) == "ui.f(n=3)"
+    with qtbot.capture_exceptions():
+        ui.f(20)
+    assert str(ui.macro[-1]) == "ui.f(n=3)"

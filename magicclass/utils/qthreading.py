@@ -368,6 +368,7 @@ class thread_worker:
             worker: FunctionWorker | GeneratorWorker = create_worker(
                 self._func.__get__(gui),
                 _ignore_errors=self._ignore_errors,
+                _start_thread=False,
                 *args,
                 **kwargs,
             )
@@ -383,13 +384,9 @@ class thread_worker:
             for c in self._aborted._iter_as_method(gui):
                 worker.aborted.connect(c)
 
-            worker.errored.connect(partial(gui._error_mode.get_handler(), parent=gui))
             if isinstance(worker, GeneratorWorker):
                 for c in self._yielded._iter_as_method(gui):
                     worker.yielded.connect(c)
-                worker.aborted.connect(
-                    gui._error_mode.wrap_handler(Aborted.raise_, parent=gui)
-                )
 
             if self._progress:
                 _desc = self._progress["desc"]
@@ -398,7 +395,7 @@ class thread_worker:
                 if callable(_desc):
                     desc = _desc(gui)
                 else:
-                    desc = str(_desc)
+                    desc = str(_desc or self._func.__name__)
 
                 if isinstance(_total, str):
                     arguments = self.__signature__.bind(gui, *args, **kwargs)
@@ -423,12 +420,12 @@ class thread_worker:
                     )
                 elif isinstance(_pbar, MagicField):
                     pbar = _pbar.get_widget(gui)
-                    if not isinstance(pbar, ProgressBarLike):
+                    if not isinstance(pbar, ProgressBar):
                         raise TypeError(f"{_pbar.name} does not create a ProgressBar.")
                     pbar.label = desc or _pbar.name
                     pbar.max = total
                 else:
-                    if not isinstance(_pbar, ProgressBarLike):
+                    if not isinstance(_pbar, ProgressBar):
                         raise TypeError(f"{_pbar} is not a ProgressBar.")
                     pbar = _pbar
 
@@ -441,17 +438,22 @@ class thread_worker:
 
                 if hasattr(pbar, "set_worker"):
                     pbar.set_worker(worker)
+
             _push_button: PushButtonPlus = gui[self._func.__name__]
             if _push_button.running:
                 _push_button.enabled = False
-
-                @worker.finished.connect
-                def _enable():
-                    _push_button.enabled = True
-
+                worker.finished.connect(lambda: setattr(_push_button, "enabled", True))
+                worker.errored.connect(
+                    partial(gui._error_mode.get_handler(), parent=gui)
+                )
+                if isinstance(worker, GeneratorWorker):
+                    worker.aborted.connect(
+                        gui._error_mode.wrap_handler(Aborted.raise_, parent=gui)
+                    )
                 worker.start()
             else:
                 worker.run()
+
             return None
 
         return _create_worker
