@@ -12,6 +12,14 @@ magicclass.utils.functions module
    :undoc-members:
    :show-inheritance:
 
+magicclass.utils.qt module
+--------------------------
+
+.. automodule:: magicclass.utils.qt
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Module contents
 ---------------
 

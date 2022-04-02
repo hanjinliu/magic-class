@@ -17,7 +17,6 @@ import warnings
 import os
 from enum import Enum
 import warnings
-import weakref
 from docstring_parser import parse, compose
 from qtpy.QtWidgets import QWidget, QDockWidget
 from qtpy.QtGui import QIcon
@@ -581,7 +580,9 @@ class MagicTemplate:
                 obj_sig, "additional_options", {}
             )
 
-        if nparams == 0:
+        has_preview = get_additional_option(func, "preview", None) is not None
+
+        if nparams == 0 and not has_preview:
             # We don't want a dialog with a single widget "Run" to show up.
             def run_function():
                 # NOTE: callback must be defined inside function. Magic class must be
@@ -592,7 +593,7 @@ class MagicTemplate:
 
                 return out
 
-        elif nparams == 1 and isinstance(fgui[0], FileEdit):
+        elif nparams == 1 and isinstance(fgui[0], FileEdit) and not has_preview:
             # We don't want to open a magicgui dialog and again open a file dialog.
             def run_function():
                 mgui = _build_mgui(widget, func, self)
@@ -912,6 +913,11 @@ def _build_mgui(widget_: Action | PushButtonPlus, func: Callable, parent: BaseGu
         mgui = FunctionGuiPlus(
             func, call_button, layout=layout, labels=labels, auto_call=auto_call
         )
+        preview = opt.get("preview", None)
+        if preview is not None:
+            btn_text, previewer = preview
+            mgui.append_preview(previewer.__get__(parent), btn_text)
+
     except Exception as e:
         msg = (
             "Exception was raised during building magicgui from method "
@@ -922,7 +928,6 @@ def _build_mgui(widget_: Action | PushButtonPlus, func: Callable, parent: BaseGu
     widget_.mgui = mgui
     name = widget_.name or ""
     mgui.native.setWindowTitle(name.replace("_", " ").strip())
-    mgui._magicclass_parent_ref = weakref.ref(parent)
     return mgui
 
 

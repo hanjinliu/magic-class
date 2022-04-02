@@ -1,7 +1,7 @@
 from __future__ import annotations
-from typing import Any, TYPE_CHECKING, TypeVar
+from typing import Any, TYPE_CHECKING, Callable, TypeVar
 import re
-import weakref
+from magicgui.widgets import PushButton
 from magicgui.widgets._concrete import _LabeledWidget
 from magicgui.widgets._bases import ValueWidget, ButtonWidget, ContainerWidget
 from magicgui.widgets._function_gui import (
@@ -20,7 +20,7 @@ _R = TypeVar("_R")
 class FunctionGuiPlus(FunctionGui[_R]):
     """FunctionGui class with a parameter recording functionality etc."""
 
-    _magicclass_parent_ref: weakref.ReferenceType[BaseGui] | None = None
+    _preview = None
 
     def __call__(self, *args: Any, update_widget: bool = False, **kwargs: Any) -> _R:
         sig = self.__signature__
@@ -94,10 +94,46 @@ class FunctionGuiPlus(FunctionGui[_R]):
                 _widget = _LabeledWidget(widget)
                 widget.label_changed.connect(self._unify_label_widths)
 
-        self._list.insert(key, widget)
         if key < 0:
             key += len(self)
+        self._list.insert(key, widget)
         # NOTE: if someone has manually mucked around with self.native.layout()
         # it's possible that indices will be off.
         self._widget._mgui_insert_widget(key, _widget)
         self._unify_label_widths()
+
+    def append_preview(self, f: Callable, text: str = "Preview"):
+        self._preview = f
+        btn = PushButton(text=text)
+        if isinstance(self[-1], PushButton):
+            self.insert(len(self) - 1, btn)
+        else:
+            self.append(btn)
+
+        @btn.changed.connect
+        def _call_preview():
+            sig = self.__signature__
+            try:
+                bound = sig.bind()
+            except TypeError as e:
+                if "missing a required argument" in str(e):
+                    match = re.search("argument: '(.+)'", str(e))
+                    missing = match.groups()[0] if match else "<param>"
+                    msg = (
+                        f"{e} in call to '{self._callable_name}{sig}'.\n"
+                        "To avoid this error, you can bind a value or callback to the "
+                        f"parameter:\n\n    {self._callable_name}.{missing}.bind(value)"
+                        "\n\nOr use the 'bind' option in the set_option decorator:\n\n"
+                        f"    @set_option({missing}={{'bind': value}})\n"
+                        f"    def {self._callable_name}{sig}: ..."
+                    )
+                    raise TypeError(msg) from None
+                else:
+                    raise
+
+            bound.apply_defaults()
+
+            f(*bound.args, **bound.kwargs)
+            return None
+
+        return f

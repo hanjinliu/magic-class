@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.widgets.logger &mdash; magic-class 0.6.1.dev1 documentation</title>
+  <title>magicclass.widgets.logger &mdash; magic-class 0.6.2.dev0 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.1.dev1
+                0.6.2.dev0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -50,6 +50,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../use_wraps.html">Call Parent Methods from its Child</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../use_bind.html">Binding Values to Arguments</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../use_choices.html">Set Choices Dynamically</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../use_preview.html">Add Preview Functionalities</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../use_worker.html">Multi-threading</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../additional_types.html">Additional types</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../containers.html">Container Variations</a></li>
@@ -149,7 +150,8 @@
         <span class="nd">@self</span><span class="o">.</span><span class="n">customContextMenuRequested</span><span class="o">.</span><span class="n">connect</span>
         <span class="k">def</span> <span class="nf">rightClickContextMenu</span><span class="p">(</span><span class="n">point</span><span class="p">):</span>
             <span class="n">menu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_contextmenu</span><span class="p">(</span><span class="n">point</span><span class="p">)</span>
-            <span class="n">menu</span><span class="o">.</span><span class="n">exec_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mapToGlobal</span><span class="p">(</span><span class="n">point</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">menu</span><span class="p">:</span>
+                <span class="n">menu</span><span class="o">.</span><span class="n">exec_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mapToGlobal</span><span class="p">(</span><span class="n">point</span><span class="p">))</span>
 
 <div class="viewcode-block" id="QtLogger.update"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.logger.QtLogger.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Printable</span><span class="p">]):</span>
         <span class="n">output_type</span><span class="p">,</span> <span class="n">obj</span> <span class="o">=</span> <span class="n">output</span>

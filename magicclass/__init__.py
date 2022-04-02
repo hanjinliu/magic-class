@@ -19,6 +19,7 @@ from .wrappers import (
     bind_key,
     confirm,
     nogui,
+    mark_preview,
 )
 
 from .fields import field, vfield

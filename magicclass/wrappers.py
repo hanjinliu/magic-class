@@ -366,6 +366,79 @@ def nogui(method: F) -> F:
     return method
 
 
+def mark_preview(function: F, text: str = "Preview") -> F:
+    """
+    Define a preview of a function.
+
+    This decorator is useful for advanced magicgui creation. A "Preview" button
+    appears in the bottom of the widget built from the input function and the
+    decorated function will be called with the same arguments.
+    Following example shows how to define a previewer that prints the content of
+    the selected file.
+
+    .. code-block:: python
+
+        def func(self, path: Path):
+            ...
+
+        @mark_preview(func)
+        def _func_prev(self, path: Path):
+            with open(path, mode="r") as f:
+                print(f.read())
+
+    Parameters
+    ----------
+    function : callable
+        To which function previewer will be defined.
+    text : str, optional
+        Text of preview button.
+    """
+
+    def _wrapper(preview):
+        sig_preview = inspect.signature(preview)
+        sig_func = inspect.signature(function)
+        params_preview = sig_preview.parameters
+        params_func = sig_func.parameters
+        prev_ns = preview.__qualname__.split(".")[-2]
+
+        less = len(params_func) - len(params_preview)
+        if less == 0:
+            if params_preview.keys() != params_func.keys():
+                raise TypeError(
+                    f"Arguments mismatch between {sig_preview} and {sig_func}."
+                )
+            # If argument names are identical, input arguments don't have to be filtered.
+            _filter = lambda a: a
+
+        elif less > 0:
+            idx: list[int] = []
+            for i, param in enumerate(params_func.keys()):
+                if param in params_preview:
+                    idx.append(i)
+            # If argument names are not identical, input arguments have to be filtered so
+            # that arguments match the inputs.
+            _filter = lambda a: filter(lambda x: x in idx, a)
+
+        else:
+            raise TypeError(
+                f"Number of arguments of preview function {preview!r} must be equal"
+                f"or smaller than that of running function {function!r}."
+            )
+
+        def _preview(self: BaseGui, *args):
+            # find proper parent instance in the case of classes being nested
+            ins = self
+            while ins.__class__.__name__ != prev_ns:
+                ins = ins.__magicclass_parent__
+            # filter input arguments
+            return preview(ins, *_filter(args))
+
+        upgrade_signature(function, additional_options={"preview": (text, _preview)})
+        return preview
+
+    return _wrapper
+
+
 def _assert_iterable(obj):
     if obj is None:
         obj = []

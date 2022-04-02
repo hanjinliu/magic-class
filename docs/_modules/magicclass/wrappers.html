@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.wrappers &mdash; magic-class 0.6.1.dev1 documentation</title>
+  <title>magicclass.wrappers &mdash; magic-class 0.6.2.dev0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.1.dev1
+                0.6.2.dev0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -50,6 +50,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../use_wraps.html">Call Parent Methods from its Child</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../use_bind.html">Binding Values to Arguments</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../use_choices.html">Set Choices Dynamically</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../use_preview.html">Add Preview Functionalities</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../use_worker.html">Multi-threading</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../additional_types.html">Additional types</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../containers.html">Container Variations</a></li>
@@ -450,7 +451,7 @@
         <span class="k">return</span> <span class="n">_method</span>
 
     <span class="k">if</span> <span class="n">f</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">_decorator</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">_decorator</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">_decorator</span></div>
 
 
@@ -458,6 +459,79 @@
     <span class="sd">&quot;&quot;&quot;Wrapped method will not be converted into a widget.&quot;&quot;&quot;</span>
     <span class="n">upgrade_signature</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">additional_options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;gui&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">})</span>
     <span class="k">return</span> <span class="n">method</span></div>
+
+
+<div class="viewcode-block" id="mark_preview"><a class="viewcode-back" href="../../magicclass.html#magicclass.wrappers.mark_preview">[docs]</a><span class="k">def</span> <span class="nf">mark_preview</span><span class="p">(</span><span class="n">function</span><span class="p">:</span> <span class="n">F</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Preview&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">F</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Define a preview of a function.</span>
+
+<span class="sd">    This decorator is useful for advanced magicgui creation. A &quot;Preview&quot; button</span>
+<span class="sd">    appears in the bottom of the widget built from the input function and the</span>
+<span class="sd">    decorated function will be called with the same arguments.</span>
+<span class="sd">    Following example shows how to define a previewer that prints the content of</span>
+<span class="sd">    the selected file.</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        def func(self, path: Path):</span>
+<span class="sd">            ...</span>
+
+<span class="sd">        @mark_preview(func)</span>
+<span class="sd">        def _func_prev(self, path: Path):</span>
+<span class="sd">            with open(path, mode=&quot;r&quot;) as f:</span>
+<span class="sd">                print(f.read())</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    function : callable</span>
+<span class="sd">        To which function previewer will be defined.</span>
+<span class="sd">    text : str, optional</span>
+<span class="sd">        Text of preview button.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">_wrapper</span><span class="p">(</span><span class="n">preview</span><span class="p">):</span>
+        <span class="n">sig_preview</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">preview</span><span class="p">)</span>
+        <span class="n">sig_func</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">function</span><span class="p">)</span>
+        <span class="n">params_preview</span> <span class="o">=</span> <span class="n">sig_preview</span><span class="o">.</span><span class="n">parameters</span>
+        <span class="n">params_func</span> <span class="o">=</span> <span class="n">sig_func</span><span class="o">.</span><span class="n">parameters</span>
+        <span class="n">prev_ns</span> <span class="o">=</span> <span class="n">preview</span><span class="o">.</span><span class="vm">__qualname__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+
+        <span class="n">less</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">params_func</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">params_preview</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">less</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">params_preview</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">!=</span> <span class="n">params_func</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Arguments mismatch between </span><span class="si">{</span><span class="n">sig_preview</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">sig_func</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="p">)</span>
+            <span class="c1"># If argument names are identical, input arguments don&#39;t have to be filtered.</span>
+            <span class="n">_filter</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">:</span> <span class="n">a</span>
+
+        <span class="k">elif</span> <span class="n">less</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">idx</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">params_func</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                <span class="k">if</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">params_preview</span><span class="p">:</span>
+                    <span class="n">idx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="c1"># If argument names are not identical, input arguments have to be filtered so</span>
+            <span class="c1"># that arguments match the inputs.</span>
+            <span class="n">_filter</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">:</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">idx</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Number of arguments of preview function </span><span class="si">{</span><span class="n">preview</span><span class="si">!r}</span><span class="s2"> must be equal&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;or smaller than that of running function </span><span class="si">{</span><span class="n">function</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">_preview</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">BaseGui</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+            <span class="c1"># find proper parent instance in the case of classes being nested</span>
+            <span class="n">ins</span> <span class="o">=</span> <span class="bp">self</span>
+            <span class="k">while</span> <span class="n">ins</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">!=</span> <span class="n">prev_ns</span><span class="p">:</span>
+                <span class="n">ins</span> <span class="o">=</span> <span class="n">ins</span><span class="o">.</span><span class="n">__magicclass_parent__</span>
+            <span class="c1"># filter input arguments</span>
+            <span class="k">return</span> <span class="n">preview</span><span class="p">(</span><span class="n">ins</span><span class="p">,</span> <span class="o">*</span><span class="n">_filter</span><span class="p">(</span><span class="n">args</span><span class="p">))</span>
+
+        <span class="n">upgrade_signature</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">additional_options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;preview&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">_preview</span><span class="p">)})</span>
+        <span class="k">return</span> <span class="n">preview</span>
+
+    <span class="k">return</span> <span class="n">_wrapper</span></div>
 
 
 <span class="k">def</span> <span class="nf">_assert_iterable</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
