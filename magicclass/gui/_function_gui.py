@@ -105,7 +105,10 @@ class FunctionGuiPlus(FunctionGui[_R]):
     def append_preview(self, f: Callable, text: str = "Preview"):
         self._preview = f
         btn = PushButton(text=text)
-        self.append(btn)
+        if isinstance(self[-1], PushButton):
+            self.insert(len(self) - 1, btn)
+        else:
+            self.append(btn)
 
         @btn.changed.connect
         def _call_preview():
