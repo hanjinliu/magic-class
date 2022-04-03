@@ -1,34 +1,21 @@
 from __future__ import annotations
 import numpy as np
-from vispy import scene
-from vispy.scene import visuals
+from vispy.scene import visuals, ViewBox
 from vispy.visuals import (
-    Visual,
     VolumeVisual,
     ImageVisual,
     IsosurfaceVisual,
     MeshVisual,
 )
 from vispy.visuals.filters import WireframeFilter
-
-
-class LayerItem:
-    _visual: Visual
-
-    @property
-    def visible(self) -> bool:
-        self._visual.visible
-
-    @visible.setter
-    def visible(self, v: bool) -> None:
-        self._visual.visible = v
+from ._base import LayerItem
 
 
 class Image(LayerItem):
     def __init__(
         self,
         data,
-        viewbox: scene.ViewBox,
+        viewbox: ViewBox,
         contrast_limits=None,
         rendering="mip",
         iso_threshold=None,
@@ -170,7 +157,7 @@ class _SurfaceBase(LayerItem):
     def __init__(
         self,
         data,
-        viewbox: scene.ViewBox,
+        viewbox: ViewBox,
         face_color=None,
         edge_color=None,
         shading="none",
@@ -230,7 +217,7 @@ class IsoSurface(_SurfaceBase):
     def __init__(
         self,
         data,
-        viewbox: scene.ViewBox,
+        viewbox: ViewBox,
         contrast_limits=None,
         iso_threshold=None,
         face_color=None,

@@ -9,6 +9,13 @@ from ...types import Color
 
 
 class Vispy3DCanvas(FreeWidget):
+    """
+    A Vispy canvas for 3-D object visualization.
+
+    Very similar to napari. This widget can be used independent of napari, or
+    as a mini-viewer of napari.
+    """
+
     def __init__(self):
         super().__init__()
         self._scene = scene.SceneCanvas()
@@ -22,10 +29,12 @@ class Vispy3DCanvas(FreeWidget):
 
     @property
     def layers(self):
+        """Return the layer list."""
         return self._items
 
     @property
     def camera(self):
+        """Return the native camera."""
         return self._viewbox.camera
 
     def add_image(
@@ -101,5 +110,5 @@ class Vispy3DCanvas(FreeWidget):
         mins = np.min(data[0], axis=0)
         maxs = np.max(data[0], axis=0)
         self._viewbox.camera.scale_factor = max(maxs - mins)
-        self._viewbox.camera.center = [(s1 - s0) / 2 for s0, s1 in zip(mins, maxs)]
+        self._viewbox.camera.center = [(s1 + s0) / 2 for s0, s1 in zip(mins, maxs)]
         return surface
