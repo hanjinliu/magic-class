@@ -22,12 +22,13 @@ except ImportError as e:  # pragma: no cover
 
 from qtpy.QtCore import Qt
 from magicgui.widgets import ProgressBar, Container, Widget, PushButton
+from magicgui.application import use_app
 
 from . import get_signature, move_to_screen_center
 
 if TYPE_CHECKING:
     from ..gui import BaseGui
-    from ..gui.mgui_ext import PushButtonPlus
+    from ..gui.mgui_ext import PushButtonPlus, Action
 
 __all__ = ["thread_worker"]
 
@@ -35,6 +36,8 @@ _F = TypeVar("_F", bound=Callable)
 
 
 class ProgressDict(TypedDict):
+    """Supported keys for the progress argument."""
+
     desc: str | Callable
     total: str | Callable
     pbar: Any
@@ -42,7 +45,13 @@ class ProgressDict(TypedDict):
 
 @runtime_checkable
 class _SupportProgress(Protocol):
-    """A progress protocol."""
+    """
+    A progress protocol.
+
+    Progressbar must be implemented with methods ``__init__``, ``set_description``,
+    ``show``, ``close`` and properties ``value``, ``max``. Optionally ``set_worker``
+    can be used so that progressbar has an access to the worker object.
+    """
 
     def __init__(self, max: int = 1, **kwargs):
         raise NotImplementedError()
@@ -365,6 +374,7 @@ class thread_worker:
 
         @wraps(self)
         def _create_worker(*args, **kwargs):
+            # create a worker object
             worker: FunctionWorker | GeneratorWorker = create_worker(
                 self._func.__get__(gui),
                 _ignore_errors=self._ignore_errors,
@@ -373,20 +383,6 @@ class thread_worker:
                 **kwargs,
             )
             self._last_arguments = args, kwargs
-            for c in self._started._iter_as_method(gui):
-                worker.started.connect(c)
-            for c in self._returned._iter_as_method(gui):
-                worker.returned.connect(c)
-            for c in self._errored._iter_as_method(gui):
-                worker.errored.connect(c)
-            for c in self._finished._iter_as_method(gui):
-                worker.finished.connect(c)
-            for c in self._aborted._iter_as_method(gui):
-                worker.aborted.connect(c)
-
-            if isinstance(worker, GeneratorWorker):
-                for c in self._yielded._iter_as_method(gui):
-                    worker.yielded.connect(c)
 
             if self._progress:
                 _desc = self._progress["desc"]
@@ -411,6 +407,7 @@ class thread_worker:
                         "'total' must be int, callable or evaluatable string."
                     )
 
+                # create progressbar widget (or any proper widget)
                 _pbar = self._progress["pbar"]
                 if _pbar is None:
                     pbar = self._find_progressbar(
@@ -425,24 +422,41 @@ class thread_worker:
                     pbar.label = desc or _pbar.name
                     pbar.max = total
                 else:
-                    if not isinstance(_pbar, ProgressBar):
-                        raise TypeError(f"{_pbar} is not a ProgressBar.")
                     pbar = _pbar
 
                 worker.started.connect(init_pbar.__get__(pbar))
+
+            for c in self._started._iter_as_method(gui):
+                worker.started.connect(c)
+            for c in self._returned._iter_as_method(gui):
+                worker.returned.connect(c)
+            for c in self._errored._iter_as_method(gui):
+                worker.errored.connect(c)
+            for c in self._finished._iter_as_method(gui):
+                worker.finished.connect(c)
+            for c in self._aborted._iter_as_method(gui):
+                worker.aborted.connect(c)
+
+            if isinstance(worker, GeneratorWorker):
+                for c in self._yielded._iter_as_method(gui):
+                    worker.yielded.connect(c)
+
+            if self._progress:
                 if not getattr(pbar, "visible", False):
+                    # return the progressbar to the initial state
                     worker.finished.connect(close_pbar.__get__(pbar))
                 if pbar.max != 0 and isinstance(worker, GeneratorWorker):
                     worker.pbar = pbar  # avoid garbage collection
                     worker.yielded.connect(increment.__get__(pbar))
 
                 if hasattr(pbar, "set_worker"):
+                    # if _SupportProgress object support set_worker
                     pbar.set_worker(worker)
 
-            _push_button: PushButtonPlus = gui[self._func.__name__]
-            if _push_button.running:
-                _push_button.enabled = False
-                worker.finished.connect(lambda: setattr(_push_button, "enabled", True))
+            _obj: PushButtonPlus | Action = gui[self._func.__name__]
+            if _obj.running:
+                _obj.enabled = False
+                worker.finished.connect(lambda: setattr(_obj, "enabled", True))
                 worker.errored.connect(
                     partial(gui._error_mode.get_handler(), parent=gui)
                 )
@@ -452,6 +466,13 @@ class thread_worker:
                     )
                 worker.start()
             else:
+                # If function is called from script, some events must get processed by
+                # the application while keep script stopping at each line of code.
+                app = use_app()
+                worker.returned.connect(app.process_events)
+                worker.started.connect(app.process_events)
+                if isinstance(worker, GeneratorWorker):
+                    worker.yielded.connect(app.process_events)
                 worker.run()
 
             return None
