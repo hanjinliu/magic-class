@@ -750,6 +750,8 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
                         filter=fdialog.filter,
                     ):
                         fdialog.value = result
+                    else:
+                        return None
 
                 if self._popup_mode != PopUpMode.dock:
                     widget.mgui.show()
