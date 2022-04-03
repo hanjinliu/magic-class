@@ -338,6 +338,11 @@ class thread_worker:
         cls._DEFAULT_PROGRESS_BAR = pbar_cls
         return pbar_cls
 
+    @property
+    def is_generator(self) -> bool:
+        """True if bound function is a generator function."""
+        return inspect.isgeneratorfunction(self._func)
+
     @overload
     def __call__(self, f: Callable) -> thread_worker:
         ...
@@ -434,10 +439,10 @@ class thread_worker:
                 worker.errored.connect(c)
             for c in self._finished._iter_as_method(gui):
                 worker.finished.connect(c)
-            for c in self._aborted._iter_as_method(gui):
-                worker.aborted.connect(c)
 
             if isinstance(worker, GeneratorWorker):
+                for c in self._aborted._iter_as_method(gui):
+                    worker.aborted.connect(c)
                 for c in self._yielded._iter_as_method(gui):
                     worker.yielded.connect(c)
 
@@ -555,6 +560,11 @@ class thread_worker:
     @property
     def yielded(self) -> Callbacks:
         """Event that will be emitted on yielded."""
+        if not self.is_generator:
+            raise TypeError(
+                f"Worker of non-generator function {self._func!r} does not have "
+                "yielded signal."
+            )
         return self._yielded
 
     @property
@@ -565,6 +575,11 @@ class thread_worker:
     @property
     def aborted(self) -> Callbacks:
         """Event that will be emitted on aborted."""
+        if not self.is_generator:
+            raise TypeError(
+                f"Worker of non-generator function {self._func!r} does not have "
+                "aborted signal."
+            )
         return self._aborted
 
 
