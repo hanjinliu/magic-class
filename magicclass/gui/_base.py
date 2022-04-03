@@ -741,12 +741,6 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
                             # If FunctioGui is docked, we should close QDockWidget.
                             mgui.called.connect(lambda: mgui.parent.hide())
 
-                if self._popup_mode != PopUpMode.dock:
-                    widget.mgui.show()
-                else:
-                    # show dock widget
-                    mgui.parent.show()
-
                 if nparams == 1 and isinstance(fgui[0], FileEdit):
                     fdialog: FileEdit = mgui[0]
                     if result := fdialog._show_file_dialog(
@@ -756,6 +750,12 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
                         filter=fdialog.filter,
                     ):
                         fdialog.value = result
+
+                if self._popup_mode != PopUpMode.dock:
+                    widget.mgui.show()
+                else:
+                    # show dock widget
+                    mgui.parent.show()
 
                 return None
 
