@@ -10,10 +10,11 @@ from typing import (
     Union,
     overload,
     TypeVar,
+    Generic,
     Protocol,
     runtime_checkable,
 )
-from typing_extensions import TypedDict
+from typing_extensions import TypedDict, ParamSpec
 
 try:
     from superqt.utils import create_worker, GeneratorWorker, FunctionWorker
@@ -31,7 +32,7 @@ if TYPE_CHECKING:
     from ..gui import BaseGui
     from ..gui.mgui_ext import PushButtonPlus, Action
 
-__all__ = ["thread_worker"]
+__all__ = ["thread_worker", "Timer"]
 
 _F = TypeVar("_F", bound=Callable)
 
@@ -83,17 +84,24 @@ class _SupportProgress(Protocol):
         raise NotImplementedError()
 
 
-class Callbacks:
+_P = ParamSpec("_P")
+_R1 = TypeVar("_R1")
+_R2 = TypeVar("_R2")
+
+
+class Callbacks(Generic[_R1]):
     """List of callback functions."""
 
     def __init__(self):
-        self._callbacks: list[Callable] = []
+        self._callbacks: list[Callable[[Any, _R1], _R2] | Callable[[Any], _R2]] = []
 
     @property
-    def callbacks(self) -> tuple[Callable, ...]:
+    def callbacks(self) -> tuple[Callable[[Any, _R1], _R2] | Callable[[Any], _R2], ...]:
         return tuple(self._callbacks)
 
-    def connect(self, callback: _F) -> _F:
+    def connect(
+        self, callback: Callable[[Any, _R1], _R2] | Callable[[Any], _R2]
+    ) -> Callable[[Any, _R1], _R2] | Callable[[Any], _R2]:
         """
         Append a callback function to the callback list.
 
@@ -107,7 +115,9 @@ class Callbacks:
         self._callbacks.append(callback)
         return callback
 
-    def disconnect(self, callback: _F) -> _F:
+    def disconnect(
+        self, callback: Callable[[Any, _R1], _R2] | Callable[[Any], _R2]
+    ) -> Callable[[Any, _R1], _R2] | Callable[[Any], _R2]:
         """
         Remove callback function from the callback list.
 
@@ -328,8 +338,9 @@ class Aborted(RuntimeError):
 
     @classmethod
     def raise_(cls, *args):
+        """A function version of "raise"."""
         if not args:
-            args = ("Function call is aborted.",)
+            args = ("Aborted.",)
         raise cls(*args)
 
 
@@ -343,18 +354,18 @@ class thread_worker:
 
     def __init__(
         self,
-        f: Callable | None = None,
+        f: Callable[_P, _R1] | None = None,
         *,
         ignore_errors: bool = False,
         progress: ProgressDict | None = None,
     ) -> None:
-        self._func: Callable | None = None
-        self._started = Callbacks()
-        self._returned = Callbacks()
-        self._errored = Callbacks()
-        self._yielded = Callbacks()
-        self._finished = Callbacks()
-        self._aborted = Callbacks()
+        self._func: Callable[_P, _R1] | None = None
+        self._started: Callbacks[None] = Callbacks()
+        self._returned: Callbacks[_R1] = Callbacks()
+        self._errored: Callbacks[Exception] = Callbacks()
+        self._yielded: Callbacks[_R1] = Callbacks()
+        self._finished: Callbacks[None] = Callbacks()
+        self._aborted: Callbacks[None] = Callbacks()
         self._ignore_errors = ignore_errors
         self._objects: dict[int, BaseGui] = {}
         self._progressbars: dict[int, ProgressBarLike | None] = {}
@@ -367,11 +378,9 @@ class thread_worker:
             if isinstance(progress, bool):
                 progress = {}
 
-            desc = progress.get("desc", None)
-            total = progress.get("total", 0)
-            pbar = progress.get("pbar", None)
-
-            progress = {"desc": desc, "total": total, "pbar": pbar}
+            progress.setdefault("desc", None)
+            progress.setdefault("total", 0)
+            progress.setdefault("pbar", None)
 
         self._progress = progress
 
@@ -410,7 +419,7 @@ class thread_worker:
         return inspect.isgeneratorfunction(self._func)
 
     @overload
-    def __call__(self, f: Callable) -> thread_worker:
+    def __call__(self, f: Callable[_P, _R1]) -> thread_worker:
         ...
 
     @overload
@@ -421,7 +430,7 @@ class thread_worker:
         if self._func is None:
             f = args[0]
             self._func = f
-            wraps(f)(self)
+            wraps(f)(self)  # NOTE: __name__ etc. are updated here.
             return self
         else:
             return self._func(*args, **kwargs)
@@ -458,16 +467,22 @@ class thread_worker:
             if self._progress:
                 _desc = self._progress["desc"]
                 _total = self._progress["total"]
+                _pbar = self._progress["pbar"]
 
+                all_args = None
                 if callable(_desc):
-                    desc = _desc(gui)
+                    arguments = self.__signature__.bind(gui, *args, **kwargs)
+                    arguments.apply_defaults()
+                    all_args = arguments.arguments
+                    desc = _desc(**all_args)
                 else:
                     desc = str(_desc or self._func.__name__)
 
                 if isinstance(_total, str):
-                    arguments = self.__signature__.bind(gui, *args, **kwargs)
-                    arguments.apply_defaults()
-                    all_args = arguments.arguments
+                    if all_args is None:
+                        arguments = self.__signature__.bind(gui, *args, **kwargs)
+                        arguments.apply_defaults()
+                        all_args = arguments.arguments
                     total = eval(_total, {}, all_args)
                 elif callable(_total):
                     total = _total(gui)
@@ -479,7 +494,6 @@ class thread_worker:
                     )
 
                 # create progressbar widget (or any proper widget)
-                _pbar = self._progress["pbar"]
                 if _pbar is None:
                     pbar = self._find_progressbar(
                         gui,
@@ -497,19 +511,19 @@ class thread_worker:
 
                 worker.started.connect(init_pbar.__get__(pbar))
 
-            for c in self._started._iter_as_method(gui):
+            for c in self.started._iter_as_method(gui):
                 worker.started.connect(c)
-            for c in self._returned._iter_as_method(gui):
+            for c in self.returned._iter_as_method(gui):
                 worker.returned.connect(c)
-            for c in self._errored._iter_as_method(gui):
+            for c in self.errored._iter_as_method(gui):
                 worker.errored.connect(c)
-            for c in self._finished._iter_as_method(gui):
+            for c in self.finished._iter_as_method(gui):
                 worker.finished.connect(c)
 
             if isinstance(worker, GeneratorWorker):
-                for c in self._aborted._iter_as_method(gui):
+                for c in self.aborted._iter_as_method(gui):
                     worker.aborted.connect(c)
-                for c in self._yielded._iter_as_method(gui):
+                for c in self.yielded._iter_as_method(gui):
                     worker.yielded.connect(c)
 
             if self._progress:
@@ -609,22 +623,22 @@ class thread_worker:
         return _pbar
 
     @property
-    def started(self) -> Callbacks:
+    def started(self) -> Callbacks[None]:
         """Event that will be emitted on started."""
         return self._started
 
     @property
-    def returned(self) -> Callbacks:
+    def returned(self) -> Callbacks[_R1]:
         """Event that will be emitted on returned."""
         return self._returned
 
     @property
-    def errored(self) -> Callbacks:
+    def errored(self) -> Callbacks[Exception]:
         """Event that will be emitted on errored."""
         return self._errored
 
     @property
-    def yielded(self) -> Callbacks:
+    def yielded(self) -> Callbacks[_R1]:
         """Event that will be emitted on yielded."""
         if not self.is_generator:
             raise TypeError(
@@ -634,12 +648,12 @@ class thread_worker:
         return self._yielded
 
     @property
-    def finished(self) -> Callbacks:
+    def finished(self) -> Callbacks[None]:
         """Event that will be emitted on finished."""
         return self._finished
 
     @property
-    def aborted(self) -> Callbacks:
+    def aborted(self) -> Callbacks[None]:
         """Event that will be emitted on aborted."""
         if not self.is_generator:
             raise TypeError(

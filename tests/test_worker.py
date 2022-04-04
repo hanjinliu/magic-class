@@ -171,14 +171,6 @@ def test_progressbar():
         def f(self):
             time.sleep(0.2)
 
-    @magicclass
-    class C:
-        @magicmenu
-        class Menu:
-            @thread_worker
-            def f(self):
-                time.sleep(0.2)
-
     a = A()
     a.f()
     b = B()
