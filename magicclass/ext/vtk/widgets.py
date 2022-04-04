@@ -10,6 +10,7 @@ from .volume import Volume
 from .components import Mesh, VtkComponent, get_object_type
 
 from ...widgets import FreeWidget
+from ...types import Color
 
 
 class QtVtkCanvas(QtW.QWidget):
@@ -50,6 +51,11 @@ class LayerList(EventedList):
 
 class VtkCanvas(FreeWidget):
     def __init__(self):
+        """
+        A Visualization toolkit (VTK) canvas for magicclass.
+
+        This widget is useful for visualizing surface and mesh.
+        """
         super().__init__()
         self._qwidget = QtVtkCanvas()
         self.set_widget(self._qwidget)
@@ -65,10 +71,34 @@ class VtkCanvas(FreeWidget):
         img = pic.tonumpy()
         return img
 
-    def add_volume(self, volume):
+    def add_volume(
+        self,
+        volume: np.ndarray,
+        color: Color = (0.7, 0.7, 0.7),
+        mode: str = "iso",
+    ):
+        """
+        Add a 3D volume to the canvas.
+
+        Parameters
+        ----------
+        volume : np.ndarray
+            Volume data. Must be 3D array.
+        color : Color, optional
+            Initial color of the volume.
+        mode : str, default is "iso"
+            Initial visualization mode of the volume.
+
+        Returns
+        -------
+        Volume
+            A volume layer.
+        """
         vol = Volume(volume, _parent=self._qwidget.plt)
         self.layers.append(vol)
         self._qwidget.plt.add(vol._current_obj)
+        vol.color = color
+        vol.mode = mode
         if len(self.layers) == 1:
             self._qwidget.plt.show(zoom=True)
         return vol
@@ -82,7 +112,7 @@ class VtkCanvas(FreeWidget):
             self._qwidget.plt.show()
         return obj
 
-    def add_surface(self, data):
+    def add_surface(self, data: tuple[np.ndarray, np.ndarray] | tuple[np.ndarray]):
         mesh = Mesh(data, _parent=self._qwidget.plt)
         self.layers.append(mesh)
         if len(self.layers) == 1:
@@ -90,7 +120,7 @@ class VtkCanvas(FreeWidget):
         return mesh
 
     @property
-    def axes(self):
+    def axes(self) -> str:
         """The axes object."""
         return AxesMode(self._qwidget.plt.axes).name
 

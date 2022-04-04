@@ -38,7 +38,7 @@ class WidgetGroup:
 
     @cached_property
     def mode(self) -> ComboBox:
-        cbox = ComboBox(choices=Mode, value=self.volume.mode, name="mode")
+        cbox = ComboBox(choices=Mode, value=Mode(self.volume.mode), name="mode")
 
         @cbox.changed.connect
         def _(v):
