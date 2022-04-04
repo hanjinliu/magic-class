@@ -120,27 +120,8 @@ def append_preview(self: FunctionGui, f: Callable, text: str = "Preview"):
     @btn.changed.connect
     def _call_preview():
         sig = self.__signature__
-        try:
-            bound = sig.bind()
-        except TypeError as e:
-            if "missing a required argument" in str(e):
-                match = re.search("argument: '(.+)'", str(e))
-                missing = match.groups()[0] if match else "<param>"
-                msg = (
-                    f"{e} in call to '{self._callable_name}{sig}'.\n"
-                    "To avoid this error, you can bind a value or callback to the "
-                    f"parameter:\n\n    {self._callable_name}.{missing}.bind(value)"
-                    "\n\nOr use the 'bind' option in the set_option decorator:\n\n"
-                    f"    @set_option({missing}={{'bind': value}})\n"
-                    f"    def {self._callable_name}{sig}: ..."
-                )
-                raise TypeError(msg) from None
-            else:
-                raise
-
+        bound = sig.bind()
         bound.apply_defaults()
-
-        f(*bound.args, **bound.kwargs)
-        return None
+        return f(*bound.args, **bound.kwargs)
 
     return f
