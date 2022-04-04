@@ -8,11 +8,12 @@ from magicgui.widgets._function_gui import (
     FunctionGui,
     _function_name_pointing_to_widget,
 )
+
 from ..widgets import Separator
 
 if TYPE_CHECKING:
     from magicgui.widgets._bases import Widget
-    from ._base import BaseGui
+
 
 _R = TypeVar("_R")
 
@@ -103,37 +104,43 @@ class FunctionGuiPlus(FunctionGui[_R]):
         self._unify_label_widths()
 
     def append_preview(self, f: Callable, text: str = "Preview"):
-        self._preview = f
-        btn = PushButton(text=text)
-        if isinstance(self[-1], PushButton):
-            self.insert(len(self) - 1, btn)
-        else:
-            self.append(btn)
+        """Append a preview button to the widget."""
+        return append_preview(self, f, text)
 
-        @btn.changed.connect
-        def _call_preview():
-            sig = self.__signature__
-            try:
-                bound = sig.bind()
-            except TypeError as e:
-                if "missing a required argument" in str(e):
-                    match = re.search("argument: '(.+)'", str(e))
-                    missing = match.groups()[0] if match else "<param>"
-                    msg = (
-                        f"{e} in call to '{self._callable_name}{sig}'.\n"
-                        "To avoid this error, you can bind a value or callback to the "
-                        f"parameter:\n\n    {self._callable_name}.{missing}.bind(value)"
-                        "\n\nOr use the 'bind' option in the set_option decorator:\n\n"
-                        f"    @set_option({missing}={{'bind': value}})\n"
-                        f"    def {self._callable_name}{sig}: ..."
-                    )
-                    raise TypeError(msg) from None
-                else:
-                    raise
 
-            bound.apply_defaults()
+def append_preview(self: FunctionGui, f: Callable, text: str = "Preview"):
+    """Append a preview button to a FunctionGui widget."""
 
-            f(*bound.args, **bound.kwargs)
-            return None
+    btn = PushButton(text=text)
+    if isinstance(self[-1], PushButton):
+        self.insert(len(self) - 1, btn)
+    else:
+        self.append(btn)
 
-        return f
+    @btn.changed.connect
+    def _call_preview():
+        sig = self.__signature__
+        try:
+            bound = sig.bind()
+        except TypeError as e:
+            if "missing a required argument" in str(e):
+                match = re.search("argument: '(.+)'", str(e))
+                missing = match.groups()[0] if match else "<param>"
+                msg = (
+                    f"{e} in call to '{self._callable_name}{sig}'.\n"
+                    "To avoid this error, you can bind a value or callback to the "
+                    f"parameter:\n\n    {self._callable_name}.{missing}.bind(value)"
+                    "\n\nOr use the 'bind' option in the set_option decorator:\n\n"
+                    f"    @set_option({missing}={{'bind': value}})\n"
+                    f"    def {self._callable_name}{sig}: ..."
+                )
+                raise TypeError(msg) from None
+            else:
+                raise
+
+        bound.apply_defaults()
+
+        f(*bound.args, **bound.kwargs)
+        return None
+
+    return f

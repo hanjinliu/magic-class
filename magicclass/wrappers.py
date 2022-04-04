@@ -4,8 +4,9 @@ import inspect
 from typing import Callable, Iterable, Iterator, Union, TYPE_CHECKING, TypeVar, overload
 from typing_extensions import ParamSpec
 import warnings
-from .utils import show_messagebox
+from magicgui.widgets import FunctionGui
 
+from .utils import show_messagebox
 from .types import Color
 from .signature import upgrade_signature
 
@@ -255,6 +256,7 @@ class Canceled(RuntimeError):
     """Raised when a function is canceled"""
 
 
+# TODO: confirm is not exchangable with thread_worker
 @overload
 def confirm(
     *,
@@ -366,7 +368,7 @@ def nogui(method: F) -> F:
     return method
 
 
-def mark_preview(function: F, text: str = "Preview") -> F:
+def mark_preview(function: Callable, text: str = "Preview") -> Callable[[F], F]:
     """
     Define a preview of a function.
 
@@ -394,12 +396,11 @@ def mark_preview(function: F, text: str = "Preview") -> F:
         Text of preview button.
     """
 
-    def _wrapper(preview):
+    def _wrapper(preview: F) -> F:
         sig_preview = inspect.signature(preview)
         sig_func = inspect.signature(function)
         params_preview = sig_preview.parameters
         params_func = sig_func.parameters
-        prev_ns = preview.__qualname__.split(".")[-2]
 
         less = len(params_func) - len(params_preview)
         if less == 0:
@@ -413,10 +414,8 @@ def mark_preview(function: F, text: str = "Preview") -> F:
         elif less > 0:
             idx: list[int] = []
             for i, param in enumerate(params_func.keys()):
-                if i == 0:
-                    continue
                 if param in params_preview:
-                    idx.append(i - 1)
+                    idx.append(i)
             # If argument names are not identical, input arguments have to be filtered so
             # that arguments match the inputs.
             _filter = lambda _args: (a for i, a in enumerate(_args) if i in idx)
@@ -427,15 +426,27 @@ def mark_preview(function: F, text: str = "Preview") -> F:
                 f"or smaller than that of running function {function!r}."
             )
 
-        def _preview(self: BaseGui, *args):
+        def _preview(*args):
             # find proper parent instance in the case of classes being nested
-            ins = self
-            while ins.__class__.__name__ != prev_ns:
-                ins = ins.__magicclass_parent__
-            # filter input arguments
-            return preview(ins, *_filter(args))
+            from .gui import BaseGui
 
-        upgrade_signature(function, additional_options={"preview": (text, _preview)})
+            if len(args) > 0 and isinstance(args[0], BaseGui):
+                ins = args[0]
+                prev_ns = preview.__qualname__.split(".")[-2]
+                while ins.__class__.__name__ != prev_ns:
+                    ins = ins.__magicclass_parent__
+                args = (ins,) + args[1:]
+            # filter input arguments
+            return preview(*_filter(args))
+
+        if not isinstance(function, FunctionGui):
+            upgrade_signature(
+                function, additional_options={"preview": (text, _preview)}
+            )
+        else:
+            from .gui._function_gui import append_preview
+
+            append_preview(function, _preview, text=text)
         return preview
 
     return _wrapper
