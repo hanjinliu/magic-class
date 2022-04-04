@@ -1,4 +1,5 @@
 from __future__ import annotations
+import time
 import inspect
 from functools import partial, wraps
 from typing import (
@@ -21,7 +22,7 @@ except ImportError as e:  # pragma: no cover
     raise type(e)(msg)
 
 from qtpy.QtCore import Qt
-from magicgui.widgets import ProgressBar, Container, Widget, PushButton
+from magicgui.widgets import ProgressBar, Container, Widget, PushButton, Label
 from magicgui.application import use_app
 
 from . import get_signature, move_to_screen_center
@@ -173,20 +174,76 @@ class NapariProgressBar(_SupportProgress):
         self._pbar.close()
 
 
+class Timer:
+    """A timer class with intuitive API."""
+
+    def __init__(self):
+        self.reset()
+
+    def __repr__(self) -> str:
+        """Return string in format hh:mm:ss"""
+        return self.format_time()
+
+    @property
+    def sec(self) -> float:
+        """Return current second."""
+        self.lap()
+        return self._t_total
+
+    def start(self):
+        """Start timer."""
+        self._t0 = time.time()
+        self._running = True
+
+    def stop(self) -> float:
+        """Stop timer."""
+        self.lap()
+        self._running = False
+
+    def lap(self) -> float:
+        """Return lap time."""
+        if self._running:
+            now = time.time()
+            self._t_total += now - self._t0
+            self._t0 = now
+        return self._t_total
+
+    def reset(self):
+        """Reset timer."""
+        self._t0 = time.time()
+        self._t_total = 0.0
+        self._running = False
+        return None
+
+    def format_time(self, fmt: str = "{hour:0>2}:{min:0>2}:{sec:0>2}") -> str:
+        """Format current time."""
+        min_all, sec = divmod(self.sec, 60)
+        hour, min = divmod(min_all, 60)
+        return fmt.format(hour=int(hour), min=int(min), sec=int(sec))
+
+
 class DefaultProgressBar(Container, _SupportProgress):
     """The default progressbar widget."""
 
     def __init__(self, max: int = 1):
+        self.progress_label = Label(value="Progress")
         self.pbar = ProgressBar(value=0, max=max)
+        self.time_label = Label(value="")
         self.pause_button = PushButton(text="Pause")
         self.abort_button = PushButton(text="Abort")
         cnt = Container(
-            layout="horizontal", widgets=[self.pause_button, self.abort_button]
+            layout="horizontal",
+            widgets=[self.time_label, self.pause_button, self.abort_button],
+            labels=False,
         )
         cnt.margins = (0, 0, 0, 0)
         self.pbar.min_width = 200
-        self._paused = False
-        super().__init__(widgets=[self.pbar, cnt])
+        self._timer = Timer()
+        super().__init__(widgets=[self.progress_label, self.pbar, cnt], labels=False)
+
+    @property
+    def paused(self) -> bool:
+        return not self._timer._running
 
     @property
     def value(self) -> int:
@@ -195,6 +252,11 @@ class DefaultProgressBar(Container, _SupportProgress):
     @value.setter
     def value(self, v):
         self.pbar.value = v
+        # update timer label
+        if self._timer.sec < 3600:
+            self.time_label.value = self._timer.format_time("{min:0>2}:{sec:0>2}")
+        else:
+            self.time_label.value = self._timer.format_time()
 
     @property
     def max(self) -> int:
@@ -204,10 +266,14 @@ class DefaultProgressBar(Container, _SupportProgress):
     def max(self, v):
         self.pbar.max = v
 
+    def show(self, run=False):
+        super().show(run=run)
+        self._timer.start()
+        return self
+
     def set_description(self, desc: str):
         """Set description as the label of the progressbar."""
-        self.pbar.label = desc
-        self._unify_label_widths()
+        self.progress_label.value = desc
         return None
 
     def set_worker(self, worker: GeneratorWorker | FunctionWorker):
@@ -232,23 +298,23 @@ class DefaultProgressBar(Container, _SupportProgress):
         def _on_pause():
             self.pause_button.text = "Resume"
             self.pause_button.enabled = True
+            self._timer.stop()
 
         return None
 
     def _toggle_pause(self):
-        if self._paused:
+        if self.paused:
             self._worker.resume()
             self.pause_button.text = "Pause"
+            self._timer.start()
         else:
             self._worker.pause()
             self.pause_button.text = "Pausing"
             self.pause_button.enabled = False
 
-        self._paused = not self._paused
         return None
 
     def _abort_worker(self):
-        self._paused = False
         self.pause_button.text = "Pause"
         self.abort_button.text = "Aborting"
         self.pause_button.enabled = False

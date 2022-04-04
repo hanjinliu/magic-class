@@ -16,4 +16,4 @@ from .qt import (
     screen_scale,
 )
 
-from .qthreading import thread_worker
+from .qthreading import thread_worker, Timer
