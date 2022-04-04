@@ -291,8 +291,8 @@ class DefaultProgressBar(Container, _SupportProgress):
         self._worker = worker
         if not isinstance(self._worker, GeneratorWorker):
             # FunctionWorker does not have yielded/aborted signals.
-            self.pause_button.enabled = False
-            self.abort_button.enabled = False
+            self.pause_button.visible = False
+            self.abort_button.visible = False
             return None
         # initialize abort_button
         self.abort_button.text = "Abort"
