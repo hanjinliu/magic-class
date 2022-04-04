@@ -1,18 +1,19 @@
 from __future__ import annotations
-from typing import Any, TYPE_CHECKING, TypeVar
+from typing import Any, TYPE_CHECKING, Callable, TypeVar
 import re
-import weakref
+from magicgui.widgets import PushButton
 from magicgui.widgets._concrete import _LabeledWidget
 from magicgui.widgets._bases import ValueWidget, ButtonWidget, ContainerWidget
 from magicgui.widgets._function_gui import (
     FunctionGui,
     _function_name_pointing_to_widget,
 )
+
 from ..widgets import Separator
 
 if TYPE_CHECKING:
     from magicgui.widgets._bases import Widget
-    from ._base import BaseGui
+
 
 _R = TypeVar("_R")
 
@@ -20,7 +21,7 @@ _R = TypeVar("_R")
 class FunctionGuiPlus(FunctionGui[_R]):
     """FunctionGui class with a parameter recording functionality etc."""
 
-    _magicclass_parent_ref: weakref.ReferenceType[BaseGui] | None = None
+    _preview = None
 
     def __call__(self, *args: Any, update_widget: bool = False, **kwargs: Any) -> _R:
         sig = self.__signature__
@@ -94,10 +95,33 @@ class FunctionGuiPlus(FunctionGui[_R]):
                 _widget = _LabeledWidget(widget)
                 widget.label_changed.connect(self._unify_label_widths)
 
-        self._list.insert(key, widget)
         if key < 0:
             key += len(self)
+        self._list.insert(key, widget)
         # NOTE: if someone has manually mucked around with self.native.layout()
         # it's possible that indices will be off.
         self._widget._mgui_insert_widget(key, _widget)
         self._unify_label_widths()
+
+    def append_preview(self, f: Callable, text: str = "Preview"):
+        """Append a preview button to the widget."""
+        return append_preview(self, f, text)
+
+
+def append_preview(self: FunctionGui, f: Callable, text: str = "Preview"):
+    """Append a preview button to a FunctionGui widget."""
+
+    btn = PushButton(text=text)
+    if isinstance(self[-1], PushButton):
+        self.insert(len(self) - 1, btn)
+    else:
+        self.append(btn)
+
+    @btn.changed.connect
+    def _call_preview():
+        sig = self.__signature__
+        bound = sig.bind()
+        bound.apply_defaults()
+        return f(*bound.args, **bound.kwargs)
+
+    return f

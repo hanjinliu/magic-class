@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.utils.functions &mdash; magic-class 0.6.1.dev1 documentation</title>
+  <title>magicclass.utils.functions &mdash; magic-class 0.6.2.dev0 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.1.dev1
+                0.6.2.dev0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -50,6 +50,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../use_wraps.html">Call Parent Methods from its Child</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../use_bind.html">Binding Values to Arguments</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../use_choices.html">Set Choices Dynamically</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../use_preview.html">Add Preview Functionalities</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../use_worker.html">Multi-threading</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../additional_types.html">Additional types</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../containers.html">Container Variations</a></li>
@@ -94,25 +95,12 @@
   <h1>Source code for magicclass.utils.functions</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 <span class="kn">import</span> <span class="nn">inspect</span>
-<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Iterable</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">docstring_parser</span> <span class="kn">import</span> <span class="n">parse</span>
-<span class="kn">from</span> <span class="nn">qtpy.QtWidgets</span> <span class="kn">import</span> <span class="n">QApplication</span><span class="p">,</span> <span class="n">QMessageBox</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">..gui</span> <span class="kn">import</span> <span class="n">BaseGui</span>
-
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;MessageBoxMode&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;show_messagebox&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;open_url&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;screen_center&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;to_clipboard&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;iter_members&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;extract_tooltip&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;get_signature&quot;</span><span class="p">,</span>
-<span class="p">]</span>
 
 
 <div class="viewcode-block" id="iter_members"><a class="viewcode-back" href="../../../magicclass.utils.html#magicclass.utils.functions.iter_members">[docs]</a><span class="k">def</span> <span class="nf">iter_members</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="n">exclude_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;__&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
@@ -171,117 +159,8 @@
     <span class="k">return</span> <span class="n">sig</span></div>
 
 
-<div class="viewcode-block" id="MessageBoxMode"><a class="viewcode-back" href="../../../magicclass.utils.html#magicclass.utils.functions.MessageBoxMode">[docs]</a><span class="k">class</span> <span class="nc">MessageBoxMode</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-    <span class="n">ERROR</span> <span class="o">=</span> <span class="s2">&quot;error&quot;</span>
-    <span class="n">WARNING</span> <span class="o">=</span> <span class="s2">&quot;warn&quot;</span>
-    <span class="n">INFO</span> <span class="o">=</span> <span class="s2">&quot;info&quot;</span>
-    <span class="n">QUESTION</span> <span class="o">=</span> <span class="s2">&quot;question&quot;</span>
-    <span class="n">ABOUT</span> <span class="o">=</span> <span class="s2">&quot;about&quot;</span></div>
-
-
-<span class="n">_QMESSAGE_MODES</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="n">MessageBoxMode</span><span class="o">.</span><span class="n">ERROR</span><span class="p">:</span> <span class="n">QMessageBox</span><span class="o">.</span><span class="n">critical</span><span class="p">,</span>
-    <span class="n">MessageBoxMode</span><span class="o">.</span><span class="n">WARNING</span><span class="p">:</span> <span class="n">QMessageBox</span><span class="o">.</span><span class="n">warning</span><span class="p">,</span>
-    <span class="n">MessageBoxMode</span><span class="o">.</span><span class="n">INFO</span><span class="p">:</span> <span class="n">QMessageBox</span><span class="o">.</span><span class="n">information</span><span class="p">,</span>
-    <span class="n">MessageBoxMode</span><span class="o">.</span><span class="n">QUESTION</span><span class="p">:</span> <span class="n">QMessageBox</span><span class="o">.</span><span class="n">question</span><span class="p">,</span>
-    <span class="n">MessageBoxMode</span><span class="o">.</span><span class="n">ABOUT</span><span class="p">:</span> <span class="n">QMessageBox</span><span class="o">.</span><span class="n">about</span><span class="p">,</span>
-<span class="p">}</span>
-
-
-<div class="viewcode-block" id="show_messagebox"><a class="viewcode-back" href="../../../magicclass.utils.html#magicclass.utils.functions.show_messagebox">[docs]</a><span class="k">def</span> <span class="nf">show_messagebox</span><span class="p">(</span>
-    <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">MessageBoxMode</span> <span class="o">=</span> <span class="n">MessageBoxMode</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span>
-    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Freeze the GUI and open a messagebox dialog.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    mode : str or MessageBoxMode, default is MessageBoxMode.INFO</span>
-<span class="sd">        Mode of message box. Must be &quot;error&quot;, &quot;warn&quot;, &quot;info&quot;, &quot;question&quot; or &quot;about&quot;.</span>
-<span class="sd">    title : str, optional</span>
-<span class="sd">        Title of messagebox.</span>
-<span class="sd">    text : str, optional</span>
-<span class="sd">        Text in messagebox.</span>
-<span class="sd">    parent : QWidget, optional</span>
-<span class="sd">        Parent widget.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    bool</span>
-<span class="sd">        If &quot;OK&quot; or &quot;Yes&quot; is clicked, return True. Otherwise return False.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">show_dialog</span> <span class="o">=</span> <span class="n">_QMESSAGE_MODES</span><span class="p">[</span><span class="n">MessageBoxMode</span><span class="p">(</span><span class="n">mode</span><span class="p">)]</span>
-    <span class="n">result</span> <span class="o">=</span> <span class="n">show_dialog</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">result</span> <span class="ow">in</span> <span class="p">(</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Ok</span><span class="p">,</span> <span class="n">QMessageBox</span><span class="o">.</span><span class="n">Yes</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="open_url"><a class="viewcode-back" href="../../../magicclass.utils.html#magicclass.utils.functions.open_url">[docs]</a><span class="k">def</span> <span class="nf">open_url</span><span class="p">(</span><span class="n">link</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Open the link with the default browser.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    link : str</span>
-<span class="sd">        Link to the home page.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">qtpy.QtGui</span> <span class="kn">import</span> <span class="n">QDesktopServices</span>
-    <span class="kn">from</span> <span class="nn">qtpy.QtCore</span> <span class="kn">import</span> <span class="n">QUrl</span>
-
-    <span class="n">QDesktopServices</span><span class="o">.</span><span class="n">openUrl</span><span class="p">(</span><span class="n">QUrl</span><span class="p">(</span><span class="n">link</span><span class="p">))</span></div>
-
-
-<div class="viewcode-block" id="to_clipboard"><a class="viewcode-back" href="../../../magicclass.utils.html#magicclass.utils.functions.to_clipboard">[docs]</a><span class="k">def</span> <span class="nf">to_clipboard</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Copy an object of any type to the clipboard.</span>
-<span class="sd">    You can copy text, ndarray as an image or data frame as a table data.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    obj : Any</span>
-<span class="sd">        Object to be copied.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">qtpy.QtGui</span> <span class="kn">import</span> <span class="n">QGuiApplication</span><span class="p">,</span> <span class="n">QImage</span><span class="p">,</span> <span class="n">qRgb</span>
-    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-    <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-
-    <span class="n">clipboard</span> <span class="o">=</span> <span class="n">QGuiApplication</span><span class="o">.</span><span class="n">clipboard</span><span class="p">()</span>
-
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="n">clipboard</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">dtype</span> <span class="o">!=</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot copy an array of dtype </span><span class="si">{</span><span class="n">obj</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> to clipboard.&quot;</span><span class="p">)</span>
-        <span class="c1"># See https://gist.github.com/smex/5287589</span>
-        <span class="n">qimg_format</span> <span class="o">=</span> <span class="n">QImage</span><span class="o">.</span><span class="n">Format_RGB888</span> <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span> <span class="k">else</span> <span class="n">QImage</span><span class="o">.</span><span class="n">Format_Indexed8</span>
-        <span class="o">*</span><span class="n">_</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">shape</span>
-        <span class="n">qimg</span> <span class="o">=</span> <span class="n">QImage</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">obj</span><span class="o">.</span><span class="n">strides</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">qimg_format</span><span class="p">)</span>
-        <span class="n">gray_color_table</span> <span class="o">=</span> <span class="p">[</span><span class="n">qRgb</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">256</span><span class="p">)]</span>
-        <span class="n">qimg</span><span class="o">.</span><span class="n">setColorTable</span><span class="p">(</span><span class="n">gray_color_table</span><span class="p">)</span>
-        <span class="n">clipboard</span><span class="o">.</span><span class="n">setImage</span><span class="p">(</span><span class="n">qimg</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
-        <span class="n">clipboard</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">))</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">clipboard</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span></div>
-
-
-<div class="viewcode-block" id="screen_center"><a class="viewcode-back" href="../../../magicclass.utils.html#magicclass.utils.functions.screen_center">[docs]</a><span class="k">def</span> <span class="nf">screen_center</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Get the center coordinate of the screen.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">QApplication</span><span class="o">.</span><span class="n">desktop</span><span class="p">()</span><span class="o">.</span><span class="n">screen</span><span class="p">()</span><span class="o">.</span><span class="n">rect</span><span class="p">()</span><span class="o">.</span><span class="n">center</span><span class="p">()</span></div>
-
-
-<span class="k">def</span> <span class="nf">screen_scale</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Get the scale of main screen.&quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">qtpy.QtGui</span> <span class="kn">import</span> <span class="n">QGuiApplication</span>
-
-    <span class="n">screen</span> <span class="o">=</span> <span class="n">QGuiApplication</span><span class="o">.</span><span class="n">screens</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">screen</span><span class="o">.</span><span class="n">devicePixelRatio</span><span class="p">()</span>
-
-
-<span class="k">def</span> <span class="nf">show_tree</span><span class="p">(</span><span class="n">ui</span><span class="p">:</span> <span class="n">BaseGui</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="k">return</span> <span class="n">_get_tree</span><span class="p">(</span><span class="n">ui</span><span class="p">)</span>
+<div class="viewcode-block" id="show_tree"><a class="viewcode-back" href="../../../magicclass.utils.html#magicclass.utils.functions.show_tree">[docs]</a><span class="k">def</span> <span class="nf">show_tree</span><span class="p">(</span><span class="n">ui</span><span class="p">:</span> <span class="n">BaseGui</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">_get_tree</span><span class="p">(</span><span class="n">ui</span><span class="p">)</span></div>
 
 
 <span class="k">def</span> <span class="nf">_get_tree</span><span class="p">(</span><span class="n">ui</span><span class="p">:</span> <span class="n">BaseGui</span><span class="p">,</span> <span class="n">depth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
@@ -299,7 +178,7 @@
     <span class="k">return</span> <span class="n">out</span>
 
 
-<span class="k">def</span> <span class="nf">rst_to_html</span><span class="p">(</span><span class="n">rst</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">unescape</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<div class="viewcode-block" id="rst_to_html"><a class="viewcode-back" href="../../../magicclass.utils.html#magicclass.utils.functions.rst_to_html">[docs]</a><span class="k">def</span> <span class="nf">rst_to_html</span><span class="p">(</span><span class="n">rst</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">unescape</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Convert rST string into HTML.&quot;&quot;&quot;</span>
     <span class="kn">from</span> <span class="nn">docutils.examples</span> <span class="kn">import</span> <span class="n">html_body</span>
 
@@ -317,7 +196,7 @@
             <span class="ne">UserWarning</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">html</span> <span class="o">=</span> <span class="n">rst</span>
-    <span class="k">return</span> <span class="n">html</span>
+    <span class="k">return</span> <span class="n">html</span></div>
 </pre></div>
 
            </div>

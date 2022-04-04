@@ -17,7 +17,7 @@ from .graph_items import (
     TextGroup,
 )
 from .mouse_event import MouseClickEvent
-from ._doc import write_docs
+from .._doc import write_docs
 from ...widgets.utils import FreeWidget
 
 BOTTOM = "bottom"

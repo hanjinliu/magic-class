@@ -1,11 +1,16 @@
 from __future__ import annotations
 import numpy as np
 from vispy import scene
-
+from .layer2d import Curve
+from .._doc import write_docs
 from ...widgets import FreeWidget
 
 
 class VispyPlotCanvas(FreeWidget):
+    """
+    A Vispy based 2-D plot canvas for curve, histogram, bar plot etc.
+    """
+
     def __init__(self):
         super().__init__()
         self._scene = scene.SceneCanvas()
@@ -28,6 +33,7 @@ class VispyPlotCanvas(FreeWidget):
     def layers(self):
         return self._items
 
+    @write_docs
     def add_curve(
         self,
         x=None,
@@ -41,26 +47,54 @@ class VispyPlotCanvas(FreeWidget):
         ls: str = "-",
         symbol=None,
     ):
-        from vispy.scene.visuals import Line
 
+        """
+        Add a line plot like ``plt.plot(x, y)``.
+
+        Parameters
+        ----------
+        {x}
+        {y}
+        {face_color}
+        {edge_color}
+        {color}
+        size: float, default is 7
+            Symbol size.
+        {name}
+        {lw}
+        {ls}
+        {symbol}
+
+        Returns
+        -------
+        Curve
+            A plot item of a curve.
+        """
         x, y = _check_xy(x, y)
         face_color, edge_color = _check_colors(face_color, edge_color, color)
         if isinstance(edge_color, np.ndarray) and edge_color.ndim == 1:
             edge_color = np.stack([edge_color] * y.size, axis=0)
-        line = Line(
-            np.stack([x, y], axis=1),
-            color=edge_color,
-            parent=self._viewbox.scene,
-            width=lw,
+        line = Curve(
+            self._viewbox,
+            x,
+            y,
+            face_color=face_color,
+            edge_color=edge_color,
+            size=size,
+            name=name,
+            lw=lw,
+            ls=ls,
+            symbol=symbol,
         )
+        self._items.append(line)
         return line
 
 
 def _check_xy(x, y):
     if y is None:
         if x is None:
-            x = []
-            y = []
+            x = np.array([])
+            y = np.array([])
         else:
             y = x
             x = np.arange(len(y))

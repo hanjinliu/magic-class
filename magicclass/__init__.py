@@ -1,4 +1,4 @@
-__version__ = "0.6.2.dev0"
+__version__ = "0.6.2.dev1"
 
 from .core import (
     magicclass,
@@ -19,6 +19,7 @@ from .wrappers import (
     bind_key,
     confirm,
     nogui,
+    mark_preview,
 )
 
 from .fields import field, vfield

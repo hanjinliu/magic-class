@@ -23,7 +23,6 @@ from .containers import (
 from .pywidgets import ListWidget, DictWidget
 from .color import ColorEdit, ColorSlider
 from .misc import (
-    Figure,
     OptionalWidget,
     ConsoleTextEdit,
     CheckButton,
@@ -31,6 +30,7 @@ from .misc import (
     FloatRangeSlider,
     SpreadSheet,
 )
+from .plot import Figure, SeabornFigure
 from .separator import Separator
 from .sequence import ListEdit, TupleEdit
 from .utils import FreeWidget
@@ -57,6 +57,7 @@ __all__ = [
     "Logger",
     "OptionalWidget",
     "RangeSlider",
+    "SeabornFigure",
     "Separator",
     "ScrollableContainer",
     "SubWindowsContainer",

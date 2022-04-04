@@ -1,12 +1,23 @@
 # magic-class
 
-In [magicgui](https://github.com/napari/magicgui) you can make simple GUIs from functions. However, we usually have to create GUIs that are composed of several buttons, and each button is connected with a class method. You may also want a menu bar on the top of the GUI, or sometimes `magicgui` widgets docked in it.
+![](Figs/Example.gif)
 
-Decorate your classes with `@magicclass` and you can use the class both in GUI and from console. They are easy to maintain and minimize the time spent on debugging of GUI implementation.
+`magic-class` makes GUI development as easy as daily coding by converting well-typed Python class directly into GUI. It is powered by [magicgui](https://github.com/napari/magicgui) and has smooth interface with [napari](https://github.com/napari/napari). It is also implemented with useful widgets
 
-Magic-class has built-in real-time macro recorder and website-like help widget creator. You can quickly make a reproducible and well-documented GUI without disturbing readability of Pythonic codes.
+#### Target users
 
-Magic-class is work in progress. Feel free to report issues, make suggestions and contribute!
+- Researchers who already have their Python functions and classes and are planing to take a step forward to improve the interface using GUI, with minimum effort.
+- Non-professional programmers who don't want to spend time on debugging and maintaining GUI.
+- Users who are not satisfied with the low reproducibility of the most of the GUI.
+- People who are familiar with `magicgui` and interested in more sophisticated GUI using typing.
+
+#### How magic-class solves your problems
+
+- Decorate your class with `@magicclass` and you are ready to use the class both in GUI and from console.
+- `@magicclass` implements macro-recorder in the class. You can easily create executable Python codes from the history of manual operations.
+- Your code looks almost "Pythonic". No need to be confused by messy class structure pecuilar to GUI development anymore.
+
+`magic-class` is work in progress. Feel free to report issues, make suggestions and contribute!
 
 ## Documentation
 
@@ -60,36 +71,29 @@ class PlotData:
 Classes decorated with `@magicclass` are converted to `magicgui`'s `Container` widgets. GUI starts with `show` method.
 
 ```python
-widget = PlotData(title="Title")
-widget.show()
+ui = PlotData(title="Title")
+ui.show()
 ```
-
-![](Figs/img.png)
 
 You can continue analysis in console.
 
 ```python
-widget.plot()
+ui.plot()
 ```
 
-`magic-class` is also compatible with [napari](https://github.com/napari/napari). You can add them to viewers as dock widgets.
+For people doing image analysis, it can added to a `napari` viewer as a dock widget.
 
 ```python
 import napari
 viewer = napari.Viewer()
-viewer.window.add_dock_widget(widget)
+viewer.window.add_dock_widget(ui)
 ```
 
-After you pushed "load" &rarr; "plot" you can make an executable Python script like below.
+Executable Python code (so called "macro" in many GUI tools) is available in `macro` attribute.
 
 ```python
-print(widget.macro)
-```
-
-```
-ui = PlotData(title='Title')
-ui.load(path=r'...')
-ui.plot()
+print(ui.macro)  # print macro
+ui.macro.widget.show()  # open a text editor widget with macro written in
 ```
 
 To make nicer GUI, you can also nest `magic-class`:
@@ -101,7 +105,7 @@ class PlotData:
     class Menu: ...
 ```
 
-add menus with `@magicmenu` decorator:
+add a menubar with `@magicmenu` decorator:
 
 ```python
 @magicclass
@@ -118,7 +122,7 @@ add context menu with `@magiccontext` decorator:
 @magicclass
 class PlotData:
     @magiccontext
-    class context: ...
+    class contextmenu: ...
         def Copy(self): ...
         def Paste(self): ...
 

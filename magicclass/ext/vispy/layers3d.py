@@ -1,28 +1,21 @@
 from __future__ import annotations
 import numpy as np
-from vispy import scene
-from vispy.scene import visuals
-from vispy.visuals import Visual, VolumeVisual, ImageVisual, IsosurfaceVisual
+from vispy.scene import visuals, ViewBox
+from vispy.visuals import (
+    VolumeVisual,
+    ImageVisual,
+    IsosurfaceVisual,
+    MeshVisual,
+)
 from vispy.visuals.filters import WireframeFilter
-
-
-class LayerItem:
-    _visual: Visual
-
-    @property
-    def visible(self) -> bool:
-        self._visual.visible
-
-    @visible.setter
-    def visible(self, v: bool) -> None:
-        self._visual.visible = v
+from ._base import LayerItem
 
 
 class Image(LayerItem):
     def __init__(
         self,
         data,
-        viewbox: scene.ViewBox,
+        viewbox: ViewBox,
         contrast_limits=None,
         rendering="mip",
         iso_threshold=None,
@@ -157,23 +150,85 @@ class Image(LayerItem):
         self._visual.update()
 
 
-class IsoSurface(LayerItem):
+class _SurfaceBase(LayerItem):
+    _visual: visuals.Mesh | visuals.Isosurface
+    _wireframe: WireframeFilter
+
     def __init__(
         self,
         data,
-        viewbox: scene.ViewBox,
+        viewbox: ViewBox,
+        face_color=None,
+        edge_color=None,
+        shading="none",
+    ):
+        self._viewbox = viewbox
+        self._create_visual(data)
+        self._wireframe = WireframeFilter()
+        self._visual.attach(self._wireframe)
+        self.data = data
+
+        if edge_color is None:
+            edge_color = [0.7, 0.7, 0.7, 1.0]
+        self.edge_color = edge_color
+
+        if face_color is None:
+            face_color = [0.7, 0.7, 0.7, 1.0]
+        self.face_color = face_color
+
+        self.shading = shading
+
+    def _create_visual(self, data):
+        raise NotImplementedError()
+
+    @property
+    def face_color(self) -> np.ndarray:
+        raise NotImplementedError()
+
+    @property
+    def edge_color(self) -> np.ndarray:
+        return self._wireframe.color
+
+    @edge_color.setter
+    def edge_color(self, color) -> None:
+        self._wireframe.color = color
+        self._visual.update()
+
+    color = property(fget=None)
+
+    @color.setter
+    def color(self, color):
+        self.face_color = color
+        self.edge_color = color
+
+    @property
+    def shading(self) -> str:
+        """Return current shading mode of the layer."""
+        return self._visual.shading or "none"
+
+    @shading.setter
+    def shading(self, v):
+        if v == "none":
+            v = None
+        self._visual.shading = v
+
+
+class IsoSurface(_SurfaceBase):
+    def __init__(
+        self,
+        data,
+        viewbox: ViewBox,
         contrast_limits=None,
         iso_threshold=None,
-        wire_color=None,
         face_color=None,
+        edge_color=None,
+        shading="smooth",
     ):
         data = np.asarray(data)
         data = data.transpose(list(range(data.ndim))[::-1])
 
-        self._data = data
-
         if contrast_limits is None:
-            contrast_limits = np.min(self._data), np.max(self._data)
+            contrast_limits = np.min(data), np.max(data)
 
         self._contrast_limits = contrast_limits
 
@@ -182,22 +237,19 @@ class IsoSurface(LayerItem):
             iso_threshold = (c0 + c1) / 2
 
         self._iso_threshold = iso_threshold
-
-        self._viewbox = viewbox
-
-        self._visual: IsosurfaceVisual = visuals.Isosurface(
-            self._data, level=iso_threshold, parent=self._viewbox.scene
+        super().__init__(
+            data,
+            viewbox=viewbox,
+            face_color=face_color,
+            edge_color=edge_color,
+            shading=shading,
         )
-        self._wireframe = WireframeFilter()
-        self._visual.attach(self._wireframe)
 
-        if wire_color is None:
-            wire_color = [0.0, 1.0, 0.0, 1.0]
-        self.edge_color = wire_color
-
-        if face_color is None:
-            face_color = [0.0, 0.0, 0.0, 0.0]
-        self.face_color = face_color
+    def _create_visual(self, data):
+        self._visual: IsosurfaceVisual = visuals.Isosurface(
+            data, level=self.iso_threshold, parent=self._viewbox.scene
+        )
+        return None
 
     @property
     def data(self) -> np.ndarray:
@@ -230,20 +282,39 @@ class IsoSurface(LayerItem):
         self._visual.level = self._iso_threshold
         self._visual.update()
 
+
+class Surface(_SurfaceBase):
+    def _create_visual(self, data):
+        self._visual: MeshVisual = visuals.Mesh(
+            vertices=data[0], faces=data[1], parent=self._viewbox.scene
+        )
+        self.data = data
+
+    @property
+    def data(self):
+        return self._data
+
+    @data.setter
+    def data(self, value) -> None:
+        if len(value) == 2:
+            verts, faces = value
+            vals = None
+        elif len(value) == 3:
+            verts, faces, vals = value
+        else:
+            raise ValueError("Data must be vertices, faces (, values).")
+        self._visual.set_data(vertices=verts, faces=faces, vertex_values=vals)
+        self._data = (verts, faces, vals)
+        self._visual.update()
+
     @property
     def face_color(self) -> np.ndarray:
         return self._visual.color
 
     @face_color.setter
     def face_color(self, color) -> None:
-        self._visual.set_data(color=color)
-        self._visual.update()
-
-    @property
-    def edge_color(self) -> np.ndarray:
-        return self._wireframe.color
-
-    @edge_color.setter
-    def edge_color(self, color) -> None:
-        self._wireframe.color = color
+        verts, faces, vals = self._data
+        self._visual.set_data(
+            vertices=verts, faces=faces, vertex_values=vals, color=color
+        )
         self._visual.update()

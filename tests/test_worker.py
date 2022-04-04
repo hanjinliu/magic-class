@@ -1,6 +1,6 @@
 from magicclass import magicclass, magicmenu, set_options, do_not_record, vfield, get_function_gui
 from magicclass.types import Bound
-from magicclass.qthreading import thread_worker
+from magicclass.utils.qthreading import thread_worker
 import time
 from unittest.mock import MagicMock
 
@@ -171,15 +171,22 @@ def test_progressbar():
         def f(self):
             time.sleep(0.2)
 
-    @magicclass
-    class C:
-        @magicmenu
-        class Menu:
-            @thread_worker
-            def f(self):
-                time.sleep(0.2)
-
     a = A()
     a.f()
     b = B()
     b.f()
+
+def test_error(qtbot):
+    @magicclass(error_mode="stderr")
+    class A:
+        @thread_worker
+        def f(self, n: int = 3):
+            if n > 10:
+                raise ValueError
+
+    ui = A()
+    ui.f(3)
+    assert str(ui.macro[-1]) == "ui.f(n=3)"
+    with qtbot.capture_exceptions():
+        ui.f(20)
+    assert str(ui.macro[-1]) == "ui.f(n=3)"

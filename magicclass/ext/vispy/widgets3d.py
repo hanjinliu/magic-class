@@ -1,12 +1,21 @@
 from __future__ import annotations
 import numpy as np
+from numpy.typing import ArrayLike
 from vispy import scene
 
-from .image import Image, IsoSurface, LayerItem
+from .layers3d import Image, IsoSurface, LayerItem, Surface
 from ...widgets import FreeWidget
+from ...types import Color
 
 
 class Vispy3DCanvas(FreeWidget):
+    """
+    A Vispy canvas for 3-D object visualization.
+
+    Very similar to napari. This widget can be used independent of napari, or
+    as a mini-viewer of napari.
+    """
+
     def __init__(self):
         super().__init__()
         self._scene = scene.SceneCanvas()
@@ -20,23 +29,25 @@ class Vispy3DCanvas(FreeWidget):
 
     @property
     def layers(self):
+        """Return the layer list."""
         return self._items
 
     @property
     def camera(self):
+        """Return the native camera."""
         return self._viewbox.camera
 
     def add_image(
         self,
-        data: np.ndarray,
+        data: ArrayLike,
         *,
-        contrast_limits=None,
-        rendering="mip",
-        iso_threshold=None,
-        attenuation=1.0,
-        cmap="grays",
-        gamma=1.0,
-        interpolation="linear",
+        contrast_limits: tuple[float, float] = None,
+        rendering: str = "mip",
+        iso_threshold: float | None = None,
+        attenuation: float = 1.0,
+        cmap: str = "grays",
+        gamma: float = 1.0,
+        interpolation: str = "linear",
     ):
         image = Image(
             data,
@@ -53,25 +64,51 @@ class Vispy3DCanvas(FreeWidget):
         self._items.append(image)
         self._viewbox.camera.scale_factor = max(data.shape)
         self._viewbox.camera.center = [s / 2 - 0.5 for s in data.shape]
+        return image
 
     def add_isosurface(
         self,
-        data: np.ndarray,
+        data: ArrayLike,
         *,
-        contrast_limits=None,
-        iso_threshold=None,
-        wire_color=None,
-        face_color=None,
+        contrast_limits: tuple[float, float] | None = None,
+        iso_threshold: float | None = None,
+        face_color: Color | None = None,
+        edge_color: Color | None = None,
+        shading: str = "smooth",
     ):
         surface = IsoSurface(
             data,
             self._viewbox,
             contrast_limits=contrast_limits,
             iso_threshold=iso_threshold,
-            wire_color=wire_color,
+            edge_color=edge_color,
             face_color=face_color,
+            shading=shading,
         )
 
         self._items.append(surface)
         self._viewbox.camera.scale_factor = max(data.shape)
         self._viewbox.camera.center = [s / 2 - 0.5 for s in data.shape]
+        return surface
+
+    def add_surface(
+        self,
+        data: tuple[ArrayLike, ArrayLike] | tuple[ArrayLike, ArrayLike, ArrayLike],
+        *,
+        face_color: Color | None = None,
+        edge_color: Color | None = None,
+        shading: str = "smooth",
+    ):
+        surface = Surface(
+            data,
+            self._viewbox,
+            face_color=face_color,
+            edge_color=edge_color,
+            shading=shading,
+        )
+        self._items.append(surface)
+        mins = np.min(data[0], axis=0)
+        maxs = np.max(data[0], axis=0)
+        self._viewbox.camera.scale_factor = max(maxs - mins)
+        self._viewbox.camera.center = [(s1 + s0) / 2 for s0, s1 in zip(mins, maxs)]
+        return surface
