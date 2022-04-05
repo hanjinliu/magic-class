@@ -9,6 +9,8 @@ from magicgui.widgets._bases import Widget, ButtonWidget, ValueWidget, Container
 from magicgui.widgets._concrete import _LabeledWidget, ContainerWidget
 from macrokit import Symbol
 
+
+from .keybinding import as_shortcut
 from .mgui_ext import PushButtonPlus
 from .toolbar import ToolBarGui, QtTabToolBar
 from .menu_gui import MenuGui, ContextMenuGui
@@ -23,7 +25,7 @@ from ._base import (
 from .utils import (
     copy_class,
     define_callback,
-    MagicClassConstructionError,
+    format_error,
     set_context_menu,
 )
 from ..widgets import (
@@ -226,6 +228,14 @@ class ClassGuiBase(BaseGui):
                         if name.startswith("_") or not get_additional_option(
                             attr, "gui", True
                         ):
+                            keybinding = get_additional_option(attr, "keybinding", None)
+                            if keybinding:
+                                from qtpy.QtWidgets import QShortcut
+
+                                shortcut = QShortcut(
+                                    as_shortcut(keybinding), self.native
+                                )
+                                shortcut.activated.connect(widget)
                             continue
                         try:
                             widget = self._create_widget_from_method(widget)
@@ -267,19 +277,7 @@ class ClassGuiBase(BaseGui):
                     _hist.append((name, str(type(attr)), type(widget).__name__))
 
             except Exception as e:
-                hist_str = (
-                    "\n\t".join(map(lambda x: f"{x[0]} {x[1]} -> {x[2]}", _hist))
-                    + f"\n\t\t{name} ({type(attr)}) <--- Error"
-                )
-                if not hist_str.startswith("\n\t"):
-                    hist_str = "\n\t" + hist_str
-                if isinstance(e, MagicClassConstructionError):
-                    e.args = (f"\n{hist_str}\n{e}",)
-                    raise e
-                else:
-                    raise MagicClassConstructionError(
-                        f"\n{hist_str}\n\n{type(e).__name__}: {e}"
-                    ) from e
+                format_error(e, _hist, name, attr)
 
         self._unify_label_widths()
         return None
@@ -412,9 +410,10 @@ def make_gui(container: type[_C], no_margin: bool = True) -> type[_C | ClassGuiB
                 key += len(self)
             self._widget._mgui_insert_widget(key, _widget)
 
-        def insert(self: cls, key: int, widget: Widget):
+        def insert(self: cls, key: int, widget: Widget) -> None:
             self._fast_insert(key, widget)
             self._unify_label_widths()
+            return None
 
         def show(self: cls, run: bool = True) -> None:
             """
@@ -452,20 +451,6 @@ def make_gui(container: type[_C], no_margin: bool = True) -> type[_C | ClassGuiB
                 if run:
                     run_app()
             return None
-
-        def reset_choices(self: cls, *_: Any):
-            """Reset child Categorical widgets"""
-            all_widgets: set[Widget] = set()
-
-            for item in self._list:
-                widget = getattr(item, "_inner_widget", item)
-                all_widgets.add(widget)
-            for widget in self.__magicclass_children__:
-                all_widgets.add(widget)
-
-            for w in all_widgets:
-                if hasattr(w, "reset_choices"):
-                    w.reset_choices()
 
         def close(self: cls):
             current_self = self._search_parent_magicclass()
@@ -556,7 +541,6 @@ def make_gui(container: type[_C], no_margin: bool = True) -> type[_C | ClassGuiB
         cls._fast_insert = _fast_insert
         cls.insert = insert
         cls.show = show
-        cls.reset_choices = reset_choices
         cls.close = close
         cls._container_widget = container
         cls._remove_child_margins = no_margin

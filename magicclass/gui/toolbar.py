@@ -8,7 +8,9 @@ from magicgui.widgets._bases.widget import Widget
 from macrokit import Symbol
 from qtpy.QtWidgets import QToolBar, QMenu, QWidgetAction, QTabWidget
 
+
 from .mgui_ext import AbstractAction, _LabeledWidgetAction, WidgetAction, ToolButtonPlus
+from .keybinding import as_shortcut
 from ._base import (
     BaseGui,
     PopUpMode,
@@ -17,7 +19,7 @@ from ._base import (
     nested_function_gui_callback,
     _inject_recorder,
 )
-from .utils import MagicClassConstructionError, copy_class, set_context_menu
+from .utils import copy_class, format_error, set_context_menu
 from .menu_gui import ContextMenuGui, MenuGui, MenuGuiBase, insert_action_like
 
 from ..signature import get_additional_option
@@ -92,19 +94,16 @@ class ToolBarGui(ContainerLikeGui):
 
     def reset_choices(self, *_: Any):
         """Reset child Categorical widgets"""
-        for widget in self:
-            if hasattr(widget, "reset_choices"):
-                widget.reset_choices()
-        for widget in self.__magicclass_children__:
-            if hasattr(widget, "reset_choices"):
-                widget.reset_choices()
+        super().reset_choices()
 
         # If parent magic-class is added to napari viewer, the style sheet need update because
         # QToolButton has inappropriate style.
         # Detecting this event using "reset_choices" is not a elegant way, but works for now.
         viewer = self.parent_viewer
-        style = _create_stylesheet(viewer)
-        self.native.setStyleSheet(style)
+        if viewer is not None:
+            style = _create_stylesheet(viewer)
+            self.native.setStyleSheet(style)
+        return None
 
     def _convert_attributes_into_widgets(self):
         cls = self.__class__
@@ -140,9 +139,6 @@ class ToolBarGui(ContainerLikeGui):
                 else:
                     # convert class method into instance method
                     widget = getattr(self, name, None)
-
-                if name.startswith("_"):
-                    continue
 
                 if isinstance(widget, FunctionGui):
                     p0 = list(signature(attr).parameters)[0]
@@ -183,6 +179,18 @@ class ToolBarGui(ContainerLikeGui):
 
                 if isinstance(widget, (AbstractAction, Callable, Widget)):
                     if (not isinstance(widget, Widget)) and callable(widget):
+                        if name.startswith("_") or not get_additional_option(
+                            attr, "gui", True
+                        ):
+                            keybinding = get_additional_option(attr, "keybinding", None)
+                            if keybinding:
+                                from qtpy.QtWidgets import QShortcut
+
+                                shortcut = QShortcut(
+                                    as_shortcut(keybinding), self.native
+                                )
+                                shortcut.activated.connect(widget)
+                            continue
                         widget = self._create_widget_from_method(widget)
 
                     elif hasattr(widget, "__magicclass_parent__") or hasattr(
@@ -195,6 +203,9 @@ class ToolBarGui(ContainerLikeGui):
                         # with a type object (not instance).
                         widget.__magicclass_parent__ = self
 
+                    if name.startswith("_"):
+                        continue
+
                     moveto = get_additional_option(attr, "into")
                     copyto = get_additional_option(attr, "copyto", [])
                     if moveto is not None or copyto:
@@ -205,19 +216,7 @@ class ToolBarGui(ContainerLikeGui):
                     _hist.append((name, str(type(attr)), type(widget).__name__))
 
             except Exception as e:
-                hist_str = (
-                    "\n\t".join(map(lambda x: f"{x[0]} {x[1]} -> {x[2]}", _hist))
-                    + f"\n\t\t{name} ({type(attr)}) <--- Error"
-                )
-                if not hist_str.startswith("\n\t"):
-                    hist_str = "\n\t" + hist_str
-                if isinstance(e, MagicClassConstructionError):
-                    e.args = (f"\n{hist_str}\n{e}",)
-                    raise e
-                else:
-                    raise MagicClassConstructionError(
-                        f"{hist_str}\n\n{type(e).__name__}: {e}"
-                    ) from e
+                format_error(e, _hist, name, attr)
 
         self._unify_label_widths()
         return None

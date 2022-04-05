@@ -9,6 +9,7 @@ from macrokit import Symbol
 from qtpy.QtWidgets import QMenu
 
 from .mgui_ext import AbstractAction, WidgetAction, _LabeledWidgetAction
+from .keybinding import as_shortcut
 from ._base import (
     BaseGui,
     PopUpMode,
@@ -17,7 +18,7 @@ from ._base import (
     nested_function_gui_callback,
     _inject_recorder,
 )
-from .utils import MagicClassConstructionError, copy_class
+from .utils import copy_class, format_error
 
 from ..signature import get_additional_option
 from ..fields import MagicField
@@ -100,9 +101,6 @@ class MenuGuiBase(ContainerLikeGui):
                     # convert class method into instance method
                     widget = getattr(self, name, None)
 
-                if name.startswith("_"):
-                    continue
-
                 if isinstance(widget, FunctionGui):
                     p0 = list(signature(attr).parameters)[0]
                     getattr(widget, p0).bind(self)  # set self to the first argument
@@ -129,6 +127,18 @@ class MenuGuiBase(ContainerLikeGui):
 
                 if isinstance(widget, (MenuGuiBase, AbstractAction, Callable, Widget)):
                     if (not isinstance(widget, Widget)) and callable(widget):
+                        if name.startswith("_") or not get_additional_option(
+                            attr, "gui", True
+                        ):
+                            keybinding = get_additional_option(attr, "keybinding", None)
+                            if keybinding:
+                                from qtpy.QtWidgets import QShortcut
+
+                                shortcut = QShortcut(
+                                    as_shortcut(keybinding), self.native
+                                )
+                                shortcut.activated.connect(widget)
+                            continue
                         widget = self._create_widget_from_method(widget)
 
                     elif hasattr(widget, "__magicclass_parent__") or hasattr(
@@ -141,6 +151,8 @@ class MenuGuiBase(ContainerLikeGui):
                         # with a type object (not instance).
                         widget.__magicclass_parent__ = self
 
+                    if name.startswith("_"):
+                        continue
                     moveto = get_additional_option(attr, "into")
                     copyto = get_additional_option(attr, "copyto", [])
                     if moveto is not None or copyto:
@@ -151,19 +163,7 @@ class MenuGuiBase(ContainerLikeGui):
                     _hist.append((name, str(type(attr)), type(widget).__name__))
 
             except Exception as e:
-                hist_str = (
-                    "\n\t".join(map(lambda x: f"{x[0]} {x[1]} -> {x[2]}", _hist))
-                    + f"\n\t\t{name} ({type(attr).__name__}) <--- Error"
-                )
-                if not hist_str.startswith("\n\t"):
-                    hist_str = "\n\t" + hist_str
-                if isinstance(e, MagicClassConstructionError):
-                    e.args = (f"\n{hist_str}\n{e}",)
-                    raise e
-                else:
-                    raise MagicClassConstructionError(
-                        f"{hist_str}\n\n{type(e).__name__}: {e}"
-                    ) from e
+                format_error(e, _hist, name, attr)
 
         self._unify_label_widths()
         return None

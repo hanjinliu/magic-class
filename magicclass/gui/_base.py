@@ -769,14 +769,8 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
         # keybinding
         keybinding = get_additional_option(func, "keybinding", None)
         if keybinding is not None:
-            if obj.__name__.startswith("_"):
-                from qtpy.QtWidgets import QShortcut
-
-                shortcut = QShortcut(as_shortcut(keybinding), self.native)
-                shortcut.activated.connect(widget.changed)
-            else:
-                shortcut = as_shortcut(keybinding)
-                widget.set_shortcut(shortcut)
+            shortcut = as_shortcut(keybinding)
+            widget.set_shortcut(shortcut)
 
         return widget
 
@@ -810,6 +804,20 @@ class BaseGui(MagicTemplate):
         self._my_symbol = Symbol.var("ui")
         self._icon_path = None
 
+    def reset_choices(self, *_: Any):
+        """Reset child Categorical widgets"""
+        all_widgets: set[Widget] = set()
+
+        for item in self._list:
+            widget = getattr(item, "_inner_widget", item)
+            all_widgets.add(widget)
+        for widget in self.__magicclass_children__:
+            all_widgets.add(widget)
+
+        for w in all_widgets:
+            if hasattr(w, "reset_choices"):
+                w.reset_choices()
+
 
 class ContainerLikeGui(BaseGui, mguiLike, MutableSequence):
     # This class enables similar API between magicgui widgets and additional widgets
@@ -817,15 +825,6 @@ class ContainerLikeGui(BaseGui, mguiLike, MutableSequence):
     _component_class = Action
     changed = Signal(object)
     _list: list[AbstractAction | ContainerLikeGui]
-
-    def reset_choices(self, *_: Any):
-        """Reset child Categorical widgets"""
-        for widget in self:
-            if hasattr(widget, "reset_choices"):
-                widget.reset_choices()
-        for widget in self.__magicclass_children__:
-            if hasattr(widget, "reset_choices"):
-                widget.reset_choices()
 
     @property
     def icon_path(self):

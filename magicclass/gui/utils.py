@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Callable, TYPE_CHECKING, TypeVar
+from typing import Any, Callable, TYPE_CHECKING, TypeVar
 from magicgui.widgets import FunctionGui
 from qtpy.QtCore import Qt
 
@@ -63,3 +63,24 @@ class MagicClassConstructionError(Exception):
     """
     This exception will be raised when class definition is not a valid magic-class.
     """
+
+
+def format_error(
+    e: Exception,
+    hist: list[tuple[str, str, str]],
+    name: str,
+    attr: Any,
+):
+    hist_str = (
+        "\n\t".join(map(lambda x: f"{x[0]} {x[1]} -> {x[2]}", hist))
+        + f"\n\t\t{name} ({type(attr)}) <--- Error"
+    )
+    if not hist_str.startswith("\n\t"):
+        hist_str = "\n\t" + hist_str
+    if isinstance(e, MagicClassConstructionError):
+        e.args = (f"\n{hist_str}\n{e}",)
+        raise e
+    else:
+        raise MagicClassConstructionError(
+            f"\n{hist_str}\n\n{type(e).__name__}: {e}"
+        ) from e
