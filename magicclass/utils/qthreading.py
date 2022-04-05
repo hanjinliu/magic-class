@@ -462,6 +462,7 @@ class thread_worker:
                 *args,
                 **kwargs,
             )
+            is_generator = isinstance(worker, GeneratorWorker)
             self._last_arguments = args, kwargs
 
             if self._progress:
@@ -493,6 +494,9 @@ class thread_worker:
                         "'total' must be int, callable or evaluatable string."
                     )
 
+                if not is_generator:
+                    total = 0
+
                 # create progressbar widget (or any proper widget)
                 if _pbar is None:
                     pbar = self._find_progressbar(
@@ -520,7 +524,7 @@ class thread_worker:
             for c in self.finished._iter_as_method(gui):
                 worker.finished.connect(c)
 
-            if isinstance(worker, GeneratorWorker):
+            if is_generator:
                 for c in self.aborted._iter_as_method(gui):
                     worker.aborted.connect(c)
                 for c in self.yielded._iter_as_method(gui):
@@ -530,7 +534,7 @@ class thread_worker:
                 if not getattr(pbar, "visible", False):
                     # return the progressbar to the initial state
                     worker.finished.connect(close_pbar.__get__(pbar))
-                if pbar.max != 0 and isinstance(worker, GeneratorWorker):
+                if pbar.max != 0 and is_generator:
                     worker.pbar = pbar  # avoid garbage collection
                     worker.yielded.connect(increment.__get__(pbar))
 
@@ -545,7 +549,7 @@ class thread_worker:
                 worker.errored.connect(
                     partial(gui._error_mode.get_handler(), parent=gui)
                 )
-                if isinstance(worker, GeneratorWorker):
+                if is_generator:
                     worker.aborted.connect(
                         gui._error_mode.wrap_handler(Aborted.raise_, parent=gui)
                     )
