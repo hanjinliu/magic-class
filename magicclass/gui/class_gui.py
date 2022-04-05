@@ -282,6 +282,71 @@ class ClassGuiBase(BaseGui):
         self._unify_label_widths()
         return None
 
+    def _fast_insert(self, key: int, obj: Widget | Callable) -> None:
+        if isinstance(obj, Callable):
+            # Sometimes uses want to dynamically add new functions to GUI.
+            if isinstance(obj, FunctionGui):
+                if obj.parent is None:
+                    f = nested_function_gui_callback(self, obj)
+                    obj.called.connect(f)
+                widget = obj
+            else:
+                obj = _inject_recorder(obj, is_method=False).__get__(self)
+                widget = self._create_widget_from_method(obj)
+
+            method_name = getattr(obj, "__name__", None)
+            if method_name and not hasattr(self, method_name):
+                object.__setattr__(self, method_name, obj)
+        else:
+            widget = obj
+
+        # _hide_labels should not contain Container because some ValueWidget like widgets
+        # are Containers.
+        _hide_labels = (
+            _LabeledWidget,
+            ButtonWidget,
+            ClassGuiBase,
+            FreeWidget,
+            Label,
+            Image,
+            Table,
+            FunctionGui,
+        )
+
+        if isinstance(widget, (ValueWidget, ContainerWidget)):
+            widget.changed.connect(lambda: self.changed.emit(self))
+
+        if hasattr(widget, "__magicclass_parent__") or hasattr(
+            widget.__class__, "__magicclass_parent__"
+        ):
+            widget.__magicclass_parent__ = self
+            if isinstance(widget, ClassGuiBase):
+                if self._remove_child_margins:
+                    widget.margins = (0, 0, 0, 0)
+                if (
+                    len(self.__magicclass_children__) > 0
+                    and widget is not self.__magicclass_children__[-1]
+                ):
+                    # nested magic classes are already in the list
+                    self.__magicclass_children__.append(widget)
+                    widget._my_symbol = Symbol(widget.name)
+
+                # NOTE: This is not safe. Attributes could collision and macro recording
+                # may break if not correctly named.
+
+        _widget = widget
+
+        if self.labels:
+            # no labels for button widgets (push buttons, checkboxes, have their own)
+            if not isinstance(widget, _hide_labels):
+                _widget = _LabeledWidget(widget)
+                widget.label_changed.connect(self._unify_label_widths)
+
+        self._list.insert(key, widget)
+        if key < 0:
+            key += len(self)
+        self._widget._mgui_insert_widget(key, _widget)
+
 
 _C = TypeVar("_C", bound=ContainerWidget)
 
@@ -345,74 +410,10 @@ def make_gui(container: type[_C], no_margin: bool = True) -> type[_C | ClassGuiB
             else:
                 object.__setattr__(self, name, value)
 
-        def _fast_insert(self: cls, key: int, obj: Widget | Callable) -> None:
-            if isinstance(obj, Callable):
-                # Sometimes uses want to dynamically add new functions to GUI.
-                if isinstance(obj, FunctionGui):
-                    if obj.parent is None:
-                        f = nested_function_gui_callback(self, obj)
-                        obj.called.connect(f)
-                    widget = obj
-                else:
-                    obj = _inject_recorder(obj, is_method=False).__get__(self)
-                    widget = self._create_widget_from_method(obj)
-
-                method_name = getattr(obj, "__name__", None)
-                if method_name and not hasattr(self, method_name):
-                    object.__setattr__(self, method_name, obj)
-            else:
-                widget = obj
-
-            # _hide_labels should not contain Container because some ValueWidget like widgets
-            # are Containers.
-            _hide_labels = (
-                _LabeledWidget,
-                ButtonWidget,
-                ClassGuiBase,
-                FreeWidget,
-                Label,
-                Image,
-                Table,
-                FunctionGui,
-            )
-
-            if isinstance(widget, (ValueWidget, ContainerWidget)):
-                widget.changed.connect(lambda: self.changed.emit(self))
-
-            if hasattr(widget, "__magicclass_parent__") or hasattr(
-                widget.__class__, "__magicclass_parent__"
-            ):
-                widget.__magicclass_parent__ = self
-                if isinstance(widget, ClassGuiBase):
-                    if self._remove_child_margins:
-                        widget.margins = (0, 0, 0, 0)
-                    if (
-                        len(self.__magicclass_children__) > 0
-                        and widget is not self.__magicclass_children__[-1]
-                    ):
-                        # nested magic classes are already in the list
-                        self.__magicclass_children__.append(widget)
-                        widget._my_symbol = Symbol(widget.name)
-
-                    # NOTE: This is not safe. Attributes could collision and macro recording
-                    # may break if not correctly named.
-
-            _widget = widget
-
-            if self.labels:
-                # no labels for button widgets (push buttons, checkboxes, have their own)
-                if not isinstance(widget, _hide_labels):
-                    _widget = _LabeledWidget(widget)
-                    widget.label_changed.connect(self._unify_label_widths)
-
-            self._list.insert(key, widget)
-            if key < 0:
-                key += len(self)
-            self._widget._mgui_insert_widget(key, _widget)
-
         def insert(self: cls, key: int, widget: Widget) -> None:
             self._fast_insert(key, widget)
             self._unify_label_widths()
+            widget.parent_changed.emit(self.native)
             return None
 
         def reset_choices(self, *_: Any):
@@ -553,7 +554,6 @@ def make_gui(container: type[_C], no_margin: bool = True) -> type[_C | ClassGuiB
 
         cls.__init__ = __init__
         cls.__setattr__ = __setattr__
-        cls._fast_insert = _fast_insert
         cls.insert = insert
         cls.show = show
         cls.reset_choices = reset_choices
