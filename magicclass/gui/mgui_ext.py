@@ -21,20 +21,19 @@ from ._function_gui import FunctionGuiPlus
 
 
 class PushButtonPlus(PushButton):
-    """
-    A Qt specific PushButton widget with a magicgui bound.
-    """
+    """A Qt specific PushButton widget with a magicgui bound."""
 
     def __init__(self, text: str | None = None, **kwargs):
         super().__init__(text=text, **kwargs)
         self.native: QPushButton
         self._icon_path = None
-        self.mgui: FunctionGuiPlus = None  # tagged function GUI
+        self.mgui: FunctionGuiPlus | None = None  # tagged function GUI
         self._doc = ""
         self._unwrapped = False
 
     @property
     def running(self) -> bool:
+        """Return true if embedded magicgui widget is running from GUI."""
         return getattr(self.mgui, "running", False)
 
     def set_shortcut(self, key):
@@ -58,7 +57,7 @@ class PushButtonPlus(PushButton):
         self.native.setStyleSheet(stylesheet)
 
     @property
-    def icon_path(self):
+    def icon_path(self) -> str | None:
         return self._icon_path
 
     @icon_path.setter
@@ -66,9 +65,10 @@ class PushButtonPlus(PushButton):
         path = str(path)
         icon = QIcon(path)
         self.native.setIcon(icon)
+        self._icon_path = path
 
     @property
-    def icon_size(self):
+    def icon_size(self) -> tuple[int, int]:
         qsize = self.native.iconSize()
         return qsize.width(), qsize.height()
 
@@ -109,7 +109,9 @@ class PushButtonPlus(PushButton):
         font.setFamily(family)
         self.native.setFont(font)
 
-    def from_options(self, options: dict[str] | Callable):
+    def from_options(self, options: dict[str, Any] | Callable):
+        """Set button design options using a dictionary or a function."""
+
         if callable(options):
             try:
                 options = options.__signature__.caller_options

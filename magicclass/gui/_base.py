@@ -526,7 +526,6 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
                         child_instance._fast_insert(index, widget)
 
                 else:
-                    print("here!")
                     widget.visible = copy
                     if new:
                         child_widget = child_instance._create_widget_from_method(
