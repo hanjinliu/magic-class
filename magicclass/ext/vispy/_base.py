@@ -6,7 +6,7 @@ class LayerItem:
 
     @property
     def visible(self) -> bool:
-        self._visual.visible
+        return self._visual.visible
 
     @visible.setter
     def visible(self, v: bool) -> None:

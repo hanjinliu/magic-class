@@ -247,6 +247,7 @@ class DefaultProgressBar(Container, _SupportProgress):
             labels=False,
         )
         cnt.margins = (0, 0, 0, 0)
+        self.footer = cnt
         self.pbar.min_width = 200
         self._timer = Timer()
         super().__init__(widgets=[self.progress_label, self.pbar, cnt], labels=False)
@@ -291,8 +292,7 @@ class DefaultProgressBar(Container, _SupportProgress):
         self._worker = worker
         if not isinstance(self._worker, GeneratorWorker):
             # FunctionWorker does not have yielded/aborted signals.
-            self.pause_button.visible = False
-            self.abort_button.visible = False
+            self.footer.visible = False
             return None
         # initialize abort_button
         self.abort_button.text = "Abort"

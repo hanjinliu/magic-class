@@ -3,7 +3,7 @@ from typing import Sequence, Tuple
 import numpy as np
 import pyqtgraph as pg
 from psygnal import Signal
-from ._utils import convert_color_code, to_rgba
+from .._shared_utils import convert_color_code, to_rgba
 
 
 class GraphicComponent:

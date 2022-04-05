@@ -4,7 +4,7 @@ import pyqtgraph as pg
 from qtpy.QtCore import Qt
 import numpy as np
 
-from ._utils import convert_color_code, to_rgba
+from .._shared_utils import convert_color_code, to_rgba
 
 # compatibility with matplotlib
 _LINE_STYLE = {

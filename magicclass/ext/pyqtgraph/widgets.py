@@ -4,7 +4,6 @@ from pyqtgraph import colormap as cmap
 from typing import Generic, Iterator, Sequence, TypeVar, overload, MutableSequence
 import numpy as np
 
-from ._utils import convert_color_code, to_rgba
 from .components import Legend, Region, ScaleBar, TextItem
 from .graph_items import (
     BarPlot,
@@ -17,6 +16,7 @@ from .graph_items import (
     TextGroup,
 )
 from .mouse_event import MouseClickEvent
+from .._shared_utils import convert_color_code, to_rgba
 from .._doc import write_docs
 from ...widgets.utils import FreeWidget
 

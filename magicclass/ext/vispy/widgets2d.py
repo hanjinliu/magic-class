@@ -1,7 +1,7 @@
 from __future__ import annotations
 import numpy as np
 from vispy import scene
-from .layer2d import Curve
+from .layer2d import Curve, Scatter
 from .._doc import write_docs
 from ...widgets import FreeWidget
 
@@ -16,11 +16,11 @@ class VispyPlotCanvas(FreeWidget):
         self._scene = scene.SceneCanvas()
         grid = self._scene.central_widget.add_grid()
         self._viewbox = grid.add_view(row=0, col=1, camera="panzoom")
-        x_axis = scene.AxisWidget(orientation="bottom")
+        x_axis = scene.AxisWidget(orientation="bottom", anchors=("center", "bottom"))
         x_axis.stretch = (1, 0.1)
         grid.add_widget(x_axis, row=1, col=1)
         x_axis.link_view(self._viewbox)
-        y_axis = scene.AxisWidget(orientation="left")
+        y_axis = scene.AxisWidget(orientation="left", anchors=("right", "middle"))
         y_axis.stretch = (0.1, 1)
         grid.add_widget(y_axis, row=0, col=0)
         y_axis.link_view(self._viewbox)
@@ -84,6 +84,56 @@ class VispyPlotCanvas(FreeWidget):
             name=name,
             lw=lw,
             ls=ls,
+            symbol=symbol,
+        )
+        self._items.append(line)
+        return line
+
+    @write_docs
+    def add_scatter(
+        self,
+        x=None,
+        y=None,
+        face_color=None,
+        edge_color=None,
+        color=None,
+        size: float = 7,
+        name: str | None = None,
+        symbol=None,
+    ):
+
+        """
+        Add a line plot like ``plt.plot(x, y)``.
+
+        Parameters
+        ----------
+        {x}
+        {y}
+        {face_color}
+        {edge_color}
+        {color}
+        size: float, default is 7
+            Symbol size.
+        {name}
+        {symbol}
+
+        Returns
+        -------
+        Curve
+            A plot item of a curve.
+        """
+        x, y = _check_xy(x, y)
+        face_color, edge_color = _check_colors(face_color, edge_color, color)
+        if isinstance(edge_color, np.ndarray) and edge_color.ndim == 1:
+            edge_color = np.stack([edge_color] * y.size, axis=0)
+        line = Scatter(
+            self._viewbox,
+            x,
+            y,
+            face_color=face_color,
+            edge_color=edge_color,
+            size=size,
+            name=name,
             symbol=symbol,
         )
         self._items.append(line)
