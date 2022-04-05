@@ -804,20 +804,6 @@ class BaseGui(MagicTemplate):
         self._my_symbol = Symbol.var("ui")
         self._icon_path = None
 
-    def reset_choices(self, *_: Any):
-        """Reset child Categorical widgets"""
-        all_widgets: set[Widget] = set()
-
-        for item in self._list:
-            widget = getattr(item, "_inner_widget", item)
-            all_widgets.add(widget)
-        for widget in self.__magicclass_children__:
-            all_widgets.add(widget)
-
-        for w in all_widgets:
-            if hasattr(w, "reset_choices"):
-                w.reset_choices()
-
 
 class ContainerLikeGui(BaseGui, mguiLike, MutableSequence):
     # This class enables similar API between magicgui widgets and additional widgets
@@ -844,6 +830,20 @@ class ContainerLikeGui(BaseGui, mguiLike, MutableSequence):
             warnings.warn(
                 f"Path {path} does not exists. Could not set icon.", UserWarning
             )
+
+    def reset_choices(self, *_: Any):
+        """Reset child Categorical widgets"""
+        all_widgets: set[Widget] = set()
+
+        for item in self._list:
+            widget = getattr(item, "_inner_widget", item)
+            all_widgets.add(widget)
+        for widget in self.__magicclass_children__:
+            all_widgets.add(widget)
+
+        for w in all_widgets:
+            if hasattr(w, "reset_choices"):
+                w.reset_choices()
 
     def _create_widget_from_field(self, name: str, fld: MagicField):
         if fld.not_ready():

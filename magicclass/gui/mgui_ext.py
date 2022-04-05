@@ -155,7 +155,7 @@ class mguiLike:
 
     @property
     def parent(self):
-        self.native.parent()
+        return self.native.parent()
 
     @parent.setter
     def parent(self, obj: mguiLike | Widget):

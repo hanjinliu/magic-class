@@ -415,6 +415,21 @@ def make_gui(container: type[_C], no_margin: bool = True) -> type[_C | ClassGuiB
             self._unify_label_widths()
             return None
 
+        def reset_choices(self, *_: Any):
+            """Reset child Categorical widgets"""
+            all_widgets: set[Widget] = set()
+
+            for item in self._list:
+                widget = getattr(item, "_inner_widget", item)
+                all_widgets.add(widget)
+            for widget in self.__magicclass_children__:
+                all_widgets.add(widget)
+
+            for w in all_widgets:
+                if hasattr(w, "reset_choices"):
+                    w.reset_choices()
+            return None
+
         def show(self: cls, run: bool = True) -> None:
             """
             Show ClassGui. If any of the parent ClassGui is a dock widget in napari, then this
@@ -541,6 +556,7 @@ def make_gui(container: type[_C], no_margin: bool = True) -> type[_C | ClassGuiB
         cls._fast_insert = _fast_insert
         cls.insert = insert
         cls.show = show
+        cls.reset_choices = reset_choices
         cls.close = close
         cls._container_widget = container
         cls._remove_child_margins = no_margin
