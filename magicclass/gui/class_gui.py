@@ -455,13 +455,15 @@ def make_gui(container: type[_C], no_margin: bool = True) -> type[_C | ClassGuiB
                 ):
                     viewer.window._dock_widgets[name].show()
                 else:
+                    _floating = self._popup_mode == PopUpMode.popup
+                    _area = "left" if _floating else "right"
                     dock = viewer.window.add_dock_widget(
                         self,
                         name=self.name.replace("_", " ").strip(),
-                        area="right",
+                        area=_area,
                         allowed_areas=["left", "right"],
                     )
-                    dock.setFloating(self._popup_mode == PopUpMode.popup)
+                    dock.setFloating(_floating)
             else:
                 container.show(self, run=False)
                 self.native.activateWindow()
