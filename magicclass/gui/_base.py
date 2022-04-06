@@ -672,12 +672,12 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
                 return out
 
         else:
+            _prep_func = _define_popup(self, obj, widget)
 
             def run_function():
                 mgui = _build_mgui(widget, func, self)
                 if mgui.call_count == 0 and len(mgui.called._slots) == 0:
-
-                    # deal with popup mode.
+                    _prep_func(mgui)
                     if self._popup_mode not in (PopUpMode.popup, PopUpMode.dock):
                         mgui.label = ""
                         # to avoid name collision
@@ -690,52 +690,6 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
                         # TODO: should remove mgui from self?
                         title.btn_clicked.connect(mgui.hide)
                         mgui.insert(0, title)
-                        mgui.append(Separator(orientation="horizontal"))
-
-                        if self._popup_mode == PopUpMode.parentlast:
-                            parent_self = self._search_parent_magicclass()
-                            parent_self.append(mgui)
-                        elif self._popup_mode == PopUpMode.first:
-                            child_self = _child_that_has_widget(self, obj, widget)
-                            child_self.insert(0, mgui)
-                        elif self._popup_mode == PopUpMode.last:
-                            child_self = _child_that_has_widget(self, obj, widget)
-                            child_self.append(mgui)
-                        elif self._popup_mode == PopUpMode.above:
-                            child_self = _child_that_has_widget(self, obj, widget)
-                            i = _get_index(child_self, widget)
-                            child_self.insert(i, mgui)
-                        elif self._popup_mode == PopUpMode.below:
-                            child_self = _child_that_has_widget(self, obj, widget)
-                            i = _get_index(child_self, widget)
-                            child_self.insert(i + 1, mgui)
-
-                    elif self._popup_mode == PopUpMode.dock:
-                        from .class_gui import MainWindowClassGui
-
-                        parent_self = self._search_parent_magicclass()
-                        viewer = parent_self.parent_viewer
-                        if viewer is None:
-                            if isinstance(parent_self, MainWindowClassGui):
-                                parent_self.add_dock_widget(mgui)
-                            else:
-                                msg = (
-                                    "Cannot add dock widget to a normal container. Please use\n"
-                                    ">>> @magicclass(widget_type='mainwindow')\n"
-                                    "to create main window widget, or add the container as a dock "
-                                    "widget in napari."
-                                )
-                                warnings.warn(msg, UserWarning)
-
-                        else:
-                            viewer.window.add_dock_widget(
-                                mgui, name=_get_widget_name(widget), area="right"
-                            )
-                    else:
-                        # To be popped up correctly, window flags of FunctionGui should be
-                        # "windowFlags" and should appear at the center.
-                        mgui.native.setParent(self.native, mgui.native.windowFlags())
-                        move_to_screen_center(mgui.native)
 
                     if self._close_on_run and not mgui._auto_call:
                         if self._popup_mode != PopUpMode.dock:
@@ -759,8 +713,7 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
                 if self._popup_mode != PopUpMode.dock:
                     widget.mgui.show()
                 else:
-                    # show dock widget
-                    mgui.parent.show()
+                    mgui.parent.show()  # show dock widget
 
                 return None
 
@@ -1411,3 +1364,73 @@ def convert_attributes(cls: type[_T], hide: tuple[type, ...]) -> dict[str, Any]:
 
             _dict[name] = new_attr
     return _dict
+
+
+def _define_popup(self: BaseGui, obj, widget: PushButtonPlus | Action):
+    # deal with popup mode.
+    if self._popup_mode == PopUpMode.popup:
+        # To be popped up correctly, window flags of FunctionGui should be
+        # "windowFlags" and should appear at the center.
+        def _prep(mgui: FunctionGui):
+            mgui.native.setParent(self.native, mgui.native.windowFlags())
+            move_to_screen_center(mgui.native)
+
+    elif self._popup_mode == PopUpMode.parentlast:
+
+        def _prep(mgui: FunctionGui):
+            parent_self = self._search_parent_magicclass()
+            parent_self.append(mgui)
+
+    elif self._popup_mode == PopUpMode.first:
+
+        def _prep(mgui: FunctionGui):
+            child_self = _child_that_has_widget(self, obj, widget)
+            child_self.insert(0, mgui)
+
+    elif self._popup_mode == PopUpMode.last:
+
+        def _prep(mgui: FunctionGui):
+            child_self = _child_that_has_widget(self, obj, widget)
+            child_self.append(mgui)
+
+    elif self._popup_mode == PopUpMode.above:
+
+        def _prep(mgui: FunctionGui):
+            child_self = _child_that_has_widget(self, obj, widget)
+            i = _get_index(child_self, widget)
+            child_self.insert(i, mgui)
+
+    elif self._popup_mode == PopUpMode.below:
+
+        def _prep(mgui: FunctionGui):
+            child_self = _child_that_has_widget(self, obj, widget)
+            i = _get_index(child_self, widget)
+            child_self.insert(i + 1, mgui)
+
+    elif self._popup_mode == PopUpMode.dock:
+        from .class_gui import MainWindowClassGui
+
+        def _prep(mgui: FunctionGui):
+
+            parent_self = self._search_parent_magicclass()
+            viewer = parent_self.parent_viewer
+            if viewer is None:
+                if isinstance(parent_self, MainWindowClassGui):
+                    parent_self.add_dock_widget(mgui)
+                else:
+                    msg = (
+                        "Cannot add dock widget to a normal container. Please use\n"
+                        ">>> @magicclass(widget_type='mainwindow')\n"
+                        "to create main window widget, or add the container as a dock "
+                        "widget in napari."
+                    )
+                    warnings.warn(msg, UserWarning)
+
+            else:
+                viewer.window.add_dock_widget(
+                    mgui, name=_get_widget_name(widget), area="right"
+                )
+
+    else:
+        raise RuntimeError
+    return _prep

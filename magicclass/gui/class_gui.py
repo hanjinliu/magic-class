@@ -2,7 +2,7 @@ from __future__ import annotations
 from inspect import signature
 from typing import Any, Callable, Sequence, TypeVar
 import warnings
-from qtpy.QtWidgets import QMenuBar, QWidget, QMainWindow, QBoxLayout
+from qtpy.QtWidgets import QMenuBar, QWidget, QMainWindow, QBoxLayout, QDockWidget
 from qtpy.QtCore import Qt
 from magicgui.widgets import Container, MainWindow, Label, FunctionGui, Image, Table
 from magicgui.widgets._bases import Widget, ButtonWidget, ValueWidget, ContainerWidget
@@ -49,7 +49,6 @@ from ..utils import iter_members, extract_tooltip
 from ..fields import MagicField
 from ..signature import get_additional_option
 from .._app import run_app
-from ._dock_widget import QtDockWidget
 
 # For Containers that belong to these classes, menubar must be set to _qwidget.layout().
 _USE_OUTER_LAYOUT = (
@@ -451,7 +450,9 @@ def make_gui(container: type[_C], no_margin: bool = True) -> type[_C | ClassGuiB
             viewer = self.parent_viewer
             if viewer is not None and self.parent is not None:
                 name = self.parent.objectName()
-                if name in viewer.window._dock_widgets:
+                if name in viewer.window._dock_widgets and isinstance(
+                    self.parent, QDockWidget
+                ):
                     viewer.window._dock_widgets[name].show()
                 else:
                     dock = viewer.window.add_dock_widget(
@@ -514,6 +515,8 @@ def make_gui(container: type[_C], no_margin: bool = True) -> type[_C | ClassGuiB
                 allowed_areas : sequence of str, optional
                     Allowed dock widget area. Allow all areas by default.
                 """
+                from ._dock_widget import QtDockWidget
+
                 name = name or widget.name
                 mainwin: QMainWindow = self.native
                 dock = QtDockWidget(
@@ -532,6 +535,8 @@ def make_gui(container: type[_C], no_margin: bool = True) -> type[_C | ClassGuiB
 
             @nogui
             def remove_dock_widget(self: cls, widget: Widget):
+                from ._dock_widget import QtDockWidget
+
                 dock = None
                 i_dock = -1
                 for i, child in enumerate(self.__magicclass_children__):
