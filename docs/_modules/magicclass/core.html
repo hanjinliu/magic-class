@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.core &mdash; magic-class 0.6.1.dev1 documentation</title>
+  <title>magicclass.core &mdash; magic-class 0.6.2.dev1 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.1.dev1
+                0.6.2.dev1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -42,29 +42,13 @@
 <li class="toctree-l1"><a class="reference internal" href="../../quick_start.html">Quick Start</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../options.html">Options in magic-class</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../nest.html">Nest magic-classes</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../use_field.html">Use Fields in magic-class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../chap_basics.html">Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../chap_make_better.html">Make Your GUI Better</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../chap_data_vis.html">Data Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../chap_advanced.html">Advanced Topics</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../use_wraps.html">Call Parent Methods from its Child</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../use_bind.html">Binding Values to Arguments</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../use_choices.html">Set Choices Dynamically</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../use_worker.html">Multi-threading</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../additional_types.html">Additional types</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../containers.html">Container Variations</a></li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../matplotlib.html">Use Matplotlib Figure</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../pyqtgraph.html">Use PyQtGraph Canvas</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../vispy.html">Vispy Canvas</a></li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../freewidget.html">Convert QtWidgets into a Magic Widget</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../keybinding.html">Define Custom Keybindings</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../customize_macro.html">Customize Macro Recording</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../class_inheritance.html">Inherit Magic Class</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api.html">API References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../best_practice.html">Best Practice</a></li>
 </ul>
 
         </div>
@@ -92,7 +76,17 @@
            <div itemprop="articleBody">
 
   <h1>Source code for magicclass.core</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">The core functions of ``magic-class``.</span>
+
+<span class="sd">:func:`magicclass`</span>
+<span class="sd">:func:`magicmenu`</span>
+<span class="sd">:func:`magiccontext`</span>
+<span class="sd">:func:`magictoolbar`</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span> <span class="k">as</span> <span class="n">functools_wraps</span>
 <span class="kn">import</span> <span class="nn">inspect</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">is_dataclass</span>
@@ -158,7 +152,7 @@
 <span class="p">}</span>
 
 
-<div class="viewcode-block" id="magicclass"><a class="viewcode-back" href="../../magicclass.html#magicclass.core.magicclass">[docs]</a><span class="k">def</span> <span class="nf">magicclass</span><span class="p">(</span>
+<div class="viewcode-block" id="magicclass"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.core.magicclass">[docs]</a><span class="k">def</span> <span class="nf">magicclass</span><span class="p">(</span>
     <span class="n">class_</span><span class="p">:</span> <span class="nb">type</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">layout</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;vertical&quot;</span><span class="p">,</span>
@@ -311,7 +305,7 @@
         <span class="k">return</span> <span class="n">wrapper</span><span class="p">(</span><span class="n">class_</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="magicmenu"><a class="viewcode-back" href="../../magicclass.html#magicclass.core.magicmenu">[docs]</a><span class="k">def</span> <span class="nf">magicmenu</span><span class="p">(</span>
+<div class="viewcode-block" id="magicmenu"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.core.magicmenu">[docs]</a><span class="k">def</span> <span class="nf">magicmenu</span><span class="p">(</span>
     <span class="n">class_</span><span class="p">:</span> <span class="nb">type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">close_on_run</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -328,7 +322,7 @@
     <span class="k">return</span> <span class="n">_call_magicmenu</span><span class="p">(</span><span class="o">**</span><span class="nb">locals</span><span class="p">(),</span> <span class="n">menugui_class</span><span class="o">=</span><span class="n">MenuGui</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="magiccontext"><a class="viewcode-back" href="../../magicclass.html#magicclass.core.magiccontext">[docs]</a><span class="k">def</span> <span class="nf">magiccontext</span><span class="p">(</span>
+<div class="viewcode-block" id="magiccontext"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.core.magiccontext">[docs]</a><span class="k">def</span> <span class="nf">magiccontext</span><span class="p">(</span>
     <span class="n">class_</span><span class="p">:</span> <span class="nb">type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">close_on_run</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -345,7 +339,7 @@
     <span class="k">return</span> <span class="n">_call_magicmenu</span><span class="p">(</span><span class="o">**</span><span class="nb">locals</span><span class="p">(),</span> <span class="n">menugui_class</span><span class="o">=</span><span class="n">ContextMenuGui</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="magictoolbar"><a class="viewcode-back" href="../../magicclass.html#magicclass.core.magictoolbar">[docs]</a><span class="k">def</span> <span class="nf">magictoolbar</span><span class="p">(</span>
+<div class="viewcode-block" id="magictoolbar"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.core.magictoolbar">[docs]</a><span class="k">def</span> <span class="nf">magictoolbar</span><span class="p">(</span>
     <span class="n">class_</span><span class="p">:</span> <span class="nb">type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">close_on_run</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -362,7 +356,7 @@
     <span class="k">return</span> <span class="n">_call_magicmenu</span><span class="p">(</span><span class="o">**</span><span class="nb">locals</span><span class="p">(),</span> <span class="n">menugui_class</span><span class="o">=</span><span class="n">ToolBarGui</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="MagicClassFactory"><a class="viewcode-back" href="../../magicclass.html#magicclass.core.MagicClassFactory">[docs]</a><span class="k">class</span> <span class="nc">MagicClassFactory</span><span class="p">:</span>
+<div class="viewcode-block" id="MagicClassFactory"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.core.MagicClassFactory">[docs]</a><span class="k">class</span> <span class="nc">MagicClassFactory</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Factory class that can make any magic-class.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -391,7 +385,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">parent</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">attrs</span> <span class="o">=</span> <span class="n">attrs</span>
 
-<div class="viewcode-block" id="MagicClassFactory.as_magicclass"><a class="viewcode-back" href="../../magicclass.html#magicclass.core.MagicClassFactory.as_magicclass">[docs]</a>    <span class="k">def</span> <span class="nf">as_magicclass</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ClassGuiBase</span><span class="p">:</span>
+<div class="viewcode-block" id="MagicClassFactory.as_magicclass"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.core.MagicClassFactory.as_magicclass">[docs]</a>    <span class="k">def</span> <span class="nf">as_magicclass</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ClassGuiBase</span><span class="p">:</span>
         <span class="n">_cls</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">attrs</span><span class="p">)</span>
         <span class="bp">cls</span> <span class="o">=</span> <span class="n">magicclass</span><span class="p">(</span>
             <span class="n">_cls</span><span class="p">,</span>
@@ -407,7 +401,7 @@
         <span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span></div>
 
-<div class="viewcode-block" id="MagicClassFactory.as_magictoolbar"><a class="viewcode-back" href="../../magicclass.html#magicclass.core.MagicClassFactory.as_magictoolbar">[docs]</a>    <span class="k">def</span> <span class="nf">as_magictoolbar</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ToolBarGui</span><span class="p">:</span>
+<div class="viewcode-block" id="MagicClassFactory.as_magictoolbar"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.core.MagicClassFactory.as_magictoolbar">[docs]</a>    <span class="k">def</span> <span class="nf">as_magictoolbar</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ToolBarGui</span><span class="p">:</span>
         <span class="n">_cls</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">attrs</span><span class="p">)</span>
         <span class="bp">cls</span> <span class="o">=</span> <span class="n">magictoolbar</span><span class="p">(</span>
             <span class="n">_cls</span><span class="p">,</span>
@@ -420,7 +414,7 @@
         <span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span></div>
 
-<div class="viewcode-block" id="MagicClassFactory.as_magicmenu"><a class="viewcode-back" href="../../magicclass.html#magicclass.core.MagicClassFactory.as_magicmenu">[docs]</a>    <span class="k">def</span> <span class="nf">as_magicmenu</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MenuGui</span><span class="p">:</span>
+<div class="viewcode-block" id="MagicClassFactory.as_magicmenu"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.core.MagicClassFactory.as_magicmenu">[docs]</a>    <span class="k">def</span> <span class="nf">as_magicmenu</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MenuGui</span><span class="p">:</span>
         <span class="n">_cls</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">attrs</span><span class="p">)</span>
         <span class="bp">cls</span> <span class="o">=</span> <span class="n">magicmenu</span><span class="p">(</span>
             <span class="n">_cls</span><span class="p">,</span>
@@ -433,7 +427,7 @@
         <span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span></div>
 
-<div class="viewcode-block" id="MagicClassFactory.as_magiccontext"><a class="viewcode-back" href="../../magicclass.html#magicclass.core.MagicClassFactory.as_magiccontext">[docs]</a>    <span class="k">def</span> <span class="nf">as_magiccontext</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ContextMenuGui</span><span class="p">:</span>
+<div class="viewcode-block" id="MagicClassFactory.as_magiccontext"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.core.MagicClassFactory.as_magiccontext">[docs]</a>    <span class="k">def</span> <span class="nf">as_magiccontext</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ContextMenuGui</span><span class="p">:</span>
         <span class="n">_cls</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">attrs</span><span class="p">)</span>
         <span class="bp">cls</span> <span class="o">=</span> <span class="n">magiccontext</span><span class="p">(</span>
             <span class="n">_cls</span><span class="p">,</span>
@@ -562,7 +556,7 @@
 <span class="n">_HELPS</span><span class="p">:</span> <span class="n">WeakValueDictionary</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">MagicTemplate</span><span class="p">]</span> <span class="o">=</span> <span class="n">WeakValueDictionary</span><span class="p">()</span>
 
 
-<div class="viewcode-block" id="build_help"><a class="viewcode-back" href="../../magicclass.html#magicclass.core.build_help">[docs]</a><span class="k">def</span> <span class="nf">build_help</span><span class="p">(</span><span class="n">ui</span><span class="p">:</span> <span class="n">MagicTemplate</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">HelpWidget</span><span class="p">:</span>
+<div class="viewcode-block" id="build_help"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.core.build_help">[docs]</a><span class="k">def</span> <span class="nf">build_help</span><span class="p">(</span><span class="n">ui</span><span class="p">:</span> <span class="n">MagicTemplate</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">HelpWidget</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Build a widget for user guide. Once it is built, widget will be cached.</span>
 
@@ -589,7 +583,7 @@
     <span class="k">return</span> <span class="n">help_widget</span></div>
 
 
-<div class="viewcode-block" id="get_function_gui"><a class="viewcode-back" href="../../magicclass.html#magicclass.core.get_function_gui">[docs]</a><span class="k">def</span> <span class="nf">get_function_gui</span><span class="p">(</span><span class="n">ui</span><span class="p">:</span> <span class="n">MagicTemplate</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FunctionGuiPlus</span><span class="p">:</span>
+<div class="viewcode-block" id="get_function_gui"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.core.get_function_gui">[docs]</a><span class="k">def</span> <span class="nf">get_function_gui</span><span class="p">(</span><span class="n">ui</span><span class="p">:</span> <span class="n">MagicTemplate</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FunctionGuiPlus</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get the FunctionGui object hidden beneath push button or menu.</span>
 
@@ -623,13 +617,24 @@
 <span class="c1">#     ...</span>
 
 
-<div class="viewcode-block" id="redo"><a class="viewcode-back" href="../../magicclass.html#magicclass.core.redo">[docs]</a><span class="k">def</span> <span class="nf">redo</span><span class="p">(</span><span class="n">ui</span><span class="p">:</span> <span class="n">MagicTemplate</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="redo"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.core.redo">[docs]</a><span class="k">def</span> <span class="nf">redo</span><span class="p">(</span><span class="n">ui</span><span class="p">:</span> <span class="n">MagicTemplate</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Redo operation on GUI using recorded macro.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ui : MagicTemplate</span>
+<span class="sd">        Target magic-class widget.</span>
+<span class="sd">    index : int, default is -1</span>
+<span class="sd">        Which execution will be redone. Any object that support list slicing can be used.</span>
+<span class="sd">        By default the last operation will be redone.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">line</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">macro</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
     <span class="n">line</span><span class="o">.</span><span class="n">eval</span><span class="p">({</span><span class="s2">&quot;ui&quot;</span><span class="p">:</span> <span class="n">ui</span><span class="p">})</span>
     <span class="k">return</span> <span class="kc">None</span></div>
 
 
-<div class="viewcode-block" id="Parameters"><a class="viewcode-back" href="../../magicclass.html#magicclass.core.Parameters">[docs]</a><span class="k">class</span> <span class="nc">Parameters</span><span class="p">:</span>
+<div class="viewcode-block" id="Parameters"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.core.Parameters">[docs]</a><span class="k">class</span> <span class="nc">Parameters</span><span class="p">:</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
         <span class="bp">self</span><span class="o">.</span><span class="vm">__qualname__</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__qualname__</span>
@@ -665,7 +670,7 @@
         <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
             <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Parameters.as_dict"><a class="viewcode-back" href="../../magicclass.html#magicclass.core.Parameters.as_dict">[docs]</a>    <span class="k">def</span> <span class="nf">as_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<div class="viewcode-block" id="Parameters.as_dict"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.core.Parameters.as_dict">[docs]</a>    <span class="k">def</span> <span class="nf">as_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Convert parameter fields into a dictionary.</span>
 

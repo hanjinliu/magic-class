@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Multi-threading &mdash; magic-class 0.6.2.dev0 documentation</title>
+  <title>Multi-threading &mdash; magic-class 0.6.2.dev1 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/columns.css" type="text/css" />
@@ -31,7 +31,7 @@
             <a href="index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.2.dev0
+                0.6.2.dev1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -45,9 +45,7 @@
 <li class="toctree-l1"><a class="reference internal" href="quick_start.html">Quick Start</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="options.html">Options in magic-class</a></li>
-<li class="toctree-l1"><a class="reference internal" href="nest.html">Nest magic-classes</a></li>
-<li class="toctree-l1"><a class="reference internal" href="use_field.html">Use Fields in magic-class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chap_basics.html">Basics</a></li>
 </ul>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="use_wraps.html">Call Parent Methods from its Child</a></li>
@@ -116,7 +114,7 @@ existing single-threaded code. To use it, you have to install <code class="docut
 </pre></div>
 </div>
 <p>Then it is available in:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass.qthreading</span> <span class="kn">import</span> <span class="n">thread_worker</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass.utils</span> <span class="kn">import</span> <span class="n">thread_worker</span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -145,7 +143,7 @@ differently, they share very similar API.</p>
 <p>Decorate the methods you want to be multi-threaded and that's it!</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span>
-<span class="kn">from</span> <span class="nn">magicclass.qthreading</span> <span class="kn">import</span> <span class="n">thread_worker</span>
+<span class="kn">from</span> <span class="nn">magicclass.utils</span> <span class="kn">import</span> <span class="n">thread_worker</span>
 
 <span class="nd">@magicclass</span>
 <span class="k">class</span> <span class="nc">Main</span><span class="p">:</span>
@@ -173,7 +171,7 @@ manual and programatical execution consistent.</p>
 In the following example:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span>
-<span class="kn">from</span> <span class="nn">magicclass.qthreading</span> <span class="kn">import</span> <span class="n">thread_worker</span>
+<span class="kn">from</span> <span class="nn">magicclass.utils</span> <span class="kn">import</span> <span class="n">thread_worker</span>
 
 <span class="nd">@magicclass</span>
 <span class="k">class</span> <span class="nc">Main</span><span class="p">:</span>
@@ -209,7 +207,7 @@ In the following example:</p>
 <p>Following example shows how you can update widget every 0.3 second.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">vfield</span>
-<span class="kn">from</span> <span class="nn">magicclass.qthreading</span> <span class="kn">import</span> <span class="n">thread_worker</span>
+<span class="kn">from</span> <span class="nn">magicclass.utils</span> <span class="kn">import</span> <span class="n">thread_worker</span>
 
 <span class="nd">@magicclass</span>
 <span class="k">class</span> <span class="nc">Main</span><span class="p">:</span>

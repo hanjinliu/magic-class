@@ -259,11 +259,12 @@ the design of button itself. ``magicclass`` uses ``set_design`` decorator to do 
 Post Initialization
 -------------------
 
-Widgets are constructed only after ``__init__`` is called. To change widget designs or geometries,
-you should not call those methods in ``__init__`` because they are not constructed yet.
+Widgets are constructed only after ``__init__`` is called. To change widget designs or
+geometries, you should not call those methods in ``__init__`` because they are not
+constructed yet.
 
-Similar to the builtin ``dataclass``, ``__post_init__`` method is used as the post initalization
-procedure. It is called after widget is completely built.
+Similar to the builtin ``dataclass``, ``__post_init__`` method is used as the post
+initalization procedure. It is called after widget is completely built.
 
 .. code-block:: python
 
@@ -282,12 +283,13 @@ procedure. It is called after widget is completely built.
 Code Completion
 ---------------
 
-A problem of using decorators to overwrite classes is code completion. When you are coding, the classes
-do not inherits magic classes yet, so IDE and console don't know they will have attributes such as
-``self.parent_viewer`` or ``self.name``.
+A problem of using decorators to overwrite classes is code completion. When you are
+coding, the classes do not inherits magic classes yet, so IDE and console don't know
+they will have attributes such as ``self.parent_viewer`` or ``self.name``.
 
-All the magic classes inherits ``MagicTemplate`` class. This class is designed in a way which does not
-interfere with magic class decorators, while provides enough information of typings and annotations.
+All the magic classes inherits ``MagicTemplate`` class. This class is designed in a
+way which does not interfere with magic class decorators, while provides enough
+information of typings and annotations.
 
 .. code-block:: python
 

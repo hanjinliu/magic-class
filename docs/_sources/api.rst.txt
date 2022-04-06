@@ -6,8 +6,8 @@ API References
    :maxdepth: 1
    :caption: Contents:
 
-   magicclass
-   magicclass.ext
-   magicclass.utils
-   magicclass.widgets
-   magicclass.widgets.pywidgets
+   ./apidoc/magicclass
+   ./apidoc/magicclass.ext
+   ./apidoc/magicclass.utils
+   ./apidoc/magicclass.widgets
+   ./apidoc/magicclass.widgets.pywidgets

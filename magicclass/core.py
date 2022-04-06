@@ -530,6 +530,17 @@ def get_function_gui(ui: MagicTemplate, name: str) -> FunctionGuiPlus:
 
 
 def redo(ui: MagicTemplate, index: int = -1) -> None:
+    """
+    Redo operation on GUI using recorded macro.
+
+    Parameters
+    ----------
+    ui : MagicTemplate
+        Target magic-class widget.
+    index : int, default is -1
+        Which execution will be redone. Any object that support list slicing can be used.
+        By default the last operation will be redone.
+    """
     line = ui.macro[index]
     line.eval({"ui": ui})
     return None

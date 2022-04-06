@@ -3,8 +3,8 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to magic-class documentation!
-=====================================
+magic-class
+===========
 
 ``magic-class`` is an extension of `magicgui <https://napari.org/magicgui/>`_.
 You can make multi-functional GUI from Python classes.
@@ -31,63 +31,19 @@ Contents
 
    quick_start
 
-Basics
-^^^^^^
+.. toctree::
+   :maxdepth: 2
 
-Here's some basics for widget creation in ``magic-class``.
+   chap_basics
+   chap_make_better
+   chap_data_vis
+   chap_advanced
 
 .. toctree::
    :maxdepth: 1
 
-   options
-   nest
-   use_field
+   best_practice
 
-Make Your GUI Better
-^^^^^^^^^^^^^^^^^^^^
-
-It is important to make your GUI user friendly and intuitive. ``magic-class`` provides many
-methods that can improve widget appearance and interactivity without disturbing readability
-and tidiness of the source code.
-
-.. toctree::
-   :maxdepth: 1
-
-   use_wraps
-   use_bind
-   use_choices
-   use_preview
-   use_worker
-   additional_types
-   containers
-
-Data Visualization
-^^^^^^^^^^^^^^^^^^
-
-Data visualization is one of the main reasons why we have to rely on GUIs. ``magic-class``
-has prepared some custom magic widgets (widgets that follow ``magicgui`` protocols) that
-can directly used as components of your GUI.
-
-.. toctree::
-   :maxdepth: 1
-
-   matplotlib
-   pyqtgraph
-   vispy
-
-Advanced Topics
-^^^^^^^^^^^^^^^
-
-Learn more about ``magic-class`` here!
-
-.. toctree::
-   :maxdepth: 1
-
-   freewidget
-   keybinding
-   customize_macro
-   class_inheritance
-   api
 
 Indices and tables
 ==================

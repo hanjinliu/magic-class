@@ -29,6 +29,32 @@ from . import widgets, utils, types
 
 from magicgui import *
 
+__all__ = [
+    "magicclass",
+    "magicmenu",
+    "magiccontext",
+    "magictoolbar",
+    "Parameters",
+    "build_help",
+    "get_function_gui",
+    "redo",
+    "set_options",
+    "click",
+    "set_design",
+    "do_not_record",
+    "bind_key",
+    "confirm",
+    "nogui",
+    "mark_preview",
+    "field",
+    "vfield",
+    "wraps",
+    "defaults",
+    "MagicTemplate",
+    "PopUpMode",
+    "Key",
+]
+
 
 def __getattr__(name):
     if name in ("WidgetType", "Bound", "Color", "Optional"):

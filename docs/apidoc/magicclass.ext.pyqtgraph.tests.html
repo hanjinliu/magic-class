@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="English" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>magicclass.ext.pyqtgraph.tests package &mdash; magic-class 0.6.2.dev1 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/columns.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="magicclass.ext.qtconsole package" href="magicclass.ext.qtconsole.html" />
+    <link rel="prev" title="magicclass.ext.pyqtgraph package" href="magicclass.ext.pyqtgraph.html" />
+</head>
+
+<body class="wy-body-for-nav">
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> magic-class
+          </a>
+              <div class="version">
+                0.6.2.dev1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../quick_start.html">Quick Start</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../chap_basics.html">Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chap_make_better.html">Make Your GUI Better</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chap_data_vis.html">Data Visualization</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../chap_advanced.html">Advanced Topics</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../freewidget.html">Convert QtWidgets into a Magic Widget</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../keybinding.html">Define Custom Keybindings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../customize_macro.html">Customize Macro Recording</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../class_inheritance.html">Inherit Magic Class</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../api.html">API References</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="magicclass.html">magicclass package</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="magicclass.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#module-magicclass.core">magicclass.core module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#module-magicclass.fields">magicclass.fields module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#module-magicclass.help">magicclass.help module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#module-magicclass.signature">magicclass.signature module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#module-magicclass.tqdm">magicclass.tqdm module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#module-magicclass.types">magicclass.types module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#module-magicclass.wrappers">magicclass.wrappers module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#module-magicclass">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3 current"><a class="reference internal" href="magicclass.ext.html">magicclass.ext package</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="magicclass.ext.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.html#module-magicclass.ext">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.utils.html">magicclass.utils package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.widgets.html">magicclass.widgets package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.widgets.pywidgets.html">magicclass.widgets.pywidgets package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../best_practice.html">Best Practice</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">magic-class</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../chap_advanced.html">Advanced Topics</a> &raquo;</li>
+          <li><a href="../api.html">API References</a> &raquo;</li>
+          <li><a href="magicclass.html">magicclass package</a> &raquo;</li>
+          <li><a href="magicclass.ext.html">magicclass.ext package</a> &raquo;</li>
+          <li><a href="magicclass.ext.pyqtgraph.html">magicclass.ext.pyqtgraph package</a> &raquo;</li>
+      <li>magicclass.ext.pyqtgraph.tests package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/apidoc/magicclass.ext.pyqtgraph.tests.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+
+  <section id="magicclass-ext-pyqtgraph-tests-package">
+<h1>magicclass.ext.pyqtgraph.tests package<a class="headerlink" href="#magicclass-ext-pyqtgraph-tests-package" title="Permalink to this headline">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="module-magicclass.ext.pyqtgraph.tests.test_qtgraph">
+<span id="magicclass-ext-pyqtgraph-tests-test-qtgraph-module"></span><h2>magicclass.ext.pyqtgraph.tests.test_qtgraph module<a class="headerlink" href="#module-magicclass.ext.pyqtgraph.tests.test_qtgraph" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="magicclass.ext.pyqtgraph.tests.test_qtgraph.test_plot_canvas">
+<span class="sig-prename descclassname"><span class="pre">magicclass.ext.pyqtgraph.tests.test_qtgraph.</span></span><span class="sig-name descname"><span class="pre">test_plot_canvas</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/pyqtgraph/tests/test_qtgraph.html#test_plot_canvas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.pyqtgraph.tests.test_qtgraph.test_plot_canvas" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-magicclass.ext.pyqtgraph.tests">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-magicclass.ext.pyqtgraph.tests" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="magicclass.ext.pyqtgraph.html" class="btn btn-neutral float-left" title="magicclass.ext.pyqtgraph package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="magicclass.ext.qtconsole.html" class="btn btn-neutral float-right" title="magicclass.ext.qtconsole package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Hanjin Liu.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+</body>
+</html>
