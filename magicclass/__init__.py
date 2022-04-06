@@ -1,4 +1,4 @@
-__version__ = "0.6.2"
+__version__ = "0.6.3.dev0"
 
 from .core import (
     magicclass,
@@ -38,6 +38,7 @@ __all__ = [
     "build_help",
     "get_function_gui",
     "redo",
+    "update_widget",
     "set_options",
     "click",
     "set_design",

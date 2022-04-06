@@ -77,7 +77,6 @@ def magicclass(
     widget_type: WidgetTypeStr | WidgetType = WidgetType.none,
     icon_path: str = None,
     stylesheet: str | StyleSheet = None,
-    parent=None,
 ):
     """
     Decorator that can convert a Python class into a widget.
@@ -117,8 +116,6 @@ def magicclass(
         Path to the icon image.
     stylesheet : str or StyleSheet object, optional
         Set stylesheet to the widget if given.
-    parent : magicgui.widgets._base.Widget, optional
-        Parent widget if exists.
 
     Returns
     -------
@@ -175,7 +172,6 @@ def magicclass(
             class_gui.__init__(
                 self,
                 layout=layout,
-                parent=parent,
                 close_on_run=close_on_run,
                 popup_mode=PopUpMode(popup_mode),
                 error_mode=ErrorMode(error_mode),
@@ -226,7 +222,6 @@ def magicmenu(
     labels: bool = True,
     name: str | None = None,
     icon_path: str = None,
-    parent=None,
 ):
     """
     Decorator that can convert a Python class into a menu bar.
@@ -243,7 +238,6 @@ def magiccontext(
     labels: bool = True,
     name: str | None = None,
     icon_path: str = None,
-    parent=None,
 ):
     """
     Decorator that can convert a Python class into a context menu.
@@ -260,7 +254,6 @@ def magictoolbar(
     labels: bool = True,
     name: str | None = None,
     icon_path: str = None,
-    parent=None,
 ):
     """
     Decorator that can convert a Python class into a menu bar.
@@ -283,8 +276,7 @@ class MagicClassFactory:
         error_mode: str | ErrorMode = None,
         widget_type: str | WidgetType = WidgetType.none,
         icon_path: str = None,
-        parent=None,
-        attrs: dict[str] = None,
+        attrs: dict[str, Any] | None = None,
     ):
         self.name = name
         self.layout = layout
@@ -294,7 +286,6 @@ class MagicClassFactory:
         self.error_mode = error_mode
         self.widget_type = widget_type
         self.icon_path = icon_path
-        self.parent = parent
         self.attrs = attrs
 
     def as_magicclass(self) -> ClassGuiBase:
@@ -309,7 +300,6 @@ class MagicClassFactory:
             error_mode=self.error_mode,
             widget_type=self.widget_type,
             icon_path=self.icon_path,
-            parent=self.parent,
         )
         return cls
 
@@ -322,7 +312,6 @@ class MagicClassFactory:
             error_mode=self.error_mode,
             labels=self.labels,
             icon_path=self.icon_path,
-            parent=self.parent,
         )
         return cls
 
@@ -335,7 +324,6 @@ class MagicClassFactory:
             error_mode=self.error_mode,
             labels=self.labels,
             icon_path=self.icon_path,
-            parent=self.parent,
         )
         return cls
 
@@ -348,7 +336,6 @@ class MagicClassFactory:
             error_mode=self.error_mode,
             labels=self.labels,
             icon_path=self.icon_path,
-            parent=self.parent,
         )
         return cls
 
@@ -361,7 +348,6 @@ def _call_magicmenu(
     labels: bool = True,
     name: str = None,
     icon_path: str = None,
-    parent=None,
     menugui_class: type[MenuGuiBase] = None,
 ):
     """
@@ -375,8 +361,6 @@ def _call_magicmenu(
     popup : bool, default is True
         If True, magicgui created by every method will be poped up, else they will be appended as a
         part of the main widget.
-    parent : magicgui.widgets._base.Widget, optional
-        Parent widget if exists.
 
     Returns
     -------
@@ -429,7 +413,6 @@ def _call_magicmenu(
 
             menugui_class.__init__(
                 self,
-                parent=parent,
                 close_on_run=close_on_run,
                 popup_mode=PopUpMode(popup_mode),
                 error_mode=ErrorMode(error_mode),
@@ -544,6 +527,19 @@ def redo(ui: MagicTemplate, index: int = -1) -> None:
     line = ui.macro[index]
     line.eval({"ui": ui})
     return None
+
+
+# def update_widget(ui: MagicTemplate) -> None:
+#     from macrokit import Head, Expr, Mock
+#     for expr in ui.macro:
+#         if expr.head == Head.call:
+#             target = expr.args[0]
+#             target_widget = Expr(Head.getitem, [target.args[0], str(target.args[1])])
+#             mock = Mock(target_widget)
+#             e = Expr(Head.call, [mock.mgui.update] + expr.args[1:])
+
+#         elif expr.head == Head.assign:
+#             expr.eval({}, {str(ui._my_symbol): ui})
 
 
 class Parameters:
