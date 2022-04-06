@@ -1,6 +1,9 @@
 from __future__ import annotations
 from typing import Any, Callable, TYPE_CHECKING, TypeVar
-from magicgui.widgets import FunctionGui
+from magicgui.widgets import FunctionGui, _protocols, _bases, Widget
+from magicgui.widgets._bases.value_widget import UNSET
+from magicgui.type_map import get_widget_class
+from magicgui.signature import magic_signature, MagicParameter, split_annotated_type
 from qtpy.QtCore import Qt
 
 if TYPE_CHECKING:
@@ -84,3 +87,19 @@ def format_error(
         raise MagicClassConstructionError(
             f"\n{hist_str}\n\n{type(e).__name__}: {e}"
         ) from e
+
+
+def callable_to_classes(f) -> list[type[Widget]]:
+    sig = magic_signature(f)
+    return [_parameter_to_widget_class(p) for p in sig.parameters.values()]
+
+
+TZ_EMPTY = "__no__default__"
+
+
+def _parameter_to_widget_class(param: MagicParameter):
+    value = UNSET if param.default in (param.empty, TZ_EMPTY) else param.default
+    annotation, options = split_annotated_type(param.annotation)
+    options = options.copy()
+    wdg_class, _ = get_widget_class(value, annotation, options)
+    return wdg_class

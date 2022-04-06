@@ -49,7 +49,7 @@ from .mgui_ext import (
     _LabeledWidgetAction,
     mguiLike,
 )
-from .utils import get_parameters, define_callback
+from .utils import get_parameters, define_callback, callable_to_classes
 from ._macro import GuiMacro
 
 from ..utils import (
@@ -224,6 +224,7 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
     _close_on_run: bool
     _component_class: type[Action | Widget]
     _error_mode: ErrorMode
+    _list: list[Action | Widget]
     _macro_instance: GuiMacro
     _my_symbol: Symbol
     _popup_mode: PopUpMode
@@ -628,8 +629,10 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
         func.__signature__ = func.__signature__.replace(parameters=all_params)
         # Get the number of parameters except for empty widgets.
         # With these lines, "bind" method of magicgui works inside magicclass.
-        fgui = FunctionGuiPlus.from_callable(func)
-        n_empty = len([_widget for _widget in fgui if isinstance(_widget, EmptyWidget)])
+        fgui_classes = callable_to_classes(func)
+        n_empty = len(
+            [_wdg_cls for _wdg_cls in fgui_classes if _wdg_cls is EmptyWidget]
+        )
         nparams = _n_parameters(func) - n_empty
 
         if isinstance(func.__signature__, MagicMethodSignature):
@@ -650,7 +653,7 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
 
                 return out
 
-        elif nparams == 1 and isinstance(fgui[0], FileEdit) and not has_preview:
+        elif nparams == 1 and issubclass(fgui_classes[0], FileEdit) and not has_preview:
             # We don't want to open a magicgui dialog and again open a file dialog.
             def run_function():
                 mgui = _build_mgui(widget, func, self)
@@ -741,7 +744,7 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
                             # If FunctioGui is docked, we should close QDockWidget.
                             mgui.called.connect(lambda: mgui.parent.hide())
 
-                if nparams == 1 and isinstance(fgui[0], FileEdit):
+                if nparams == 1 and issubclass(fgui_classes[0], FileEdit):
                     fdialog: FileEdit = mgui[0]
                     if result := fdialog._show_file_dialog(
                         fdialog.mode,

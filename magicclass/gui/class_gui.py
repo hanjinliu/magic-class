@@ -59,6 +59,8 @@ _USE_OUTER_LAYOUT = (
     TabbedContainer,
 )
 
+_MCLS_PAREMT = "__magicclass_parent__"
+
 
 class ClassGuiBase(BaseGui):
     # This class is always inherited by @magicclass decorator.
@@ -247,8 +249,8 @@ class ClassGuiBase(BaseGui):
                             )
                             continue
 
-                    elif hasattr(widget, "__magicclass_parent__") or hasattr(
-                        widget.__class__, "__magicclass_parent__"
+                    elif hasattr(widget, _MCLS_PAREMT) or hasattr(
+                        widget.__class__, _MCLS_PAREMT
                     ):
                         # magic-class has to know its parent.
                         # if __magicclass_parent__ is defined as a property, hasattr must be called
@@ -316,9 +318,7 @@ class ClassGuiBase(BaseGui):
         if isinstance(widget, (ValueWidget, ContainerWidget)):
             widget.changed.connect(lambda: self.changed.emit(self))
 
-        if hasattr(widget, "__magicclass_parent__") or hasattr(
-            widget.__class__, "__magicclass_parent__"
-        ):
+        if hasattr(widget, _MCLS_PAREMT) or hasattr(widget.__class__, _MCLS_PAREMT):
             widget.__magicclass_parent__ = self
             if isinstance(widget, ClassGuiBase):
                 if self._remove_child_margins:
@@ -346,6 +346,7 @@ class ClassGuiBase(BaseGui):
         if key < 0:
             key += len(self)
         self._widget._mgui_insert_widget(key, _widget)
+        return None
 
 
 _C = TypeVar("_C", bound=ContainerWidget)
@@ -413,7 +414,6 @@ def make_gui(container: type[_C], no_margin: bool = True) -> type[_C | ClassGuiB
         def insert(self: cls, key: int, widget: Widget) -> None:
             self._fast_insert(key, widget)
             self._unify_label_widths()
-            widget.parent_changed.emit(self.native)
             return None
 
         def reset_choices(self, *_: Any):
