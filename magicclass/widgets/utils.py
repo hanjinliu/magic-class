@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 import weakref
 from qtpy.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QHBoxLayout
 from magicgui.widgets import Widget
@@ -75,15 +75,65 @@ class FreeWidget(Widget):
         self._magicclass_parent_ref = weakref.ref(parent)
 
 
-# def magicwidget(qcls: type[QWidget]):
-#     from ..utils import iter_members
+WIDGET_OPTIONS = {
+    "name",
+    "annotation",
+    "label",
+    "tooltip",
+    "visible",
+    "enabled",
+    "gui_only",
+}
 
-#     for name, attr in iter_members(qcls):
 
-#         def _(self: FreeWidget, *args, **kwargs):
-#             return attr(self.central_widget, *args, **kwargs)
+class _MagicGuiMeta(type):
+    _qwidget_class: type[QWidget]
 
-#     cls = type(qcls.__name__, (FreeWidget,), {})
+    def __new__(
+        mcls: type,
+        name: str,
+        bases: tuple,
+        namespace: dict,
+        base: type[QWidget] = QWidget,
+    ) -> _MagicGuiMeta:
+        cls: _MagicGuiMeta = type.__new__(mcls, name, bases, namespace)
+        if not issubclass(base, QWidget):
+            raise TypeError
+        cls_init = cls.__init__
+
+        def __init__(self, *args, **kwargs):
+            widget_options: dict[str, Any] = {}
+            qt_options: dict[str, Any] = {}
+            for k, v in kwargs.items():
+                if k in WIDGET_OPTIONS:
+                    widget_options[k] = v
+                else:
+                    qt_options[k] = v
+
+            Widget.__init__(
+                self,
+                widget_type=QBaseWidget,
+                backend_kwargs={"qwidg": base},
+                **widget_options,
+            )
+            cls_init(self, *args, **qt_options)
+
+        cls.__init__ = __init__
+        return cls
+
+
+class MagicGuiBase(Widget, metaclass=_MagicGuiMeta):
+    """
+    An abstract class to convert QWidget into magicgui's Widget class.
+
+    .. code-block:: python
+
+        class MyQWidget(QWidget):
+            ...
+
+        class MyWidget(MagicGuiBase, base=MyQWidget):
+            ...
+    """
 
 
 def merge_super_sigs(cls):

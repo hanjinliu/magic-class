@@ -33,7 +33,7 @@ from .misc import (
 from .plot import Figure, SeabornFigure
 from .separator import Separator
 from .sequence import ListEdit, TupleEdit
-from .utils import FreeWidget
+from .utils import FreeWidget, MagicGuiBase
 from .logger import Logger
 
 __all__ = [
@@ -55,6 +55,7 @@ __all__ = [
     "ListContainer",
     "ListWidget",
     "Logger",
+    "MagicGuiBase",
     "OptionalWidget",
     "RangeSlider",
     "SeabornFigure",
