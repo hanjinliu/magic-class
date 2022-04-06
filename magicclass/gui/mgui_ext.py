@@ -130,6 +130,8 @@ class _QToolButton(QBaseButtonWidget):
 
 
 class ToolButtonPlus(PushButtonPlus):
+    """Buttons for toolbar in magic-class."""
+
     def __init__(self, text: str | None = None, **kwargs):
         kwargs["widget_type"] = _QToolButton
         ValueWidget.__init__(self, **kwargs)
