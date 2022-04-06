@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Convert QtWidgets into a Magic Widget &mdash; magic-class 0.6.2.dev1 documentation</title>
+  <title>Convert QtWidgets into a Magic Widget &mdash; magic-class 0.6.2 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/columns.css" type="text/css" />
@@ -20,7 +20,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Define Custom Keybindings" href="keybinding.html" />
-    <link rel="prev" title="Vispy Canvas" href="vispy.html" />
+    <link rel="prev" title="Advanced Topics" href="chap_advanced.html" />
 </head>
 
 <body class="wy-body-for-nav">
@@ -31,7 +31,7 @@
             <a href="index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.2.dev1
+                0.6.2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -44,33 +44,25 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="quick_start.html">Quick Start</a></li>
 </ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="chap_basics.html">Basics</a></li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="use_wraps.html">Call Parent Methods from its Child</a></li>
-<li class="toctree-l1"><a class="reference internal" href="use_bind.html">Binding Values to Arguments</a></li>
-<li class="toctree-l1"><a class="reference internal" href="use_choices.html">Set Choices Dynamically</a></li>
-<li class="toctree-l1"><a class="reference internal" href="use_preview.html">Add Preview Functionalities</a></li>
-<li class="toctree-l1"><a class="reference internal" href="use_worker.html">Multi-threading</a></li>
-<li class="toctree-l1"><a class="reference internal" href="additional_types.html">Additional types</a></li>
-<li class="toctree-l1"><a class="reference internal" href="containers.html">Container Variations</a></li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="matplotlib.html">Use Matplotlib Figure</a></li>
-<li class="toctree-l1"><a class="reference internal" href="pyqtgraph.html">Use PyQtGraph Canvas</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vispy.html">Vispy Canvas</a></li>
-</ul>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Convert QtWidgets into a Magic Widget</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#basic-usage">Basic Usage</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#make-it-behave-more-like-a-valuewidget">Make It Behave More Like A ValueWidget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chap_basics.html">Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chap_make_better.html">Make Your GUI Better</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chap_data_vis.html">Data Visualization</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="chap_advanced.html">Advanced Topics</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Convert QtWidgets into a Magic Widget</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#basic-usage">Basic Usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#make-it-behave-more-like-a-valuewidget">Make It Behave More Like A ValueWidget</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="keybinding.html">Define Custom Keybindings</a></li>
-<li class="toctree-l1"><a class="reference internal" href="customize_macro.html">Customize Macro Recording</a></li>
-<li class="toctree-l1"><a class="reference internal" href="class_inheritance.html">Inherit Magic Class</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api.html">API References</a></li>
+<li class="toctree-l2"><a class="reference internal" href="keybinding.html">Define Custom Keybindings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="customize_macro.html">Customize Macro Recording</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_inheritance.html">Inherit Magic Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html">API References</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="best_practice.html">Best Practice</a></li>
 </ul>
 
         </div>
@@ -87,6 +79,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="chap_advanced.html">Advanced Topics</a> &raquo;</li>
       <li>Convert QtWidgets into a Magic Widget</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/freewidget.rst.txt" rel="nofollow"> View page source</a>
@@ -182,7 +175,7 @@ the <code class="docutils literal notranslate"><span class="pre">MyQWidget</span
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="vispy.html" class="btn btn-neutral float-left" title="Vispy Canvas" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="chap_advanced.html" class="btn btn-neutral float-left" title="Advanced Topics" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="keybinding.html" class="btn btn-neutral float-right" title="Define Custom Keybindings" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.gui._base &mdash; magic-class 0.6.2.dev1 documentation</title>
+  <title>magicclass.gui._base &mdash; magic-class 0.6.2 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.2.dev1
+                0.6.2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -750,12 +750,12 @@
                 <span class="k">return</span> <span class="n">out</span>
 
         <span class="k">else</span><span class="p">:</span>
+            <span class="n">_prep_func</span> <span class="o">=</span> <span class="n">_define_popup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">widget</span><span class="p">)</span>
 
             <span class="k">def</span> <span class="nf">run_function</span><span class="p">():</span>
                 <span class="n">mgui</span> <span class="o">=</span> <span class="n">_build_mgui</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">mgui</span><span class="o">.</span><span class="n">call_count</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">mgui</span><span class="o">.</span><span class="n">called</span><span class="o">.</span><span class="n">_slots</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-
-                    <span class="c1"># deal with popup mode.</span>
+                    <span class="n">_prep_func</span><span class="p">(</span><span class="n">mgui</span><span class="p">)</span>
                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_popup_mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="n">PopUpMode</span><span class="o">.</span><span class="n">popup</span><span class="p">,</span> <span class="n">PopUpMode</span><span class="o">.</span><span class="n">dock</span><span class="p">):</span>
                         <span class="n">mgui</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
                         <span class="c1"># to avoid name collision</span>
@@ -768,52 +768,6 @@
                         <span class="c1"># TODO: should remove mgui from self?</span>
                         <span class="n">title</span><span class="o">.</span><span class="n">btn_clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">mgui</span><span class="o">.</span><span class="n">hide</span><span class="p">)</span>
                         <span class="n">mgui</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">title</span><span class="p">)</span>
-                        <span class="n">mgui</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Separator</span><span class="p">(</span><span class="n">orientation</span><span class="o">=</span><span class="s2">&quot;horizontal&quot;</span><span class="p">))</span>
-
-                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_popup_mode</span> <span class="o">==</span> <span class="n">PopUpMode</span><span class="o">.</span><span class="n">parentlast</span><span class="p">:</span>
-                            <span class="n">parent_self</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_search_parent_magicclass</span><span class="p">()</span>
-                            <span class="n">parent_self</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mgui</span><span class="p">)</span>
-                        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_popup_mode</span> <span class="o">==</span> <span class="n">PopUpMode</span><span class="o">.</span><span class="n">first</span><span class="p">:</span>
-                            <span class="n">child_self</span> <span class="o">=</span> <span class="n">_child_that_has_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">widget</span><span class="p">)</span>
-                            <span class="n">child_self</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">mgui</span><span class="p">)</span>
-                        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_popup_mode</span> <span class="o">==</span> <span class="n">PopUpMode</span><span class="o">.</span><span class="n">last</span><span class="p">:</span>
-                            <span class="n">child_self</span> <span class="o">=</span> <span class="n">_child_that_has_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">widget</span><span class="p">)</span>
-                            <span class="n">child_self</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mgui</span><span class="p">)</span>
-                        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_popup_mode</span> <span class="o">==</span> <span class="n">PopUpMode</span><span class="o">.</span><span class="n">above</span><span class="p">:</span>
-                            <span class="n">child_self</span> <span class="o">=</span> <span class="n">_child_that_has_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">widget</span><span class="p">)</span>
-                            <span class="n">i</span> <span class="o">=</span> <span class="n">_get_index</span><span class="p">(</span><span class="n">child_self</span><span class="p">,</span> <span class="n">widget</span><span class="p">)</span>
-                            <span class="n">child_self</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">mgui</span><span class="p">)</span>
-                        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_popup_mode</span> <span class="o">==</span> <span class="n">PopUpMode</span><span class="o">.</span><span class="n">below</span><span class="p">:</span>
-                            <span class="n">child_self</span> <span class="o">=</span> <span class="n">_child_that_has_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">widget</span><span class="p">)</span>
-                            <span class="n">i</span> <span class="o">=</span> <span class="n">_get_index</span><span class="p">(</span><span class="n">child_self</span><span class="p">,</span> <span class="n">widget</span><span class="p">)</span>
-                            <span class="n">child_self</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">mgui</span><span class="p">)</span>
-
-                    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_popup_mode</span> <span class="o">==</span> <span class="n">PopUpMode</span><span class="o">.</span><span class="n">dock</span><span class="p">:</span>
-                        <span class="kn">from</span> <span class="nn">.class_gui</span> <span class="kn">import</span> <span class="n">MainWindowClassGui</span>
-
-                        <span class="n">parent_self</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_search_parent_magicclass</span><span class="p">()</span>
-                        <span class="n">viewer</span> <span class="o">=</span> <span class="n">parent_self</span><span class="o">.</span><span class="n">parent_viewer</span>
-                        <span class="k">if</span> <span class="n">viewer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parent_self</span><span class="p">,</span> <span class="n">MainWindowClassGui</span><span class="p">):</span>
-                                <span class="n">parent_self</span><span class="o">.</span><span class="n">add_dock_widget</span><span class="p">(</span><span class="n">mgui</span><span class="p">)</span>
-                            <span class="k">else</span><span class="p">:</span>
-                                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
-                                    <span class="s2">&quot;Cannot add dock widget to a normal container. Please use</span><span class="se">\n</span><span class="s2">&quot;</span>
-                                    <span class="s2">&quot;&gt;&gt;&gt; @magicclass(widget_type=&#39;mainwindow&#39;)</span><span class="se">\n</span><span class="s2">&quot;</span>
-                                    <span class="s2">&quot;to create main window widget, or add the container as a dock &quot;</span>
-                                    <span class="s2">&quot;widget in napari.&quot;</span>
-                                <span class="p">)</span>
-                                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="ne">UserWarning</span><span class="p">)</span>
-
-                        <span class="k">else</span><span class="p">:</span>
-                            <span class="n">viewer</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">add_dock_widget</span><span class="p">(</span>
-                                <span class="n">mgui</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">_get_widget_name</span><span class="p">(</span><span class="n">widget</span><span class="p">),</span> <span class="n">area</span><span class="o">=</span><span class="s2">&quot;right&quot;</span>
-                            <span class="p">)</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="c1"># To be popped up correctly, window flags of FunctionGui should be</span>
-                        <span class="c1"># &quot;windowFlags&quot; and should appear at the center.</span>
-                        <span class="n">mgui</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="p">,</span> <span class="n">mgui</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">windowFlags</span><span class="p">())</span>
-                        <span class="n">move_to_screen_center</span><span class="p">(</span><span class="n">mgui</span><span class="o">.</span><span class="n">native</span><span class="p">)</span>
 
                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_close_on_run</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">mgui</span><span class="o">.</span><span class="n">_auto_call</span><span class="p">:</span>
                         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_popup_mode</span> <span class="o">!=</span> <span class="n">PopUpMode</span><span class="o">.</span><span class="n">dock</span><span class="p">:</span>
@@ -837,8 +791,7 @@
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_popup_mode</span> <span class="o">!=</span> <span class="n">PopUpMode</span><span class="o">.</span><span class="n">dock</span><span class="p">:</span>
                     <span class="n">widget</span><span class="o">.</span><span class="n">mgui</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="c1"># show dock widget</span>
-                    <span class="n">mgui</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+                    <span class="n">mgui</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>  <span class="c1"># show dock widget</span>
 
                 <span class="k">return</span> <span class="kc">None</span>
 
@@ -1489,6 +1442,76 @@
 
             <span class="n">_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_attr</span>
     <span class="k">return</span> <span class="n">_dict</span>
+
+
+<span class="k">def</span> <span class="nf">_define_popup</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">BaseGui</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">widget</span><span class="p">:</span> <span class="n">PushButtonPlus</span> <span class="o">|</span> <span class="n">Action</span><span class="p">):</span>
+    <span class="c1"># deal with popup mode.</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_popup_mode</span> <span class="o">==</span> <span class="n">PopUpMode</span><span class="o">.</span><span class="n">popup</span><span class="p">:</span>
+        <span class="c1"># To be popped up correctly, window flags of FunctionGui should be</span>
+        <span class="c1"># &quot;windowFlags&quot; and should appear at the center.</span>
+        <span class="k">def</span> <span class="nf">_prep</span><span class="p">(</span><span class="n">mgui</span><span class="p">:</span> <span class="n">FunctionGui</span><span class="p">):</span>
+            <span class="n">mgui</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="p">,</span> <span class="n">mgui</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">windowFlags</span><span class="p">())</span>
+            <span class="n">move_to_screen_center</span><span class="p">(</span><span class="n">mgui</span><span class="o">.</span><span class="n">native</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_popup_mode</span> <span class="o">==</span> <span class="n">PopUpMode</span><span class="o">.</span><span class="n">parentlast</span><span class="p">:</span>
+
+        <span class="k">def</span> <span class="nf">_prep</span><span class="p">(</span><span class="n">mgui</span><span class="p">:</span> <span class="n">FunctionGui</span><span class="p">):</span>
+            <span class="n">parent_self</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_search_parent_magicclass</span><span class="p">()</span>
+            <span class="n">parent_self</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mgui</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_popup_mode</span> <span class="o">==</span> <span class="n">PopUpMode</span><span class="o">.</span><span class="n">first</span><span class="p">:</span>
+
+        <span class="k">def</span> <span class="nf">_prep</span><span class="p">(</span><span class="n">mgui</span><span class="p">:</span> <span class="n">FunctionGui</span><span class="p">):</span>
+            <span class="n">child_self</span> <span class="o">=</span> <span class="n">_child_that_has_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">widget</span><span class="p">)</span>
+            <span class="n">child_self</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">mgui</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_popup_mode</span> <span class="o">==</span> <span class="n">PopUpMode</span><span class="o">.</span><span class="n">last</span><span class="p">:</span>
+
+        <span class="k">def</span> <span class="nf">_prep</span><span class="p">(</span><span class="n">mgui</span><span class="p">:</span> <span class="n">FunctionGui</span><span class="p">):</span>
+            <span class="n">child_self</span> <span class="o">=</span> <span class="n">_child_that_has_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">widget</span><span class="p">)</span>
+            <span class="n">child_self</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mgui</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_popup_mode</span> <span class="o">==</span> <span class="n">PopUpMode</span><span class="o">.</span><span class="n">above</span><span class="p">:</span>
+
+        <span class="k">def</span> <span class="nf">_prep</span><span class="p">(</span><span class="n">mgui</span><span class="p">:</span> <span class="n">FunctionGui</span><span class="p">):</span>
+            <span class="n">child_self</span> <span class="o">=</span> <span class="n">_child_that_has_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">widget</span><span class="p">)</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="n">_get_index</span><span class="p">(</span><span class="n">child_self</span><span class="p">,</span> <span class="n">widget</span><span class="p">)</span>
+            <span class="n">child_self</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">mgui</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_popup_mode</span> <span class="o">==</span> <span class="n">PopUpMode</span><span class="o">.</span><span class="n">below</span><span class="p">:</span>
+
+        <span class="k">def</span> <span class="nf">_prep</span><span class="p">(</span><span class="n">mgui</span><span class="p">:</span> <span class="n">FunctionGui</span><span class="p">):</span>
+            <span class="n">child_self</span> <span class="o">=</span> <span class="n">_child_that_has_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">widget</span><span class="p">)</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="n">_get_index</span><span class="p">(</span><span class="n">child_self</span><span class="p">,</span> <span class="n">widget</span><span class="p">)</span>
+            <span class="n">child_self</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">mgui</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_popup_mode</span> <span class="o">==</span> <span class="n">PopUpMode</span><span class="o">.</span><span class="n">dock</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">.class_gui</span> <span class="kn">import</span> <span class="n">MainWindowClassGui</span>
+
+        <span class="k">def</span> <span class="nf">_prep</span><span class="p">(</span><span class="n">mgui</span><span class="p">:</span> <span class="n">FunctionGui</span><span class="p">):</span>
+
+            <span class="n">parent_self</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_search_parent_magicclass</span><span class="p">()</span>
+            <span class="n">viewer</span> <span class="o">=</span> <span class="n">parent_self</span><span class="o">.</span><span class="n">parent_viewer</span>
+            <span class="k">if</span> <span class="n">viewer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parent_self</span><span class="p">,</span> <span class="n">MainWindowClassGui</span><span class="p">):</span>
+                    <span class="n">parent_self</span><span class="o">.</span><span class="n">add_dock_widget</span><span class="p">(</span><span class="n">mgui</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="s2">&quot;Cannot add dock widget to a normal container. Please use</span><span class="se">\n</span><span class="s2">&quot;</span>
+                        <span class="s2">&quot;&gt;&gt;&gt; @magicclass(widget_type=&#39;mainwindow&#39;)</span><span class="se">\n</span><span class="s2">&quot;</span>
+                        <span class="s2">&quot;to create main window widget, or add the container as a dock &quot;</span>
+                        <span class="s2">&quot;widget in napari.&quot;</span>
+                    <span class="p">)</span>
+                    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="ne">UserWarning</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">viewer</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">add_dock_widget</span><span class="p">(</span>
+                    <span class="n">mgui</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">_get_widget_name</span><span class="p">(</span><span class="n">widget</span><span class="p">),</span> <span class="n">area</span><span class="o">=</span><span class="s2">&quot;right&quot;</span>
+                <span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span>
+    <span class="k">return</span> <span class="n">_prep</span>
 </pre></div>
 
            </div>

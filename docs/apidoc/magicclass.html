@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass package &mdash; magic-class 0.6.2.dev1 documentation</title>
+  <title>magicclass package &mdash; magic-class 0.6.2 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/columns.css" type="text/css" />
@@ -31,7 +31,7 @@
             <a href="../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.2.dev1
+                0.6.2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -44,37 +44,11 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../quick_start.html">Quick Start</a></li>
 </ul>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../chap_basics.html">Basics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../chap_make_better.html">Make Your GUI Better</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../chap_data_vis.html">Data Visualization</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../chap_advanced.html">Advanced Topics</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../freewidget.html">Convert QtWidgets into a Magic Widget</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../keybinding.html">Define Custom Keybindings</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../customize_macro.html">Customize Macro Recording</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../class_inheritance.html">Inherit Magic Class</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="../api.html">API References</a><ul class="current">
-<li class="toctree-l3 current"><a class="current reference internal" href="#">magicclass package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#subpackages">Subpackages</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-magicclass.core">magicclass.core module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-magicclass.fields">magicclass.fields module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-magicclass.help">magicclass.help module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-magicclass.signature">magicclass.signature module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-magicclass.tqdm">magicclass.tqdm module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-magicclass.types">magicclass.types module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-magicclass.wrappers">magicclass.wrappers module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-magicclass">Module contents</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.html">magicclass.ext package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.utils.html">magicclass.utils package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.widgets.html">magicclass.widgets package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.widgets.pywidgets.html">magicclass.widgets.pywidgets package</a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../chap_advanced.html">Advanced Topics</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../best_practice.html">Best Practice</a></li>
@@ -216,11 +190,6 @@
 </section>
 <section id="module-magicclass.core">
 <span id="magicclass-core-module"></span><h2>magicclass.core module<a class="headerlink" href="#module-magicclass.core" title="Permalink to this headline">¶</a></h2>
-<p>The core functions of <code class="docutils literal notranslate"><span class="pre">magic-class</span></code>.</p>
-<p><a class="reference internal" href="#module-magicclass" title="magicclass"><code class="xref py py-func docutils literal notranslate"><span class="pre">magicclass()</span></code></a>
-<a class="reference internal" href="#magicclass.core.magicmenu" title="magicclass.core.magicmenu"><code class="xref py py-func docutils literal notranslate"><span class="pre">magicmenu()</span></code></a>
-<a class="reference internal" href="#magicclass.core.magiccontext" title="magicclass.core.magiccontext"><code class="xref py py-func docutils literal notranslate"><span class="pre">magiccontext()</span></code></a>
-<a class="reference internal" href="#magicclass.core.magictoolbar" title="magicclass.core.magictoolbar"><code class="xref py py-func docutils literal notranslate"><span class="pre">magictoolbar()</span></code></a></p>
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.core.MagicClassFactory">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.core.</span></span><span class="sig-name descname"><span class="pre">MagicClassFactory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'vertical'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">close_on_run</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">popup_mode</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">PopUpMode</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_mode</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">ErrorMode</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">widget_type</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">WidgetType</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">WidgetType.none</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">icon_path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attrs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/core.html#MagicClassFactory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.core.MagicClassFactory" title="Permalink to this definition">¶</a></dt>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.gui.class_gui &mdash; magic-class 0.6.2.dev1 documentation</title>
+  <title>magicclass.gui.class_gui &mdash; magic-class 0.6.2 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.2.dev1
+                0.6.2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -43,27 +43,12 @@
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../chap_basics.html">Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../chap_make_better.html">Make Your GUI Better</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../chap_data_vis.html">Data Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../chap_advanced.html">Advanced Topics</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../use_wraps.html">Call Parent Methods from its Child</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../use_bind.html">Binding Values to Arguments</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../use_choices.html">Set Choices Dynamically</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../use_preview.html">Add Preview Functionalities</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../use_worker.html">Multi-threading</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../additional_types.html">Additional types</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../containers.html">Container Variations</a></li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../matplotlib.html">Use Matplotlib Figure</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../pyqtgraph.html">Use PyQtGraph Canvas</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../vispy.html">Vispy Canvas</a></li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../freewidget.html">Convert QtWidgets into a Magic Widget</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../keybinding.html">Define Custom Keybindings</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../customize_macro.html">Customize Macro Recording</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../class_inheritance.html">Inherit Magic Class</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../best_practice.html">Best Practice</a></li>
 </ul>
 
         </div>
@@ -95,7 +80,7 @@
 <span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">signature</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">TypeVar</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
-<span class="kn">from</span> <span class="nn">qtpy.QtWidgets</span> <span class="kn">import</span> <span class="n">QMenuBar</span><span class="p">,</span> <span class="n">QWidget</span><span class="p">,</span> <span class="n">QMainWindow</span><span class="p">,</span> <span class="n">QBoxLayout</span>
+<span class="kn">from</span> <span class="nn">qtpy.QtWidgets</span> <span class="kn">import</span> <span class="n">QMenuBar</span><span class="p">,</span> <span class="n">QWidget</span><span class="p">,</span> <span class="n">QMainWindow</span><span class="p">,</span> <span class="n">QBoxLayout</span><span class="p">,</span> <span class="n">QDockWidget</span>
 <span class="kn">from</span> <span class="nn">qtpy.QtCore</span> <span class="kn">import</span> <span class="n">Qt</span>
 <span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">Container</span><span class="p">,</span> <span class="n">MainWindow</span><span class="p">,</span> <span class="n">Label</span><span class="p">,</span> <span class="n">FunctionGui</span><span class="p">,</span> <span class="n">Image</span><span class="p">,</span> <span class="n">Table</span>
 <span class="kn">from</span> <span class="nn">magicgui.widgets._bases</span> <span class="kn">import</span> <span class="n">Widget</span><span class="p">,</span> <span class="n">ButtonWidget</span><span class="p">,</span> <span class="n">ValueWidget</span><span class="p">,</span> <span class="n">ContainerWidget</span>
@@ -113,7 +98,6 @@
     <span class="n">ErrorMode</span><span class="p">,</span>
     <span class="n">value_widget_callback</span><span class="p">,</span>
     <span class="n">nested_function_gui_callback</span><span class="p">,</span>
-    <span class="n">_inject_recorder</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">copy_class</span><span class="p">,</span>
@@ -142,7 +126,6 @@
 <span class="kn">from</span> <span class="nn">..fields</span> <span class="kn">import</span> <span class="n">MagicField</span>
 <span class="kn">from</span> <span class="nn">..signature</span> <span class="kn">import</span> <span class="n">get_additional_option</span>
 <span class="kn">from</span> <span class="nn">.._app</span> <span class="kn">import</span> <span class="n">run_app</span>
-<span class="kn">from</span> <span class="nn">._dock_widget</span> <span class="kn">import</span> <span class="n">QtDockWidget</span>
 
 <span class="c1"># For Containers that belong to these classes, menubar must be set to _qwidget.layout().</span>
 <span class="n">_USE_OUTER_LAYOUT</span> <span class="o">=</span> <span class="p">(</span>
@@ -155,7 +138,7 @@
 <span class="n">_MCLS_PAREMT</span> <span class="o">=</span> <span class="s2">&quot;__magicclass_parent__&quot;</span>
 
 
-<div class="viewcode-block" id="ClassGuiBase"><a class="viewcode-back" href="../../../magicclass.gui.html#magicclass.gui.class_gui.ClassGuiBase">[docs]</a><span class="k">class</span> <span class="nc">ClassGuiBase</span><span class="p">(</span><span class="n">BaseGui</span><span class="p">):</span>
+<div class="viewcode-block" id="ClassGuiBase"><a class="viewcode-back" href="../../../apidoc/magicclass.gui.html#magicclass.gui.class_gui.ClassGuiBase">[docs]</a><span class="k">class</span> <span class="nc">ClassGuiBase</span><span class="p">(</span><span class="n">BaseGui</span><span class="p">):</span>
     <span class="c1"># This class is always inherited by @magicclass decorator.</span>
     <span class="n">_component_class</span> <span class="o">=</span> <span class="n">PushButtonPlus</span>
     <span class="n">_container_widget</span><span class="p">:</span> <span class="nb">type</span>
@@ -386,6 +369,7 @@
                     <span class="n">obj</span><span class="o">.</span><span class="n">called</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
                 <span class="n">widget</span> <span class="o">=</span> <span class="n">obj</span>
             <span class="k">else</span><span class="p">:</span>
+                <span class="kn">from</span> <span class="nn">._base</span> <span class="kn">import</span> <span class="n">_inject_recorder</span>
                 <span class="n">obj</span> <span class="o">=</span> <span class="n">_inject_recorder</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">is_method</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
                 <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_widget_from_method</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
 
@@ -445,7 +429,7 @@
 <span class="n">_C</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;_C&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">ContainerWidget</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="make_gui"><a class="viewcode-back" href="../../../magicclass.gui.html#magicclass.gui.class_gui.make_gui">[docs]</a><span class="k">def</span> <span class="nf">make_gui</span><span class="p">(</span><span class="n">container</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">_C</span><span class="p">],</span> <span class="n">no_margin</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">[</span><span class="n">_C</span> <span class="o">|</span> <span class="n">ClassGuiBase</span><span class="p">]:</span>
+<div class="viewcode-block" id="make_gui"><a class="viewcode-back" href="../../../apidoc/magicclass.gui.html#magicclass.gui.class_gui.make_gui">[docs]</a><span class="k">def</span> <span class="nf">make_gui</span><span class="p">(</span><span class="n">container</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">_C</span><span class="p">],</span> <span class="n">no_margin</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">[</span><span class="n">_C</span> <span class="o">|</span> <span class="n">ClassGuiBase</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Make a ClassGui class from a Container widget.</span>
 <span class="sd">    Because GUI class inherits Container here, functions that need overriden must be defined</span>
@@ -526,14 +510,15 @@
 
         <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">run</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
             <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">            Show ClassGui. If any of the parent ClassGui is a dock widget in napari, then this</span>
+<span class="sd">            Show GUI. If any of the parent GUI is a dock widget in napari, then this</span>
 <span class="sd">            will also show up as a dock widget (floating if in popup mode).</span>
 
 <span class="sd">            Parameters</span>
 <span class="sd">            ----------</span>
 <span class="sd">            run : bool, default is True</span>
-<span class="sd">                *Unlike magicgui, this parameter should always be True* unless you want to close</span>
-<span class="sd">                the window immediately. If true, application gets executed *if needed*.</span>
+<span class="sd">                *Unlike magicgui, this parameter should always be True* unless you want </span>
+<span class="sd">                to close the window immediately. If true, application gets executed if</span>
+<span class="sd">                needed.</span>
 <span class="sd">            &quot;&quot;&quot;</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__magicclass_parent__</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="c1"># If child magic class is closed before, we have to set parent again.</span>
@@ -544,16 +529,20 @@
             <span class="n">viewer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent_viewer</span>
             <span class="k">if</span> <span class="n">viewer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">objectName</span><span class="p">()</span>
-                <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">viewer</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">_dock_widgets</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">viewer</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">_dock_widgets</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="n">QDockWidget</span>
+                <span class="p">):</span>
                     <span class="n">viewer</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">_dock_widgets</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
                 <span class="k">else</span><span class="p">:</span>
+                    <span class="n">_floating</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_popup_mode</span> <span class="o">==</span> <span class="n">PopUpMode</span><span class="o">.</span><span class="n">popup</span>
+                    <span class="n">_area</span> <span class="o">=</span> <span class="s2">&quot;left&quot;</span> <span class="k">if</span> <span class="n">_floating</span> <span class="k">else</span> <span class="s2">&quot;right&quot;</span>
                     <span class="n">dock</span> <span class="o">=</span> <span class="n">viewer</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">add_dock_widget</span><span class="p">(</span>
                         <span class="bp">self</span><span class="p">,</span>
                         <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
-                        <span class="n">area</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">,</span>
+                        <span class="n">area</span><span class="o">=</span><span class="n">_area</span><span class="p">,</span>
                         <span class="n">allowed_areas</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="s2">&quot;right&quot;</span><span class="p">],</span>
                     <span class="p">)</span>
-                    <span class="n">dock</span><span class="o">.</span><span class="n">setFloating</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_popup_mode</span> <span class="o">==</span> <span class="n">PopUpMode</span><span class="o">.</span><span class="n">popup</span><span class="p">)</span>
+                    <span class="n">dock</span><span class="o">.</span><span class="n">setFloating</span><span class="p">(</span><span class="n">_floating</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">container</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">activateWindow</span><span class="p">()</span>
@@ -562,6 +551,8 @@
             <span class="k">return</span> <span class="kc">None</span>
 
         <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="bp">cls</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;Close GUI. if this widget is a dock widget, then also close it.&quot;&quot;&quot;</span>
+
             <span class="n">current_self</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_search_parent_magicclass</span><span class="p">()</span>
 
             <span class="n">viewer</span> <span class="o">=</span> <span class="n">current_self</span><span class="o">.</span><span class="n">parent_viewer</span>
@@ -607,6 +598,8 @@
 <span class="sd">                allowed_areas : sequence of str, optional</span>
 <span class="sd">                    Allowed dock widget area. Allow all areas by default.</span>
 <span class="sd">                &quot;&quot;&quot;</span>
+                <span class="kn">from</span> <span class="nn">._dock_widget</span> <span class="kn">import</span> <span class="n">QtDockWidget</span>
+
                 <span class="n">name</span> <span class="o">=</span> <span class="n">name</span> <span class="ow">or</span> <span class="n">widget</span><span class="o">.</span><span class="n">name</span>
                 <span class="n">mainwin</span><span class="p">:</span> <span class="n">QMainWindow</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span>
                 <span class="n">dock</span> <span class="o">=</span> <span class="n">QtDockWidget</span><span class="p">(</span>
@@ -625,6 +618,8 @@
 
             <span class="nd">@nogui</span>
             <span class="k">def</span> <span class="nf">remove_dock_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">widget</span><span class="p">:</span> <span class="n">Widget</span><span class="p">):</span>
+                <span class="kn">from</span> <span class="nn">._dock_widget</span> <span class="kn">import</span> <span class="n">QtDockWidget</span>
+
                 <span class="n">dock</span> <span class="o">=</span> <span class="kc">None</span>
                 <span class="n">i_dock</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
                 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">child</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__magicclass_children__</span><span class="p">):</span>

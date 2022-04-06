@@ -20,7 +20,6 @@ from ._base import (
     ErrorMode,
     value_widget_callback,
     nested_function_gui_callback,
-    _inject_recorder,
 )
 from .utils import (
     copy_class,
@@ -292,6 +291,8 @@ class ClassGuiBase(BaseGui):
                     obj.called.connect(f)
                 widget = obj
             else:
+                from ._base import _inject_recorder
+
                 obj = _inject_recorder(obj, is_method=False).__get__(self)
                 widget = self._create_widget_from_method(obj)
 
@@ -432,14 +433,15 @@ def make_gui(container: type[_C], no_margin: bool = True) -> type[_C | ClassGuiB
 
         def show(self: cls, run: bool = True) -> None:
             """
-            Show ClassGui. If any of the parent ClassGui is a dock widget in napari, then this
+            Show GUI. If any of the parent GUI is a dock widget in napari, then this
             will also show up as a dock widget (floating if in popup mode).
 
             Parameters
             ----------
             run : bool, default is True
-                *Unlike magicgui, this parameter should always be True* unless you want to close
-                the window immediately. If true, application gets executed *if needed*.
+                *Unlike magicgui, this parameter should always be True* unless you want
+                to close the window immediately. If true, application gets executed if
+                needed.
             """
             if self.__magicclass_parent__ is not None and self.parent is None:
                 # If child magic class is closed before, we have to set parent again.
@@ -472,6 +474,8 @@ def make_gui(container: type[_C], no_margin: bool = True) -> type[_C | ClassGuiB
             return None
 
         def close(self: cls):
+            """Close GUI. if this widget is a dock widget, then also close it."""
+
             current_self = self._search_parent_magicclass()
 
             viewer = current_self.parent_viewer
