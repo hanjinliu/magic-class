@@ -107,7 +107,7 @@ def set_design(
     font_family: int = None,
     font_color: Color = None,
     background_color: Color = None,
-    visible: bool = True,
+    visible: bool = None,
 ):
     """
     Change button/action design by calling setter when the widget is created.
@@ -145,6 +145,7 @@ def set_design(
             min_height = icon_size[1]
 
     caller_options = locals()
+    caller_options = {k: v for k, v in caller_options.items() if v is not None}
 
     @overload
     def wrapper(obj: type[T]) -> type[T]:
@@ -161,8 +162,7 @@ def set_design(
             def __post_init__(self):
                 _post_init(self)
                 for k, v in caller_options.items():
-                    if v is not None:
-                        setattr(self, k, v)
+                    setattr(self, k, v)
 
             obj.__post_init__ = __post_init__
         else:
