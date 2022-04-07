@@ -93,7 +93,7 @@ class PlotDataLayer(LayerItem):
         self.edge_color = value
 
 
-class Curve(LayerItem):
+class Curve(PlotDataLayer):
     def __init__(
         self,
         viewbox: ViewBox,
@@ -125,7 +125,7 @@ class Curve(LayerItem):
         self._visual.update()
 
 
-class Scatter(LayerItem):
+class Scatter(PlotDataLayer):
     def __init__(
         self,
         viewbox: ViewBox,
@@ -135,7 +135,7 @@ class Scatter(LayerItem):
         edge_color=None,
         size: float = 7,
         name: str | None = None,
-        symbol=None,
+        symbol="o",
     ) -> None:
         symbol = _SYMBOL_MAP.get(symbol, symbol)
         self._viewbox = viewbox

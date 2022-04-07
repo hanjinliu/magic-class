@@ -1,33 +1,42 @@
 from __future__ import annotations
 import numpy as np
 from vispy import scene
+from vispy.scene import visuals, ViewBox
 from .layer2d import Curve, Scatter
 from .._doc import write_docs
 from ...widgets import FreeWidget
 
 
-class VispyPlotCanvas(FreeWidget):
-    """
-    A Vispy based 2-D plot canvas for curve, histogram, bar plot etc.
-    """
-
-    def __init__(self):
+class HasViewBox(FreeWidget):
+    def __init__(self, grid_pos: tuple[int, int] = (0, 0), _scene=None, _col=0):
         super().__init__()
-        self._scene = scene.SceneCanvas()
-        grid = self._scene.central_widget.add_grid()
-        self._viewbox = grid.add_view(row=0, col=1, camera="panzoom")
-        x_axis = scene.AxisWidget(orientation="bottom", anchors=("center", "bottom"))
-        x_axis.stretch = (1, 0.1)
-        grid.add_widget(x_axis, row=1, col=1)
-        x_axis.link_view(self._viewbox)
-        y_axis = scene.AxisWidget(orientation="left", anchors=("right", "middle"))
-        y_axis.stretch = (0.1, 1)
-        grid.add_widget(y_axis, row=0, col=0)
-        y_axis.link_view(self._viewbox)
+        if _scene is None:
+            _scene = scene.SceneCanvas()
+        self._scene = _scene
+        grid = self._scene.central_widget.add_grid(pos=grid_pos)
+        self._viewbox: ViewBox = grid.add_view(row=0, col=_col, camera="panzoom")
         self._items = []
-
+        self._grid = grid
         self._scene.create_native()
         self.set_widget(self._scene.native)
+
+    @property
+    def xrange(self) -> tuple[float, float]:
+        return self._viewbox.camera._xlim
+
+    @xrange.setter
+    def xrange(self, rng: tuple[float, float]):
+        x0, x1 = rng
+        self._viewbox.camera.set_range(x=(x0, x1))
+
+    @property
+    def yrange(self) -> tuple[float, float]:
+        return self._viewbox.camera._ylim
+
+    @yrange.setter
+    def yrange(self, rng: tuple[float, float]):
+        y0, y1 = rng
+        self._viewbox.camera.set_range(y=(y0, y1))
 
     @property
     def layers(self):
@@ -138,6 +147,110 @@ class VispyPlotCanvas(FreeWidget):
         )
         self._items.append(line)
         return line
+
+
+class PlotItem(HasViewBox):
+    def __init__(self, grid_pos=(0, 0), _scene=None):
+        super().__init__(grid_pos=grid_pos, _scene=_scene, _col=1)
+        x_axis = scene.AxisWidget(orientation="bottom", anchors=("center", "bottom"))
+        x_axis.stretch = (1, 0.1)
+        self._x_axis = x_axis
+        self._grid.add_widget(x_axis, row=1, col=1)
+        x_axis.link_view(self._viewbox)
+        y_axis = scene.AxisWidget(orientation="left", anchors=("right", "middle"))
+        y_axis.stretch = (0.1, 1)
+        self._grid.add_widget(y_axis, row=0, col=0)
+        y_axis.link_view(self._viewbox)
+        self._y_axis = y_axis
+
+    @property
+    def xlabel(self):
+        return self._x_axis.axis.axis_label
+
+    @xlabel.setter
+    def xlabel(self, text: str):
+        self._x_axis.axis.axis_label = text
+        # TODO: set margin
+
+    @property
+    def ylabel(self):
+        return self._y_axis.axis.axis_label
+
+    @xlabel.setter
+    def ylabel(self, text: str):
+        self._y_axis.axis.axis_label = text
+        # TODO: set margin
+
+
+class ImageItem(HasViewBox):
+    def __init__(
+        self, lock_contrast_limits: bool = False, grid_pos=(0, 0), _scene=None
+    ):
+        super().__init__(grid_pos=grid_pos, _scene=_scene)
+        self._viewbox.camera.aspect = 1.0
+        self._viewbox.camera.flip = (False, True, False)
+        self._image = visuals.Image(cmap="gray", parent=self._viewbox.scene)
+        self._lock_contrast_limits = lock_contrast_limits
+
+    @property
+    def image(self):
+        return self._image._data
+
+    @image.setter
+    def image(self, img):
+        self._image.set_data(img)
+        if not self._lock_contrast_limits:
+            self._image.clim = "auto"
+
+    @image.deleter
+    def image(self):
+        self._image._data = None
+        self._image.update()
+
+    @property
+    def cmap(self):
+        return self._image.cmap
+
+    @cmap.setter
+    def cmap(self, c):
+        self._image.cmap = c
+
+
+class VispyPlotCanvas(PlotItem):
+    """
+    A Vispy based 2-D plot canvas for curve, histogram, bar plot etc.
+    """
+
+
+class VispyImageCanvas(ImageItem):
+    ...
+
+
+class _MultiPlot(FreeWidget):
+    _base_class: type[HasViewBox]
+
+    def __init__(self, nrows: int = 1, ncols: int = 1):
+        super().__init__()
+        self._canvas = []
+        self._scene = scene.SceneCanvas()
+        for r in range(nrows):
+            for c in range(ncols):
+                canvas = self._base_class(grid_pos=(r, c), _scene=self._scene)
+                self._canvas.append(canvas)
+
+        self._scene.create_native()
+        self.set_widget(self._scene.native)
+
+    def __getitem__(self, i):
+        return self._canvas[i]
+
+
+class VispyMultiPlotCanvas(_MultiPlot):
+    _base_class = VispyPlotCanvas
+
+
+class VispyMultiImageCanvas(_MultiPlot):
+    _base_class = VispyImageCanvas
 
 
 def _check_xy(x, y):
