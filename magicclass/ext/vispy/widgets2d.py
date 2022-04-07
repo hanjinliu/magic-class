@@ -8,13 +8,14 @@ from ...widgets import FreeWidget
 
 
 class HasViewBox(FreeWidget):
-    def __init__(self, grid_pos: tuple[int, int] = (0, 0), _scene=None, _col=0):
+    def __init__(self, grid_pos: tuple[int, int] = (0, 0), _scene=None, _row=0, _col=0):
         super().__init__()
         if _scene is None:
-            _scene = scene.SceneCanvas()
+            _scene = scene.SceneCanvas(keys="interactive")
         self._scene = _scene
         grid = self._scene.central_widget.add_grid(pos=grid_pos)
-        self._viewbox: ViewBox = grid.add_view(row=0, col=_col, camera="panzoom")
+        grid.spacing = 0
+        self._viewbox: ViewBox = grid.add_view(row=_row, col=_col, camera="panzoom")
         self._items = []
         self._grid = grid
         self._scene.create_native()
@@ -96,6 +97,9 @@ class HasViewBox(FreeWidget):
             symbol=symbol,
         )
         self._items.append(line)
+        if len(self._items) == 1:
+            self.xrange = (np.min(x), np.max(x))
+            self.yrange = (np.min(y), np.max(y))
         return line
 
     @write_docs
@@ -146,40 +150,79 @@ class HasViewBox(FreeWidget):
             symbol=symbol,
         )
         self._items.append(line)
+        if len(self._items) == 1:
+            self.xrange = (np.min(x), np.max(x))
+            self.yrange = (np.min(y), np.max(y))
         return line
 
 
 class PlotItem(HasViewBox):
     def __init__(self, grid_pos=(0, 0), _scene=None):
-        super().__init__(grid_pos=grid_pos, _scene=_scene, _col=1)
-        x_axis = scene.AxisWidget(orientation="bottom", anchors=("center", "bottom"))
+        super().__init__(grid_pos=grid_pos, _scene=_scene, _row=1, _col=1)
+
+        title = scene.Label("", color="white", font_size=7)
+        title.height_max = 40
+        self._grid.add_widget(title, row=0, col=0, col_span=2)
+        self._title = title
+        x_axis = scene.AxisWidget(
+            orientation="bottom",
+            anchors=("center", "bottom"),
+            font_size=6,
+            axis_label_margin=40,
+            tick_label_margin=5,
+            axis_label="",
+        )
+        x_axis.height_min = 65
+        x_axis.height_max = 80
         x_axis.stretch = (1, 0.1)
         self._x_axis = x_axis
-        self._grid.add_widget(x_axis, row=1, col=1)
+        self._grid.add_widget(x_axis, row=2, col=1)
         x_axis.link_view(self._viewbox)
-        y_axis = scene.AxisWidget(orientation="left", anchors=("right", "middle"))
+        y_axis = scene.AxisWidget(
+            orientation="left",
+            anchors=("right", "middle"),
+            font_size=6,
+            axis_label_margin=50,
+            tick_label_margin=5,
+            axis_label="",
+        )
+        y_axis.width_max = 80
         y_axis.stretch = (0.1, 1)
-        self._grid.add_widget(y_axis, row=0, col=0)
+        self._grid.add_widget(y_axis, row=1, col=0)
         y_axis.link_view(self._viewbox)
         self._y_axis = y_axis
 
     @property
-    def xlabel(self):
+    def title(self) -> str:
+        """The title string."""
+        return self._title.text
+
+    @title.setter
+    def title(self, text: str):
+        self._title.text = text
+
+    @property
+    def xlabel(self) -> str:
+        """The x-label string."""
         return self._x_axis.axis.axis_label
 
     @xlabel.setter
     def xlabel(self, text: str):
         self._x_axis.axis.axis_label = text
-        # TODO: set margin
+        height = self._x_axis.height
+        if text:
+            self._x_axis.size = (height, 75.0)
+        else:
+            self._x_axis.size = (height, 75.0)
 
     @property
-    def ylabel(self):
+    def ylabel(self) -> str:
+        """The y-label string."""
         return self._y_axis.axis.axis_label
 
     @xlabel.setter
     def ylabel(self, text: str):
         self._y_axis.axis.axis_label = text
-        # TODO: set margin
 
 
 class ImageItem(HasViewBox):
