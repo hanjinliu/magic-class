@@ -9,7 +9,7 @@ from typing import (
 )
 from typing_extensions import _AnnotatedAlias, get_args
 from psygnal import Signal
-from qtpy.QtWidgets import QTabWidget, QLineEdit, QMenu, QVBoxLayout, QWidget
+from qtpy import QtWidgets as QtW
 from qtpy.QtGui import QTextCursor
 from qtpy.QtCore import Qt
 from magicgui.signature import split_annotated_type
@@ -190,7 +190,7 @@ class CheckButton(PushButton):
 
 
 class QIntEdit(BaseLineEdit):
-    _qwidget: QLineEdit
+    _qwidget: QtW.QLineEdit
 
     def _post_get_hook(self, value):
         if value == "":
@@ -214,7 +214,7 @@ class IntEdit(LineEdit):
 
 
 class QFloatEdit(BaseLineEdit):
-    _qwidget: QLineEdit
+    _qwidget: QtW.QLineEdit
 
     def _post_get_hook(self, value):
         if value == "":
@@ -288,10 +288,10 @@ class AbstractRangeSlider(ValueWidget, Generic[_V]):
         super().__init__(
             value=value,
             widget_type=QRangeSlider,
-            backend_kwargs={"qwidg": QWidget},
+            backend_kwargs={"qwidg": QtW.QWidget},
             **kwargs,
         )
-        self.native.setLayout(QVBoxLayout())
+        self.native.setLayout(QtW.QVBoxLayout())
         self.native.setContentsMargins(0, 0, 0, 0)
         self.native.layout().addWidget(sl)
 
@@ -361,7 +361,7 @@ class FloatRangeSlider(AbstractRangeSlider[float]):
         return sl
 
 
-class _QtSpreadSheet(QTabWidget):
+class _QtSpreadSheet(QtW.QTabWidget):
     def __init__(self):
         super().__init__()
         self.setMovable(True)
@@ -387,7 +387,7 @@ class _QtSpreadSheet(QTabWidget):
             self._line_edit = None
 
         tabbar = self.tabBar()
-        self._line_edit = QLineEdit(self)
+        self._line_edit = QtW.QLineEdit(self)
 
         @self._line_edit.editingFinished.connect
         def _(_=None):
@@ -406,7 +406,7 @@ class _QtSpreadSheet(QTabWidget):
             return
         tabbar = self.tabBar()
         index = tabbar.tabAt(point)
-        menu = QMenu(self)
+        menu = QtW.QMenu(self)
         rename_action = menu.addAction("Rename")
         rename_action.triggered.connect(lambda _: self.editTabBarLabel(index))
         delete_action = menu.addAction("Delete")
