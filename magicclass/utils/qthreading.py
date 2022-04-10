@@ -369,7 +369,7 @@ class thread_worker:
         self._ignore_errors = ignore_errors
         self._objects: dict[int, BaseGui] = {}
         self._progressbars: dict[int, ProgressBarLike | None] = {}
-        self._last_arguments = tuple(), dict()
+        self._recorder: Callable[_P, Any] | None = None
 
         if f is not None:
             self(f)
@@ -418,6 +418,14 @@ class thread_worker:
         """True if bound function is a generator function."""
         return inspect.isgeneratorfunction(self._func)
 
+    def _set_recorder(self, recorder: Callable[_P, Any]):
+        """
+        Set macro recorder function.
+        Must accept ``recorder(bgui, *args, **kwargs)``.
+        """
+        self._recorder = recorder
+        return None
+
     @overload
     def __call__(self, f: Callable[_P, _R1]) -> thread_worker:
         ...
@@ -463,7 +471,6 @@ class thread_worker:
                 **kwargs,
             )
             is_generator = isinstance(worker, GeneratorWorker)
-            self._last_arguments = args, kwargs
 
             if self._progress:
                 _desc = self._progress["desc"]
@@ -515,6 +522,7 @@ class thread_worker:
 
                 worker.started.connect(init_pbar.__get__(pbar))
 
+            # bind callbacks
             for c in self.started._iter_as_method(gui):
                 worker.started.connect(c)
             for c in self.returned._iter_as_method(gui):
@@ -523,6 +531,10 @@ class thread_worker:
                 worker.errored.connect(c)
             for c in self.finished._iter_as_method(gui):
                 worker.finished.connect(c)
+
+            # bind macro-recorder if exists
+            if self._recorder is not None:
+                worker.returned.connect(lambda _: self._recorder(gui, *args, **kwargs))
 
             if is_generator:
                 for c in self.aborted._iter_as_method(gui):
@@ -544,8 +556,6 @@ class thread_worker:
 
             _obj: PushButtonPlus | Action = gui[self._func.__name__]
             if _obj.running:
-                _obj.enabled = False
-                worker.finished.connect(lambda: setattr(_obj, "enabled", True))
                 worker.errored.connect(
                     partial(gui._error_mode.get_handler(), parent=gui)
                 )
