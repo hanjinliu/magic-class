@@ -7,7 +7,7 @@ import datetime
 from .types import Color
 from .widgets import ColorEdit
 from .widgets.sequence import ListDataView
-from .gui._base import MagicTemplate
+from ._gui._base import MagicTemplate
 
 # classes
 _datetime = Expr(Head.getattr, [datetime, datetime.datetime])

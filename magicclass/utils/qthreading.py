@@ -29,8 +29,8 @@ from magicgui.application import use_app
 from . import get_signature, move_to_screen_center
 
 if TYPE_CHECKING:
-    from ..gui import BaseGui
-    from ..gui.mgui_ext import PushButtonPlus, Action
+    from .._gui import BaseGui
+    from .._gui.mgui_ext import PushButtonPlus, Action
 
 __all__ = ["thread_worker", "Timer"]
 

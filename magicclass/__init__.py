@@ -23,8 +23,8 @@ from .wrappers import (
 )
 
 from .fields import field, vfield
-from .gui._base import wraps, defaults, MagicTemplate, PopUpMode
-from .gui.keybinding import Key
+from ._gui._base import wraps, defaults, MagicTemplate, PopUpMode
+from ._gui.keybinding import Key
 from . import widgets, utils, types
 
 from magicgui import *

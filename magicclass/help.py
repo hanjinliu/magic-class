@@ -13,10 +13,10 @@ from typing import Any, Callable, Iterator, TYPE_CHECKING
 from .widgets.containers import SplitterContainer
 from .widgets.misc import ConsoleTextEdit
 
-from .gui.mgui_ext import Action, PushButtonPlus, WidgetAction
-from .gui._base import MagicTemplate
+from ._gui.mgui_ext import Action, PushButtonPlus, WidgetAction
+from ._gui._base import MagicTemplate
 from .widgets import DraggableContainer, FreeWidget
-from .gui.class_gui import (
+from ._gui.class_gui import (
     CollapsibleClassGui,
     DraggableClassGui,
     ScrollableClassGui,
@@ -287,7 +287,7 @@ def _get_relative_pos(widget: Widget) -> tuple[int, int]:
 
 def get_keymap(ui: MagicTemplate | type[MagicTemplate]):
     from .signature import get_additional_option
-    from .gui.keybinding import as_shortcut
+    from ._gui.keybinding import as_shortcut
 
     keymap: dict[str, Callable] = {}
 

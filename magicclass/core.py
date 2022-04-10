@@ -5,7 +5,7 @@ from dataclasses import is_dataclass
 from weakref import WeakValueDictionary
 from typing import Any, TYPE_CHECKING
 
-from .gui.class_gui import (
+from ._gui.class_gui import (
     ClassGuiBase,
     ClassGui,
     FrameClassGui,
@@ -23,7 +23,7 @@ from .gui.class_gui import (
     ToolBoxClassGui,
     ListClassGui,
 )
-from .gui._base import (
+from ._gui._base import (
     PopUpMode,
     ErrorMode,
     defaults,
@@ -31,15 +31,15 @@ from .gui._base import (
     check_override,
     convert_attributes,
 )
-from .gui import ContextMenuGui, MenuGui, ToolBarGui
+from ._gui import ContextMenuGui, MenuGui, ToolBarGui
 from ._app import get_app
 from .types import WidgetType
 from . import _register  # activate type registration things.
 
 if TYPE_CHECKING:
     from .stylesheets import StyleSheet
-    from .gui import MenuGuiBase
-    from .gui._function_gui import FunctionGuiPlus
+    from ._gui import MenuGuiBase
+    from ._gui._function_gui import FunctionGuiPlus
     from .types import WidgetTypeStr, PopUpModeStr, ErrorModeStr
     from .help import HelpWidget
 
@@ -502,7 +502,7 @@ def get_function_gui(ui: MagicTemplate, name: str) -> FunctionGuiPlus:
     if not hasattr(widget, "mgui"):
         raise TypeError(f"Widget {widget} does not have FunctionGui inside it.")
 
-    from .gui._base import _build_mgui
+    from ._gui._base import _build_mgui
 
     mgui = _build_mgui(widget, func, ui)
     return mgui
