@@ -367,7 +367,6 @@ def make_gui(container: type[_C], no_margin: bool = True) -> type[_C | ClassGuiB
         def __init__(
             self: cls,
             layout: str = "vertical",
-            parent=None,
             close_on_run: bool = None,
             popup_mode: str | PopUpMode = None,
             error_mode: str | ErrorMode = None,
@@ -385,9 +384,6 @@ def make_gui(container: type[_C], no_margin: bool = True) -> type[_C | ClassGuiB
                 popup_mode=popup_mode,
                 error_mode=error_mode,
             )
-
-            if parent is not None:
-                self.parent = parent
 
             self._menubar = None
             self._toolbar = None

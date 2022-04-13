@@ -12,12 +12,12 @@ from magicgui.widgets import create_widget
 from magicgui.widgets._bases import Widget, ValueWidget
 from magicgui.widgets._bases.value_widget import UNSET
 
-from .gui.mgui_ext import Action, WidgetAction
+from ._gui.mgui_ext import Action, WidgetAction
 
 if TYPE_CHECKING:
     from magicgui.widgets._protocols import WidgetProtocol
-    from .gui._base import MagicTemplate
-    from .gui.mgui_ext import AbstractAction
+    from ._gui._base import MagicTemplate
+    from ._gui.mgui_ext import AbstractAction
 
     _M = TypeVar("_M", bound=MagicTemplate)
 
@@ -82,7 +82,7 @@ class MagicField(Field, Generic[_W, _V]):
     @contextmanager
     def _resolve_choices(self, obj: Any) -> dict[str, Any]:
         """If method is given as choices, get generate method from it."""
-        from .gui._base import _is_instance_method, _method_as_getter
+        from ._gui._base import _is_instance_method, _method_as_getter
 
         _arg_choices = self.options.get("choices", None)
         if _is_instance_method(obj, _arg_choices):
@@ -273,7 +273,7 @@ class MagicField(Field, Generic[_W, _V]):
         Callable
             Same method as input, but has updated signature.
         """
-        from .gui._base import BaseGui
+        from ._gui._base import BaseGui
 
         cls = self.default_factory
         if not (isinstance(cls, type) and issubclass(cls, BaseGui)):

@@ -72,6 +72,7 @@ class QtLogger(QtW.QTextEdit):
             cursor = self.textCursor()
             cursor.insertImage(obj)
             self.insertPlainText("\n\n")
+            self.verticalScrollBar().setValue(self.verticalScrollBar().maximum())
         else:
             raise TypeError("Wrong type.")
         self._post_append()

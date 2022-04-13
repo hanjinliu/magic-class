@@ -7,8 +7,8 @@ if sys.version_info < (3, 10):
 else:
     from typing import ParamSpec
 from functools import wraps
-from ...gui._base import BaseGui
-from ...gui import MenuGui, ToolBarGui, ClassGui
+from ..._gui._base import BaseGui
+from ..._gui import MenuGui, ToolBarGui, ClassGui
 from napari.qt.threading import GeneratorWorker, FunctionWorker
 
 

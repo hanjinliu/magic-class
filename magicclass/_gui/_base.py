@@ -1267,6 +1267,28 @@ def _inject_recorder(func: Callable, is_method: bool = True) -> Callable:
             return_annotation=sig.return_annotation,
         )
 
+    _record_macro = _define_macro_recorder(sig, _func)
+
+    if not isinstance(_func, thread_worker):
+
+        @functools_wraps(_func)
+        def _recordable(bgui: MagicTemplate, *args, **kwargs):
+            with bgui.macro.blocked():
+                out = _func.__get__(bgui)(*args, **kwargs)
+            if bgui.macro.active:
+                _record_macro(bgui, *args, **kwargs)
+            return out
+
+        if hasattr(_func, "__signature__"):
+            _recordable.__signature__ = _func.__signature__
+        return _recordable
+
+    else:
+        _func._set_recorder(_record_macro)
+        return _func
+
+
+def _define_macro_recorder(sig, func):
     if isinstance(sig, MagicMethodSignature):
         opt = sig.additional_options
         _auto_call = opt.get("auto_call", False)
@@ -1277,7 +1299,7 @@ def _inject_recorder(func: Callable, is_method: bool = True) -> Callable:
     def _record_macro(bgui: MagicTemplate, *args, **kwargs):
         bound = sig.bind(*args, **kwargs)
         kwargs = dict(bound.arguments.items())
-        expr = Expr.parse_method(bgui, _func, (), kwargs)
+        expr = Expr.parse_method(bgui, func, (), kwargs)
         if _auto_call:
             # Auto-call will cause many redundant macros. To avoid this, only the last
             # input will be recorded in magic-class.
@@ -1295,37 +1317,7 @@ def _inject_recorder(func: Callable, is_method: bool = True) -> Callable:
         bgui.macro._last_setval = None
         return None
 
-    if not isinstance(_func, thread_worker):
-
-        @functools_wraps(_func)
-        def _recordable(bgui: MagicTemplate, *args, **kwargs):
-            with bgui.macro.blocked():
-                out = _func.__get__(bgui)(*args, **kwargs)
-            if bgui.macro.active:
-                _record_macro(bgui, *args, **kwargs)
-            return out
-
-        if hasattr(_func, "__signature__"):
-            _recordable.__signature__ = _func.__signature__
-        return _recordable
-
-    else:
-        _func.returned.connect(_define_returned_callback(_func, _record_macro))
-        return _func
-
-
-def _define_returned_callback(worker: thread_worker, recorder):
-    """
-    Define a returned callback function for macro-recording of a
-    thread_worker object.
-    """
-
-    def _on_return(bgui: MagicTemplate, _=None):
-        args, kwargs = worker._last_arguments
-        recorder(bgui, *args, **kwargs)
-        return None
-
-    return _on_return
+    return _record_macro
 
 
 def convert_attributes(cls: type[_T], hide: tuple[type, ...]) -> dict[str, Any]:

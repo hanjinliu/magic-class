@@ -119,8 +119,7 @@ class PushButtonPlus(PushButton):
                 return None
 
         for k, v in options.items():
-            if v is not None:
-                setattr(self, k, v)
+            setattr(self, k, v)
         return None
 
 
@@ -286,8 +285,7 @@ class Action(AbstractAction):
                 return None
 
         for k, v in options.items():
-            if v is not None:
-                setattr(self, k, v)
+            setattr(self, k, v)
         return None
 
 

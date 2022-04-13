@@ -1,4 +1,4 @@
-__version__ = "0.6.2"
+__version__ = "0.6.3.dev0"
 
 from .core import (
     magicclass,
@@ -23,8 +23,8 @@ from .wrappers import (
 )
 
 from .fields import field, vfield
-from .gui._base import wraps, defaults, MagicTemplate, PopUpMode
-from .gui.keybinding import Key
+from ._gui._base import wraps, defaults, MagicTemplate, PopUpMode
+from ._gui.keybinding import Key
 from . import widgets, utils, types
 
 from magicgui import *
@@ -38,6 +38,7 @@ __all__ = [
     "build_help",
     "get_function_gui",
     "redo",
+    "update_widget",
     "set_options",
     "click",
     "set_design",

@@ -628,12 +628,12 @@ class PlotItem(HasViewBox):
         return self._legend
 
     @property
-    def xlabel(self):
+    def xlabel(self) -> str:
         """Label of X-axis."""
         return self._xlabel
 
     @xlabel.setter
-    def xlabel(self, label: str) -> str:
+    def xlabel(self, label: str):
         self.pgitem.setLabel(BOTTOM, label)
         self._xlabel = label
 

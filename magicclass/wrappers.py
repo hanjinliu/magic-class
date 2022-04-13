@@ -11,8 +11,8 @@ from .types import Color
 from .signature import upgrade_signature
 
 if TYPE_CHECKING:
-    from .gui import BaseGui
-    from .gui.mgui_ext import Action
+    from ._gui import BaseGui
+    from ._gui.mgui_ext import Action
     from magicgui.widgets._bases import ButtonWidget
 
 nStrings = Union[str, Iterable[str]]
@@ -107,7 +107,7 @@ def set_design(
     font_family: int = None,
     font_color: Color = None,
     background_color: Color = None,
-    visible: bool = True,
+    visible: bool = None,
 ):
     """
     Change button/action design by calling setter when the widget is created.
@@ -145,6 +145,7 @@ def set_design(
             min_height = icon_size[1]
 
     caller_options = locals()
+    caller_options = {k: v for k, v in caller_options.items() if v is not None}
 
     @overload
     def wrapper(obj: type[T]) -> type[T]:
@@ -161,8 +162,7 @@ def set_design(
             def __post_init__(self):
                 _post_init(self)
                 for k, v in caller_options.items():
-                    if v is not None:
-                        setattr(self, k, v)
+                    setattr(self, k, v)
 
             obj.__post_init__ = __post_init__
         else:
@@ -428,7 +428,7 @@ def mark_preview(function: Callable, text: str = "Preview") -> Callable[[F], F]:
 
         def _preview(*args):
             # find proper parent instance in the case of classes being nested
-            from .gui import BaseGui
+            from ._gui import BaseGui
 
             if len(args) > 0 and isinstance(args[0], BaseGui):
                 ins = args[0]
@@ -444,7 +444,7 @@ def mark_preview(function: Callable, text: str = "Preview") -> Callable[[F], F]:
                 function, additional_options={"preview": (text, _preview)}
             )
         else:
-            from .gui._function_gui import append_preview
+            from ._gui._function_gui import append_preview
 
             append_preview(function, _preview, text=text)
         return preview
