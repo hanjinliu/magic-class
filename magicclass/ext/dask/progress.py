@@ -5,7 +5,10 @@ import time
 from timeit import default_timer
 import threading
 from dask.diagnostics import Callback as DaskCallback
+from qtpy.QtCore import Qt
 from superqt.utils import FunctionWorker, GeneratorWorker
+
+from ...utils import move_to_screen_center
 from ...utils.qthreading import DefaultProgressBar, thread_worker, ProgressDict
 
 
@@ -98,7 +101,28 @@ _DASK_PROGRESS_BAR = DaskProgressBar()
 
 
 class dask_thread_worker(thread_worker):
+    """
+    Create a worker in a superqt/napari style.
 
+    This thread worker class can monitor the progress of dask computation.
+    Unlike standard ``thread_worker``, you should not specify ``total`` parameter
+    since dask progress bar knows it.
+
+    Examples
+    --------
+
+    .. code-block:: python
+
+        @magicclass
+        class A:
+            @dask_thread_worker
+            def func(self):
+                arr = da.random.random((30000, 30000))
+                da.mean(arr).compute()
+
+    """
+
+    _DASK_PROGRESS_BAR = DaskProgressBar
     _DEFAULT_TOTAL = 100
 
     def __init__(
@@ -133,3 +157,11 @@ class dask_thread_worker(thread_worker):
             return self
         else:
             return self._func(*args, **kwargs)
+
+    def _bind_callbacks(self, worker: FunctionWorker | GeneratorWorker, gui):
+        _DASK_PROGRESS_BAR.native.setParent(
+            gui.native,
+            Qt.WindowTitleHint | Qt.WindowMinimizeButtonHint | Qt.Window,
+        )
+        move_to_screen_center(_DASK_PROGRESS_BAR.native)
+        return super()._bind_callbacks(worker, gui)
