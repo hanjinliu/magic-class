@@ -351,6 +351,7 @@ class thread_worker:
     """Create a worker in a superqt/napari style."""
 
     _DEFAULT_PROGRESS_BAR = DefaultProgressBar
+    _DEFAULT_TOTAL = 0
 
     def __init__(
         self,
@@ -502,7 +503,7 @@ class thread_worker:
                     )
 
                 if not is_generator:
-                    total = 0
+                    total = self._DEFAULT_TOTAL
 
                 # create progressbar widget (or any proper widget)
                 if _pbar is None:
@@ -522,25 +523,11 @@ class thread_worker:
 
                 worker.started.connect(init_pbar.__get__(pbar))
 
-            # bind callbacks
-            for c in self.started._iter_as_method(gui):
-                worker.started.connect(c)
-            for c in self.returned._iter_as_method(gui):
-                worker.returned.connect(c)
-            for c in self.errored._iter_as_method(gui):
-                worker.errored.connect(c)
-            for c in self.finished._iter_as_method(gui):
-                worker.finished.connect(c)
+            self._bind_callbacks(worker, gui)
 
             # bind macro-recorder if exists
             if self._recorder is not None:
                 worker.returned.connect(lambda _: self._recorder(gui, *args, **kwargs))
-
-            if is_generator:
-                for c in self.aborted._iter_as_method(gui):
-                    worker.aborted.connect(c)
-                for c in self.yielded._iter_as_method(gui):
-                    worker.yielded.connect(c)
 
             if self._progress:
                 if not getattr(pbar, "visible", False):
@@ -563,6 +550,7 @@ class thread_worker:
                     worker.aborted.connect(
                         gui._error_mode.wrap_handler(Aborted.raise_, parent=gui)
                     )
+
                 worker.start()
             else:
                 # If function is called from script, some events must get processed by
@@ -582,6 +570,24 @@ class thread_worker:
         sig = self.__signature__
         params = list(sig.parameters.values())[1:]
         return sig.replace(parameters=params)
+
+    def _bind_callbacks(self, worker: FunctionWorker | GeneratorWorker, gui):
+        # bind callbacks
+        is_generator = isinstance(worker, GeneratorWorker)
+        for c in self.started._iter_as_method(gui):
+            worker.started.connect(c)
+        for c in self.returned._iter_as_method(gui):
+            worker.returned.connect(c)
+        for c in self.errored._iter_as_method(gui):
+            worker.errored.connect(c)
+        for c in self.finished._iter_as_method(gui):
+            worker.finished.connect(c)
+
+        if is_generator:
+            for c in self.aborted._iter_as_method(gui):
+                worker.aborted.connect(c)
+            for c in self.yielded._iter_as_method(gui):
+                worker.yielded.connect(c)
 
     @property
     def __signature__(self) -> inspect.Signature:
