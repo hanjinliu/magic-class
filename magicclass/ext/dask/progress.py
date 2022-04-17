@@ -6,12 +6,7 @@ from timeit import default_timer
 import threading
 from dask.diagnostics import Callback as DaskCallback
 from superqt.utils import FunctionWorker, GeneratorWorker
-from ...utils.qthreading import (
-    DefaultProgressBar,
-    thread_worker,
-    ProgressDict,
-    Callbacks,
-)
+from ...utils.qthreading import DefaultProgressBar, thread_worker, ProgressDict
 
 
 class DaskProgressBar(DefaultProgressBar, DaskCallback):
