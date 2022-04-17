@@ -31,10 +31,9 @@ from . import get_signature, move_to_screen_center
 if TYPE_CHECKING:
     from .._gui import BaseGui
     from .._gui.mgui_ext import PushButtonPlus, Action
+    from ..fields import MagicField
 
 __all__ = ["thread_worker", "Timer"]
-
-_F = TypeVar("_F", bound=Callable)
 
 
 class ProgressDict(TypedDict):
@@ -42,7 +41,7 @@ class ProgressDict(TypedDict):
 
     desc: str | Callable
     total: str | Callable
-    pbar: Any
+    pbar: ProgressBar | _SupportProgress | MagicField
 
 
 @runtime_checkable
@@ -520,6 +519,7 @@ class thread_worker:
                     pbar.max = total
                 else:
                     pbar = _pbar
+                    pbar.set_description(desc)
 
                 worker.started.connect(init_pbar.__get__(pbar))
 
