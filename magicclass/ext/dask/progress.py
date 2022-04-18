@@ -41,14 +41,15 @@ class DaskProgressBar(DefaultProgressBar, DaskCallback):
         super().__init__(max=max)
         self._dummy = Dummy()
 
-        @self._dummy.computed.connect
-        def update(tup):
-            self.pbar.value = self.max * self._frac
-            self.computed.emit(tup)
+        self._dummy.computed.connect(self._on_computed)
 
     def _start(self, dsk):
         self._state = None
         self._start_thread()
+
+    def _on_computed(self, result):
+        self.pbar.value = self.max * self._frac
+        self.computed.emit(result)
 
     def _pretask(self, key, dsk, state):
         self._state = state
