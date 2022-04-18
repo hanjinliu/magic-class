@@ -1,4 +1,4 @@
-__version__ = "0.6.3.dev0"
+__version__ = "0.6.3.dev1"
 
 from .core import (
     magicclass,
@@ -55,18 +55,3 @@ __all__ = [
     "PopUpMode",
     "Key",
 ]
-
-
-def __getattr__(name):
-    if name in ("WidgetType", "Bound", "Color", "Optional"):
-        import warnings
-        from . import types
-
-        warnings.warn(
-            f"{name} should be imported from 'magicclass.types'. This will raise "
-            "error in future version.",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        return getattr(types, name)
-    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
