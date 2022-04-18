@@ -1,21 +1,34 @@
 from __future__ import annotations
 from functools import wraps
-from typing import Callable, TYPE_CHECKING
+from typing import Any, Callable, TYPE_CHECKING
 import time
-from timeit import default_timer
-import threading
 from dask.diagnostics import Callback as DaskCallback
-from qtpy.QtCore import Qt
+from psygnal import Signal
+from qtpy import QtCore
+from qtpy.QtWidgets import QWidget
 from superqt.utils import FunctionWorker, GeneratorWorker
 
 from ...utils import move_to_screen_center
-from ...utils.qthreading import DefaultProgressBar, thread_worker, ProgressDict
+from ...utils.qthreading import (
+    Callbacks,
+    DefaultProgressBar,
+    thread_worker,
+    ProgressDict,
+)
 
 if TYPE_CHECKING:
     from ..._gui import BaseGui
 
 
+class Dummy(QWidget):
+    """Dummy widget for pyqt signal operations."""
+
+    computed = QtCore.Signal(object)
+
+
 class DaskProgressBar(DefaultProgressBar, DaskCallback):
+    computed = Signal(object)
+
     def __init__(
         self,
         max: int = 100,
@@ -25,62 +38,60 @@ class DaskProgressBar(DefaultProgressBar, DaskCallback):
         self._minimum = minimum
         self._dt = dt
         self.last_duration = 0
-        self._callbacks: list[Callable] = []
         super().__init__(max=max)
+        self._dummy = Dummy()
+
+        @self._dummy.computed.connect
+        def update(tup):
+            self.pbar.value = self.max * self._frac
+            self.computed.emit(tup)
 
     def _start(self, dsk):
         self._state = None
-        self._start_time = default_timer()
-        # Start background thread
-        self._running = True
-        self._thread_timer = threading.Thread(target=self._update_timer_label)
-        self._thread_timer.daemon = True
-        self._thread_timer.start()
+        self._start_thread()
 
     def _pretask(self, key, dsk, state):
         self._state = state
 
+    def _posttask(self, key, result, dsk, state, worker_id):
+        self._dummy.computed.emit(result)
+
     def _finish(self, dsk, state, errored):
         self._running = False
         self._thread_timer.join()
-        elapsed = default_timer() - self._start_time
+        elapsed = self._timer.sec
         self.last_duration = elapsed
+        self._frac = 1.0
+        self._timer.reset()
         if elapsed < self._minimum:
             return
-        if not errored:
-            self._draw_bar(1, elapsed)
-        else:
-            self._update_bar(elapsed)
 
     def _update_timer_label(self):
         """Background thread for updating the progress bar"""
         while self._running:
-            elapsed = default_timer() - self._start_time
+            elapsed = self._timer.sec
             if elapsed > self._minimum:
                 self._update_bar(elapsed)
-            time.sleep(self._dt)
+
+            if self._timer._running:
+                if self._timer.sec < 3600:
+                    self.time_label.value = self._timer.format_time(
+                        "{min:0>2}:{sec:0>2}"
+                    )
+                else:
+                    self.time_label.value = self._timer.format_time()
+
+            time.sleep(0.1)
 
     def _update_bar(self, elapsed):
         s = self._state
         if not s:
-            self._draw_bar(0, elapsed)
+            self._frac = 0
             return
         ndone = len(s["finished"])
         ntasks = sum(len(s[k]) for k in ["ready", "waiting", "running"]) + ndone
         if ndone < ntasks:
-            self._draw_bar(ndone / ntasks if ntasks else 0, elapsed)
-
-    def _draw_bar(self, frac, elapsed):
-        self.value = self.max * frac
-        min_all, sec = divmod(elapsed, 60)
-        hour, min = divmod(min_all, 60)
-        sec = int(sec)
-        min = int(min)
-        hour = int(hour)
-        if elapsed < 3600:
-            self.time_label.value = f"{min:0>2}:{sec:0>2}"
-        else:
-            self.time_label.value = f"{hour:0>2}:{min:0>2}:{sec:0>2}"
+            self._frac = ndone / ntasks if ntasks else 0
 
     @property
     def value(self) -> int:
@@ -102,11 +113,15 @@ class DaskProgressBar(DefaultProgressBar, DaskCallback):
 
 class dask_thread_worker(thread_worker):
     """
-    Create a worker in a superqt/napari style.
+    Create a dask's worker in a superqt/napari style.
 
     This thread worker class can monitor the progress of dask computation.
-    Unlike standard ``thread_worker``, you should not specify ``total`` parameter
-    since dask progress bar knows it.
+    Callback function connected to ``computed`` signal will get called when any one
+    of the tasks are finished. The returned value of the task will be sent to the
+    callback argument. The returned value is useful if delayed functions are computed
+    but it is not always meaningful when dask mapping functions such as ``map_blocks``
+    is used. Unlike standard ``thread_worker``, you should not specify ``total``
+    parameter since dask progress bar knows it.
 
     Examples
     --------
@@ -119,6 +134,10 @@ class dask_thread_worker(thread_worker):
             def func(self):
                 arr = da.random.random((30000, 30000))
                 da.mean(arr).compute()
+
+            @func.computed.connect
+            def _on_computed(self, _=None):
+                print("computed")
 
     """
 
@@ -133,6 +152,11 @@ class dask_thread_worker(thread_worker):
     ) -> None:
         self._pbar_widget = None
         super().__init__(f, ignore_errors=ignore_errors, progress=progress)
+        self._callback_dict_["computed"] = Callbacks()
+
+    @property
+    def computed(self) -> Callbacks[Any]:
+        return self._callback_dict_["computed"]
 
     def _create_method(self, gui: BaseGui):
         if self._progress is None:
@@ -168,13 +192,15 @@ class dask_thread_worker(thread_worker):
             desc = "Progress"
         pbar = self.pbar_widget
         pbar.max = total
-        pbar.native.setParent(
-            gui.native,
-            Qt.WindowTitleHint | Qt.WindowMinimizeButtonHint | Qt.Window,
-        )
+        pbar.native.setParent(gui.native, self.__class__._WINDOW_FLAG)
         move_to_screen_center(pbar.native)
         pbar.set_description(desc)
         return pbar
+
+    def _bind_callbacks(self, worker: FunctionWorker | GeneratorWorker, gui):
+        for c in self.computed._iter_as_method(gui):
+            self.pbar_widget.computed.connect(c)
+        return super()._bind_callbacks(worker, gui)
 
     @property
     def pbar_widget(self) -> DaskProgressBar:

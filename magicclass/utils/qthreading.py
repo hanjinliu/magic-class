@@ -251,12 +251,14 @@ class DefaultProgressBar(Container, _SupportProgress):
         self.pbar.min_width = 200
         self._timer = Timer()
 
+        super().__init__(widgets=[self.progress_label, self.pbar, cnt], labels=False)
+
+    def _start_thread(self):
         # Start background thread
         self._running = True
         self._thread_timer = threading.Thread(target=self._update_timer_label)
         self._thread_timer.daemon = True
         self._thread_timer.start()
-        super().__init__(widgets=[self.progress_label, self.pbar, cnt], labels=False)
 
     def _update_timer_label(self):
         """Background thread for updating the progress bar"""
@@ -273,6 +275,7 @@ class DefaultProgressBar(Container, _SupportProgress):
 
     def _finish(self):
         self._running = False
+        self._thread_timer.join()
 
     @property
     def paused(self) -> bool:
@@ -308,6 +311,7 @@ class DefaultProgressBar(Container, _SupportProgress):
         """Set currently running worker."""
         self._worker = worker
         self._worker.finished.connect(self._finish)
+        self._worker.started.connect(self._start_thread)
         if not isinstance(self._worker, GeneratorWorker):
             # FunctionWorker does not have yielded/aborted signals.
             self.footer[1].visible = False
@@ -371,6 +375,7 @@ class thread_worker:
 
     _DEFAULT_PROGRESS_BAR = DefaultProgressBar
     _DEFAULT_TOTAL = 0
+    _WINDOW_FLAG = Qt.WindowTitleHint | Qt.WindowMinimizeButtonHint | Qt.Window
 
     def __init__(
         self,
@@ -380,12 +385,15 @@ class thread_worker:
         progress: ProgressDict | None = None,
     ) -> None:
         self._func: Callable[_P, _R1] | None = None
-        self._started: Callbacks[None] = Callbacks()
-        self._returned: Callbacks[_R1] = Callbacks()
-        self._errored: Callbacks[Exception] = Callbacks()
-        self._yielded: Callbacks[_R1] = Callbacks()
-        self._finished: Callbacks[None] = Callbacks()
-        self._aborted: Callbacks[None] = Callbacks()
+        self._callback_dict_ = {
+            "started": Callbacks(),
+            "returned": Callbacks(),
+            "errored": Callbacks(),
+            "yielded": Callbacks(),
+            "finished": Callbacks(),
+            "aborted": Callbacks(),
+        }
+
         self._ignore_errors = ignore_errors
         self._objects: dict[int, BaseGui] = {}
         self._progressbars: dict[int, ProgressBarLike | None] = {}
@@ -647,10 +655,7 @@ class thread_worker:
             _pbar = self.__class__._DEFAULT_PROGRESS_BAR(max=total)
             if isinstance(_pbar, Widget) and _pbar.parent is None:
                 # Popup progressbar as a splashscreen if it is not a child widget.
-                _pbar.native.setParent(
-                    gui.native,
-                    Qt.WindowTitleHint | Qt.WindowMinimizeButtonHint | Qt.Window,
-                )
+                _pbar.native.setParent(gui.native, self.__class__._WINDOW_FLAG)
                 move_to_screen_center(_pbar.native)
         else:
             _pbar.max = total
@@ -665,17 +670,17 @@ class thread_worker:
     @property
     def started(self) -> Callbacks[None]:
         """Event that will be emitted on started."""
-        return self._started
+        return self._callback_dict_["started"]
 
     @property
     def returned(self) -> Callbacks[_R1]:
         """Event that will be emitted on returned."""
-        return self._returned
+        return self._callback_dict_["returned"]
 
     @property
     def errored(self) -> Callbacks[Exception]:
         """Event that will be emitted on errored."""
-        return self._errored
+        return self._callback_dict_["errored"]
 
     @property
     def yielded(self) -> Callbacks[_R1]:
@@ -685,12 +690,12 @@ class thread_worker:
                 f"Worker of non-generator function {self._func!r} does not have "
                 "yielded signal."
             )
-        return self._yielded
+        return self._callback_dict_["yielded"]
 
     @property
     def finished(self) -> Callbacks[None]:
         """Event that will be emitted on finished."""
-        return self._finished
+        return self._callback_dict_["finished"]
 
     @property
     def aborted(self) -> Callbacks[None]:
@@ -700,7 +705,7 @@ class thread_worker:
                 f"Worker of non-generator function {self._func!r} does not have "
                 "aborted signal."
             )
-        return self._aborted
+        return self._callback_dict_["aborted"]
 
 
 def init_pbar(pbar: ProgressBarLike):
