@@ -19,10 +19,16 @@ if TYPE_CHECKING:
     from ..._gui import BaseGui
 
 
-class Dummy(QtCore.QObject):
+class QtSignal(QtCore.QObject):
     """Dummy widget for pyqt signal operations."""
 
-    computed = QtCore.Signal(object)
+    signal = QtCore.Signal(object)
+
+    def connect(self, slot: Callable):
+        return self.signal.connect(slot)
+
+    def emit(self, val: Any = None):
+        return self.signal.emit(val)
 
 
 class DaskProgressBar(DefaultProgressBar, DaskCallback):
@@ -42,24 +48,37 @@ class DaskProgressBar(DefaultProgressBar, DaskCallback):
         self.last_duration = 0
         super().__init__(max=max)
         self.footer[1].visible = self.footer[2].visible = False
-        self._dummy = Dummy()
-        self._dummy.computed.connect(self._on_computed)
+        self._computed_signal = QtSignal()
+        self._time_signal = QtSignal()
+        self._computed_signal.connect(self._on_computed)
+        self._time_signal.connect(self._on_timer_updated)
 
     def _start(self, dsk):
         self._state = None
         self._frac = 0.0
         self.last_duration = 0
         self._start_thread()
+        return None
 
     def _on_computed(self, result):
         self.pbar.value = self.max * self._frac
         self.computed.emit(result)
+        return None
+
+    def _on_timer_updated(self, _=None):
+        if self._timer.sec < 3600:
+            self.time_label.value = self._timer.format_time("{min:0>2}:{sec:0>2}")
+        else:
+            self.time_label.value = self._timer.format_time()
+        return None
 
     def _pretask(self, key, dsk, state):
         self._state = state
+        return None
 
     def _posttask(self, key, result, dsk, state, worker_id):
-        self._dummy.computed.emit(result)
+        self._computed_signal.emit(result)
+        return None
 
     def _finish(self, dsk, state, errored):
         self._frac = 1.0
@@ -68,8 +87,7 @@ class DaskProgressBar(DefaultProgressBar, DaskCallback):
         elapsed = self._timer.sec
         self.last_duration = elapsed
         self._timer.reset()
-        if elapsed < self._minimum:
-            return
+        return None
 
     def _update_timer_label(self):
         """Background thread for updating the progress bar"""
@@ -84,16 +102,11 @@ class DaskProgressBar(DefaultProgressBar, DaskCallback):
                     ntasks = (
                         sum(len(s[k]) for k in ["ready", "waiting", "running"]) + ndone
                     )
-                    if ndone <= ntasks:
+                    if ndone < ntasks:
                         self._frac = ndone / ntasks if ntasks else 0.0
 
             if self._timer._running:
-                if self._timer.sec < 3600:
-                    self.time_label.value = self._timer.format_time(
-                        "{min:0>2}:{sec:0>2}"
-                    )
-                else:
-                    self.time_label.value = self._timer.format_time()
+                self._time_signal.emit()
 
             time.sleep(0.1)
 
