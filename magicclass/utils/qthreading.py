@@ -271,6 +271,7 @@ class DefaultProgressBar(Container, _SupportProgress):
         self._thread_timer.daemon = True
         self._thread_timer.start()
         self._timer.start()
+        return None
 
     def _update_timer_label(self):
         """Background thread for updating the progress bar"""
@@ -279,10 +280,12 @@ class DefaultProgressBar(Container, _SupportProgress):
                 self._time_signal.emit()
 
             time.sleep(0.1)
+        return None
 
     def _finish(self):
         self._running = False
         self._thread_timer.join()
+        return None
 
     @property
     def paused(self) -> bool:

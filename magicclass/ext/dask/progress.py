@@ -54,6 +54,7 @@ class DaskProgressBar(DefaultProgressBar, DaskCallback):
 
     def _posttask(self, key, result, dsk, state, worker_id):
         self._computed_signal.emit(result)
+        self._time_signal.emit()
         return None
 
     def _finish(self, dsk, state, errored):
