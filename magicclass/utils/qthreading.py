@@ -1,4 +1,5 @@
 from __future__ import annotations
+import threading
 import time
 import inspect
 from functools import partial, wraps
@@ -249,7 +250,29 @@ class DefaultProgressBar(Container, _SupportProgress):
         self.footer = cnt
         self.pbar.min_width = 200
         self._timer = Timer()
+
+        # Start background thread
+        self._running = True
+        self._thread_timer = threading.Thread(target=self._update_timer_label)
+        self._thread_timer.daemon = True
+        self._thread_timer.start()
         super().__init__(widgets=[self.progress_label, self.pbar, cnt], labels=False)
+
+    def _update_timer_label(self):
+        """Background thread for updating the progress bar"""
+        while self._running:
+            if self._timer._running:
+                if self._timer.sec < 3600:
+                    self.time_label.value = self._timer.format_time(
+                        "{min:0>2}:{sec:0>2}"
+                    )
+                else:
+                    self.time_label.value = self._timer.format_time()
+
+            time.sleep(0.1)
+
+    def _finish(self):
+        self._running = False
 
     @property
     def paused(self) -> bool:
@@ -262,11 +285,6 @@ class DefaultProgressBar(Container, _SupportProgress):
     @value.setter
     def value(self, v):
         self.pbar.value = v
-        # update timer label
-        if self._timer.sec < 3600:
-            self.time_label.value = self._timer.format_time("{min:0>2}:{sec:0>2}")
-        else:
-            self.time_label.value = self._timer.format_time()
 
     @property
     def max(self) -> int:
@@ -289,9 +307,11 @@ class DefaultProgressBar(Container, _SupportProgress):
     def set_worker(self, worker: GeneratorWorker | FunctionWorker):
         """Set currently running worker."""
         self._worker = worker
+        self._worker.finished.connect(self._finish)
         if not isinstance(self._worker, GeneratorWorker):
             # FunctionWorker does not have yielded/aborted signals.
-            self.footer.visible = False
+            self.footer[1].visible = False
+            self.footer[2].visible = False
             return None
         # initialize abort_button
         self.abort_button.text = "Abort"

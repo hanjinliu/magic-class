@@ -33,7 +33,7 @@ class DaskProgressBar(DefaultProgressBar, DaskCallback):
         self._start_time = default_timer()
         # Start background thread
         self._running = True
-        self._thread_timer = threading.Thread(target=self._timer_func)
+        self._thread_timer = threading.Thread(target=self._update_timer_label)
         self._thread_timer.daemon = True
         self._thread_timer.start()
 
@@ -52,7 +52,7 @@ class DaskProgressBar(DefaultProgressBar, DaskCallback):
         else:
             self._update_bar(elapsed)
 
-    def _timer_func(self):
+    def _update_timer_label(self):
         """Background thread for updating the progress bar"""
         while self._running:
             elapsed = default_timer() - self._start_time
@@ -71,6 +71,7 @@ class DaskProgressBar(DefaultProgressBar, DaskCallback):
             self._draw_bar(ndone / ntasks if ntasks else 0, elapsed)
 
     def _draw_bar(self, frac, elapsed):
+        self.value = self.max * frac
         min_all, sec = divmod(elapsed, 60)
         hour, min = divmod(min_all, 60)
         sec = int(sec)
@@ -80,7 +81,6 @@ class DaskProgressBar(DefaultProgressBar, DaskCallback):
             self.time_label.value = f"{min:0>2}:{sec:0>2}"
         else:
             self.time_label.value = f"{hour:0>2}:{min:0>2}:{sec:0>2}"
-        self.value = self.max * frac
 
     @property
     def value(self) -> int:
