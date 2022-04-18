@@ -485,19 +485,26 @@ class thread_worker:
         self._objects[gui_id] = _create_worker  # cache
         return _create_worker
 
+    def _create_qt_worker(
+        self, gui, *args, **kwargs
+    ) -> FunctionWorker | GeneratorWorker:
+        """Create a worker object."""
+        worker = create_worker(
+            self._func.__get__(gui),
+            _ignore_errors=self._ignore_errors,
+            _start_thread=False,
+            *args,
+            **kwargs,
+        )
+        return worker
+
     def _create_method(self, gui: BaseGui):
         from ..fields import MagicField
 
         @wraps(self)
         def _create_worker(*args, **kwargs):
             # create a worker object
-            worker: FunctionWorker | GeneratorWorker = create_worker(
-                self._func.__get__(gui),
-                _ignore_errors=self._ignore_errors,
-                _start_thread=False,
-                *args,
-                **kwargs,
-            )
+            worker = self._create_qt_worker(gui, *args, **kwargs)
             is_generator = isinstance(worker, GeneratorWorker)
 
             if self._progress:
@@ -637,19 +644,19 @@ class thread_worker:
         gui_id = id(gui)
         if gui_id in self._progressbars:
             _pbar = self._progressbars[gui_id]
-
-        for name, attr in gui.__class__.__dict__.items():
-            if isinstance(attr, MagicField):
-                attr = attr.get_widget(gui)
-            if isinstance(attr, ProgressBar):
-                _pbar = self._progressbars[gui_id] = attr
-                if desc is None:
-                    desc = name
-                break
         else:
-            _pbar = self._progressbars[gui_id] = None
-            if desc is None:
-                desc = "Progress"
+            for name, attr in gui.__class__.__dict__.items():
+                if isinstance(attr, MagicField):
+                    attr = attr.get_widget(gui)
+                if isinstance(attr, ProgressBar):
+                    _pbar = self._progressbars[gui_id] = attr
+                    if desc is None:
+                        desc = name
+                    break
+            else:
+                _pbar = self._progressbars[gui_id] = None
+                if desc is None:
+                    desc = "Progress"
 
         if _pbar is None:
             _pbar = self.__class__._DEFAULT_PROGRESS_BAR(max=total)

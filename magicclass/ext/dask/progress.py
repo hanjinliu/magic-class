@@ -5,8 +5,7 @@ import time
 from dask.diagnostics import Callback as DaskCallback
 from psygnal import Signal
 from qtpy import QtCore
-from qtpy.QtWidgets import QWidget
-from superqt.utils import FunctionWorker, GeneratorWorker
+from superqt.utils import FunctionWorker, GeneratorWorker, create_worker
 
 from ...utils import move_to_screen_center
 from ...utils.qthreading import (
@@ -20,7 +19,7 @@ if TYPE_CHECKING:
     from ..._gui import BaseGui
 
 
-class Dummy(QWidget):
+class Dummy(QtCore.QObject):
     """Dummy widget for pyqt signal operations."""
 
     computed = QtCore.Signal(object)
@@ -142,6 +141,7 @@ class dask_thread_worker(thread_worker):
 
     """
 
+    _DEFAULT_PROGRESS_BAR = DaskProgressBar
     _DEFAULT_TOTAL = 100
 
     def __init__(
@@ -162,49 +162,44 @@ class dask_thread_worker(thread_worker):
     def _create_method(self, gui: BaseGui):
         if self._progress is None:
             self._progress = {
-                "pbar": self.pbar_widget,
+                "pbar": None,
                 "desc": "Progress",
                 "total": 100,
             }
         else:
-            self._progress["pbar"] = self.pbar_widget
+            self._progress["pbar"] = None
 
         return super()._create_method(gui)
 
-    def __call__(self, *args, **kwargs):
-        if self._func is None:
-            f = args[0]
-
-            @wraps(f)
-            def _wrapped(*args, **kwargs):
-                with self.pbar_widget:
-                    out = f(*args, **kwargs)
-                return out
-
-            self._func = _wrapped
-            wraps(f)(self)  # NOTE: __name__ etc. are updated here.
-            return self
+    def _create_qt_worker(
+        self, gui, *args, **kwargs
+    ) -> FunctionWorker | GeneratorWorker:
+        gui_id = id(gui)
+        if gui_id in self._progressbars:
+            pbar = self._progressbars[gui_id]
         else:
-            return self._func(*args, **kwargs)
+            pbar = self._DEFAULT_PROGRESS_BAR(max=self._DEFAULT_TOTAL)
+            self._progressbars[gui_id] = pbar
+            for c in self.computed._iter_as_method(gui):
+                pbar.computed.connect(c)
+            pbar.native.setParent(gui.native, self.__class__._WINDOW_FLAG)
+            move_to_screen_center(pbar.native)
 
-    def _find_progressbar(self, gui: BaseGui, desc: str | None = None, total: int = 0):
-        """Find available progressbar. Create a new one if not found."""
-        if desc is None:
-            desc = "Progress"
-        pbar = self.pbar_widget
-        pbar.max = total
-        pbar.native.setParent(gui.native, self.__class__._WINDOW_FLAG)
-        move_to_screen_center(pbar.native)
-        pbar.set_description(desc)
-        return pbar
+        worker = create_worker(
+            self._define_function(pbar).__get__(gui),
+            _ignore_errors=self._ignore_errors,
+            _start_thread=False,
+            *args,
+            **kwargs,
+        )
 
-    def _bind_callbacks(self, worker: FunctionWorker | GeneratorWorker, gui):
-        for c in self.computed._iter_as_method(gui):
-            self.pbar_widget.computed.connect(c)
-        return super()._bind_callbacks(worker, gui)
+        return worker
 
-    @property
-    def pbar_widget(self) -> DaskProgressBar:
-        if self._pbar_widget is None:
-            self._pbar_widget = DaskProgressBar()
-        return self._pbar_widget
+    def _define_function(self, pbar):
+        @wraps(self._func)
+        def _wrapped(*args, **kwargs):
+            with pbar:
+                out = self._func(*args, **kwargs)
+            return out
+
+        return _wrapped
