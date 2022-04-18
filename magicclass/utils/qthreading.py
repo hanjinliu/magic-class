@@ -1,6 +1,7 @@
 from __future__ import annotations
 import threading
 import time
+from timeit import default_timer
 import inspect
 from functools import partial, wraps
 from typing import (
@@ -28,6 +29,7 @@ from magicgui.widgets import ProgressBar, Container, Widget, PushButton, Label
 from magicgui.application import use_app
 
 from . import get_signature, move_to_screen_center
+from .qtsignal import QtSignal
 
 if TYPE_CHECKING:
     from .._gui import BaseGui
@@ -202,7 +204,7 @@ class Timer:
 
     def start(self):
         """Start timer."""
-        self._t0 = time.time()
+        self._t0 = default_timer()
         self._running = True
 
     def stop(self) -> float:
@@ -213,14 +215,14 @@ class Timer:
     def lap(self) -> float:
         """Return lap time."""
         if self._running:
-            now = time.time()
+            now = default_timer()
             self._t_total += now - self._t0
             self._t0 = now
         return self._t_total
 
     def reset(self):
         """Reset timer."""
-        self._t0 = time.time()
+        self._t0 = default_timer()
         self._t_total = 0.0
         self._running = False
         return None
@@ -250,8 +252,17 @@ class DefaultProgressBar(Container, _SupportProgress):
         self.footer = cnt
         self.pbar.min_width = 200
         self._timer = Timer()
+        self._time_signal = QtSignal()
+        self._time_signal.connect(self._on_timer_updated)
 
         super().__init__(widgets=[self.progress_label, self.pbar, cnt], labels=False)
+
+    def _on_timer_updated(self, _=None):
+        if self._timer.sec < 3600:
+            self.time_label.value = self._timer.format_time("{min:0>2}:{sec:0>2}")
+        else:
+            self.time_label.value = self._timer.format_time()
+        return None
 
     def _start_thread(self):
         # Start background thread
@@ -265,12 +276,7 @@ class DefaultProgressBar(Container, _SupportProgress):
         """Background thread for updating the progress bar"""
         while self._running:
             if self._timer._running:
-                if self._timer.sec < 3600:
-                    self.time_label.value = self._timer.format_time(
-                        "{min:0>2}:{sec:0>2}"
-                    )
-                else:
-                    self.time_label.value = self._timer.format_time()
+                self._time_signal.emit()
 
             time.sleep(0.1)
 

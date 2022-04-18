@@ -17,3 +17,4 @@ from .qt import (
 )
 
 from .qthreading import thread_worker, Timer
+from .qtsignal import QtSignal
