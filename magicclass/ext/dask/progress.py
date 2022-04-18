@@ -26,6 +26,8 @@ class Dummy(QtCore.QObject):
 
 
 class DaskProgressBar(DefaultProgressBar, DaskCallback):
+    """A progress bar widget for dask computation."""
+
     computed = Signal(object)
 
     def __init__(
@@ -36,14 +38,17 @@ class DaskProgressBar(DefaultProgressBar, DaskCallback):
     ):
         self._minimum = minimum
         self._dt = dt
+        self._frac = 0.0
         self.last_duration = 0
         super().__init__(max=max)
+        self.footer[1].visible = self.footer[2].visible = False
         self._dummy = Dummy()
-
         self._dummy.computed.connect(self._on_computed)
 
     def _start(self, dsk):
         self._state = None
+        self._frac = 0.0
+        self.last_duration = 0
         self._start_thread()
 
     def _on_computed(self, result):
@@ -57,11 +62,11 @@ class DaskProgressBar(DefaultProgressBar, DaskCallback):
         self._dummy.computed.emit(result)
 
     def _finish(self, dsk, state, errored):
+        self._frac = 1.0
         self._running = False
         self._thread_timer.join()
         elapsed = self._timer.sec
         self.last_duration = elapsed
-        self._frac = 1.0
         self._timer.reset()
         if elapsed < self._minimum:
             return
@@ -71,7 +76,16 @@ class DaskProgressBar(DefaultProgressBar, DaskCallback):
         while self._running:
             elapsed = self._timer.sec
             if elapsed > self._minimum:
-                self._update_bar(elapsed)
+                s = self._state
+                if not s:
+                    self._frac = 0.0
+                else:
+                    ndone = len(s["finished"])
+                    ntasks = (
+                        sum(len(s[k]) for k in ["ready", "waiting", "running"]) + ndone
+                    )
+                    if ndone <= ntasks:
+                        self._frac = ndone / ntasks if ntasks else 0.0
 
             if self._timer._running:
                 if self._timer.sec < 3600:
@@ -82,16 +96,6 @@ class DaskProgressBar(DefaultProgressBar, DaskCallback):
                     self.time_label.value = self._timer.format_time()
 
             time.sleep(0.1)
-
-    def _update_bar(self, elapsed):
-        s = self._state
-        if not s:
-            self._frac = 0
-            return
-        ndone = len(s["finished"])
-        ntasks = sum(len(s[k]) for k in ["ready", "waiting", "running"]) + ndone
-        if ndone < ntasks:
-            self._frac = ndone / ntasks if ntasks else 0
 
     @property
     def value(self) -> int:
@@ -151,7 +155,6 @@ class dask_thread_worker(thread_worker):
         ignore_errors: bool = False,
         progress: ProgressDict | bool | None = True,
     ) -> None:
-        self._pbar_widget = None
         super().__init__(f, ignore_errors=ignore_errors, progress=progress)
         self._callback_dict_["computed"] = Callbacks()
 

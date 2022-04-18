@@ -238,7 +238,7 @@ class DefaultProgressBar(Container, _SupportProgress):
     def __init__(self, max: int = 1):
         self.progress_label = Label(value="Progress")
         self.pbar = ProgressBar(value=0, max=max)
-        self.time_label = Label(value="")
+        self.time_label = Label(value="00:00")
         self.pause_button = PushButton(text="Pause")
         self.abort_button = PushButton(text="Abort")
         cnt = Container(
@@ -259,6 +259,7 @@ class DefaultProgressBar(Container, _SupportProgress):
         self._thread_timer = threading.Thread(target=self._update_timer_label)
         self._thread_timer.daemon = True
         self._thread_timer.start()
+        self._timer.start()
 
     def _update_timer_label(self):
         """Background thread for updating the progress bar"""
@@ -296,11 +297,6 @@ class DefaultProgressBar(Container, _SupportProgress):
     @max.setter
     def max(self, v):
         self.pbar.max = v
-
-    def show(self, run=False):
-        super().show(run=run)
-        self._timer.start()
-        return self
 
     def set_description(self, desc: str):
         """Set description as the label of the progressbar."""
