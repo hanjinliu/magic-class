@@ -32,14 +32,20 @@ class DaskProgressBar(DefaultProgressBar, DaskCallback):
         self._minimum = minimum
         self._dt = dt
         self._frac = 0.0
+        self._n_computation = 0
         super().__init__(max=max)
         self.footer[1].visible = self.footer[2].visible = False
         self._computed_signal = QtSignal()
         self._computed_signal.connect(self._on_computed)
 
+    def __enter__(self):
+        self._n_computation = 0
+        return super().__enter__()
+
     def _start(self, dsk):
         self._state = None
         self._frac = 0.0
+        self._n_computation += 1
         self._start_thread()
         return None
 
@@ -62,6 +68,19 @@ class DaskProgressBar(DefaultProgressBar, DaskCallback):
         self._running = False
         self._thread_timer.join()
         self._timer.reset()
+        return None
+
+    def _on_timer_updated(self, _=None):
+        if self._n_computation > 1:
+            _prefix = f"({self._n_computation}) "
+        else:
+            _prefix = ""
+        if self._timer.sec < 3600:
+            self.time_label.value = _prefix + self._timer.format_time(
+                "{min:0>2}:{sec:0>2}"
+            )
+        else:
+            self.time_label.value = _prefix + self._timer.format_time()
         return None
 
     def _update_timer_label(self):
