@@ -66,6 +66,7 @@ class DaskProgressBar(DefaultProgressBar, DaskCallback):
     def _finish(self, dsk, state, errored):
         self._frac = 1.0
         self._running = False
+        self.pbar.value = self.max
         self._thread_timer.join()
         self._timer.reset()
         return None
