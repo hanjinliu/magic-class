@@ -31,6 +31,7 @@ class MacroEdit(FreeWidget):
 
     @property
     def value(self):
+        """Get macro text."""
         return self.textedit.value
 
     @value.setter
@@ -39,6 +40,7 @@ class MacroEdit(FreeWidget):
 
     @property
     def synchronize(self):
+        """Update macro text in real time if true."""
         return self._synchronize
 
     @synchronize.setter
@@ -49,11 +51,13 @@ class MacroEdit(FreeWidget):
         self._synchronize = value
 
     def load(self, path: str):
+        """Load macro text from a file."""
         path = str(path)
         with open(path) as f:
             self.value = f.read()
 
     def save(self, path: str):
+        """Save current macro text."""
         path = str(path)
         with open(path, mode="w") as f:
             f.write(self.value)
