@@ -45,6 +45,7 @@ class DaskProgressBar(DefaultProgressBar, DaskCallback):
     def _start(self, dsk):
         self._state = None
         self._frac = 0.0
+        self.pbar.value = 0
         self._n_computation += 1
         self._start_thread()
         return None
