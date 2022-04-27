@@ -3,9 +3,12 @@ from dask.diagnostics import ResourceProfiler
 from dask.diagnostics.profile import _Tracker, import_required, current_process
 from timeit import default_timer
 from time import sleep
+import threading
 from psygnal import Signal
 from magicgui.widgets import Container, LineEdit
 import datetime
+
+from ...utils import QtSignal
 
 # WIP!!
 
@@ -18,23 +21,32 @@ class DaskResourceProfiler(ResourceProfiler, Container):
         self._cpu = LineEdit(value="--- %")
         Container.__init__(self, widgets=[self._tic, self._mem, self._cpu], **kwargs)
 
+        self._running = True
+        self._signal = QtSignal()
+        self._signal.connect(self._update_display)
+
     def clear(self):
         ResourceProfiler.clear(self)
 
     def _start_collect(self):
         if not self._is_running():
             self._tracker = EventedTracker(self._dt)
-
-            def _c(a):
-                self._update_display(a)
-
-            self._tracker.callback = _c
             self._tracker.start()
+            self._thread_timer = threading.Thread(target=self._thread_target)
+            self._thread_timer.daemon = True
+            self._thread_timer.start()
+
         self._tracker.parent_conn.send("collect")
 
-    # def _stop_collect(self):
-    #     super()._stop_collect()
-    #     self._tracker.changed.disconnect(self._update_display)
+    def _stop_collect(self):
+        super()._stop_collect()
+        self._running = False
+        self._thread_timer.join()
+
+    def _thread_target(self):
+        while self._running:
+            self._signal.emit(self._tracker._last_data)
+            sleep(1)
 
     def _update_display(self, tp: tuple[float, float, float]):
         tic, mem, cpu = tp
@@ -45,6 +57,8 @@ class DaskResourceProfiler(ResourceProfiler, Container):
 
 
 class EventedTracker(_Tracker):
+    _last_data = (0.0, 0.0, 0.0)
+
     def run(self):
 
         psutil = import_required(
@@ -77,8 +91,8 @@ class EventedTracker(_Tracker):
                             mem += mem2
                             cpu += cpu2
                     _new_data = (tic, mem / 1e6, cpu)
+                    self._last_data = _new_data
                     data.append(_new_data)
-                    self.callback(_new_data)
                     sleep(self.dt)
             elif msg == "send_data":
                 self.child_conn.send(data)

@@ -40,12 +40,12 @@ class DaskProgressBar(DefaultProgressBar, DaskCallback):
 
     def __enter__(self):
         self._n_computation = 0
+        self._on_timer_updated()
         return super().__enter__()
 
     def _start(self, dsk):
         self._state = None
         self._frac = 0.0
-        self.pbar.value = 0
         self._n_computation += 1
         self._start_thread()
         return None
