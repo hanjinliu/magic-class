@@ -1,7 +1,6 @@
 from __future__ import annotations
 from functools import wraps
 from typing import Any, Callable, TYPE_CHECKING
-import time
 from dask.diagnostics import Callback as DaskCallback
 from psygnal import Signal
 from superqt.utils import FunctionWorker, GeneratorWorker, create_worker
@@ -51,6 +50,14 @@ class DaskProgressBar(DefaultProgressBar, DaskCallback):
         return None
 
     def _on_computed(self, result):
+        s = self._state
+        if not s:
+            self._frac = 0.0
+        else:
+            ndone = len(s["finished"])
+            ntasks = sum(len(s[k]) for k in ["ready", "waiting", "running"]) + ndone
+            if ndone <= ntasks:
+                self._frac = ndone / ntasks if ntasks else 0.0
         self.pbar.value = self.max * self._frac
         self.computed.emit(result)
         return None
@@ -67,7 +74,6 @@ class DaskProgressBar(DefaultProgressBar, DaskCallback):
     def _finish(self, dsk, state, errored):
         self._frac = 1.0
         self._running = False
-        self.pbar.value = self.max
         self._thread_timer.join()
         self._timer.reset()
         return None
@@ -84,34 +90,6 @@ class DaskProgressBar(DefaultProgressBar, DaskCallback):
         else:
             self.time_label.value = _prefix + self._timer.format_time()
         return None
-
-    def _update_timer_label(self):
-        """Background thread for updating the progress bar"""
-        while self._running:
-            if self._timer.sec > self._minimum:
-                s = self._state
-                if not s:
-                    self._frac = 0.0
-                else:
-                    ndone = len(s["finished"])
-                    ntasks = (
-                        sum(len(s[k]) for k in ["ready", "waiting", "running"]) + ndone
-                    )
-                    if ndone < ntasks:
-                        self._frac = ndone / ntasks if ntasks else 0.0
-
-            if self._timer._running:
-                self._time_signal.emit()
-
-            time.sleep(0.1)
-
-    @property
-    def value(self) -> int:
-        return self.pbar.value
-
-    @value.setter
-    def value(self, v):
-        self.pbar.value = v
 
     def set_worker(self, worker: GeneratorWorker | FunctionWorker):
         """Set currently running worker."""

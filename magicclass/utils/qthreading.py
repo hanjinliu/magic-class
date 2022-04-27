@@ -18,12 +18,7 @@ from typing import (
 )
 from typing_extensions import TypedDict, ParamSpec
 
-try:
-    from superqt.utils import create_worker, GeneratorWorker, FunctionWorker
-except ImportError as e:  # pragma: no cover
-    msg = f"{e}. To use magicclass with threading please `pip install superqt`"
-    raise type(e)(msg)
-
+from superqt.utils import create_worker, GeneratorWorker, FunctionWorker
 from qtpy.QtCore import Qt
 from magicgui.widgets import ProgressBar, Container, Widget, PushButton, Label
 from magicgui.application import use_app
