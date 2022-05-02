@@ -1,7 +1,8 @@
 from __future__ import annotations
 from contextlib import contextmanager
+from types import GenericAlias
 from typing import Any, TYPE_CHECKING, Callable, TypeVar, overload, Generic, Union
-from typing_extensions import Literal
+from typing_extensions import Literal, _AnnotatedAlias
 from pathlib import Path
 import datetime
 import sys
@@ -172,7 +173,7 @@ class MagicField(Field, Generic[_W, _V]):
         ValueError
             If there is not enough information to build a widget.
         """
-        if self.default_factory is not MISSING and issubclass(
+        if self.default_factory is not MISSING and _is_subclass(
             self.default_factory, Widget
         ):
             widget = self.default_factory(**self.options)
@@ -296,7 +297,7 @@ class MagicField(Field, Generic[_W, _V]):
 
     @property
     def widget_type(self) -> str:
-        if self.default_factory is not MISSING and issubclass(
+        if self.default_factory is not MISSING and _is_subclass(
             self.default_factory, Widget
         ):
             wcls = self.default_factory
@@ -582,7 +583,14 @@ def _get_field(
     if "name" in options.keys():
         name = options["name"]
     kwargs = dict(metadata=metadata, name=name, record=record)
-    if isinstance(obj, type):
+    if isinstance(obj, (type, GenericAlias)):
+        f = field_class(default_factory=obj, **kwargs)
+    elif isinstance(obj, _AnnotatedAlias):
+        from magicgui.signature import split_annotated_type
+
+        _, widget_option = split_annotated_type(obj)
+        widget_option.pop("annotation", None)
+        kwargs["metadata"].update(widget_option)
         f = field_class(default_factory=obj, **kwargs)
     elif obj is MISSING:
         f = field_class(**kwargs)
@@ -590,3 +598,10 @@ def _get_field(
         f = field_class(default=obj, **kwargs)
 
     return f
+
+
+def _is_subclass(obj: Any, class_or_tuple):
+    try:
+        return issubclass(obj, class_or_tuple)
+    except Exception:
+        return False
