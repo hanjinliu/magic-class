@@ -1,6 +1,7 @@
 from magicclass import magicclass, magicmenu, magictoolbar, field, vfield, set_design
 from magicclass.types import Optional
 from magicgui import widgets
+from typing import Tuple
 from pathlib import Path
 
 def test_field_types():
@@ -346,8 +347,9 @@ def test_get_value_field_widget():
     assert type(ui["y_1"]) is widgets.SpinBox
 
 def test_generic_and_annotated():
-    w0 = field(tuple[int, str]).to_widget()
+    w0 = field(Tuple[int, str]).to_widget()
     w1 = field(Optional[int], options={"text": "XXX", "options": {"max": 10}}).to_widget()
+    w2 = field(Optional[Tuple[int, str]]).to_widget()
 
     assert w0.widget_type == "TupleEdit"
     assert w1.widget_type == "OptionalWidget"
@@ -355,3 +357,4 @@ def test_generic_and_annotated():
     assert w0[1].widget_type == "LineEdit"
     assert w1[0].text == "XXX"
     assert w1[1].max == 10
+    assert w2[1].widget_type == "TupleEdit"

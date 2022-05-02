@@ -1,7 +1,15 @@
 from __future__ import annotations
 from contextlib import contextmanager
-from types import GenericAlias
-from typing import Any, TYPE_CHECKING, Callable, TypeVar, overload, Generic, Union
+from typing import (
+    Any,
+    TYPE_CHECKING,
+    Callable,
+    TypeVar,
+    overload,
+    Generic,
+    Union,
+    _BaseGenericAlias,
+)
 from typing_extensions import Literal, _AnnotatedAlias
 from pathlib import Path
 import datetime
@@ -178,9 +186,12 @@ class MagicField(Field, Generic[_W, _V]):
         ):
             widget = self.default_factory(**self.options)
         else:
-            widget = create_widget(
-                value=self.value, annotation=self.annotation, **self.metadata
-            )
+            if "annotation" not in self.metadata.keys():
+                widget = create_widget(
+                    value=self.value, annotation=self.annotation, **self.metadata
+                )
+            else:
+                widget = create_widget(value=self.value, **self.metadata)
         widget.name = self.name
         return widget
 
@@ -583,14 +594,12 @@ def _get_field(
     if "name" in options.keys():
         name = options["name"]
     kwargs = dict(metadata=metadata, name=name, record=record)
-    if isinstance(obj, (type, GenericAlias)):
-        f = field_class(default_factory=obj, **kwargs)
-    elif isinstance(obj, _AnnotatedAlias):
-        from magicgui.signature import split_annotated_type
+    if isinstance(obj, (type, _BaseGenericAlias)):
+        if isinstance(obj, _AnnotatedAlias):
+            from magicgui.signature import split_annotated_type
 
-        _, widget_option = split_annotated_type(obj)
-        widget_option.pop("annotation", None)
-        kwargs["metadata"].update(widget_option)
+            _, widget_option = split_annotated_type(obj)
+            kwargs["metadata"].update(widget_option)
         f = field_class(default_factory=obj, **kwargs)
     elif obj is MISSING:
         f = field_class(**kwargs)
