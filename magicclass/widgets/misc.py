@@ -69,15 +69,22 @@ class OptionalWidget(Container):
         self._checkbox = CheckBox(text=text, value=True)
 
         if inner_widget is None:
+            annot = kwargs.get("annotation", None)
+            if annot is None:
+                annot_arg = type(value)
+            else:
+                args = get_args(annot)
+                if len(args) > 0:
+                    annot_arg = args[0]
+                else:
+                    annot_arg = type(value)
 
-            annot = get_args(kwargs["annotation"])[0]
-
-            if isinstance(annot, _AnnotatedAlias):
-                annot, metadata = split_annotated_type(annot)
+            if isinstance(annot_arg, _AnnotatedAlias):
+                annot_arg, metadata = split_annotated_type(annot_arg)
                 options.update(metadata)
 
             self._inner_value_widget = create_widget(
-                annotation=annot,
+                annotation=annot_arg,
                 options=options,
             )
 
