@@ -1029,45 +1029,6 @@ def wraps(template: Callable | inspect.Signature) -> Callable[[_C], _C]:
     return wrapper
 
 
-def _raise_error_in_msgbox(_func: Callable, parent: BaseGui = None):
-    """If exception happened inside function, then open a message box."""
-
-    def wrapped_func(*args, **kwargs):
-        try:
-            out = _func(*args, **kwargs)
-        except Exception as e:
-            from ._message_box import QtErrorMessageBox
-
-            QtErrorMessageBox.raise_(e, parent=parent.native)
-            out = e
-        return out
-
-    return wrapped_func
-
-
-def _print_error(_func: Callable, parent: BaseGui = None):
-    """If exception happened inside function, then print it."""
-
-    def wrapped_func(*args, **kwargs):
-        try:
-            out = _func(*args, **kwargs)
-        except Exception as e:
-            print(f"{e.__class__.__name__}: {e}")
-            out = e
-        return out
-
-    return wrapped_func
-
-
-def _identity_wrapper(_func: Callable, parent: BaseGui = None):
-    """Do nothing."""
-
-    def wrapped_func(*args, **kwargs):
-        return _func(*args, **kwargs)
-
-    return wrapped_func
-
-
 def _n_parameters(func: Callable):
     """Count the number of parameters of a callable object."""
     return len(inspect.signature(func).parameters)
