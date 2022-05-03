@@ -370,6 +370,8 @@ _X = TypeVar(
         Enum,
         range,
         slice,
+        list,
+        tuple,
     ],
 )
 
@@ -589,7 +591,7 @@ def _get_field(
     options: dict[str, Any],
     record: bool,
     field_class: type[MagicField],
-) -> type[MagicField]:
+) -> MagicField:
     if not isinstance(options, dict):
         raise TypeError(f"Field options must be a dict, got {type(options)}")
     options = options.copy()
