@@ -8,7 +8,6 @@ from typing import (
     overload,
     Generic,
     Union,
-    _BaseGenericAlias,
 )
 from typing_extensions import Literal, _AnnotatedAlias
 from pathlib import Path
@@ -36,6 +35,10 @@ if sys.version_info >= (3, 10):
         def __init__(self, **kwargs):
             super().__init__(**kwargs, kw_only=False)
 
+    from typing import _BaseGenericAlias
+
+else:
+    from typing_extensions import _BaseGenericAlias
 
 _W = TypeVar("_W", bound=Widget)
 _V = TypeVar("_V", bound=object)
