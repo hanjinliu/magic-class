@@ -1,5 +1,5 @@
 from __future__ import annotations
-from macrokit import Symbol, Expr, Head, Macro, parse, symbol
+from macrokit import Symbol, Expr, Head, Macro, parse
 from typing import TYPE_CHECKING, Iterable, overload
 from qtpy.QtWidgets import QMenuBar, QMenu, QAction
 from magicgui.widgets import FileEdit
@@ -173,7 +173,7 @@ class MacroEdit(FreeWidget):
         parent = self._search_parent_magicclass()
         with parent.macro.blocked():
             try:
-                all_code = self.textedit.value
+                all_code: str = self.textedit.value
                 selected = self.textedit.selected
                 code = parse(selected.strip())
 
