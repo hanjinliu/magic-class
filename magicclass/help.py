@@ -208,16 +208,17 @@ def get_help_info(ui: MagicTemplate) -> tuple[np.ndarray, dict[str, str]]:
             ax.imshow(img)
             for i, widget in enumerate(_iter_unwrapped_children(ui)):
                 x, y = _get_relative_pos(widget)
-                ax.text(
-                    x * scale,
-                    y * scale,
-                    f"({i+1})",
-                    ha="center",
-                    va="center",
-                    color="white",
-                    backgroundcolor="black",
-                    fontfamily="Arial",
-                )
+                if x >= 0 and y >= 0:
+                    ax.text(
+                        x * scale,
+                        y * scale,
+                        f"({i+1})",
+                        ha="center",
+                        va="center",
+                        color="white",
+                        backgroundcolor="black",
+                        fontfamily="Arial",
+                    )
                 docs[widget.name] = _get_doc(widget)
             fig.tight_layout()
             fig.canvas.draw()
@@ -271,17 +272,28 @@ def _render(qwidget: QWidget) -> np.ndarray:
 
 
 def _iter_unwrapped_children(ui: MagicTemplate) -> Iterator[Widget]:
-    for widget in ui:
-        if not getattr(widget, "_unwrapped", False):
-            yield widget
+    all_widgets: set[Widget] = set()
+
+    for item in ui._list:
+        widget = getattr(item, "_inner_widget", item)
+        all_widgets.add(widget)
+    for widget in ui.__magicclass_children__:
+        all_widgets.add(widget)
+
+    for w in all_widgets:
+        if not getattr(w, "_unwrapped", False):
+            yield w
 
 
 def _get_relative_pos(widget: Widget) -> tuple[int, int]:
     """Get relative position of a widget seen from its parent."""
-    w = widget._labeled_widget()
-    if w is None:
-        w = widget
-    qpos = w.native.mapToParent(w.native.rect().topLeft())
+    if hasattr(widget, "_labeled_widget"):
+        w = widget._labeled_widget()
+        if w is None:
+            w = widget
+        qpos = w.native.mapToParent(w.native.rect().topLeft())
+    else:
+        return -1, -1
     return qpos.x(), qpos.y()
 
 
