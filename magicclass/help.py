@@ -291,10 +291,14 @@ def _get_relative_pos(widget: Widget) -> tuple[int, int]:
         w = widget._labeled_widget()
         if w is None:
             w = widget
-        qpos = w.native.mapToParent(w.native.rect().topLeft())
+        try:
+            qpos = w.native.mapToParent(w.native.rect().topLeft())
+            out = qpos.x(), qpos.y()
+        except Exception:
+            out = (-1, -1)
     else:
-        return -1, -1
-    return qpos.x(), qpos.y()
+        out = (-1, -1)
+    return out
 
 
 def get_keymap(ui: MagicTemplate | type[MagicTemplate]):
