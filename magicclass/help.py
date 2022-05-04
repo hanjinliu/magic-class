@@ -15,7 +15,7 @@ from .widgets.misc import ConsoleTextEdit
 
 from ._gui.mgui_ext import Action, PushButtonPlus, WidgetAction
 from ._gui._base import MagicTemplate
-from .widgets import DraggableContainer, FreeWidget
+from .widgets import DraggableContainer, FreeWidget, Separator
 from ._gui.class_gui import (
     CollapsibleClassGui,
     DraggableClassGui,
@@ -101,6 +101,9 @@ class _HelpWidget(QSplitter):
                     child.setText(0, f"({i+1}) {widget.name}")
 
             else:
+                if isinstance(getattr(widget, "_inner_widget", widget), Separator):
+                    # separator does not need a help
+                    continue
                 child = UiBoundTreeItem(root, ui=None)
                 child.setText(0, f"({i+1}) {widget.name}")
 
