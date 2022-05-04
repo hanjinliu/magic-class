@@ -23,10 +23,13 @@ class QtTracebackDialog(QDialog):
         self.resize(600, 400)
 
     def setText(self, text: str):
+        """Always set text as a HTML text."""
         self._text.setHtml(text)
 
 
 class QtErrorMessageBox(QMessageBox):
+    """An message box widget for displaying Python exception."""
+
     def __init__(self, title: str, text_or_exception: str | Exception, parent):
         if isinstance(text_or_exception, str):
             text = text_or_exception
@@ -58,6 +61,7 @@ class QtErrorMessageBox(QMessageBox):
 
     @classmethod
     def raise_(cls, e: Exception, parent=None):
+        """Raise exception in the message box."""
         self = cls(type(e).__name__, e, parent)
         self.exec_()
 
@@ -71,18 +75,20 @@ class QtErrorMessageBox(QMessageBox):
         return tb
 
 
-# Following functions are mostly copied from napari (BSD-3).
+# Following functions are mostly copied from napari (BSD 3-Clause).
 # See https://github.com/napari/napari/blob/main/napari/utils/notifications.py
 
 _FONT = "consolas"
 
 
 def get_tb_formatter() -> Callable[[Exception, bool, str], str]:
-    """Return a formatter callable that uses IPython VerboseTB if available.
+    """
+    Return a formatter callable that uses IPython VerboseTB if available.
     Imports IPython lazily if available to take advantage of ultratb.VerboseTB.
     If unavailable, cgitb is used instead, but this function overrides a lot of
     the hardcoded citgb styles and adds error chaining (for exceptions that
     result from other exceptions).
+
     Returns
     -------
     callable
@@ -239,7 +245,9 @@ ANSI_STYLES = {
 def ansi2html(
     ansi_string: str, styles: dict[int, dict[str, str]] = ANSI_STYLES
 ) -> Generator[str, None, None]:
-    """Convert ansi string to colored HTML
+    """
+    Convert ansi string to colored HTML
+
     Parameters
     ----------
     ansi_string : str
@@ -247,6 +255,7 @@ def ansi2html(
     styles : dict, optional
         A mapping from ANSI codes to a dict of css kwargs:values,
         by default ANSI_STYLES
+
     Yields
     ------
     str
