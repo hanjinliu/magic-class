@@ -7,6 +7,7 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
+   magicclass.ext.dask
    magicclass.ext.napari
    magicclass.ext.pyqtgraph
    magicclass.ext.qtconsole

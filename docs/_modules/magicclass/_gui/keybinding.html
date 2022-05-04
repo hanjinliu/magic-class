@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="English" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>magicclass._gui.keybinding &mdash; magic-class 0.6.3 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+</head>
+
+<body class="wy-body-for-nav">
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> magic-class
+          </a>
+              <div class="version">
+                0.6.3
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../quick_start.html">Quick Start</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../chap_basics.html">Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../chap_make_better.html">Make Your GUI Better</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../chap_data_vis.html">Data Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../chap_advanced.html">Advanced Topics</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../best_practice.html">Best Practice</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">magic-class</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>magicclass._gui.keybinding</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+
+  <h1>Source code for magicclass._gui.keybinding</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span> <span class="nn">qtpy.QtCore</span> <span class="kn">import</span> <span class="n">Qt</span>
+<span class="kn">from</span> <span class="nn">qtpy.QtGui</span> <span class="kn">import</span> <span class="n">QKeySequence</span>
+<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">NewType</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+<span class="n">QtKey</span> <span class="o">=</span> <span class="n">NewType</span><span class="p">(</span><span class="s2">&quot;QtKey&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+<span class="n">QtModifier</span> <span class="o">=</span> <span class="n">NewType</span><span class="p">(</span><span class="s2">&quot;QtModifier&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+<span class="n">KeyCombo</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span>
+    <span class="n">Tuple</span><span class="p">[</span><span class="n">QtKey</span><span class="p">],</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">QtModifier</span><span class="p">,</span> <span class="n">QtKey</span><span class="p">],</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">QtModifier</span><span class="p">,</span> <span class="n">QtModifier</span><span class="p">,</span> <span class="n">QtKey</span><span class="p">]</span>
+<span class="p">]</span>
+
+
+<div class="viewcode-block" id="Key"><a class="viewcode-back" href="../../../apidoc/magicclass.html#magicclass.Key">[docs]</a><span class="k">class</span> <span class="nc">Key</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="c1"># keys</span>
+    <span class="n">Tab</span> <span class="o">=</span> <span class="s2">&quot;tab&quot;</span>
+    <span class="n">Backspace</span> <span class="o">=</span> <span class="s2">&quot;backspace&quot;</span>
+    <span class="n">Delete</span> <span class="o">=</span> <span class="s2">&quot;delete&quot;</span>
+    <span class="n">Left</span> <span class="o">=</span> <span class="s2">&quot;left&quot;</span>
+    <span class="n">Up</span> <span class="o">=</span> <span class="s2">&quot;up&quot;</span>
+    <span class="n">Right</span> <span class="o">=</span> <span class="s2">&quot;right&quot;</span>
+    <span class="n">Down</span> <span class="o">=</span> <span class="s2">&quot;down&quot;</span>
+    <span class="n">PageUp</span> <span class="o">=</span> <span class="s2">&quot;pageup&quot;</span>
+    <span class="n">PageDown</span> <span class="o">=</span> <span class="s2">&quot;pagedown&quot;</span>
+    <span class="n">F1</span> <span class="o">=</span> <span class="s2">&quot;f1&quot;</span>
+    <span class="n">F2</span> <span class="o">=</span> <span class="s2">&quot;f2&quot;</span>
+    <span class="n">F3</span> <span class="o">=</span> <span class="s2">&quot;f3&quot;</span>
+    <span class="n">F4</span> <span class="o">=</span> <span class="s2">&quot;f4&quot;</span>
+    <span class="n">F5</span> <span class="o">=</span> <span class="s2">&quot;f5&quot;</span>
+    <span class="n">F6</span> <span class="o">=</span> <span class="s2">&quot;f6&quot;</span>
+    <span class="n">F7</span> <span class="o">=</span> <span class="s2">&quot;f7&quot;</span>
+    <span class="n">F8</span> <span class="o">=</span> <span class="s2">&quot;f8&quot;</span>
+    <span class="n">F9</span> <span class="o">=</span> <span class="s2">&quot;f9&quot;</span>
+    <span class="n">F10</span> <span class="o">=</span> <span class="s2">&quot;f10&quot;</span>
+    <span class="n">F11</span> <span class="o">=</span> <span class="s2">&quot;f11&quot;</span>
+    <span class="n">F12</span> <span class="o">=</span> <span class="s2">&quot;f12&quot;</span>
+    <span class="n">Exclam</span> <span class="o">=</span> <span class="s2">&quot;!&quot;</span>
+    <span class="n">Dollar</span> <span class="o">=</span> <span class="s2">&quot;$&quot;</span>
+    <span class="n">Percent</span> <span class="o">=</span> <span class="s2">&quot;%&quot;</span>
+    <span class="n">Ampersand</span> <span class="o">=</span> <span class="s2">&quot;&amp;&quot;</span>
+    <span class="n">Apostrophe</span> <span class="o">=</span> <span class="s2">&quot;&#39;&quot;</span>
+    <span class="n">ParenLeft</span> <span class="o">=</span> <span class="s2">&quot;(&quot;</span>
+    <span class="n">ParenRight</span> <span class="o">=</span> <span class="s2">&quot;)&quot;</span>
+    <span class="n">Asterisk</span> <span class="o">=</span> <span class="s2">&quot;*&quot;</span>
+    <span class="n">Plus</span> <span class="o">=</span> <span class="s2">&quot;+&quot;</span>
+    <span class="n">Comma</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span>
+    <span class="n">Minus</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span>
+    <span class="n">Period</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span>
+    <span class="n">Slash</span> <span class="o">=</span> <span class="s2">&quot;/&quot;</span>
+    <span class="n">Colon</span> <span class="o">=</span> <span class="s2">&quot;:&quot;</span>
+    <span class="n">Semicolon</span> <span class="o">=</span> <span class="s2">&quot;;&quot;</span>
+    <span class="n">Less</span> <span class="o">=</span> <span class="s2">&quot;&lt;&quot;</span>
+    <span class="n">Equal</span> <span class="o">=</span> <span class="s2">&quot;=&quot;</span>
+    <span class="n">Greater</span> <span class="o">=</span> <span class="s2">&quot;&gt;&quot;</span>
+    <span class="n">Question</span> <span class="o">=</span> <span class="s2">&quot;?&quot;</span>
+    <span class="n">At</span> <span class="o">=</span> <span class="s2">&quot;@&quot;</span>
+
+    <span class="c1"># alphabets</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="s2">&quot;a&quot;</span>
+    <span class="n">B</span> <span class="o">=</span> <span class="s2">&quot;b&quot;</span>
+    <span class="n">C</span> <span class="o">=</span> <span class="s2">&quot;c&quot;</span>
+    <span class="n">D</span> <span class="o">=</span> <span class="s2">&quot;d&quot;</span>
+    <span class="n">E</span> <span class="o">=</span> <span class="s2">&quot;e&quot;</span>
+    <span class="n">F</span> <span class="o">=</span> <span class="s2">&quot;f&quot;</span>
+    <span class="n">G</span> <span class="o">=</span> <span class="s2">&quot;g&quot;</span>
+    <span class="n">H</span> <span class="o">=</span> <span class="s2">&quot;h&quot;</span>
+    <span class="n">I</span> <span class="o">=</span> <span class="s2">&quot;i&quot;</span>
+    <span class="n">J</span> <span class="o">=</span> <span class="s2">&quot;j&quot;</span>
+    <span class="n">K</span> <span class="o">=</span> <span class="s2">&quot;k&quot;</span>
+    <span class="n">L</span> <span class="o">=</span> <span class="s2">&quot;l&quot;</span>
+    <span class="n">M</span> <span class="o">=</span> <span class="s2">&quot;m&quot;</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="s2">&quot;n&quot;</span>
+    <span class="n">O</span> <span class="o">=</span> <span class="s2">&quot;o&quot;</span>
+    <span class="n">P</span> <span class="o">=</span> <span class="s2">&quot;p&quot;</span>
+    <span class="n">Q</span> <span class="o">=</span> <span class="s2">&quot;q&quot;</span>
+    <span class="n">R</span> <span class="o">=</span> <span class="s2">&quot;r&quot;</span>
+    <span class="n">S</span> <span class="o">=</span> <span class="s2">&quot;s&quot;</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="s2">&quot;t&quot;</span>
+    <span class="n">U</span> <span class="o">=</span> <span class="s2">&quot;u&quot;</span>
+    <span class="n">V</span> <span class="o">=</span> <span class="s2">&quot;v&quot;</span>
+    <span class="n">W</span> <span class="o">=</span> <span class="s2">&quot;w&quot;</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="s2">&quot;x&quot;</span>
+    <span class="n">Y</span> <span class="o">=</span> <span class="s2">&quot;y&quot;</span>
+    <span class="n">Z</span> <span class="o">=</span> <span class="s2">&quot;z&quot;</span>
+
+    <span class="c1"># numbers</span>
+    <span class="n">_0</span> <span class="o">=</span> <span class="s2">&quot;0&quot;</span>
+    <span class="n">_1</span> <span class="o">=</span> <span class="s2">&quot;1&quot;</span>
+    <span class="n">_2</span> <span class="o">=</span> <span class="s2">&quot;2&quot;</span>
+    <span class="n">_3</span> <span class="o">=</span> <span class="s2">&quot;3&quot;</span>
+    <span class="n">_4</span> <span class="o">=</span> <span class="s2">&quot;4&quot;</span>
+    <span class="n">_5</span> <span class="o">=</span> <span class="s2">&quot;5&quot;</span>
+    <span class="n">_6</span> <span class="o">=</span> <span class="s2">&quot;6&quot;</span>
+    <span class="n">_7</span> <span class="o">=</span> <span class="s2">&quot;7&quot;</span>
+    <span class="n">_8</span> <span class="o">=</span> <span class="s2">&quot;8&quot;</span>
+    <span class="n">_9</span> <span class="o">=</span> <span class="s2">&quot;9&quot;</span>
+
+    <span class="c1"># modifiers</span>
+    <span class="n">Meta</span> <span class="o">=</span> <span class="s2">&quot;meta&quot;</span>
+    <span class="n">Shift</span> <span class="o">=</span> <span class="s2">&quot;shift&quot;</span>
+    <span class="n">Ctrl</span> <span class="o">=</span> <span class="s2">&quot;ctrl&quot;</span>
+    <span class="n">Alt</span> <span class="o">=</span> <span class="s2">&quot;alt&quot;</span>
+
+<div class="viewcode-block" id="Key.to_qtkey"><a class="viewcode-back" href="../../../apidoc/magicclass.html#magicclass.Key.to_qtkey">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">to_qtkey</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">Key</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QtKey</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="bp">cls</span><span class="p">):</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported type for a key: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">key</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">Qt</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Key_</span><span class="si">{</span><span class="n">key</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Key.to_qtmodifier"><a class="viewcode-back" href="../../../apidoc/magicclass.html#magicclass.Key.to_qtmodifier">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">to_qtmodifier</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Key</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QtModifier</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;control&quot;</span><span class="p">:</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">Ctrl</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="bp">cls</span><span class="p">):</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported type for a modifier: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">key</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">Qt</span><span class="p">,</span> <span class="n">key</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">upper</span><span class="p">())</span></div>
+
+    <span class="c1"># Add method enables expressions like ``Key.Ctrl + Key.A``.</span>
+    <span class="k">def</span> <span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Key</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Key</span><span class="p">,</span> <span class="n">Key</span><span class="p">]:</span>
+        <span class="bp">cls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">other</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">cls</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot add type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">other</span><span class="p">)</span><span class="si">}</span><span class="s2"> to Key object.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__radd__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Key</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">Key</span><span class="p">,</span> <span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Key</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+        <span class="bp">cls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">other</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+            <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">cls</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">other</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="p">,)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot add Key object to type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">other</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span></div>
+
+
+<span class="n">MODIFIERS</span> <span class="o">=</span> <span class="p">(</span><span class="n">Key</span><span class="o">.</span><span class="n">Meta</span><span class="p">,</span> <span class="n">Key</span><span class="o">.</span><span class="n">Shift</span><span class="p">,</span> <span class="n">Key</span><span class="o">.</span><span class="n">Ctrl</span><span class="p">,</span> <span class="n">Key</span><span class="o">.</span><span class="n">Alt</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">ismodifier</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">s</span> <span class="o">==</span> <span class="s2">&quot;control&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Key</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="ow">in</span> <span class="n">MODIFIERS</span>
+
+
+<span class="k">def</span> <span class="nf">parse_key_combo</span><span class="p">(</span><span class="n">key_combo</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QtKey</span><span class="p">:</span>
+    <span class="c1"># For compatibility with napari</span>
+    <span class="n">parsed</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;-(?=.+)&quot;</span><span class="p">,</span> <span class="n">key_combo</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">strs2keycombo</span><span class="p">(</span><span class="o">*</span><span class="n">parsed</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">strs2keycombo</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">Key</span><span class="p">,</span> <span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">KeyCombo</span><span class="p">:</span>
+    <span class="o">*</span><span class="n">modifiers</span><span class="p">,</span> <span class="n">key</span> <span class="o">=</span> <span class="n">args</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">modifiers</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;More than two modifiers found.&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">Key</span><span class="o">.</span><span class="n">to_qtmodifier</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">modifiers</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">Key</span><span class="o">.</span><span class="n">to_qtkey</span><span class="p">(</span><span class="n">key</span><span class="p">),)</span>
+
+
+<span class="k">def</span> <span class="nf">as_shortcut</span><span class="p">(</span><span class="n">key_combo</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QKeySequence</span><span class="p">:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key_combo</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Unsupported key combo.&quot;</span><span class="p">)</span>
+
+    <span class="n">key0</span> <span class="o">=</span> <span class="n">key_combo</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">key_combo</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key0</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">Key</span><span class="p">,</span> <span class="n">key0</span><span class="o">.</span><span class="n">lower</span><span class="p">()):</span>
+        <span class="n">qtkeycombo</span> <span class="o">=</span> <span class="n">parse_key_combo</span><span class="p">(</span><span class="o">*</span><span class="n">key_combo</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">qtkeycombo</span> <span class="o">=</span> <span class="n">strs2keycombo</span><span class="p">(</span><span class="o">*</span><span class="n">key_combo</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">QKeySequence</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">qtkeycombo</span><span class="p">))</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Hanjin Liu.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+</body>
+</html>

@@ -28,6 +28,14 @@ magicclass.utils.qthreading module
    :undoc-members:
    :show-inheritance:
 
+magicclass.utils.qtsignal module
+--------------------------------
+
+.. automodule:: magicclass.utils.qtsignal
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Module contents
 ---------------
 

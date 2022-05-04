@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.widgets.plot &mdash; magic-class 0.6.2.dev1 documentation</title>
+  <title>magicclass.widgets.plot &mdash; magic-class 0.6.3 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.2.dev1
+                0.6.3
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -43,27 +43,12 @@
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../chap_basics.html">Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../chap_make_better.html">Make Your GUI Better</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../chap_data_vis.html">Data Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../chap_advanced.html">Advanced Topics</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../use_wraps.html">Call Parent Methods from its Child</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../use_bind.html">Binding Values to Arguments</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../use_choices.html">Set Choices Dynamically</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../use_preview.html">Add Preview Functionalities</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../use_worker.html">Multi-threading</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../additional_types.html">Additional types</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../containers.html">Container Variations</a></li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../matplotlib.html">Use Matplotlib Figure</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../pyqtgraph.html">Use PyQtGraph Canvas</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../vispy.html">Vispy Canvas</a></li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../freewidget.html">Convert QtWidgets into a Magic Widget</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../keybinding.html">Define Custom Keybindings</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../customize_macro.html">Customize Macro Recording</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../class_inheritance.html">Inherit Magic Class</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../best_practice.html">Best Practice</a></li>
 </ul>
 
         </div>
@@ -127,7 +112,7 @@
         <span class="k">return</span> <span class="n">f</span>
 
 
-<div class="viewcode-block" id="Figure"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.plot.Figure">[docs]</a><span class="k">class</span> <span class="nc">Figure</span><span class="p">(</span><span class="n">FreeWidget</span><span class="p">):</span>
+<div class="viewcode-block" id="Figure"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.plot.Figure">[docs]</a><span class="k">class</span> <span class="nc">Figure</span><span class="p">(</span><span class="n">FreeWidget</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A matplotlib figure canvas.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
@@ -156,7 +141,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">figure</span> <span class="o">=</span> <span class="n">fig</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">min_height</span> <span class="o">=</span> <span class="mi">40</span>
 
-<div class="viewcode-block" id="Figure.draw"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.plot.Figure.draw">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
+<div class="viewcode-block" id="Figure.draw"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.plot.Figure.draw">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
     <span class="k">def</span> <span class="nf">draw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span></div>
@@ -176,12 +161,12 @@
 
     <span class="n">interactive</span> <span class="o">=</span> <span class="n">enabled</span>  <span class="c1"># alias</span>
 
-<div class="viewcode-block" id="Figure.clf"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.plot.Figure.clf">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
+<div class="viewcode-block" id="Figure.clf"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.plot.Figure.clf">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
     <span class="k">def</span> <span class="nf">clf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Figure.cla"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.plot.Figure.cla">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
+<div class="viewcode-block" id="Figure.cla"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.plot.Figure.cla">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
     <span class="k">def</span> <span class="nf">cla</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">cla</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span></div>
@@ -200,7 +185,7 @@
             <span class="n">_ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">_ax</span>
 
-<div class="viewcode-block" id="Figure.subplots"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.plot.Figure.subplots">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
+<div class="viewcode-block" id="Figure.subplots"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.plot.Figure.subplots">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
     <span class="k">def</span> <span class="nf">subplots</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
         <span class="n">fig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">figure</span>
@@ -208,23 +193,23 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">axs</span></div>
 
-<div class="viewcode-block" id="Figure.savefig"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.plot.Figure.savefig">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
+<div class="viewcode-block" id="Figure.savefig"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.plot.Figure.savefig">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
     <span class="k">def</span> <span class="nf">savefig</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Figure.plot"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.plot.Figure.plot">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
+<div class="viewcode-block" id="Figure.plot"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.plot.Figure.plot">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
     <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Axes</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax</span></div>
 
-<div class="viewcode-block" id="Figure.scatter"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.plot.Figure.scatter">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
+<div class="viewcode-block" id="Figure.scatter"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.plot.Figure.scatter">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
     <span class="k">def</span> <span class="nf">scatter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Axes</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax</span></div>
 
-<div class="viewcode-block" id="Figure.hist"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.plot.Figure.hist">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
+<div class="viewcode-block" id="Figure.hist"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.plot.Figure.hist">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
     <span class="k">def</span> <span class="nf">hist</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ArrayLike</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="n">ArrayLike</span><span class="p">],</span> <span class="n">ArrayLike</span><span class="p">,</span> <span class="nb">list</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">]]:</span>
@@ -232,37 +217,37 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">out</span></div>
 
-<div class="viewcode-block" id="Figure.text"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.plot.Figure.text">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
+<div class="viewcode-block" id="Figure.text"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.plot.Figure.text">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
     <span class="k">def</span> <span class="nf">text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax</span></div>
 
-<div class="viewcode-block" id="Figure.quiver"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.plot.Figure.quiver">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
+<div class="viewcode-block" id="Figure.quiver"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.plot.Figure.quiver">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
     <span class="k">def</span> <span class="nf">quiver</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">quiver</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax</span></div>
 
-<div class="viewcode-block" id="Figure.axline"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.plot.Figure.axline">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
+<div class="viewcode-block" id="Figure.axline"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.plot.Figure.axline">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
     <span class="k">def</span> <span class="nf">axline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xy1</span><span class="p">,</span> <span class="n">xy2</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">slope</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">axline</span><span class="p">(</span><span class="n">xy1</span><span class="p">,</span> <span class="n">xy2</span><span class="o">=</span><span class="n">xy2</span><span class="p">,</span> <span class="n">slope</span><span class="o">=</span><span class="n">slope</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax</span></div>
 
-<div class="viewcode-block" id="Figure.axhline"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.plot.Figure.axhline">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
+<div class="viewcode-block" id="Figure.axhline"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.plot.Figure.axhline">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
     <span class="k">def</span> <span class="nf">axhline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">xmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">xmax</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax</span></div>
 
-<div class="viewcode-block" id="Figure.axvline"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.plot.Figure.axvline">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
+<div class="viewcode-block" id="Figure.axvline"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.plot.Figure.axvline">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
     <span class="k">def</span> <span class="nf">axvline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ymin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ymax</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax</span></div>
 
-<div class="viewcode-block" id="Figure.xlim"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.plot.Figure.xlim">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
+<div class="viewcode-block" id="Figure.xlim"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.plot.Figure.xlim">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
     <span class="k">def</span> <span class="nf">xlim</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">args</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">kwargs</span><span class="p">:</span>
@@ -271,7 +256,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">ret</span></div>
 
-<div class="viewcode-block" id="Figure.ylim"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.plot.Figure.ylim">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
+<div class="viewcode-block" id="Figure.ylim"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.plot.Figure.ylim">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
     <span class="k">def</span> <span class="nf">ylim</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">args</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">kwargs</span><span class="p">:</span>
@@ -280,37 +265,37 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">ret</span></div>
 
-<div class="viewcode-block" id="Figure.imshow"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.plot.Figure.imshow">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
+<div class="viewcode-block" id="Figure.imshow"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.plot.Figure.imshow">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
     <span class="k">def</span> <span class="nf">imshow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Axes</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax</span></div>
 
-<div class="viewcode-block" id="Figure.legend"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.plot.Figure.legend">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
+<div class="viewcode-block" id="Figure.legend"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.plot.Figure.legend">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
     <span class="k">def</span> <span class="nf">legend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">leg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">leg</span></div>
 
-<div class="viewcode-block" id="Figure.title"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.plot.Figure.title">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
+<div class="viewcode-block" id="Figure.title"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.plot.Figure.title">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
     <span class="k">def</span> <span class="nf">title</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">title</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">title</span></div>
 
-<div class="viewcode-block" id="Figure.xlabel"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.plot.Figure.xlabel">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
+<div class="viewcode-block" id="Figure.xlabel"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.plot.Figure.xlabel">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
     <span class="k">def</span> <span class="nf">xlabel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">xlabel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">xlabel</span></div>
 
-<div class="viewcode-block" id="Figure.ylabel"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.plot.Figure.ylabel">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
+<div class="viewcode-block" id="Figure.ylabel"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.plot.Figure.ylabel">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
     <span class="k">def</span> <span class="nf">ylabel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">ylabel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">ylabel</span></div>
 
-<div class="viewcode-block" id="Figure.xticks"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.plot.Figure.xticks">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
+<div class="viewcode-block" id="Figure.xticks"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.plot.Figure.xticks">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
     <span class="k">def</span> <span class="nf">xticks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ticks</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">ticks</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">locs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">get_xticks</span><span class="p">()</span>
@@ -331,7 +316,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">locs</span><span class="p">,</span> <span class="n">labels</span></div>
 
-<div class="viewcode-block" id="Figure.yticks"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.plot.Figure.yticks">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
+<div class="viewcode-block" id="Figure.yticks"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.plot.Figure.yticks">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
     <span class="k">def</span> <span class="nf">yticks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ticks</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">ticks</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">locs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">get_yticks</span><span class="p">()</span>
@@ -352,38 +337,38 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">locs</span><span class="p">,</span> <span class="n">labels</span></div>
 
-<div class="viewcode-block" id="Figure.twinx"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.plot.Figure.twinx">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
+<div class="viewcode-block" id="Figure.twinx"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.plot.Figure.twinx">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
     <span class="k">def</span> <span class="nf">twinx</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Axes</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">twinx</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Figure.twiny"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.plot.Figure.twiny">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
+<div class="viewcode-block" id="Figure.twiny"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.plot.Figure.twiny">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
     <span class="k">def</span> <span class="nf">twiny</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Axes</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">twiny</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Figure.box"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.plot.Figure.box">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
+<div class="viewcode-block" id="Figure.box"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.plot.Figure.box">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
     <span class="k">def</span> <span class="nf">box</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">on</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">on</span> <span class="o">=</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">get_frame_on</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_frame_on</span><span class="p">(</span><span class="n">on</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Figure.xscale"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.plot.Figure.xscale">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
+<div class="viewcode-block" id="Figure.xscale"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.plot.Figure.xscale">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
     <span class="k">def</span> <span class="nf">xscale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_xscale</span><span class="p">(</span><span class="n">scale</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Figure.yscale"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.plot.Figure.yscale">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
+<div class="viewcode-block" id="Figure.yscale"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.plot.Figure.yscale">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
     <span class="k">def</span> <span class="nf">yscale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="n">scale</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Figure.autoscale"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.plot.Figure.autoscale">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
+<div class="viewcode-block" id="Figure.autoscale"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.plot.Figure.autoscale">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
     <span class="k">def</span> <span class="nf">autoscale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">enable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">,</span> <span class="n">tight</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">autoscale</span><span class="p">(</span><span class="n">enable</span><span class="o">=</span><span class="n">enable</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">tight</span><span class="o">=</span><span class="n">tight</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span></div></div>
 
 
-<div class="viewcode-block" id="SeabornFigure"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.plot.SeabornFigure">[docs]</a><span class="k">class</span> <span class="nc">SeabornFigure</span><span class="p">(</span><span class="n">Figure</span><span class="p">):</span>
-<div class="viewcode-block" id="SeabornFigure.swarmplot"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.plot.SeabornFigure.swarmplot">[docs]</a>    <span class="k">def</span> <span class="nf">swarmplot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="SeabornFigure"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.plot.SeabornFigure">[docs]</a><span class="k">class</span> <span class="nc">SeabornFigure</span><span class="p">(</span><span class="n">Figure</span><span class="p">):</span>
+<div class="viewcode-block" id="SeabornFigure.swarmplot"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.plot.SeabornFigure.swarmplot">[docs]</a>    <span class="k">def</span> <span class="nf">swarmplot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
 
         <span class="k">return</span> <span class="n">sns</span><span class="o">.</span><span class="n">swarmplot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
@@ -393,32 +378,32 @@
 
         <span class="k">return</span> <span class="n">sns</span><span class="o">.</span><span class="n">barplot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-<div class="viewcode-block" id="SeabornFigure.boxplot"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.plot.SeabornFigure.boxplot">[docs]</a>    <span class="k">def</span> <span class="nf">boxplot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="SeabornFigure.boxplot"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.plot.SeabornFigure.boxplot">[docs]</a>    <span class="k">def</span> <span class="nf">boxplot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
 
         <span class="k">return</span> <span class="n">sns</span><span class="o">.</span><span class="n">boxplot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="SeabornFigure.boxenplot"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.plot.SeabornFigure.boxenplot">[docs]</a>    <span class="k">def</span> <span class="nf">boxenplot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="SeabornFigure.boxenplot"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.plot.SeabornFigure.boxenplot">[docs]</a>    <span class="k">def</span> <span class="nf">boxenplot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
 
         <span class="k">return</span> <span class="n">sns</span><span class="o">.</span><span class="n">boxenplot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="SeabornFigure.violinplot"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.plot.SeabornFigure.violinplot">[docs]</a>    <span class="k">def</span> <span class="nf">violinplot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="SeabornFigure.violinplot"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.plot.SeabornFigure.violinplot">[docs]</a>    <span class="k">def</span> <span class="nf">violinplot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
 
         <span class="k">return</span> <span class="n">sns</span><span class="o">.</span><span class="n">violinplot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="SeabornFigure.pairplot"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.plot.SeabornFigure.pairplot">[docs]</a>    <span class="k">def</span> <span class="nf">pairplot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="SeabornFigure.pairplot"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.plot.SeabornFigure.pairplot">[docs]</a>    <span class="k">def</span> <span class="nf">pairplot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
 
         <span class="k">return</span> <span class="n">sns</span><span class="o">.</span><span class="n">pairplot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="SeabornFigure.barplot"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.plot.SeabornFigure.barplot">[docs]</a>    <span class="k">def</span> <span class="nf">barplot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="SeabornFigure.barplot"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.plot.SeabornFigure.barplot">[docs]</a>    <span class="k">def</span> <span class="nf">barplot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
 
         <span class="k">return</span> <span class="n">sns</span><span class="o">.</span><span class="n">barplot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="SeabornFigure.pointplot"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.plot.SeabornFigure.pointplot">[docs]</a>    <span class="k">def</span> <span class="nf">pointplot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="SeabornFigure.pointplot"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.plot.SeabornFigure.pointplot">[docs]</a>    <span class="k">def</span> <span class="nf">pointplot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
 
         <span class="k">return</span> <span class="n">sns</span><span class="o">.</span><span class="n">pointplot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
