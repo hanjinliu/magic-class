@@ -93,10 +93,17 @@ def _stdout_raising(e, parent):
     print(f"{e.__class__.__name__}: {e}")
 
 
+def _napari_notification_raising(e, parent):
+    from napari.utils.notifications import show_error
+
+    show_error(str(e))
+
+
 class ErrorMode(Enum):
     msgbox = "msgbox"
     stderr = "stderr"
     stdout = "stdout"
+    napari = "napari"
 
     def get_handler(self):
         """Get error handler."""
@@ -127,6 +134,7 @@ ErrorModeHandlers = {
     ErrorMode.msgbox: _msgbox_raising,
     ErrorMode.stderr: _stderr_raising,
     ErrorMode.stdout: _stdout_raising,
+    ErrorMode.napari: _napari_notification_raising,
 }
 
 
