@@ -3,7 +3,8 @@ import numpy as np
 from numpy.typing import ArrayLike
 from vispy import scene
 
-from .layers3d import Image, IsoSurface, LayerItem, Surface
+from .layer3d import Image, IsoSurface, Surface
+from .layerlist import LayerList
 from ...widgets import FreeWidget
 from ...types import Color
 
@@ -22,7 +23,7 @@ class Vispy3DCanvas(FreeWidget):
         grid = self._scene.central_widget.add_grid()
         self._viewbox = grid.add_view()
         self._viewbox.camera = scene.ArcballCamera(fov=0)
-        self._items: list[LayerItem] = []
+        self._layerlist = LayerList()
 
         self._scene.create_native()
         self.set_widget(self._scene.native)
@@ -30,7 +31,7 @@ class Vispy3DCanvas(FreeWidget):
     @property
     def layers(self):
         """Return the layer list."""
-        return self._items
+        return self._layerlist
 
     @property
     def camera(self):
@@ -61,7 +62,7 @@ class Vispy3DCanvas(FreeWidget):
             interpolation=interpolation,
         )
 
-        self._items.append(image)
+        self._layerlist.append(image)
         self._viewbox.camera.scale_factor = max(data.shape)
         self._viewbox.camera.center = [s / 2 - 0.5 for s in data.shape]
         return image
@@ -86,7 +87,7 @@ class Vispy3DCanvas(FreeWidget):
             shading=shading,
         )
 
-        self._items.append(surface)
+        self._layerlist.append(surface)
         self._viewbox.camera.scale_factor = max(data.shape)
         self._viewbox.camera.center = [s / 2 - 0.5 for s in data.shape]
         return surface
@@ -106,7 +107,7 @@ class Vispy3DCanvas(FreeWidget):
             edge_color=edge_color,
             shading=shading,
         )
-        self._items.append(surface)
+        self._layerlist.append(surface)
         mins = np.min(data[0], axis=0)
         maxs = np.max(data[0], axis=0)
         self._viewbox.camera.scale_factor = max(maxs - mins)
