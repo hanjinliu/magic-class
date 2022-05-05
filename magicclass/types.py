@@ -106,6 +106,8 @@ def bound(obj):
         outtype = Any
     else:
         raise TypeError("'bound' can only convert callable, MagicField or type objects")
+    while isinstance(outtype, _AnnotatedAlias):
+        outtype, _ = split_annotated_type(outtype)
     return Annotated[outtype, {"bind": obj, "widget_type": EmptyWidget}]
 
 

@@ -1,5 +1,6 @@
+from typing import Tuple
 from magicclass import magicclass, set_options, field, vfield, magictoolbar
-from magicclass.types import Bound
+from magicclass.types import Bound, Optional
 
 def test_bind_value():
     # test binding an invariable
@@ -180,3 +181,19 @@ def test_multi_gui():
 
     assert a0._a == id(a0)
     assert a1._a == id(a1)
+
+def test_annotated():
+    @magicclass
+    class A:
+        x = field(Optional[float])
+        y = field(Tuple[int, str])
+        _out = None
+        def f(self, x0: Bound[x], y0: Bound[y]):
+            self._out = (x0, y0)
+
+    ui = A()
+    ui.x.value = 0.5
+    ui.y.value = (1, "z")
+    ui["f"].changed()
+    assert ui._out is not None
+    assert ui._out == (0.5, (1, "z"))
