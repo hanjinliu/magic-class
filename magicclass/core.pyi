@@ -3,14 +3,14 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Callable, TypeVar, Union, overload, Any
 from typing_extensions import Literal
 
-from .gui.menu_gui import ContextMenuGui, MenuGui
-from .gui.toolbar import ToolBarGui
-from .gui.class_gui import ClassGuiBase
-from .gui._base import PopUpMode, ErrorMode, MagicTemplate
+from ._gui.menu_gui import ContextMenuGui, MenuGui
+from ._gui.toolbar import ToolBarGui
+from ._gui.class_gui import ClassGuiBase
+from ._gui._base import PopUpMode, ErrorMode, MagicTemplate
 
 if TYPE_CHECKING:
     from .types import WidgetType, WidgetTypeStr, PopUpModeStr, ErrorModeStr
-    from .gui._function_gui import FunctionGuiPlus
+    from ._gui._function_gui import FunctionGuiPlus
     from .stylesheets import StyleSheet
     from qtpy.QtWidgets import QWidget
     from .help import HelpWidget

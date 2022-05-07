@@ -367,7 +367,6 @@ def make_gui(container: type[_C], no_margin: bool = True) -> type[_C | ClassGuiB
         def __init__(
             self: cls,
             layout: str = "vertical",
-            parent=None,
             close_on_run: bool = None,
             popup_mode: str | PopUpMode = None,
             error_mode: str | ErrorMode = None,
@@ -386,9 +385,6 @@ def make_gui(container: type[_C], no_margin: bool = True) -> type[_C | ClassGuiB
                 error_mode=error_mode,
             )
 
-            if parent is not None:
-                self.parent = parent
-
             self._menubar = None
             self._toolbar = None
 
@@ -397,7 +393,7 @@ def make_gui(container: type[_C], no_margin: bool = True) -> type[_C | ClassGuiB
 
         # ui["x"] will not return widget if x is a MagicValueField.
         # To ensure __getitem__ returns a Widget, this method should be overriden.
-        def __getitem__(self, key):
+        def __getitem__(self: cls, key):
             """Get item by integer, str, or slice."""
             if isinstance(key, str):
                 for widget in self._list:
@@ -416,7 +412,7 @@ def make_gui(container: type[_C], no_margin: bool = True) -> type[_C | ClassGuiB
             self._unify_label_widths()
             return None
 
-        def reset_choices(self, *_: Any):
+        def reset_choices(self: cls, *_: Any):
             """Reset child Categorical widgets"""
             all_widgets: set[Widget] = set()
 

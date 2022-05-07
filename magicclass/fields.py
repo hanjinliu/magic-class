@@ -1,7 +1,15 @@
 from __future__ import annotations
 from contextlib import contextmanager
-from typing import Any, TYPE_CHECKING, Callable, TypeVar, overload, Generic, Union
-from typing_extensions import Literal
+from typing import (
+    Any,
+    TYPE_CHECKING,
+    Callable,
+    TypeVar,
+    overload,
+    Generic,
+    Union,
+)
+from typing_extensions import Literal, _AnnotatedAlias
 from pathlib import Path
 import datetime
 import sys
@@ -12,12 +20,12 @@ from magicgui.widgets import create_widget
 from magicgui.widgets._bases import Widget, ValueWidget
 from magicgui.widgets._bases.value_widget import UNSET
 
-from .gui.mgui_ext import Action, WidgetAction
+from ._gui.mgui_ext import Action, WidgetAction
 
 if TYPE_CHECKING:
     from magicgui.widgets._protocols import WidgetProtocol
-    from .gui._base import MagicTemplate
-    from .gui.mgui_ext import AbstractAction
+    from ._gui._base import MagicTemplate
+    from ._gui.mgui_ext import AbstractAction
 
     _M = TypeVar("_M", bound=MagicTemplate)
 
@@ -27,6 +35,10 @@ if sys.version_info >= (3, 10):
         def __init__(self, **kwargs):
             super().__init__(**kwargs, kw_only=False)
 
+    from typing import _BaseGenericAlias
+
+else:
+    from typing_extensions import _BaseGenericAlias
 
 _W = TypeVar("_W", bound=Widget)
 _V = TypeVar("_V", bound=object)
@@ -82,7 +94,7 @@ class MagicField(Field, Generic[_W, _V]):
     @contextmanager
     def _resolve_choices(self, obj: Any) -> dict[str, Any]:
         """If method is given as choices, get generate method from it."""
-        from .gui._base import _is_instance_method, _method_as_getter
+        from ._gui._base import _is_instance_method, _method_as_getter
 
         _arg_choices = self.options.get("choices", None)
         if _is_instance_method(obj, _arg_choices):
@@ -172,14 +184,17 @@ class MagicField(Field, Generic[_W, _V]):
         ValueError
             If there is not enough information to build a widget.
         """
-        if self.default_factory is not MISSING and issubclass(
+        if self.default_factory is not MISSING and _is_subclass(
             self.default_factory, Widget
         ):
             widget = self.default_factory(**self.options)
         else:
-            widget = create_widget(
-                value=self.value, annotation=self.annotation, **self.metadata
-            )
+            if "annotation" not in self.metadata.keys():
+                widget = create_widget(
+                    value=self.value, annotation=self.annotation, **self.metadata
+                )
+            else:
+                widget = create_widget(value=self.value, **self.metadata)
         widget.name = self.name
         return widget
 
@@ -273,7 +288,7 @@ class MagicField(Field, Generic[_W, _V]):
         Callable
             Same method as input, but has updated signature.
         """
-        from .gui._base import BaseGui
+        from ._gui._base import BaseGui
 
         cls = self.default_factory
         if not (isinstance(cls, type) and issubclass(cls, BaseGui)):
@@ -296,7 +311,7 @@ class MagicField(Field, Generic[_W, _V]):
 
     @property
     def widget_type(self) -> str:
-        if self.default_factory is not MISSING and issubclass(
+        if self.default_factory is not MISSING and _is_subclass(
             self.default_factory, Widget
         ):
             wcls = self.default_factory
@@ -355,6 +370,8 @@ _X = TypeVar(
         Enum,
         range,
         slice,
+        list,
+        tuple,
     ],
 )
 
@@ -574,7 +591,7 @@ def _get_field(
     options: dict[str, Any],
     record: bool,
     field_class: type[MagicField],
-) -> type[MagicField]:
+) -> MagicField:
     if not isinstance(options, dict):
         raise TypeError(f"Field options must be a dict, got {type(options)}")
     options = options.copy()
@@ -582,7 +599,12 @@ def _get_field(
     if "name" in options.keys():
         name = options["name"]
     kwargs = dict(metadata=metadata, name=name, record=record)
-    if isinstance(obj, type):
+    if isinstance(obj, (type, _BaseGenericAlias)):
+        if isinstance(obj, _AnnotatedAlias):
+            from magicgui.signature import split_annotated_type
+
+            _, widget_option = split_annotated_type(obj)
+            kwargs["metadata"].update(widget_option)
         f = field_class(default_factory=obj, **kwargs)
     elif obj is MISSING:
         f = field_class(**kwargs)
@@ -590,3 +612,10 @@ def _get_field(
         f = field_class(default=obj, **kwargs)
 
     return f
+
+
+def _is_subclass(obj: Any, class_or_tuple):
+    try:
+        return issubclass(obj, class_or_tuple)
+    except Exception:
+        return False

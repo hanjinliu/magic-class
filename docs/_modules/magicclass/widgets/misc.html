@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.widgets.misc &mdash; magic-class 0.6.2.dev1 documentation</title>
+  <title>magicclass.widgets.misc &mdash; magic-class 0.6.3 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.2.dev1
+                0.6.3
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -43,27 +43,12 @@
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../chap_basics.html">Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../chap_make_better.html">Make Your GUI Better</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../chap_data_vis.html">Data Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../chap_advanced.html">Advanced Topics</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../use_wraps.html">Call Parent Methods from its Child</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../use_bind.html">Binding Values to Arguments</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../use_choices.html">Set Choices Dynamically</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../use_preview.html">Add Preview Functionalities</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../use_worker.html">Multi-threading</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../additional_types.html">Additional types</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../containers.html">Container Variations</a></li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../matplotlib.html">Use Matplotlib Figure</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../pyqtgraph.html">Use PyQtGraph Canvas</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../vispy.html">Vispy Canvas</a></li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../freewidget.html">Convert QtWidgets into a Magic Widget</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../keybinding.html">Define Custom Keybindings</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../customize_macro.html">Customize Macro Recording</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../class_inheritance.html">Inherit Magic Class</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../best_practice.html">Best Practice</a></li>
 </ul>
 
         </div>
@@ -102,7 +87,7 @@
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">_AnnotatedAlias</span><span class="p">,</span> <span class="n">get_args</span>
 <span class="kn">from</span> <span class="nn">psygnal</span> <span class="kn">import</span> <span class="n">Signal</span>
-<span class="kn">from</span> <span class="nn">qtpy.QtWidgets</span> <span class="kn">import</span> <span class="n">QTabWidget</span><span class="p">,</span> <span class="n">QLineEdit</span><span class="p">,</span> <span class="n">QMenu</span><span class="p">,</span> <span class="n">QVBoxLayout</span><span class="p">,</span> <span class="n">QWidget</span>
+<span class="kn">from</span> <span class="nn">qtpy</span> <span class="kn">import</span> <span class="n">QtWidgets</span> <span class="k">as</span> <span class="n">QtW</span>
 <span class="kn">from</span> <span class="nn">qtpy.QtGui</span> <span class="kn">import</span> <span class="n">QTextCursor</span>
 <span class="kn">from</span> <span class="nn">qtpy.QtCore</span> <span class="kn">import</span> <span class="n">Qt</span>
 <span class="kn">from</span> <span class="nn">magicgui.signature</span> <span class="kn">import</span> <span class="n">split_annotated_type</span>
@@ -162,15 +147,22 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_checkbox</span> <span class="o">=</span> <span class="n">CheckBox</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">inner_widget</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">annot</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;annotation&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">annot</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">annot_arg</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">args</span> <span class="o">=</span> <span class="n">get_args</span><span class="p">(</span><span class="n">annot</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">annot_arg</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">annot_arg</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
-            <span class="n">annot</span> <span class="o">=</span> <span class="n">get_args</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;annotation&quot;</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
-
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">annot</span><span class="p">,</span> <span class="n">_AnnotatedAlias</span><span class="p">):</span>
-                <span class="n">annot</span><span class="p">,</span> <span class="n">metadata</span> <span class="o">=</span> <span class="n">split_annotated_type</span><span class="p">(</span><span class="n">annot</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">annot_arg</span><span class="p">,</span> <span class="n">_AnnotatedAlias</span><span class="p">):</span>
+                <span class="n">annot_arg</span><span class="p">,</span> <span class="n">metadata</span> <span class="o">=</span> <span class="n">split_annotated_type</span><span class="p">(</span><span class="n">annot_arg</span><span class="p">)</span>
                 <span class="n">options</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_inner_value_widget</span> <span class="o">=</span> <span class="n">create_widget</span><span class="p">(</span>
-                <span class="n">annotation</span><span class="o">=</span><span class="n">annot</span><span class="p">,</span>
+                <span class="n">annotation</span><span class="o">=</span><span class="n">annot_arg</span><span class="p">,</span>
                 <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span>
             <span class="p">)</span>
 
@@ -216,7 +208,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_checkbox</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">v</span>
 
 
-<div class="viewcode-block" id="ConsoleTextEdit"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.misc.ConsoleTextEdit">[docs]</a><span class="k">class</span> <span class="nc">ConsoleTextEdit</span><span class="p">(</span><span class="n">TextEdit</span><span class="p">):</span>
+<div class="viewcode-block" id="ConsoleTextEdit"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.misc.ConsoleTextEdit">[docs]</a><span class="k">class</span> <span class="nc">ConsoleTextEdit</span><span class="p">(</span><span class="n">TextEdit</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A text edit with console-like setting.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -243,11 +235,11 @@
         <span class="n">metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">fontMetrics</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setTabStopWidth</span><span class="p">(</span><span class="n">size</span> <span class="o">*</span> <span class="n">metrics</span><span class="o">.</span><span class="n">width</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">))</span>
 
-<div class="viewcode-block" id="ConsoleTextEdit.append"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.misc.ConsoleTextEdit.append">[docs]</a>    <span class="k">def</span> <span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<div class="viewcode-block" id="ConsoleTextEdit.append"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.misc.ConsoleTextEdit.append">[docs]</a>    <span class="k">def</span> <span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Append new text.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ConsoleTextEdit.erase_last"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.misc.ConsoleTextEdit.erase_last">[docs]</a>    <span class="k">def</span> <span class="nf">erase_last</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ConsoleTextEdit.erase_last"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.misc.ConsoleTextEdit.erase_last">[docs]</a>    <span class="k">def</span> <span class="nf">erase_last</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Erase the last line.&quot;&quot;&quot;</span>
         <span class="n">cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">textCursor</span><span class="p">()</span>
         <span class="n">cursor</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">End</span><span class="p">)</span>
@@ -256,7 +248,7 @@
         <span class="n">cursor</span><span class="o">.</span><span class="n">deletePreviousChar</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setTextCursor</span><span class="p">(</span><span class="n">cursor</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ConsoleTextEdit.erase_first"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.misc.ConsoleTextEdit.erase_first">[docs]</a>    <span class="k">def</span> <span class="nf">erase_first</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ConsoleTextEdit.erase_first"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.misc.ConsoleTextEdit.erase_first">[docs]</a>    <span class="k">def</span> <span class="nf">erase_first</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Erase the first line.&quot;&quot;&quot;</span>
         <span class="n">cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">textCursor</span><span class="p">()</span>
         <span class="n">cursor</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">Start</span><span class="p">)</span>
@@ -274,7 +266,7 @@
         <span class="k">return</span> <span class="n">cursor</span><span class="o">.</span><span class="n">selectedText</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\u2029</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="CheckButton"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.misc.CheckButton">[docs]</a><span class="k">class</span> <span class="nc">CheckButton</span><span class="p">(</span><span class="n">PushButton</span><span class="p">):</span>
+<div class="viewcode-block" id="CheckButton"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.misc.CheckButton">[docs]</a><span class="k">class</span> <span class="nc">CheckButton</span><span class="p">(</span><span class="n">PushButton</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A checkable button.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -282,8 +274,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setCheckable</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="QIntEdit"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.misc.QIntEdit">[docs]</a><span class="k">class</span> <span class="nc">QIntEdit</span><span class="p">(</span><span class="n">BaseLineEdit</span><span class="p">):</span>
-    <span class="n">_qwidget</span><span class="p">:</span> <span class="n">QLineEdit</span>
+<div class="viewcode-block" id="QIntEdit"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.misc.QIntEdit">[docs]</a><span class="k">class</span> <span class="nc">QIntEdit</span><span class="p">(</span><span class="n">BaseLineEdit</span><span class="p">):</span>
+    <span class="n">_qwidget</span><span class="p">:</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QLineEdit</span>
 
     <span class="k">def</span> <span class="nf">_post_get_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
@@ -294,7 +286,7 @@
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="IntEdit"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.misc.IntEdit">[docs]</a><span class="k">class</span> <span class="nc">IntEdit</span><span class="p">(</span><span class="n">LineEdit</span><span class="p">):</span>
+<div class="viewcode-block" id="IntEdit"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.misc.IntEdit">[docs]</a><span class="k">class</span> <span class="nc">IntEdit</span><span class="p">(</span><span class="n">LineEdit</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">UNSET</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">app</span> <span class="o">=</span> <span class="n">use_app</span><span class="p">()</span>
         <span class="k">assert</span> <span class="n">app</span><span class="o">.</span><span class="n">native</span>
@@ -306,8 +298,8 @@
         <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="QFloatEdit"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.misc.QFloatEdit">[docs]</a><span class="k">class</span> <span class="nc">QFloatEdit</span><span class="p">(</span><span class="n">BaseLineEdit</span><span class="p">):</span>
-    <span class="n">_qwidget</span><span class="p">:</span> <span class="n">QLineEdit</span>
+<div class="viewcode-block" id="QFloatEdit"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.misc.QFloatEdit">[docs]</a><span class="k">class</span> <span class="nc">QFloatEdit</span><span class="p">(</span><span class="n">BaseLineEdit</span><span class="p">):</span>
+    <span class="n">_qwidget</span><span class="p">:</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QLineEdit</span>
 
     <span class="k">def</span> <span class="nf">_post_get_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
@@ -318,7 +310,7 @@
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="FloatEdit"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.misc.FloatEdit">[docs]</a><span class="k">class</span> <span class="nc">FloatEdit</span><span class="p">(</span><span class="n">LineEdit</span><span class="p">):</span>
+<div class="viewcode-block" id="FloatEdit"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.misc.FloatEdit">[docs]</a><span class="k">class</span> <span class="nc">FloatEdit</span><span class="p">(</span><span class="n">LineEdit</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">UNSET</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">app</span> <span class="o">=</span> <span class="n">use_app</span><span class="p">()</span>
         <span class="k">assert</span> <span class="n">app</span><span class="o">.</span><span class="n">native</span>
@@ -333,7 +325,7 @@
 <span class="n">_V</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;_V&quot;</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="QRangeSlider"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.misc.QRangeSlider">[docs]</a><span class="k">class</span> <span class="nc">QRangeSlider</span><span class="p">(</span><span class="n">QBaseWidget</span><span class="p">):</span>
+<div class="viewcode-block" id="QRangeSlider"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.misc.QRangeSlider">[docs]</a><span class="k">class</span> <span class="nc">QRangeSlider</span><span class="p">(</span><span class="n">QBaseWidget</span><span class="p">):</span>
     <span class="n">_qwidget</span><span class="p">:</span> <span class="n">QLabeledRangeSlider</span>
 
     <span class="k">def</span> <span class="nf">_mgui_get_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -346,7 +338,7 @@
         <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="AbstractRangeSlider"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.misc.AbstractRangeSlider">[docs]</a><span class="k">class</span> <span class="nc">AbstractRangeSlider</span><span class="p">(</span><span class="n">ValueWidget</span><span class="p">,</span> <span class="n">Generic</span><span class="p">[</span><span class="n">_V</span><span class="p">]):</span>
+<div class="viewcode-block" id="AbstractRangeSlider"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.misc.AbstractRangeSlider">[docs]</a><span class="k">class</span> <span class="nc">AbstractRangeSlider</span><span class="p">(</span><span class="n">ValueWidget</span><span class="p">,</span> <span class="n">Generic</span><span class="p">[</span><span class="n">_V</span><span class="p">]):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A slider widget that represent a range like (2, 5).</span>
 
@@ -381,10 +373,10 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span>
             <span class="n">widget_type</span><span class="o">=</span><span class="n">QRangeSlider</span><span class="p">,</span>
-            <span class="n">backend_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;qwidg&quot;</span><span class="p">:</span> <span class="n">QWidget</span><span class="p">},</span>
+            <span class="n">backend_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;qwidg&quot;</span><span class="p">:</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QWidget</span><span class="p">},</span>
             <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">QVBoxLayout</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">QtW</span><span class="o">.</span><span class="n">QVBoxLayout</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setContentsMargins</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">sl</span><span class="p">)</span>
 
@@ -432,7 +424,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_slider</span><span class="o">.</span><span class="n">setMaximum</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="RangeSlider"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.misc.RangeSlider">[docs]</a><span class="k">class</span> <span class="nc">RangeSlider</span><span class="p">(</span><span class="n">AbstractRangeSlider</span><span class="p">[</span><span class="nb">int</span><span class="p">]):</span>
+<div class="viewcode-block" id="RangeSlider"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.misc.RangeSlider">[docs]</a><span class="k">class</span> <span class="nc">RangeSlider</span><span class="p">(</span><span class="n">AbstractRangeSlider</span><span class="p">[</span><span class="nb">int</span><span class="p">]):</span>
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">_construct_qt</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="kn">from</span> <span class="nn">superqt</span> <span class="kn">import</span> <span class="n">QLabeledRangeSlider</span>
@@ -443,7 +435,7 @@
         <span class="k">return</span> <span class="n">sl</span></div>
 
 
-<div class="viewcode-block" id="FloatRangeSlider"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.misc.FloatRangeSlider">[docs]</a><span class="k">class</span> <span class="nc">FloatRangeSlider</span><span class="p">(</span><span class="n">AbstractRangeSlider</span><span class="p">[</span><span class="nb">float</span><span class="p">]):</span>
+<div class="viewcode-block" id="FloatRangeSlider"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.misc.FloatRangeSlider">[docs]</a><span class="k">class</span> <span class="nc">FloatRangeSlider</span><span class="p">(</span><span class="n">AbstractRangeSlider</span><span class="p">[</span><span class="nb">float</span><span class="p">]):</span>
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">_construct_qt</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="kn">from</span> <span class="nn">superqt</span> <span class="kn">import</span> <span class="n">QLabeledDoubleRangeSlider</span>
@@ -454,7 +446,7 @@
         <span class="k">return</span> <span class="n">sl</span></div>
 
 
-<span class="k">class</span> <span class="nc">_QtSpreadSheet</span><span class="p">(</span><span class="n">QTabWidget</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">_QtSpreadSheet</span><span class="p">(</span><span class="n">QtW</span><span class="o">.</span><span class="n">QTabWidget</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setMovable</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
@@ -480,7 +472,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_line_edit</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="n">tabbar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabBar</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_line_edit</span> <span class="o">=</span> <span class="n">QLineEdit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_line_edit</span> <span class="o">=</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QLineEdit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
         <span class="nd">@self</span><span class="o">.</span><span class="n">_line_edit</span><span class="o">.</span><span class="n">editingFinished</span><span class="o">.</span><span class="n">connect</span>
         <span class="k">def</span> <span class="nf">_</span><span class="p">(</span><span class="n">_</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -499,7 +491,7 @@
             <span class="k">return</span>
         <span class="n">tabbar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabBar</span><span class="p">()</span>
         <span class="n">index</span> <span class="o">=</span> <span class="n">tabbar</span><span class="o">.</span><span class="n">tabAt</span><span class="p">(</span><span class="n">point</span><span class="p">)</span>
-        <span class="n">menu</span> <span class="o">=</span> <span class="n">QMenu</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">menu</span> <span class="o">=</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QMenu</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="n">rename_action</span> <span class="o">=</span> <span class="n">menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">&quot;Rename&quot;</span><span class="p">)</span>
         <span class="n">rename_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span> <span class="n">_</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">editTabBarLabel</span><span class="p">(</span><span class="n">index</span><span class="p">))</span>
         <span class="n">delete_action</span> <span class="o">=</span> <span class="n">menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">&quot;Delete&quot;</span><span class="p">)</span>
@@ -508,7 +500,7 @@
         <span class="n">menu</span><span class="o">.</span><span class="n">exec</span><span class="p">(</span><span class="n">tabbar</span><span class="o">.</span><span class="n">mapToGlobal</span><span class="p">(</span><span class="n">point</span><span class="p">))</span>
 
 
-<div class="viewcode-block" id="SpreadSheet"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.misc.SpreadSheet">[docs]</a><span class="k">class</span> <span class="nc">SpreadSheet</span><span class="p">(</span><span class="n">FreeWidget</span><span class="p">,</span> <span class="n">MutableSequence</span><span class="p">[</span><span class="n">Table</span><span class="p">]):</span>
+<div class="viewcode-block" id="SpreadSheet"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.misc.SpreadSheet">[docs]</a><span class="k">class</span> <span class="nc">SpreadSheet</span><span class="p">(</span><span class="n">FreeWidget</span><span class="p">,</span> <span class="n">MutableSequence</span><span class="p">[</span><span class="n">Table</span><span class="p">]):</span>
     <span class="sd">&quot;&quot;&quot;A simple spread sheet widget.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">read_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
@@ -522,7 +514,7 @@
     <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_widget</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
 
-<div class="viewcode-block" id="SpreadSheet.index"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.misc.SpreadSheet.index">[docs]</a>    <span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">Table</span> <span class="o">|</span> <span class="nb">str</span><span class="p">):</span>
+<div class="viewcode-block" id="SpreadSheet.index"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.misc.SpreadSheet.index">[docs]</a>    <span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">Table</span> <span class="o">|</span> <span class="nb">str</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">Table</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">table</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tables</span><span class="p">):</span>
                 <span class="k">if</span> <span class="n">item</span> <span class="ow">is</span> <span class="n">table</span><span class="p">:</span>
@@ -557,7 +549,7 @@
     <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Table</span><span class="p">]:</span>
         <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tables</span><span class="p">)</span>
 
-<div class="viewcode-block" id="SpreadSheet.insert"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.misc.SpreadSheet.insert">[docs]</a>    <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<div class="viewcode-block" id="SpreadSheet.insert"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.misc.SpreadSheet.insert">[docs]</a>    <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Insert a table-like data as a new sheet.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">key</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">key</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
@@ -567,7 +559,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_tables</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">table</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">None</span></div>
 
-<div class="viewcode-block" id="SpreadSheet.rename"><a class="viewcode-back" href="../../../magicclass.widgets.html#magicclass.widgets.misc.SpreadSheet.rename">[docs]</a>    <span class="k">def</span> <span class="nf">rename</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<div class="viewcode-block" id="SpreadSheet.rename"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.misc.SpreadSheet.rename">[docs]</a>    <span class="k">def</span> <span class="nf">rename</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Rename tab at index `index` with name `name`.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">central_widget</span><span class="o">.</span><span class="n">renameTab</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">None</span></div>

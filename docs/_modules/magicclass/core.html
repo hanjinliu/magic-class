@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.core &mdash; magic-class 0.6.2.dev1 documentation</title>
+  <title>magicclass.core &mdash; magic-class 0.6.3 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.2.dev1
+                0.6.3
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -76,24 +76,14 @@
            <div itemprop="articleBody">
 
   <h1>Source code for magicclass.core</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">The core functions of ``magic-class``.</span>
-
-<span class="sd">:func:`magicclass`</span>
-<span class="sd">:func:`magicmenu`</span>
-<span class="sd">:func:`magiccontext`</span>
-<span class="sd">:func:`magictoolbar`</span>
-
-<span class="sd">&quot;&quot;&quot;</span>
-
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span> <span class="k">as</span> <span class="n">functools_wraps</span>
 <span class="kn">import</span> <span class="nn">inspect</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">is_dataclass</span>
 <span class="kn">from</span> <span class="nn">weakref</span> <span class="kn">import</span> <span class="n">WeakValueDictionary</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span>
 
-<span class="kn">from</span> <span class="nn">.gui.class_gui</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span> <span class="nn">._gui.class_gui</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">ClassGuiBase</span><span class="p">,</span>
     <span class="n">ClassGui</span><span class="p">,</span>
     <span class="n">FrameClassGui</span><span class="p">,</span>
@@ -111,7 +101,7 @@
     <span class="n">ToolBoxClassGui</span><span class="p">,</span>
     <span class="n">ListClassGui</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">.gui._base</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span> <span class="nn">._gui._base</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">PopUpMode</span><span class="p">,</span>
     <span class="n">ErrorMode</span><span class="p">,</span>
     <span class="n">defaults</span><span class="p">,</span>
@@ -119,15 +109,15 @@
     <span class="n">check_override</span><span class="p">,</span>
     <span class="n">convert_attributes</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">.gui</span> <span class="kn">import</span> <span class="n">ContextMenuGui</span><span class="p">,</span> <span class="n">MenuGui</span><span class="p">,</span> <span class="n">ToolBarGui</span>
+<span class="kn">from</span> <span class="nn">._gui</span> <span class="kn">import</span> <span class="n">ContextMenuGui</span><span class="p">,</span> <span class="n">MenuGui</span><span class="p">,</span> <span class="n">ToolBarGui</span>
 <span class="kn">from</span> <span class="nn">._app</span> <span class="kn">import</span> <span class="n">get_app</span>
 <span class="kn">from</span> <span class="nn">.types</span> <span class="kn">import</span> <span class="n">WidgetType</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">_register</span>  <span class="c1"># activate type registration things.</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">.stylesheets</span> <span class="kn">import</span> <span class="n">StyleSheet</span>
-    <span class="kn">from</span> <span class="nn">.gui</span> <span class="kn">import</span> <span class="n">MenuGuiBase</span>
-    <span class="kn">from</span> <span class="nn">.gui._function_gui</span> <span class="kn">import</span> <span class="n">FunctionGuiPlus</span>
+    <span class="kn">from</span> <span class="nn">._gui</span> <span class="kn">import</span> <span class="n">MenuGuiBase</span>
+    <span class="kn">from</span> <span class="nn">._gui._function_gui</span> <span class="kn">import</span> <span class="n">FunctionGuiPlus</span>
     <span class="kn">from</span> <span class="nn">.types</span> <span class="kn">import</span> <span class="n">WidgetTypeStr</span><span class="p">,</span> <span class="n">PopUpModeStr</span><span class="p">,</span> <span class="n">ErrorModeStr</span>
     <span class="kn">from</span> <span class="nn">.help</span> <span class="kn">import</span> <span class="n">HelpWidget</span>
 
@@ -165,7 +155,6 @@
     <span class="n">widget_type</span><span class="p">:</span> <span class="n">WidgetTypeStr</span> <span class="o">|</span> <span class="n">WidgetType</span> <span class="o">=</span> <span class="n">WidgetType</span><span class="o">.</span><span class="n">none</span><span class="p">,</span>
     <span class="n">icon_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">stylesheet</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">StyleSheet</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Decorator that can convert a Python class into a widget.</span>
@@ -205,8 +194,6 @@
 <span class="sd">        Path to the icon image.</span>
 <span class="sd">    stylesheet : str or StyleSheet object, optional</span>
 <span class="sd">        Set stylesheet to the widget if given.</span>
-<span class="sd">    parent : magicgui.widgets._base.Widget, optional</span>
-<span class="sd">        Parent widget if exists.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -263,7 +250,6 @@
             <span class="n">class_gui</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
                 <span class="bp">self</span><span class="p">,</span>
                 <span class="n">layout</span><span class="o">=</span><span class="n">layout</span><span class="p">,</span>
-                <span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">,</span>
                 <span class="n">close_on_run</span><span class="o">=</span><span class="n">close_on_run</span><span class="p">,</span>
                 <span class="n">popup_mode</span><span class="o">=</span><span class="n">PopUpMode</span><span class="p">(</span><span class="n">popup_mode</span><span class="p">),</span>
                 <span class="n">error_mode</span><span class="o">=</span><span class="n">ErrorMode</span><span class="p">(</span><span class="n">error_mode</span><span class="p">),</span>
@@ -314,7 +300,6 @@
     <span class="n">labels</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">icon_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Decorator that can convert a Python class into a menu bar.</span>
@@ -331,7 +316,6 @@
     <span class="n">labels</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">icon_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Decorator that can convert a Python class into a context menu.</span>
@@ -348,7 +332,6 @@
     <span class="n">labels</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">icon_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Decorator that can convert a Python class into a menu bar.</span>
@@ -371,8 +354,7 @@
         <span class="n">error_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">ErrorMode</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">widget_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">WidgetType</span> <span class="o">=</span> <span class="n">WidgetType</span><span class="o">.</span><span class="n">none</span><span class="p">,</span>
         <span class="n">icon_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">attrs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">attrs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">layout</span> <span class="o">=</span> <span class="n">layout</span>
@@ -382,7 +364,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">error_mode</span> <span class="o">=</span> <span class="n">error_mode</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget_type</span> <span class="o">=</span> <span class="n">widget_type</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">icon_path</span> <span class="o">=</span> <span class="n">icon_path</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">parent</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">attrs</span> <span class="o">=</span> <span class="n">attrs</span>
 
 <div class="viewcode-block" id="MagicClassFactory.as_magicclass"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.core.MagicClassFactory.as_magicclass">[docs]</a>    <span class="k">def</span> <span class="nf">as_magicclass</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ClassGuiBase</span><span class="p">:</span>
@@ -397,7 +378,6 @@
             <span class="n">error_mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">error_mode</span><span class="p">,</span>
             <span class="n">widget_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">widget_type</span><span class="p">,</span>
             <span class="n">icon_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">icon_path</span><span class="p">,</span>
-            <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span></div>
 
@@ -410,7 +390,6 @@
             <span class="n">error_mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">error_mode</span><span class="p">,</span>
             <span class="n">labels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">,</span>
             <span class="n">icon_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">icon_path</span><span class="p">,</span>
-            <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span></div>
 
@@ -423,7 +402,6 @@
             <span class="n">error_mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">error_mode</span><span class="p">,</span>
             <span class="n">labels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">,</span>
             <span class="n">icon_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">icon_path</span><span class="p">,</span>
-            <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span></div>
 
@@ -436,7 +414,6 @@
             <span class="n">error_mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">error_mode</span><span class="p">,</span>
             <span class="n">labels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">,</span>
             <span class="n">icon_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">icon_path</span><span class="p">,</span>
-            <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span></div></div>
 
@@ -449,7 +426,6 @@
     <span class="n">labels</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">icon_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">menugui_class</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">MenuGuiBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -463,8 +439,6 @@
 <span class="sd">    popup : bool, default is True</span>
 <span class="sd">        If True, magicgui created by every method will be poped up, else they will be appended as a</span>
 <span class="sd">        part of the main widget.</span>
-<span class="sd">    parent : magicgui.widgets._base.Widget, optional</span>
-<span class="sd">        Parent widget if exists.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -517,7 +491,6 @@
 
             <span class="n">menugui_class</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
                 <span class="bp">self</span><span class="p">,</span>
-                <span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">,</span>
                 <span class="n">close_on_run</span><span class="o">=</span><span class="n">close_on_run</span><span class="p">,</span>
                 <span class="n">popup_mode</span><span class="o">=</span><span class="n">PopUpMode</span><span class="p">(</span><span class="n">popup_mode</span><span class="p">),</span>
                 <span class="n">error_mode</span><span class="o">=</span><span class="n">ErrorMode</span><span class="p">(</span><span class="n">error_mode</span><span class="p">),</span>
@@ -607,7 +580,7 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="s2">&quot;mgui&quot;</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Widget </span><span class="si">{</span><span class="n">widget</span><span class="si">}</span><span class="s2"> does not have FunctionGui inside it.&quot;</span><span class="p">)</span>
 
-    <span class="kn">from</span> <span class="nn">.gui._base</span> <span class="kn">import</span> <span class="n">_build_mgui</span>
+    <span class="kn">from</span> <span class="nn">._gui._base</span> <span class="kn">import</span> <span class="n">_build_mgui</span>
 
     <span class="n">mgui</span> <span class="o">=</span> <span class="n">_build_mgui</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">ui</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">mgui</span></div>
@@ -632,6 +605,19 @@
     <span class="n">line</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">macro</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
     <span class="n">line</span><span class="o">.</span><span class="n">eval</span><span class="p">({</span><span class="s2">&quot;ui&quot;</span><span class="p">:</span> <span class="n">ui</span><span class="p">})</span>
     <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<span class="c1"># def update_widget(ui: MagicTemplate) -&gt; None:</span>
+<span class="c1">#     from macrokit import Head, Expr, Mock</span>
+<span class="c1">#     for expr in ui.macro:</span>
+<span class="c1">#         if expr.head == Head.call:</span>
+<span class="c1">#             target = expr.args[0]</span>
+<span class="c1">#             target_widget = Expr(Head.getitem, [target.args[0], str(target.args[1])])</span>
+<span class="c1">#             mock = Mock(target_widget)</span>
+<span class="c1">#             e = Expr(Head.call, [mock.mgui.update] + expr.args[1:])</span>
+
+<span class="c1">#         elif expr.head == Head.assign:</span>
+<span class="c1">#             expr.eval({}, {str(ui._my_symbol): ui})</span>
 
 
 <div class="viewcode-block" id="Parameters"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.core.Parameters">[docs]</a><span class="k">class</span> <span class="nc">Parameters</span><span class="p">:</span>

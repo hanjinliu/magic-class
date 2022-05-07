@@ -8,7 +8,6 @@ Subpackages
    :maxdepth: 4
 
    magicclass.ext
-   magicclass.gui
    magicclass.stylesheets
    magicclass.utils
    magicclass.widgets

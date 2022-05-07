@@ -7,7 +7,7 @@ from magicgui.widgets._concrete import merge_super_sigs as _merge_super_sigs
 from magicgui.backends._qtpy.widgets import QBaseWidget
 
 if TYPE_CHECKING:
-    from ..gui import BaseGui, ContextMenuGui
+    from .._gui import BaseGui, ContextMenuGui
 
 
 class _NotInitialized:
@@ -52,11 +52,11 @@ class FreeWidget(Widget):
         self.central_widget = widget
 
     def set_contextmenu(self, contextmenugui: ContextMenuGui):
-        from ..gui import ContextMenuGui
+        from .._gui import ContextMenuGui
 
         if not isinstance(contextmenugui, ContextMenuGui):
             raise TypeError
-        from ..gui.utils import set_context_menu
+        from .._gui.utils import set_context_menu
 
         set_context_menu(contextmenugui, self)
 

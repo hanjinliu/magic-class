@@ -16,4 +16,9 @@ from .qt import (
     screen_scale,
 )
 
-from .qthreading import thread_worker, Timer
+from .qtsignal import QtSignal
+
+try:
+    from .qthreading import thread_worker, Timer
+except ImportError:
+    pass

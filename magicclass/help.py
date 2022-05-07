@@ -13,10 +13,10 @@ from typing import Any, Callable, Iterator, TYPE_CHECKING
 from .widgets.containers import SplitterContainer
 from .widgets.misc import ConsoleTextEdit
 
-from .gui.mgui_ext import Action, PushButtonPlus, WidgetAction
-from .gui._base import MagicTemplate
-from .widgets import DraggableContainer, FreeWidget
-from .gui.class_gui import (
+from ._gui.mgui_ext import Action, PushButtonPlus, WidgetAction
+from ._gui._base import MagicTemplate
+from .widgets import DraggableContainer, FreeWidget, Separator
+from ._gui.class_gui import (
     CollapsibleClassGui,
     DraggableClassGui,
     ScrollableClassGui,
@@ -101,6 +101,9 @@ class _HelpWidget(QSplitter):
                     child.setText(0, f"({i+1}) {widget.name}")
 
             else:
+                if isinstance(getattr(widget, "_inner_widget", widget), Separator):
+                    # separator does not need a help
+                    continue
                 child = UiBoundTreeItem(root, ui=None)
                 child.setText(0, f"({i+1}) {widget.name}")
 
@@ -208,16 +211,17 @@ def get_help_info(ui: MagicTemplate) -> tuple[np.ndarray, dict[str, str]]:
             ax.imshow(img)
             for i, widget in enumerate(_iter_unwrapped_children(ui)):
                 x, y = _get_relative_pos(widget)
-                ax.text(
-                    x * scale,
-                    y * scale,
-                    f"({i+1})",
-                    ha="center",
-                    va="center",
-                    color="white",
-                    backgroundcolor="black",
-                    fontfamily="Arial",
-                )
+                if x >= 0 and y >= 0:
+                    ax.text(
+                        x * scale,
+                        y * scale,
+                        f"({i+1})",
+                        ha="center",
+                        va="center",
+                        color="white",
+                        backgroundcolor="black",
+                        fontfamily="Arial",
+                    )
                 docs[widget.name] = _get_doc(widget)
             fig.tight_layout()
             fig.canvas.draw()
@@ -271,23 +275,38 @@ def _render(qwidget: QWidget) -> np.ndarray:
 
 
 def _iter_unwrapped_children(ui: MagicTemplate) -> Iterator[Widget]:
-    for widget in ui:
-        if not getattr(widget, "_unwrapped", False):
-            yield widget
+    all_widgets: set[Widget] = set()
+
+    for item in ui._list:
+        widget = getattr(item, "_inner_widget", item)
+        all_widgets.add(widget)
+    for widget in ui.__magicclass_children__:
+        all_widgets.add(widget)
+
+    for w in all_widgets:
+        if not getattr(w, "_unwrapped", False):
+            yield w
 
 
 def _get_relative_pos(widget: Widget) -> tuple[int, int]:
     """Get relative position of a widget seen from its parent."""
-    w = widget._labeled_widget()
-    if w is None:
-        w = widget
-    qpos = w.native.mapToParent(w.native.rect().topLeft())
-    return qpos.x(), qpos.y()
+    if hasattr(widget, "_labeled_widget"):
+        w = widget._labeled_widget()
+        if w is None:
+            w = widget
+        try:
+            qpos = w.native.mapToParent(w.native.rect().topLeft())
+            out = qpos.x(), qpos.y()
+        except Exception:
+            out = (-1, -1)
+    else:
+        out = (-1, -1)
+    return out
 
 
 def get_keymap(ui: MagicTemplate | type[MagicTemplate]):
     from .signature import get_additional_option
-    from .gui.keybinding import as_shortcut
+    from ._gui.keybinding import as_shortcut
 
     keymap: dict[str, Callable] = {}
 

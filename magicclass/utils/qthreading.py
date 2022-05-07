@@ -1,5 +1,7 @@
 from __future__ import annotations
+import threading
 import time
+from timeit import default_timer
 import inspect
 from functools import partial, wraps
 from typing import (
@@ -16,25 +18,20 @@ from typing import (
 )
 from typing_extensions import TypedDict, ParamSpec
 
-try:
-    from superqt.utils import create_worker, GeneratorWorker, FunctionWorker
-except ImportError as e:  # pragma: no cover
-    msg = f"{e}. To use magicclass with threading please `pip install superqt`"
-    raise type(e)(msg)
-
+from superqt.utils import create_worker, GeneratorWorker, FunctionWorker
 from qtpy.QtCore import Qt
 from magicgui.widgets import ProgressBar, Container, Widget, PushButton, Label
 from magicgui.application import use_app
 
 from . import get_signature, move_to_screen_center
+from .qtsignal import QtSignal
 
 if TYPE_CHECKING:
-    from ..gui import BaseGui
-    from ..gui.mgui_ext import PushButtonPlus, Action
+    from .._gui import BaseGui
+    from .._gui.mgui_ext import PushButtonPlus, Action
+    from ..fields import MagicField
 
 __all__ = ["thread_worker", "Timer"]
-
-_F = TypeVar("_F", bound=Callable)
 
 
 class ProgressDict(TypedDict):
@@ -42,7 +39,7 @@ class ProgressDict(TypedDict):
 
     desc: str | Callable
     total: str | Callable
-    pbar: Any
+    pbar: ProgressBar | _SupportProgress | MagicField
 
 
 @runtime_checkable
@@ -202,7 +199,7 @@ class Timer:
 
     def start(self):
         """Start timer."""
-        self._t0 = time.time()
+        self._t0 = default_timer()
         self._running = True
 
     def stop(self) -> float:
@@ -213,14 +210,14 @@ class Timer:
     def lap(self) -> float:
         """Return lap time."""
         if self._running:
-            now = time.time()
+            now = default_timer()
             self._t_total += now - self._t0
             self._t0 = now
         return self._t_total
 
     def reset(self):
         """Reset timer."""
-        self._t0 = time.time()
+        self._t0 = default_timer()
         self._t_total = 0.0
         self._running = False
         return None
@@ -238,7 +235,7 @@ class DefaultProgressBar(Container, _SupportProgress):
     def __init__(self, max: int = 1):
         self.progress_label = Label(value="Progress")
         self.pbar = ProgressBar(value=0, max=max)
-        self.time_label = Label(value="")
+        self.time_label = Label(value="00:00")
         self.pause_button = PushButton(text="Pause")
         self.abort_button = PushButton(text="Abort")
         cnt = Container(
@@ -250,7 +247,40 @@ class DefaultProgressBar(Container, _SupportProgress):
         self.footer = cnt
         self.pbar.min_width = 200
         self._timer = Timer()
+        self._time_signal = QtSignal()
+        self._time_signal.connect(self._on_timer_updated)
+
         super().__init__(widgets=[self.progress_label, self.pbar, cnt], labels=False)
+
+    def _on_timer_updated(self, _=None):
+        if self._timer.sec < 3600:
+            self.time_label.value = self._timer.format_time("{min:0>2}:{sec:0>2}")
+        else:
+            self.time_label.value = self._timer.format_time()
+        return None
+
+    def _start_thread(self):
+        # Start background thread
+        self._running = True
+        self._thread_timer = threading.Thread(target=self._update_timer_label)
+        self._thread_timer.daemon = True
+        self._thread_timer.start()
+        self._timer.start()
+        return None
+
+    def _update_timer_label(self):
+        """Background thread for updating the progress bar"""
+        while self._running:
+            if self._timer._running:
+                self._time_signal.emit()
+
+            time.sleep(0.1)
+        return None
+
+    def _finish(self):
+        self._running = False
+        self._thread_timer.join()
+        return None
 
     @property
     def paused(self) -> bool:
@@ -263,11 +293,6 @@ class DefaultProgressBar(Container, _SupportProgress):
     @value.setter
     def value(self, v):
         self.pbar.value = v
-        # update timer label
-        if self._timer.sec < 3600:
-            self.time_label.value = self._timer.format_time("{min:0>2}:{sec:0>2}")
-        else:
-            self.time_label.value = self._timer.format_time()
 
     @property
     def max(self) -> int:
@@ -277,11 +302,6 @@ class DefaultProgressBar(Container, _SupportProgress):
     def max(self, v):
         self.pbar.max = v
 
-    def show(self, run=False):
-        super().show(run=run)
-        self._timer.start()
-        return self
-
     def set_description(self, desc: str):
         """Set description as the label of the progressbar."""
         self.progress_label.value = desc
@@ -290,9 +310,12 @@ class DefaultProgressBar(Container, _SupportProgress):
     def set_worker(self, worker: GeneratorWorker | FunctionWorker):
         """Set currently running worker."""
         self._worker = worker
+        self._worker.finished.connect(self._finish)
+        self._worker.started.connect(self._start_thread)
         if not isinstance(self._worker, GeneratorWorker):
             # FunctionWorker does not have yielded/aborted signals.
-            self.footer.visible = False
+            self.footer[1].visible = False
+            self.footer[2].visible = False
             return None
         # initialize abort_button
         self.abort_button.text = "Abort"
@@ -351,6 +374,8 @@ class thread_worker:
     """Create a worker in a superqt/napari style."""
 
     _DEFAULT_PROGRESS_BAR = DefaultProgressBar
+    _DEFAULT_TOTAL = 0
+    _WINDOW_FLAG = Qt.WindowTitleHint | Qt.WindowMinimizeButtonHint | Qt.Window
 
     def __init__(
         self,
@@ -360,16 +385,19 @@ class thread_worker:
         progress: ProgressDict | None = None,
     ) -> None:
         self._func: Callable[_P, _R1] | None = None
-        self._started: Callbacks[None] = Callbacks()
-        self._returned: Callbacks[_R1] = Callbacks()
-        self._errored: Callbacks[Exception] = Callbacks()
-        self._yielded: Callbacks[_R1] = Callbacks()
-        self._finished: Callbacks[None] = Callbacks()
-        self._aborted: Callbacks[None] = Callbacks()
+        self._callback_dict_ = {
+            "started": Callbacks(),
+            "returned": Callbacks(),
+            "errored": Callbacks(),
+            "yielded": Callbacks(),
+            "finished": Callbacks(),
+            "aborted": Callbacks(),
+        }
+
         self._ignore_errors = ignore_errors
         self._objects: dict[int, BaseGui] = {}
         self._progressbars: dict[int, ProgressBarLike | None] = {}
-        self._last_arguments = tuple(), dict()
+        self._recorder: Callable[_P, Any] | None = None
 
         if f is not None:
             self(f)
@@ -418,6 +446,14 @@ class thread_worker:
         """True if bound function is a generator function."""
         return inspect.isgeneratorfunction(self._func)
 
+    def _set_recorder(self, recorder: Callable[_P, Any]):
+        """
+        Set macro recorder function.
+        Must accept ``recorder(bgui, *args, **kwargs)``.
+        """
+        self._recorder = recorder
+        return None
+
     @overload
     def __call__(self, f: Callable[_P, _R1]) -> thread_worker:
         ...
@@ -449,21 +485,27 @@ class thread_worker:
         self._objects[gui_id] = _create_worker  # cache
         return _create_worker
 
+    def _create_qt_worker(
+        self, gui, *args, **kwargs
+    ) -> FunctionWorker | GeneratorWorker:
+        """Create a worker object."""
+        worker = create_worker(
+            self._func.__get__(gui),
+            _ignore_errors=self._ignore_errors,
+            _start_thread=False,
+            *args,
+            **kwargs,
+        )
+        return worker
+
     def _create_method(self, gui: BaseGui):
         from ..fields import MagicField
 
         @wraps(self)
         def _create_worker(*args, **kwargs):
             # create a worker object
-            worker: FunctionWorker | GeneratorWorker = create_worker(
-                self._func.__get__(gui),
-                _ignore_errors=self._ignore_errors,
-                _start_thread=False,
-                *args,
-                **kwargs,
-            )
+            worker = self._create_qt_worker(gui, *args, **kwargs)
             is_generator = isinstance(worker, GeneratorWorker)
-            self._last_arguments = args, kwargs
 
             if self._progress:
                 _desc = self._progress["desc"]
@@ -495,7 +537,7 @@ class thread_worker:
                     )
 
                 if not is_generator:
-                    total = 0
+                    total = self._DEFAULT_TOTAL
 
                 # create progressbar widget (or any proper widget)
                 if _pbar is None:
@@ -512,23 +554,15 @@ class thread_worker:
                     pbar.max = total
                 else:
                     pbar = _pbar
+                    pbar.set_description(desc)
 
                 worker.started.connect(init_pbar.__get__(pbar))
 
-            for c in self.started._iter_as_method(gui):
-                worker.started.connect(c)
-            for c in self.returned._iter_as_method(gui):
-                worker.returned.connect(c)
-            for c in self.errored._iter_as_method(gui):
-                worker.errored.connect(c)
-            for c in self.finished._iter_as_method(gui):
-                worker.finished.connect(c)
+            self._bind_callbacks(worker, gui)
 
-            if is_generator:
-                for c in self.aborted._iter_as_method(gui):
-                    worker.aborted.connect(c)
-                for c in self.yielded._iter_as_method(gui):
-                    worker.yielded.connect(c)
+            # bind macro-recorder if exists
+            if self._recorder is not None:
+                worker.returned.connect(lambda _: self._recorder(gui, *args, **kwargs))
 
             if self._progress:
                 if not getattr(pbar, "visible", False):
@@ -544,8 +578,6 @@ class thread_worker:
 
             _obj: PushButtonPlus | Action = gui[self._func.__name__]
             if _obj.running:
-                _obj.enabled = False
-                worker.finished.connect(lambda: setattr(_obj, "enabled", True))
                 worker.errored.connect(
                     partial(gui._error_mode.get_handler(), parent=gui)
                 )
@@ -553,6 +585,7 @@ class thread_worker:
                     worker.aborted.connect(
                         gui._error_mode.wrap_handler(Aborted.raise_, parent=gui)
                     )
+
                 worker.start()
             else:
                 # If function is called from script, some events must get processed by
@@ -572,6 +605,24 @@ class thread_worker:
         sig = self.__signature__
         params = list(sig.parameters.values())[1:]
         return sig.replace(parameters=params)
+
+    def _bind_callbacks(self, worker: FunctionWorker | GeneratorWorker, gui):
+        # bind callbacks
+        is_generator = isinstance(worker, GeneratorWorker)
+        for c in self.started._iter_as_method(gui):
+            worker.started.connect(c)
+        for c in self.returned._iter_as_method(gui):
+            worker.returned.connect(c)
+        for c in self.errored._iter_as_method(gui):
+            worker.errored.connect(c)
+        for c in self.finished._iter_as_method(gui):
+            worker.finished.connect(c)
+
+        if is_generator:
+            for c in self.aborted._iter_as_method(gui):
+                worker.aborted.connect(c)
+            for c in self.yielded._iter_as_method(gui):
+                worker.yielded.connect(c)
 
     @property
     def __signature__(self) -> inspect.Signature:
@@ -593,28 +644,25 @@ class thread_worker:
         gui_id = id(gui)
         if gui_id in self._progressbars:
             _pbar = self._progressbars[gui_id]
-
-        for name, attr in gui.__class__.__dict__.items():
-            if isinstance(attr, MagicField):
-                attr = attr.get_widget(gui)
-            if isinstance(attr, ProgressBar):
-                _pbar = self._progressbars[gui_id] = attr
-                if desc is None:
-                    desc = name
-                break
         else:
-            _pbar = self._progressbars[gui_id] = None
-            if desc is None:
-                desc = "Progress"
+            for name, attr in gui.__class__.__dict__.items():
+                if isinstance(attr, MagicField):
+                    attr = attr.get_widget(gui)
+                if isinstance(attr, ProgressBar):
+                    _pbar = self._progressbars[gui_id] = attr
+                    if desc is None:
+                        desc = name
+                    break
+            else:
+                _pbar = self._progressbars[gui_id] = None
+                if desc is None:
+                    desc = "Progress"
 
         if _pbar is None:
             _pbar = self.__class__._DEFAULT_PROGRESS_BAR(max=total)
             if isinstance(_pbar, Widget) and _pbar.parent is None:
                 # Popup progressbar as a splashscreen if it is not a child widget.
-                _pbar.native.setParent(
-                    gui.native,
-                    Qt.WindowTitleHint | Qt.WindowMinimizeButtonHint | Qt.Window,
-                )
+                _pbar.native.setParent(gui.native, self.__class__._WINDOW_FLAG)
                 move_to_screen_center(_pbar.native)
         else:
             _pbar.max = total
@@ -629,17 +677,17 @@ class thread_worker:
     @property
     def started(self) -> Callbacks[None]:
         """Event that will be emitted on started."""
-        return self._started
+        return self._callback_dict_["started"]
 
     @property
     def returned(self) -> Callbacks[_R1]:
         """Event that will be emitted on returned."""
-        return self._returned
+        return self._callback_dict_["returned"]
 
     @property
     def errored(self) -> Callbacks[Exception]:
         """Event that will be emitted on errored."""
-        return self._errored
+        return self._callback_dict_["errored"]
 
     @property
     def yielded(self) -> Callbacks[_R1]:
@@ -649,12 +697,12 @@ class thread_worker:
                 f"Worker of non-generator function {self._func!r} does not have "
                 "yielded signal."
             )
-        return self._yielded
+        return self._callback_dict_["yielded"]
 
     @property
     def finished(self) -> Callbacks[None]:
         """Event that will be emitted on finished."""
-        return self._finished
+        return self._callback_dict_["finished"]
 
     @property
     def aborted(self) -> Callbacks[None]:
@@ -664,7 +712,7 @@ class thread_worker:
                 f"Worker of non-generator function {self._func!r} does not have "
                 "aborted signal."
             )
-        return self._aborted
+        return self._callback_dict_["aborted"]
 
 
 def init_pbar(pbar: ProgressBarLike):
