@@ -98,7 +98,7 @@ class _MagicGuiMeta(type):
     ) -> _MagicGuiMeta:
         cls: _MagicGuiMeta = type.__new__(mcls, name, bases, namespace)
         if not issubclass(base, QWidget):
-            raise TypeError
+            raise TypeError("The base parameter must be a subclass of QWidget.")
         cls_init = cls.__init__
 
         def __init__(self, *args, **kwargs):
