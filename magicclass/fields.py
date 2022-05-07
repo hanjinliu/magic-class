@@ -85,6 +85,12 @@ class MagicField(Field, Generic[_W, _V]):
     def __repr__(self):
         return self.__class__.__name__.rstrip("Field") + super().__repr__()
 
+    def __set_name__(self, owner: type, name: str) -> None:
+        super().__set_name__(owner, name)
+        self.parent_class = owner
+        if self.name is None:
+            self.name = name
+
     def copy(self) -> MagicField:
         """Copy object."""
         return self.__class__(
@@ -111,15 +117,15 @@ class MagicField(Field, Generic[_W, _V]):
         by ``obj.field``.
         """
         obj_id = id(obj)
-        objtype = type(obj)
         if obj_id in self.guis.keys():
             widget = self.guis[obj_id]
         else:
             with self._resolve_choices(obj):
                 widget = self.to_widget()
                 self.guis[obj_id] = widget
-            if self.parent_class is None:
-                self.parent_class = objtype
+                # for callback in self.callbacks:
+                #     # funcname = callback.__name__
+                #     widget.changed.connect(define_callback(obj, callback))
 
         return widget
 
@@ -129,15 +135,12 @@ class MagicField(Field, Generic[_W, _V]):
         by ``obj.field``.
         """
         obj_id = id(obj)
-        objtype = type(obj)
         if obj_id in self.guis.keys():
             action = self.guis[obj_id]
         else:
             with self._resolve_choices(obj):
                 action = self.to_action()
                 self.guis[obj_id] = action
-            if self.parent_class is None:
-                self.parent_class = objtype
 
         return action
 
