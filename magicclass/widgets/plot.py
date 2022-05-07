@@ -10,6 +10,11 @@ from .utils import FreeWidget
 
 if TYPE_CHECKING:
     from matplotlib.axes import Axes
+    from matplotlib.lines import Line2D
+    from matplotlib.collections import PathCollection
+    from matplotlib.text import Text
+    from matplotlib.quiver import Quiver
+    from matplotlib.legend import Legend
     from numpy.typing import ArrayLike
 
 try:
@@ -84,12 +89,12 @@ class Figure(FreeWidget):
     interactive = enabled  # alias
 
     @_inject_mpl_docs
-    def clf(self):
+    def clf(self) -> None:
         self.figure.clf()
         self.draw()
 
     @_inject_mpl_docs
-    def cla(self):
+    def cla(self) -> None:
         self.ax.cla()
         self.draw()
 
@@ -108,7 +113,9 @@ class Figure(FreeWidget):
         return _ax
 
     @_inject_mpl_docs
-    def subplots(self, *args, **kwargs):
+    def subplots(
+        self, *args, **kwargs
+    ) -> tuple[Figure, Axes] | tuple[Figure, list[Axes]]:
         self.clf()
         fig = self.figure
         axs = fig.subplots(*args, **kwargs)
@@ -116,20 +123,20 @@ class Figure(FreeWidget):
         return fig, axs
 
     @_inject_mpl_docs
-    def savefig(self, *args, **kwargs):
+    def savefig(self, *args, **kwargs) -> None:
         return self.figure.savefig(*args, **kwargs)
 
     @_inject_mpl_docs
-    def plot(self, *args, **kwargs) -> Axes:
-        self.ax.plot(*args, **kwargs)
+    def plot(self, *args, **kwargs) -> list[Line2D]:
+        lines = self.ax.plot(*args, **kwargs)
         self.draw()
-        return self.ax
+        return lines
 
     @_inject_mpl_docs
-    def scatter(self, *args, **kwargs) -> Axes:
-        self.ax.scatter(*args, **kwargs)
+    def scatter(self, *args, **kwargs) -> PathCollection:
+        paths = self.ax.scatter(*args, **kwargs)
         self.draw()
-        return self.ax
+        return paths
 
     @_inject_mpl_docs
     def hist(
@@ -140,37 +147,37 @@ class Figure(FreeWidget):
         return out
 
     @_inject_mpl_docs
-    def text(self, *args, **kwargs):
-        self.ax.text(*args, **kwargs)
+    def text(self, *args, **kwargs) -> Text:
+        text = self.ax.text(*args, **kwargs)
         self.draw()
-        return self.ax
+        return text
 
     @_inject_mpl_docs
-    def quiver(self, *args, data=None, **kwargs):
-        self.ax.quiver(*args, data=data, **kwargs)
+    def quiver(self, *args, data=None, **kwargs) -> Quiver:
+        quiver = self.ax.quiver(*args, data=data, **kwargs)
         self.draw()
-        return self.ax
+        return quiver
 
     @_inject_mpl_docs
-    def axline(self, xy1, xy2=None, *, slope=None, **kwargs):
-        self.ax.axline(xy1, xy2=xy2, slope=slope, **kwargs)
+    def axline(self, xy1, xy2=None, *, slope=None, **kwargs) -> Line2D:
+        lines = self.ax.axline(xy1, xy2=xy2, slope=slope, **kwargs)
         self.draw()
-        return self.ax
+        return lines
 
     @_inject_mpl_docs
-    def axhline(self, y=0, xmin=0, xmax=1, **kwargs):
-        self.ax.axhline(y, xmin, xmax, **kwargs)
+    def axhline(self, y=0, xmin=0, xmax=1, **kwargs) -> Line2D:
+        lines = self.ax.axhline(y, xmin, xmax, **kwargs)
         self.draw()
-        return self.ax
+        return lines
 
     @_inject_mpl_docs
-    def axvline(self, x=0, ymin=0, ymax=1, **kwargs):
-        self.ax.axvline(x, ymin, ymax, **kwargs)
+    def axvline(self, x=0, ymin=0, ymax=1, **kwargs) -> Line2D:
+        lines = self.ax.axvline(x, ymin, ymax, **kwargs)
         self.draw()
-        return self.ax
+        return lines
 
     @_inject_mpl_docs
-    def xlim(self, *args, **kwargs):
+    def xlim(self, *args, **kwargs) -> tuple[float, float]:
         ax = self.ax
         if not args and not kwargs:
             return ax.get_xlim()
@@ -179,7 +186,7 @@ class Figure(FreeWidget):
         return ret
 
     @_inject_mpl_docs
-    def ylim(self, *args, **kwargs):
+    def ylim(self, *args, **kwargs) -> tuple[float, float]:
         ax = self.ax
         if not args and not kwargs:
             return ax.get_ylim()
@@ -194,31 +201,31 @@ class Figure(FreeWidget):
         return self.ax
 
     @_inject_mpl_docs
-    def legend(self, *args, **kwargs):
+    def legend(self, *args, **kwargs) -> Legend:
         leg = self.ax.legend(*args, **kwargs)
         self.draw()
         return leg
 
     @_inject_mpl_docs
-    def title(self, *args, **kwargs):
+    def title(self, *args, **kwargs) -> Text:
         title = self.ax.set_title(*args, **kwargs)
         self.draw()
         return title
 
     @_inject_mpl_docs
-    def xlabel(self, *args, **kwargs):
-        xlabel = self.ax.set_xlabel(*args, **kwargs)
+    def xlabel(self, *args, **kwargs) -> None:
+        self.ax.set_xlabel(*args, **kwargs)
         self.draw()
-        return xlabel
+        return None
 
     @_inject_mpl_docs
-    def ylabel(self, *args, **kwargs):
-        ylabel = self.ax.set_ylabel(*args, **kwargs)
+    def ylabel(self, *args, **kwargs) -> None:
+        self.ax.set_ylabel(*args, **kwargs)
         self.draw()
-        return ylabel
+        return None
 
     @_inject_mpl_docs
-    def xticks(self, ticks=None, labels=None, **kwargs):
+    def xticks(self, ticks=None, labels=None, **kwargs) -> tuple[ArrayLike, list[Text]]:
         if ticks is None:
             locs = self.ax.get_xticks()
             if labels is not None:
@@ -239,7 +246,7 @@ class Figure(FreeWidget):
         return locs, labels
 
     @_inject_mpl_docs
-    def yticks(self, ticks=None, labels=None, **kwargs):
+    def yticks(self, ticks=None, labels=None, **kwargs) -> tuple[ArrayLike, list[Text]]:
         if ticks is None:
             locs = self.ax.get_yticks()
             if labels is not None:
@@ -272,60 +279,63 @@ class Figure(FreeWidget):
         if on is None:
             on = not self.ax.get_frame_on()
         self.ax.set_frame_on(on)
+        return None
 
     @_inject_mpl_docs
-    def xscale(self, scale=None):
+    def xscale(self, scale=None) -> None:
         self.ax.set_xscale(scale)
         self.draw()
+        return None
 
     @_inject_mpl_docs
-    def yscale(self, scale=None):
+    def yscale(self, scale=None) -> None:
         self.ax.set_yscale(scale)
         self.draw()
+        return None
 
     @_inject_mpl_docs
-    def autoscale(self, enable=True, axis="both", tight=None):
+    def autoscale(self, enable=True, axis="both", tight=None) -> None:
         self.ax.autoscale(enable=enable, axis=axis, tight=tight)
         self.draw()
+        return None
 
 
 class SeabornFigure(Figure):
-    def swarmplot(self, **kwargs):
+    """A matplotlib figure canvas implemented with seaborn plot functions."""
+
+    def __init__(
+        self,
+        nrows: int = 1,
+        ncols: int = 1,
+        figsize: tuple[float, float] = (4.0, 3.0),
+        style=None,
+        **kwargs,
+    ):
+        super().__init__(**locals())
         import seaborn as sns
 
-        return sns.swarmplot(ax=self.ax, **kwargs)
+        self._seaborn = sns
+
+    def swarmplot(self, **kwargs):
+        return self._seaborn.swarmplot(ax=self.ax, **kwargs)
 
     def barplot(self, **kwargs):
-        import seaborn as sns
-
-        return sns.barplot(ax=self.ax, **kwargs)
+        return self._seaborn.barplot(ax=self.ax, **kwargs)
 
     def boxplot(self, **kwargs):
-        import seaborn as sns
-
-        return sns.boxplot(ax=self.ax, **kwargs)
+        return self._seaborn.boxplot(ax=self.ax, **kwargs)
 
     def boxenplot(self, **kwargs):
-        import seaborn as sns
-
-        return sns.boxenplot(ax=self.ax, **kwargs)
+        return self._seaborn.boxenplot(ax=self.ax, **kwargs)
 
     def violinplot(self, **kwargs):
-        import seaborn as sns
-
-        return sns.violinplot(ax=self.ax, **kwargs)
+        return self._seaborn.violinplot(ax=self.ax, **kwargs)
 
     def pairplot(self, **kwargs):
-        import seaborn as sns
-
-        return sns.pairplot(ax=self.ax, **kwargs)
+        return self._seaborn.pairplot(ax=self.ax, **kwargs)
 
     def barplot(self, **kwargs):
-        import seaborn as sns
-
-        return sns.barplot(ax=self.ax, **kwargs)
+        return self._seaborn.barplot(ax=self.ax, **kwargs)
 
     def pointplot(self, **kwargs):
-        import seaborn as sns
-
-        return sns.pointplot(ax=self.ax, **kwargs)
+        return self._seaborn.pointplot(ax=self.ax, **kwargs)
