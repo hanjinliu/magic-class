@@ -116,6 +116,8 @@ class MagicField(Field, Generic[_W, _V]):
         Get a widget from ``obj``. This function will be called every time MagicField is referred
         by ``obj.field``.
         """
+        from ._gui import MagicTemplate
+
         obj_id = id(obj)
         if obj_id in self.guis.keys():
             widget = self.guis[obj_id]
@@ -124,11 +126,14 @@ class MagicField(Field, Generic[_W, _V]):
                 widget = self.to_widget()
                 self.guis[obj_id] = widget
 
-            # if isinstance(widget, (ValueWidget, ContainerWidget)):
-            #     from ._gui.utils import define_callback
-            #     for callback in self.callbacks:
-            #         # funcname = callback.__name__
-            #         widget.changed.connect(define_callback(obj, callback))
+            if isinstance(widget, (ValueWidget, ContainerWidget)):
+                if isinstance(obj, MagicTemplate):
+                    _def = _define_callback_gui
+                else:
+                    _def = _define_callback
+                for callback in self.callbacks:
+                    # funcname = callback.__name__
+                    widget.changed.connect(_def(obj, callback))
 
         return widget
 
@@ -137,6 +142,8 @@ class MagicField(Field, Generic[_W, _V]):
         Get an action from ``obj``. This function will be called every time MagicField is referred
         by ``obj.field``.
         """
+        from ._gui import MagicTemplate
+
         obj_id = id(obj)
         if obj_id in self.guis.keys():
             action = self.guis[obj_id]
@@ -144,6 +151,15 @@ class MagicField(Field, Generic[_W, _V]):
             with self._resolve_choices(obj):
                 action = self.to_action()
                 self.guis[obj_id] = action
+
+            if action.support_value:
+                if isinstance(obj, MagicTemplate):
+                    _def = _define_callback_gui
+                else:
+                    _def = _define_callback
+                for callback in self.callbacks:
+                    # funcname = callback.__name__
+                    action.changed.connect(_def(obj, callback))
 
         return action
 
@@ -625,3 +641,42 @@ def _is_subclass(obj: Any, class_or_tuple):
         return issubclass(obj, class_or_tuple)
     except Exception:
         return False
+
+
+def _define_callback(self: Any, callback: Callable):
+    def _callback():
+        callback(self)
+        return None
+
+    return _callback
+
+
+def _define_callback_gui(self: MagicTemplate, callback: Callable):
+    """Define a callback function from a method."""
+
+    *_, clsname, funcname = callback.__qualname__.split(".")
+    mro = self.__class__.__mro__
+    for base in mro:
+        if base.__name__ == clsname:
+
+            def _callback():
+                with self.macro.blocked():
+                    getattr(base, funcname)(self)
+                return None
+
+            break
+    else:
+
+        def _callback():
+            # search for parent instances that have the same name.
+            current_self = self
+            while not (
+                hasattr(current_self, funcname)
+                and current_self.__class__.__name__ == clsname
+            ):
+                current_self = current_self.__magicclass_parent__
+            with self.macro.blocked():
+                getattr(current_self, funcname)()
+            return None
+
+    return _callback

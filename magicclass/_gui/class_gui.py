@@ -23,7 +23,6 @@ from ._base import (
 )
 from .utils import (
     copy_class,
-    define_callback,
     format_error,
     set_context_menu,
 )
@@ -90,10 +89,6 @@ class ClassGuiBase(BaseGui):
                 getvalue = type(fld) is MagicField
                 f = value_widget_callback(self, widget, name, getvalue=getvalue)
                 widget.changed.connect(f)
-
-            for callback in fld.callbacks:
-                # funcname = callback.__name__
-                widget.changed.connect(define_callback(self, callback))
 
         elif fld.callbacks:
             warnings.warn(

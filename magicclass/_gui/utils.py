@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Any, Callable, TYPE_CHECKING, TypeVar
+from typing import Any, TYPE_CHECKING, TypeVar
 from magicgui.widgets import FunctionGui, _protocols, _bases, Widget
 from magicgui.widgets._bases.value_widget import UNSET
 from magicgui.type_map import get_widget_class
@@ -13,36 +13,6 @@ if TYPE_CHECKING:
 
 def get_parameters(fgui: FunctionGui):
     return {k: v.default for k, v in fgui.__signature__.parameters.items()}
-
-
-def define_callback(self: BaseGui, callback: Callable):
-    """Define a callback function from a method."""
-    *_, clsname, funcname = callback.__qualname__.split(".")
-    mro = self.__class__.__mro__
-    for base in mro:
-        if base.__name__ == clsname:
-
-            def _callback():
-                with self.macro.blocked():
-                    getattr(base, funcname)(self)
-                return None
-
-            break
-    else:
-
-        def _callback():
-            # search for parent instances that have the same name.
-            current_self = self
-            while not (
-                hasattr(current_self, funcname)
-                and current_self.__class__.__name__ == clsname
-            ):
-                current_self = current_self.__magicclass_parent__
-            with self.macro.blocked():
-                getattr(current_self, funcname)()
-            return None
-
-    return _callback
 
 
 def set_context_menu(contextmenu: ContextMenuGui, parent: BaseGui) -> None:
