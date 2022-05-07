@@ -17,7 +17,7 @@ from enum import Enum
 from dataclasses import Field, MISSING
 from magicgui.type_map import get_widget_class
 from magicgui.widgets import create_widget
-from magicgui.widgets._bases import Widget, ValueWidget
+from magicgui.widgets._bases import Widget, ValueWidget, ContainerWidget
 from magicgui.widgets._bases.value_widget import UNSET
 
 from ._gui.mgui_ext import Action, WidgetAction
@@ -80,14 +80,14 @@ class MagicField(Field, Generic[_W, _V]):
 
         # MagicField has to remenber the first class that referred to itself so that it can
         # "know" the namespace it belongs to.
-        self.parent_class: type = None
+        self._parent_class: type | None = None
 
     def __repr__(self):
         return self.__class__.__name__.rstrip("Field") + super().__repr__()
 
     def __set_name__(self, owner: type, name: str) -> None:
         super().__set_name__(owner, name)
-        self.parent_class = owner
+        self._parent_class = owner
         if self.name is None:
             self.name = name
 
@@ -123,9 +123,12 @@ class MagicField(Field, Generic[_W, _V]):
             with self._resolve_choices(obj):
                 widget = self.to_widget()
                 self.guis[obj_id] = widget
-                # for callback in self.callbacks:
-                #     # funcname = callback.__name__
-                #     widget.changed.connect(define_callback(obj, callback))
+
+            # if isinstance(widget, (ValueWidget, ContainerWidget)):
+            #     from ._gui.utils import define_callback
+            #     for callback in self.callbacks:
+            #         # funcname = callback.__name__
+            #         widget.changed.connect(define_callback(obj, callback))
 
         return widget
 

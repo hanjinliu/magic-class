@@ -1102,7 +1102,7 @@ def _method_as_getter(self, getter: Callable):
 
 def _field_as_getter(bgui: BaseGui, fld: MagicField):
     """Called when a MagicField is used in Bound method."""
-    qualname = fld.parent_class.__qualname__
+    qualname = fld._parent_class.__qualname__
     if _LOCALS in qualname:
         qualname = qualname.split(_LOCALS)[-1]
     clsnames = qualname.split(".")
@@ -1120,7 +1120,7 @@ def _field_as_getter(bgui: BaseGui, fld: MagicField):
         for clsname in clsnames[i:]:
             ins = getattr(ins, clsname, ins)
 
-        # Now, ins is an instance of parent_class.
+        # Now, ins is an instance of parent class.
         # Extract correct widget from MagicField
         _field_widget = fld.get_widget(ins)
         if not hasattr(_field_widget, "value"):
