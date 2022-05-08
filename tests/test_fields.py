@@ -1,4 +1,12 @@
-from magicclass import magicclass, magicmenu, magictoolbar, field, vfield, set_design
+from magicclass import (
+    magicclass,
+    magicmenu,
+    magictoolbar,
+    field,
+    vfield,
+    FieldGroup,
+    set_design,
+)
 from magicclass.types import Optional
 from magicgui import widgets
 from typing import Tuple
@@ -358,3 +366,49 @@ def test_generic_and_annotated():
     assert w1[0].text == "XXX"
     assert w1[1].max == 10
     assert w2[1].widget_type == "TupleEdit"
+
+def test_field_in_non_gui():
+    """Test fields can be used in non-GUI classes."""
+    class A:
+        x = field(int)
+        y = vfield(str)
+
+        def __init__(self):
+            self._x_value = None
+            self._y_value = None
+
+        @x.connect
+        def _x(self):
+            self._x_value = self.x.value
+
+        @y.connect
+        def _y(self):
+            self._y_value = self.y
+
+    a = A()
+    assert a.x.widget_type == "SpinBox"
+    a.x.value = 1
+    assert a._x_value == 1
+    a.y = "xxx"
+    assert a._y_value == "xxx"
+
+def test_field_group():
+    from magicgui.widgets import Container
+
+    class Params(FieldGroup):
+        x = field(int)
+        y = vfield(str)
+
+    class A:
+        params = Params(layout="horizontal")
+
+    a0 = A()
+    assert isinstance(a0.params, Container)
+    assert a0.params.x.widget_type == "SpinBox"
+    assert a0.params.y == ""
+    a0.params.x.value = 10
+    a0.params.y = "t"
+
+    a1 = A()
+    assert a1.params.x.value == 0
+    assert a1.params.y == ""

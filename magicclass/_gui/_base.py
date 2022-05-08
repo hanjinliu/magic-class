@@ -1137,11 +1137,23 @@ def _is_instance_method(self: MagicTemplate, func: Callable) -> bool:
 
 
 def value_widget_callback(
-    gui: MagicTemplate, widget: ValueWidget, name: str, getvalue: bool = True
+    gui: MagicTemplate,
+    widget: ValueWidget,
+    name: str | list[str],
+    getvalue: bool = True,
 ):
     """Define a ValueWidget callback, including macro recording."""
-    sym_name = Symbol(name)
-    sym_value = Symbol("value")
+    if isinstance(name, str):
+        sym_name = Symbol(name)
+    else:
+        sym_name = Symbol(name[0])
+        for n in name[1:]:
+            sym_name = Expr(head=Head.getattr, args=[sym_name, n])
+
+    if getvalue:
+        sub = Expr(head=Head.getattr, args=[sym_name, Symbol("value")])  # name.value
+    else:
+        sub = sym_name
 
     def _set_value():
         if not widget.enabled or not gui.macro.active:
@@ -1150,11 +1162,6 @@ def value_widget_callback(
             return None
 
         gui.changed.emit(gui)
-
-        if getvalue:
-            sub = Expr(head=Head.getattr, args=[sym_name, sym_value])  # name.value
-        else:
-            sub = sym_name
 
         # Make an expression of
         # >>> x.name.value = value
