@@ -73,3 +73,23 @@ def test_wraps():
     assert len(ui.macro) == 3
     assert str(ui.macro[-1]) == "ui.f2(a=20, b='x')"
     assert str(ui.macro[-2]) == "ui.f2(a=10, b='x')"
+
+# NOTE: need fix on magicgui side
+# def test_multi_gui():
+#     @magicclass
+#     class A:
+#         @magicgui
+#         def f(self, x: int):
+#             return id(self)
+
+#         @magicgui
+#         def g(self, x: float):
+#             return -id(self)
+
+#     ui0 = A()
+#     ui1 = A()
+#     assert ui0["f"] is not ui1["f"]
+#     assert ui0["g"] is not ui1["g"]
+#     assert ui0["f"](0) == -ui0["g"](0)
+#     assert ui1["f"](0) == -ui1["g"](0)
+#     assert ui0["f"](0) != ui1["f"](0)

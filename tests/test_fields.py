@@ -414,6 +414,13 @@ def test_field_group():
     assert a1.params.x.value == 0
     assert a1.params.y == ""
 
+    @magicclass
+    class Main:
+        params = Params()
+
+    ui = Main()
+    assert ui.params is ui[0]
+
 def test_has_fields():
     class A(HasFields):
         x = vfield(int)

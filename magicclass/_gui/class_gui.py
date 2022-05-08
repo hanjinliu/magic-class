@@ -1,5 +1,4 @@
 from __future__ import annotations
-from inspect import signature
 from typing import Any, Callable, Sequence, TypeVar
 import warnings
 from qtpy.QtWidgets import QMenuBar, QWidget, QMainWindow, QBoxLayout, QDockWidget
@@ -138,9 +137,8 @@ class ClassGuiBase(BaseGui):
                     widget = self._create_widget_from_field(name, attr)
 
                 elif isinstance(attr, FunctionGui):
-                    widget = attr
-                    p0 = list(signature(attr).parameters)[0]
-                    getattr(widget, p0).bind(self)  # set self to the first argument
+                    widget = attr.copy()
+                    widget[0].bind(self)  # bind self to the first argument
 
                 else:
                     # convert class method into instance method

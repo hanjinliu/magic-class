@@ -792,6 +792,7 @@ class FieldGroup(Container, HasFields):
         wdt = self._containers.get(_id, None)
         if wdt is None:
             wdt = self.copy()
+            self._containers[_id] = wdt
         return wdt
 
     def connect(self, callback: Callable):
