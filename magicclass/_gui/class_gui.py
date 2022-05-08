@@ -1,5 +1,4 @@
 from __future__ import annotations
-from inspect import signature
 from typing import Any, Callable, Sequence, TypeVar
 import warnings
 from qtpy.QtWidgets import QMenuBar, QWidget, QMainWindow, QBoxLayout, QDockWidget
@@ -23,7 +22,6 @@ from ._base import (
 )
 from .utils import (
     copy_class,
-    define_callback,
     format_error,
     set_context_menu,
 )
@@ -91,10 +89,6 @@ class ClassGuiBase(BaseGui):
                 f = value_widget_callback(self, widget, name, getvalue=getvalue)
                 widget.changed.connect(f)
 
-            for callback in fld.callbacks:
-                # funcname = callback.__name__
-                widget.changed.connect(define_callback(self, callback))
-
         elif fld.callbacks:
             warnings.warn(
                 f"{type(widget).__name__} does not have value-change callback. "
@@ -143,9 +137,8 @@ class ClassGuiBase(BaseGui):
                     widget = self._create_widget_from_field(name, attr)
 
                 elif isinstance(attr, FunctionGui):
-                    widget = attr
-                    p0 = list(signature(attr).parameters)[0]
-                    getattr(widget, p0).bind(self)  # set self to the first argument
+                    widget = attr.copy()
+                    widget[0].bind(self)  # bind self to the first argument
 
                 else:
                     # convert class method into instance method

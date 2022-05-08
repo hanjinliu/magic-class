@@ -1,14 +1,17 @@
 from __future__ import annotations
 from contextlib import contextmanager
+import weakref
 from typing import (
     Any,
     TYPE_CHECKING,
     Callable,
+    Iterator,
     TypeVar,
     overload,
     Generic,
     Union,
 )
+from abc import ABCMeta
 from typing_extensions import Literal, _AnnotatedAlias
 from pathlib import Path
 import datetime
@@ -16,14 +19,15 @@ import sys
 from enum import Enum
 from dataclasses import Field, MISSING
 from magicgui.type_map import get_widget_class
-from magicgui.widgets import create_widget
-from magicgui.widgets._bases import Widget, ValueWidget
+from magicgui.widgets import create_widget, Container
+from magicgui.widgets._bases import Widget, ValueWidget, ContainerWidget
 from magicgui.widgets._bases.value_widget import UNSET
 
 from ._gui.mgui_ext import Action, WidgetAction
 
 if TYPE_CHECKING:
     from magicgui.widgets._protocols import WidgetProtocol
+    from typing_extensions import Self
     from ._gui._base import MagicTemplate
     from ._gui.mgui_ext import AbstractAction
 
@@ -73,22 +77,37 @@ class MagicField(Field, Generic[_W, _V]):
             compare=False,
             metadata=metadata,
         )
-        self.callbacks: list[Callable] = []
-        self.guis: dict[int, _M] = {}
+        self._callbacks: list[Callable] = []
+        self._guis: dict[int, _M] = {}
         self.name = name
-        self.record = record
+        self._record = record
 
         # MagicField has to remenber the first class that referred to itself so that it can
         # "know" the namespace it belongs to.
-        self.parent_class: type = None
+        self._parent_class: type | None = None
 
     def __repr__(self):
         return self.__class__.__name__.rstrip("Field") + super().__repr__()
 
+    def __set_name__(self, owner: type, name: str) -> None:
+        super().__set_name__(owner, name)
+        self._parent_class = owner
+        if self.name is None:
+            self.name = name
+
+    @property
+    def callbacks(self) -> tuple[Callable, ...]:
+        """Return callbacks in an immutable way."""
+        return tuple(self._callbacks)
+
+    @property
+    def record(self) -> bool:
+        return self._record
+
     def copy(self) -> MagicField:
         """Copy object."""
         return self.__class__(
-            self.default, self.default_factory, self.metadata, self.name, self.record
+            self.default, self.default_factory, self.metadata, self.name, self._record
         )
 
     @contextmanager
@@ -110,16 +129,24 @@ class MagicField(Field, Generic[_W, _V]):
         Get a widget from ``obj``. This function will be called every time MagicField is referred
         by ``obj.field``.
         """
+        from ._gui import MagicTemplate
+
         obj_id = id(obj)
-        objtype = type(obj)
-        if obj_id in self.guis.keys():
-            widget = self.guis[obj_id]
+        if obj_id in self._guis.keys():
+            widget = self._guis[obj_id]
         else:
             with self._resolve_choices(obj):
                 widget = self.to_widget()
-                self.guis[obj_id] = widget
-            if self.parent_class is None:
-                self.parent_class = objtype
+                self._guis[obj_id] = widget
+
+            if isinstance(widget, (ValueWidget, ContainerWidget)):
+                if isinstance(obj, MagicTemplate):
+                    _def = _define_callback_gui
+                else:
+                    _def = _define_callback
+                for callback in self._callbacks:
+                    # funcname = callback.__name__
+                    widget.changed.connect(_def(obj, callback))
 
         return widget
 
@@ -128,22 +155,30 @@ class MagicField(Field, Generic[_W, _V]):
         Get an action from ``obj``. This function will be called every time MagicField is referred
         by ``obj.field``.
         """
+        from ._gui import MagicTemplate
+
         obj_id = id(obj)
-        objtype = type(obj)
-        if obj_id in self.guis.keys():
-            action = self.guis[obj_id]
+        if obj_id in self._guis.keys():
+            action = self._guis[obj_id]
         else:
             with self._resolve_choices(obj):
                 action = self.to_action()
-                self.guis[obj_id] = action
-            if self.parent_class is None:
-                self.parent_class = objtype
+                self._guis[obj_id] = action
+
+            if action.support_value:
+                if isinstance(obj, MagicTemplate):
+                    _def = _define_callback_gui
+                else:
+                    _def = _define_callback
+                for callback in self._callbacks:
+                    # funcname = callback.__name__
+                    action.changed.connect(_def(obj, callback))
 
         return action
 
     def as_getter(self, obj: Any) -> Callable[[Any], _V]:
         """Make a function that get the value of Widget or Action."""
-        return lambda w: self.guis[id(obj)].value
+        return lambda w: self._guis[id(obj)].value
 
     @overload
     def __get__(self, obj: Literal[None], objtype=None) -> MagicField[_W, _V] | _W:
@@ -234,7 +269,7 @@ class MagicField(Field, Generic[_W, _V]):
         """Set callback function to "ready to connect" state."""
         if not callable(func):
             raise TypeError("Cannot connect non-callable object")
-        self.callbacks.append(func)
+        self._callbacks.append(func)
         return func
 
     def disconnect(self, func: Callable) -> None:
@@ -243,8 +278,8 @@ class MagicField(Field, Generic[_W, _V]):
         This method does NOT disconnect callbacks from widgets that are
         already created.
         """
-        i = self.callbacks.index(func)
-        self.callbacks.pop(i)
+        i = self._callbacks.index(func)
+        self._callbacks.pop(i)
         return None
 
     def wraps(
@@ -619,3 +654,196 @@ def _is_subclass(obj: Any, class_or_tuple):
         return issubclass(obj, class_or_tuple)
     except Exception:
         return False
+
+
+def _define_callback(self: Any, callback: Callable):
+    def _callback():
+        callback(self)
+        return None
+
+    return _callback
+
+
+def _define_callback_gui(self: MagicTemplate, callback: Callable):
+    """Define a callback function from a method."""
+
+    *_, clsname, funcname = callback.__qualname__.split(".")
+    mro = self.__class__.__mro__
+    for base in mro:
+        if base.__name__ == clsname:
+
+            def _callback():
+                with self.macro.blocked():
+                    getattr(base, funcname)(self)
+                return None
+
+            break
+    else:
+
+        def _callback():
+            # search for parent instances that have the same name.
+            current_self = self
+            while not (
+                hasattr(current_self, funcname)
+                and current_self.__class__.__name__ == clsname
+            ):
+                current_self = current_self.__magicclass_parent__
+            with self.macro.blocked():
+                getattr(current_self, funcname)()
+            return None
+
+    return _callback
+
+
+class _FieldGroupMeta(ABCMeta):
+    _fields: dict[str, MagicField]
+
+    def __new__(
+        fcls: type,
+        name: str,
+        bases: tuple,
+        namespace: dict,
+        **kwds,
+    ) -> _FieldGroupMeta:
+        cls: _FieldGroupMeta = type.__new__(fcls, name, bases, namespace, **kwds)
+        _fields: dict[str, MagicField] = {}
+        for k, v in namespace.items():
+            if isinstance(v, MagicField):
+                v.name = k
+                _fields[k] = v
+
+        cls._fields = _fields
+
+        return cls
+
+
+class HasFields(metaclass=_FieldGroupMeta):
+    """Base class with _FieldGroupMeta as the meta-class."""
+
+    @property
+    def widgets(self):
+        """Return a view of widgets."""
+        return WidgetView(self)
+
+    def __repr__(self) -> str:
+        """List up child widgets."""
+        _repr = ",\n\t".join(
+            f"{name} = {repr(wdt)}" for name, wdt in self.widgets.iteritems()
+        )
+        return f"{self.__class__.__name__}(\n\t{_repr}\n)"
+
+
+# NOTE: Typing of FieldGroup is tricky. When it is referred to via __get__, it must return
+# a object of same type as itself to guarantee the child fields are also defined there.
+# Thus, FieldGroup must inherit magicgui Container although the original container will
+# never be used.
+class FieldGroup(Container, HasFields):
+    _containers: dict[int, Self] = {}
+
+    def __init__(
+        self,
+        layout: str = "vertical",
+        labels: bool = True,
+        **kwargs,
+    ):
+        widgets = [fld.get_widget(self) for fld in self.__class__._fields.values()]
+        super().__init__(layout=layout, widgets=widgets, labels=labels, **kwargs)
+        self._callbacks = []
+
+    def __set_name__(self, owner: type, name: str):
+        # self._parent_class = owner
+        if self.name is None:
+            self.name = name
+
+    # Unlike Container, `self.x = value` should be allowed because `x` can be a value field.
+    __setattr__ = object.__setattr__
+
+    def copy(self) -> Self:
+        """Copy widget."""
+        wdt = self.__class__(
+            layout=self.layout,
+            labels=self.labels,
+            label=self.label,
+            enabled=self.enabled,
+            name=self.name,
+            tooltip=self.tooltip,
+        )
+        for callback in self._callbacks:
+            wdt.connect(callback)
+        return wdt
+
+    @property
+    def callbacks(self) -> tuple[Callable, ...]:
+        """Return callbacks in an immutable way."""
+        return tuple(self._callbacks)
+
+    @overload
+    def __get__(self, obj: Literal[None], objtype: Any | None = None) -> Self:
+        ...
+
+    @overload
+    def __get__(self, obj: Any, objtype: Any | None = None) -> Self:
+        ...
+
+    def __get__(self, obj, objtype=None):
+        if obj is None:
+            return self
+        _id = id(obj)
+        wdt = self._containers.get(_id, None)
+        if wdt is None:
+            wdt = self.copy()
+            self._containers[_id] = wdt
+        return wdt
+
+    def connect(self, callback: Callable):
+        # self.changed.connect(callback)  NOTE: the original container doesn't need signals!
+        self._callbacks.append(callback)
+        return callback
+
+
+class WidgetView:
+    """View of widgets."""
+
+    def __init__(self, obj: HasFields):
+        self._obj_ref = weakref.ref(obj)
+
+    def __repr__(self) -> str:
+        _repr = ",\n\t".join(f"{name} = {repr(wdt)}" for name, wdt in self.iteritems())
+        return f"{self.__class__.__name__}(\n\t{_repr}\n)"
+
+    def __getattr__(self, name: str) -> Widget:
+        obj = self._obj_ref()
+        fld = obj.__class__._fields.get(name, None)
+        if isinstance(fld, MagicField):
+            return fld.get_widget(obj)
+        raise AttributeError(f"{obj!r} does not have attribute {name!r}.")
+
+    def __getitem__(self, name: str) -> Widget:
+        try:
+            wdt = self.__getattr__(name)
+        except AttributeError:
+            raise KeyError(name)
+        return wdt
+
+    def iternames(self) -> Iterator[str]:
+        """Iterate widget names."""
+        return iter(self._obj_ref().__class__._fields.keys())
+
+    def iterwidgets(self) -> Iterator[Widget]:
+        """Iterate widgets."""
+        obj = self._obj_ref()
+        for fld in obj.__class__._fields.values():
+            wdt = fld.get_widget(obj)
+            yield wdt
+
+    def iteritems(self) -> Iterator[tuple[str, Widget]]:
+        """Iterate widget names and widgets themselves."""
+        return iter(zip(self.iternames(), self.iterwidgets()))
+
+    def __iter__(self) -> Iterator[Widget]:
+        """Iterate widgets."""
+        return self.iterwidgets()
+
+    def as_container(self, layout="vertical", labels=True, **kwargs) -> Container:
+        widgets = list(self)
+        return Container(layout=layout, widgets=widgets, labels=labels, **kwargs)

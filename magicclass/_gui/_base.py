@@ -49,7 +49,7 @@ from .mgui_ext import (
     _LabeledWidgetAction,
     mguiLike,
 )
-from .utils import get_parameters, define_callback, callable_to_classes
+from .utils import get_parameters, callable_to_classes
 from ._macro import GuiMacro
 
 from ..utils import (
@@ -818,17 +818,11 @@ class ContainerLikeGui(BaseGui, mguiLike, MutableSequence):
         fld.name = fld.name or name
         action = fld.get_action(self)
 
-        if action.support_value:
+        if action.support_value and fld.record:
             # By default, set value function will be connected to the widget.
-            if fld.record:
-                getvalue = type(fld) is MagicField
-                f = value_widget_callback(self, action, name, getvalue=getvalue)
-                action.changed.connect(f)
-
-            # If the field has callbacks, connect it to the newly generated widget.
-            for callback in fld.callbacks:
-                # funcname = callback.__name__
-                action.changed.connect(define_callback(self, callback))
+            getvalue = type(fld) is MagicField
+            f = value_widget_callback(self, action, name, getvalue=getvalue)
+            action.changed.connect(f)
 
         return action
 
@@ -1102,7 +1096,7 @@ def _method_as_getter(self, getter: Callable):
 
 def _field_as_getter(bgui: BaseGui, fld: MagicField):
     """Called when a MagicField is used in Bound method."""
-    qualname = fld.parent_class.__qualname__
+    qualname = fld._parent_class.__qualname__
     if _LOCALS in qualname:
         qualname = qualname.split(_LOCALS)[-1]
     clsnames = qualname.split(".")
@@ -1120,7 +1114,7 @@ def _field_as_getter(bgui: BaseGui, fld: MagicField):
         for clsname in clsnames[i:]:
             ins = getattr(ins, clsname, ins)
 
-        # Now, ins is an instance of parent_class.
+        # Now, ins is an instance of parent class.
         # Extract correct widget from MagicField
         _field_widget = fld.get_widget(ins)
         if not hasattr(_field_widget, "value"):
@@ -1143,11 +1137,23 @@ def _is_instance_method(self: MagicTemplate, func: Callable) -> bool:
 
 
 def value_widget_callback(
-    gui: MagicTemplate, widget: ValueWidget, name: str, getvalue: bool = True
+    gui: MagicTemplate,
+    widget: ValueWidget,
+    name: str | list[str],
+    getvalue: bool = True,
 ):
     """Define a ValueWidget callback, including macro recording."""
-    sym_name = Symbol(name)
-    sym_value = Symbol("value")
+    if isinstance(name, str):
+        sym_name = Symbol(name)
+    else:
+        sym_name = Symbol(name[0])
+        for n in name[1:]:
+            sym_name = Expr(head=Head.getattr, args=[sym_name, n])
+
+    if getvalue:
+        sub = Expr(head=Head.getattr, args=[sym_name, Symbol("value")])  # name.value
+    else:
+        sub = sym_name
 
     def _set_value():
         if not widget.enabled or not gui.macro.active:
@@ -1156,11 +1162,6 @@ def value_widget_callback(
             return None
 
         gui.changed.emit(gui)
-
-        if getvalue:
-            sub = Expr(head=Head.getattr, args=[sym_name, sym_value])  # name.value
-        else:
-            sub = sym_name
 
         # Make an expression of
         # >>> x.name.value = value
