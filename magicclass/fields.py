@@ -1,9 +1,11 @@
 from __future__ import annotations
 from contextlib import contextmanager
+import weakref
 from typing import (
     Any,
     TYPE_CHECKING,
     Callable,
+    Iterator,
     TypeVar,
     overload,
     Generic,
@@ -715,7 +717,27 @@ class _FieldGroupMeta(ABCMeta):
         return cls
 
 
-class FieldGroup(Container, metaclass=_FieldGroupMeta):
+class HasFields(metaclass=_FieldGroupMeta):
+    """Base class with _FieldGroupMeta as the meta-class."""
+
+    @property
+    def widgets(self):
+        """Return a view of widgets."""
+        return WidgetView(self)
+
+    def __repr__(self) -> str:
+        """List up child widgets."""
+        _repr = ",\n\t".join(
+            f"{name} = {repr(wdt)}" for name, wdt in self.widgets.iteritems()
+        )
+        return f"{self.__class__.__name__}(\n\t{_repr}\n)"
+
+
+# NOTE: Typing of FieldGroup is tricky. When it is referred to via __get__, it must return
+# a object of same type as itself to guarantee the child fields are also defined there.
+# Thus, FieldGroup must inherit magicgui Container although the original container will
+# never be used.
+class FieldGroup(Container, HasFields):
     _containers: dict[int, Self] = {}
 
     def __init__(
@@ -750,6 +772,11 @@ class FieldGroup(Container, metaclass=_FieldGroupMeta):
             wdt.connect(callback)
         return wdt
 
+    @property
+    def callbacks(self) -> tuple[Callable, ...]:
+        """Return callbacks in an immutable way."""
+        return tuple(self._callbacks)
+
     @overload
     def __get__(self, obj: Literal[None], objtype: Any | None = None) -> Self:
         ...
@@ -758,7 +785,7 @@ class FieldGroup(Container, metaclass=_FieldGroupMeta):
     def __get__(self, obj: Any, objtype: Any | None = None) -> Self:
         ...
 
-    def __get__(self, obj, objtype):
+    def __get__(self, obj, objtype=None):
         if obj is None:
             return self
         _id = id(obj)
@@ -768,23 +795,54 @@ class FieldGroup(Container, metaclass=_FieldGroupMeta):
         return wdt
 
     def connect(self, callback: Callable):
-        self.changed.connect(callback)
+        # self.changed.connect(callback)
         self._callbacks.append(callback)
         return callback
 
 
-class HasFields(metaclass=_FieldGroupMeta):
-    @property
-    def widgets(self):
-        return WidgetView(self)
-
-
 class WidgetView:
+    """View of widgets."""
+
     def __init__(self, obj: HasFields):
-        self._obj = obj
+        self._obj_ref = weakref.ref(obj)
+
+    def __repr__(self) -> str:
+        _repr = ",\n\t".join(f"{name} = {repr(wdt)}" for name, wdt in self.iteritems())
+        return f"{self.__class__.__name__}(\n\t{_repr}\n)"
 
     def __getattr__(self, name: str) -> Widget:
-        fld = self._obj.__class__._fields.get(name, None)
+        obj = self._obj_ref()
+        fld = obj.__class__._fields.get(name, None)
         if isinstance(fld, MagicField):
-            return fld.get_widget(self._obj)
-        raise AttributeError(f"{self._obj!r} does not have attribute {name!r}.")
+            return fld.get_widget(obj)
+        raise AttributeError(f"{obj!r} does not have attribute {name!r}.")
+
+    def __getitem__(self, name: str) -> Widget:
+        try:
+            wdt = self.__getattr__(name)
+        except AttributeError:
+            raise KeyError(name)
+        return wdt
+
+    def iternames(self) -> Iterator[str]:
+        """Iterate widget names."""
+        return iter(self._obj_ref().__class__._fields.keys())
+
+    def iterwidgets(self) -> Iterator[Widget]:
+        """Iterate widgets."""
+        obj = self._obj_ref()
+        for fld in obj.__class__._fields.values():
+            wdt = fld.get_widget(obj)
+            yield wdt
+
+    def iteritems(self) -> Iterator[tuple[str, Widget]]:
+        """Iterate widget names and widgets themselves."""
+        return iter(zip(self.iternames(), self.iterwidgets()))
+
+    def __iter__(self) -> Iterator[Widget]:
+        """Iterate widgets."""
+        return self.iterwidgets()
+
+    def as_container(self, layout="vertical", labels=True, **kwargs) -> Container:
+        widgets = list(self)
+        return Container(layout=layout, widgets=widgets, labels=labels, **kwargs)

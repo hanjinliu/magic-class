@@ -5,6 +5,7 @@ from magicclass import (
     field,
     vfield,
     FieldGroup,
+    HasFields,
     set_design,
 )
 from magicclass.types import Optional
@@ -412,3 +413,28 @@ def test_field_group():
     a1 = A()
     assert a1.params.x.value == 0
     assert a1.params.y == ""
+
+def test_has_fields():
+    class A(HasFields):
+        x = vfield(int)
+        y = vfield(str)
+        @property
+        def value(self):
+            return self.x, self.y
+
+    a0 = A()
+    a1 = A()
+
+    # test repr works
+    repr(a0)
+    repr(a0.widgets)
+
+    a0.x = 10
+    a0.y = "abc"
+
+    assert (10, "abc") == a0.value
+    assert (0, "") == a1.value
+
+    c0 = a0.widgets.as_container()
+    assert c0["x"].value == a0.x
+    assert c0["y"].value == a0.y

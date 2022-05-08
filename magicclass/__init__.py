@@ -22,7 +22,7 @@ from .wrappers import (
     mark_preview,
 )
 
-from .fields import field, vfield, FieldGroup
+from .fields import field, vfield, FieldGroup, HasFields
 from ._gui._base import wraps, defaults, MagicTemplate, PopUpMode
 from ._gui.keybinding import Key
 from . import widgets, utils, types
