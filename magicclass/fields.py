@@ -796,7 +796,7 @@ class FieldGroup(Container, HasFields):
         return wdt
 
     def connect(self, callback: Callable):
-        # self.changed.connect(callback)
+        # self.changed.connect(callback)  NOTE: the original container doesn't need signals!
         self._callbacks.append(callback)
         return callback
 
