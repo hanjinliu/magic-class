@@ -834,6 +834,7 @@ class WidgetView:
         raise AttributeError(f"{obj!r} does not have attribute {name!r}.")
 
     def __getitem__(self, key: str | int) -> Widget:
+        """Similar to Container's __getitem__."""
         if isinstance(key, int):
             obj = self._obj_ref()
             key = list(obj.__class__._fields.keys())[key]
@@ -863,5 +864,6 @@ class WidgetView:
         return self.iterwidgets()
 
     def as_container(self, layout="vertical", labels=True, **kwargs) -> Container:
+        """Convert view into a Container widget."""
         widgets = list(self)
         return Container(layout=layout, widgets=widgets, labels=labels, **kwargs)
