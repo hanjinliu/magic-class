@@ -1,4 +1,4 @@
-__version__ = "0.6.4.dev0"
+__version__ = "0.6.4.dev1"
 
 from .core import (
     magicclass,
@@ -50,6 +50,7 @@ __all__ = [
     "field",
     "vfield",
     "FieldGroup",
+    "HasFields",
     "wraps",
     "defaults",
     "MagicTemplate",
