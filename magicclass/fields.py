@@ -759,6 +759,21 @@ class FieldGroup(Container, HasFields, _FieldObject):
         )
         self._callbacks = []
 
+    def __newlike__(self) -> Self:
+        """
+        Make a copy of a FieldGroup.
+
+        This method needs override if __init__ is overrided in a subclass.
+        """
+        return self.__class__(
+            layout=self.layout,
+            labels=self.labels,
+            label=self.label,
+            enabled=self.enabled,
+            name=self.name,
+            tooltip=self.tooltip,
+        )
+
     def __set_name__(self, owner: type, name: str):
         # self._parent_class = owner
         if self.name is None:
@@ -769,14 +784,7 @@ class FieldGroup(Container, HasFields, _FieldObject):
 
     def copy(self) -> Self:
         """Copy widget."""
-        wdt = self.__class__(
-            layout=self.layout,
-            labels=self.labels,
-            label=self.label,
-            enabled=self.enabled,
-            name=self.name,
-            tooltip=self.tooltip,
-        )
+        wdt = self.__newlike__()
         for callback in self._callbacks:
             wdt.connect(callback)
         return wdt

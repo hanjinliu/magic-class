@@ -3,7 +3,7 @@ Use Fields in magic-class
 =========================
 
 MagicFields
------------
+===========
 
 When widgets are directly provided in a magic class as class variables, they should be considered as "fields".
 The concept of fields was actually introduced in Python as an standard library ``dataclasses`` as a ``Field``
@@ -114,3 +114,31 @@ defined callbacks similar to ``MagicField``.
 
         def print_value(self):
             print(f"a = {self.a}") # instead of "self.a.value"!
+
+
+FieldGroup
+==========
+
+TODO
+
+.. code-block:: python
+
+    from magicclass import FieldGroup, vfield
+
+    class Points(FieldGroup):
+        x = vfield(float)
+        y = vfield(float)
+
+    class A:
+        # FieldGroup is a subclass of Container
+        points = Points(layout="horizontal", labels=False)
+
+        def get_point(self):
+            return (self.points.x, self.points.y)
+
+
+
+Use Fields in Non-GUI Classes
+=============================
+
+``MagicField`` is also designed for general usage of widgets.
