@@ -744,8 +744,6 @@ class HasFields(metaclass=_FieldGroupMeta):
 # Thus, FieldGroup must inherit magicgui Container although the original container will
 # never be used.
 class FieldGroup(Container, HasFields, _FieldObject):
-    _containers: dict[int, Self] = {}
-
     def __init__(
         self,
         layout: str = "vertical",
@@ -757,6 +755,7 @@ class FieldGroup(Container, HasFields, _FieldObject):
         super().__init__(
             layout=layout, widgets=widgets, labels=labels, name=name, **kwargs
         )
+        self._containers: dict[int, Self] = {}
         self._callbacks = []
 
     def __newlike__(self) -> Self:

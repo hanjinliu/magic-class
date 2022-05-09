@@ -402,6 +402,7 @@ def test_field_group():
 
     class A:
         params = Params(layout="horizontal")
+        params2 = Params(layout="horizontal")
 
     a0 = A()
     assert isinstance(a0.params, Container)
@@ -409,6 +410,9 @@ def test_field_group():
     assert a0.params.y == ""
     a0.params.x.value = 10
     a0.params.y = "t"
+    assert a0.params2.x.value == 0
+    assert a0.params2.y == ""
+
 
     a1 = A()
     assert a1.params.x.value == 0
