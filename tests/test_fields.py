@@ -421,6 +421,49 @@ def test_field_group():
     ui = Main()
     assert ui.params is ui[0]
 
+
+def test_nesting_field_group():
+    class Params(FieldGroup):
+        x = field(int)
+        y = vfield(str)
+
+    class G(FieldGroup):
+        p = Params()
+        u = field(bool)
+        v = vfield(float)
+
+    class A:
+        g = G()
+
+        def __init__(self):
+            self.out = "None"
+            self.g.p.widgets.x.changed.connect(lambda: self.set_output("x"))
+            self.g.p.widgets.y.changed.connect(lambda: self.set_output("y"))
+
+        def set_output(self, out):
+            self.out = out
+
+    a0 = A()
+    a1 = A()
+
+    assert a0.g.p.x.value == 0
+    assert a0.g.p.y == ""
+    assert a0.g.p is a0.g.p
+    assert a0.g.widgets.p is a0.g.widgets.p
+    assert a0.g.p.widgets.x is a0.g.p.widgets.x
+    assert a0.g.p is not a1.g.p
+
+    a0.g.p.x.value = 1
+    assert a0.out == "x"
+    assert a1.out == "None"
+    a0.g.p.y = "a"
+    assert a0.out == "y"
+    assert a1.out == "None"
+    a1.g.p.y = "xx"
+    assert a0.out == "y"
+    assert a1.out == "y"
+
+
 def test_has_fields():
     class A(HasFields):
         x = vfield(int)
@@ -431,6 +474,7 @@ def test_has_fields():
 
     a0 = A()
     a1 = A()
+    assert len(A._fields) == 2
 
     # test repr works
     repr(a0)
@@ -443,5 +487,8 @@ def test_has_fields():
     assert (0, "") == a1.value
 
     c0 = a0.widgets.as_container()
+    assert len(c0) == 2
+    assert c0[0].name == "x"
+    assert c0[1].name == "y"
     assert c0["x"].value == a0.x
     assert c0["y"].value == a0.y

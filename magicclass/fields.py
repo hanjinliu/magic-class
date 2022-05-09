@@ -44,11 +44,19 @@ if sys.version_info >= (3, 10):
 else:
     from typing_extensions import _BaseGenericAlias
 
+
+class _FieldObject:
+    name: str
+
+    def get_widget(self, obj: Any) -> Widget:
+        raise NotImplementedError()
+
+
 _W = TypeVar("_W", bound=Widget)
 _V = TypeVar("_V", bound=object)
 
 
-class MagicField(Field, Generic[_W, _V]):
+class MagicField(Field, _FieldObject, Generic[_W, _V]):
     """
     Field class for magicgui construction.
 
@@ -415,7 +423,7 @@ _X = TypeVar(
 def field(
     obj: _X,
     *,
-    name: str = "",
+    name: str | None = None,
     widget_type: str | type[WidgetProtocol] | type[Widget] | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
@@ -427,7 +435,7 @@ def field(
 def field(
     obj: type[_W],
     *,
-    name: str = "",
+    name: str | None = None,
     widget_type: str | type[WidgetProtocol] | type[Widget] | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
@@ -439,7 +447,7 @@ def field(
 def field(
     obj: type[_X],
     *,
-    name: str = "",
+    name: str | None = None,
     widget_type: str | type[WidgetProtocol] | type[Widget] | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
@@ -451,7 +459,7 @@ def field(
 def field(
     obj: type[_M],
     *,
-    name: str = "",
+    name: str | None = None,
     widget_type: str | type[WidgetProtocol] | type[Widget] | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
@@ -463,7 +471,7 @@ def field(
 def field(
     obj: Any,
     *,
-    name: str = "",
+    name: str | None = None,
     widget_type: type[_W] = None,
     options: dict[str, Any] = {},
     record: bool = True,
@@ -475,7 +483,7 @@ def field(
 def field(
     obj: Any,
     *,
-    name: str = "",
+    name: str | None = None,
     widget_type: str | type[WidgetProtocol] | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
@@ -486,7 +494,7 @@ def field(
 def field(
     obj: Any = MISSING,
     *,
-    name: str = "",
+    name: str | None = None,
     widget_type: str | type[WidgetProtocol] | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
@@ -523,7 +531,7 @@ def field(
 def vfield(
     obj: _X,
     *,
-    name: str = "",
+    name: str | None = None,
     widget_type: str | type[WidgetProtocol] | type[Widget] | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
@@ -535,7 +543,7 @@ def vfield(
 def vfield(
     obj: type[_W],
     *,
-    name: str = "",
+    name: str | None = None,
     widget_type: str | type[WidgetProtocol] | type[Widget] | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
@@ -547,7 +555,7 @@ def vfield(
 def vfield(
     obj: type[_X],
     *,
-    name: str = "",
+    name: str | None = None,
     widget_type: str | type[WidgetProtocol] | type[Widget] | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
@@ -559,7 +567,7 @@ def vfield(
 def vfield(
     obj: Any,
     *,
-    name: str = "",
+    name: str | None = None,
     widget_type: type[_W] = None,
     options: dict[str, Any] = {},
     record: bool = True,
@@ -571,7 +579,7 @@ def vfield(
 def vfield(
     obj: Any,
     *,
-    name: str = "",
+    name: str | None = None,
     widget_type: str | type[WidgetProtocol] | type[Widget] | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
@@ -582,7 +590,7 @@ def vfield(
 def vfield(
     obj: Any = MISSING,
     *,
-    name: str = "",
+    name: str | None = None,
     widget_type: str | type[WidgetProtocol] | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
@@ -631,8 +639,7 @@ def _get_field(
         raise TypeError(f"Field options must be a dict, got {type(options)}")
     options = options.copy()
     metadata = dict(widget_type=widget_type, options=options)
-    if "name" in options.keys():
-        name = options["name"]
+    name = options.get("name", name)
     kwargs = dict(metadata=metadata, name=name, record=record)
     if isinstance(obj, (type, _BaseGenericAlias)):
         if isinstance(obj, _AnnotatedAlias):
@@ -708,8 +715,7 @@ class _FieldGroupMeta(ABCMeta):
         cls: _FieldGroupMeta = type.__new__(fcls, name, bases, namespace, **kwds)
         _fields: dict[str, MagicField] = {}
         for k, v in namespace.items():
-            if isinstance(v, MagicField):
-                v.name = k
+            if isinstance(v, _FieldObject):
                 _fields[k] = v
 
         cls._fields = _fields
@@ -737,17 +743,20 @@ class HasFields(metaclass=_FieldGroupMeta):
 # a object of same type as itself to guarantee the child fields are also defined there.
 # Thus, FieldGroup must inherit magicgui Container although the original container will
 # never be used.
-class FieldGroup(Container, HasFields):
+class FieldGroup(Container, HasFields, _FieldObject):
     _containers: dict[int, Self] = {}
 
     def __init__(
         self,
         layout: str = "vertical",
         labels: bool = True,
+        name: str | None = None,
         **kwargs,
     ):
         widgets = [fld.get_widget(self) for fld in self.__class__._fields.values()]
-        super().__init__(layout=layout, widgets=widgets, labels=labels, **kwargs)
+        super().__init__(
+            layout=layout, widgets=widgets, labels=labels, name=name, **kwargs
+        )
         self._callbacks = []
 
     def __set_name__(self, owner: type, name: str):
@@ -788,6 +797,12 @@ class FieldGroup(Container, HasFields):
     def __get__(self, obj, objtype=None):
         if obj is None:
             return self
+        return self.get_widget(obj)
+
+    def __set__(self, obj, value) -> None:
+        raise AttributeError(f"Cannot set value to {self.__class__.__name__}.")
+
+    def get_widget(self, obj) -> Container:
         _id = id(obj)
         wdt = self._containers.get(_id, None)
         if wdt is None:
@@ -814,15 +829,19 @@ class WidgetView:
     def __getattr__(self, name: str) -> Widget:
         obj = self._obj_ref()
         fld = obj.__class__._fields.get(name, None)
-        if isinstance(fld, MagicField):
+        if isinstance(fld, _FieldObject):
             return fld.get_widget(obj)
         raise AttributeError(f"{obj!r} does not have attribute {name!r}.")
 
-    def __getitem__(self, name: str) -> Widget:
+    def __getitem__(self, key: str | int) -> Widget:
+        """Similar to Container's __getitem__."""
+        if isinstance(key, int):
+            obj = self._obj_ref()
+            key = list(obj.__class__._fields.keys())[key]
         try:
-            wdt = self.__getattr__(name)
+            wdt = self.__getattr__(key)
         except AttributeError:
-            raise KeyError(name)
+            raise KeyError(key)
         return wdt
 
     def iternames(self) -> Iterator[str]:
@@ -845,5 +864,6 @@ class WidgetView:
         return self.iterwidgets()
 
     def as_container(self, layout="vertical", labels=True, **kwargs) -> Container:
+        """Convert view into a Container widget."""
         widgets = list(self)
         return Container(layout=layout, widgets=widgets, labels=labels, **kwargs)
