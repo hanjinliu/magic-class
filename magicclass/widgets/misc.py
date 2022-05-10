@@ -1,4 +1,5 @@
 from __future__ import annotations
+import sys
 from typing import (
     TYPE_CHECKING,
     Generic,
@@ -34,6 +35,11 @@ if TYPE_CHECKING:
     from qtpy.QtWidgets import QTextEdit
     from superqt import QLabeledRangeSlider
 
+
+if sys.platform == "windows":
+    _FONT = "Consolas"
+else:
+    _FONT = "Menlo"
 
 @merge_super_sigs
 class OptionalWidget(Container):
@@ -138,7 +144,7 @@ class ConsoleTextEdit(TextEdit):
         from qtpy.QtGui import QFont, QTextOption
 
         self.native: QTextEdit
-        font = QFont("Consolas")
+        font = QFont(_FONT)
         font.setStyleHint(QFont.Monospace)
         font.setFixedPitch(True)
         self.native.setFont(font)
