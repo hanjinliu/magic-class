@@ -1,8 +1,13 @@
 from __future__ import annotations
+import sys
 import re
 from typing import Callable, Generator
 from qtpy.QtWidgets import QMessageBox, QTextEdit, QDialog, QVBoxLayout
 
+if sys.platform == "windows":
+    _FONT = "Consolas"
+else:
+    _FONT = "Menlo"
 
 class QtTracebackDialog(QDialog):
     """A dialog box that shows Python traceback."""
@@ -16,7 +21,7 @@ class QtTracebackDialog(QDialog):
         # prepare text edit
         self._text = QTextEdit(self)
         self._text.setReadOnly(True)
-        self._text.setFontFamily("Consolas")
+        self._text.setFontFamily(_FONT)
         self._text.setLineWrapMode(QTextEdit.NoWrap)
         layout.addWidget(self._text)
 
@@ -77,8 +82,6 @@ class QtErrorMessageBox(QMessageBox):
 
 # Following functions are mostly copied from napari (BSD 3-Clause).
 # See https://github.com/napari/napari/blob/main/napari/utils/notifications.py
-
-_FONT = "consolas"
 
 
 def get_tb_formatter() -> Callable[[Exception, bool, str], str]:

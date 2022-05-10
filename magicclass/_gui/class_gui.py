@@ -335,9 +335,9 @@ class ClassGuiBase(BaseGui):
                 _widget = _LabeledWidget(widget)
                 widget.label_changed.connect(self._unify_label_widths)
 
-        self._list.insert(key, widget)
         if key < 0:
             key += len(self)
+        self._list.insert(key, widget)
         self._widget._mgui_insert_widget(key, _widget)
         return None
 
