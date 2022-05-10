@@ -119,7 +119,9 @@ defined callbacks similar to ``MagicField``.
 FieldGroup
 ==========
 
-TODO
+(This feature is an advanced one.)
+A ``FieldGroup`` is a class that is used as a container of ``MagicField``s and behave
+like a ``field`` or ``vfield`` function itself.
 
 .. code-block:: python
 
@@ -129,16 +131,126 @@ TODO
         x = vfield(float)
         y = vfield(float)
 
+    @magicclass
     class A:
-        # FieldGroup is a subclass of Container
+        # FieldGroup is a direct subclass of Container
         points = Points(layout="horizontal", labels=False)
 
         def get_point(self):
-            return (self.points.x, self.points.y)
+            print(self.points.x, self.points.y)
 
+    ui = A()
+    ui.show()
 
+.. image:: images/fig_3-3.png
 
-Use Fields in Non-GUI Classes
-=============================
+Here, a ``Points`` class has two child fields ``x`` and ``y``. Since they are created by
+``vfield``, their values can be simply obtained by ``self.points.x``.
 
-``MagicField`` is also designed for general usage of widgets.
+Deal with Widgets and Values
+----------------------------
+
+Basically, a ``FieldGroup`` can always be substituted with a ``magicclass``. However, there
+are some benefits to use ``FieldGroup`` over creating ``magicclass``.
+
+A ``FieldGroup`` is aware of its child fields. Even if you defined all the fields using
+``vfield`` you can still retrieve the widgets via ``widgets`` property.
+
+.. code-block:: python
+
+    from magicclass import FieldGroup, vfield
+
+    class Points(FieldGroup):
+        x = vfield(float)
+        y = vfield(float)
+
+    @magicclass
+    class A:
+        points = Points(layout="horizontal", labels=False)
+
+    ui = A()
+
+When you want the values of points, you just have to do what you used to do.
+
+.. code-block:: python
+
+    ui.points.x  # get the value of x
+
+When you have to directly use the widget (``FloatSpinBox`` in this example) of ``x``,
+following code works.
+
+.. code-block:: python
+
+    ui.points.widgets.x  # get the widget of x
+
+Create Many Similar Containers
+------------------------------
+
+Since a ``FieldGroup`` can be considered as a "widget creator", you can easily define a
+widget template using it.
+
+.. warning::
+
+    Since a ``FieldGroup`` needs an implementation of copying the widget, you must correctly
+    override ``__newlike__`` method if you re-defined ``__init__``.
+
+.. code-block:: python
+
+    class LabeledLineEdit(FieldGroup):
+        lbl = vfield(widget_type="Label")
+        txt = vfield(str)
+
+        def __init__(self, label_text="label"):
+            super().__init__(labels=False)
+            self.lbl = label_text
+
+        def __newlike__(self):
+            return LabeledLineEdit(self.label_text)
+
+.. code-block:: python
+
+    @magicclass
+    class A:
+        text_1 = LabeledLineEdit("First name")
+        text_2 = LabeledLineEdit("Last name")
+
+Use fields in non-GUI classes
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+``MagicField`` and ``FieldGroup`` are also designed for general usage of widgets. This means
+that essentially you can use ``vfield`` instead of ``property`` for getting or setting
+parameters.
+
+.. code-block:: python
+
+    class A:
+        x = vfield(int)
+
+    a = A()
+    a.x = 10  # OK
+    a.x  # Out: 10
+
+However, a problem here is that there is no simple way to obtain the widget of ``x``. Of
+course you can use ``field`` instead of ``vfield`` to make the widget accessible but you
+will have to get the value from ``a.x.value``, which is not elegant.
+
+As mentioned above, this problem is solved in ``FieldGroup`` by ``widgets`` property.
+Therefore, the inaccessibility of widgets can generally be solved in a similar way.
+
+The ``widgets`` interface becomes available by subclassing ``HasFields`` class.
+
+.. code-block:: python
+
+    from magicclass import HasFields
+
+    class A(HasFields):
+        x = vfield(int)
+
+    a = A()
+    a.x = 10  # OK
+    a.x  # Out: 10
+    a.widgets.x  # SpinBox
+
+.. note::
+
+    Actually, ``FieldGroup`` is also a subclass of ``HasFields``.
