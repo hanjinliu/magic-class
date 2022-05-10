@@ -487,7 +487,7 @@ def make_gui(container: type[_C], no_margin: bool = True) -> type[_C | ClassGuiB
             # try to convert it into widget. Should decorate with @nogui.
             @nogui
             def add_dock_widget(
-                self: MainWindowClassGui | BaseGui,
+                self: cls,
                 widget: Widget,
                 *,
                 name: str = "",
@@ -513,16 +513,15 @@ def make_gui(container: type[_C], no_margin: bool = True) -> type[_C | ClassGuiB
                 from ._dock_widget import QtDockWidget
 
                 name = name or widget.name
-                mainwin: QMainWindow = self.native
                 dock = QtDockWidget(
-                    mainwin,
+                    self.native,
                     widget.native,
                     name=name.replace("_", " "),
                     area=area,
                     allowed_areas=allowed_areas,
                 )
 
-                mainwin.addDockWidget(QtDockWidget.areas[area], dock)
+                self.native.addDockWidget(QtDockWidget.areas[area], dock)
                 if isinstance(widget, BaseGui):
                     widget.__magicclass_parent__ = self
                     self.__magicclass_children__.append(widget)
@@ -545,12 +544,23 @@ def make_gui(container: type[_C], no_margin: bool = True) -> type[_C | ClassGuiB
                 else:
                     raise RuntimeError("Dock widget not found.")
 
-                mainwin: QMainWindow = self.native
-                mainwin.removeDockWidget(dock)
+                self.native.removeDockWidget(dock)
                 self.__magicclass_children__.pop(i_dock)
+
+            @property
+            def status(self: cls) -> str:
+                """Get status tip."""
+                return self.native.statusTip()
+
+            @status.setter
+            def status(self: cls, text: str):
+                """Set status tip."""
+                self.native.setStatusTip(text)
+                self.native.statusBar().showMessage(text, 5000)
 
             cls.add_dock_widget = add_dock_widget
             cls.remove_dock_widget = remove_dock_widget
+            cls.status = status
 
         cls.__init__ = __init__
         cls.__setattr__ = __setattr__
