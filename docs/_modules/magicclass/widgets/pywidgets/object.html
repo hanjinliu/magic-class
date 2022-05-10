@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.widgets.pywidgets.object &mdash; magic-class 0.5.21.dev0 documentation</title>
+  <title>magicclass.widgets.pywidgets.object &mdash; magic-class 0.6.4.dev1 documentation</title>
       <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.21.dev0
+                0.6.4.dev1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
@@ -40,17 +40,15 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../quick_start.html">Quick Start</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../options.html">Options in magic-class</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../nest.html">Nest magic-classes</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../use_field.html">Use Fields in magic-class</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../use_wraps.html">Call Parent Methods from its Child</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../use_bind.html">Binding Values to Arguments</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../keybinding.html">Define Custom Keybindings</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../customize_macro.html">Customize Macro Recording</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../containers.html">Container Variations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../class_inheritance.html">Inherit Magic Class</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../special_methods.html">Special Attributes in Magic class</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../api.html">API References</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../chap_basics.html">Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../chap_make_better.html">Make Your GUI Better</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../chap_data_vis.html">Data Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../chap_advanced.html">Advanced Topics</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../best_practice.html">Best Practice</a></li>
 </ul>
 
         </div>
@@ -91,7 +89,7 @@
 <span class="n">_Callback</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="n">Any</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="BaseWidget"><a class="viewcode-back" href="../../../../magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.object.BaseWidget">[docs]</a><span class="k">class</span> <span class="nc">BaseWidget</span><span class="p">(</span><span class="n">FreeWidget</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseWidget"><a class="viewcode-back" href="../../../../apidoc/magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.object.BaseWidget">[docs]</a><span class="k">class</span> <span class="nc">BaseWidget</span><span class="p">(</span><span class="n">FreeWidget</span><span class="p">):</span>
     <span class="c1"># Abstract class for PyObject-like widgets.</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -122,7 +120,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_title</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span>
 
-<div class="viewcode-block" id="BaseWidget.register_callback"><a class="viewcode-back" href="../../../../magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.object.BaseWidget.register_callback">[docs]</a>    <span class="k">def</span> <span class="nf">register_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_</span><span class="p">:</span> <span class="nb">type</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseWidget.register_callback"><a class="viewcode-back" href="../../../../apidoc/magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.object.BaseWidget.register_callback">[docs]</a>    <span class="k">def</span> <span class="nf">register_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_</span><span class="p">:</span> <span class="nb">type</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Register a double-click callback function for items of certain type.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -133,7 +131,7 @@
 
         <span class="k">return</span> <span class="n">wrapper</span></div>
 
-<div class="viewcode-block" id="BaseWidget.register_delegate"><a class="viewcode-back" href="../../../../magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.object.BaseWidget.register_delegate">[docs]</a>    <span class="k">def</span> <span class="nf">register_delegate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_</span><span class="p">:</span> <span class="nb">type</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseWidget.register_delegate"><a class="viewcode-back" href="../../../../apidoc/magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.object.BaseWidget.register_delegate">[docs]</a>    <span class="k">def</span> <span class="nf">register_delegate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_</span><span class="p">:</span> <span class="nb">type</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Register a custom display.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -144,7 +142,7 @@
 
         <span class="k">return</span> <span class="n">wrapper</span></div>
 
-<div class="viewcode-block" id="BaseWidget.register_contextmenu"><a class="viewcode-back" href="../../../../magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.object.BaseWidget.register_contextmenu">[docs]</a>    <span class="k">def</span> <span class="nf">register_contextmenu</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_</span><span class="p">:</span> <span class="nb">type</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseWidget.register_contextmenu"><a class="viewcode-back" href="../../../../apidoc/magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.object.BaseWidget.register_contextmenu">[docs]</a>    <span class="k">def</span> <span class="nf">register_contextmenu</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_</span><span class="p">:</span> <span class="nb">type</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Register a custom context menu for items of certain type.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -155,7 +153,7 @@
 
         <span class="k">return</span> <span class="n">wrapper</span></div>
 
-<div class="viewcode-block" id="BaseWidget.register_tooltip"><a class="viewcode-back" href="../../../../magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.object.BaseWidget.register_tooltip">[docs]</a>    <span class="k">def</span> <span class="nf">register_tooltip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_</span><span class="p">:</span> <span class="nb">type</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseWidget.register_tooltip"><a class="viewcode-back" href="../../../../apidoc/magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.object.BaseWidget.register_tooltip">[docs]</a>    <span class="k">def</span> <span class="nf">register_tooltip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_</span><span class="p">:</span> <span class="nb">type</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Register a custom tooltipfor items of certain type.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -169,20 +167,20 @@
         <span class="k">return</span> <span class="n">wrapper</span></div></div>
 
 
-<div class="viewcode-block" id="ContextMenuMixin"><a class="viewcode-back" href="../../../../magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.object.ContextMenuMixin">[docs]</a><span class="k">class</span> <span class="nc">ContextMenuMixin</span><span class="p">:</span>
+<div class="viewcode-block" id="ContextMenuMixin"><a class="viewcode-back" href="../../../../apidoc/magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.object.ContextMenuMixin">[docs]</a><span class="k">class</span> <span class="nc">ContextMenuMixin</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This class defines custom contextmenu with type dispatching.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="ContextMenuMixin.setContextMenu"><a class="viewcode-back" href="../../../../magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.object.ContextMenuMixin.setContextMenu">[docs]</a>    <span class="k">def</span> <span class="nf">setContextMenu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ContextMenuMixin.setContextMenu"><a class="viewcode-back" href="../../../../apidoc/magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.object.ContextMenuMixin.setContextMenu">[docs]</a>    <span class="k">def</span> <span class="nf">setContextMenu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setContextMenuPolicy</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">CustomContextMenu</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">customContextMenuRequested</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contextMenu</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ContextMenuMixin.setParentWidget"><a class="viewcode-back" href="../../../../magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.object.ContextMenuMixin.setParentWidget">[docs]</a>    <span class="k">def</span> <span class="nf">setParentWidget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">:</span> <span class="n">BaseWidget</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="ContextMenuMixin.setParentWidget"><a class="viewcode-back" href="../../../../apidoc/magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.object.ContextMenuMixin.setParentWidget">[docs]</a>    <span class="k">def</span> <span class="nf">setParentWidget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">:</span> <span class="n">BaseWidget</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="n">widget</span>
         <span class="k">return</span> <span class="kc">None</span></div>
 
-<div class="viewcode-block" id="ContextMenuMixin.contextMenu"><a class="viewcode-back" href="../../../../magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.object.ContextMenuMixin.contextMenu">[docs]</a>    <span class="k">def</span> <span class="nf">contextMenu</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">point</span><span class="p">):</span>
+<div class="viewcode-block" id="ContextMenuMixin.contextMenu"><a class="viewcode-back" href="../../../../apidoc/magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.object.ContextMenuMixin.contextMenu">[docs]</a>    <span class="k">def</span> <span class="nf">contextMenu</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">point</span><span class="p">):</span>
         <span class="n">menu</span> <span class="o">=</span> <span class="n">QMenu</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="n">menu</span><span class="o">.</span><span class="n">setToolTipsVisible</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">itemAt</span><span class="p">(</span><span class="n">point</span><span class="p">)</span>
@@ -201,7 +199,7 @@
         <span class="n">menu</span><span class="o">.</span><span class="n">exec_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mapToGlobal</span><span class="p">(</span><span class="n">point</span><span class="p">))</span></div></div>
 
 
-<div class="viewcode-block" id="partial_event"><a class="viewcode-back" href="../../../../magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.object.partial_event">[docs]</a><span class="k">def</span> <span class="nf">partial_event</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+<div class="viewcode-block" id="partial_event"><a class="viewcode-back" href="../../../../apidoc/magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.object.partial_event">[docs]</a><span class="k">def</span> <span class="nf">partial_event</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
     <span class="nd">@wraps</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">_func</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
@@ -209,8 +207,8 @@
     <span class="k">return</span> <span class="n">_func</span></div>
 
 
-<div class="viewcode-block" id="PyObjectBound"><a class="viewcode-back" href="../../../../magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.object.PyObjectBound">[docs]</a><span class="k">class</span> <span class="nc">PyObjectBound</span><span class="p">:</span>
-<div class="viewcode-block" id="PyObjectBound.setObject"><a class="viewcode-back" href="../../../../magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.object.PyObjectBound.setObject">[docs]</a>    <span class="k">def</span> <span class="nf">setObject</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="PyObjectBound"><a class="viewcode-back" href="../../../../apidoc/magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.object.PyObjectBound">[docs]</a><span class="k">class</span> <span class="nc">PyObjectBound</span><span class="p">:</span>
+<div class="viewcode-block" id="PyObjectBound.setObject"><a class="viewcode-back" href="../../../../apidoc/magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.object.PyObjectBound.setObject">[docs]</a>    <span class="k">def</span> <span class="nf">setObject</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">obj</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">obj</span> <span class="o">=</span> <span class="n">obj</span>
         <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>

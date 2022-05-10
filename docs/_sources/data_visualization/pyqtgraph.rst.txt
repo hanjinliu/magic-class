@@ -1,7 +1,0 @@
-================
-PyQtGraph Canvas
-================
-
-.. code-block:: python
-
-    from magicclass.ext.pyqtgraph import QtPlotCanvas

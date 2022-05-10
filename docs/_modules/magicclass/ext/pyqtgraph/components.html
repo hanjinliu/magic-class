@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.ext.pyqtgraph.components &mdash; magic-class 0.6.2.dev1 documentation</title>
+  <title>magicclass.ext.pyqtgraph.components &mdash; magic-class 0.6.4.dev1 documentation</title>
       <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.2.dev1
+                0.6.4.dev1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
@@ -43,27 +43,12 @@
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../chap_basics.html">Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../chap_make_better.html">Make Your GUI Better</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../chap_data_vis.html">Data Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../chap_advanced.html">Advanced Topics</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../use_wraps.html">Call Parent Methods from its Child</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../use_bind.html">Binding Values to Arguments</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../use_choices.html">Set Choices Dynamically</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../use_preview.html">Add Preview Functionalities</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../use_worker.html">Multi-threading</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../additional_types.html">Additional types</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../containers.html">Container Variations</a></li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../matplotlib.html">Use Matplotlib Figure</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../pyqtgraph.html">Use PyQtGraph Canvas</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../vispy.html">Vispy Canvas</a></li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../freewidget.html">Convert QtWidgets into a Magic Widget</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../keybinding.html">Define Custom Keybindings</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../customize_macro.html">Customize Macro Recording</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../class_inheritance.html">Inherit Magic Class</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../api.html">API References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../best_practice.html">Best Practice</a></li>
 </ul>
 
         </div>
@@ -99,7 +84,7 @@
 <span class="kn">from</span> <span class="nn">.._shared_utils</span> <span class="kn">import</span> <span class="n">convert_color_code</span><span class="p">,</span> <span class="n">to_rgba</span>
 
 
-<div class="viewcode-block" id="GraphicComponent"><a class="viewcode-back" href="../../../../magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.components.GraphicComponent">[docs]</a><span class="k">class</span> <span class="nc">GraphicComponent</span><span class="p">:</span>
+<div class="viewcode-block" id="GraphicComponent"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.components.GraphicComponent">[docs]</a><span class="k">class</span> <span class="nc">GraphicComponent</span><span class="p">:</span>
     <span class="n">native</span><span class="p">:</span> <span class="n">pg</span><span class="o">.</span><span class="n">GraphicsObject</span>
 
     <span class="nd">@property</span>
@@ -111,7 +96,7 @@
     <span class="k">def</span> <span class="nf">visible</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
-<div class="viewcode-block" id="GraphicComponent.update"><a class="viewcode-back" href="../../../../magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.components.GraphicComponent.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="GraphicComponent.update"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.components.GraphicComponent.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
                 <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot set attribute </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> to TextOverlay.&quot;</span><span class="p">)</span>
@@ -119,7 +104,7 @@
             <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="Region"><a class="viewcode-back" href="../../../../magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.components.Region">[docs]</a><span class="k">class</span> <span class="nc">Region</span><span class="p">(</span><span class="n">GraphicComponent</span><span class="p">):</span>
+<div class="viewcode-block" id="Region"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.components.Region">[docs]</a><span class="k">class</span> <span class="nc">Region</span><span class="p">(</span><span class="n">GraphicComponent</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A linear region with magicgui-like API&quot;&quot;&quot;</span>
 
     <span class="n">changed</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">(</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span>
@@ -159,7 +144,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setBrush</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="Roi"><a class="viewcode-back" href="../../../../magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.components.Roi">[docs]</a><span class="k">class</span> <span class="nc">Roi</span><span class="p">(</span><span class="n">GraphicComponent</span><span class="p">):</span>
+<div class="viewcode-block" id="Roi"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.components.Roi">[docs]</a><span class="k">class</span> <span class="nc">Roi</span><span class="p">(</span><span class="n">GraphicComponent</span><span class="p">):</span>
     <span class="n">native</span><span class="p">:</span> <span class="n">pg</span><span class="o">.</span><span class="n">ROI</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)):</span>
@@ -178,7 +163,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">_updateView</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="TextItem"><a class="viewcode-back" href="../../../../magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.components.TextItem">[docs]</a><span class="k">class</span> <span class="nc">TextItem</span><span class="p">(</span><span class="n">GraphicComponent</span><span class="p">):</span>
+<div class="viewcode-block" id="TextItem"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.components.TextItem">[docs]</a><span class="k">class</span> <span class="nc">TextItem</span><span class="p">(</span><span class="n">GraphicComponent</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A text item with napari-like API.&quot;&quot;&quot;</span>
 
     <span class="n">native</span><span class="p">:</span> <span class="n">pg</span><span class="o">.</span><span class="n">TextItem</span>
@@ -247,7 +232,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setAnchor</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="ScaleBar"><a class="viewcode-back" href="../../../../magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.components.ScaleBar">[docs]</a><span class="k">class</span> <span class="nc">ScaleBar</span><span class="p">(</span><span class="n">GraphicComponent</span><span class="p">):</span>
+<div class="viewcode-block" id="ScaleBar"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.components.ScaleBar">[docs]</a><span class="k">class</span> <span class="nc">ScaleBar</span><span class="p">(</span><span class="n">GraphicComponent</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A scale bar with napari-like API&quot;&quot;&quot;</span>
 
     <span class="n">native</span><span class="p">:</span> <span class="n">pg</span><span class="o">.</span><span class="n">ScaleBar</span>
@@ -278,7 +263,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_unit</span> <span class="o">=</span> <span class="n">value</span></div>
 
 
-<div class="viewcode-block" id="Legend"><a class="viewcode-back" href="../../../../magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.components.Legend">[docs]</a><span class="k">class</span> <span class="nc">Legend</span><span class="p">(</span><span class="n">GraphicComponent</span><span class="p">):</span>
+<div class="viewcode-block" id="Legend"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.components.Legend">[docs]</a><span class="k">class</span> <span class="nc">Legend</span><span class="p">(</span><span class="n">GraphicComponent</span><span class="p">):</span>
     <span class="n">native</span><span class="p">:</span> <span class="n">pg</span><span class="o">.</span><span class="n">LegendItem</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)):</span>

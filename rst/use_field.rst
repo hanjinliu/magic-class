@@ -2,13 +2,21 @@
 Use Fields in magic-class
 =========================
 
+.. contents:: Contents
+    :local:
+    :depth: 2
+
 MagicFields
 ===========
 
-When widgets are directly provided in a magic class as class variables, they should be considered as "fields".
-The concept of fields was actually introduced in Python as an standard library ``dataclasses`` as a ``Field``
-object. A field is in a state of "ready to be converted into a object", i.e., a new object is created for every
-instance construction.
+Basics
+------
+
+When widgets are directly provided in a magic class as class variables, they should be
+considered as "fields". The concept of fields was actually introduced in Python as an
+standard library ``dataclasses`` as a ``Field`` object. A field is in a state of "ready
+to be converted into a object", i.e., a new object is created for every instance
+construction.
 
 .. code-block:: python
 
@@ -116,11 +124,10 @@ defined callbacks similar to ``MagicField``.
             print(f"a = {self.a}") # instead of "self.a.value"!
 
 
-FieldGroup
-==========
+(Advanced) FieldGroup
+=====================
 
-(This feature is an advanced one.)
-A ``FieldGroup`` is a class that is used as a container of ``MagicField``s and behave
+A ``FieldGroup`` is a class that is used as a container of field objects and behave
 like a ``field`` or ``vfield`` function itself.
 
 .. code-block:: python
@@ -208,8 +215,10 @@ Now, ``LabeledLineEdit`` can be used as ``field`` or ``vfield``.
         text_1 = LabeledLineEdit("First name")
         text_2 = LabeledLineEdit("Last name")
 
+.. image:: images/fig_3-4.png
+
 Use fields in non-GUI classes
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------
 
 ``MagicField`` and ``FieldGroup`` are also designed for general usage of widgets. This means
 that essentially you can use ``vfield`` instead of ``property`` for getting or setting

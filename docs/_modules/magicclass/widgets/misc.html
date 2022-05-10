@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.widgets.misc &mdash; magic-class 0.6.3 documentation</title>
+  <title>magicclass.widgets.misc &mdash; magic-class 0.6.4.dev1 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.3
+                0.6.4.dev1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -77,6 +77,7 @@
 
   <h1>Source code for magicclass.widgets.misc</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">TYPE_CHECKING</span><span class="p">,</span>
     <span class="n">Generic</span><span class="p">,</span>
@@ -111,6 +112,12 @@
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">qtpy.QtWidgets</span> <span class="kn">import</span> <span class="n">QTextEdit</span>
     <span class="kn">from</span> <span class="nn">superqt</span> <span class="kn">import</span> <span class="n">QLabeledRangeSlider</span>
+
+
+<span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s2">&quot;win32&quot;</span><span class="p">:</span>
+    <span class="n">_FONT</span> <span class="o">=</span> <span class="s2">&quot;Consolas&quot;</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">_FONT</span> <span class="o">=</span> <span class="s2">&quot;Menlo&quot;</span>
 
 
 <span class="nd">@merge_super_sigs</span>
@@ -216,7 +223,7 @@
         <span class="kn">from</span> <span class="nn">qtpy.QtGui</span> <span class="kn">import</span> <span class="n">QFont</span><span class="p">,</span> <span class="n">QTextOption</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="p">:</span> <span class="n">QTextEdit</span>
-        <span class="n">font</span> <span class="o">=</span> <span class="n">QFont</span><span class="p">(</span><span class="s2">&quot;Consolas&quot;</span><span class="p">)</span>
+        <span class="n">font</span> <span class="o">=</span> <span class="n">QFont</span><span class="p">(</span><span class="n">_FONT</span><span class="p">)</span>
         <span class="n">font</span><span class="o">.</span><span class="n">setStyleHint</span><span class="p">(</span><span class="n">QFont</span><span class="o">.</span><span class="n">Monospace</span><span class="p">)</span>
         <span class="n">font</span><span class="o">.</span><span class="n">setFixedPitch</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setFont</span><span class="p">(</span><span class="n">font</span><span class="p">)</span>

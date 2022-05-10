@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.fields &mdash; magic-class 0.6.3 documentation</title>
+  <title>magicclass.fields &mdash; magic-class 0.6.4.dev1 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.3
+                0.6.4.dev1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -78,15 +78,19 @@
   <h1>Source code for magicclass.fields</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 <span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">contextmanager</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
+<span class="kn">import</span> <span class="nn">weakref</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">Any</span><span class="p">,</span>
     <span class="n">TYPE_CHECKING</span><span class="p">,</span>
     <span class="n">Callable</span><span class="p">,</span>
+    <span class="n">Iterator</span><span class="p">,</span>
     <span class="n">TypeVar</span><span class="p">,</span>
     <span class="n">overload</span><span class="p">,</span>
     <span class="n">Generic</span><span class="p">,</span>
     <span class="n">Union</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span>
 <span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">_AnnotatedAlias</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">import</span> <span class="nn">datetime</span>
@@ -94,14 +98,15 @@
 <span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">Field</span><span class="p">,</span> <span class="n">MISSING</span>
 <span class="kn">from</span> <span class="nn">magicgui.type_map</span> <span class="kn">import</span> <span class="n">get_widget_class</span>
-<span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">create_widget</span>
-<span class="kn">from</span> <span class="nn">magicgui.widgets._bases</span> <span class="kn">import</span> <span class="n">Widget</span><span class="p">,</span> <span class="n">ValueWidget</span>
+<span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">create_widget</span><span class="p">,</span> <span class="n">Container</span>
+<span class="kn">from</span> <span class="nn">magicgui.widgets._bases</span> <span class="kn">import</span> <span class="n">Widget</span><span class="p">,</span> <span class="n">ValueWidget</span><span class="p">,</span> <span class="n">ContainerWidget</span>
 <span class="kn">from</span> <span class="nn">magicgui.widgets._bases.value_widget</span> <span class="kn">import</span> <span class="n">UNSET</span>
 
 <span class="kn">from</span> <span class="nn">._gui.mgui_ext</span> <span class="kn">import</span> <span class="n">Action</span><span class="p">,</span> <span class="n">WidgetAction</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">magicgui.widgets._protocols</span> <span class="kn">import</span> <span class="n">WidgetProtocol</span>
+    <span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Self</span>
     <span class="kn">from</span> <span class="nn">._gui._base</span> <span class="kn">import</span> <span class="n">MagicTemplate</span>
     <span class="kn">from</span> <span class="nn">._gui.mgui_ext</span> <span class="kn">import</span> <span class="n">AbstractAction</span>
 
@@ -118,11 +123,19 @@
 <span class="k">else</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">_BaseGenericAlias</span>
 
+
+<span class="k">class</span> <span class="nc">_FieldObject</span><span class="p">:</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+
+    <span class="k">def</span> <span class="nf">get_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Widget</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+
+
 <span class="n">_W</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;_W&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">Widget</span><span class="p">)</span>
 <span class="n">_V</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;_V&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="MagicField"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.fields.MagicField">[docs]</a><span class="k">class</span> <span class="nc">MagicField</span><span class="p">(</span><span class="n">Field</span><span class="p">,</span> <span class="n">Generic</span><span class="p">[</span><span class="n">_W</span><span class="p">,</span> <span class="n">_V</span><span class="p">]):</span>
+<div class="viewcode-block" id="MagicField"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.fields.MagicField">[docs]</a><span class="k">class</span> <span class="nc">MagicField</span><span class="p">(</span><span class="n">Field</span><span class="p">,</span> <span class="n">_FieldObject</span><span class="p">,</span> <span class="n">Generic</span><span class="p">[</span><span class="n">_W</span><span class="p">,</span> <span class="n">_V</span><span class="p">]):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Field class for magicgui construction.</span>
 
@@ -151,22 +164,37 @@
             <span class="n">compare</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">callbacks</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">guis</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">_M</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_callbacks</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_guis</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">_M</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">record</span> <span class="o">=</span> <span class="n">record</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_record</span> <span class="o">=</span> <span class="n">record</span>
 
         <span class="c1"># MagicField has to remenber the first class that referred to itself so that it can</span>
         <span class="c1"># &quot;know&quot; the namespace it belongs to.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">parent_class</span><span class="p">:</span> <span class="nb">type</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parent_class</span><span class="p">:</span> <span class="nb">type</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;Field&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 
+    <span class="k">def</span> <span class="nf">__set_name__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">owner</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__set_name__</span><span class="p">(</span><span class="n">owner</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parent_class</span> <span class="o">=</span> <span class="n">owner</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">callbacks</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Return callbacks in an immutable way.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_callbacks</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">record</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_record</span>
+
 <div class="viewcode-block" id="MagicField.copy"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.fields.MagicField.copy">[docs]</a>    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicField</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Copy object.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">default</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_factory</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">record</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">default</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_factory</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_record</span>
         <span class="p">)</span></div>
 
     <span class="nd">@contextmanager</span>
@@ -188,16 +216,24 @@
 <span class="sd">        Get a widget from ``obj``. This function will be called every time MagicField is referred</span>
 <span class="sd">        by ``obj.field``.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">._gui</span> <span class="kn">import</span> <span class="n">MagicTemplate</span>
+
         <span class="n">obj_id</span> <span class="o">=</span> <span class="nb">id</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
-        <span class="n">objtype</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">obj_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">guis</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">guis</span><span class="p">[</span><span class="n">obj_id</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">obj_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_guis</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_guis</span><span class="p">[</span><span class="n">obj_id</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_choices</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
                 <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_widget</span><span class="p">()</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">guis</span><span class="p">[</span><span class="n">obj_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">widget</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent_class</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">parent_class</span> <span class="o">=</span> <span class="n">objtype</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_guis</span><span class="p">[</span><span class="n">obj_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">widget</span>
+
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="p">(</span><span class="n">ValueWidget</span><span class="p">,</span> <span class="n">ContainerWidget</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">MagicTemplate</span><span class="p">):</span>
+                    <span class="n">_def</span> <span class="o">=</span> <span class="n">_define_callback_gui</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">_def</span> <span class="o">=</span> <span class="n">_define_callback</span>
+                <span class="k">for</span> <span class="n">callback</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_callbacks</span><span class="p">:</span>
+                    <span class="c1"># funcname = callback.__name__</span>
+                    <span class="n">widget</span><span class="o">.</span><span class="n">changed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">_def</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">callback</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="n">widget</span></div>
 
@@ -206,22 +242,30 @@
 <span class="sd">        Get an action from ``obj``. This function will be called every time MagicField is referred</span>
 <span class="sd">        by ``obj.field``.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">._gui</span> <span class="kn">import</span> <span class="n">MagicTemplate</span>
+
         <span class="n">obj_id</span> <span class="o">=</span> <span class="nb">id</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
-        <span class="n">objtype</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">obj_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">guis</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="n">action</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">guis</span><span class="p">[</span><span class="n">obj_id</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">obj_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_guis</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">action</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_guis</span><span class="p">[</span><span class="n">obj_id</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_choices</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
                 <span class="n">action</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_action</span><span class="p">()</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">guis</span><span class="p">[</span><span class="n">obj_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">action</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent_class</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">parent_class</span> <span class="o">=</span> <span class="n">objtype</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_guis</span><span class="p">[</span><span class="n">obj_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">action</span>
+
+            <span class="k">if</span> <span class="n">action</span><span class="o">.</span><span class="n">support_value</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">MagicTemplate</span><span class="p">):</span>
+                    <span class="n">_def</span> <span class="o">=</span> <span class="n">_define_callback_gui</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">_def</span> <span class="o">=</span> <span class="n">_define_callback</span>
+                <span class="k">for</span> <span class="n">callback</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_callbacks</span><span class="p">:</span>
+                    <span class="c1"># funcname = callback.__name__</span>
+                    <span class="n">action</span><span class="o">.</span><span class="n">changed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">_def</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">callback</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="n">action</span></div>
 
 <div class="viewcode-block" id="MagicField.as_getter"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.fields.MagicField.as_getter">[docs]</a>    <span class="k">def</span> <span class="nf">as_getter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">],</span> <span class="n">_V</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Make a function that get the value of Widget or Action.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="k">lambda</span> <span class="n">w</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">guis</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">obj</span><span class="p">)]</span><span class="o">.</span><span class="n">value</span></div>
+        <span class="k">return</span> <span class="k">lambda</span> <span class="n">w</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_guis</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">obj</span><span class="p">)]</span><span class="o">.</span><span class="n">value</span></div>
 
     <span class="nd">@overload</span>
     <span class="k">def</span> <span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span> <span class="n">objtype</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicField</span><span class="p">[</span><span class="n">_W</span><span class="p">,</span> <span class="n">_V</span><span class="p">]</span> <span class="o">|</span> <span class="n">_W</span><span class="p">:</span>
@@ -312,7 +356,7 @@
         <span class="sd">&quot;&quot;&quot;Set callback function to &quot;ready to connect&quot; state.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">callable</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Cannot connect non-callable object&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">func</span></div>
 
 <div class="viewcode-block" id="MagicField.disconnect"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.fields.MagicField.disconnect">[docs]</a>    <span class="k">def</span> <span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -321,8 +365,8 @@
 <span class="sd">        This method does NOT disconnect callbacks from widgets that are</span>
 <span class="sd">        already created.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">callbacks</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">callbacks</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_callbacks</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_callbacks</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">None</span></div>
 
 <div class="viewcode-block" id="MagicField.wraps"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.fields.MagicField.wraps">[docs]</a>    <span class="k">def</span> <span class="nf">wraps</span><span class="p">(</span>
@@ -458,7 +502,7 @@
 <span class="k">def</span> <span class="nf">field</span><span class="p">(</span>
     <span class="n">obj</span><span class="p">:</span> <span class="n">_X</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">widget_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">type</span><span class="p">[</span><span class="n">WidgetProtocol</span><span class="p">]</span> <span class="o">|</span> <span class="nb">type</span><span class="p">[</span><span class="n">Widget</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{},</span>
     <span class="n">record</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -470,7 +514,7 @@
 <span class="k">def</span> <span class="nf">field</span><span class="p">(</span>
     <span class="n">obj</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">_W</span><span class="p">],</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">widget_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">type</span><span class="p">[</span><span class="n">WidgetProtocol</span><span class="p">]</span> <span class="o">|</span> <span class="nb">type</span><span class="p">[</span><span class="n">Widget</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{},</span>
     <span class="n">record</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -482,7 +526,7 @@
 <span class="k">def</span> <span class="nf">field</span><span class="p">(</span>
     <span class="n">obj</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">_X</span><span class="p">],</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">widget_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">type</span><span class="p">[</span><span class="n">WidgetProtocol</span><span class="p">]</span> <span class="o">|</span> <span class="nb">type</span><span class="p">[</span><span class="n">Widget</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{},</span>
     <span class="n">record</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -494,7 +538,7 @@
 <span class="k">def</span> <span class="nf">field</span><span class="p">(</span>
     <span class="n">obj</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">_M</span><span class="p">],</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">widget_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">type</span><span class="p">[</span><span class="n">WidgetProtocol</span><span class="p">]</span> <span class="o">|</span> <span class="nb">type</span><span class="p">[</span><span class="n">Widget</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{},</span>
     <span class="n">record</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -506,7 +550,7 @@
 <span class="k">def</span> <span class="nf">field</span><span class="p">(</span>
     <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">widget_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">_W</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{},</span>
     <span class="n">record</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -518,7 +562,7 @@
 <span class="k">def</span> <span class="nf">field</span><span class="p">(</span>
     <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">widget_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">type</span><span class="p">[</span><span class="n">WidgetProtocol</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{},</span>
     <span class="n">record</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -529,7 +573,7 @@
 <div class="viewcode-block" id="field"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.fields.field">[docs]</a><span class="k">def</span> <span class="nf">field</span><span class="p">(</span>
     <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">MISSING</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">widget_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">type</span><span class="p">[</span><span class="n">WidgetProtocol</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{},</span>
     <span class="n">record</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -566,7 +610,7 @@
 <span class="k">def</span> <span class="nf">vfield</span><span class="p">(</span>
     <span class="n">obj</span><span class="p">:</span> <span class="n">_X</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">widget_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">type</span><span class="p">[</span><span class="n">WidgetProtocol</span><span class="p">]</span> <span class="o">|</span> <span class="nb">type</span><span class="p">[</span><span class="n">Widget</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{},</span>
     <span class="n">record</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -578,7 +622,7 @@
 <span class="k">def</span> <span class="nf">vfield</span><span class="p">(</span>
     <span class="n">obj</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">_W</span><span class="p">],</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">widget_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">type</span><span class="p">[</span><span class="n">WidgetProtocol</span><span class="p">]</span> <span class="o">|</span> <span class="nb">type</span><span class="p">[</span><span class="n">Widget</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{},</span>
     <span class="n">record</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -590,7 +634,7 @@
 <span class="k">def</span> <span class="nf">vfield</span><span class="p">(</span>
     <span class="n">obj</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">_X</span><span class="p">],</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">widget_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">type</span><span class="p">[</span><span class="n">WidgetProtocol</span><span class="p">]</span> <span class="o">|</span> <span class="nb">type</span><span class="p">[</span><span class="n">Widget</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{},</span>
     <span class="n">record</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -602,7 +646,7 @@
 <span class="k">def</span> <span class="nf">vfield</span><span class="p">(</span>
     <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">widget_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">_W</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{},</span>
     <span class="n">record</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -614,7 +658,7 @@
 <span class="k">def</span> <span class="nf">vfield</span><span class="p">(</span>
     <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">widget_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">type</span><span class="p">[</span><span class="n">WidgetProtocol</span><span class="p">]</span> <span class="o">|</span> <span class="nb">type</span><span class="p">[</span><span class="n">Widget</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{},</span>
     <span class="n">record</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -625,7 +669,7 @@
 <div class="viewcode-block" id="vfield"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.fields.vfield">[docs]</a><span class="k">def</span> <span class="nf">vfield</span><span class="p">(</span>
     <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">MISSING</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">widget_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">type</span><span class="p">[</span><span class="n">WidgetProtocol</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{},</span>
     <span class="n">record</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -674,8 +718,7 @@
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Field options must be a dict, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">options</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="n">options</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="n">metadata</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">widget_type</span><span class="o">=</span><span class="n">widget_type</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
-    <span class="k">if</span> <span class="s2">&quot;name&quot;</span> <span class="ow">in</span> <span class="n">options</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-        <span class="n">name</span> <span class="o">=</span> <span class="n">options</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
     <span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">record</span><span class="o">=</span><span class="n">record</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="n">_BaseGenericAlias</span><span class="p">)):</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">_AnnotatedAlias</span><span class="p">):</span>
@@ -697,6 +740,237 @@
         <span class="k">return</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">class_or_tuple</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">False</span>
+
+
+<span class="k">def</span> <span class="nf">_define_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">callback</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_callback</span><span class="p">():</span>
+        <span class="n">callback</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">return</span> <span class="n">_callback</span>
+
+
+<span class="k">def</span> <span class="nf">_define_callback_gui</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">MagicTemplate</span><span class="p">,</span> <span class="n">callback</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Define a callback function from a method.&quot;&quot;&quot;</span>
+
+    <span class="o">*</span><span class="n">_</span><span class="p">,</span> <span class="n">clsname</span><span class="p">,</span> <span class="n">funcname</span> <span class="o">=</span> <span class="n">callback</span><span class="o">.</span><span class="vm">__qualname__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+    <span class="n">mro</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__mro__</span>
+    <span class="k">for</span> <span class="n">base</span> <span class="ow">in</span> <span class="n">mro</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">base</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">==</span> <span class="n">clsname</span><span class="p">:</span>
+
+            <span class="k">def</span> <span class="nf">_callback</span><span class="p">():</span>
+                <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">macro</span><span class="o">.</span><span class="n">blocked</span><span class="p">():</span>
+                    <span class="nb">getattr</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">funcname</span><span class="p">)(</span><span class="bp">self</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
+
+            <span class="k">break</span>
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="k">def</span> <span class="nf">_callback</span><span class="p">():</span>
+            <span class="c1"># search for parent instances that have the same name.</span>
+            <span class="n">current_self</span> <span class="o">=</span> <span class="bp">self</span>
+            <span class="k">while</span> <span class="ow">not</span> <span class="p">(</span>
+                <span class="nb">hasattr</span><span class="p">(</span><span class="n">current_self</span><span class="p">,</span> <span class="n">funcname</span><span class="p">)</span>
+                <span class="ow">and</span> <span class="n">current_self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">==</span> <span class="n">clsname</span>
+            <span class="p">):</span>
+                <span class="n">current_self</span> <span class="o">=</span> <span class="n">current_self</span><span class="o">.</span><span class="n">__magicclass_parent__</span>
+            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">macro</span><span class="o">.</span><span class="n">blocked</span><span class="p">():</span>
+                <span class="nb">getattr</span><span class="p">(</span><span class="n">current_self</span><span class="p">,</span> <span class="n">funcname</span><span class="p">)()</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">return</span> <span class="n">_callback</span>
+
+
+<span class="k">class</span> <span class="nc">_FieldGroupMeta</span><span class="p">(</span><span class="n">ABCMeta</span><span class="p">):</span>
+    <span class="n">_fields</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">MagicField</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span>
+        <span class="n">fcls</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">bases</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">,</span>
+        <span class="n">namespace</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwds</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_FieldGroupMeta</span><span class="p">:</span>
+        <span class="bp">cls</span><span class="p">:</span> <span class="n">_FieldGroupMeta</span> <span class="o">=</span> <span class="nb">type</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="n">fcls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">namespace</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
+        <span class="n">_fields</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">MagicField</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">namespace</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">_FieldObject</span><span class="p">):</span>
+                <span class="n">_fields</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+
+        <span class="bp">cls</span><span class="o">.</span><span class="n">_fields</span> <span class="o">=</span> <span class="n">_fields</span>
+
+        <span class="k">return</span> <span class="bp">cls</span>
+
+
+<div class="viewcode-block" id="HasFields"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.fields.HasFields">[docs]</a><span class="k">class</span> <span class="nc">HasFields</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">_FieldGroupMeta</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Base class with _FieldGroupMeta as the meta-class.&quot;&quot;&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">widgets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a view of widgets.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">WidgetView</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;List up child widgets.&quot;&quot;&quot;</span>
+        <span class="n">_repr</span> <span class="o">=</span> <span class="s2">&quot;,</span><span class="se">\n\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="n">wdt</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">wdt</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(</span><span class="se">\n\t</span><span class="si">{</span><span class="n">_repr</span><span class="si">}</span><span class="se">\n</span><span class="s2">)&quot;</span></div>
+
+
+<span class="c1"># NOTE: Typing of FieldGroup is tricky. When it is referred to via __get__, it must return</span>
+<span class="c1"># a object of same type as itself to guarantee the child fields are also defined there.</span>
+<span class="c1"># Thus, FieldGroup must inherit magicgui Container although the original container will</span>
+<span class="c1"># never be used.</span>
+<div class="viewcode-block" id="FieldGroup"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.fields.FieldGroup">[docs]</a><span class="k">class</span> <span class="nc">FieldGroup</span><span class="p">(</span><span class="n">Container</span><span class="p">,</span> <span class="n">HasFields</span><span class="p">,</span> <span class="n">_FieldObject</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">layout</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;vertical&quot;</span><span class="p">,</span>
+        <span class="n">labels</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="n">widgets</span> <span class="o">=</span> <span class="p">[</span><span class="n">fld</span><span class="o">.</span><span class="n">get_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="k">for</span> <span class="n">fld</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">_fields</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">layout</span><span class="o">=</span><span class="n">layout</span><span class="p">,</span> <span class="n">widgets</span><span class="o">=</span><span class="n">widgets</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_containers</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Self</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_callbacks</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span> <span class="nf">__init_subclass__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">&quot;__init__&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">return</span>
+
+        <span class="bp">cls</span><span class="o">.</span><span class="n">__base_init__</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="fm">__init__</span>
+
+        <span class="nd">@wraps</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="fm">__init__</span><span class="p">)</span>
+        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__input_arguments</span> <span class="o">=</span> <span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">__base_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">__newlike__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__input_arguments</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="bp">cls</span><span class="o">.</span><span class="fm">__init__</span> <span class="o">=</span> <span class="fm">__init__</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">__newlike__</span> <span class="o">=</span> <span class="n">__newlike__</span>
+
+    <span class="k">def</span> <span class="nf">__newlike__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Make a copy of a FieldGroup.</span>
+
+<span class="sd">        This method needs override if __init__ is overrided in a subclass.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span>
+            <span class="n">layout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="p">,</span>
+            <span class="n">labels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="p">,</span>
+            <span class="n">enabled</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">enabled</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">tooltip</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tooltip</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__set_name__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">owner</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="c1"># self._parent_class = owner</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+    <span class="c1"># Unlike Container, `self.x = value` should be allowed because `x` can be a value field.</span>
+    <span class="fm">__setattr__</span> <span class="o">=</span> <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span>
+
+<div class="viewcode-block" id="FieldGroup.copy"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.fields.FieldGroup.copy">[docs]</a>    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Copy widget.&quot;&quot;&quot;</span>
+        <span class="n">wdt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__newlike__</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">callback</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_callbacks</span><span class="p">:</span>
+            <span class="n">wdt</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">callback</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">wdt</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">callbacks</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Return callbacks in an immutable way.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_callbacks</span><span class="p">)</span>
+
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span> <span class="n">objtype</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+        <span class="o">...</span>
+
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">objtype</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+        <span class="o">...</span>
+
+    <span class="k">def</span> <span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">objtype</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">obj</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_widget</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__set__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot set value to </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="FieldGroup.get_widget"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.fields.FieldGroup.get_widget">[docs]</a>    <span class="k">def</span> <span class="nf">get_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Container</span><span class="p">:</span>
+        <span class="n">_id</span> <span class="o">=</span> <span class="nb">id</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="n">wdt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_containers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">wdt</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">wdt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_containers</span><span class="p">[</span><span class="n">_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">wdt</span>
+        <span class="k">return</span> <span class="n">wdt</span></div>
+
+<div class="viewcode-block" id="FieldGroup.connect"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.fields.FieldGroup.connect">[docs]</a>    <span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
+        <span class="c1"># self.changed.connect(callback)  NOTE: the original container doesn&#39;t need signals!</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">callback</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">callback</span></div></div>
+
+
+<div class="viewcode-block" id="WidgetView"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.fields.WidgetView">[docs]</a><span class="k">class</span> <span class="nc">WidgetView</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;View of widgets.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">HasFields</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_obj_ref</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">_repr</span> <span class="o">=</span> <span class="s2">&quot;,</span><span class="se">\n\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="n">wdt</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">wdt</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">iteritems</span><span class="p">())</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(</span><span class="se">\n\t</span><span class="si">{</span><span class="n">_repr</span><span class="si">}</span><span class="se">\n</span><span class="s2">)&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Widget</span><span class="p">:</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_obj_ref</span><span class="p">()</span>
+        <span class="n">fld</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">_fields</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fld</span><span class="p">,</span> <span class="n">_FieldObject</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">fld</span><span class="o">.</span><span class="n">get_widget</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">obj</span><span class="si">!r}</span><span class="s2"> does not have attribute </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Widget</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Similar to Container&#39;s __getitem__.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="n">obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_obj_ref</span><span class="p">()</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">_fields</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="n">key</span><span class="p">]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">wdt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__getattr__</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">wdt</span>
+
+<div class="viewcode-block" id="WidgetView.iternames"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.fields.WidgetView.iternames">[docs]</a>    <span class="k">def</span> <span class="nf">iternames</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Iterate widget names.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj_ref</span><span class="p">()</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">_fields</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="WidgetView.iterwidgets"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.fields.WidgetView.iterwidgets">[docs]</a>    <span class="k">def</span> <span class="nf">iterwidgets</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Widget</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Iterate widgets.&quot;&quot;&quot;</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_obj_ref</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">fld</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">_fields</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">wdt</span> <span class="o">=</span> <span class="n">fld</span><span class="o">.</span><span class="n">get_widget</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+            <span class="k">yield</span> <span class="n">wdt</span></div>
+
+<div class="viewcode-block" id="WidgetView.iteritems"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.fields.WidgetView.iteritems">[docs]</a>    <span class="k">def</span> <span class="nf">iteritems</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Widget</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;Iterate widget names and widgets themselves.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">iternames</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">iterwidgets</span><span class="p">()))</span></div>
+
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Widget</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Iterate widgets.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">iterwidgets</span><span class="p">()</span>
+
+<div class="viewcode-block" id="WidgetView.as_container"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.fields.WidgetView.as_container">[docs]</a>    <span class="k">def</span> <span class="nf">as_container</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="s2">&quot;vertical&quot;</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Container</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Convert view into a Container widget.&quot;&quot;&quot;</span>
+        <span class="n">widgets</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Container</span><span class="p">(</span><span class="n">layout</span><span class="o">=</span><span class="n">layout</span><span class="p">,</span> <span class="n">widgets</span><span class="o">=</span><span class="n">widgets</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>

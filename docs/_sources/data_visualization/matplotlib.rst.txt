@@ -1,7 +1,0 @@
-=================
-Matplotlib Figure
-=================
-
-.. code-block:: python
-
-    from magicclass.widgets import Figure

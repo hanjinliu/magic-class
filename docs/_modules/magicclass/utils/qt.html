@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.utils.qt &mdash; magic-class 0.6.2.dev1 documentation</title>
+  <title>magicclass.utils.qt &mdash; magic-class 0.6.4.dev1 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.2.dev1
+                0.6.4.dev1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -43,27 +43,12 @@
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../chap_basics.html">Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../chap_make_better.html">Make Your GUI Better</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../chap_data_vis.html">Data Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../chap_advanced.html">Advanced Topics</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../use_wraps.html">Call Parent Methods from its Child</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../use_bind.html">Binding Values to Arguments</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../use_choices.html">Set Choices Dynamically</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../use_preview.html">Add Preview Functionalities</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../use_worker.html">Multi-threading</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../additional_types.html">Additional types</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../containers.html">Container Variations</a></li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../matplotlib.html">Use Matplotlib Figure</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../pyqtgraph.html">Use PyQtGraph Canvas</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../vispy.html">Vispy Canvas</a></li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../freewidget.html">Convert QtWidgets into a Magic Widget</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../keybinding.html">Define Custom Keybindings</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../customize_macro.html">Customize Macro Recording</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../class_inheritance.html">Inherit Magic Class</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../best_practice.html">Best Practice</a></li>
 </ul>
 
         </div>
@@ -96,7 +81,7 @@
 <span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
 
 
-<div class="viewcode-block" id="MessageBoxMode"><a class="viewcode-back" href="../../../magicclass.utils.html#magicclass.utils.qt.MessageBoxMode">[docs]</a><span class="k">class</span> <span class="nc">MessageBoxMode</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<div class="viewcode-block" id="MessageBoxMode"><a class="viewcode-back" href="../../../apidoc/magicclass.utils.html#magicclass.utils.qt.MessageBoxMode">[docs]</a><span class="k">class</span> <span class="nc">MessageBoxMode</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
     <span class="n">ERROR</span> <span class="o">=</span> <span class="s2">&quot;error&quot;</span>
     <span class="n">WARNING</span> <span class="o">=</span> <span class="s2">&quot;warn&quot;</span>
     <span class="n">INFO</span> <span class="o">=</span> <span class="s2">&quot;info&quot;</span>
@@ -113,7 +98,7 @@
 <span class="p">}</span>
 
 
-<div class="viewcode-block" id="show_messagebox"><a class="viewcode-back" href="../../../magicclass.utils.html#magicclass.utils.qt.show_messagebox">[docs]</a><span class="k">def</span> <span class="nf">show_messagebox</span><span class="p">(</span>
+<div class="viewcode-block" id="show_messagebox"><a class="viewcode-back" href="../../../apidoc/magicclass.utils.html#magicclass.utils.qt.show_messagebox">[docs]</a><span class="k">def</span> <span class="nf">show_messagebox</span><span class="p">(</span>
     <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">MessageBoxMode</span> <span class="o">=</span> <span class="n">MessageBoxMode</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span>
     <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -143,7 +128,7 @@
     <span class="k">return</span> <span class="n">result</span> <span class="ow">in</span> <span class="p">(</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Ok</span><span class="p">,</span> <span class="n">QMessageBox</span><span class="o">.</span><span class="n">Yes</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="open_url"><a class="viewcode-back" href="../../../magicclass.utils.html#magicclass.utils.qt.open_url">[docs]</a><span class="k">def</span> <span class="nf">open_url</span><span class="p">(</span><span class="n">link</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="open_url"><a class="viewcode-back" href="../../../apidoc/magicclass.utils.html#magicclass.utils.qt.open_url">[docs]</a><span class="k">def</span> <span class="nf">open_url</span><span class="p">(</span><span class="n">link</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Open the link with the default browser.</span>
 
@@ -158,18 +143,18 @@
     <span class="n">QDesktopServices</span><span class="o">.</span><span class="n">openUrl</span><span class="p">(</span><span class="n">QUrl</span><span class="p">(</span><span class="n">link</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="screen_center"><a class="viewcode-back" href="../../../magicclass.utils.html#magicclass.utils.qt.screen_center">[docs]</a><span class="k">def</span> <span class="nf">screen_center</span><span class="p">():</span>
+<div class="viewcode-block" id="screen_center"><a class="viewcode-back" href="../../../apidoc/magicclass.utils.html#magicclass.utils.qt.screen_center">[docs]</a><span class="k">def</span> <span class="nf">screen_center</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;Get the center coordinate of the screen.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">QApplication</span><span class="o">.</span><span class="n">desktop</span><span class="p">()</span><span class="o">.</span><span class="n">screen</span><span class="p">()</span><span class="o">.</span><span class="n">rect</span><span class="p">()</span><span class="o">.</span><span class="n">center</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="move_to_screen_center"><a class="viewcode-back" href="../../../magicclass.utils.html#magicclass.utils.qt.move_to_screen_center">[docs]</a><span class="k">def</span> <span class="nf">move_to_screen_center</span><span class="p">(</span><span class="n">qwidget</span><span class="p">:</span> <span class="n">QWidget</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="move_to_screen_center"><a class="viewcode-back" href="../../../apidoc/magicclass.utils.html#magicclass.utils.qt.move_to_screen_center">[docs]</a><span class="k">def</span> <span class="nf">move_to_screen_center</span><span class="p">(</span><span class="n">qwidget</span><span class="p">:</span> <span class="n">QWidget</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Move a QWidget to the center of screen.&quot;&quot;&quot;</span>
     <span class="n">qwidget</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">screen_center</span><span class="p">()</span> <span class="o">-</span> <span class="n">qwidget</span><span class="o">.</span><span class="n">rect</span><span class="p">()</span><span class="o">.</span><span class="n">center</span><span class="p">())</span>
     <span class="k">return</span> <span class="kc">None</span></div>
 
 
-<div class="viewcode-block" id="screen_scale"><a class="viewcode-back" href="../../../magicclass.utils.html#magicclass.utils.qt.screen_scale">[docs]</a><span class="k">def</span> <span class="nf">screen_scale</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<div class="viewcode-block" id="screen_scale"><a class="viewcode-back" href="../../../apidoc/magicclass.utils.html#magicclass.utils.qt.screen_scale">[docs]</a><span class="k">def</span> <span class="nf">screen_scale</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Get the scale of main screen.&quot;&quot;&quot;</span>
     <span class="kn">from</span> <span class="nn">qtpy.QtGui</span> <span class="kn">import</span> <span class="n">QGuiApplication</span>
 
@@ -177,7 +162,7 @@
     <span class="k">return</span> <span class="n">screen</span><span class="o">.</span><span class="n">devicePixelRatio</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="to_clipboard"><a class="viewcode-back" href="../../../magicclass.utils.html#magicclass.utils.qt.to_clipboard">[docs]</a><span class="k">def</span> <span class="nf">to_clipboard</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="to_clipboard"><a class="viewcode-back" href="../../../apidoc/magicclass.utils.html#magicclass.utils.qt.to_clipboard">[docs]</a><span class="k">def</span> <span class="nf">to_clipboard</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Copy an object of any type to the clipboard.</span>
 <span class="sd">    You can copy text, ndarray as an image or data frame as a table data.</span>
