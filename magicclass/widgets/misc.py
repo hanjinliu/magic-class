@@ -36,10 +36,11 @@ if TYPE_CHECKING:
     from superqt import QLabeledRangeSlider
 
 
-if sys.platform == "windows":
+if sys.platform == "win32":
     _FONT = "Consolas"
 else:
     _FONT = "Menlo"
+
 
 @merge_super_sigs
 class OptionalWidget(Container):

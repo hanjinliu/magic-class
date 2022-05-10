@@ -4,10 +4,11 @@ import re
 from typing import Callable, Generator
 from qtpy.QtWidgets import QMessageBox, QTextEdit, QDialog, QVBoxLayout
 
-if sys.platform == "windows":
+if sys.platform == "win32":
     _FONT = "Consolas"
 else:
     _FONT = "Menlo"
+
 
 class QtTracebackDialog(QDialog):
     """A dialog box that shows Python traceback."""
