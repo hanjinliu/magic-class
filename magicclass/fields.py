@@ -1,5 +1,6 @@
 from __future__ import annotations
 from contextlib import contextmanager
+from functools import wraps
 import weakref
 from typing import (
     Any,
@@ -757,6 +758,24 @@ class FieldGroup(Container, HasFields, _FieldObject):
         )
         self._containers: dict[int, Self] = {}
         self._callbacks = []
+
+    def __init_subclass__(cls) -> None:
+        if "__init__" not in cls.__dict__.keys():
+            return
+
+        cls.__base_init__ = cls.__init__
+
+        @wraps(cls.__init__)
+        def __init__(self: cls, *args, **kwargs):
+            self.__input_arguments = (args, kwargs)
+            cls.__base_init__(self, *args, **kwargs)
+
+        def __newlike__(self):
+            args, kwargs = self.__input_arguments
+            return cls(*args, **kwargs)
+
+        cls.__init__ = __init__
+        cls.__newlike__ = __newlike__
 
     def __newlike__(self) -> Self:
         """

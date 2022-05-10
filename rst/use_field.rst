@@ -187,12 +187,7 @@ Create Many Similar Containers
 ------------------------------
 
 Since a ``FieldGroup`` can be considered as a "widget creator", you can easily define a
-widget template using it.
-
-.. warning::
-
-    Since a ``FieldGroup`` needs an implementation of copying the widget, you must correctly
-    override ``__newlike__`` method if you re-defined ``__init__``.
+widget template by subclassing it.
 
 .. code-block:: python
 
@@ -204,8 +199,7 @@ widget template using it.
             super().__init__(labels=False)
             self.lbl = label_text
 
-        def __newlike__(self):
-            return LabeledLineEdit(self.label_text)
+Now, ``LabeledLineEdit`` can be used as ``field`` or ``vfield``.
 
 .. code-block:: python
 
