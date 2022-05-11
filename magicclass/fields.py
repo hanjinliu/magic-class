@@ -1,7 +1,8 @@
 from __future__ import annotations
 from contextlib import contextmanager
-from functools import wraps
+from functools import wraps, cached_property
 import weakref
+import types
 from typing import (
     Any,
     TYPE_CHECKING,
@@ -640,7 +641,7 @@ def vfield(
     return _get_field(obj, name, widget_type, options, record, MagicValueField)
 
 
-def widget_property(func):
+def widget_property(func: Callable[..., _W]) -> MagicValueField[_W, Any]:
     """
     Create a widget property from a function.
 
@@ -720,11 +721,7 @@ def _is_subclass(obj: Any, class_or_tuple):
 
 
 def _define_callback(self: Any, callback: Callable):
-    def _callback():
-        callback(self)
-        return None
-
-    return _callback
+    return callback.__get__(self)
 
 
 def _define_callback_gui(self: MagicTemplate, callback: Callable):
@@ -772,22 +769,38 @@ class _FieldGroupMeta(ABCMeta):
         _fields: dict[str, MagicField] = {}
         for k, v in namespace.items():
             if isinstance(v, _FieldObject):
+                if k in _View._METHODS:
+                    raise ValueError(f"Attribute {k} cannot be used in HasFields.")
                 _fields[k] = v
 
-        cls._fields = _fields
+        cls._fields = types.MappingProxyType(_fields)
 
         return cls
 
 
 class HasFields(metaclass=_FieldGroupMeta):
-    """Base class with _FieldGroupMeta as the meta-class."""
+    """
+    A trait implemented with widgets and signals.
 
-    @property
+    Subclasses can easily handle widgets and their value-change signals using
+    the same attribute names.
+
+    >>> class A(HasFields):
+    >>>     a = vfield(int)
+    >>>     b = vfield(str)
+    >>> ins = A()
+    >>> ins.a  # type: int
+    >>> ins.widgets.a  # type: SpinBox
+    >>> ins.signals.a  # type: SignalInstance
+
+    """
+
+    @cached_property
     def widgets(self) -> WidgetView:
         """Return a view of widgets."""
         return WidgetView(self)
 
-    @property
+    @cached_property
     def signals(self) -> SignalView:
         """Return a view of signals."""
         return SignalView(self)
@@ -904,6 +917,12 @@ class FieldGroup(Container, HasFields, _FieldObject):
 
 
 class _View:
+    _METHODS = (
+        "iternames",
+        "iterwidgets",
+        "itersignals",
+    )
+
     def __init__(self, obj: HasFields):
         self._obj_ref = weakref.ref(obj)
 
@@ -930,7 +949,7 @@ class _View:
             wdt = fld.get_widget(obj)
             sig = getattr(wdt, "changed", None)
             if isinstance(sig, SignalInstance):
-                yield wdt
+                yield sig
             elif not skip_undef:
                 yield None
 
@@ -983,7 +1002,7 @@ class SignalView(_View):
         raise AttributeError(f"{obj!r} does not have attribute {name!r}.")
 
     def __getitem__(self, key: str | int) -> SignalInstance:
-        """Similar to Container's __getitem__."""
+        """Similar to list.__getitem__."""
         if isinstance(key, int):
             obj = self._obj_ref()
             key = list(obj.__class__._fields.keys())[key]
@@ -999,3 +1018,22 @@ class SignalView(_View):
 
     def __iter__(self) -> Iterator[SignalInstance | None]:
         return self.itersignals()
+
+    def block(self) -> None:
+        """Block all the signals."""
+        for sig in self.itersignals(skip_undef=True):
+            sig.block()
+
+    def unblock(self) -> None:
+        """Unblock all the signals."""
+        for sig in self.itersignals(skip_undef=True):
+            sig.unblock()
+
+    @contextmanager
+    def blocked(self):
+        """Temporarly block all signals."""
+        self.block()
+        try:
+            yield
+        finally:
+            self.unblock()

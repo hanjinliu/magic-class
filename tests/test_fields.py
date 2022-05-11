@@ -8,9 +8,11 @@ from magicclass import (
     HasFields,
     set_design,
 )
+from magicclass.fields import widget_property
 from magicclass.types import Optional
 from magicgui import widgets
 from typing import Tuple
+from unittest.mock import MagicMock
 from pathlib import Path
 
 def test_field_types():
@@ -483,6 +485,7 @@ def test_has_fields():
     # test repr works
     repr(a0)
     repr(a0.widgets)
+    repr(a0.signals)
 
     a0.x = 10
     a0.y = "abc"
@@ -496,3 +499,31 @@ def test_has_fields():
     assert c0[1].name == "y"
     assert c0["x"].value == a0.x
     assert c0["y"].value == a0.y
+
+def test_widget_property():
+    from magicgui.widgets import Slider
+    mock = MagicMock()
+
+    class A(HasFields):
+        def __init__(self, max=5):
+            self._max = max
+            self.result = None
+
+        @widget_property
+        def a(self):
+            return Slider(max=self._max)
+
+        @a.connect
+        def _a(self, v):
+            self.result = v
+
+    x = A(max=10)
+    y = A(max=20)
+
+    assert x.widgets is not y.widgets
+    assert x.widgets.a.max == 10
+    assert y.widgets.a.max == 20
+
+    x.a = 1
+    assert x.result == 1
+    assert y.result is None
