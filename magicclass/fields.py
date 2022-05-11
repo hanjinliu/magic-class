@@ -67,10 +67,12 @@ class MagicField(Field, _FieldObject, Generic[_W, _V]):
     widget construction" state.
     """
 
+    default_object = object()
+
     def __init__(
         self,
-        default=MISSING,
-        default_factory=MISSING,
+        default: Any = MISSING,
+        constructor: Callable[..., Widget] | None = None,
         metadata: dict[str, Any] = {},
         name: str | None = None,
         record: bool = True,
@@ -78,15 +80,25 @@ class MagicField(Field, _FieldObject, Generic[_W, _V]):
         metadata = metadata.copy()
         if default is MISSING:
             default = metadata.pop("value", MISSING)
+
         super().__init__(
             default=default,
-            default_factory=default_factory,
+            default_factory=metadata.get("annotation", MISSING),
             init=True,
             repr=True,
             hash=False,
             compare=False,
             metadata=metadata,
         )
+
+        if constructor is None:
+
+            def _create_widget(obj):
+                return create_widget(self.value, **metadata)
+
+            constructor = _create_widget
+
+        self._constructor = constructor
         self._callbacks: list[Callable] = []
         self._guis: dict[int, _M] = {}
         self.name = name
@@ -106,6 +118,11 @@ class MagicField(Field, _FieldObject, Generic[_W, _V]):
             self.name = name
 
     @property
+    def constructor(self) -> Callable[..., Widget]:
+        """Get widget constructor."""
+        return self._constructor
+
+    @property
     def callbacks(self) -> tuple[Callable, ...]:
         """Return callbacks in an immutable way."""
         return tuple(self._callbacks)
@@ -114,11 +131,30 @@ class MagicField(Field, _FieldObject, Generic[_W, _V]):
     def record(self) -> bool:
         return self._record
 
-    def copy(self) -> MagicField:
+    def construct(self, obj) -> Widget:
+        """Construct a widget."""
+        constructor = self.constructor
+        if _is_subclass(constructor, Widget):
+            return constructor(**self.options)
+        else:
+            widget = constructor(obj)
+            if not isinstance(widget, Widget):
+                raise TypeError(
+                    f"{self.__class__.__name__} {self.name} created non-widget "
+                    f"object {type(widget)}."
+                )
+            return widget
+
+    def copy(self) -> Self[_W, _V]:
         """Copy object."""
         return self.__class__(
-            self.default, self.default_factory, self.metadata, self.name, self._record
+            self.default, self.constructor, self.metadata, self.name, self._record
         )
+
+    @classmethod
+    def from_callable(cls, func: Callable[..., _W]) -> Self[_W, Any]:
+        """Use a function as the constructor of MagicField."""
+        return cls(constructor=func)
 
     @contextmanager
     def _resolve_choices(self, obj: Any) -> dict[str, Any]:
@@ -146,7 +182,8 @@ class MagicField(Field, _FieldObject, Generic[_W, _V]):
             widget = self._guis[obj_id]
         else:
             with self._resolve_choices(obj):
-                widget = self.to_widget()
+                widget = self.construct(obj)
+                widget.name = self.name
                 self._guis[obj_id] = widget
 
             if isinstance(widget, (ValueWidget, ContainerWidget)):
@@ -172,7 +209,23 @@ class MagicField(Field, _FieldObject, Generic[_W, _V]):
             action = self._guis[obj_id]
         else:
             with self._resolve_choices(obj):
-                action = self.to_action()
+                if type(self.default) is bool or self.annotation is bool:
+                    # we should not use "isinstance" or "issubclass" because subclass
+                    # may be mapped to different widget by users.
+                    value = False if self.default is MISSING else self.default
+                    action = Action(
+                        checkable=True,
+                        checked=value,
+                        text=self.name.replace("_", " "),
+                        name=self.name,
+                    )
+                    for k, v in self.options.items():
+                        setattr(action, k, v)
+                else:
+                    widget = self.construct(obj)
+                    widget.name = self.name
+                    action = WidgetAction(widget)
+
                 self._guis[obj_id] = action
 
             if action.support_value:
@@ -229,19 +282,7 @@ class MagicField(Field, _FieldObject, Generic[_W, _V]):
         ValueError
             If there is not enough information to build a widget.
         """
-        if self.default_factory is not MISSING and _is_subclass(
-            self.default_factory, Widget
-        ):
-            widget = self.default_factory(**self.options)
-        else:
-            if "annotation" not in self.metadata.keys():
-                widget = create_widget(
-                    value=self.value, annotation=self.annotation, **self.metadata
-                )
-            else:
-                widget = create_widget(value=self.value, **self.metadata)
-        widget.name = self.name
-        return widget
+        return self.get_widget(self.default_object)
 
     def to_action(self) -> Action | WidgetAction[_W]:
         """
@@ -257,23 +298,7 @@ class MagicField(Field, _FieldObject, Generic[_W, _V]):
         ValueError
             If there is not enough information to build an action.
         """
-        if type(self.default) is bool or self.default_factory is bool:
-            # we should not use "isinstance" or "issubclass" because subclass may be mapped
-            # to different widget by users.
-            value = False if self.default is MISSING else self.default
-            action = Action(
-                checkable=True,
-                checked=value,
-                text=self.name.replace("_", " "),
-                name=self.name,
-            )
-            options = self.metadata.get("options", {})
-            for k, v in options.items():
-                setattr(action, k, v)
-        else:
-            widget = self.to_widget()
-            action = WidgetAction(widget)
-        return action
+        return self.get_action(self.default_object)
 
     def connect(self, func: Callable) -> Callable:
         """Set callback function to "ready to connect" state."""
@@ -335,7 +360,7 @@ class MagicField(Field, _FieldObject, Generic[_W, _V]):
         """
         from ._gui._base import BaseGui
 
-        cls = self.default_factory
+        cls = self.constructor
         if not (isinstance(cls, type) and issubclass(cls, BaseGui)):
             raise TypeError(
                 "The wraps method cannot be used for any objects but magic class."
@@ -348,7 +373,7 @@ class MagicField(Field, _FieldObject, Generic[_W, _V]):
 
     @property
     def annotation(self):
-        return None if self.default_factory is MISSING else self.default_factory
+        return self.metadata.get("annotation", None)
 
     @property
     def options(self) -> dict:
@@ -356,12 +381,8 @@ class MagicField(Field, _FieldObject, Generic[_W, _V]):
 
     @property
     def widget_type(self) -> str:
-        if self.default_factory is not MISSING and _is_subclass(
-            self.default_factory, Widget
-        ):
-            wcls = self.default_factory
-        else:
-            wcls = get_widget_class(value=self.value, annotation=self.annotation)
+        """Return widget type string if it is deterministic."""
+        wcls = get_widget_class(value=self.value, annotation=self.annotation)
         return wcls.__name__
 
 
@@ -370,16 +391,6 @@ class MagicValueField(MagicField[_W, _V]):
     Field class for magicgui construction. Unlike MagicField, object of this class always
     returns value itself.
     """
-
-    def get_widget(self, obj: Any) -> _W:
-        widget = super().get_widget(obj)
-        if not hasattr(widget, "value"):
-            raise TypeError(
-                "Widget is not a value widget or a widget with value: "
-                f"{type(widget)}"
-            )
-
-        return widget
 
     @overload
     def __get__(self, obj: Literal[None], objtype=None) -> MagicValueField[_W, _V] | _V:
@@ -629,6 +640,42 @@ def vfield(
     return _get_field(obj, name, widget_type, options, record, MagicValueField)
 
 
+def widget_property(func):
+    """
+    Create a widget property from a function.
+
+    Generally, this decorator will be used in line with ``HasFields`` trait.
+    If a widget has to be initialized depending on the state of the instance,
+    you can define a field using a method.
+
+    >>> class A(HasFields):
+    >>>     def __init__(self, max: int = 10):
+    >>>         self._max = max
+    >>>     @widget_property
+    >>>     def param(self):
+    >>>         return SpinBox(value=1, max=self._max)
+
+    In this example, ``param`` is a field object similar to those defined using
+    ``vfield`` but has a variable argument ``max``.
+
+    >>> a = A(max=20)
+    >>> a.param  # Out: 1
+    >>> a.param = 4  # OK
+    >>> a.widgets.param  # SpinBox with value=1 and max=20
+
+    Parameters
+    ----------
+    func : callable
+        Widget constructor function.
+
+    Returns
+    -------
+    MagicValueField
+        A field with given constructor.
+    """
+    return MagicValueField.from_callable(func)
+
+
 def _get_field(
     obj,
     name: str,
@@ -647,9 +694,16 @@ def _get_field(
         if isinstance(obj, _AnnotatedAlias):
             from magicgui.signature import split_annotated_type
 
-            _, widget_option = split_annotated_type(obj)
-            kwargs["metadata"].update(widget_option)
-        f = field_class(default_factory=obj, **kwargs)
+            tp, widget_option = split_annotated_type(obj)
+            if "annotation" not in widget_option:
+                widget_option.update(annotation=tp)
+            metadata.update(**widget_option)
+        if _is_subclass(obj, Widget):
+            f = field_class(constructor=obj, **kwargs)
+        else:
+            if "annotation" not in metadata:
+                metadata.update(annotation=obj)
+            f = field_class(**kwargs)
     elif obj is MISSING:
         f = field_class(**kwargs)
     else:
