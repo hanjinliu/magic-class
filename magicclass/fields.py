@@ -23,6 +23,7 @@ from magicgui.type_map import get_widget_class
 from magicgui.widgets import create_widget, Container
 from magicgui.widgets._bases import Widget, ValueWidget, ContainerWidget
 from magicgui.widgets._bases.value_widget import UNSET
+from psygnal import SignalInstance
 
 from ._gui.mgui_ext import Action, WidgetAction
 
@@ -728,9 +729,14 @@ class HasFields(metaclass=_FieldGroupMeta):
     """Base class with _FieldGroupMeta as the meta-class."""
 
     @property
-    def widgets(self):
+    def widgets(self) -> WidgetView:
         """Return a view of widgets."""
         return WidgetView(self)
+
+    @property
+    def signals(self) -> SignalView:
+        """Return a view of signals."""
+        return SignalView(self)
 
     def __repr__(self) -> str:
         """List up child widgets."""
@@ -793,6 +799,7 @@ class FieldGroup(Container, HasFields, _FieldObject):
         )
 
     def __set_name__(self, owner: type, name: str):
+        """Set variable name as the container's name."""
         # self._parent_class = owner
         if self.name is None:
             self.name = name
@@ -842,15 +849,40 @@ class FieldGroup(Container, HasFields, _FieldObject):
         return callback
 
 
-class WidgetView:
-    """View of widgets."""
-
+class _View:
     def __init__(self, obj: HasFields):
         self._obj_ref = weakref.ref(obj)
 
     def __repr__(self) -> str:
-        _repr = ",\n\t".join(f"{name} = {repr(wdt)}" for name, wdt in self.iteritems())
+        _it = zip(self.iternames(), self.iterwidgets())
+        _repr = ",\n\t".join(f"{name} = {repr(wdt)}" for name, wdt in _it)
         return f"{self.__class__.__name__}(\n\t{_repr}\n)"
+
+    def iternames(self) -> Iterator[str]:
+        """Iterate widget names."""
+        return iter(self._obj_ref().__class__._fields.keys())
+
+    def iterwidgets(self) -> Iterator[Widget]:
+        """Iterate widgets."""
+        obj = self._obj_ref()
+        for fld in obj.__class__._fields.values():
+            wdt = fld.get_widget(obj)
+            yield wdt
+
+    def itersignals(self, skip_undef: bool = False) -> Iterator[SignalInstance | None]:
+        """Iterate value-changed signals."""
+        obj = self._obj_ref()
+        for fld in obj.__class__._fields.values():
+            wdt = fld.get_widget(obj)
+            sig = getattr(wdt, "changed", None)
+            if isinstance(sig, SignalInstance):
+                yield wdt
+            elif not skip_undef:
+                yield None
+
+
+class WidgetView(_View):
+    """View of widgets."""
 
     def __getattr__(self, name: str) -> Widget:
         obj = self._obj_ref()
@@ -870,17 +902,6 @@ class WidgetView:
             raise KeyError(key)
         return wdt
 
-    def iternames(self) -> Iterator[str]:
-        """Iterate widget names."""
-        return iter(self._obj_ref().__class__._fields.keys())
-
-    def iterwidgets(self) -> Iterator[Widget]:
-        """Iterate widgets."""
-        obj = self._obj_ref()
-        for fld in obj.__class__._fields.values():
-            wdt = fld.get_widget(obj)
-            yield wdt
-
     def iteritems(self) -> Iterator[tuple[str, Widget]]:
         """Iterate widget names and widgets themselves."""
         return iter(zip(self.iternames(), self.iterwidgets()))
@@ -893,3 +914,34 @@ class WidgetView:
         """Convert view into a Container widget."""
         widgets = list(self)
         return Container(layout=layout, widgets=widgets, labels=labels, **kwargs)
+
+
+class SignalView(_View):
+    def __getattr__(self, name: str) -> SignalInstance:
+        obj = self._obj_ref()
+        fld = obj.__class__._fields.get(name, None)
+        if isinstance(fld, _FieldObject):
+            wdt = fld.get_widget(obj)
+            sig = getattr(wdt, "changed", None)
+            if not isinstance(sig, SignalInstance):
+                raise AttributeError(f"Widget {wdt!r} does not have 'changed' signal")
+            return sig
+        raise AttributeError(f"{obj!r} does not have attribute {name!r}.")
+
+    def __getitem__(self, key: str | int) -> SignalInstance:
+        """Similar to Container's __getitem__."""
+        if isinstance(key, int):
+            obj = self._obj_ref()
+            key = list(obj.__class__._fields.keys())[key]
+        try:
+            wdt = self.__getattr__(key)
+        except AttributeError:
+            raise KeyError(key)
+        return wdt
+
+    def iteritems(self) -> Iterator[tuple[str, SignalInstance | None]]:
+        """Iterate widget names and value-changed signals."""
+        return iter(zip(self.iternames(), self.itersignals()))
+
+    def __iter__(self) -> Iterator[SignalInstance | None]:
+        return self.itersignals()

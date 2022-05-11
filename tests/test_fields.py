@@ -441,8 +441,8 @@ def test_nesting_field_group():
 
         def __init__(self):
             self.out = "None"
-            self.g.p.widgets.x.changed.connect(lambda: self.set_output("x"))
-            self.g.p.widgets.y.changed.connect(lambda: self.set_output("y"))
+            self.g.p.signals.x.connect(lambda: self.set_output("x"))
+            self.g.p.signals.y.connect(lambda: self.set_output("y"))
 
         def set_output(self, out):
             self.out = out
