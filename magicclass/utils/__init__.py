@@ -2,6 +2,7 @@ from .functions import (
     iter_members,
     extract_tooltip,
     get_signature,
+    argcount,
     show_tree,
     rst_to_html,
 )
@@ -17,8 +18,4 @@ from .qt import (
 )
 
 from .qtsignal import QtSignal
-
-try:
-    from .qthreading import thread_worker, Timer
-except ImportError:
-    pass
+from .qthreading import thread_worker, Timer

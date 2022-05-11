@@ -1,6 +1,6 @@
 from __future__ import annotations
 import inspect
-from typing import Any, TYPE_CHECKING, Iterable
+from typing import Any, TYPE_CHECKING, Callable, Iterable
 import warnings
 from docstring_parser import parse
 
@@ -62,6 +62,18 @@ def get_signature(func):
     else:
         sig = inspect.signature(func)
     return sig
+
+
+def argcount(func: Callable):
+    """Count the number of parameters of a callable object."""
+    # TODO: there should be faster method to count args
+    # if hasattr(func, "__wrapped__"):
+    #     func = func.__wrapped__
+    # nargs = func.__code__.co_argcount
+    # if isinstance(func, MethodType):
+    #     nargs -= 1
+    # return nargs
+    return len(inspect.signature(func).parameters)
 
 
 def show_tree(ui: BaseGui) -> str:

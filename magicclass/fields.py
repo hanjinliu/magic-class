@@ -26,6 +26,7 @@ from magicgui.widgets._bases import Widget, ValueWidget, ContainerWidget
 from magicgui.widgets._bases.value_widget import UNSET
 from psygnal import SignalInstance
 
+from .utils import argcount
 from ._gui.mgui_ext import Action, WidgetAction
 
 if TYPE_CHECKING:
@@ -721,26 +722,29 @@ def _is_subclass(obj: Any, class_or_tuple):
 
 
 def _define_callback(self: Any, callback: Callable):
+    """Define a callback function from a method."""
     return callback.__get__(self)
 
 
 def _define_callback_gui(self: MagicTemplate, callback: Callable):
-    """Define a callback function from a method."""
+    """Define a callback function from a method of a magic-class."""
 
     *_, clsname, funcname = callback.__qualname__.split(".")
     mro = self.__class__.__mro__
     for base in mro:
         if base.__name__ == clsname:
+            _func: Callable = getattr(base, funcname).__get__(self)
+            _func = _normalize_argcount(_func)
 
-            def _callback():
+            def _callback(v):
                 with self.macro.blocked():
-                    getattr(base, funcname)(self)
+                    _func(v)
                 return None
 
             break
     else:
 
-        def _callback():
+        def _callback(v):
             # search for parent instances that have the same name.
             current_self = self
             while not (
@@ -748,11 +752,19 @@ def _define_callback_gui(self: MagicTemplate, callback: Callable):
                 and current_self.__class__.__name__ == clsname
             ):
                 current_self = current_self.__magicclass_parent__
+            _func = _normalize_argcount(getattr(current_self, funcname))
+
             with self.macro.blocked():
-                getattr(current_self, funcname)()
+                _func(v)
             return None
 
     return _callback
+
+
+def _normalize_argcount(func: Callable) -> Callable[[Any], Any]:
+    if argcount(func) == 0:
+        return lambda v: func()
+    return func
 
 
 class _FieldGroupMeta(ABCMeta):
@@ -813,10 +825,10 @@ class HasFields(metaclass=_FieldGroupMeta):
         return f"{self.__class__.__name__}(\n\t{_repr}\n)"
 
 
-# NOTE: Typing of FieldGroup is tricky. When it is referred to via __get__, it must return
-# a object of same type as itself to guarantee the child fields are also defined there.
-# Thus, FieldGroup must inherit magicgui Container although the original container will
-# never be used.
+# NOTE: Typing of FieldGroup is tricky. When it is referred to via __get__, it
+# must return a object of same type as itself to guarantee the child fields are
+# also defined there. Thus, FieldGroup must inherit magicgui Container although
+# the original container will never be used.
 class FieldGroup(Container, HasFields, _FieldObject):
     def __init__(
         self,

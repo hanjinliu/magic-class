@@ -40,6 +40,7 @@ from magicgui.widgets._bases.widget import Widget
 from magicgui.widgets._bases import ButtonWidget, ValueWidget
 from macrokit import Expr, Head, Symbol, symbol
 
+
 from .keybinding import as_shortcut
 from .mgui_ext import (
     AbstractAction,
@@ -57,6 +58,7 @@ from ..utils import (
     iter_members,
     extract_tooltip,
     move_to_screen_center,
+    argcount,
     thread_worker,
 )
 from ..widgets import Separator, FreeWidget
@@ -641,7 +643,7 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
         n_empty = len(
             [_wdg_cls for _wdg_cls in fgui_classes if _wdg_cls is EmptyWidget]
         )
-        nparams = _n_parameters(func) - n_empty
+        nparams = argcount(func) - n_empty
 
         if isinstance(func.__signature__, MagicMethodSignature):
             func.__signature__.additional_options = getattr(
@@ -1031,11 +1033,6 @@ def wraps(template: Callable | inspect.Signature) -> Callable[[_C], _C]:
     return wrapper
 
 
-def _n_parameters(func: Callable):
-    """Count the number of parameters of a callable object."""
-    return len(inspect.signature(func).parameters)
-
-
 def _get_index(container: Container, widget_or_name: Widget | str) -> int:
     """
     Identical to container[widget_or_name], which sometimes doesn't work
@@ -1133,7 +1130,7 @@ def _is_instance_method(self: MagicTemplate, func: Callable) -> bool:
     #     return False
     # classes = func.__qualname__.split(".")[:-1]
     # return self.__class__.__name__ in classes
-    return isinstance(func, Callable) and _n_parameters(func) == 2
+    return callable(func) and argcount(func) == 2
 
 
 def value_widget_callback(
