@@ -1,5 +1,4 @@
 from __future__ import annotations
-from typing import Generic, TypeVar
 import numpy as np
 from vispy.scene import visuals, ViewBox
 from vispy.visuals import (
@@ -11,181 +10,13 @@ from vispy.visuals import (
 from vispy.visuals.filters import WireframeFilter
 from ._base import LayerItem
 
-from functools import cached_property
-import weakref
 from psygnal import SignalGroup, Signal
-from magicgui.widgets import ComboBox, FloatSlider, Container
-from magicgui.widgets._bases import ValueWidget
+from magicgui.widgets import ComboBox, FloatSlider
 from ...widgets import ColorEdit, FloatRangeSlider
+from ...fields import HasFields, widget_property
 
 
-class widget_property(cached_property):
-    """Identical to cached_property but returns a widget."""
-
-
-_L = TypeVar("_L", bound=LayerItem)
-
-
-class WidgetGroup(Generic[_L]):
-    """A base class of widget groups for a layer item."""
-
-    def __init__(self, vol: _L):
-        self._layer = weakref.ref(vol)
-
-    @property
-    def layer(self) -> _L:
-        """Returns the parent layer."""
-        return self._layer()
-
-    @widget_property
-    def container(self) -> Container:
-        """Create a container of all the widget properties."""
-        widgets: list[ValueWidget] = []
-        for k, v in self.__class__.__dict__.items():
-            if isinstance(v, widget_property) and k != "container":
-                widgets.append(v.__get__(self))
-        return Container(widgets=widgets, name=f"{self.__class__.__name__}_widget")
-
-    def link(self, widget: ValueWidget, attr: str):
-        """Link value change events from widget and programmatic one."""
-        layer = self.layer
-        widget.name = attr
-        widget.changed.connect_setattr(layer, attr)
-
-        ev = getattr(layer.events, attr)
-
-        @ev.connect
-        def _(v):
-            with widget.changed.blocked():
-                widget.value = v
-
-        return None
-
-
-class ImageWidgetGroup(WidgetGroup["Image"]):
-    """A widget group of an Image layer."""
-
-    @widget_property
-    def rendering(self) -> ComboBox:
-        cbox = ComboBox(choices=Image.RENDERINGS, value=self.layer.rendering)
-        self.link(cbox, "rendering")
-        return cbox
-
-    @widget_property
-    def contrast_limits(self) -> FloatRangeSlider:
-        layer = self.layer
-        sl = FloatRangeSlider(
-            min=layer.data.min(),
-            max=layer.data.max(),
-            value=layer.contrast_limits,
-        )
-        self.link(sl, "contrast_limits")
-        return sl
-
-    @widget_property
-    def iso_threshold(self) -> FloatSlider:
-        layer = self.layer
-        sl = FloatSlider(
-            min=layer.data.min(),
-            max=layer.data.max(),
-            value=self.layer.iso_threshold,
-        )
-        self.link(sl, "iso_threshold")
-        return sl
-
-    @widget_property
-    def gamma(self) -> FloatSlider:
-        layer = self.layer
-        sl = FloatSlider(
-            min=0.0,
-            max=1.0,
-            value=layer.gamma,
-        )
-        self.link(sl, "gamma")
-        return sl
-
-    @widget_property
-    def attenuation(self) -> FloatSlider:
-        layer = self.layer
-        sl = FloatSlider(
-            min=0.0,
-            max=1.0,
-            value=layer.attenuation,
-        )
-        self.link(sl, "attenuation")
-        return sl
-
-
-class IsoSurfaceWidgetGroup(WidgetGroup["IsoSurface"]):
-    """A widget group of an IsoSurface layer."""
-
-    @widget_property
-    def contrast_limits(self) -> FloatRangeSlider:
-        layer = self.layer
-        sl = FloatRangeSlider(
-            min=layer.data.min(),
-            max=layer.data.max(),
-            value=layer.contrast_limits,
-        )
-        self.link(sl, "contrast_limits")
-        return sl
-
-    @widget_property
-    def shading(self) -> ComboBox:
-        cbox = ComboBox(
-            choices=["none", "float", "smooth"],
-            value=self.layer.shading,
-        )
-        self.link(cbox, "shading")
-        return cbox
-
-    @widget_property
-    def iso_threshold(self) -> FloatSlider:
-        layer = self.layer
-        sl = FloatSlider(
-            min=layer.data.min(),
-            max=layer.data.max(),
-            value=self.layer.iso_threshold,
-        )
-        self.link(sl, "iso_threshold")
-        return sl
-
-    @widget_property
-    def face_color(self) -> ColorEdit:
-        layer = self.layer
-        col = ColorEdit(value=layer.face_color)
-        self.link(col, "face_color")
-        return col
-
-    @widget_property
-    def edge_color(self) -> ColorEdit:
-        layer = self.layer
-        col = ColorEdit(value=layer.edge_color)
-        self.link(col, "edge_color")
-        return col
-
-    @widget_property
-    def edge_width(self) -> FloatSlider:
-        sl = FloatSlider(
-            min=0.5,
-            max=10.0,
-            value=self.layer.edge_width,
-        )
-        self.link(sl, "edge_width")
-        return sl
-
-
-class ImageSignals(SignalGroup):
-    data = Signal(np.ndarray)
-    contrast_limits = Signal(tuple[float, float])
-    rendering = Signal(str)
-    iso_threshold = Signal(float)
-    attenuation = Signal(float)
-    gamma = Signal(float)
-    interpolation = Signal(str)
-
-
-class Image(LayerItem):
+class Image(LayerItem, HasFields):
     RENDERINGS = [
         "translucent",
         "mip",
@@ -209,45 +40,53 @@ class Image(LayerItem):
         gamma=1.0,
         interpolation="linear",
     ):
-        self.events = ImageSignals()
         self._data = data
 
         if contrast_limits is None:
             contrast_limits = np.min(self._data), np.max(self._data)
-
-        self._contrast_limits = contrast_limits
-        self._rendering = rendering
-        self._iso_threshold = iso_threshold
-        self._attenuation = attenuation
-        self._cmap = cmap
-        self._gamma = gamma
-        self._interpolation = interpolation
+        if iso_threshold is None:
+            iso_threshold = np.median(contrast_limits)
 
         self._viewbox = viewbox
-        self._visual: VolumeVisual | ImageVisual = None
-        self._create_visual(self._data, self._interpolation)
+        self._create_visual(
+            self._data,
+            clim=contrast_limits,
+            cmap=cmap,
+            rendering=rendering,
+            iso_threshold=iso_threshold,
+            attenuation=attenuation,
+            gamma=gamma,
+            interpolation=interpolation,
+        )
 
-        # connect signals
-        self.events.data.connect(self._on_data_change)
-        self.events.contrast_limits.connect(self._on_constrast_limits_change)
-        self.events.iso_threshold.connect(self._on_iso_threshold_change)
-        self.events.rendering.connect(self._on_rendering_change)
-        self.events.gamma.connect(self._on_gamma_change)
-        self.events.attenuation.connect(self._on_attenuation_change)
-        self.events.interpolation.connect(self._on_interpolation_change)
+        self.contrast_limits = contrast_limits
+        self.rendering = rendering
+        self.iso_threshold = iso_threshold
+        self.attenuation = attenuation
+        self._cmap = cmap
+        self.gamma = gamma
+        self.interpolation = interpolation
 
-        self.widgets = ImageWidgetGroup(self)
-
-    def _create_visual(self, data: np.ndarray, interpolation: str | None = None):
+    def _create_visual(
+        self,
+        data: np.ndarray,
+        clim: tuple[float, float],
+        cmap: str,
+        rendering: str,
+        iso_threshold: float,
+        attenuation: float,
+        gamma: float,
+        interpolation: str | None = None,
+    ):
         if data.ndim == 2:
             if interpolation is None:
                 interpolation = "nearest"
             self._visual = visuals.Image(
                 data,
-                clim=self._contrast_limits,
+                clim=clim,
                 method="auto",
-                cmap=self._cmap,
-                gamma=self._gamma,
+                cmap=cmap,
+                gamma=gamma,
                 interpolation=interpolation,
                 parent=self._viewbox.scene,
             )
@@ -257,12 +96,12 @@ class Image(LayerItem):
                 interpolation = "linear"
             self._visual = visuals.Volume(
                 data,
-                clim=self._contrast_limits,
-                method=self._rendering,
-                threshold=self._iso_threshold,
-                attenuation=self._attenuation,
-                cmap=self._cmap,
-                gamma=self._gamma,
+                clim=clim,
+                method=rendering,
+                threshold=iso_threshold,
+                attenuation=attenuation,
+                cmap=cmap,
+                gamma=gamma,
                 interpolation=interpolation,
                 parent=self._viewbox.scene,
             )
@@ -275,9 +114,6 @@ class Image(LayerItem):
 
     @data.setter
     def data(self, value) -> None:
-        self.events.data.emit(value)
-
-    def _on_data_change(self, value):
         value = np.asarray(value)
         if self._visual is None or value.ndim != self._data.ndim:
             self._visual.parent = None
@@ -288,87 +124,58 @@ class Image(LayerItem):
         self._data = value
         self._visual.update()
 
-    @property
-    def contrast_limits(self) -> tuple[float, float]:
-        return self._contrast_limits
+    @widget_property
+    def rendering(self):
+        return ComboBox(choices=Image.RENDERINGS, value="mip")
 
-    @contrast_limits.setter
-    def contrast_limits(self, value) -> None:
-        min, max = value
-        if min > max:
-            raise ValueError("min > max.")
-        self.events.contrast_limits.emit(value)
+    @widget_property
+    def contrast_limits(self):
+        return FloatRangeSlider(min=self.data.min(), max=self.data.max())
 
+    @widget_property
+    def iso_threshold(self):
+        return FloatSlider(min=self.data.min(), max=self.data.max())
+
+    @widget_property
+    def gamma(self):
+        return FloatSlider(min=0.0, max=1.0)
+
+    @widget_property
+    def attenuation(self):
+        return FloatSlider(min=0.0, max=1.0)
+
+    @widget_property
+    def interpolation(self):
+        return ComboBox(choices=Image.INTERPOLATIONS)
+
+    @contrast_limits.connect
     def _on_constrast_limits_change(self, value):
         self._visual.clim = value
-        self._contrast_limits = value
         self._visual.update()
 
-    @property
-    def rendering(self) -> str:
-        return self._rendering
-
-    @rendering.setter
-    def rendering(self, value: str) -> None:
-        if not value in self.__class__.RENDERINGS:
-            raise ValueError(f"'rendering' must be in {self.__class__.RENDERINGS}.")
-        self.events.rendering.emit(value)
-
+    @rendering.connect
     def _on_rendering_change(self, value):
         self._visual.method = value
-        self._rendering = value
         self._visual.update()
 
-    @property
-    def iso_threshold(self) -> float:
-        return self._iso_threshold
-
-    @iso_threshold.setter
-    def iso_threshold(self, value) -> None:
-        self.events.iso_threshold.emit(float(value))
-
+    @iso_threshold.connect
     def _on_iso_threshold_change(self, value):
-        self._iso_threshold = value
-        self._visual.threshold = self._iso_threshold
+        self._visual.threshold = value
         self._visual.update()
 
-    @property
-    def gamma(self) -> float:
-        return self._gamma
-
-    @gamma.setter
-    def gamma(self, value) -> None:
-        self.events.gamma.emit(float(value))
-
+    @gamma.connect
     def _on_gamma_change(self, value):
-        self._gamma = value
-        self._visual.gamma = self._gamma
+        self._visual.gamma = value
         self._visual.update()
 
-    @property
-    def attenuation(self) -> float:
-        return self._attenuation
-
-    @attenuation.setter
-    def attenuation(self, value) -> None:
-        self.events.attenuation.emit(float(value))
-
+    @attenuation.connect
     def _on_attenuation_change(self, value):
-        self._attenuation = value
-        self._visual.attenuation = self._attenuation
+        self._visual.attenuation = value
         self._visual.update()
 
-    @property
-    def interpolation(self) -> float:
-        return self._interpolation
-
-    @interpolation.setter
-    def interpolation(self, value) -> None:
-        self.events.interpolation.emit(value)
-
+    @interpolation.connect
     def _on_interpolation_change(self, value):
-        self._interpolation = value
-        self._visual.interpolation = self._interpolation
+        self._visual.interpolation = value
         self._visual.update()
 
 
@@ -403,24 +210,8 @@ class _SurfaceBase(LayerItem):
     def _create_visual(self, data):
         raise NotImplementedError()
 
-    @property
-    def face_color(self) -> np.ndarray:
-        return self._visual.color.rgba
-
-    @face_color.setter
-    def face_color(self, color):
-        self.events.face_color.emit(color)
-
     def _on_face_color_change(self, color):
         self._visual.color = color
-
-    @property
-    def edge_color(self) -> np.ndarray:
-        return self._wireframe.color.rgba
-
-    @edge_color.setter
-    def edge_color(self, color) -> None:
-        self.events.edge_color.emit(color)
 
     def _on_edge_color_change(self, color):
         self._wireframe.color = color
@@ -432,23 +223,6 @@ class _SurfaceBase(LayerItem):
     def color(self, color):
         self.face_color = color
         self.edge_color = color
-
-    @property
-    def shading(self) -> str:
-        """Return current shading mode of the layer."""
-        return self._visual.shading or "none"
-
-    @shading.setter
-    def shading(self, v):
-        self.events.shading.emit(v)
-
-    @property
-    def edge_width(self) -> float:
-        return self._wireframe.width
-
-    @edge_width.setter
-    def edge_width(self, value: float):
-        self.events.edge_width.emit(float(value))
 
     def _on_edge_width_change(self, value):
         self._wireframe.width = value
@@ -481,29 +255,20 @@ class IsoSurface(_SurfaceBase):
         edge_color=None,
         shading="smooth",
     ):
-        self.events = IsoSurfaceSignals()
         data = np.asarray(data)
         data = data.transpose(list(range(data.ndim))[::-1])
 
         if contrast_limits is None:
             contrast_limits = np.min(data), np.max(data)
 
-        self._contrast_limits = contrast_limits
+        self.contrast_limits = contrast_limits
 
         if iso_threshold is None:
-            c0, c1 = self._contrast_limits
+            c0, c1 = self.contrast_limits
             iso_threshold = (c0 + c1) / 2
 
         self._iso_threshold = iso_threshold
 
-        # connect signals
-        self.events.data.connect(self._on_data_change)
-        self.events.contrast_limits.connect(self._on_contrast_limits_change)
-        self.events.shading.connect(self._on_shading_change)
-        self.events.iso_threshold.connect(self._on_iso_threshold_change)
-        self.events.face_color.connect(self._on_face_color_change)
-        self.events.edge_color.connect(self._on_edge_color_change)
-        self.events.edge_width.connect(self._on_edge_width_change)
         super().__init__(
             data,
             viewbox=viewbox,
@@ -511,7 +276,6 @@ class IsoSurface(_SurfaceBase):
             edge_color=edge_color,
             shading=shading,
         )
-        self.widgets = IsoSurfaceWidgetGroup(self)
 
     def _create_visual(self, data):
         self._visual: IsosurfaceVisual = visuals.Isosurface(
@@ -526,46 +290,48 @@ class IsoSurface(_SurfaceBase):
     @data.setter
     def data(self, value) -> None:
         value = np.asarray(value)
-        self.events.data.emit(value)
-
-    def _on_data_change(self, value):
         self._visual.set_data(value)
         self._data = value
         self._visual.update()
 
-    @property
-    def contrast_limits(self) -> tuple[float, float]:
-        return self._contrast_limits
+    @widget_property
+    def contrast_limits(self):
+        return FloatRangeSlider(min=self.data.min(), max=self.data.max())
 
-    @contrast_limits.setter
-    def contrast_limits(self, value) -> None:
-        self.events.contrast_limits.emit(value)
+    @widget_property
+    def shading(self):
+        return ComboBox(choices=["none", "float", "smooth"], value="smooth")
 
+    @widget_property
+    def iso_threshold(self):
+        return FloatSlider(min=self.data.min(), max=self.data.max())
+
+    @widget_property
+    def face_color(self):
+        return ColorEdit()
+
+    @widget_property
+    def edge_color(self) -> ColorEdit:
+        return ColorEdit()
+
+    @widget_property
+    def edge_width(self) -> FloatSlider:
+        return FloatSlider(min=0.5, max=10.0, value=1.0)
+
+    @contrast_limits.connect
     def _on_contrast_limits_change(self, value):
         self._visual.clim = value
-        self._contrast_limits = value
         self._visual.update()
 
-    @property
-    def iso_threshold(self) -> float:
-        return self._iso_threshold
-
-    @iso_threshold.setter
-    def iso_threshold(self, value) -> None:
-        self.events.iso_threshold.emit(float(value))
-
+    @iso_threshold.connect
     def _on_iso_threshold_change(self, value):
-        self._iso_threshold = value
-        self._visual.level = self._iso_threshold
+        self._visual.level = self.iso_threshold
         self._visual.update()
 
-
-class SurfaceSignals(SignalGroup):
-    data = Signal(np.ndarray)
-    shading = Signal(str)
-    face_color = Signal(tuple)
-    edge_color = Signal(tuple)
-    edge_width = Signal(float)
+    shading.connect(_SurfaceBase._on_shading_change)
+    face_color.connect(_SurfaceBase._on_face_color_change)
+    edge_color.connect(_SurfaceBase._on_edge_color_change)
+    edge_width.connect(_SurfaceBase._on_edge_width_change)
 
 
 class Surface(_SurfaceBase):
@@ -577,14 +343,6 @@ class Surface(_SurfaceBase):
         edge_color=None,
         shading="none",
     ):
-        self.events = SurfaceSignals()
-
-        # connect signals
-        self.events.shading.connect(self._on_shading_change)
-        self.events.face_color.connect(self._on_face_color_change)
-        self.events.edge_color.connect(self._on_edge_color_change)
-        self.events.edge_width.connect(self._on_edge_width_change)
-
         super().__init__(
             data, viewbox, face_color=face_color, edge_color=edge_color, shading=shading
         )
@@ -610,17 +368,4 @@ class Surface(_SurfaceBase):
             raise ValueError("Data must be vertices, faces (, values).")
         self._visual.set_data(vertices=verts, faces=faces, vertex_values=vals)
         self._data = (verts, faces, vals)
-        self._visual.update()
-
-    @property
-    def face_color(self) -> np.ndarray:
-        return self._visual.color.rgba
-
-    @face_color.setter
-    def face_color(self, color) -> None:
-        self.face_color
-        verts, faces, vals = self._data
-        self._visual.set_data(
-            vertices=verts, faces=faces, vertex_values=vals, color=color
-        )
         self._visual.update()
