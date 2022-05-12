@@ -842,7 +842,7 @@ class FieldGroup(Container, HasFields, _FieldObject):
             layout=layout, widgets=widgets, labels=labels, name=name, **kwargs
         )
         self._containers: dict[int, Self] = {}
-        self._callbacks = []
+        self._callbacks: list[Callable] = []
 
     def __init_subclass__(cls) -> None:
         if "__init__" not in cls.__dict__.keys():
@@ -1002,6 +1002,8 @@ class WidgetView(_View):
 
 
 class SignalView(_View):
+    """View of signals."""
+
     def __getattr__(self, name: str) -> SignalInstance:
         obj = self._obj_ref()
         fld = obj.__class__._fields.get(name, None)

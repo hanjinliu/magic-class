@@ -10,7 +10,6 @@ from vispy.visuals import (
 from vispy.visuals.filters import WireframeFilter
 from ._base import LayerItem
 
-from psygnal import SignalGroup, Signal
 from magicgui.widgets import ComboBox, FloatSlider
 from ...widgets import ColorEdit, FloatRangeSlider
 from ...fields import HasFields, widget_property
