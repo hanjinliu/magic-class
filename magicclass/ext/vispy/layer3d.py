@@ -32,20 +32,21 @@ class Image(LayerItem, HasFields):
         self,
         data,
         viewbox: ViewBox,
-        contrast_limits=None,
-        rendering="mip",
-        iso_threshold=None,
-        attenuation=1.0,
-        cmap="grays",
-        gamma=1.0,
-        interpolation="linear",
+        contrast_limits: tuple[float, float] | None = None,
+        rendering: str = "mip",
+        iso_threshold: float | None = None,
+        attenuation: float = 1.0,
+        cmap: str = "grays",
+        gamma: str = 1.0,
+        interpolation: str = "linear",
     ):
         self._data = data
+        self._cache_lims()
 
         if contrast_limits is None:
             contrast_limits = np.min(self._data), np.max(self._data)
         if iso_threshold is None:
-            iso_threshold = np.median(contrast_limits)
+            iso_threshold = np.mean(contrast_limits)
 
         self._viewbox = viewbox
         self._create_visual(
@@ -81,7 +82,7 @@ class Image(LayerItem, HasFields):
         if data.ndim == 2:
             if interpolation is None:
                 interpolation = "nearest"
-            self._visual = visuals.Image(
+            self._visual: ImageVisual = visuals.Image(
                 data,
                 clim=clim,
                 method="auto",
@@ -94,7 +95,7 @@ class Image(LayerItem, HasFields):
         elif data.ndim == 3:
             if interpolation is None:
                 interpolation = "linear"
-            self._visual = visuals.Volume(
+            self._visual: VolumeVisual = visuals.Volume(
                 data,
                 clim=clim,
                 method=rendering,
@@ -122,7 +123,15 @@ class Image(LayerItem, HasFields):
         else:
             self._visual.set_data(value)
         self._data = value
+        self._cache_lims()
         self._visual.update()
+
+    def _cache_lims(self):
+        self._lims = np.min(self._data), np.max(self._data)
+        self.widgets.contrast_limits.min = self._lims[0]
+        self.widgets.contrast_limits.max = self._lims[1]
+        self.widgets.iso_threshold.min = self._lims[0]
+        self.widgets.iso_threshold.max = self._lims[1]
 
     @widget_property
     def rendering(self):
@@ -130,11 +139,11 @@ class Image(LayerItem, HasFields):
 
     @widget_property
     def contrast_limits(self):
-        return FloatRangeSlider(min=self.data.min(), max=self.data.max())
+        return FloatRangeSlider(min=self._lims[0], max=self._lims[1])
 
     @widget_property
     def iso_threshold(self):
-        return FloatSlider(min=self.data.min(), max=self.data.max())
+        return FloatSlider(min=self._lims[0], max=self._lims[1])
 
     @widget_property
     def gamma(self):
@@ -160,7 +169,7 @@ class Image(LayerItem, HasFields):
 
     @iso_threshold.connect
     def _on_iso_threshold_change(self, value):
-        self._visual.threshold = value
+        self._visual.threshold = max(value, self._lims[0] + 1e-6)
         self._visual.update()
 
     @gamma.connect
@@ -190,9 +199,10 @@ class _SurfaceBase(LayerItem):
         face_color=None,
         edge_color=None,
         shading="none",
+        **kwargs,
     ):
         self._viewbox = viewbox
-        self._create_visual(data)
+        self._create_visual(data, **kwargs)
         self._wireframe = WireframeFilter()
         self._visual.attach(self._wireframe)
         self._data = data
@@ -234,17 +244,7 @@ class _SurfaceBase(LayerItem):
         self._visual._shading = v
 
 
-class IsoSurfaceSignals(SignalGroup):
-    data = Signal(np.ndarray)
-    contrast_limits = Signal(tuple[float, float])
-    iso_threshold = Signal(float)
-    shading = Signal(str)
-    face_color = Signal(tuple)
-    edge_color = Signal(tuple)
-    edge_width = Signal(float)
-
-
-class IsoSurface(_SurfaceBase):
+class IsoSurface(_SurfaceBase, HasFields):
     def __init__(
         self,
         data,
@@ -261,13 +261,8 @@ class IsoSurface(_SurfaceBase):
         if contrast_limits is None:
             contrast_limits = np.min(data), np.max(data)
 
-        self.contrast_limits = contrast_limits
-
         if iso_threshold is None:
-            c0, c1 = self.contrast_limits
-            iso_threshold = (c0 + c1) / 2
-
-        self._iso_threshold = iso_threshold
+            iso_threshold = np.mean(contrast_limits)
 
         super().__init__(
             data,
@@ -275,13 +270,25 @@ class IsoSurface(_SurfaceBase):
             face_color=face_color,
             edge_color=edge_color,
             shading=shading,
+            iso_threshold=iso_threshold,
         )
+        self._cache_lims()
 
-    def _create_visual(self, data):
+        self.contrast_limits = contrast_limits
+        self.iso_threshold = iso_threshold
+
+    def _create_visual(self, data, iso_threshold):
         self._visual: IsosurfaceVisual = visuals.Isosurface(
-            data, level=self.iso_threshold, parent=self._viewbox.scene
+            data, level=iso_threshold, parent=self._viewbox.scene
         )
         return None
+
+    def _cache_lims(self):
+        self._lims = np.min(self._data), np.max(self._data)
+        self.widgets.contrast_limits.min = self._lims[0]
+        self.widgets.contrast_limits.max = self._lims[1]
+        self.widgets.iso_threshold.min = self._lims[0]
+        self.widgets.iso_threshold.max = self._lims[1]
 
     @property
     def data(self) -> np.ndarray:
@@ -296,7 +303,7 @@ class IsoSurface(_SurfaceBase):
 
     @widget_property
     def contrast_limits(self):
-        return FloatRangeSlider(min=self.data.min(), max=self.data.max())
+        return FloatRangeSlider(min=self._lims[0], max=self._lims[1])
 
     @widget_property
     def shading(self):
@@ -304,7 +311,7 @@ class IsoSurface(_SurfaceBase):
 
     @widget_property
     def iso_threshold(self):
-        return FloatSlider(min=self.data.min(), max=self.data.max())
+        return FloatSlider(min=self._lims[0], max=self._lims[1])
 
     @widget_property
     def face_color(self):
@@ -325,7 +332,7 @@ class IsoSurface(_SurfaceBase):
 
     @iso_threshold.connect
     def _on_iso_threshold_change(self, value):
-        self._visual.level = self.iso_threshold
+        self._visual.level = max(self.iso_threshold, self._lims[0] + 1e-6)
         self._visual.update()
 
     shading.connect(_SurfaceBase._on_shading_change)
@@ -334,7 +341,7 @@ class IsoSurface(_SurfaceBase):
     edge_width.connect(_SurfaceBase._on_edge_width_change)
 
 
-class Surface(_SurfaceBase):
+class Surface(_SurfaceBase, HasFields):
     def __init__(
         self,
         data,
@@ -369,3 +376,24 @@ class Surface(_SurfaceBase):
         self._visual.set_data(vertices=verts, faces=faces, vertex_values=vals)
         self._data = (verts, faces, vals)
         self._visual.update()
+
+    @widget_property
+    def shading(self):
+        return ComboBox(choices=["none", "float", "smooth"], value="smooth")
+
+    @widget_property
+    def face_color(self):
+        return ColorEdit()
+
+    @widget_property
+    def edge_color(self) -> ColorEdit:
+        return ColorEdit()
+
+    @widget_property
+    def edge_width(self) -> FloatSlider:
+        return FloatSlider(min=0.5, max=10.0, value=1.0)
+
+    shading.connect(_SurfaceBase._on_shading_change)
+    face_color.connect(_SurfaceBase._on_face_color_change)
+    edge_color.connect(_SurfaceBase._on_edge_color_change)
+    edge_width.connect(_SurfaceBase._on_edge_width_change)
