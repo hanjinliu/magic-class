@@ -78,7 +78,6 @@ class MagicField(Field, _FieldObject, Generic[_W, _V]):
         name: str | None = None,
         record: bool = True,
     ):
-        metadata = metadata.copy()
         if default is MISSING:
             default = metadata.pop("value", MISSING)
 
@@ -288,6 +287,7 @@ class MagicField(Field, _FieldObject, Generic[_W, _V]):
         raise AttributeError(f"Cannot set value to {self.__class__.__name__}.")
 
     def ready(self) -> bool:
+        """Return true if field is ready to create widgets."""
         return not self.not_ready()
 
     def not_ready(self) -> bool:
