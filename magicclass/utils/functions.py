@@ -76,6 +76,38 @@ def argcount(func: Callable):
     return len(inspect.signature(func).parameters)
 
 
+_LOCALS = "<locals>."
+
+
+def is_instance_method(func: Callable) -> bool:
+    """Check if a function is defined in a class."""
+    return callable(func) and "." in func.__qualname__.split(_LOCALS)[-1]
+
+
+def method_as_getter(self, getter: Callable):
+    qualname = getter.__qualname__
+    if _LOCALS in qualname:
+        qualname = qualname.split(_LOCALS)[-1]
+    *clsnames, funcname = qualname.split(".")
+    ins = self
+    self_cls = ins.__class__.__name__
+    if self_cls not in clsnames:
+        ns = ".".join(clsnames)
+        raise ValueError(
+            f"Method {funcname} is in namespace {ns!r}, so it is invisible "
+            f"from class {self.__class__.__qualname__!r}."
+        )
+    i = clsnames.index(self_cls) + 1
+
+    for clsname in clsnames[i:]:
+        ins = getattr(ins, clsname)
+
+    def _func(w):
+        return getter(ins, w)
+
+    return _func
+
+
 def show_tree(ui: BaseGui) -> str:
     return _get_tree(ui)
 

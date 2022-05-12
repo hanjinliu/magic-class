@@ -59,6 +59,8 @@ from ..utils import (
     extract_tooltip,
     move_to_screen_center,
     argcount,
+    is_instance_method,
+    method_as_getter,
     thread_worker,
 )
 from ..widgets import Separator, FreeWidget
@@ -620,16 +622,16 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
                 _arg_choices = _param.options.get("choices", None)
 
                 # If bound method is a class method, use self.method(widget).
-                if _is_instance_method(self, _arg_bind):
-                    _param.options["bind"] = _method_as_getter(self, _arg_bind)
+                if is_instance_method(_arg_bind):
+                    _param.options["bind"] = method_as_getter(self, _arg_bind)
 
                 # If a MagicFiled is bound, bind the value of the connected widget.
                 elif isinstance(_arg_bind, MagicField):
-                    _param.options["bind"] = _field_as_getter(self, _arg_bind)
+                    _param.options["bind"] = _arg_bind.as_remote_getter(self)
 
                 # If choices are provided by a class method, use self.method(widget).
-                if _is_instance_method(self, _arg_choices):
-                    _param.options["choices"] = _method_as_getter(self, _arg_choices)
+                if is_instance_method(_arg_choices):
+                    _param.options["choices"] = method_as_getter(self, _arg_choices)
 
             else:
                 _param = param
@@ -1062,75 +1064,6 @@ def _child_that_has_widget(
     else:
         raise ValueError(f"{widget_or_name} not found.")
     return child_instance
-
-
-_LOCALS = "<locals>."
-
-
-def _method_as_getter(self, getter: Callable):
-    qualname = getter.__qualname__
-    if _LOCALS in qualname:
-        qualname = qualname.split(_LOCALS)[-1]
-    *clsnames, funcname = qualname.split(".")
-    ins = self
-    self_cls = ins.__class__.__name__
-    if self_cls not in clsnames:
-        ns = ".".join(clsnames)
-        raise ValueError(
-            f"Method {funcname} is in namespace {ns}, so it is invisible "
-            f"from magicclass {self.__class__.__qualname__}"
-        )
-    i = clsnames.index(self_cls) + 1
-
-    for clsname in clsnames[i:]:
-        ins = getattr(ins, clsname)
-
-    def _func(w):
-        return getter(ins, w)
-
-    return _func
-
-
-def _field_as_getter(bgui: BaseGui, fld: MagicField):
-    """Called when a MagicField is used in Bound method."""
-    qualname = fld._parent_class.__qualname__
-    if _LOCALS in qualname:
-        qualname = qualname.split(_LOCALS)[-1]
-    clsnames = qualname.split(".")
-
-    def _func(w):
-        # First we have to know where (which instance) MagicField came from.
-        if bgui.__class__.__name__ not in clsnames:
-            ns = ".".join(clsnames)
-            raise ValueError(
-                f"Method {fld.name} is in namespace {ns}, so it is invisible "
-                f"from magicclass {bgui.__class__.__qualname__}"
-            )
-        i = clsnames.index(type(bgui).__name__) + 1
-        ins = bgui
-        for clsname in clsnames[i:]:
-            ins = getattr(ins, clsname, ins)
-
-        # Now, ins is an instance of parent class.
-        # Extract correct widget from MagicField
-        _field_widget = fld.get_widget(ins)
-        if not hasattr(_field_widget, "value"):
-            raise TypeError(
-                f"MagicField {fld.name} does not return ValueWidget "
-                "thus cannot be used as a bound value."
-            )
-        return fld.as_getter(ins)(w)
-
-    return _func
-
-
-def _is_instance_method(self: MagicTemplate, func: Callable) -> bool:
-    # NOTE: following implementation is not compatible with @wraps
-    # if not callable(func):
-    #     return False
-    # classes = func.__qualname__.split(".")[:-1]
-    # return self.__class__.__name__ in classes
-    return callable(func) and argcount(func) == 2
 
 
 def value_widget_callback(

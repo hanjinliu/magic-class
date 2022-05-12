@@ -3,6 +3,8 @@ from .functions import (
     extract_tooltip,
     get_signature,
     argcount,
+    is_instance_method,
+    method_as_getter,
     show_tree,
     rst_to_html,
 )

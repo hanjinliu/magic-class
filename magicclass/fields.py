@@ -26,7 +26,7 @@ from magicgui.widgets._bases import Widget, ValueWidget, ContainerWidget
 from magicgui.widgets._bases.value_widget import UNSET
 from psygnal import SignalInstance
 
-from .utils import argcount
+from .utils import argcount, is_instance_method, method_as_getter
 from ._gui.mgui_ext import Action, WidgetAction
 
 if TYPE_CHECKING:
@@ -161,11 +161,9 @@ class MagicField(Field, _FieldObject, Generic[_W, _V]):
     @contextmanager
     def _resolve_choices(self, obj: Any) -> dict[str, Any]:
         """If method is given as choices, get generate method from it."""
-        from ._gui._base import _is_instance_method, _method_as_getter
-
         _arg_choices = self.options.get("choices", None)
-        if _is_instance_method(obj, _arg_choices):
-            self.options["choices"] = _method_as_getter(obj, _arg_choices)
+        if is_instance_method(obj, _arg_choices):
+            self.options["choices"] = method_as_getter(obj, _arg_choices)
         try:
             yield self
         finally:
@@ -244,6 +242,39 @@ class MagicField(Field, _FieldObject, Generic[_W, _V]):
     def as_getter(self, obj: Any) -> Callable[[Any], _V]:
         """Make a function that get the value of Widget or Action."""
         return lambda w: self._guis[id(obj)].value
+
+    def as_remote_getter(self, obj: Any):
+        """Called when a MagicField is used in Bound method."""
+        qualname = self._parent_class.__qualname__
+        _LOCALS = "<locals>."
+        if _LOCALS in qualname:
+            qualname = qualname.split(_LOCALS)[-1]
+        clsnames = qualname.split(".")
+
+        def _func(w):
+            # First we have to know where (which instance) MagicField came from.
+            if obj.__class__.__name__ not in clsnames:
+                ns = ".".join(clsnames)
+                raise ValueError(
+                    f"Method {self.name} is in namespace {ns}, so it is invisible "
+                    f"from magicclass {obj.__class__.__qualname__}"
+                )
+            i = clsnames.index(type(obj).__name__) + 1
+            ins = obj
+            for clsname in clsnames[i:]:
+                ins = getattr(ins, clsname, ins)
+
+            # Now, ins is an instance of parent class.
+            # Extract correct widget from MagicField
+            _field_widget = self.get_widget(ins)
+            if not hasattr(_field_widget, "value"):
+                raise TypeError(
+                    f"MagicField {self.name} does not return ValueWidget "
+                    "thus cannot be used as a bound value."
+                )
+            return self.as_getter(ins)(w)
+
+        return _func
 
     @overload
     def __get__(self, obj: Literal[None], objtype=None) -> MagicField[_W, _V] | _W:
