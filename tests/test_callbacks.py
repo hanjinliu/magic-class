@@ -162,3 +162,16 @@ def test_container_callback():
     mock.assert_not_called()
     ui.a[0].value = "xxx"
     mock.assert_called()
+
+def test_parametric_callback():
+    @magicclass
+    class A:
+        a = field(int)
+
+        @a.connect
+        def _callback(self, v):
+            self._v = v
+
+    ui = A()
+    ui.a.value = 1
+    assert ui._v == 1
