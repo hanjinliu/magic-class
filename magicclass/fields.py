@@ -64,7 +64,6 @@ class MagicField(Field, _FieldObject, Generic[_W, _V]):
     """
     Field class for magicgui construction.
 
-
     This object is compatible with dataclass. MagicField object is in "ready for
     widget construction" state.
     """

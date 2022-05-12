@@ -1,5 +1,6 @@
 from __future__ import annotations
 import inspect
+from types import MethodType
 from typing import Any, TYPE_CHECKING, Callable, Iterable
 import warnings
 from docstring_parser import parse
@@ -64,16 +65,28 @@ def get_signature(func):
     return sig
 
 
-def argcount(func: Callable):
-    """Count the number of parameters of a callable object."""
-    # TODO: there should be faster method to count args
-    # if hasattr(func, "__wrapped__"):
-    #     func = func.__wrapped__
-    # nargs = func.__code__.co_argcount
-    # if isinstance(func, MethodType):
-    #     nargs -= 1
-    # return nargs
-    return len(inspect.signature(func).parameters)
+def argcount(func: Callable) -> int:
+    """
+    Count the number of parameters of a callable object.
+
+    Basically, this function returns identical result as:
+    >>> len(inspect.signature(func).parameters)
+    but ~10x faster.
+    """
+    if hasattr(func, "__func__"):
+        _func = func.__func__
+    else:
+        _func = func
+    unwrapped: Callable = inspect.unwrap(
+        _func, stop=(lambda f: hasattr(f, "__signature__"))
+    )
+    if hasattr(unwrapped, "__signature__"):
+        nargs = len(unwrapped.__signature__.parameters)
+    else:
+        nargs = unwrapped.__code__.co_argcount
+    if isinstance(func, MethodType):
+        nargs -= 1
+    return nargs
 
 
 _LOCALS = "<locals>."
