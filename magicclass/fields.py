@@ -136,16 +136,25 @@ class MagicField(Field, _FieldObject, Generic[_W, _V]):
     def construct(self, obj) -> Widget:
         """Construct a widget."""
         constructor = self.constructor
-        if _is_subclass(constructor, Widget):
-            return constructor(**self.options)
-        else:
-            widget = constructor(obj)
-            if not isinstance(widget, Widget):
-                raise TypeError(
-                    f"{self.__class__.__name__} {self.name} created non-widget "
-                    f"object {type(widget)}."
-                )
-            return widget
+        _arg_choices = self.options.get("choices", None)
+        if is_instance_method(_arg_choices):
+            self.options["choices"] = method_as_getter(obj, _arg_choices)
+        try:
+            if _is_subclass(constructor, Widget):
+                widget = constructor(**self.options)
+            else:
+                widget = constructor(obj)
+                if not isinstance(widget, Widget):
+                    raise TypeError(
+                        f"{self.__class__.__name__} {self.name} created non-widget "
+                        f"object {type(widget)}."
+                    )
+
+        finally:
+            if _arg_choices is not None:
+                self.options["choices"] = _arg_choices
+
+        return widget
 
     def copy(self) -> Self[_W, _V]:
         """Copy object."""
@@ -158,18 +167,6 @@ class MagicField(Field, _FieldObject, Generic[_W, _V]):
         """Use a function as the constructor of MagicField."""
         return cls(constructor=func)
 
-    @contextmanager
-    def _resolve_choices(self, obj: Any) -> dict[str, Any]:
-        """If method is given as choices, get generate method from it."""
-        _arg_choices = self.options.get("choices", None)
-        if is_instance_method(obj, _arg_choices):
-            self.options["choices"] = method_as_getter(obj, _arg_choices)
-        try:
-            yield self
-        finally:
-            if _arg_choices is not None:
-                self.options["choices"] = _arg_choices
-
     def get_widget(self, obj: Any) -> _W:
         """
         Get a widget from ``obj``. This function will be called every time MagicField is referred
@@ -181,10 +178,9 @@ class MagicField(Field, _FieldObject, Generic[_W, _V]):
         if obj_id in self._guis.keys():
             widget = self._guis[obj_id]
         else:
-            with self._resolve_choices(obj):
-                widget = self.construct(obj)
-                widget.name = self.name
-                self._guis[obj_id] = widget
+            widget = self.construct(obj)
+            widget.name = self.name
+            self._guis[obj_id] = widget
 
             if isinstance(widget, (ValueWidget, ContainerWidget)):
                 if isinstance(obj, MagicTemplate):
@@ -208,25 +204,24 @@ class MagicField(Field, _FieldObject, Generic[_W, _V]):
         if obj_id in self._guis.keys():
             action = self._guis[obj_id]
         else:
-            with self._resolve_choices(obj):
-                if type(self.default) is bool or self.annotation is bool:
-                    # we should not use "isinstance" or "issubclass" because subclass
-                    # may be mapped to different widget by users.
-                    value = False if self.default is MISSING else self.default
-                    action = Action(
-                        checkable=True,
-                        checked=value,
-                        text=self.name.replace("_", " "),
-                        name=self.name,
-                    )
-                    for k, v in self.options.items():
-                        setattr(action, k, v)
-                else:
-                    widget = self.construct(obj)
-                    widget.name = self.name
-                    action = WidgetAction(widget)
+            if type(self.default) is bool or self.annotation is bool:
+                # we should not use "isinstance" or "issubclass" because subclass
+                # may be mapped to different widget by users.
+                value = False if self.default is MISSING else self.default
+                action = Action(
+                    checkable=True,
+                    checked=value,
+                    text=self.name.replace("_", " "),
+                    name=self.name,
+                )
+                for k, v in self.options.items():
+                    setattr(action, k, v)
+            else:
+                widget = self.construct(obj)
+                widget.name = self.name
+                action = WidgetAction(widget)
 
-                self._guis[obj_id] = action
+            self._guis[obj_id] = action
 
             if action.support_value:
                 if isinstance(obj, MagicTemplate):
@@ -256,8 +251,8 @@ class MagicField(Field, _FieldObject, Generic[_W, _V]):
             if obj.__class__.__name__ not in clsnames:
                 ns = ".".join(clsnames)
                 raise ValueError(
-                    f"Method {self.name} is in namespace {ns}, so it is invisible "
-                    f"from magicclass {obj.__class__.__qualname__}"
+                    f"Method {self.name!r} is in namespace {ns!r}, so it is invisible "
+                    f"from magicclass {obj.__class__.__qualname__!r}."
                 )
             i = clsnames.index(type(obj).__name__) + 1
             ins = obj
