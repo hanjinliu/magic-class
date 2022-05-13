@@ -66,41 +66,53 @@ class MagicField(_FieldObject, Generic[_W, _V]):
 
     def __init__(
         self,
-        default: Any = UNSET,
-        constructor: Callable[..., Widget] | None = None,
-        metadata: dict[str, Any] = {},
+        value: Any = UNSET,
         name: str | None = None,
+        label: str | None = None,
+        annotation: Any = None,
+        widget_type=None,
+        options: dict[str, Any] | None = None,
         record: bool = True,
+        constructor: Callable[..., Widget] | None = None,
     ):
-        if default is UNSET:
-            default = metadata.pop("value", UNSET)
-
-        if "options" not in metadata:
-            metadata = metadata.copy()
-            metadata.update(options={})
+        if options is None:
+            options = {}
+        if value is UNSET:
+            value = options.pop("value", UNSET)
 
         if constructor is None:
 
             def _create_widget(obj):
-                return create_widget(self.value, **metadata)
+                return create_widget(
+                    self.value,
+                    name=self.name,
+                    label=self.label,
+                    annotation=self.annotation,
+                    widget_type=self.widget_type,
+                    options=self.options,
+                )
 
             constructor = _create_widget
 
-        self.default = default
-        self.metadata = types.MappingProxyType(metadata)
+        self.value = value
+        self.name = name
+        self.label = label
+        self.annotation = annotation
+        self.widget_type = widget_type
+        self.options = options
         self._constructor = constructor
         self._callbacks: list[Callable] = []
         self._guis: dict[int, _M] = {}
-        self.name = name
         self._record = record
 
-        # MagicField has to remenber the first class that referred to itself so that it can
-        # "know" the namespace it belongs to.
+        # MagicField has to remenber the first class that referred to itself so
+        # that it can "know" the namespace it belongs to.
         self._parent_class: type | None = None
 
     def __repr__(self):
-        attrs = ["default", "name", "record", "options"]
-        return f"{self.__class__.__name__}()"
+        attrs = ["value", "name", "widget_type", "record", "options"]
+        kw = ", ".join(f"{a}={getattr(self, a)!r}" for a in attrs)
+        return f"{self.__class__.__name__}({kw})"
 
     def __set_name__(self, owner: type, name: str) -> None:
         self._parent_class = owner
@@ -147,7 +159,12 @@ class MagicField(_FieldObject, Generic[_W, _V]):
     def copy(self) -> Self[_W, _V]:
         """Copy object."""
         return self.__class__(
-            self.default, self.constructor, self.metadata, self.name, self._record
+            value=self.value,
+            annotation=self.annotation,
+            widget_type=self.widget_type,
+            options=self.options,
+            record=self.record,
+            constructor=self.constructor,
         )
 
     @classmethod
@@ -192,10 +209,10 @@ class MagicField(_FieldObject, Generic[_W, _V]):
         if obj_id in self._guis.keys():
             action = self._guis[obj_id]
         else:
-            if type(self.default) is bool or self.annotation is bool:
+            if type(self.value) is bool or self.annotation is bool:
                 # we should not use "isinstance" or "issubclass" because subclass
                 # may be mapped to different widget by users.
-                value = False if self.default is UNSET else self.default
+                value = False if self.value is UNSET else self.value
                 action = Action(
                     checkable=True,
                     checked=value,
@@ -281,9 +298,9 @@ class MagicField(_FieldObject, Generic[_W, _V]):
         return not self.not_ready()
 
     def not_ready(self) -> bool:
-        if "widget_type" in self.metadata:
-            return False
-        return self.default is UNSET and self.annotation is None
+        return (
+            self.value is UNSET and self.annotation is None and self.widget_type is None
+        )
 
     def to_widget(self) -> _W:
         """
@@ -383,24 +400,6 @@ class MagicField(_FieldObject, Generic[_W, _V]):
                 "The wraps method cannot be used for any objects but magic class."
             )
         return cls.wraps(method=method, template=template, copy=copy)
-
-    @property
-    def value(self) -> Any:
-        return UNSET if self.default is UNSET else self.default
-
-    @property
-    def annotation(self):
-        return self.metadata.get("annotation", None)
-
-    @property
-    def options(self) -> dict:
-        return self.metadata.get("options", {})
-
-    @property
-    def widget_type(self) -> str:
-        """Return widget type string if it is deterministic."""
-        wcls = get_widget_class(value=self.value, annotation=self.annotation)
-        return wcls.__name__
 
     @property
     def tooltip(self) -> str:
@@ -534,6 +533,7 @@ def field(
     obj: Any = UNSET,
     *,
     name: str | None = None,
+    label: str | None = None,
     widget_type: str | type[WidgetProtocol] | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
@@ -563,7 +563,7 @@ def field(
     -------
     MagicField
     """
-    return _get_field(obj, name, widget_type, options, record, MagicField)
+    return _get_field(obj, name, label, widget_type, options, record, MagicField)
 
 
 @overload
@@ -630,6 +630,7 @@ def vfield(
     obj: Any = UNSET,
     *,
     name: str | None = None,
+    label: str | None = None,
     widget_type: str | type[WidgetProtocol] | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
@@ -663,7 +664,7 @@ def vfield(
     -------
     MagicValueField
     """
-    return _get_field(obj, name, widget_type, options, record, MagicValueField)
+    return _get_field(obj, name, label, widget_type, options, record, MagicValueField)
 
 
 def widget_property(func: Callable[..., _W]) -> MagicValueField[_W, Any]:
@@ -705,6 +706,7 @@ def widget_property(func: Callable[..., _W]) -> MagicValueField[_W, Any]:
 def _get_field(
     obj,
     name: str,
+    label: str,
     widget_type: str | type[WidgetProtocol] | None,
     options: dict[str, Any],
     record: bool,
@@ -713,27 +715,28 @@ def _get_field(
     if not isinstance(options, dict):
         raise TypeError(f"Field options must be a dict, got {type(options)}")
     options = options.copy()
-    metadata = dict(widget_type=widget_type, options=options)
-    name = options.get("name", name)
-    kwargs = dict(metadata=metadata, name=name, record=record)
+    kwargs = dict(
+        name=name, label=label, record=record, annotation=None, options=options
+    )
     if isinstance(obj, (type, _BaseGenericAlias)):
         if isinstance(obj, _AnnotatedAlias):
             from magicgui.signature import split_annotated_type
 
             tp, widget_option = split_annotated_type(obj)
-            if "annotation" not in widget_option:
-                widget_option.update(annotation=tp)
-            metadata.update(**widget_option)
+            kwargs.update(annotation=tp)
+            options.update(**widget_option)
         if _is_subclass(obj, Widget):
-            f = field_class(constructor=obj, **kwargs)
+            if widget_type is not None:
+                raise ValueError("Cannot specify Widget type twice.")
+            f = field_class(constructor=obj, widget_type=obj, **kwargs)
         else:
-            if "annotation" not in metadata:
-                metadata.update(annotation=obj)
-            f = field_class(**kwargs)
+            if kwargs["annotation"] is None:
+                kwargs.update(annotation=obj)
+            f = field_class(widget_type=widget_type, **kwargs)
     elif obj is UNSET:
-        f = field_class(**kwargs)
+        f = field_class(widget_type=widget_type, **kwargs)
     else:
-        f = field_class(default=obj, **kwargs)
+        f = field_class(value=obj, widget_type=widget_type, **kwargs)
 
     return f
 
