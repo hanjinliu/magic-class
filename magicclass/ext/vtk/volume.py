@@ -6,10 +6,13 @@ import numpy as np
 from functools import cached_property
 from psygnal import Signal, SignalGroup
 from magicgui.widgets import FloatSlider, ComboBox
-from magicclass.widgets import ColorEdit
 
 from .components import VtkProperty, VtkComponent
 from .const import Mode, Rendering
+
+from ...widgets import ColorEdit
+from ...fields import HasFields, widget_property, vfield
+from ...types import Color
 
 
 class VolumeSignalGroup(SignalGroup):
@@ -88,9 +91,8 @@ def split_rgba(col: str | Sequence[float]) -> tuple[str | Sequence[float], float
     return rgb, alpha
 
 
-class Volume(VtkComponent, base=vedo.Volume):
+class Volume(VtkComponent, HasFields, base=vedo.Volume):
     _obj: vedo.Volume
-    events = VolumeSignalGroup()
 
     def __init__(self, data, _parent):
         super().__init__(data, _parent=_parent)
@@ -120,43 +122,26 @@ class Volume(VtkComponent, base=vedo.Volume):
     jittering: VtkProperty[Volume, bool] = VtkProperty("jittering", converter=bool, doc="Turn on/off jittering.")  # noqa
     # fmt: on
 
-    @property
-    def color(self) -> np.ndarray:
-        """Color of the volume."""
-        return self._color
+    color = vfield(Color)
+    mode = vfield(Mode.volume)
+    rendering = vfield(Rendering.mip)
+    iso_threshold = vfield(float, widget_type=FloatSlider)
 
-    @color.setter
+    @color.connect
     def color(self, col):
         rgb, alpha = split_rgba(col)
-        self._obj.color(
-            rgb, vmin=self._contrast_limits[0], vmax=self._contrast_limits[0]
-        )
+        vmin, vmax = self.contrast_limits
+        self._obj.color(rgb, vmin=vmin, vmax=vmax)
         # self._obj.alpha(alpha)
-        self._color = rgb
         self._update_actor()
 
-    @property
-    def rendering(self):
-        """Rendering mode of the volume."""
-        return self._rendering.name
-
-    @rendering.setter
-    def rendering(self, v):
+    @rendering.connect
+    def _on_rendering_change(self, v):
         r: Rendering = getattr(Rendering, v)
         self._obj.mode(r.value)
-        self._rendering = r
         self._update_actor()
 
-    @property
-    def iso_threshold(self) -> float:
-        """
-        Threshold value to generate isosurface.
-
-        This property only has effect on "iso" and "wireframe" rendering.
-        """
-        return self._iso_threshold
-
-    @iso_threshold.setter
+    @iso_threshold.connect
     def iso_threshold(self, v):
         self._iso_threshold = float(v)
         if self._mode in (Mode.iso, Mode.wireframe):
