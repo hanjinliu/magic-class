@@ -42,7 +42,7 @@ from ..widgets import (
     FreeWidget,
 )
 
-from ..utils import iter_members, extract_tooltip
+from ..utils import iter_members, Tooltips
 from ..fields import MagicField
 from ..signature import get_additional_option
 from .._app import run_app
@@ -106,8 +106,8 @@ class ClassGuiBase(BaseGui):
         cls = self.__class__
 
         # Add class docstring as tooltip.
-        doc = extract_tooltip(cls)
-        self.tooltip = doc
+        _tooltips = Tooltips(cls)
+        self.tooltip = _tooltips.desc
 
         # Bind all the methods and annotations
         n_insert = 0
@@ -135,6 +135,8 @@ class ClassGuiBase(BaseGui):
                 elif isinstance(attr, MagicField):
                     # If MagicField is given by field() function.
                     widget = self._create_widget_from_field(name, attr)
+                    if not widget.tooltip:
+                        widget.tooltip = _tooltips.attributes.get(name, "")
 
                 elif isinstance(attr, FunctionGui):
                     widget = attr.copy()

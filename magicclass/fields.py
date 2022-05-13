@@ -26,7 +26,7 @@ from magicgui.widgets._bases import Widget, ValueWidget, ContainerWidget
 from magicgui.widgets._bases.value_widget import UNSET
 from psygnal import SignalInstance
 
-from .utils import argcount, is_instance_method, method_as_getter
+from .utils import argcount, is_instance_method, method_as_getter, Tooltips
 from ._gui.mgui_ext import Action, WidgetAction
 
 if TYPE_CHECKING:
@@ -51,6 +51,7 @@ else:
 
 class _FieldObject:
     name: str
+    tooltip: str
 
     def get_widget(self, obj: Any) -> Widget:
         raise NotImplementedError()
@@ -80,6 +81,10 @@ class MagicField(Field, _FieldObject, Generic[_W, _V]):
     ):
         if default is MISSING:
             default = metadata.pop("value", MISSING)
+
+        if "options" not in metadata:
+            metadata = metadata.copy()
+            metadata.update(options={})
 
         super().__init__(
             default=default,
@@ -411,6 +416,15 @@ class MagicField(Field, _FieldObject, Generic[_W, _V]):
         """Return widget type string if it is deterministic."""
         wcls = get_widget_class(value=self.value, annotation=self.annotation)
         return wcls.__name__
+
+    @property
+    def tooltip(self) -> str:
+        """Get tooltip of returned widgets."""
+        return self.options.get("tooltip", "")
+
+    @tooltip.setter
+    def tooltip(self, value):
+        self.options.update(tooltip=value)
 
 
 class MagicValueField(MagicField[_W, _V]):
@@ -803,12 +817,15 @@ class _FieldGroupMeta(ABCMeta):
         **kwds,
     ) -> _FieldGroupMeta:
         cls: _FieldGroupMeta = type.__new__(fcls, name, bases, namespace, **kwds)
+        _tooltips = Tooltips(cls)
         _fields: dict[str, MagicField] = {}
         for k, v in namespace.items():
             if isinstance(v, _FieldObject):
                 if k in _View._METHODS:
                     raise ValueError(f"Attribute {k} cannot be used in HasFields.")
                 _fields[k] = v
+                if not v.tooltip:
+                    v.tooltip = _tooltips.attributes.get(k, "")
 
         cls._fields = types.MappingProxyType(_fields)
 

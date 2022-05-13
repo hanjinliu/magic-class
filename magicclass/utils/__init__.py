@@ -1,6 +1,6 @@
 from .functions import (
     iter_members,
-    extract_tooltip,
+    Tooltips,
     get_signature,
     argcount,
     is_instance_method,
