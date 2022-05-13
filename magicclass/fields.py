@@ -19,7 +19,6 @@ from pathlib import Path
 import datetime
 import sys
 from enum import Enum
-from magicgui.type_map import get_widget_class
 from magicgui.widgets import create_widget, Container
 from magicgui.widgets._bases import Widget, ValueWidget, ContainerWidget
 from magicgui.widgets._bases.value_widget import UNSET
@@ -160,6 +159,8 @@ class MagicField(_FieldObject, Generic[_W, _V]):
         """Copy object."""
         return self.__class__(
             value=self.value,
+            name=self.name,
+            label=self.label,
             annotation=self.annotation,
             widget_type=self.widget_type,
             options=self.options,
@@ -462,6 +463,7 @@ def field(
     obj: _X,
     *,
     name: str | None = None,
+    label: str | None = None,
     widget_type: str | type[WidgetProtocol] | type[Widget] | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
@@ -471,10 +473,10 @@ def field(
 
 @overload
 def field(
-    obj: type[_W],
+    widget_type: type[_W],
     *,
     name: str | None = None,
-    widget_type: str | type[WidgetProtocol] | type[Widget] | None = None,
+    label: str | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
 ) -> MagicField[_W, Any]:
@@ -486,6 +488,7 @@ def field(
     obj: type[_X],
     *,
     name: str | None = None,
+    label: str | None = None,
     widget_type: str | type[WidgetProtocol] | type[Widget] | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
@@ -495,9 +498,10 @@ def field(
 
 @overload
 def field(
-    obj: type[_M],
+    gui_class: type[_M],
     *,
     name: str | None = None,
+    label: str | None = None,
     widget_type: str | type[WidgetProtocol] | type[Widget] | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
@@ -510,6 +514,7 @@ def field(
     obj: Any,
     *,
     name: str | None = None,
+    label: str | None = None,
     widget_type: type[_W] = None,
     options: dict[str, Any] = {},
     record: bool = True,
@@ -522,6 +527,7 @@ def field(
     obj: Any,
     *,
     name: str | None = None,
+    label: str | None = None,
     widget_type: str | type[WidgetProtocol] | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
@@ -571,6 +577,7 @@ def vfield(
     obj: _X,
     *,
     name: str | None = None,
+    label: str | None = None,
     widget_type: str | type[WidgetProtocol] | type[Widget] | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
@@ -580,10 +587,10 @@ def vfield(
 
 @overload
 def vfield(
-    obj: type[_W],
+    widget_type: type[_W],
     *,
     name: str | None = None,
-    widget_type: str | type[WidgetProtocol] | type[Widget] | None = None,
+    label: str | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
 ) -> MagicValueField[_W, Any]:
@@ -592,9 +599,10 @@ def vfield(
 
 @overload
 def vfield(
-    obj: type[_X],
+    annotation: type[_X],
     *,
     name: str | None = None,
+    label: str | None = None,
     widget_type: str | type[WidgetProtocol] | type[Widget] | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
@@ -607,6 +615,7 @@ def vfield(
     obj: Any,
     *,
     name: str | None = None,
+    label: str | None = None,
     widget_type: type[_W] = None,
     options: dict[str, Any] = {},
     record: bool = True,
@@ -619,6 +628,7 @@ def vfield(
     obj: Any,
     *,
     name: str | None = None,
+    label: str | None = None,
     widget_type: str | type[WidgetProtocol] | type[Widget] | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
