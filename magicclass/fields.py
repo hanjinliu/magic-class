@@ -19,7 +19,6 @@ from pathlib import Path
 import datetime
 import sys
 from enum import Enum
-from dataclasses import Field, MISSING
 from magicgui.type_map import get_widget_class
 from magicgui.widgets import create_widget, Container
 from magicgui.widgets._bases import Widget, ValueWidget, ContainerWidget
@@ -38,13 +37,7 @@ if TYPE_CHECKING:
     _M = TypeVar("_M", bound=MagicTemplate)
 
 if sys.version_info >= (3, 10):
-    # From Python 3.10 the Field type takes an additional argument "kw_only".
-    class Field(Field):
-        def __init__(self, **kwargs):
-            super().__init__(**kwargs, kw_only=False)
-
     from typing import _BaseGenericAlias
-
 else:
     from typing_extensions import _BaseGenericAlias
 
@@ -61,7 +54,7 @@ _W = TypeVar("_W", bound=Widget)
 _V = TypeVar("_V", bound=object)
 
 
-class MagicField(Field, _FieldObject, Generic[_W, _V]):
+class MagicField(_FieldObject, Generic[_W, _V]):
     """
     Field class for magicgui construction.
 
@@ -73,28 +66,18 @@ class MagicField(Field, _FieldObject, Generic[_W, _V]):
 
     def __init__(
         self,
-        default: Any = MISSING,
+        default: Any = UNSET,
         constructor: Callable[..., Widget] | None = None,
         metadata: dict[str, Any] = {},
         name: str | None = None,
         record: bool = True,
     ):
-        if default is MISSING:
-            default = metadata.pop("value", MISSING)
+        if default is UNSET:
+            default = metadata.pop("value", UNSET)
 
         if "options" not in metadata:
             metadata = metadata.copy()
             metadata.update(options={})
-
-        super().__init__(
-            default=default,
-            default_factory=metadata.get("annotation", MISSING),
-            init=True,
-            repr=True,
-            hash=False,
-            compare=False,
-            metadata=metadata,
-        )
 
         if constructor is None:
 
@@ -103,6 +86,8 @@ class MagicField(Field, _FieldObject, Generic[_W, _V]):
 
             constructor = _create_widget
 
+        self.default = default
+        self.metadata = types.MappingProxyType(metadata)
         self._constructor = constructor
         self._callbacks: list[Callable] = []
         self._guis: dict[int, _M] = {}
@@ -114,10 +99,10 @@ class MagicField(Field, _FieldObject, Generic[_W, _V]):
         self._parent_class: type | None = None
 
     def __repr__(self):
-        return self.__class__.__name__.rstrip("Field") + super().__repr__()
+        attrs = ["default", "name", "record", "options"]
+        return f"{self.__class__.__name__}()"
 
     def __set_name__(self, owner: type, name: str) -> None:
-        super().__set_name__(owner, name)
         self._parent_class = owner
         if self.name is None:
             self.name = name
@@ -210,7 +195,7 @@ class MagicField(Field, _FieldObject, Generic[_W, _V]):
             if type(self.default) is bool or self.annotation is bool:
                 # we should not use "isinstance" or "issubclass" because subclass
                 # may be mapped to different widget by users.
-                value = False if self.default is MISSING else self.default
+                value = False if self.default is UNSET else self.default
                 action = Action(
                     checkable=True,
                     checked=value,
@@ -298,7 +283,7 @@ class MagicField(Field, _FieldObject, Generic[_W, _V]):
     def not_ready(self) -> bool:
         if "widget_type" in self.metadata:
             return False
-        return self.default is MISSING and self.default_factory is MISSING
+        return self.default is UNSET and self.annotation is None
 
     def to_widget(self) -> _W:
         """
@@ -401,7 +386,7 @@ class MagicField(Field, _FieldObject, Generic[_W, _V]):
 
     @property
     def value(self) -> Any:
-        return UNSET if self.default is MISSING else self.default
+        return UNSET if self.default is UNSET else self.default
 
     @property
     def annotation(self):
@@ -546,7 +531,7 @@ def field(
 
 
 def field(
-    obj: Any = MISSING,
+    obj: Any = UNSET,
     *,
     name: str | None = None,
     widget_type: str | type[WidgetProtocol] | None = None,
@@ -561,7 +546,7 @@ def field(
 
     Parameters
     ----------
-    obj : Any, default is MISSING
+    obj : Any, default is UNSET
         Reference to determine what type of widget will be created. If Widget subclass is given,
         it will be used as is. If other type of class is given, it will used as type annotation.
         If an object (not type) is given, it will be assumed to be the default value.
@@ -642,7 +627,7 @@ def vfield(
 
 
 def vfield(
-    obj: Any = MISSING,
+    obj: Any = UNSET,
     *,
     name: str | None = None,
     widget_type: str | type[WidgetProtocol] | None = None,
@@ -662,7 +647,7 @@ def vfield(
 
     Parameters
     ----------
-    obj : Any, default is MISSING
+    obj : Any, default is UNSET
         Reference to determine what type of widget will be created. If Widget subclass is given,
         it will be used as is. If other type of class is given, it will used as type annotation.
         If an object (not type) is given, it will be assumed to be the default value.
@@ -745,7 +730,7 @@ def _get_field(
             if "annotation" not in metadata:
                 metadata.update(annotation=obj)
             f = field_class(**kwargs)
-    elif obj is MISSING:
+    elif obj is UNSET:
         f = field_class(**kwargs)
     else:
         f = field_class(default=obj, **kwargs)
