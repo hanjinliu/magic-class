@@ -527,3 +527,41 @@ def test_widget_property():
     x.a = 1
     assert x.result == 1
     assert y.result is None
+
+def test_tooltip():
+    @magicclass
+    class A:
+        """
+        Test class.
+
+        Attributes
+        ----------
+        a : SpinBox
+            Parameter-a.
+        b : str
+            Parameter-b.
+        """
+        a = field(int)
+        b = vfield(str)
+
+    ui = A()
+    assert ui.a.tooltip == "Parameter-a."
+    assert ui["b"].tooltip == "Parameter-b."
+
+    class B(HasFields):
+        """
+        Test class.
+
+        Attributes
+        ----------
+        a : SpinBox
+            Parameter-a.
+        b : str
+            Parameter-b.
+        """
+        a = field(int)
+        b = vfield(str)
+
+    ui = B()
+    assert ui.widgets.a.tooltip == "Parameter-a."
+    assert ui.widgets.b.tooltip == "Parameter-b."

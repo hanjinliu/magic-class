@@ -1,4 +1,5 @@
 from __future__ import annotations
+from functools import cached_property
 import inspect
 from types import MethodType
 from typing import Any, TYPE_CHECKING, Callable, Iterable
@@ -45,15 +46,33 @@ def iter_members(cls: type, exclude_prefix: str = "__") -> Iterable[tuple[str, A
         processed.add(key)
 
 
-def extract_tooltip(obj: Any) -> str:
-    """Extract docstring for tooltip."""
-    doc = parse(obj.__doc__)
-    if doc.short_description is None:
-        return ""
-    elif doc.long_description is None:
-        return doc.short_description
-    else:
-        return doc.short_description + "\n" + doc.long_description
+class Tooltips:
+    def __init__(self, obj: Any):
+        self._doc = parse(obj.__doc__)
+
+    @property
+    def desc(self):
+        doc = self._doc
+        if doc.short_description is None:
+            return ""
+        elif doc.long_description is None:
+            return doc.short_description
+        else:
+            return doc.short_description + "\n" + doc.long_description
+
+    @cached_property
+    def parameters(self) -> dict[str, str]:
+        return dict(self._iter_args_of("param"))
+
+    @cached_property
+    def attributes(self) -> dict[str, str]:
+        return dict(self._iter_args_of("attribute"))
+
+    def _iter_args_of(self, type_name: str) -> Iterable[tuple[str, str]]:
+        for p in self._doc.params:
+            tp, name = p.args
+            if tp == type_name:
+                yield name, p.description
 
 
 def get_signature(func):

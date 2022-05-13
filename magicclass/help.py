@@ -22,7 +22,7 @@ from ._gui.class_gui import (
     ScrollableClassGui,
     ButtonClassGui,
 )
-from .utils import iter_members, extract_tooltip, get_signature
+from .utils import iter_members, Tooltips, get_signature
 
 if TYPE_CHECKING:
     import numpy as np
@@ -122,7 +122,7 @@ class _HelpWidget(QSplitter):
         self._mgui_image.value = img
 
         # set text
-        htmls = [f"<h1>{ui.name}</h1><p>{extract_tooltip(ui)}</p>"]
+        htmls = [f"<h1>{ui.name}</h1><p>{Tooltips(ui).desc}</p>"]
 
         if docs:
             htmls.append("<h2>Contents</h2>")
@@ -325,6 +325,6 @@ def get_keymap(ui: MagicTemplate | type[MagicTemplate]):
             kb = get_additional_option(attr, "keybinding", None)
             if kb:
                 keystr = as_shortcut(kb).toString()
-                keymap[keystr] = (name, extract_tooltip(attr))
+                keymap[keystr] = (name, Tooltips(attr).desc)
 
     return keymap

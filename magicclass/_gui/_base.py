@@ -56,7 +56,7 @@ from ._macro import GuiMacro
 from ..utils import (
     get_signature,
     iter_members,
-    extract_tooltip,
+    Tooltips,
     move_to_screen_center,
     argcount,
     is_instance_method,
@@ -601,7 +601,7 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
         func.__signature__ = obj_sig
 
         # Prepare a button or action
-        widget.tooltip = extract_tooltip(func)
+        widget.tooltip = Tooltips(func).desc
         widget._doc = func.__doc__
 
         # This block enables instance methods in "bind" or "choices" of ValueWidget.

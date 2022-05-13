@@ -5,7 +5,7 @@ from collections import defaultdict
 from qtpy.QtWidgets import QLabel, QMenu, QAction
 from qtpy.QtCore import Qt
 from ..utils import FreeWidget
-from ...utils import extract_tooltip
+from ...utils import Tooltips
 
 
 _Callback = Callable[[Any, int], Any]
@@ -113,7 +113,7 @@ class ContextMenuMixin:
             action = QAction(text, self)
             pfunc = partial_event(f, item.obj, self.row(item))
             action.triggered.connect(pfunc)
-            doc = extract_tooltip(f)
+            doc = Tooltips(f).desc
             if doc:
                 action.setToolTip(doc)
             menu.addAction(action)
