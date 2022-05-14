@@ -10,9 +10,10 @@ from vispy.visuals import (
 from vispy.visuals.filters import WireframeFilter
 from ._base import LayerItem
 
-from magicgui.widgets import ComboBox, FloatSlider
-from ...widgets import ColorEdit, FloatRangeSlider
-from ...fields import HasFields, widget_property
+from magicgui.widgets import FloatSlider
+from ...widgets import FloatRangeSlider
+from ...fields import HasFields, vfield
+from ...types import Color
 
 
 class Image(LayerItem, HasFields):
@@ -132,29 +133,14 @@ class Image(LayerItem, HasFields):
         self.widgets.iso_threshold.min = self._lims[0]
         self.widgets.iso_threshold.max = self._lims[1]
 
-    @widget_property
-    def rendering(self):
-        return ComboBox(choices=Image.RENDERINGS, value="mip")
-
-    @widget_property
-    def contrast_limits(self):
-        return FloatRangeSlider(min=self._lims[0], max=self._lims[1])
-
-    @widget_property
-    def iso_threshold(self):
-        return FloatSlider(min=self._lims[0], max=self._lims[1])
-
-    @widget_property
-    def gamma(self):
-        return FloatSlider(min=0.0, max=1.0)
-
-    @widget_property
-    def attenuation(self):
-        return FloatSlider(min=0.0, max=1.0)
-
-    @widget_property
-    def interpolation(self):
-        return ComboBox(choices=Image.INTERPOLATIONS)
+    # fmt: off
+    rendering = vfield(str, options={"choices": RENDERINGS, "value": "mip"})
+    contrast_limits = vfield(tuple[float, float], widget_type=FloatRangeSlider)
+    iso_threshold = vfield(float, widget_type=FloatSlider)
+    gamma = vfield(float, widget_type=FloatSlider, options={"min": 0., "max": 1.})
+    attenuation = vfield(float, widget_type=FloatSlider, options={"min": 0., "max": 1.})
+    interpolation = vfield(str, options={"choices": INTERPOLATIONS})
+    # fmt: on
 
     @contrast_limits.connect
     def _on_constrast_limits_change(self, value):
@@ -299,30 +285,16 @@ class IsoSurface(_SurfaceBase, HasFields):
         self._visual.set_data(value)
         self._data = value
         self._visual.update()
+        self._cache_lims()
 
-    @widget_property
-    def contrast_limits(self):
-        return FloatRangeSlider(min=self._lims[0], max=self._lims[1])
-
-    @widget_property
-    def shading(self):
-        return ComboBox(choices=["none", "float", "smooth"], value="smooth")
-
-    @widget_property
-    def iso_threshold(self):
-        return FloatSlider(min=self._lims[0], max=self._lims[1])
-
-    @widget_property
-    def face_color(self):
-        return ColorEdit()
-
-    @widget_property
-    def edge_color(self) -> ColorEdit:
-        return ColorEdit()
-
-    @widget_property
-    def edge_width(self) -> FloatSlider:
-        return FloatSlider(min=0.5, max=10.0, value=1.0)
+    # fmt: off
+    contrast_limits = vfield(tuple[float, float], widget_type=FloatRangeSlider)
+    shading = vfield(str, options={"choices": ["none", "float", "smooth"], "value": "smooth"})
+    iso_threshold = vfield(float, widget_type=FloatSlider)
+    face_color = vfield(Color)
+    edge_color = vfield(Color)
+    edge_width = vfield(float, widget_type=FloatSlider, options={"min": 0.5, "max": 10.0, "value": 1.0})
+    # fmt: on
 
     @contrast_limits.connect
     def _on_contrast_limits_change(self, value):
@@ -376,21 +348,14 @@ class Surface(_SurfaceBase, HasFields):
         self._data = (verts, faces, vals)
         self._visual.update()
 
-    @widget_property
-    def shading(self):
-        return ComboBox(choices=["none", "float", "smooth"], value="smooth")
-
-    @widget_property
-    def face_color(self):
-        return ColorEdit()
-
-    @widget_property
-    def edge_color(self) -> ColorEdit:
-        return ColorEdit()
-
-    @widget_property
-    def edge_width(self) -> FloatSlider:
-        return FloatSlider(min=0.5, max=10.0, value=1.0)
+    shading = vfield(
+        str, options={"choices": ["none", "float", "smooth"], "value": "smooth"}
+    )
+    face_color = vfield(Color)
+    edge_color = vfield(Color)
+    edge_width = vfield(
+        float, widget_type=FloatSlider, options={"min": 0.5, "max": 10.0, "value": 1.0}
+    )
 
     shading.connect(_SurfaceBase._on_shading_change)
     face_color.connect(_SurfaceBase._on_face_color_change)
