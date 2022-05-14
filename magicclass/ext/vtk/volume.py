@@ -1,73 +1,17 @@
 from __future__ import annotations
 from typing import Sequence
-import weakref
+import vtk
 import vedo
+from vedo.utils import numpy2vtk
 import numpy as np
-from functools import cached_property
-from psygnal import Signal, SignalGroup
-from magicgui.widgets import FloatSlider, ComboBox
+from magicgui.widgets import FloatSlider
 
 from .components import VtkProperty, VtkComponent
 from .const import Mode, Rendering
 
-from ...widgets import ColorEdit
-from ...fields import HasFields, widget_property, vfield
+from ...fields import HasFields, vfield
+from ...widgets import FloatRangeSlider
 from ...types import Color
-
-
-class VolumeSignalGroup(SignalGroup):
-    """Signal group for a volume."""
-
-    color = Signal(tuple)
-    mode = Signal(int)
-    rendering = Signal(int)
-    iso_threshold = Signal(float)
-
-
-class WidgetGroup:
-    def __init__(self, vol: Volume):
-        self._vol = weakref.ref(vol)
-
-    @property
-    def volume(self) -> Volume:
-        return self._vol()
-
-    @cached_property
-    def color(self) -> ColorEdit:
-        coloredit = ColorEdit(value=self.volume.color, name="color")
-        coloredit.changed.connect_setattr(self.volume, "color")
-        self.volume.events.rendering.connect_setattr(coloredit, "value")
-        return coloredit
-
-    @cached_property
-    def mode(self) -> ComboBox:
-        cbox = ComboBox(choices=Mode, value=Mode(self.volume.mode), name="mode")
-
-        @cbox.changed.connect
-        def _(v):
-            self.volume.mode = Mode(v)
-
-        self.volume.events.mode.connect_setattr(cbox, "value")
-        return cbox
-
-    @cached_property
-    def rendering(self) -> ComboBox:
-        cbox = ComboBox(
-            choices=Rendering, value=self.volume.rendering, name="rendering"
-        )
-        cbox.changed.connect_setattr(self.volume, "rendering")
-        self.volume.events.rendering.connect_setattr(cbox, "value")
-        return cbox
-
-    @cached_property
-    def iso_threshold(self) -> FloatSlider:
-        vmin, vmax = self.volume.contrast_limits
-        sl = FloatSlider(
-            name="iso threshold", min=vmin, max=vmax, value=self.volume.iso_threshold
-        )
-        sl.changed.connect_setattr(self.volume, "iso_threshold")
-        self.volume.events.iso_threshold.connect_setattr(sl, "value")
-        return sl
 
 
 def split_rgba(col: str | Sequence[float]) -> tuple[str | Sequence[float], float]:
@@ -96,16 +40,13 @@ class Volume(VtkComponent, HasFields, base=vedo.Volume):
 
     def __init__(self, data, _parent):
         super().__init__(data, _parent=_parent)
-        self._data = data
         self._current_obj = self._obj
-        self._color = None
-        self._alpha = None
-        self._rendering = Rendering.composite
-        self._mode = Mode.volume
-        self._contrast_limits = (self._data.min(), self._data.max())
-        self._iso_threshold = np.mean(self._contrast_limits)
+        self.rendering = Rendering.composite
+        self.mode = Mode.volume
         self.color = np.array([0.7, 0.7, 0.7])
-        self.widgets = WidgetGroup(self)
+        self.data = data
+        self.contrast_limits = self._lims
+        self.iso_threshold = np.mean(self.contrast_limits)
 
     @property
     def data(self) -> np.ndarray:
@@ -113,9 +54,23 @@ class Volume(VtkComponent, HasFields, base=vedo.Volume):
 
     @data.setter
     def data(self, v):
-        self._obj._update(v)
+        self._data = np.asarray(v)
+        self._cache_lims()
+        vimg = vtk.vtkImageData()
+        varr = numpy2vtk(self._data.ravel(order="F"), dtype=float)
+        varr.SetName("input_scalars")
+        vimg.SetDimensions(self._data.shape)
+        vimg.GetPointData().AddArray(varr)
+        vimg.GetPointData().SetActiveScalars(varr.GetName())
+        self._obj._update(vimg)
         self._update_actor()
-        self._data = v
+
+    def _cache_lims(self):
+        self._lims = self._data.min(), self._data.max()
+        self.widgets.contrast_limits.min = self._lims[0]
+        self.widgets.contrast_limits.max = self._lims[1]
+        self.widgets.iso_threshold.min = self._lims[0]
+        self.widgets.iso_threshold.max = self._lims[1]
 
     # fmt: off
     shade: VtkProperty[Volume, np.ndarray] = VtkProperty(vtk_fname="Shade", converter=bool, doc="Turn on/off shading.")  # noqa
@@ -126,9 +81,10 @@ class Volume(VtkComponent, HasFields, base=vedo.Volume):
     mode = vfield(Mode.volume)
     rendering = vfield(Rendering.mip)
     iso_threshold = vfield(float, widget_type=FloatSlider)
+    contrast_limits = vfield(tuple[float, float], widget_type=FloatRangeSlider)
 
     @color.connect
-    def color(self, col):
+    def _on_color_change(self, col):
         rgb, alpha = split_rgba(col)
         vmin, vmax = self.contrast_limits
         self._obj.color(rgb, vmin=vmin, vmax=vmax)
@@ -136,37 +92,42 @@ class Volume(VtkComponent, HasFields, base=vedo.Volume):
         self._update_actor()
 
     @rendering.connect
-    def _on_rendering_change(self, v):
-        r: Rendering = getattr(Rendering, v)
-        self._obj.mode(r.value)
+    def _on_rendering_change(self, v: Rendering):
+        self._obj.mode(v.value)
         self._update_actor()
 
     @iso_threshold.connect
-    def iso_threshold(self, v):
-        self._iso_threshold = float(v)
-        if self._mode in (Mode.iso, Mode.wireframe):
+    def _on_iso_threshold_change(self, v):
+        if self.mode in (Mode.iso, Mode.wireframe):
             self._update_actor()
-        self.events.iso_threshold.emit(v)
+
+    @mode.connect
+    def _on_mode_change(self, v):
+        self._update_actor()
+
+    @contrast_limits.connect
+    def _on_contrast_limits_change(self, v):
+        self._update_actor()
 
     def _update_actor(self):
-        vmin, vmax = self._contrast_limits
-        if self._mode == Mode.volume:
-            actor = self._obj.color(self.color, vmin=vmin, vmax=vmax)
-        elif self._mode == Mode.mesh:
+        vmin, vmax = self.contrast_limits
+        if self.mode == Mode.volume:
+            actor = self._obj.color(self.color[:3], vmin=vmin, vmax=vmax)
+        elif self.mode == Mode.mesh:
             actor = self._obj.tomesh()
-        elif self._mode == Mode.iso:
-            actor = self._obj.isosurface(threshold=self._iso_threshold).color(
-                self._color
+        elif self.mode == Mode.iso:
+            actor = self._obj.isosurface(threshold=self.iso_threshold).color(
+                self.color[:3]
             )
-        elif self._mode == Mode.wireframe:
+        elif self.mode == Mode.wireframe:
             actor = (
-                self._obj.isosurface(threshold=self._iso_threshold)
-                .color(self._color)
+                self._obj.isosurface(threshold=self.iso_threshold)
+                .color(self.color[:3])
                 .wireframe()
             )
-        elif self._mode == Mode.lego:
+        elif self.mode == Mode.lego:
             actor = self._obj.legosurface(vmin=vmin, vmax=vmax).color(
-                self._color, vmin=vmin, vmax=vmax
+                self.color[:3], vmin=vmin, vmax=vmax
             )
         else:
             raise RuntimeError()
@@ -177,27 +138,3 @@ class Volume(VtkComponent, HasFields, base=vedo.Volume):
         plotter.window.Render()
         self._current_obj = actor
         return None
-
-    @property
-    def mode(self) -> str:
-        """Projection mode of volume."""
-        return self._mode.value
-
-    @mode.setter
-    def mode(self, v):
-        self._mode = Mode(v)
-        self._update_actor()
-        self.events.mode.emit(self._mode.value)
-
-    @property
-    def contrast_limits(self) -> tuple[float, float]:
-        """Contrast limits of volume."""
-        return self._contrast_limits
-
-    @contrast_limits.setter
-    def contrast_limits(self, v):
-        x0, x1 = v
-        self._contrast_limits = (x0, x1)
-
-        if self._mode == Mode.lego:
-            self._update_actor()
