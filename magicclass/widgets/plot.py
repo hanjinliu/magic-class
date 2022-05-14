@@ -9,6 +9,7 @@ from typing_extensions import ParamSpec
 from .utils import FreeWidget
 
 if TYPE_CHECKING:
+    import matplotlib.pyplot as plt
     from matplotlib.axes import Axes
     from matplotlib.lines import Line2D
     from matplotlib.collections import PathCollection
@@ -17,30 +18,44 @@ if TYPE_CHECKING:
     from matplotlib.legend import Legend
     from numpy.typing import ArrayLike
 
-try:
-    import matplotlib as mpl
-    import matplotlib.pyplot as plt
-    from ._mpl_canvas import InteractiveFigureCanvas
-
     _P = ParamSpec("_P")
     _R = TypeVar("_R")
 
     def _inject_mpl_docs(f: Callable[_P, _R]) -> Callable[_P, _R]:
         plt_func = getattr(plt, f.__name__)
-        f.__annotations__ = {"self": "Figure"}.update(plt_func.__annotations__)
         plt_doc = getattr(plt_func, "__doc__", "")
         if plt_doc:
-            f.__doc__ = f"Copy of ``plt.{f.__name__}()``. Original docstring is ...\n\n{plt_doc}"
+            f.__doc__ = (
+                f"Copy of ``plt.{f.__name__}()``. Original docstring "
+                f"is ...\n\n{plt_doc}"
+            )
         return f
 
-except ImportError as e:
+    import seaborn as sns
+
+    def _inject_sns_docs(f: Callable[_P, _R]) -> Callable[_P, _R]:
+        sns_func = getattr(sns, f.__name__)
+        sns_doc = getattr(sns_func, "__doc__", "")
+        if sns_doc:
+            f.__doc__ = (
+                f"Copy of ``sns.{f.__name__}()``. Original docstring "
+                f"is ...\n\n{sns_doc}"
+            )
+        return f
+
+else:
 
     def _inject_mpl_docs(f: Callable[_P, _R]) -> Callable[_P, _R]:
+        return f
+
+    def _inject_sns_docs(f: Callable[_P, _R]) -> Callable[_P, _R]:
         return f
 
 
 class Figure(FreeWidget):
     """A matplotlib figure canvas."""
+
+    _docstring_initialized = False
 
     def __init__(
         self,
@@ -50,6 +65,10 @@ class Figure(FreeWidget):
         style=None,
         **kwargs,
     ):
+        import matplotlib as mpl
+        import matplotlib.pyplot as plt
+        from ._mpl_canvas import InteractiveFigureCanvas
+
         backend = mpl.get_backend()
         try:
             mpl.use("Agg")
@@ -67,6 +86,27 @@ class Figure(FreeWidget):
         self.set_widget(canvas)
         self.figure = fig
         self.min_height = 40
+        self._inject_docs()
+
+    def _inject_docs(self):
+        if Figure._docstring_initialized:
+            return
+
+        import matplotlib.pyplot as plt
+
+        for k, f in Figure.__dict__.items():
+            if k.startswith("_") or isinstance(f, property):
+                continue
+            plt_func = getattr(plt, k, None)
+            if plt_func is None:
+                continue
+            plt_doc = getattr(plt_func, "__doc__", "")
+            if plt_doc:
+                f.__doc__ = (
+                    f"Copy of ``plt.{k}()``. Original docstring " f"is ...\n\n{plt_doc}"
+                )
+
+        Figure._docstring_initialized = True
 
     @_inject_mpl_docs
     def draw(self):
@@ -301,7 +341,14 @@ class Figure(FreeWidget):
 
 
 class SeabornFigure(Figure):
-    """A matplotlib figure canvas implemented with seaborn plot functions."""
+    """
+    A matplotlib figure canvas implemented with seaborn plot functions.
+
+    Not all the seaborn plot functions are supported since some of them are
+    figure-level functions and incompatible with specifying axes.
+    """
+
+    _docstring_initialized = False
 
     def __init__(
         self,
@@ -311,31 +358,85 @@ class SeabornFigure(Figure):
         style=None,
         **kwargs,
     ):
-        super().__init__(**locals())
+        super().__init__(
+            nrows=nrows, ncols=ncols, figsize=figsize, style=style, **kwargs
+        )
         import seaborn as sns
 
         self._seaborn = sns
 
-    def swarmplot(self, **kwargs):
-        return self._seaborn.swarmplot(ax=self.ax, **kwargs)
+    def _inject_docs(self):
+        super()._inject_docs()
 
-    def barplot(self, **kwargs):
-        return self._seaborn.barplot(ax=self.ax, **kwargs)
+        if SeabornFigure._docstring_initialized:
+            return
 
-    def boxplot(self, **kwargs):
-        return self._seaborn.boxplot(ax=self.ax, **kwargs)
+        import seaborn as sns
 
-    def boxenplot(self, **kwargs):
-        return self._seaborn.boxenplot(ax=self.ax, **kwargs)
+        for k, f in SeabornFigure.__dict__.items():
+            if k.startswith("_") or isinstance(f, property):
+                continue
+            sns_func = getattr(sns, k, None)
+            if sns_func is None:
+                continue
+            sns_doc = getattr(sns_func, "__doc__", "")
+            if sns_doc:
+                f.__doc__ = (
+                    f"Copy of ``sns.{k}()``. Original docstring " f"is ...\n\n{sns_doc}"
+                )
 
-    def violinplot(self, **kwargs):
-        return self._seaborn.violinplot(ax=self.ax, **kwargs)
+        SeabornFigure._docstring_initialized = True
 
-    def pairplot(self, **kwargs):
-        return self._seaborn.pairplot(ax=self.ax, **kwargs)
+    @_inject_sns_docs
+    def swarmplot(self, *args, **kwargs) -> Axes:
+        out = self._seaborn.swarmplot(ax=self.ax, *args, **kwargs)
+        self.draw()
+        return out
 
-    def barplot(self, **kwargs):
-        return self._seaborn.barplot(ax=self.ax, **kwargs)
+    @_inject_sns_docs
+    def barplot(self, *args, **kwargs) -> Axes:
+        out = self._seaborn.barplot(ax=self.ax, *args, **kwargs)
+        self.draw()
+        return out
 
-    def pointplot(self, **kwargs):
-        return self._seaborn.pointplot(ax=self.ax, **kwargs)
+    @_inject_sns_docs
+    def boxplot(self, *args, **kwargs) -> Axes:
+        out = self._seaborn.boxplot(ax=self.ax, *args, **kwargs)
+        self.draw()
+        return out
+
+    @_inject_sns_docs
+    def boxenplot(self, *args, **kwargs) -> Axes:
+        out = self._seaborn.boxenplot(ax=self.ax, *args, **kwargs)
+        self.draw()
+        return out
+
+    @_inject_sns_docs
+    def violinplot(self, *args, **kwargs) -> Axes:
+        out = self._seaborn.violinplot(ax=self.ax, *args, **kwargs)
+        self.draw()
+        return out
+
+    @_inject_sns_docs
+    def pointplot(self, *args, **kwargs) -> Axes:
+        out = self._seaborn.pointplot(ax=self.ax, *args, **kwargs)
+        self.draw()
+        return out
+
+    @_inject_sns_docs
+    def histplot(self, *args, **kwargs) -> Axes:
+        out = self._seaborn.histplot(ax=self.ax, *args, **kwargs)
+        self.draw()
+        return out
+
+    @_inject_sns_docs
+    def kdeplot(self, *args, **kwargs) -> Axes:
+        out = self._seaborn.kdeplot(ax=self.ax, *args, **kwargs)
+        self.draw()
+        return out
+
+    @_inject_sns_docs
+    def rugplot(self, *args, **kwargs) -> Axes:
+        out = self._seaborn.rugplot(ax=self.ax, *args, **kwargs)
+        self.draw()
+        return out
