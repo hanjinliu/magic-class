@@ -1,3 +1,6 @@
+[![Downloads](https://pepy.tech/badge/magic-class/month)](https://pepy.tech/project/magic-class)
+[![PyPI version](https://badge.fury.io/py/magic-class.svg)](https://badge.fury.io/py/magic-class)
+
 # magic-class
 
 ![](Figs/Example.gif)
