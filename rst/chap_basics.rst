@@ -10,3 +10,4 @@ Here's some basics for widget creation in ``magic-class``.
    options
    nest
    use_field
+   tooltips
