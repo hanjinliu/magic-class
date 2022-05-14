@@ -300,7 +300,10 @@ class MagicField(_FieldObject, Generic[_W, _V]):
 
     def not_ready(self) -> bool:
         return (
-            self.value is UNSET and self.annotation is None and self.widget_type is None
+            self.value is UNSET
+            and self.annotation is None
+            and self.widget_type is None
+            and "choices" not in self.options
         )
 
     def to_widget(self) -> _W:

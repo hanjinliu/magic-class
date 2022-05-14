@@ -92,7 +92,7 @@ def test_field():
             return self._a
 
         a = field(Select, options={"choices": _get_choices})
-        b = vfield(ComboBox, options={"choices": _get_choices})
+        b = vfield(options={"choices": _get_choices})
         c = field(Select, options={"choices": [0, 1]})
 
     ui = A()
