@@ -565,3 +565,25 @@ def test_tooltip():
     ui = B()
     assert ui.widgets.a.tooltip == "Parameter-a."
     assert ui.widgets.b.tooltip == "Parameter-b."
+
+def test_get_set_hooks():
+    class A:
+        offset = 1
+        suffix = "-0"
+
+        x = vfield(int)
+        y = vfield(str)
+
+        @x.pre_set_hook
+        def _x_set(self, value):
+            return value + self.offset
+
+        @y.post_get_hook
+        def _y_get(self, value):
+            return value + self.suffix
+
+    a = A()
+    a.x = 10
+    assert a.x == 11
+    a.y = "Y"
+    assert a.y == "Y-0"

@@ -69,7 +69,7 @@ class MagicField(_FieldObject, Generic[_W, _V]):
         name: str | None = None,
         label: str | None = None,
         annotation: Any = None,
-        widget_type=None,
+        widget_type: type | str | None = None,
         options: dict[str, Any] | None = None,
         record: bool = True,
         constructor: Callable[..., Widget] | None = None,
@@ -97,8 +97,8 @@ class MagicField(_FieldObject, Generic[_W, _V]):
         self.name = name
         self.label = label
         self.annotation = annotation
-        self.widget_type = widget_type
         self.options = options
+        self._widget_type = widget_type
         self._constructor = constructor
         self._callbacks: list[Callable] = []
         self._guis: dict[int, _M] = {}
@@ -414,11 +414,34 @@ class MagicField(_FieldObject, Generic[_W, _V]):
     def tooltip(self, value):
         self.options.update(tooltip=value)
 
+    @property
+    def enabled(self) -> bool:
+        """Get interactivity of returned widgets."""
+        return self.options.get("enabled", True)
+
+    @enabled.setter
+    def enabled(self, value: bool):
+        self.options.update(enabled=value)
+
+    @property
+    def visible(self) -> bool:
+        """Get visibility of returned widgets."""
+        return self.options.get("visible", True)
+
+    @visible.setter
+    def visible(self, value: bool):
+        self.options.update(visible=value)
+
+    @property
+    def widget_type(self) -> type[Widget]:
+        """Return type of the resulting widget."""
+        return self._widget_type
+
 
 class MagicValueField(MagicField[_W, _V]):
     """
-    Field class for magicgui construction. Unlike MagicField, object of this class always
-    returns value itself.
+    Field class for magicgui construction. Unlike MagicField, object of this class
+    always returns value itself.
     """
 
     @overload
@@ -432,12 +455,72 @@ class MagicValueField(MagicField[_W, _V]):
     def __get__(self, obj, objtype=None):
         if obj is None:
             return self
-        return self.get_widget(obj).value
+        return self._postgethook(obj, self.get_widget(obj).value)
 
     def __set__(self, obj: _M, value: _V) -> None:
         if obj is None:
             raise AttributeError(f"Cannot set {self.__class__.__name__}.")
-        self.get_widget(obj).value = value
+        self.get_widget(obj).value = self._presethook(obj, value)
+
+    def post_get_hook(self, hook: Callable[[Any, _V], Any] | Callable[[_V], Any]):
+        """
+        Define a post-get hook for the field.
+
+        If a post-get hook is set, value will always be converted before returned.
+        Following example shows how to convert ``x`` to a float every time it gets
+        accessed.
+
+        >>> class A:
+        >>>     x = vfield(int)
+        >>>     @x.post_get_hook
+        >>>     def _x_get(self, value):
+        >>>         return float(int)
+
+        Parameters
+        ----------
+        hook : callable
+            Post-get hook function.
+        """
+        if not callable(hook):
+            raise TypeError("Post-get hook must be callable.")
+        if is_instance_method(hook):
+            self._postgethook = hook
+        else:
+            self._postgethook = lambda _, x: hook(x)
+        return hook
+
+    def pre_set_hook(self, hook: Callable[[Any, Any], _V] | Callable[[Any], _V]):
+        """
+        Define a pre-set hook for the field.
+
+        If a pre-set hook is set, value will always be converted before being set
+        to the widget value. Following example shows how to convert ``x`` to a
+        string before setting the value
+
+        >>> class A:
+        >>>     x = vfield(str)
+        >>>     @x.pre_set_hook
+        >>>     def _x_set(self, value):
+        >>>         return str(value)
+
+        Parameters
+        ----------
+        hook : callable
+            Pre-set hook function.
+        """
+        if not callable(hook):
+            raise TypeError("Pre-set hook must be callable.")
+        if is_instance_method(hook):
+            self._presethook = hook
+        else:
+            self._presethook = lambda _, x: hook(x)
+        return hook
+
+    def _postgethook(self, obj, value):
+        return value
+
+    def _presethook(self, obj, value):
+        return value
 
 
 # magicgui symple types
@@ -556,17 +639,21 @@ def field(
     Parameters
     ----------
     obj : Any, default is UNSET
-        Reference to determine what type of widget will be created. If Widget subclass is given,
-        it will be used as is. If other type of class is given, it will used as type annotation.
-        If an object (not type) is given, it will be assumed to be the default value.
-    name : str, default is ""
+        Reference to determine what type of widget will be created. If Widget
+        subclass is given, it will be used as is. If other type of class is given,
+        it will used as type annotation. If an object (not type) is given, it will
+        be assumed to be the default value.
+    name : str, optional
         Name of the widget.
+    label : str, optional
+        Label of the widget.
     widget_type : str, optional
         Widget type. This argument will be sent to ``create_widget`` function.
     options : WidgetOptions, optional
-        Widget options. This parameter will always be used in ``widget(**options)`` form.
+        Widget options. This parameter will be passed to the ``options`` keyword
+        argument of ``create_widget``.
     record : bool, default is True
-        Record value changes as macro.
+        A magic-class specific parameter. If true, record value changes as macro.
 
     Returns
     -------
@@ -662,16 +749,21 @@ def vfield(
     Parameters
     ----------
     obj : Any, default is UNSET
-        Reference to determine what type of widget will be created. If Widget subclass is given,
-        it will be used as is. If other type of class is given, it will used as type annotation.
-        If an object (not type) is given, it will be assumed to be the default value.
-    name : str, default is ""
+        Reference to determine what type of widget will be created. If Widget
+        subclass is given, it will be used as is. If other type of class is given,
+        it will used as type annotation. If an object (not type) is given, it will
+        be assumed to be the default value.
+    name : str, optional
         Name of the widget.
+    label : str, optional
+        Label of the widget.
     widget_type : str, optional
         Widget type. This argument will be sent to ``create_widget`` function.
     options : WidgetOptions, optional
+        Widget options. This parameter will be passed to the ``options`` keyword
+        argument of ``create_widget``.
     record : bool, default is True
-        Record value changes as macro.
+        A magic-class specific parameter. If true, record value changes as macro.
 
     Returns
     -------
