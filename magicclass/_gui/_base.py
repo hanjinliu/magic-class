@@ -210,7 +210,7 @@ def check_override(cls: type):
         )
 
 
-_T = TypeVar("_T")
+_T = TypeVar("_T", bound="MagicTemplate")
 _F = TypeVar("_F", bound=Callable)
 
 

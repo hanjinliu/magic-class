@@ -4,7 +4,8 @@
 # reproducible macro recording, magicclass also provides helper function "Bound".
 # Bound[x] is equivalent to Annotated[X, {"bind": x}]. Type "X" is determined from x.
 
-from magicclass import magicclass, Bound, field, set_options
+from magicclass import magicclass, field, set_options
+from magicclass.types import Bound
 from typing_extensions import Annotated
 import numpy as np
 
