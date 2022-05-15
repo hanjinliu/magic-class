@@ -124,8 +124,6 @@ class ToolBarGui(ContainerLikeGui):
 
             try:
                 if isinstance(attr, type):
-                    if not issubclass(attr, BaseGui):
-                        continue
                     # Nested magic-menu
                     if cls.__name__ not in attr.__qualname__.split("."):
                         attr = copy_class(attr)

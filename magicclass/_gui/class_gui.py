@@ -123,8 +123,6 @@ class ClassGuiBase(BaseGui):
 
             try:
                 if isinstance(attr, type):
-                    if not issubclass(attr, BaseGui):
-                        continue
                     # Nested magic-class
                     if cls.__name__ not in attr.__qualname__.split("."):
                         attr = copy_class(attr)
