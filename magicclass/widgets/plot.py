@@ -1,8 +1,10 @@
 from __future__ import annotations
+from functools import wraps
 from typing import (
     TYPE_CHECKING,
     Callable,
     TypeVar,
+    overload,
 )
 from typing_extensions import ParamSpec
 
@@ -32,6 +34,7 @@ if TYPE_CHECKING:
         return f
 
     import seaborn as sns
+    from seaborn.axisgrid import Grid
 
     def _inject_sns_docs(f: Callable[_P, _R]) -> Callable[_P, _R]:
         sns_func = getattr(sns, f.__name__)
@@ -57,6 +60,7 @@ class Figure(FreeWidget):
 
     _docstring_initialized = False
 
+    @overload
     def __init__(
         self,
         nrows: int = 1,
@@ -65,20 +69,43 @@ class Figure(FreeWidget):
         style=None,
         **kwargs,
     ):
-        import matplotlib as mpl
-        import matplotlib.pyplot as plt
-        from ._mpl_canvas import InteractiveFigureCanvas
+        ...
 
-        backend = mpl.get_backend()
-        try:
-            mpl.use("Agg")
-            if style is None:
-                fig, _ = plt.subplots(nrows, ncols, figsize=figsize)
-            else:
-                with plt.style.context(style):
+    @overload
+    def __init__(
+        self,
+        fig: Figure,
+        **kwargs,
+    ):
+        ...
+
+    def __init__(
+        self,
+        nrows=1,
+        ncols=1,
+        figsize=(4.0, 3.0),
+        style=None,
+        **kwargs,
+    ):
+
+        if isinstance(nrows, int):
+            import matplotlib as mpl
+            import matplotlib.pyplot as plt
+
+            backend = mpl.get_backend()
+            try:
+                mpl.use("Agg")
+                if style is None:
                     fig, _ = plt.subplots(nrows, ncols, figsize=figsize)
-        finally:
-            mpl.use(backend)
+                else:
+                    with plt.style.context(style):
+                        fig, _ = plt.subplots(nrows, ncols, figsize=figsize)
+            finally:
+                mpl.use(backend)
+        else:
+            fig = nrows
+
+        from ._mpl_canvas import InteractiveFigureCanvas
 
         canvas = InteractiveFigureCanvas(fig)
         self.canvas = canvas
@@ -86,7 +113,20 @@ class Figure(FreeWidget):
         self.set_widget(canvas)
         self.figure = fig
         self.min_height = 40
+        self.min_width = 40
         self._inject_docs()
+
+    def _reset_canvas(self, fig: Figure, draw: bool = True):
+        """Create an interactive figure canvas and add it to the widget."""
+        from ._mpl_canvas import InteractiveFigureCanvas
+
+        canvas = InteractiveFigureCanvas(fig)
+        if self.central_widget is not None:
+            self.remove_widget(self.canvas)
+        self.canvas = canvas
+        self.set_widget(canvas)
+        if draw:
+            self.draw()
 
     def _inject_docs(self):
         if Figure._docstring_initialized:
@@ -340,6 +380,29 @@ class Figure(FreeWidget):
         return None
 
 
+def _use_seaborn_grid(f):
+    """
+    Some seaborn plot functions will create a new figure.
+    This decorator provides a common way to update figure canvas in the widget.
+    """
+
+    @wraps(f)
+    def func(self: SeabornFigure, *args, **kwargs):
+        import matplotlib as mpl
+
+        backend = mpl.get_backend()
+        try:
+            mpl.use("Agg")
+            grid: Grid = f(self, *args, **kwargs)
+        finally:
+            mpl.use(backend)
+
+        self._reset_canvas(grid.figure)
+        return grid
+
+    return func
+
+
 class SeabornFigure(Figure):
     """
     A matplotlib figure canvas implemented with seaborn plot functions.
@@ -440,3 +503,24 @@ class SeabornFigure(Figure):
         out = self._seaborn.rugplot(ax=self.ax, *args, **kwargs)
         self.draw()
         return out
+
+    @_inject_sns_docs
+    def regplot(self, *args, **kwargs) -> Axes:
+        out = self._seaborn.regplot(ax=self.ax, *args, **kwargs)
+        self.draw()
+        return out
+
+    @_inject_sns_docs
+    @_use_seaborn_grid
+    def jointplot(self, *args, **kwargs) -> sns.JointGrid:
+        return self._seaborn.jointplot(*args, **kwargs)
+
+    @_inject_sns_docs
+    @_use_seaborn_grid
+    def lmplot(self, *args, **kwargs) -> sns.FacetGrid:
+        return self._seaborn.lmplot(*args, **kwargs)
+
+    @_inject_sns_docs
+    @_use_seaborn_grid
+    def pairplot(self, *args, **kwargs) -> sns.PairGrid:
+        return self._seaborn.pairplot(*args, **kwargs)
