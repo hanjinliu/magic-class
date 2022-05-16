@@ -17,7 +17,7 @@ from ...types import Color
 def split_rgba(col: str | Sequence[float]) -> tuple[str | Sequence[float], float]:
     if not isinstance(col, str):
         if len(col) == 3:
-            rgb, alpha = col, 1.0
+            rgb, alpha = col, 255
         else:
             rgb, alpha = col[:3], col[3]
     elif col.startswith("#"):
@@ -31,22 +31,23 @@ def split_rgba(col: str | Sequence[float]) -> tuple[str | Sequence[float], float
         else:
             raise ValueError(f"Informal color code: {col}.")
     else:
-        rgb, alpha = col, 1.0
-    return rgb, alpha
+        rgb, alpha = col, 255
+    return [int(c * 255) for c in rgb], alpha * 255
 
 
 class Volume(VtkComponent, base=vedo.Volume):
     _obj: vedo.Volume
 
     def __init__(self, data, _parent):
-        super().__init__(data, _parent=_parent)
+        super().__init__(data, _parent=_parent, _emit=False)
         self._current_obj = self._obj
         self.rendering = Rendering.composite
         self.mode = Mode.volume
         self.color = np.array([0.7, 0.7, 0.7])
         self.data = data
         self.contrast_limits = self._lims
-        self.iso_threshold = np.mean(self.contrast_limits)
+        self.iso_threshold = np.mean(self._lims)
+        self.widgets.emit_all()
 
     @property
     def data(self) -> np.ndarray:
@@ -77,17 +78,14 @@ class Volume(VtkComponent, base=vedo.Volume):
     rendering = vfield(Rendering.mip)
     iso_threshold = vfield(float, widget_type=FloatSlider)
     contrast_limits = vfield(tuple[float, float], widget_type=FloatRangeSlider)
-    shade = vfield(True)
-    jittering = vfield(False)
+    visible = vfield(True, name="visibility")
 
-    @shade.connect
-    def _on_shade_change(self, v: bool):
-        self._obj.shade(v)
-        self._update()
-
-    @jittering.connect
-    def _on_jittering_change(self, v: bool):
-        self._obj.jittering(v)
+    @visible.connect
+    def _on_visible_change(self, v: bool):
+        if v:
+            self._current_obj.on()
+        else:
+            self._current_obj.off()
         self._update()
 
     @color.connect
@@ -95,13 +93,13 @@ class Volume(VtkComponent, base=vedo.Volume):
         rgb, alpha = split_rgba(col)
         vmin, vmax = self.contrast_limits
         self._obj.color(rgb, vmin=vmin, vmax=vmax)
-        # self._obj.alpha(alpha)
-        self._update_actor()
+        self._obj.alpha([0, alpha])
+        self._update_cmap()
 
     @rendering.connect
     def _on_rendering_change(self, v: Rendering):
         self._obj.mode(v.value)
-        self._update_actor()
+        self._update_cmap()
 
     @iso_threshold.connect
     def _on_iso_threshold_change(self, v):
@@ -114,28 +112,42 @@ class Volume(VtkComponent, base=vedo.Volume):
 
     @contrast_limits.connect
     def _on_contrast_limits_change(self, v):
-        self._update_actor()
+        self._update_cmap()
+
+    def _update_cmap(self):
+        vmin, vmax = self.contrast_limits
+        rgb, alpha = split_rgba(self.color)
+        if self.mode == Mode.volume:
+            self._current_obj.color(
+                [[0, 0, 0], rgb],
+                alpha=[0, alpha],
+                vmin=vmin,
+                vmax=vmax,
+            )
+        else:
+            self._current_obj.color(
+                rgb,
+                alpha=alpha,
+            )
+        self._update()
 
     def _update_actor(self):
         vmin, vmax = self.contrast_limits
+        rgb, alpha = split_rgba(self.color)
         if self.mode == Mode.volume:
-            actor = self._obj.color(self.color[:3], vmin=vmin, vmax=vmax)
+            actor = self._obj
         elif self.mode == Mode.mesh:
             actor = self._obj.tomesh()
         elif self.mode == Mode.iso:
-            actor = self._obj.isosurface(threshold=self.iso_threshold).color(
-                self.color[:3]
-            )
+            actor = self._obj.isosurface(threshold=self.iso_threshold)
         elif self.mode == Mode.wireframe:
             actor = (
                 self._obj.isosurface(threshold=self.iso_threshold)
-                .color(self.color[:3])
+                .color(rgb, alpha=alpha)
                 .wireframe()
             )
         elif self.mode == Mode.lego:
-            actor = self._obj.legosurface(vmin=vmin, vmax=vmax).color(
-                self.color[:3], vmin=vmin, vmax=vmax
-            )
+            actor = self._obj.legosurface(vmin=vmin, vmax=vmax)
         else:
             raise RuntimeError()
 
@@ -144,4 +156,5 @@ class Volume(VtkComponent, base=vedo.Volume):
         plotter.add(actor)
         plotter.window.Render()
         self._current_obj = actor
+        self._update_cmap()
         return None

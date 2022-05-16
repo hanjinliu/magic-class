@@ -13,11 +13,15 @@ _VtkType = TypeVar("_VtkType", bound=vedo.BaseActor)
 class VtkComponent(HasFields):
     _vtk_type: type[_VtkType] | Callable[..., _VtkType]
 
-    def __init__(self, *args, _parent: vedo.Plotter = None, **kwargs):
+    def __init__(
+        self, *args, _parent: vedo.Plotter = None, _emit: bool = True, **kwargs
+    ):
         if self._vtk_type is None:
             raise TypeError("Base VTK type is unknown.")
         self._obj = self._vtk_type(*args, **kwargs)
         self._parent_ref = weakref.ref(_parent)
+        if _emit:
+            self.widgets.emit_all()
 
     @overload
     def __init_subclass__(cls, base: type[_VtkType] = None) -> None:  # noqa
@@ -30,7 +34,7 @@ class VtkComponent(HasFields):
     def __init_subclass__(cls, base=None) -> None:
         cls._vtk_type = base
 
-    visible = vfield(True)
+    visible = vfield(True, name="visibility")
 
     @visible.connect
     def _on_visible_change(self, v: bool):
@@ -38,6 +42,7 @@ class VtkComponent(HasFields):
             self._obj.on()
         else:
             self._obj.off()
+        self._update()
 
     def _update(self):
         self._parent_ref().window.Render()
@@ -47,10 +52,6 @@ class VtkComponent(HasFields):
 
 
 class Points(VtkComponent, base=vedo.Points):
-    def __init__(self, *args, _parent: vedo.Plotter = None, **kwargs):
-        super().__init__(*args, _parent=_parent, **kwargs)
-        self.widgets.emit_all()
-
     _obj: vedo.Points
     color = vfield(Color)
     size = vfield(float)
@@ -91,10 +92,6 @@ class Points(VtkComponent, base=vedo.Points):
 
 
 class Mesh(VtkComponent, base=vedo.Mesh):
-    def __init__(self, *args, _parent: vedo.Plotter = None, **kwargs):
-        super().__init__(*args, _parent=_parent, **kwargs)
-        self.widgets.emit_all()
-
     _obj: vedo.Mesh
 
     color = vfield(Color)
