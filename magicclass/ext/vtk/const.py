@@ -37,6 +37,9 @@ class Representation(StringEnum):
     wireframe = 1
     surface = 2
 
+    def __int__(self):
+        return self.value
+
 
 class AxesMode(StringEnum):
     none = 0

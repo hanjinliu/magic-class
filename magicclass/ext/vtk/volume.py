@@ -6,10 +6,10 @@ from vedo.utils import numpy2vtk
 import numpy as np
 from magicgui.widgets import FloatSlider
 
-from .components import VtkProperty, VtkComponent
+from .components import VtkComponent
 from .const import Mode, Rendering
 
-from ...fields import HasFields, vfield
+from ...fields import vfield
 from ...widgets import FloatRangeSlider
 from ...types import Color
 
@@ -35,7 +35,7 @@ def split_rgba(col: str | Sequence[float]) -> tuple[str | Sequence[float], float
     return rgb, alpha
 
 
-class Volume(VtkComponent, HasFields, base=vedo.Volume):
+class Volume(VtkComponent, base=vedo.Volume):
     _obj: vedo.Volume
 
     def __init__(self, data, _parent):
@@ -72,16 +72,23 @@ class Volume(VtkComponent, HasFields, base=vedo.Volume):
         self.widgets.iso_threshold.min = self._lims[0]
         self.widgets.iso_threshold.max = self._lims[1]
 
-    # fmt: off
-    shade: VtkProperty[Volume, np.ndarray] = VtkProperty(vtk_fname="Shade", converter=bool, doc="Turn on/off shading.")  # noqa
-    jittering: VtkProperty[Volume, bool] = VtkProperty("jittering", converter=bool, doc="Turn on/off jittering.")  # noqa
-    # fmt: on
-
     color = vfield(Color)
     mode = vfield(Mode.volume)
     rendering = vfield(Rendering.mip)
     iso_threshold = vfield(float, widget_type=FloatSlider)
     contrast_limits = vfield(tuple[float, float], widget_type=FloatRangeSlider)
+    shade = vfield(True)
+    jittering = vfield(False)
+
+    @shade.connect
+    def _on_shade_change(self, v: bool):
+        self._obj.shade(v)
+        self._update()
+
+    @jittering.connect
+    def _on_jittering_change(self, v: bool):
+        self._obj.jittering(v)
+        self._update()
 
     @color.connect
     def _on_color_change(self, col):

@@ -912,6 +912,10 @@ class _FieldGroupMeta(ABCMeta):
         cls: _FieldGroupMeta = type.__new__(fcls, name, bases, namespace, **kwds)
         _tooltips = Tooltips(cls)
         _fields: dict[str, MagicField] = {}
+        for base in cls.__mro__[1:-1]:
+            if type(base) is _FieldGroupMeta:
+                _fields.update(base._fields)
+
         for k, v in namespace.items():
             if isinstance(v, _FieldObject):
                 if k in _View._METHODS:
@@ -1130,10 +1134,25 @@ class WidgetView(_View):
         """Iterate widgets."""
         return self.iterwidgets()
 
-    def as_container(self, layout="vertical", labels=True, **kwargs) -> Container:
+    def as_container(
+        self,
+        layout: str = "vertical",
+        labels: bool = True,
+        keys: list[str] | None = None,
+        **kwargs,
+    ) -> Container:
         """Convert view into a Container widget."""
-        widgets = list(self)
+        if keys is None:
+            widgets = list(self)
+        else:
+            widgets = [getattr(self, name) for name in keys]
         return Container(layout=layout, widgets=widgets, labels=labels, **kwargs)
+
+    def emit_all(self) -> None:
+        """Emit all the signals with current value."""
+        for wdt, sig in zip(self.iterwidgets(), self.itersignals()):
+            if sig is not None:
+                sig.emit(wdt.value)
 
 
 class SignalView(_View):
