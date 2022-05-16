@@ -1,9 +1,13 @@
 from __future__ import annotations
 from qtpy.QtCore import Qt
 from qtpy.QtGui import QKeySequence
+from qtpy.QtWidgets import QShortcut
 from enum import Enum
-from typing import NewType, Union, Tuple
+from typing import Callable, NewType, Union, Tuple, TYPE_CHECKING
 import re
+
+if TYPE_CHECKING:
+    from qtpy.QtWidgets import QWidget
 
 QtKey = NewType("QtKey", int)
 QtModifier = NewType("QtModifier", int)
@@ -174,7 +178,7 @@ def strs2keycombo(*args: tuple[str | Key, ...]) -> KeyCombo:
 
 def as_shortcut(key_combo: tuple) -> QKeySequence:
     if not isinstance(key_combo, tuple):
-        raise TypeError("Unsupported key combo.")
+        raise TypeError(f"Unsupported key combo: {key_combo!r}.")
 
     key0 = key_combo[0]
     if len(key_combo) == 1 and isinstance(key0, str) and not hasattr(Key, key0.lower()):
@@ -182,3 +186,10 @@ def as_shortcut(key_combo: tuple) -> QKeySequence:
     else:
         qtkeycombo = strs2keycombo(*key_combo)
     return QKeySequence(sum(qtkeycombo))
+
+
+def register_shortcut(keys, parent: QWidget, target: Callable):
+    """Register a callback to a key-binding globally."""
+    shortcut = QShortcut(as_shortcut(keys), parent)
+    shortcut.activated.connect(target)
+    return None

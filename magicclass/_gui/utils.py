@@ -28,8 +28,10 @@ def set_context_menu(contextmenu: ContextMenuGui, parent: BaseGui) -> None:
 _C = TypeVar("_C", bound=type)
 
 
-def copy_class(cls: _C) -> _C:
-    return type(cls.__name__, cls.__bases__, dict(cls.__dict__))
+def copy_class(cls: _C, ns: type) -> _C:
+    out = type(cls.__name__, cls.__bases__, dict(cls.__dict__))
+    out.__qualname__ = f"{ns.__qualname__}.{out.__name__}"
+    return out
 
 
 class MagicClassConstructionError(Exception):

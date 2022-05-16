@@ -9,7 +9,7 @@ from magicgui.widgets._concrete import _LabeledWidget, ContainerWidget
 from macrokit import Symbol
 
 
-from .keybinding import as_shortcut
+from .keybinding import register_shortcut
 from .mgui_ext import PushButtonPlus
 from .toolbar import ToolBarGui, QtTabToolBar
 from .menu_gui import MenuGui, ContextMenuGui
@@ -125,8 +125,7 @@ class ClassGuiBase(BaseGui):
                 if isinstance(attr, type):
                     # Nested magic-class
                     if cls.__name__ not in attr.__qualname__.split("."):
-                        attr = copy_class(attr)
-                        attr.__qualname__ = f"{cls.__qualname__}.{attr.__name__}"
+                        attr = copy_class(attr, ns=cls)
                     widget = attr()
                     object.__setattr__(self, name, widget)
 
@@ -211,9 +210,7 @@ class ClassGuiBase(BaseGui):
                     _hist.append((name, type(attr), "ToolBarGui"))
 
                 elif isinstance(widget, (Widget, Callable)):
-                    if (not isinstance(widget, Widget)) and isinstance(
-                        widget, Callable
-                    ):
+                    if (not isinstance(widget, Widget)) and callable(widget):
                         # Methods or any callable objects, but FunctionGui is not included.
                         # NOTE: Here any custom callable objects could be given. Some callable
                         # objects can be incompatible (like "Signal" object in magicgui) but
@@ -223,12 +220,9 @@ class ClassGuiBase(BaseGui):
                         ):
                             keybinding = get_additional_option(attr, "keybinding", None)
                             if keybinding:
-                                from qtpy.QtWidgets import QShortcut
-
-                                shortcut = QShortcut(
-                                    as_shortcut(keybinding), self.native
+                                register_shortcut(
+                                    keys=keybinding, parent=self.native, target=widget
                                 )
-                                shortcut.activated.connect(widget)
                             continue
                         try:
                             widget = self._create_widget_from_method(widget)
