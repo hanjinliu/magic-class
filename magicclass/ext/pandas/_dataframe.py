@@ -3,11 +3,24 @@ from typing import Any
 import pandas as pd
 from pandas._typing import Axes, Dtype, Axis
 from magicgui.widgets import Table
+
 from ...fields import field
+
+Defaults = {
+    "read_only": True,
+}
 
 
 class WidgetSeries(pd.Series):
     _table = field(Table)
+
+    @property
+    def _constructor(self):
+        return self.__class__
+
+    @property
+    def _constructor_expanddim(self):
+        return WidgetDataFrame
 
     def __init__(
         self,
@@ -38,11 +51,13 @@ class WidgetSeries(pd.Series):
 
     @property
     def table(self) -> Table:
-        with self._table.changed.blocked():
-            self._table.value = {self.name: self.values}
-            self._table.row_headers = self.index
+        tab = self._table
+        with tab.changed.blocked():
+            tab.value = {self.name: self.values}
+            tab.row_headers = self.index
+        tab.read_only = Defaults["read_only"]
         self._table_initialized = True
-        return self._table
+        return tab
 
 
 class WidgetDataFrame(pd.DataFrame):
@@ -85,34 +100,32 @@ class WidgetDataFrame(pd.DataFrame):
 
     @property
     def table(self) -> Table:
-        with self._table.changed.blocked():
-            self._table.value = self
+        tab = self._table
+        with tab.changed.blocked():
+            tab.value = self
         self._table_initialized = True
-        return self._table
+        tab.read_only = Defaults["read_only"]
+        return tab
+
+    _dataframe_index = pd.DataFrame.index
+    _dataframe_columns = pd.DataFrame.columns
 
     @property
     def index(self) -> pd.Index:
-        """Return the index (row headers)."""
-        return super().index
+        return self._dataframe_index
 
     @index.setter
     def index(self, value) -> None:
-        super().index = value
+        self._dataframe_index = value
         if self._table_initialized:
             self._table.row_headers = value
 
     @property
     def columns(self) -> pd.Index:
-        """Return the columns (column headers)."""
-        return super().columns
+        return self._dataframe_columns
 
     @columns.setter
     def columns(self, value) -> None:
-        super().columns = value
+        self._dataframe_columns = value
         if self._table_initialized:
             self._table.column_headers = value
-
-
-def read_csv(path, *args, **kwargs):
-    df = pd.read_csv(path, *args, **kwargs)
-    return WidgetDataFrame(data=df)
