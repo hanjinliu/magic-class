@@ -755,7 +755,7 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
         """Iterate over all the child magic classes"""
         for child in self.__magicclass_children__:
             yield child
-            yield from child.__magicclass_children__
+            yield from child._iter_child_magicclasses()
 
 
 class BaseGui(MagicTemplate):
