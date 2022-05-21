@@ -263,3 +263,13 @@ def test_names():
     assert str(ui.macro[-1]) == "ui.MyWidget.f()"
     ui.Menu.menu1["m"].changed()
     assert str(ui.macro[-1]) == "ui.Menu.menu1.m()"
+
+def test_default_init():
+    @magicclass
+    class A:
+        pass
+
+    ui_a = A(name="a")
+    ui_b = A(name="b")
+    assert ui_a.name == "a"
+    assert ui_b.name == "b"

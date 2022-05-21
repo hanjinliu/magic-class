@@ -169,15 +169,24 @@ def magicclass(
             # Without "app = " Jupyter freezes after closing the window!
             app = get_app()
 
-            class_gui.__init__(
-                self,
+            gui_kwargs = dict(
                 layout=layout,
-                close_on_run=close_on_run,
-                popup_mode=PopUpMode(popup_mode),
-                error_mode=ErrorMode(error_mode),
                 labels=labels,
                 name=name or cls.__name__,
                 visible=visible,
+                close_on_run=close_on_run,
+                popup_mode=PopUpMode(popup_mode),
+                error_mode=ErrorMode(error_mode),
+            )
+
+            # Inheriting Container's constructor is the most intuitive way.
+            if kwargs and "__init__" not in cls.__dict__:
+                gui_kwargs.update(kwargs)
+                kwargs = {}
+
+            class_gui.__init__(
+                self,
+                **gui_kwargs,
             )
             # prepare macro
             macrowidget = self.macro.widget.native
@@ -411,13 +420,22 @@ def _call_magicmenu(
             # Without "app = " Jupyter freezes after closing the window!
             app = get_app()
 
-            menugui_class.__init__(
-                self,
+            gui_kwargs = dict(
                 close_on_run=close_on_run,
                 popup_mode=PopUpMode(popup_mode),
                 error_mode=ErrorMode(error_mode),
                 labels=labels,
                 name=name or cls.__name__,
+            )
+
+            # Inheriting Container's constructor is the most intuitive way.
+            if kwargs and "__init__" not in cls.__dict__:
+                gui_kwargs.update(kwargs)
+                kwargs = {}
+
+            menugui_class.__init__(
+                self,
+                **gui_kwargs,
             )
 
             macrowidget = self.macro.widget.native
