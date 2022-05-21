@@ -273,3 +273,11 @@ def test_default_init():
     ui_b = A(name="b")
     assert ui_a.name == "a"
     assert ui_b.name == "b"
+
+    @magicclass
+    class B:
+        def __init__(self, param=None):
+            self.param = param
+
+    ui = B(param=10)
+    assert ui.param == 10
