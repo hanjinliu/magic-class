@@ -12,11 +12,11 @@ MagicFields
 Basics
 ------
 
-When widgets are directly provided in a magic class as class variables, they should be
-considered as "fields". The concept of fields was actually introduced in Python as an
-standard library ``dataclasses`` as a ``Field`` object. A field is in a state of "ready
-to be converted into a object", i.e., a new object is created for every instance
-construction.
+When widgets are directly provided in a magic class as class variables, they should
+be considered as "fields". The concept of fields was actually introduced in Python
+as an standard library ``dataclasses`` as a ``Field`` object. A field is in a state
+of "ready to be converted into a object", i.e., a new object is created for every
+instance construction.
 
 .. code-block:: python
 
@@ -34,9 +34,10 @@ construction.
 
     C(i=5, s='')
 
-Here, the arguments ``default`` and ``default_factory`` are reminiscent of "default value" and "type annotation"
-in ``magicgui``. To apply the concept of field to widget construction, ``magic-class`` has ``MagicField``, a
-subclass of ``Field``, which can store defaults as a object that is ready to be converted into a widget.
+Here, the arguments ``default`` and ``default_factory`` are reminiscent of
+"default value" and "type annotation" in ``magicgui``. To apply the concept of
+field to widget construction, ``magic-class`` has ``MagicField``, which can store
+defaults as an object that is ready to be converted into a widget.
 
 .. code-block:: python
 
@@ -47,7 +48,7 @@ subclass of ``Field``, which can store defaults as a object that is ready to be 
 
 .. code-block::
 
-    MagicField(name='',type=None,default=<dataclasses._MISSING_TYPE object at 0x0000018E067891F0>,default_factory=<class 'str'>,init=True,repr=True,hash=False,compare=False,metadata=mappingproxy({'widget_type': None, 'options': {'value': 'initial'}}),_field_type=None)
+    MagicField(value='initial', name=None, widget_type=None, record=True, options={})
 
 .. code-block:: python
 
@@ -101,12 +102,12 @@ can be safely bound to ``MagicField`` with ``connect`` method.
 Make Fields More Property-like
 ------------------------------
 
-In many cases, you don't need all the controls of a widget. If you only need the value of a field, you
-might not want to get the value via ``self.widget.value`` all the way.
+In many cases, you don't need all the controls of a widget. If you only need the value
+of a field, you might not want to get the value via ``self.widget.value`` all the way.
 
-Magic-class provides another field class called ``MagicValueField``, which returns the value itself when
-the field get accessed. You can create ``MagicValueField`` object using ``vfield`` function. You can also
-defined callbacks similar to ``MagicField``.
+Magic-class provides another field class called ``MagicValueField``, which returns the
+value itself when the field get accessed. You can create ``MagicValueField`` object
+using ``vfield`` function. You can also defined callbacks similar to ``MagicField``.
 
 .. code-block:: python
 
@@ -121,8 +122,7 @@ defined callbacks similar to ``MagicField``.
             print("value changed!")
 
         def print_value(self):
-            print(f"a = {self.a}") # instead of "self.a.value"!
-
+            print(f"a = {self.a}")  # instead of "self.a.value"!
 
 (Advanced) FieldGroup
 =====================
@@ -151,17 +151,17 @@ like a ``field`` or ``vfield`` function itself.
 
 .. image:: images/fig_3-3.png
 
-Here, a ``Points`` class has two child fields ``x`` and ``y``. Since they are created by
-``vfield``, their values can be simply obtained by ``self.points.x``.
+Here, a ``Points`` class has two child fields ``x`` and ``y``. Since they are created
+by ``vfield``, their values can be simply obtained by ``self.points.x``.
 
 Deal with Widgets and Values
 ----------------------------
 
-Basically, a ``FieldGroup`` can always be substituted with a ``magicclass``. However, there
-are some benefits to use ``FieldGroup`` over creating ``magicclass``.
+Basically, a ``FieldGroup`` can always be substituted with a ``magicclass``. However,
+there are some benefits to use ``FieldGroup`` over creating ``magicclass``.
 
-A ``FieldGroup`` is aware of its child fields. Even if you defined all the fields using
-``vfield`` you can still retrieve the widgets via ``widgets`` property.
+A ``FieldGroup`` is aware of its child fields. Even if you defined all the fields
+using ``vfield`` you can still retrieve the widgets via ``widgets`` property.
 
 .. code-block:: python
 
@@ -217,12 +217,12 @@ Now, ``LabeledLineEdit`` can be used as ``field`` or ``vfield``.
 
 .. image:: images/fig_3-4.png
 
-Use fields in non-GUI classes
------------------------------
+Use Fields in Non-GUI Classes
+=============================
 
-``MagicField`` and ``FieldGroup`` are also designed for general usage of widgets. This means
-that essentially you can use ``vfield`` instead of ``property`` for getting or setting
-parameters.
+``MagicField`` and ``FieldGroup`` are also designed for general usage of widgets.
+This means that essentially you can use ``vfield`` instead of ``property`` for
+getting or setting parameters.
 
 .. code-block:: python
 
@@ -233,9 +233,9 @@ parameters.
     a.x = 10  # OK
     a.x  # Out: 10
 
-However, a problem here is that there is no simple way to obtain the widget of ``x``. Of
-course you can use ``field`` instead of ``vfield`` to make the widget accessible but you
-will have to get the value from ``a.x.value``, which is not elegant.
+However, a problem here is that there is no simple way to obtain the widget of ``x``.
+Of course you can use ``field`` instead of ``vfield`` to make the widget accessible
+but you will have to get the value from ``a.x.value``, which is not elegant.
 
 As mentioned above, this problem is solved in ``FieldGroup`` by ``widgets`` property.
 Therefore, the inaccessibility of widgets can generally be solved in a similar way.

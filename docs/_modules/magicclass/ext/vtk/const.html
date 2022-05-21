@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.ext.vtk.const &mdash; magic-class 0.6.4.dev1 documentation</title>
+  <title>magicclass.ext.vtk.const &mdash; magic-class 0.6.4 documentation</title>
       <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.4.dev1
+                0.6.4
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
@@ -79,7 +79,20 @@
 <span></span><span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
 
 
-<div class="viewcode-block" id="Rendering"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vtk.html#magicclass.ext.vtk.const.Rendering">[docs]</a><span class="k">class</span> <span class="nc">Rendering</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<div class="viewcode-block" id="StringEnum"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vtk.html#magicclass.ext.vtk.const.StringEnum">[docs]</a><span class="k">class</span> <span class="nc">StringEnum</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">other</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__eq__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span></div>
+
+
+<div class="viewcode-block" id="Rendering"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vtk.html#magicclass.ext.vtk.const.Rendering">[docs]</a><span class="k">class</span> <span class="nc">Rendering</span><span class="p">(</span><span class="n">StringEnum</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Volume rendering mode suppored in vtk.&quot;&quot;&quot;</span>
 
     <span class="n">composite</span> <span class="o">=</span> <span class="mi">0</span>
@@ -89,7 +102,7 @@
     <span class="n">additive</span> <span class="o">=</span> <span class="mi">4</span></div>
 
 
-<div class="viewcode-block" id="Mode"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vtk.html#magicclass.ext.vtk.const.Mode">[docs]</a><span class="k">class</span> <span class="nc">Mode</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<div class="viewcode-block" id="Mode"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vtk.html#magicclass.ext.vtk.const.Mode">[docs]</a><span class="k">class</span> <span class="nc">Mode</span><span class="p">(</span><span class="n">StringEnum</span><span class="p">):</span>
     <span class="n">volume</span> <span class="o">=</span> <span class="s2">&quot;volume&quot;</span>
     <span class="n">iso</span> <span class="o">=</span> <span class="s2">&quot;iso&quot;</span>
     <span class="n">lego</span> <span class="o">=</span> <span class="s2">&quot;lego&quot;</span>
@@ -97,13 +110,16 @@
     <span class="n">wireframe</span> <span class="o">=</span> <span class="s2">&quot;wireframe&quot;</span></div>
 
 
-<div class="viewcode-block" id="Representation"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vtk.html#magicclass.ext.vtk.const.Representation">[docs]</a><span class="k">class</span> <span class="nc">Representation</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<div class="viewcode-block" id="Representation"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vtk.html#magicclass.ext.vtk.const.Representation">[docs]</a><span class="k">class</span> <span class="nc">Representation</span><span class="p">(</span><span class="n">StringEnum</span><span class="p">):</span>
     <span class="n">points</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">wireframe</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="n">surface</span> <span class="o">=</span> <span class="mi">2</span></div>
+    <span class="n">surface</span> <span class="o">=</span> <span class="mi">2</span>
+
+    <span class="k">def</span> <span class="fm">__int__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span></div>
 
 
-<div class="viewcode-block" id="AxesMode"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vtk.html#magicclass.ext.vtk.const.AxesMode">[docs]</a><span class="k">class</span> <span class="nc">AxesMode</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<div class="viewcode-block" id="AxesMode"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vtk.html#magicclass.ext.vtk.const.AxesMode">[docs]</a><span class="k">class</span> <span class="nc">AxesMode</span><span class="p">(</span><span class="n">StringEnum</span><span class="p">):</span>
     <span class="n">none</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">wall</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">cartesian</span> <span class="o">=</span> <span class="mi">2</span>

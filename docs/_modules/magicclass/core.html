@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.core &mdash; magic-class 0.6.4.dev1 documentation</title>
+  <title>magicclass.core &mdash; magic-class 0.6.4 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.4.dev1
+                0.6.4
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -247,15 +247,24 @@
             <span class="c1"># Without &quot;app = &quot; Jupyter freezes after closing the window!</span>
             <span class="n">app</span> <span class="o">=</span> <span class="n">get_app</span><span class="p">()</span>
 
-            <span class="n">class_gui</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-                <span class="bp">self</span><span class="p">,</span>
+            <span class="n">gui_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
                 <span class="n">layout</span><span class="o">=</span><span class="n">layout</span><span class="p">,</span>
-                <span class="n">close_on_run</span><span class="o">=</span><span class="n">close_on_run</span><span class="p">,</span>
-                <span class="n">popup_mode</span><span class="o">=</span><span class="n">PopUpMode</span><span class="p">(</span><span class="n">popup_mode</span><span class="p">),</span>
-                <span class="n">error_mode</span><span class="o">=</span><span class="n">ErrorMode</span><span class="p">(</span><span class="n">error_mode</span><span class="p">),</span>
                 <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span>
                 <span class="n">name</span><span class="o">=</span><span class="n">name</span> <span class="ow">or</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
                 <span class="n">visible</span><span class="o">=</span><span class="n">visible</span><span class="p">,</span>
+                <span class="n">close_on_run</span><span class="o">=</span><span class="n">close_on_run</span><span class="p">,</span>
+                <span class="n">popup_mode</span><span class="o">=</span><span class="n">PopUpMode</span><span class="p">(</span><span class="n">popup_mode</span><span class="p">),</span>
+                <span class="n">error_mode</span><span class="o">=</span><span class="n">ErrorMode</span><span class="p">(</span><span class="n">error_mode</span><span class="p">),</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Inheriting Container&#39;s constructor is the most intuitive way.</span>
+            <span class="k">if</span> <span class="n">kwargs</span> <span class="ow">and</span> <span class="s2">&quot;__init__&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
+                <span class="n">gui_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+
+            <span class="n">class_gui</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+                <span class="bp">self</span><span class="p">,</span>
+                <span class="o">**</span><span class="n">gui_kwargs</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="c1"># prepare macro</span>
             <span class="n">macrowidget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">macro</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">native</span>
@@ -489,13 +498,22 @@
             <span class="c1"># Without &quot;app = &quot; Jupyter freezes after closing the window!</span>
             <span class="n">app</span> <span class="o">=</span> <span class="n">get_app</span><span class="p">()</span>
 
-            <span class="n">menugui_class</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-                <span class="bp">self</span><span class="p">,</span>
+            <span class="n">gui_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
                 <span class="n">close_on_run</span><span class="o">=</span><span class="n">close_on_run</span><span class="p">,</span>
                 <span class="n">popup_mode</span><span class="o">=</span><span class="n">PopUpMode</span><span class="p">(</span><span class="n">popup_mode</span><span class="p">),</span>
                 <span class="n">error_mode</span><span class="o">=</span><span class="n">ErrorMode</span><span class="p">(</span><span class="n">error_mode</span><span class="p">),</span>
                 <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span>
                 <span class="n">name</span><span class="o">=</span><span class="n">name</span> <span class="ow">or</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Inheriting Container&#39;s constructor is the most intuitive way.</span>
+            <span class="k">if</span> <span class="n">kwargs</span> <span class="ow">and</span> <span class="s2">&quot;__init__&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
+                <span class="n">gui_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+
+            <span class="n">menugui_class</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+                <span class="bp">self</span><span class="p">,</span>
+                <span class="o">**</span><span class="n">gui_kwargs</span><span class="p">,</span>
             <span class="p">)</span>
 
             <span class="n">macrowidget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">macro</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">native</span>

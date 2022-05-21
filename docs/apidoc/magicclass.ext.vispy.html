@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.ext.vispy package &mdash; magic-class 0.6.4.dev1 documentation</title>
+  <title>magicclass.ext.vispy package &mdash; magic-class 0.6.4 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/columns.css" type="text/css" />
@@ -31,7 +31,7 @@
             <a href="../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.4.dev1
+                0.6.4
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -161,8 +161,8 @@
 <span id="magicclass-ext-vispy-layer3d-module"></span><h2>magicclass.ext.vispy.layer3d module<a class="headerlink" href="#module-magicclass.ext.vispy.layer3d" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.Image">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vispy.layer3d.</span></span><span class="sig-name descname"><span class="pre">Image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">viewbox</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">vispy.scene.widgets.viewbox.ViewBox</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contrast_limits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rendering</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mip'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iso_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attenuation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'grays'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interpolation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vispy/layer3d.html#Image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Image" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.vispy._base.LayerItem</span></code></p>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vispy.layer3d.</span></span><span class="sig-name descname"><span class="pre">Image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">viewbox</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">ViewBox</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contrast_limits</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rendering</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'mip'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iso_threshold</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attenuation</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'grays'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interpolation</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'linear'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vispy/layer3d.html#Image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.vispy._base.LayerItem</span></code>, <a class="reference internal" href="magicclass.html#magicclass.fields.HasFields" title="magicclass.fields.HasFields"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.fields.HasFields</span></code></a></p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.Image.INTERPOLATIONS">
 <span class="sig-name descname"><span class="pre">INTERPOLATIONS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">['nearest',</span> <span class="pre">'linear']</span></em><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Image.INTERPOLATIONS" title="Permalink to this definition">¶</a></dt>
@@ -173,900 +173,145 @@
 <span class="sig-name descname"><span class="pre">RENDERINGS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">['translucent',</span> <span class="pre">'mip',</span> <span class="pre">'minip',</span> <span class="pre">'attenuated_mip',</span> <span class="pre">'additive',</span> <span class="pre">'iso',</span> <span class="pre">'average']</span></em><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Image.RENDERINGS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="py property">
+<dl class="py attribute">
 <dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.Image.attenuation">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">attenuation</span></span><em class="property"><span class="pre">:</span> <span class="pre">float</span></em><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Image.attenuation" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">attenuation</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Image.attenuation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
+</dd></dl>
 
-<dl class="py property">
+<dl class="py attribute">
 <dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.Image.contrast_limits">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">contrast_limits</span></span><em class="property"><span class="pre">:</span> <span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Image.contrast_limits" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">contrast_limits</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Image.contrast_limits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
+</dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.Image.data">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">data</span></span><em class="property"><span class="pre">:</span> <span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Image.data" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="py property">
+<dl class="py attribute">
 <dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.Image.gamma">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">gamma</span></span><em class="property"><span class="pre">:</span> <span class="pre">float</span></em><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Image.gamma" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">gamma</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Image.gamma" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
+</dd></dl>
 
-<dl class="py property">
+<dl class="py attribute">
 <dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.Image.interpolation">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">interpolation</span></span><em class="property"><span class="pre">:</span> <span class="pre">float</span></em><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Image.interpolation" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">interpolation</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Image.interpolation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
+</dd></dl>
 
-<dl class="py property">
+<dl class="py attribute">
 <dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.Image.iso_threshold">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">iso_threshold</span></span><em class="property"><span class="pre">:</span> <span class="pre">float</span></em><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Image.iso_threshold" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">iso_threshold</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Image.iso_threshold" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
+</dd></dl>
 
-<dl class="py property">
+<dl class="py attribute">
 <dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.Image.rendering">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">rendering</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Image.rendering" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
+<span class="sig-name descname"><span class="pre">rendering</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Image.rendering" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
 </dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.ImageSignals">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vispy.layer3d.</span></span><span class="sig-name descname"><span class="pre">ImageSignals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instance</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vispy/layer3d.html#ImageSignals"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.layer3d.ImageSignals" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">psygnal._group.SignalGroup</span></code></p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.ImageSignals.attenuation">
-<span class="sig-name descname"><span class="pre">attenuation</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.ImageSignals.attenuation" title="Permalink to this definition">¶</a></dt>
-<dd><p>Signal descriptor, for declaring a signal on a class.</p>
-<p>This is designed to be used as a class attribute, with the supported signature(s)
-provided in the contructor:</p>
-<blockquote>
-<div><dl class="simple">
-<dt>class MyEmitter:</dt><dd><p>changed = Signal(int)  # changed will emit an int</p>
-</dd>
-<dt>def receiver(arg: int):</dt><dd><p>print(&quot;new value:&quot;, arg)</p>
-</dd>
-</dl>
-<p>emitter = MyEmitter()
-emitter.changed.connect(receiver)
-emitter.emit(1)</p>
-</div></blockquote>
-<p>Note: in the example above, <cite>MyEmitter.changed</cite> is an instance of <cite>Signal</cite>,
-and <cite>emitter.changed</cite> is an instance of <cite>SignalInstance</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>*types</strong> (<em>sequence of Type</em>) -- A sequence of individual types</p></li>
-<li><p><strong>description</strong> (<em>str</em><em>, </em><em>optional</em>) -- Optional descriptive text for the signal.  (not used internally).</p></li>
-<li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em>) -- Optional name of the signal. If it is not specified then the name of the
-class attribute that is bound to the signal will be used. default None</p></li>
-<li><p><strong>check_nargs_on_connect</strong> (<em>str</em><em>, </em><em>optional</em>) -- Whether to check the number of positional args against <cite>signature</cite> when
-connecting a new callback. This can also be provided at connection time using
-<cite>.connect(..., check_nargs=True)</cite>. By default, True.</p></li>
-<li><p><strong>check_types_on_connect</strong> (<em>str</em><em>, </em><em>optional</em>) -- Whether to check the callback parameter types against <cite>signature</cite> when
-connecting a new callback. This can also be provided at connection time using
-<cite>.connect(..., check_types=True)</cite>. By default, False.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.ImageSignals.contrast_limits">
-<span class="sig-name descname"><span class="pre">contrast_limits</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.ImageSignals.contrast_limits" title="Permalink to this definition">¶</a></dt>
-<dd><p>Signal descriptor, for declaring a signal on a class.</p>
-<p>This is designed to be used as a class attribute, with the supported signature(s)
-provided in the contructor:</p>
-<blockquote>
-<div><dl class="simple">
-<dt>class MyEmitter:</dt><dd><p>changed = Signal(int)  # changed will emit an int</p>
-</dd>
-<dt>def receiver(arg: int):</dt><dd><p>print(&quot;new value:&quot;, arg)</p>
-</dd>
-</dl>
-<p>emitter = MyEmitter()
-emitter.changed.connect(receiver)
-emitter.emit(1)</p>
-</div></blockquote>
-<p>Note: in the example above, <cite>MyEmitter.changed</cite> is an instance of <cite>Signal</cite>,
-and <cite>emitter.changed</cite> is an instance of <cite>SignalInstance</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>*types</strong> (<em>sequence of Type</em>) -- A sequence of individual types</p></li>
-<li><p><strong>description</strong> (<em>str</em><em>, </em><em>optional</em>) -- Optional descriptive text for the signal.  (not used internally).</p></li>
-<li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em>) -- Optional name of the signal. If it is not specified then the name of the
-class attribute that is bound to the signal will be used. default None</p></li>
-<li><p><strong>check_nargs_on_connect</strong> (<em>str</em><em>, </em><em>optional</em>) -- Whether to check the number of positional args against <cite>signature</cite> when
-connecting a new callback. This can also be provided at connection time using
-<cite>.connect(..., check_nargs=True)</cite>. By default, True.</p></li>
-<li><p><strong>check_types_on_connect</strong> (<em>str</em><em>, </em><em>optional</em>) -- Whether to check the callback parameter types against <cite>signature</cite> when
-connecting a new callback. This can also be provided at connection time using
-<cite>.connect(..., check_types=True)</cite>. By default, False.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.ImageSignals.data">
-<span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.ImageSignals.data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Signal descriptor, for declaring a signal on a class.</p>
-<p>This is designed to be used as a class attribute, with the supported signature(s)
-provided in the contructor:</p>
-<blockquote>
-<div><dl class="simple">
-<dt>class MyEmitter:</dt><dd><p>changed = Signal(int)  # changed will emit an int</p>
-</dd>
-<dt>def receiver(arg: int):</dt><dd><p>print(&quot;new value:&quot;, arg)</p>
-</dd>
-</dl>
-<p>emitter = MyEmitter()
-emitter.changed.connect(receiver)
-emitter.emit(1)</p>
-</div></blockquote>
-<p>Note: in the example above, <cite>MyEmitter.changed</cite> is an instance of <cite>Signal</cite>,
-and <cite>emitter.changed</cite> is an instance of <cite>SignalInstance</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>*types</strong> (<em>sequence of Type</em>) -- A sequence of individual types</p></li>
-<li><p><strong>description</strong> (<em>str</em><em>, </em><em>optional</em>) -- Optional descriptive text for the signal.  (not used internally).</p></li>
-<li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em>) -- Optional name of the signal. If it is not specified then the name of the
-class attribute that is bound to the signal will be used. default None</p></li>
-<li><p><strong>check_nargs_on_connect</strong> (<em>str</em><em>, </em><em>optional</em>) -- Whether to check the number of positional args against <cite>signature</cite> when
-connecting a new callback. This can also be provided at connection time using
-<cite>.connect(..., check_nargs=True)</cite>. By default, True.</p></li>
-<li><p><strong>check_types_on_connect</strong> (<em>str</em><em>, </em><em>optional</em>) -- Whether to check the callback parameter types against <cite>signature</cite> when
-connecting a new callback. This can also be provided at connection time using
-<cite>.connect(..., check_types=True)</cite>. By default, False.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.ImageSignals.gamma">
-<span class="sig-name descname"><span class="pre">gamma</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.ImageSignals.gamma" title="Permalink to this definition">¶</a></dt>
-<dd><p>Signal descriptor, for declaring a signal on a class.</p>
-<p>This is designed to be used as a class attribute, with the supported signature(s)
-provided in the contructor:</p>
-<blockquote>
-<div><dl class="simple">
-<dt>class MyEmitter:</dt><dd><p>changed = Signal(int)  # changed will emit an int</p>
-</dd>
-<dt>def receiver(arg: int):</dt><dd><p>print(&quot;new value:&quot;, arg)</p>
-</dd>
-</dl>
-<p>emitter = MyEmitter()
-emitter.changed.connect(receiver)
-emitter.emit(1)</p>
-</div></blockquote>
-<p>Note: in the example above, <cite>MyEmitter.changed</cite> is an instance of <cite>Signal</cite>,
-and <cite>emitter.changed</cite> is an instance of <cite>SignalInstance</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>*types</strong> (<em>sequence of Type</em>) -- A sequence of individual types</p></li>
-<li><p><strong>description</strong> (<em>str</em><em>, </em><em>optional</em>) -- Optional descriptive text for the signal.  (not used internally).</p></li>
-<li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em>) -- Optional name of the signal. If it is not specified then the name of the
-class attribute that is bound to the signal will be used. default None</p></li>
-<li><p><strong>check_nargs_on_connect</strong> (<em>str</em><em>, </em><em>optional</em>) -- Whether to check the number of positional args against <cite>signature</cite> when
-connecting a new callback. This can also be provided at connection time using
-<cite>.connect(..., check_nargs=True)</cite>. By default, True.</p></li>
-<li><p><strong>check_types_on_connect</strong> (<em>str</em><em>, </em><em>optional</em>) -- Whether to check the callback parameter types against <cite>signature</cite> when
-connecting a new callback. This can also be provided at connection time using
-<cite>.connect(..., check_types=True)</cite>. By default, False.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.ImageSignals.interpolation">
-<span class="sig-name descname"><span class="pre">interpolation</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.ImageSignals.interpolation" title="Permalink to this definition">¶</a></dt>
-<dd><p>Signal descriptor, for declaring a signal on a class.</p>
-<p>This is designed to be used as a class attribute, with the supported signature(s)
-provided in the contructor:</p>
-<blockquote>
-<div><dl class="simple">
-<dt>class MyEmitter:</dt><dd><p>changed = Signal(int)  # changed will emit an int</p>
-</dd>
-<dt>def receiver(arg: int):</dt><dd><p>print(&quot;new value:&quot;, arg)</p>
-</dd>
-</dl>
-<p>emitter = MyEmitter()
-emitter.changed.connect(receiver)
-emitter.emit(1)</p>
-</div></blockquote>
-<p>Note: in the example above, <cite>MyEmitter.changed</cite> is an instance of <cite>Signal</cite>,
-and <cite>emitter.changed</cite> is an instance of <cite>SignalInstance</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>*types</strong> (<em>sequence of Type</em>) -- A sequence of individual types</p></li>
-<li><p><strong>description</strong> (<em>str</em><em>, </em><em>optional</em>) -- Optional descriptive text for the signal.  (not used internally).</p></li>
-<li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em>) -- Optional name of the signal. If it is not specified then the name of the
-class attribute that is bound to the signal will be used. default None</p></li>
-<li><p><strong>check_nargs_on_connect</strong> (<em>str</em><em>, </em><em>optional</em>) -- Whether to check the number of positional args against <cite>signature</cite> when
-connecting a new callback. This can also be provided at connection time using
-<cite>.connect(..., check_nargs=True)</cite>. By default, True.</p></li>
-<li><p><strong>check_types_on_connect</strong> (<em>str</em><em>, </em><em>optional</em>) -- Whether to check the callback parameter types against <cite>signature</cite> when
-connecting a new callback. This can also be provided at connection time using
-<cite>.connect(..., check_types=True)</cite>. By default, False.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.ImageSignals.iso_threshold">
-<span class="sig-name descname"><span class="pre">iso_threshold</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.ImageSignals.iso_threshold" title="Permalink to this definition">¶</a></dt>
-<dd><p>Signal descriptor, for declaring a signal on a class.</p>
-<p>This is designed to be used as a class attribute, with the supported signature(s)
-provided in the contructor:</p>
-<blockquote>
-<div><dl class="simple">
-<dt>class MyEmitter:</dt><dd><p>changed = Signal(int)  # changed will emit an int</p>
-</dd>
-<dt>def receiver(arg: int):</dt><dd><p>print(&quot;new value:&quot;, arg)</p>
-</dd>
-</dl>
-<p>emitter = MyEmitter()
-emitter.changed.connect(receiver)
-emitter.emit(1)</p>
-</div></blockquote>
-<p>Note: in the example above, <cite>MyEmitter.changed</cite> is an instance of <cite>Signal</cite>,
-and <cite>emitter.changed</cite> is an instance of <cite>SignalInstance</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>*types</strong> (<em>sequence of Type</em>) -- A sequence of individual types</p></li>
-<li><p><strong>description</strong> (<em>str</em><em>, </em><em>optional</em>) -- Optional descriptive text for the signal.  (not used internally).</p></li>
-<li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em>) -- Optional name of the signal. If it is not specified then the name of the
-class attribute that is bound to the signal will be used. default None</p></li>
-<li><p><strong>check_nargs_on_connect</strong> (<em>str</em><em>, </em><em>optional</em>) -- Whether to check the number of positional args against <cite>signature</cite> when
-connecting a new callback. This can also be provided at connection time using
-<cite>.connect(..., check_nargs=True)</cite>. By default, True.</p></li>
-<li><p><strong>check_types_on_connect</strong> (<em>str</em><em>, </em><em>optional</em>) -- Whether to check the callback parameter types against <cite>signature</cite> when
-connecting a new callback. This can also be provided at connection time using
-<cite>.connect(..., check_types=True)</cite>. By default, False.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.ImageSignals.rendering">
-<span class="sig-name descname"><span class="pre">rendering</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.ImageSignals.rendering" title="Permalink to this definition">¶</a></dt>
-<dd><p>Signal descriptor, for declaring a signal on a class.</p>
-<p>This is designed to be used as a class attribute, with the supported signature(s)
-provided in the contructor:</p>
-<blockquote>
-<div><dl class="simple">
-<dt>class MyEmitter:</dt><dd><p>changed = Signal(int)  # changed will emit an int</p>
-</dd>
-<dt>def receiver(arg: int):</dt><dd><p>print(&quot;new value:&quot;, arg)</p>
-</dd>
-</dl>
-<p>emitter = MyEmitter()
-emitter.changed.connect(receiver)
-emitter.emit(1)</p>
-</div></blockquote>
-<p>Note: in the example above, <cite>MyEmitter.changed</cite> is an instance of <cite>Signal</cite>,
-and <cite>emitter.changed</cite> is an instance of <cite>SignalInstance</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>*types</strong> (<em>sequence of Type</em>) -- A sequence of individual types</p></li>
-<li><p><strong>description</strong> (<em>str</em><em>, </em><em>optional</em>) -- Optional descriptive text for the signal.  (not used internally).</p></li>
-<li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em>) -- Optional name of the signal. If it is not specified then the name of the
-class attribute that is bound to the signal will be used. default None</p></li>
-<li><p><strong>check_nargs_on_connect</strong> (<em>str</em><em>, </em><em>optional</em>) -- Whether to check the number of positional args against <cite>signature</cite> when
-connecting a new callback. This can also be provided at connection time using
-<cite>.connect(..., check_nargs=True)</cite>. By default, True.</p></li>
-<li><p><strong>check_types_on_connect</strong> (<em>str</em><em>, </em><em>optional</em>) -- Whether to check the callback parameter types against <cite>signature</cite> when
-connecting a new callback. This can also be provided at connection time using
-<cite>.connect(..., check_types=True)</cite>. By default, False.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.ImageWidgetGroup">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vispy.layer3d.</span></span><span class="sig-name descname"><span class="pre">ImageWidgetGroup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vol</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">magicclass.ext.vispy.layer3d._L</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vispy/layer3d.html#ImageWidgetGroup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.layer3d.ImageWidgetGroup" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#magicclass.ext.vispy.layer3d.WidgetGroup" title="magicclass.ext.vispy.layer3d.WidgetGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.vispy.layer3d.WidgetGroup</span></code></a>[<a class="reference internal" href="#magicclass.ext.vispy.layer3d.Image" title="magicclass.ext.vispy.layer3d.Image"><code class="xref py py-class docutils literal notranslate"><span class="pre">Image</span></code></a>]</p>
-<p>A widget group of an Image layer.</p>
-<dl class="py property">
-<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.ImageWidgetGroup.attenuation">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">attenuation</span></span><em class="property"><span class="pre">:</span> <span class="pre">magicgui.widgets.FloatSlider</span></em><a class="reference internal" href="../_modules/magicclass/ext/vispy/layer3d.html#ImageWidgetGroup.attenuation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.layer3d.ImageWidgetGroup.attenuation" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.ImageWidgetGroup.contrast_limits">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">contrast_limits</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="magicclass.widgets.html#magicclass.widgets.misc.FloatRangeSlider" title="magicclass.widgets.misc.FloatRangeSlider"><span class="pre">magicclass.widgets.misc.FloatRangeSlider</span></a></em><a class="reference internal" href="../_modules/magicclass/ext/vispy/layer3d.html#ImageWidgetGroup.contrast_limits"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.layer3d.ImageWidgetGroup.contrast_limits" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.ImageWidgetGroup.gamma">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">gamma</span></span><em class="property"><span class="pre">:</span> <span class="pre">magicgui.widgets.FloatSlider</span></em><a class="reference internal" href="../_modules/magicclass/ext/vispy/layer3d.html#ImageWidgetGroup.gamma"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.layer3d.ImageWidgetGroup.gamma" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.ImageWidgetGroup.iso_threshold">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">iso_threshold</span></span><em class="property"><span class="pre">:</span> <span class="pre">magicgui.widgets.FloatSlider</span></em><a class="reference internal" href="../_modules/magicclass/ext/vispy/layer3d.html#ImageWidgetGroup.iso_threshold"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.layer3d.ImageWidgetGroup.iso_threshold" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.ImageWidgetGroup.rendering">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">rendering</span></span><em class="property"><span class="pre">:</span> <span class="pre">magicgui.widgets.ComboBox</span></em><a class="reference internal" href="../_modules/magicclass/ext/vispy/layer3d.html#ImageWidgetGroup.rendering"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.layer3d.ImageWidgetGroup.rendering" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.IsoSurface">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vispy.layer3d.</span></span><span class="sig-name descname"><span class="pre">IsoSurface</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">viewbox</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">vispy.scene.widgets.viewbox.ViewBox</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contrast_limits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iso_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">face_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shading</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'smooth'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vispy/layer3d.html#IsoSurface"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.layer3d.IsoSurface" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.vispy.layer3d._SurfaceBase</span></code></p>
-<dl class="py property">
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.vispy.layer3d._SurfaceBase</span></code>, <a class="reference internal" href="magicclass.html#magicclass.fields.HasFields" title="magicclass.fields.HasFields"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.fields.HasFields</span></code></a></p>
+<dl class="py attribute">
 <dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.IsoSurface.contrast_limits">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">contrast_limits</span></span><em class="property"><span class="pre">:</span> <span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#magicclass.ext.vispy.layer3d.IsoSurface.contrast_limits" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">contrast_limits</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.IsoSurface.contrast_limits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
+</dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.IsoSurface.data">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">data</span></span><em class="property"><span class="pre">:</span> <span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#magicclass.ext.vispy.layer3d.IsoSurface.data" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="py property">
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.IsoSurface.edge_color">
+<span class="sig-name descname"><span class="pre">edge_color</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.IsoSurface.edge_color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.IsoSurface.edge_width">
+<span class="sig-name descname"><span class="pre">edge_width</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.IsoSurface.edge_width" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.IsoSurface.face_color">
+<span class="sig-name descname"><span class="pre">face_color</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.IsoSurface.face_color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.IsoSurface.iso_threshold">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">iso_threshold</span></span><em class="property"><span class="pre">:</span> <span class="pre">float</span></em><a class="headerlink" href="#magicclass.ext.vispy.layer3d.IsoSurface.iso_threshold" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.IsoSurfaceSignals">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vispy.layer3d.</span></span><span class="sig-name descname"><span class="pre">IsoSurfaceSignals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instance</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vispy/layer3d.html#IsoSurfaceSignals"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.layer3d.IsoSurfaceSignals" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">psygnal._group.SignalGroup</span></code></p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.IsoSurfaceSignals.contrast_limits">
-<span class="sig-name descname"><span class="pre">contrast_limits</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.IsoSurfaceSignals.contrast_limits" title="Permalink to this definition">¶</a></dt>
-<dd><p>Signal descriptor, for declaring a signal on a class.</p>
-<p>This is designed to be used as a class attribute, with the supported signature(s)
-provided in the contructor:</p>
-<blockquote>
-<div><dl class="simple">
-<dt>class MyEmitter:</dt><dd><p>changed = Signal(int)  # changed will emit an int</p>
-</dd>
-<dt>def receiver(arg: int):</dt><dd><p>print(&quot;new value:&quot;, arg)</p>
-</dd>
-</dl>
-<p>emitter = MyEmitter()
-emitter.changed.connect(receiver)
-emitter.emit(1)</p>
-</div></blockquote>
-<p>Note: in the example above, <cite>MyEmitter.changed</cite> is an instance of <cite>Signal</cite>,
-and <cite>emitter.changed</cite> is an instance of <cite>SignalInstance</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>*types</strong> (<em>sequence of Type</em>) -- A sequence of individual types</p></li>
-<li><p><strong>description</strong> (<em>str</em><em>, </em><em>optional</em>) -- Optional descriptive text for the signal.  (not used internally).</p></li>
-<li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em>) -- Optional name of the signal. If it is not specified then the name of the
-class attribute that is bound to the signal will be used. default None</p></li>
-<li><p><strong>check_nargs_on_connect</strong> (<em>str</em><em>, </em><em>optional</em>) -- Whether to check the number of positional args against <cite>signature</cite> when
-connecting a new callback. This can also be provided at connection time using
-<cite>.connect(..., check_nargs=True)</cite>. By default, True.</p></li>
-<li><p><strong>check_types_on_connect</strong> (<em>str</em><em>, </em><em>optional</em>) -- Whether to check the callback parameter types against <cite>signature</cite> when
-connecting a new callback. This can also be provided at connection time using
-<cite>.connect(..., check_types=True)</cite>. By default, False.</p></li>
-</ul>
-</dd>
-</dl>
+<span class="sig-name descname"><span class="pre">iso_threshold</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.IsoSurface.iso_threshold" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.IsoSurfaceSignals.data">
-<span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.IsoSurfaceSignals.data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Signal descriptor, for declaring a signal on a class.</p>
-<p>This is designed to be used as a class attribute, with the supported signature(s)
-provided in the contructor:</p>
-<blockquote>
-<div><dl class="simple">
-<dt>class MyEmitter:</dt><dd><p>changed = Signal(int)  # changed will emit an int</p>
-</dd>
-<dt>def receiver(arg: int):</dt><dd><p>print(&quot;new value:&quot;, arg)</p>
-</dd>
-</dl>
-<p>emitter = MyEmitter()
-emitter.changed.connect(receiver)
-emitter.emit(1)</p>
-</div></blockquote>
-<p>Note: in the example above, <cite>MyEmitter.changed</cite> is an instance of <cite>Signal</cite>,
-and <cite>emitter.changed</cite> is an instance of <cite>SignalInstance</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>*types</strong> (<em>sequence of Type</em>) -- A sequence of individual types</p></li>
-<li><p><strong>description</strong> (<em>str</em><em>, </em><em>optional</em>) -- Optional descriptive text for the signal.  (not used internally).</p></li>
-<li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em>) -- Optional name of the signal. If it is not specified then the name of the
-class attribute that is bound to the signal will be used. default None</p></li>
-<li><p><strong>check_nargs_on_connect</strong> (<em>str</em><em>, </em><em>optional</em>) -- Whether to check the number of positional args against <cite>signature</cite> when
-connecting a new callback. This can also be provided at connection time using
-<cite>.connect(..., check_nargs=True)</cite>. By default, True.</p></li>
-<li><p><strong>check_types_on_connect</strong> (<em>str</em><em>, </em><em>optional</em>) -- Whether to check the callback parameter types against <cite>signature</cite> when
-connecting a new callback. This can also be provided at connection time using
-<cite>.connect(..., check_types=True)</cite>. By default, False.</p></li>
-</ul>
-</dd>
-</dl>
+<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.IsoSurface.shading">
+<span class="sig-name descname"><span class="pre">shading</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.IsoSurface.shading" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
 </dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.IsoSurfaceSignals.edge_color">
-<span class="sig-name descname"><span class="pre">edge_color</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.IsoSurfaceSignals.edge_color" title="Permalink to this definition">¶</a></dt>
-<dd><p>Signal descriptor, for declaring a signal on a class.</p>
-<p>This is designed to be used as a class attribute, with the supported signature(s)
-provided in the contructor:</p>
-<blockquote>
-<div><dl class="simple">
-<dt>class MyEmitter:</dt><dd><p>changed = Signal(int)  # changed will emit an int</p>
-</dd>
-<dt>def receiver(arg: int):</dt><dd><p>print(&quot;new value:&quot;, arg)</p>
-</dd>
-</dl>
-<p>emitter = MyEmitter()
-emitter.changed.connect(receiver)
-emitter.emit(1)</p>
-</div></blockquote>
-<p>Note: in the example above, <cite>MyEmitter.changed</cite> is an instance of <cite>Signal</cite>,
-and <cite>emitter.changed</cite> is an instance of <cite>SignalInstance</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>*types</strong> (<em>sequence of Type</em>) -- A sequence of individual types</p></li>
-<li><p><strong>description</strong> (<em>str</em><em>, </em><em>optional</em>) -- Optional descriptive text for the signal.  (not used internally).</p></li>
-<li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em>) -- Optional name of the signal. If it is not specified then the name of the
-class attribute that is bound to the signal will be used. default None</p></li>
-<li><p><strong>check_nargs_on_connect</strong> (<em>str</em><em>, </em><em>optional</em>) -- Whether to check the number of positional args against <cite>signature</cite> when
-connecting a new callback. This can also be provided at connection time using
-<cite>.connect(..., check_nargs=True)</cite>. By default, True.</p></li>
-<li><p><strong>check_types_on_connect</strong> (<em>str</em><em>, </em><em>optional</em>) -- Whether to check the callback parameter types against <cite>signature</cite> when
-connecting a new callback. This can also be provided at connection time using
-<cite>.connect(..., check_types=True)</cite>. By default, False.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.IsoSurfaceSignals.edge_width">
-<span class="sig-name descname"><span class="pre">edge_width</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.IsoSurfaceSignals.edge_width" title="Permalink to this definition">¶</a></dt>
-<dd><p>Signal descriptor, for declaring a signal on a class.</p>
-<p>This is designed to be used as a class attribute, with the supported signature(s)
-provided in the contructor:</p>
-<blockquote>
-<div><dl class="simple">
-<dt>class MyEmitter:</dt><dd><p>changed = Signal(int)  # changed will emit an int</p>
-</dd>
-<dt>def receiver(arg: int):</dt><dd><p>print(&quot;new value:&quot;, arg)</p>
-</dd>
-</dl>
-<p>emitter = MyEmitter()
-emitter.changed.connect(receiver)
-emitter.emit(1)</p>
-</div></blockquote>
-<p>Note: in the example above, <cite>MyEmitter.changed</cite> is an instance of <cite>Signal</cite>,
-and <cite>emitter.changed</cite> is an instance of <cite>SignalInstance</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>*types</strong> (<em>sequence of Type</em>) -- A sequence of individual types</p></li>
-<li><p><strong>description</strong> (<em>str</em><em>, </em><em>optional</em>) -- Optional descriptive text for the signal.  (not used internally).</p></li>
-<li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em>) -- Optional name of the signal. If it is not specified then the name of the
-class attribute that is bound to the signal will be used. default None</p></li>
-<li><p><strong>check_nargs_on_connect</strong> (<em>str</em><em>, </em><em>optional</em>) -- Whether to check the number of positional args against <cite>signature</cite> when
-connecting a new callback. This can also be provided at connection time using
-<cite>.connect(..., check_nargs=True)</cite>. By default, True.</p></li>
-<li><p><strong>check_types_on_connect</strong> (<em>str</em><em>, </em><em>optional</em>) -- Whether to check the callback parameter types against <cite>signature</cite> when
-connecting a new callback. This can also be provided at connection time using
-<cite>.connect(..., check_types=True)</cite>. By default, False.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.IsoSurfaceSignals.face_color">
-<span class="sig-name descname"><span class="pre">face_color</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.IsoSurfaceSignals.face_color" title="Permalink to this definition">¶</a></dt>
-<dd><p>Signal descriptor, for declaring a signal on a class.</p>
-<p>This is designed to be used as a class attribute, with the supported signature(s)
-provided in the contructor:</p>
-<blockquote>
-<div><dl class="simple">
-<dt>class MyEmitter:</dt><dd><p>changed = Signal(int)  # changed will emit an int</p>
-</dd>
-<dt>def receiver(arg: int):</dt><dd><p>print(&quot;new value:&quot;, arg)</p>
-</dd>
-</dl>
-<p>emitter = MyEmitter()
-emitter.changed.connect(receiver)
-emitter.emit(1)</p>
-</div></blockquote>
-<p>Note: in the example above, <cite>MyEmitter.changed</cite> is an instance of <cite>Signal</cite>,
-and <cite>emitter.changed</cite> is an instance of <cite>SignalInstance</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>*types</strong> (<em>sequence of Type</em>) -- A sequence of individual types</p></li>
-<li><p><strong>description</strong> (<em>str</em><em>, </em><em>optional</em>) -- Optional descriptive text for the signal.  (not used internally).</p></li>
-<li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em>) -- Optional name of the signal. If it is not specified then the name of the
-class attribute that is bound to the signal will be used. default None</p></li>
-<li><p><strong>check_nargs_on_connect</strong> (<em>str</em><em>, </em><em>optional</em>) -- Whether to check the number of positional args against <cite>signature</cite> when
-connecting a new callback. This can also be provided at connection time using
-<cite>.connect(..., check_nargs=True)</cite>. By default, True.</p></li>
-<li><p><strong>check_types_on_connect</strong> (<em>str</em><em>, </em><em>optional</em>) -- Whether to check the callback parameter types against <cite>signature</cite> when
-connecting a new callback. This can also be provided at connection time using
-<cite>.connect(..., check_types=True)</cite>. By default, False.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.IsoSurfaceSignals.iso_threshold">
-<span class="sig-name descname"><span class="pre">iso_threshold</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.IsoSurfaceSignals.iso_threshold" title="Permalink to this definition">¶</a></dt>
-<dd><p>Signal descriptor, for declaring a signal on a class.</p>
-<p>This is designed to be used as a class attribute, with the supported signature(s)
-provided in the contructor:</p>
-<blockquote>
-<div><dl class="simple">
-<dt>class MyEmitter:</dt><dd><p>changed = Signal(int)  # changed will emit an int</p>
-</dd>
-<dt>def receiver(arg: int):</dt><dd><p>print(&quot;new value:&quot;, arg)</p>
-</dd>
-</dl>
-<p>emitter = MyEmitter()
-emitter.changed.connect(receiver)
-emitter.emit(1)</p>
-</div></blockquote>
-<p>Note: in the example above, <cite>MyEmitter.changed</cite> is an instance of <cite>Signal</cite>,
-and <cite>emitter.changed</cite> is an instance of <cite>SignalInstance</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>*types</strong> (<em>sequence of Type</em>) -- A sequence of individual types</p></li>
-<li><p><strong>description</strong> (<em>str</em><em>, </em><em>optional</em>) -- Optional descriptive text for the signal.  (not used internally).</p></li>
-<li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em>) -- Optional name of the signal. If it is not specified then the name of the
-class attribute that is bound to the signal will be used. default None</p></li>
-<li><p><strong>check_nargs_on_connect</strong> (<em>str</em><em>, </em><em>optional</em>) -- Whether to check the number of positional args against <cite>signature</cite> when
-connecting a new callback. This can also be provided at connection time using
-<cite>.connect(..., check_nargs=True)</cite>. By default, True.</p></li>
-<li><p><strong>check_types_on_connect</strong> (<em>str</em><em>, </em><em>optional</em>) -- Whether to check the callback parameter types against <cite>signature</cite> when
-connecting a new callback. This can also be provided at connection time using
-<cite>.connect(..., check_types=True)</cite>. By default, False.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.IsoSurfaceSignals.shading">
-<span class="sig-name descname"><span class="pre">shading</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.IsoSurfaceSignals.shading" title="Permalink to this definition">¶</a></dt>
-<dd><p>Signal descriptor, for declaring a signal on a class.</p>
-<p>This is designed to be used as a class attribute, with the supported signature(s)
-provided in the contructor:</p>
-<blockquote>
-<div><dl class="simple">
-<dt>class MyEmitter:</dt><dd><p>changed = Signal(int)  # changed will emit an int</p>
-</dd>
-<dt>def receiver(arg: int):</dt><dd><p>print(&quot;new value:&quot;, arg)</p>
-</dd>
-</dl>
-<p>emitter = MyEmitter()
-emitter.changed.connect(receiver)
-emitter.emit(1)</p>
-</div></blockquote>
-<p>Note: in the example above, <cite>MyEmitter.changed</cite> is an instance of <cite>Signal</cite>,
-and <cite>emitter.changed</cite> is an instance of <cite>SignalInstance</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>*types</strong> (<em>sequence of Type</em>) -- A sequence of individual types</p></li>
-<li><p><strong>description</strong> (<em>str</em><em>, </em><em>optional</em>) -- Optional descriptive text for the signal.  (not used internally).</p></li>
-<li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em>) -- Optional name of the signal. If it is not specified then the name of the
-class attribute that is bound to the signal will be used. default None</p></li>
-<li><p><strong>check_nargs_on_connect</strong> (<em>str</em><em>, </em><em>optional</em>) -- Whether to check the number of positional args against <cite>signature</cite> when
-connecting a new callback. This can also be provided at connection time using
-<cite>.connect(..., check_nargs=True)</cite>. By default, True.</p></li>
-<li><p><strong>check_types_on_connect</strong> (<em>str</em><em>, </em><em>optional</em>) -- Whether to check the callback parameter types against <cite>signature</cite> when
-connecting a new callback. This can also be provided at connection time using
-<cite>.connect(..., check_types=True)</cite>. By default, False.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.IsoSurfaceWidgetGroup">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vispy.layer3d.</span></span><span class="sig-name descname"><span class="pre">IsoSurfaceWidgetGroup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vol</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">magicclass.ext.vispy.layer3d._L</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vispy/layer3d.html#IsoSurfaceWidgetGroup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.layer3d.IsoSurfaceWidgetGroup" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#magicclass.ext.vispy.layer3d.WidgetGroup" title="magicclass.ext.vispy.layer3d.WidgetGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.vispy.layer3d.WidgetGroup</span></code></a>[<a class="reference internal" href="#magicclass.ext.vispy.layer3d.IsoSurface" title="magicclass.ext.vispy.layer3d.IsoSurface"><code class="xref py py-class docutils literal notranslate"><span class="pre">IsoSurface</span></code></a>]</p>
-<p>A widget group of an IsoSurface layer.</p>
-<dl class="py property">
-<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.IsoSurfaceWidgetGroup.contrast_limits">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">contrast_limits</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="magicclass.widgets.html#magicclass.widgets.misc.FloatRangeSlider" title="magicclass.widgets.misc.FloatRangeSlider"><span class="pre">magicclass.widgets.misc.FloatRangeSlider</span></a></em><a class="reference internal" href="../_modules/magicclass/ext/vispy/layer3d.html#IsoSurfaceWidgetGroup.contrast_limits"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.layer3d.IsoSurfaceWidgetGroup.contrast_limits" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.IsoSurfaceWidgetGroup.edge_color">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">edge_color</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="magicclass.widgets.html#magicclass.widgets.ColorEdit" title="magicclass.widgets.ColorEdit"><span class="pre">magicclass.widgets.ColorEdit</span></a></em><a class="reference internal" href="../_modules/magicclass/ext/vispy/layer3d.html#IsoSurfaceWidgetGroup.edge_color"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.layer3d.IsoSurfaceWidgetGroup.edge_color" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.IsoSurfaceWidgetGroup.edge_width">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">edge_width</span></span><em class="property"><span class="pre">:</span> <span class="pre">magicgui.widgets.FloatSlider</span></em><a class="reference internal" href="../_modules/magicclass/ext/vispy/layer3d.html#IsoSurfaceWidgetGroup.edge_width"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.layer3d.IsoSurfaceWidgetGroup.edge_width" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.IsoSurfaceWidgetGroup.face_color">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">face_color</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="magicclass.widgets.html#magicclass.widgets.ColorEdit" title="magicclass.widgets.ColorEdit"><span class="pre">magicclass.widgets.ColorEdit</span></a></em><a class="reference internal" href="../_modules/magicclass/ext/vispy/layer3d.html#IsoSurfaceWidgetGroup.face_color"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.layer3d.IsoSurfaceWidgetGroup.face_color" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.IsoSurfaceWidgetGroup.iso_threshold">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">iso_threshold</span></span><em class="property"><span class="pre">:</span> <span class="pre">magicgui.widgets.FloatSlider</span></em><a class="reference internal" href="../_modules/magicclass/ext/vispy/layer3d.html#IsoSurfaceWidgetGroup.iso_threshold"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.layer3d.IsoSurfaceWidgetGroup.iso_threshold" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.IsoSurfaceWidgetGroup.shading">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">shading</span></span><em class="property"><span class="pre">:</span> <span class="pre">magicgui.widgets.ComboBox</span></em><a class="reference internal" href="../_modules/magicclass/ext/vispy/layer3d.html#IsoSurfaceWidgetGroup.shading"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.layer3d.IsoSurfaceWidgetGroup.shading" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.Surface">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vispy.layer3d.</span></span><span class="sig-name descname"><span class="pre">Surface</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">viewbox</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">vispy.scene.widgets.viewbox.ViewBox</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">face_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shading</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'none'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vispy/layer3d.html#Surface"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Surface" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.vispy.layer3d._SurfaceBase</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.vispy.layer3d._SurfaceBase</span></code>, <a class="reference internal" href="magicclass.html#magicclass.fields.HasFields" title="magicclass.fields.HasFields"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.fields.HasFields</span></code></a></p>
 <dl class="py property">
 <dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.Surface.data">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Surface.data" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="py property">
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.Surface.edge_color">
+<span class="sig-name descname"><span class="pre">edge_color</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Surface.edge_color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.Surface.edge_width">
+<span class="sig-name descname"><span class="pre">edge_width</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Surface.edge_width" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.Surface.face_color">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">face_color</span></span><em class="property"><span class="pre">:</span> <span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Surface.face_color" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.SurfaceSignals">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vispy.layer3d.</span></span><span class="sig-name descname"><span class="pre">SurfaceSignals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instance</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vispy/layer3d.html#SurfaceSignals"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.layer3d.SurfaceSignals" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">psygnal._group.SignalGroup</span></code></p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.SurfaceSignals.data">
-<span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.SurfaceSignals.data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Signal descriptor, for declaring a signal on a class.</p>
-<p>This is designed to be used as a class attribute, with the supported signature(s)
-provided in the contructor:</p>
-<blockquote>
-<div><dl class="simple">
-<dt>class MyEmitter:</dt><dd><p>changed = Signal(int)  # changed will emit an int</p>
-</dd>
-<dt>def receiver(arg: int):</dt><dd><p>print(&quot;new value:&quot;, arg)</p>
-</dd>
-</dl>
-<p>emitter = MyEmitter()
-emitter.changed.connect(receiver)
-emitter.emit(1)</p>
-</div></blockquote>
-<p>Note: in the example above, <cite>MyEmitter.changed</cite> is an instance of <cite>Signal</cite>,
-and <cite>emitter.changed</cite> is an instance of <cite>SignalInstance</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>*types</strong> (<em>sequence of Type</em>) -- A sequence of individual types</p></li>
-<li><p><strong>description</strong> (<em>str</em><em>, </em><em>optional</em>) -- Optional descriptive text for the signal.  (not used internally).</p></li>
-<li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em>) -- Optional name of the signal. If it is not specified then the name of the
-class attribute that is bound to the signal will be used. default None</p></li>
-<li><p><strong>check_nargs_on_connect</strong> (<em>str</em><em>, </em><em>optional</em>) -- Whether to check the number of positional args against <cite>signature</cite> when
-connecting a new callback. This can also be provided at connection time using
-<cite>.connect(..., check_nargs=True)</cite>. By default, True.</p></li>
-<li><p><strong>check_types_on_connect</strong> (<em>str</em><em>, </em><em>optional</em>) -- Whether to check the callback parameter types against <cite>signature</cite> when
-connecting a new callback. This can also be provided at connection time using
-<cite>.connect(..., check_types=True)</cite>. By default, False.</p></li>
-</ul>
-</dd>
-</dl>
+<span class="sig-name descname"><span class="pre">face_color</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Surface.face_color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.SurfaceSignals.edge_color">
-<span class="sig-name descname"><span class="pre">edge_color</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.SurfaceSignals.edge_color" title="Permalink to this definition">¶</a></dt>
-<dd><p>Signal descriptor, for declaring a signal on a class.</p>
-<p>This is designed to be used as a class attribute, with the supported signature(s)
-provided in the contructor:</p>
-<blockquote>
-<div><dl class="simple">
-<dt>class MyEmitter:</dt><dd><p>changed = Signal(int)  # changed will emit an int</p>
-</dd>
-<dt>def receiver(arg: int):</dt><dd><p>print(&quot;new value:&quot;, arg)</p>
-</dd>
-</dl>
-<p>emitter = MyEmitter()
-emitter.changed.connect(receiver)
-emitter.emit(1)</p>
-</div></blockquote>
-<p>Note: in the example above, <cite>MyEmitter.changed</cite> is an instance of <cite>Signal</cite>,
-and <cite>emitter.changed</cite> is an instance of <cite>SignalInstance</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>*types</strong> (<em>sequence of Type</em>) -- A sequence of individual types</p></li>
-<li><p><strong>description</strong> (<em>str</em><em>, </em><em>optional</em>) -- Optional descriptive text for the signal.  (not used internally).</p></li>
-<li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em>) -- Optional name of the signal. If it is not specified then the name of the
-class attribute that is bound to the signal will be used. default None</p></li>
-<li><p><strong>check_nargs_on_connect</strong> (<em>str</em><em>, </em><em>optional</em>) -- Whether to check the number of positional args against <cite>signature</cite> when
-connecting a new callback. This can also be provided at connection time using
-<cite>.connect(..., check_nargs=True)</cite>. By default, True.</p></li>
-<li><p><strong>check_types_on_connect</strong> (<em>str</em><em>, </em><em>optional</em>) -- Whether to check the callback parameter types against <cite>signature</cite> when
-connecting a new callback. This can also be provided at connection time using
-<cite>.connect(..., check_types=True)</cite>. By default, False.</p></li>
-</ul>
-</dd>
-</dl>
+<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.Surface.shading">
+<span class="sig-name descname"><span class="pre">shading</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Surface.shading" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
 </dd></dl>
 
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.SurfaceSignals.edge_width">
-<span class="sig-name descname"><span class="pre">edge_width</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.SurfaceSignals.edge_width" title="Permalink to this definition">¶</a></dt>
-<dd><p>Signal descriptor, for declaring a signal on a class.</p>
-<p>This is designed to be used as a class attribute, with the supported signature(s)
-provided in the contructor:</p>
-<blockquote>
-<div><dl class="simple">
-<dt>class MyEmitter:</dt><dd><p>changed = Signal(int)  # changed will emit an int</p>
-</dd>
-<dt>def receiver(arg: int):</dt><dd><p>print(&quot;new value:&quot;, arg)</p>
-</dd>
-</dl>
-<p>emitter = MyEmitter()
-emitter.changed.connect(receiver)
-emitter.emit(1)</p>
-</div></blockquote>
-<p>Note: in the example above, <cite>MyEmitter.changed</cite> is an instance of <cite>Signal</cite>,
-and <cite>emitter.changed</cite> is an instance of <cite>SignalInstance</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>*types</strong> (<em>sequence of Type</em>) -- A sequence of individual types</p></li>
-<li><p><strong>description</strong> (<em>str</em><em>, </em><em>optional</em>) -- Optional descriptive text for the signal.  (not used internally).</p></li>
-<li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em>) -- Optional name of the signal. If it is not specified then the name of the
-class attribute that is bound to the signal will be used. default None</p></li>
-<li><p><strong>check_nargs_on_connect</strong> (<em>str</em><em>, </em><em>optional</em>) -- Whether to check the number of positional args against <cite>signature</cite> when
-connecting a new callback. This can also be provided at connection time using
-<cite>.connect(..., check_nargs=True)</cite>. By default, True.</p></li>
-<li><p><strong>check_types_on_connect</strong> (<em>str</em><em>, </em><em>optional</em>) -- Whether to check the callback parameter types against <cite>signature</cite> when
-connecting a new callback. This can also be provided at connection time using
-<cite>.connect(..., check_types=True)</cite>. By default, False.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.SurfaceSignals.face_color">
-<span class="sig-name descname"><span class="pre">face_color</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.SurfaceSignals.face_color" title="Permalink to this definition">¶</a></dt>
-<dd><p>Signal descriptor, for declaring a signal on a class.</p>
-<p>This is designed to be used as a class attribute, with the supported signature(s)
-provided in the contructor:</p>
-<blockquote>
-<div><dl class="simple">
-<dt>class MyEmitter:</dt><dd><p>changed = Signal(int)  # changed will emit an int</p>
-</dd>
-<dt>def receiver(arg: int):</dt><dd><p>print(&quot;new value:&quot;, arg)</p>
-</dd>
-</dl>
-<p>emitter = MyEmitter()
-emitter.changed.connect(receiver)
-emitter.emit(1)</p>
-</div></blockquote>
-<p>Note: in the example above, <cite>MyEmitter.changed</cite> is an instance of <cite>Signal</cite>,
-and <cite>emitter.changed</cite> is an instance of <cite>SignalInstance</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>*types</strong> (<em>sequence of Type</em>) -- A sequence of individual types</p></li>
-<li><p><strong>description</strong> (<em>str</em><em>, </em><em>optional</em>) -- Optional descriptive text for the signal.  (not used internally).</p></li>
-<li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em>) -- Optional name of the signal. If it is not specified then the name of the
-class attribute that is bound to the signal will be used. default None</p></li>
-<li><p><strong>check_nargs_on_connect</strong> (<em>str</em><em>, </em><em>optional</em>) -- Whether to check the number of positional args against <cite>signature</cite> when
-connecting a new callback. This can also be provided at connection time using
-<cite>.connect(..., check_nargs=True)</cite>. By default, True.</p></li>
-<li><p><strong>check_types_on_connect</strong> (<em>str</em><em>, </em><em>optional</em>) -- Whether to check the callback parameter types against <cite>signature</cite> when
-connecting a new callback. This can also be provided at connection time using
-<cite>.connect(..., check_types=True)</cite>. By default, False.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.SurfaceSignals.shading">
-<span class="sig-name descname"><span class="pre">shading</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.SurfaceSignals.shading" title="Permalink to this definition">¶</a></dt>
-<dd><p>Signal descriptor, for declaring a signal on a class.</p>
-<p>This is designed to be used as a class attribute, with the supported signature(s)
-provided in the contructor:</p>
-<blockquote>
-<div><dl class="simple">
-<dt>class MyEmitter:</dt><dd><p>changed = Signal(int)  # changed will emit an int</p>
-</dd>
-<dt>def receiver(arg: int):</dt><dd><p>print(&quot;new value:&quot;, arg)</p>
-</dd>
-</dl>
-<p>emitter = MyEmitter()
-emitter.changed.connect(receiver)
-emitter.emit(1)</p>
-</div></blockquote>
-<p>Note: in the example above, <cite>MyEmitter.changed</cite> is an instance of <cite>Signal</cite>,
-and <cite>emitter.changed</cite> is an instance of <cite>SignalInstance</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>*types</strong> (<em>sequence of Type</em>) -- A sequence of individual types</p></li>
-<li><p><strong>description</strong> (<em>str</em><em>, </em><em>optional</em>) -- Optional descriptive text for the signal.  (not used internally).</p></li>
-<li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em>) -- Optional name of the signal. If it is not specified then the name of the
-class attribute that is bound to the signal will be used. default None</p></li>
-<li><p><strong>check_nargs_on_connect</strong> (<em>str</em><em>, </em><em>optional</em>) -- Whether to check the number of positional args against <cite>signature</cite> when
-connecting a new callback. This can also be provided at connection time using
-<cite>.connect(..., check_nargs=True)</cite>. By default, True.</p></li>
-<li><p><strong>check_types_on_connect</strong> (<em>str</em><em>, </em><em>optional</em>) -- Whether to check the callback parameter types against <cite>signature</cite> when
-connecting a new callback. This can also be provided at connection time using
-<cite>.connect(..., check_types=True)</cite>. By default, False.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.WidgetGroup">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vispy.layer3d.</span></span><span class="sig-name descname"><span class="pre">WidgetGroup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vol</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">magicclass.ext.vispy.layer3d._L</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vispy/layer3d.html#WidgetGroup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.layer3d.WidgetGroup" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">magicclass.ext.vispy.layer3d._L</span></code>]</p>
-<p>A base class of widget groups for a layer item.</p>
-<dl class="py property">
-<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.WidgetGroup.container">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">container</span></span><em class="property"><span class="pre">:</span> <span class="pre">magicgui.widgets.Container</span></em><a class="reference internal" href="../_modules/magicclass/ext/vispy/layer3d.html#WidgetGroup.container"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.layer3d.WidgetGroup.container" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a container of all the widget properties.</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.WidgetGroup.layer">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">layer</span></span><em class="property"><span class="pre">:</span> <span class="pre">magicclass.ext.vispy.layer3d._L</span></em><a class="headerlink" href="#magicclass.ext.vispy.layer3d.WidgetGroup.layer" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the parent layer.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.WidgetGroup.link">
-<span class="sig-name descname"><span class="pre">link</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">widget</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">magicgui.widgets._bases.value_widget.ValueWidget</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attr</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vispy/layer3d.html#WidgetGroup.link"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.layer3d.WidgetGroup.link" title="Permalink to this definition">¶</a></dt>
-<dd><p>Link value change events from widget and programmatic one.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.widget_property">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vispy.layer3d.</span></span><span class="sig-name descname"><span class="pre">widget_property</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vispy/layer3d.html#widget_property"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.layer3d.widget_property" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">functools.cached_property</span></code></p>
-<p>Identical to cached_property but returns a widget.</p>
 </dd></dl>
 
 </section>

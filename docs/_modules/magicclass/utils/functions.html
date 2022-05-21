@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.utils.functions &mdash; magic-class 0.6.4.dev1 documentation</title>
+  <title>magicclass.utils.functions &mdash; magic-class 0.6.4 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.4.dev1
+                0.6.4
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -77,8 +77,10 @@
 
   <h1>Source code for magicclass.utils.functions</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">cached_property</span>
 <span class="kn">import</span> <span class="nn">inspect</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Iterable</span>
+<span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="n">MethodType</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">docstring_parser</span> <span class="kn">import</span> <span class="n">parse</span>
 
@@ -122,15 +124,33 @@
         <span class="n">processed</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">key</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="extract_tooltip"><a class="viewcode-back" href="../../../apidoc/magicclass.utils.html#magicclass.utils.functions.extract_tooltip">[docs]</a><span class="k">def</span> <span class="nf">extract_tooltip</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Extract docstring for tooltip.&quot;&quot;&quot;</span>
-    <span class="n">doc</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="vm">__doc__</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">doc</span><span class="o">.</span><span class="n">short_description</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;&quot;</span>
-    <span class="k">elif</span> <span class="n">doc</span><span class="o">.</span><span class="n">long_description</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">doc</span><span class="o">.</span><span class="n">short_description</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">doc</span><span class="o">.</span><span class="n">short_description</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">doc</span><span class="o">.</span><span class="n">long_description</span></div>
+<div class="viewcode-block" id="Tooltips"><a class="viewcode-back" href="../../../apidoc/magicclass.utils.html#magicclass.utils.functions.Tooltips">[docs]</a><span class="k">class</span> <span class="nc">Tooltips</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_doc</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="vm">__doc__</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">desc</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">doc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_doc</span>
+        <span class="k">if</span> <span class="n">doc</span><span class="o">.</span><span class="n">short_description</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">elif</span> <span class="n">doc</span><span class="o">.</span><span class="n">long_description</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">doc</span><span class="o">.</span><span class="n">short_description</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">doc</span><span class="o">.</span><span class="n">short_description</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">doc</span><span class="o">.</span><span class="n">long_description</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span> <span class="nf">parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_iter_args_of</span><span class="p">(</span><span class="s2">&quot;param&quot;</span><span class="p">))</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span> <span class="nf">attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_iter_args_of</span><span class="p">(</span><span class="s2">&quot;attribute&quot;</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_iter_args_of</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_doc</span><span class="o">.</span><span class="n">params</span><span class="p">:</span>
+            <span class="n">tp</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">args</span>
+            <span class="k">if</span> <span class="n">tp</span> <span class="o">==</span> <span class="n">type_name</span><span class="p">:</span>
+                <span class="k">yield</span> <span class="n">name</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">description</span></div>
 
 
 <div class="viewcode-block" id="get_signature"><a class="viewcode-back" href="../../../apidoc/magicclass.utils.html#magicclass.utils.functions.get_signature">[docs]</a><span class="k">def</span> <span class="nf">get_signature</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
@@ -140,6 +160,62 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">sig</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">sig</span></div>
+
+
+<div class="viewcode-block" id="argcount"><a class="viewcode-back" href="../../../apidoc/magicclass.utils.html#magicclass.utils.functions.argcount">[docs]</a><span class="k">def</span> <span class="nf">argcount</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Count the number of parameters of a callable object.</span>
+
+<span class="sd">    Basically, this function returns identical result as:</span>
+<span class="sd">    &gt;&gt;&gt; len(inspect.signature(func).parameters)</span>
+<span class="sd">    but ~10x faster.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s2">&quot;__func__&quot;</span><span class="p">):</span>
+        <span class="n">_func</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="vm">__func__</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">_func</span> <span class="o">=</span> <span class="n">func</span>
+    <span class="n">unwrapped</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">unwrap</span><span class="p">(</span>
+        <span class="n">_func</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="p">(</span><span class="k">lambda</span> <span class="n">f</span><span class="p">:</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s2">&quot;__signature__&quot;</span><span class="p">))</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">unwrapped</span><span class="p">,</span> <span class="s2">&quot;__signature__&quot;</span><span class="p">):</span>
+        <span class="n">nargs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">unwrapped</span><span class="o">.</span><span class="n">__signature__</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">nargs</span> <span class="o">=</span> <span class="n">unwrapped</span><span class="o">.</span><span class="vm">__code__</span><span class="o">.</span><span class="n">co_argcount</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">MethodType</span><span class="p">):</span>
+        <span class="n">nargs</span> <span class="o">-=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">nargs</span></div>
+
+
+<span class="n">_LOCALS</span> <span class="o">=</span> <span class="s2">&quot;&lt;locals&gt;.&quot;</span>
+
+
+<div class="viewcode-block" id="is_instance_method"><a class="viewcode-back" href="../../../apidoc/magicclass.utils.html#magicclass.utils.functions.is_instance_method">[docs]</a><span class="k">def</span> <span class="nf">is_instance_method</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Check if a function is defined in a class.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">callable</span><span class="p">(</span><span class="n">func</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;.&quot;</span> <span class="ow">in</span> <span class="n">func</span><span class="o">.</span><span class="vm">__qualname__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">_LOCALS</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="method_as_getter"><a class="viewcode-back" href="../../../apidoc/magicclass.utils.html#magicclass.utils.functions.method_as_getter">[docs]</a><span class="k">def</span> <span class="nf">method_as_getter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">getter</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
+    <span class="n">qualname</span> <span class="o">=</span> <span class="n">getter</span><span class="o">.</span><span class="vm">__qualname__</span>
+    <span class="k">if</span> <span class="n">_LOCALS</span> <span class="ow">in</span> <span class="n">qualname</span><span class="p">:</span>
+        <span class="n">qualname</span> <span class="o">=</span> <span class="n">qualname</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">_LOCALS</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="o">*</span><span class="n">clsnames</span><span class="p">,</span> <span class="n">funcname</span> <span class="o">=</span> <span class="n">qualname</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+    <span class="n">ins</span> <span class="o">=</span> <span class="bp">self</span>
+    <span class="n">self_cls</span> <span class="o">=</span> <span class="n">ins</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
+    <span class="k">if</span> <span class="n">self_cls</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">clsnames</span><span class="p">:</span>
+        <span class="n">ns</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">clsnames</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Method </span><span class="si">{</span><span class="n">funcname</span><span class="si">}</span><span class="s2"> is in namespace </span><span class="si">{</span><span class="n">ns</span><span class="si">!r}</span><span class="s2">, so it is invisible &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;from class </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__qualname__</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="n">clsnames</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">self_cls</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="k">for</span> <span class="n">clsname</span> <span class="ow">in</span> <span class="n">clsnames</span><span class="p">[</span><span class="n">i</span><span class="p">:]:</span>
+        <span class="n">ins</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ins</span><span class="p">,</span> <span class="n">clsname</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_func</span><span class="p">(</span><span class="n">w</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">getter</span><span class="p">(</span><span class="n">ins</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">_func</span></div>
 
 
 <div class="viewcode-block" id="show_tree"><a class="viewcode-back" href="../../../apidoc/magicclass.utils.html#magicclass.utils.functions.show_tree">[docs]</a><span class="k">def</span> <span class="nf">show_tree</span><span class="p">(</span><span class="n">ui</span><span class="p">:</span> <span class="n">BaseGui</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>

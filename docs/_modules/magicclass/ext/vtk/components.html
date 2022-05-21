@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.ext.vtk.components &mdash; magic-class 0.6.4.dev1 documentation</title>
+  <title>magicclass.ext.vtk.components &mdash; magic-class 0.6.4 documentation</title>
       <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.4.dev1
+                0.6.4
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
@@ -77,92 +77,50 @@
 
   <h1>Source code for magicclass.ext.vtk.components</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">overload</span>
-<span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">ParamSpec</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">overload</span>
 <span class="kn">import</span> <span class="nn">weakref</span>
 <span class="kn">import</span> <span class="nn">vedo</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">.const</span> <span class="kn">import</span> <span class="n">Representation</span>
+<span class="kn">from</span> <span class="nn">...fields</span> <span class="kn">import</span> <span class="n">vfield</span><span class="p">,</span> <span class="n">HasFields</span>
+<span class="kn">from</span> <span class="nn">...types</span> <span class="kn">import</span> <span class="n">Color</span>
 
 <span class="n">_VtkType</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;_VtkType&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">vedo</span><span class="o">.</span><span class="n">BaseActor</span><span class="p">)</span>
-<span class="n">_P</span> <span class="o">=</span> <span class="n">ParamSpec</span><span class="p">(</span><span class="s2">&quot;_P&quot;</span><span class="p">)</span>
-<span class="n">_L</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;_L&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="s2">&quot;VtkComponent&quot;</span><span class="p">)</span>
-<span class="n">_V</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;_V&quot;</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="VtkProperty"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vtk.html#magicclass.ext.vtk.components.VtkProperty">[docs]</a><span class="k">class</span> <span class="nc">VtkProperty</span><span class="p">(</span><span class="nb">property</span><span class="p">,</span> <span class="n">Generic</span><span class="p">[</span><span class="n">_L</span><span class="p">,</span> <span class="n">_V</span><span class="p">]):</span>
+<div class="viewcode-block" id="VtkComponent"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vtk.html#magicclass.ext.vtk.components.VtkComponent">[docs]</a><span class="k">class</span> <span class="nc">VtkComponent</span><span class="p">(</span><span class="n">HasFields</span><span class="p">):</span>
+    <span class="n">_vtk_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">_VtkType</span><span class="p">]</span> <span class="o">|</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">_VtkType</span><span class="p">]</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">vedo_fname</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">vtk_fname</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">converter</span><span class="p">:</span> <span class="nb">type</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">doc</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">_parent</span><span class="p">:</span> <span class="n">vedo</span><span class="o">.</span><span class="n">Plotter</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">_emit</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
     <span class="p">):</span>
-        <span class="k">if</span> <span class="n">converter</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">converter</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_converter</span> <span class="o">=</span> <span class="n">converter</span>
-
-        <span class="k">if</span> <span class="n">vedo_fname</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">fget</span><span class="p">,</span> <span class="n">fset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_from_vedo</span><span class="p">(</span><span class="n">vedo_fname</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">fget</span><span class="p">,</span> <span class="n">fset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_from_vtk</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Get</span><span class="si">{</span><span class="n">vtk_fname</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Set</span><span class="si">{</span><span class="n">vtk_fname</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">fget</span><span class="p">,</span> <span class="n">fset</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="n">doc</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_from_vedo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vedo_fname</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="c1"># getter function</span>
-        <span class="k">def</span> <span class="nf">fget</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">_L</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_V</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_converter</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">_obj</span><span class="p">,</span> <span class="n">vedo_fname</span><span class="p">)())</span>
-
-        <span class="c1"># setter function</span>
-        <span class="k">def</span> <span class="nf">fset</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">_L</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">_V</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="nb">getattr</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">_obj</span><span class="p">,</span> <span class="n">vedo_fname</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">_converter</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-            <span class="n">x</span><span class="o">.</span><span class="n">_update</span><span class="p">()</span>
-
-        <span class="k">return</span> <span class="n">fget</span><span class="p">,</span> <span class="n">fset</span>
-
-    <span class="k">def</span> <span class="nf">_from_vtk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fget_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">fset_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="c1"># getter function</span>
-        <span class="k">def</span> <span class="nf">fget</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">_L</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_V</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_converter</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">GetProperty</span><span class="p">(),</span> <span class="n">fget_name</span><span class="p">)())</span>
-
-        <span class="c1"># setter function</span>
-        <span class="k">def</span> <span class="nf">fset</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">_L</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">_V</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="nb">getattr</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">GetProperty</span><span class="p">(),</span> <span class="n">fset_name</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">_converter</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-            <span class="n">x</span><span class="o">.</span><span class="n">_update</span><span class="p">()</span>
-
-        <span class="k">return</span> <span class="n">fget</span><span class="p">,</span> <span class="n">fset</span></div>
-
-
-<div class="viewcode-block" id="VtkComponent"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vtk.html#magicclass.ext.vtk.components.VtkComponent">[docs]</a><span class="k">class</span> <span class="nc">VtkComponent</span><span class="p">:</span>
-    <span class="n">_vtk_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">_VtkType</span><span class="p">]</span> <span class="o">|</span> <span class="n">Callable</span><span class="p">[</span><span class="n">_P</span><span class="p">,</span> <span class="n">_VtkType</span><span class="p">]</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">_parent</span><span class="p">:</span> <span class="n">vedo</span><span class="o">.</span><span class="n">Plotter</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vtk_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Base VTK type is unknown.&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vtk_type</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_parent_ref</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">_parent</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_set_properties</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="nf">_set_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">pass</span>
+        <span class="k">if</span> <span class="n">_emit</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">emit_all</span><span class="p">()</span>
 
     <span class="nd">@overload</span>
     <span class="k">def</span> <span class="nf">__init_subclass__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">base</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">_VtkType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># noqa</span>
         <span class="o">...</span>
 
     <span class="nd">@overload</span>
-    <span class="k">def</span> <span class="nf">__init_subclass__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">base</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="n">_P</span><span class="p">,</span> <span class="n">_VtkType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># noqa</span>
+    <span class="k">def</span> <span class="nf">__init_subclass__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">base</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">_VtkType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># noqa</span>
         <span class="o">...</span>
 
     <span class="k">def</span> <span class="nf">__init_subclass__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">cls</span><span class="o">.</span><span class="n">_vtk_type</span> <span class="o">=</span> <span class="n">base</span>
 
-    <span class="n">visible</span><span class="p">:</span> <span class="n">VtkProperty</span><span class="p">[</span><span class="n">VtkComponent</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="n">VtkProperty</span><span class="p">(</span>
-        <span class="n">vtk_fname</span><span class="o">=</span><span class="s2">&quot;Visibility&quot;</span><span class="p">,</span> <span class="n">converter</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">&quot;Visibility of the object.&quot;</span>
-    <span class="p">)</span>
+    <span class="n">visible</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;visibility&quot;</span><span class="p">)</span>
+
+    <span class="nd">@visible</span><span class="o">.</span><span class="n">connect</span>
+    <span class="k">def</span> <span class="nf">_on_visible_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">v</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">on</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">_update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_parent_ref</span><span class="p">()</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">Render</span><span class="p">()</span>
@@ -172,43 +130,101 @@
 
 
 <div class="viewcode-block" id="Points"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vtk.html#magicclass.ext.vtk.components.Points">[docs]</a><span class="k">class</span> <span class="nc">Points</span><span class="p">(</span><span class="n">VtkComponent</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="n">vedo</span><span class="o">.</span><span class="n">Points</span><span class="p">):</span>
-    <span class="c1"># fmt: off</span>
-    <span class="n">color</span><span class="p">:</span> <span class="n">VtkProperty</span><span class="p">[</span><span class="n">Points</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="n">VtkProperty</span><span class="p">(</span><span class="s2">&quot;color&quot;</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">&quot;Point color.&quot;</span><span class="p">)</span>  <span class="c1"># noqa</span>
-    <span class="n">point_size</span><span class="p">:</span> <span class="n">VtkProperty</span><span class="p">[</span><span class="n">Points</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">VtkProperty</span><span class="p">(</span><span class="n">vtk_fname</span><span class="o">=</span><span class="s2">&quot;PointSize&quot;</span><span class="p">,</span> <span class="n">converter</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">&quot;Size of points.&quot;</span><span class="p">)</span>  <span class="c1"># noqa</span>
-    <span class="n">spherical</span><span class="p">:</span> <span class="n">VtkProperty</span><span class="p">[</span><span class="n">Points</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">VtkProperty</span><span class="p">(</span><span class="n">vtk_fname</span><span class="o">=</span><span class="s2">&quot;RenderPointsAsSpheres&quot;</span><span class="p">,</span> <span class="n">converter</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">&quot;Render points to look spherical&quot;</span><span class="p">)</span>  <span class="c1"># noqa</span>
-    <span class="n">occlusion</span><span class="p">:</span> <span class="n">VtkProperty</span><span class="p">[</span><span class="n">Points</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">VtkProperty</span><span class="p">(</span><span class="s2">&quot;occlusion&quot;</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">&quot;Occlusion strength.&quot;</span><span class="p">)</span>  <span class="c1"># noqa</span>
-    <span class="n">pos</span><span class="p">:</span> <span class="n">VtkProperty</span><span class="p">[</span><span class="n">Points</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="n">VtkProperty</span><span class="p">(</span><span class="s2">&quot;pos&quot;</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">&quot;position the points.&quot;</span><span class="p">)</span>  <span class="c1"># noqa</span>
-    <span class="n">scale</span><span class="p">:</span> <span class="n">VtkProperty</span><span class="p">[</span><span class="n">Points</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">VtkProperty</span><span class="p">(</span><span class="s2">&quot;scale&quot;</span><span class="p">,</span> <span class="n">absolute</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">&quot;scale of the layer.&quot;</span><span class="p">)</span>  <span class="c1"># noqa</span></div>
-    <span class="c1"># fmt: on</span>
+    <span class="n">_obj</span><span class="p">:</span> <span class="n">vedo</span><span class="o">.</span><span class="n">Points</span>
+    <span class="n">color</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="n">Color</span><span class="p">)</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">spherical</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">occlusion</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">pos</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+
+    <span class="nd">@color</span><span class="o">.</span><span class="n">connect</span>
+    <span class="k">def</span> <span class="nf">_on_color_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">v</span><span class="p">[:</span><span class="mi">3</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update</span><span class="p">()</span>
+
+    <span class="nd">@size</span><span class="o">.</span><span class="n">connect</span>
+    <span class="k">def</span> <span class="nf">_on_size_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">PointSize</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update</span><span class="p">()</span>
+
+    <span class="nd">@spherical</span><span class="o">.</span><span class="n">connect</span>
+    <span class="k">def</span> <span class="nf">_on_spherical_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">RenderPointsAsSpheres</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update</span><span class="p">()</span>
+
+    <span class="nd">@occlusion</span><span class="o">.</span><span class="n">connect</span>
+    <span class="k">def</span> <span class="nf">_on_occlusion_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">occlusion</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update</span><span class="p">()</span>
+
+    <span class="nd">@pos</span><span class="o">.</span><span class="n">connect</span>
+    <span class="k">def</span> <span class="nf">_on_pos_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">pos</span><span class="p">(</span><span class="o">*</span><span class="n">v</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update</span><span class="p">()</span>
+
+    <span class="nd">@scale</span><span class="o">.</span><span class="n">connect</span>
+    <span class="k">def</span> <span class="nf">_on_scale_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">absolute</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="Mesh"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vtk.html#magicclass.ext.vtk.components.Mesh">[docs]</a><span class="k">class</span> <span class="nc">Mesh</span><span class="p">(</span><span class="n">Points</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="n">vedo</span><span class="o">.</span><span class="n">Mesh</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">_set_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_set_properties</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_representation</span> <span class="o">=</span> <span class="n">Representation</span><span class="o">.</span><span class="n">surface</span>
+<div class="viewcode-block" id="Mesh"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vtk.html#magicclass.ext.vtk.components.Mesh">[docs]</a><span class="k">class</span> <span class="nc">Mesh</span><span class="p">(</span><span class="n">VtkComponent</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="n">vedo</span><span class="o">.</span><span class="n">Mesh</span><span class="p">):</span>
+    <span class="n">_obj</span><span class="p">:</span> <span class="n">vedo</span><span class="o">.</span><span class="n">Mesh</span>
 
-    <span class="c1"># fmt: off</span>
-    <span class="n">linewidth</span><span class="p">:</span> <span class="n">VtkProperty</span><span class="p">[</span><span class="n">Mesh</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">VtkProperty</span><span class="p">(</span><span class="s2">&quot;lineWidth&quot;</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">&quot;Line width of edges.&quot;</span><span class="p">)</span>  <span class="c1"># noqa</span>
-    <span class="n">backface_color</span><span class="p">:</span> <span class="n">VtkProperty</span><span class="p">[</span><span class="n">Mesh</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="n">VtkProperty</span><span class="p">(</span><span class="s2">&quot;backColor&quot;</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">&quot;Color of the backside of polygons.&quot;</span><span class="p">)</span>  <span class="c1"># noqa</span>
-    <span class="n">frontface_culling</span><span class="p">:</span> <span class="n">VtkProperty</span><span class="p">[</span><span class="n">Points</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="n">VtkProperty</span><span class="p">(</span><span class="n">vtk_fname</span><span class="o">=</span><span class="s2">&quot;FrontfaceCulling&quot;</span><span class="p">,</span> <span class="n">converter</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">&quot;Culling of front face.&quot;</span><span class="p">)</span>  <span class="c1"># noqa</span>
-    <span class="n">backface_culling</span><span class="p">:</span> <span class="n">VtkProperty</span><span class="p">[</span><span class="n">Points</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="n">VtkProperty</span><span class="p">(</span><span class="n">vtk_fname</span><span class="o">=</span><span class="s2">&quot;BackfaceCulling&quot;</span><span class="p">,</span> <span class="n">converter</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">&quot;Culling of back face.&quot;</span><span class="p">)</span>  <span class="c1"># noqa</span>
-    <span class="n">lines_as_tubes</span><span class="p">:</span> <span class="n">VtkProperty</span><span class="p">[</span><span class="n">Points</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="n">VtkProperty</span><span class="p">(</span><span class="n">vtk_fname</span><span class="o">=</span><span class="s2">&quot;RenderLinesAsTubes&quot;</span><span class="p">,</span> <span class="n">converter</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">&quot;Render mesh lines as tubes.&quot;</span><span class="p">)</span>  <span class="c1"># noqa</span>
-    <span class="c1"># fmt: on</span>
+    <span class="n">color</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="n">Color</span><span class="p">)</span>
+    <span class="n">occlusion</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">representation</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="n">Representation</span><span class="o">.</span><span class="n">surface</span><span class="p">)</span>
+    <span class="n">linewidth</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">})</span>
+    <span class="n">backface_color</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="n">Color</span><span class="p">)</span>
+    <span class="n">frontface_culling</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">backface_culling</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">lines_as_tubes</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
 
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">representation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Representation</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Representation mode of mesh.</span>
+    <span class="nd">@color</span><span class="o">.</span><span class="n">connect</span>
+    <span class="k">def</span> <span class="nf">_on_color_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">color</span><span class="p">([</span><span class="n">v</span> <span class="o">*</span> <span class="mi">255</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">v</span><span class="p">[:</span><span class="mi">3</span><span class="p">]])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update</span><span class="p">()</span>
 
-<span class="sd">        One of &quot;points&quot;, &quot;wireframe&quot;, &quot;surface&quot;.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_representation</span><span class="o">.</span><span class="n">name</span>
+    <span class="nd">@occlusion</span><span class="o">.</span><span class="n">connect</span>
+    <span class="k">def</span> <span class="nf">_on_occlusion_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">occlusion</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update</span><span class="p">()</span>
 
-    <span class="nd">@representation</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">representation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">rep</span><span class="p">:</span> <span class="n">Representation</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">Representation</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">property</span><span class="o">.</span><span class="n">SetRepresentation</span><span class="p">(</span><span class="n">rep</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_representation</span> <span class="o">=</span> <span class="n">rep</span>
+    <span class="nd">@scale</span><span class="o">.</span><span class="n">connect</span>
+    <span class="k">def</span> <span class="nf">_on_scale_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">absolute</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update</span><span class="p">()</span>
+
+    <span class="nd">@representation</span><span class="o">.</span><span class="n">connect</span>
+    <span class="k">def</span> <span class="nf">_on_representation_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n">Representation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">property</span><span class="o">.</span><span class="n">SetRepresentation</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update</span><span class="p">()</span>
+
+    <span class="nd">@linewidth</span><span class="o">.</span><span class="n">connect</span>
+    <span class="k">def</span> <span class="nf">_on_linewidth_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">lineWidth</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update</span><span class="p">()</span>
+
+    <span class="nd">@backface_color</span><span class="o">.</span><span class="n">connect</span>
+    <span class="k">def</span> <span class="nf">_on_backface_color_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">backColor</span><span class="p">([</span><span class="n">v</span> <span class="o">*</span> <span class="mi">255</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">v</span><span class="p">[:</span><span class="mi">3</span><span class="p">]])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update</span><span class="p">()</span>
+
+    <span class="nd">@frontface_culling</span><span class="o">.</span><span class="n">connect</span>
+    <span class="k">def</span> <span class="nf">_on_frontface_culling_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">frontFaceCulling</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update</span><span class="p">()</span>
+
+    <span class="nd">@backface_culling</span><span class="o">.</span><span class="n">connect</span>
+    <span class="k">def</span> <span class="nf">_on_backface_culling_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">backFaceCulling</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update</span><span class="p">()</span>
+
+    <span class="nd">@lines_as_tubes</span><span class="o">.</span><span class="n">connect</span>
+    <span class="k">def</span> <span class="nf">_on_lines_as_tubes_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">renderLinesAsTubes</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_update</span><span class="p">()</span></div>
 
 
@@ -239,8 +255,6 @@
 <div class="viewcode-block" id="get_object_type"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vtk.html#magicclass.ext.vtk.components.get_object_type">[docs]</a><span class="k">def</span> <span class="nf">get_object_type</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">[</span><span class="n">VtkComponent</span><span class="p">]:</span>
     <span class="n">t</span> <span class="o">=</span> <span class="nb">globals</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="n">Generic</span><span class="p">)):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Object type </span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="s2"> not found.&quot;</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">VtkComponent</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Object type </span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="s2"> not found.&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">t</span></div>
 </pre></div>
