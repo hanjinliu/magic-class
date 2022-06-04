@@ -188,7 +188,7 @@ class MenuGuiBase(ContainerLikeGui):
             from .toolbar import ToolBarGui
 
             if isinstance(_obj.widget, Separator):
-                insert_action_like(self.native, key, "sep")
+                insert_action_like(self.native, key, _obj.widget.title)
 
             elif isinstance(_obj.widget, ToolBarGui):
                 qmenu = QMenu(_obj.widget.name, self.native)
@@ -242,7 +242,7 @@ def insert_action_like(qmenu: QMenu, key: int, obj):
         QMenu object to which object will be inserted.
     key : int
         Position to insert.
-    obj : QMenu or QAction or "sep"
+    obj : QMenu or QAction or str
         Object to be inserted.
     """
     actions = qmenu.actions()
@@ -252,8 +252,11 @@ def insert_action_like(qmenu: QMenu, key: int, obj):
     if key == l:
         if isinstance(obj, QMenu):
             qmenu.addMenu(obj).setText(obj.objectName().replace("_", " "))
-        elif obj == "sep":
-            qmenu.addSeparator()
+        elif isinstance(obj, str):
+            if obj:
+                qmenu.addSection(obj)
+            else:
+                qmenu.addSeparator()
         else:
             qmenu.addAction(obj)
     else:
@@ -261,8 +264,11 @@ def insert_action_like(qmenu: QMenu, key: int, obj):
         before = new_action
         if isinstance(obj, QMenu):
             qmenu.insertMenu(before, obj).setText(obj.objectName().replace("_", " "))
-        elif obj == "sep":
-            qmenu.insertSeparator(before)
+        elif isinstance(obj, str):
+            if obj:
+                qmenu.insertSection(before, obj)
+            else:
+                qmenu.insertSeparator(before)
         else:
             qmenu.insertAction(before, obj)
 

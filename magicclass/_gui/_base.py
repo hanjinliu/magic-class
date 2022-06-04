@@ -696,7 +696,7 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
                         mgui.name = f"mgui-{id(mgui._function)}"
                         mgui.margins = (0, 0, 0, 0)
                         title = Separator(
-                            orientation="horizontal", text=text, button=True
+                            orientation="horizontal", title=text, button=True
                         )
                         title.btn_text = "-"
                         # TODO: should remove mgui from self?

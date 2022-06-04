@@ -15,17 +15,18 @@ class Separator(FreeWidget):
     def __init__(
         self,
         orientation: str = "horizontal",
-        text: str = "",
+        title: str = "",
         name: str = "",
         button: bool = False,
     ):
         super().__init__(name=name)
-        self._qtitlebar = _QTitleBar(self.native, text, button)
+        self._qtitlebar = _QTitleBar(self.native, title, button)
         self.set_widget(self._qtitlebar)
         if button:
             self._qtitlebar.button.clicked.connect(
                 lambda e: self.btn_clicked.emit(self._qtitlebar.button.isDown())
             )
+        self._title = title
 
     @property
     def btn_text(self):
@@ -34,6 +35,10 @@ class Separator(FreeWidget):
     @btn_text.setter
     def btn_text(self, value: str):
         self._qtitlebar.button.setText(value)
+
+    @property
+    def title(self) -> str:
+        return self._title
 
 
 class _QTitleBar(QLabel):

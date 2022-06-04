@@ -249,7 +249,7 @@ class ToolBarGui(ContainerLikeGui):
 
         elif isinstance(_obj, WidgetAction):
             if isinstance(_obj.widget, Separator):
-                insert_action_like(self.native, key, "sep")
+                insert_action_like(self.native, key, "")
 
             else:
                 _hide_labels = (
