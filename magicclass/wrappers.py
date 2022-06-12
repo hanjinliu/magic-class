@@ -281,6 +281,7 @@ def confirm(
     *,
     text: str | None = None,
     condition: Callable[[BaseGui], bool] | str = None,
+    callback: Callable[[str, BaseGui], None] | None = None,
 ):
     """
     Confirm if it is OK to run function in GUI.
@@ -308,6 +309,8 @@ def confirm(
     """
     if condition is None:
         condition = lambda x: True
+    if callback is None:
+        callback = _default_confirmation
 
     def _decorator(method: F) -> F:
         _name = method.__name__
@@ -342,14 +345,7 @@ def confirm(
                         UserWarning,
                     )
                 if need_confirmation:
-                    ok = show_messagebox(
-                        mode="question",
-                        title="Confirmation",
-                        text=_text.format(**all_args),
-                        parent=self.native,
-                    )
-                    if not ok:
-                        raise Canceled("Canceled")
+                    callback(_text.format(**all_args), self)
 
             return method(self, *args, **kwargs)
 
@@ -360,6 +356,17 @@ def confirm(
     if f is not None:
         return _decorator(f)
     return _decorator
+
+
+def _default_confirmation(text: str, gui: BaseGui):
+    ok = show_messagebox(
+        mode="question",
+        title="Confirmation",
+        text=text,
+        parent=gui.native,
+    )
+    if not ok:
+        raise Canceled("Canceled")
 
 
 def nogui(method: F) -> F:
