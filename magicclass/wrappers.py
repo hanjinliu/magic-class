@@ -2,7 +2,7 @@ from __future__ import annotations
 from functools import wraps
 import inspect
 from typing import Callable, Iterable, Iterator, Union, TYPE_CHECKING, TypeVar, overload
-from typing_extensions import ParamSpec
+from types import FunctionType
 import warnings
 from magicgui.widgets import FunctionGui
 
@@ -17,7 +17,6 @@ if TYPE_CHECKING:
 
 nStrings = Union[str, Iterable[str]]
 
-P = ParamSpec("P")
 R = TypeVar("R")
 T = TypeVar("T")
 F = TypeVar("F", bound=Callable)
@@ -261,7 +260,7 @@ class Canceled(RuntimeError):
 def confirm(
     *,
     text: str | None,
-    condition: Callable[P, bool] | str | None,
+    condition: Callable[..., bool] | str | None,
 ) -> Callable[[F], F]:
     ...
 
@@ -271,7 +270,7 @@ def confirm(
     f: F,
     *,
     text: str | None,
-    condition: Callable[P, bool] | str | None,
+    condition: Callable[..., bool] | str | None,
 ) -> F:
     ...
 
@@ -306,6 +305,10 @@ def confirm(
         function ``f(a, b)`` decorated by ``confirm(condition="a < b + 1")`` will
         evaluate ``a < b + 1`` to check if confirmation is needed. Always true by
         default.
+    callback : callable, optional
+        Callback function when confirmation is needed. Must take a ``str`` and a
+        ``BaseGui`` object as inputs. By default, message box will be shown. Useful
+        for testing.
     """
     if condition is None:
         condition = lambda x: True
@@ -313,6 +316,18 @@ def confirm(
         callback = _default_confirmation
 
     def _decorator(method: F) -> F:
+        if not isinstance(method, FunctionType):
+            from .utils import thread_worker
+
+            if isinstance(method, thread_worker):
+                _method_type = "thread_worker"
+                method_func = method.func
+            else:
+                raise TypeError(f"Type {type(method)} not supported.")
+        else:
+            _method_type = "function"
+            method_func = method
+
         _name = method.__name__
 
         # set text
@@ -327,7 +342,7 @@ def confirm(
 
         sig = inspect.signature(method)
 
-        @wraps(method)
+        @wraps(method_func)
         def _method(self: BaseGui, *args, **kwargs):
             if self[_name].running:
                 arguments = sig.bind(self, *args, **kwargs)
@@ -347,10 +362,13 @@ def confirm(
                 if need_confirmation:
                     callback(_text.format(**all_args), self)
 
-            return method(self, *args, **kwargs)
+            return method_func(self, *args, **kwargs)
 
         if hasattr(method, "__signature__"):
             _method.__signature__ = method.__signature__
+        if _method_type == "thread_worker":
+            method._func = _method
+            return method
         return _method
 
     if f is not None:
