@@ -74,12 +74,15 @@ if TYPE_CHECKING:
 
 
 class PopUpMode(Enum):
+    """Define how to popup FunctionGui."""
+
     popup = "popup"
     first = "first"
     last = "last"
     above = "above"
     below = "below"
     dock = "dock"
+    dialog = "dialog"
     parentlast = "parentlast"
 
 
@@ -690,7 +693,11 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
                 mgui = _build_mgui(widget, func, self)
                 if mgui.call_count == 0 and len(mgui.called._slots) == 0:
                     _prep_func(mgui)
-                    if self._popup_mode not in (PopUpMode.popup, PopUpMode.dock):
+                    if self._popup_mode not in (
+                        PopUpMode.popup,
+                        PopUpMode.dock,
+                        PopUpMode.dialog,
+                    ):
                         mgui.label = ""
                         # to avoid name collision
                         mgui.name = f"mgui-{id(mgui._function)}"
@@ -704,9 +711,9 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
                         mgui.insert(0, title)
 
                     if self._close_on_run and not mgui._auto_call:
-                        if self._popup_mode != PopUpMode.dock:
+                        if self._popup_mode not in (PopUpMode.dock, PopUpMode.dialog):
                             mgui.called.connect(mgui.hide)
-                        else:
+                        elif self._popup_mode == PopUpMode.dock:
                             # If FunctioGui is docked, we should close QDockWidget.
                             mgui.called.connect(lambda: mgui.parent.hide())
 
@@ -722,10 +729,12 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
                     else:
                         return None
 
-                if self._popup_mode != PopUpMode.dock:
+                if self._popup_mode not in (PopUpMode.dock, PopUpMode.dialog):
                     widget.mgui.show()
-                else:
+                elif self._popup_mode == PopUpMode.dock:
                     mgui.parent.show()  # show dock widget
+                else:
+                    mgui.exec_as_dialog()
 
                 return None
 
@@ -1322,6 +1331,11 @@ def _define_popup(self: BaseGui, obj, widget: PushButtonPlus | Action):
                 viewer.window.add_dock_widget(
                     mgui, name=_get_widget_name(widget), area="right"
                 )
+
+    elif self._popup_mode == PopUpMode.dialog:
+
+        def _prep(mgui: FunctionGui):
+            mgui.call_button.visible = False
 
     else:
         raise RuntimeError

@@ -12,7 +12,7 @@ from magicgui.widgets._function_gui import (
 from ..widgets import Separator
 
 if TYPE_CHECKING:
-    from magicgui.widgets._bases import Widget
+    from magicgui.widgets import Widget
 
 
 _R = TypeVar("_R")
@@ -21,7 +21,7 @@ _R = TypeVar("_R")
 class FunctionGuiPlus(FunctionGui[_R]):
     """FunctionGui class with a parameter recording functionality etc."""
 
-    _preview = None
+    _dialog_widget = None
 
     def __call__(self, *args: Any, update_widget: bool = False, **kwargs: Any) -> _R:
         sig = self.__signature__
@@ -106,6 +106,17 @@ class FunctionGuiPlus(FunctionGui[_R]):
     def append_preview(self, f: Callable, text: str = "Preview"):
         """Append a preview button to the widget."""
         return append_preview(self, f, text)
+
+    def exec_as_dialog(self):
+        """Show container as a dialog."""
+        if self._dialog_widget is None:
+            from magicgui.widgets import Dialog
+
+            dlg = Dialog(widgets=[self], labels=False)
+            self._dialog_widget = dlg
+        if self._dialog_widget.exec():
+            self()
+        return None
 
 
 def append_preview(self: FunctionGui, f: Callable, text: str = "Preview"):

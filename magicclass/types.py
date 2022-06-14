@@ -58,6 +58,7 @@ PopUpModeStr = Union[
     Literal["above"],
     Literal["below"],
     Literal["dock"],
+    Literal["dialog"],
     Literal["parentlast"],
 ]
 
