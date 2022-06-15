@@ -110,7 +110,12 @@ class FunctionGuiPlus(FunctionGui[_R]):
     def exec_as_dialog(self):
         """Show container as a dialog."""
         if self._dialog_widget is None:
-            from magicgui.widgets import Dialog
+            try:
+                from magicgui.widgets import Dialog
+            except ImportError:
+                raise ImportError(
+                    "Could not import Dialog widget. Using dialog needs magicgui>=0.5."
+                )
 
             dlg = Dialog(widgets=[self], labels=False)
             self._dialog_widget = dlg
