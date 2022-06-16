@@ -120,6 +120,7 @@ class ErrorMode(Enum):
         """Wrap function with the error handler."""
         handler = self.get_handler()
 
+        @functools_wraps(func)
         def wrapped_func(*args, **kwargs):
             try:
                 out = func(*args, **kwargs)
@@ -127,12 +128,6 @@ class ErrorMode(Enum):
                 handler(e, parent=parent)
                 out = e
             return out
-
-        wrapped_func.__annotations__ = func.__annotations__
-        # wrapped_func.__name__ = func.__name__  # this is not allowed!
-        wrapped_func.__qualname__ = func.__qualname__
-        wrapped_func.__doc__ = func.__doc__
-        wrapped_func.__module__ = func.__module__
 
         return wrapped_func
 
@@ -593,14 +588,19 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
     def _create_widget_from_method(self, obj: MethodType):
         """Convert instance methods into GUI objects, such as push buttons or actions."""
         text = obj.__name__.replace("_", " ")
+        obj_sig = inspect.signature(obj)
         widget = self._component_class(name=obj.__name__, text=text, gui_only=True)
+
+        # confirmation
+        conf = get_additional_option(obj, "confirm", None)
+        if conf is not None:
+            obj = _implement_confirmation(obj, self, **conf)
 
         # Wrap function to deal with errors in a right way.
         func = self._error_mode.wrap_handler(obj, parent=self)
 
         # Signature must be updated like this. Otherwise, already wrapped member function
         # will have signature with "self".
-        obj_sig = inspect.signature(obj)
         func.__signature__ = obj_sig
 
         # Prepare a button or action
@@ -611,7 +611,6 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
         all_params: list[inspect.Parameter] = []
         for param in func.__signature__.parameters.values():
             if isinstance(param.annotation, _AnnotatedAlias):
-                # TODO: after magicgui supports pydantic, something needs update here.
                 param = MagicParameter.from_parameter(param)
 
             if isinstance(param, MagicParameter):
@@ -1340,3 +1339,49 @@ def _define_popup(self: BaseGui, obj, widget: PushButtonPlus | Action):
     else:
         raise RuntimeError
     return _prep
+
+
+def _implement_confirmation(
+    method: MethodType,
+    self: BaseGui,
+    text: str,
+    condition: Callable[[BaseGui], bool] | str,
+    callback: Callable[[str, BaseGui], None],
+):
+    # if isinstance(method.__func__, thread_worker):
+    #     _method_type = "thread_worker"
+    #     method_func = method.func
+    # else:
+    #     _method_type = "function"
+    #     method_func = method
+
+    _name = method.__name__
+
+    sig = inspect.signature(method)
+
+    @wraps(method)
+    def _method(*args, **kwargs):
+        if self[_name].running:
+            arguments = sig.bind(*args, **kwargs)
+            arguments.apply_defaults()
+            all_args = arguments.arguments
+            need_confirmation = False
+            if isinstance(condition, str):
+                need_confirmation = eval(condition, {}, all_args)
+            elif callable(condition):
+                need_confirmation = condition(self)
+            else:
+                warnings.warn(
+                    f"Condition {condition} should be callable or string but got type "
+                    f"{type(condition)}. No confirmation was executed.",
+                    UserWarning,
+                )
+            if need_confirmation:
+                callback(text.format(**all_args), self)
+
+        return method(*args, **kwargs)
+
+    if hasattr(method, "__signature__"):
+        _method.__signature__ = method.__signature__
+
+    return _method

@@ -2,7 +2,6 @@ from __future__ import annotations
 from functools import wraps
 import inspect
 from typing import Callable, Iterable, Iterator, Union, TYPE_CHECKING, TypeVar, overload
-from types import FunctionType
 import warnings
 from magicgui.widgets import FunctionGui
 
@@ -316,18 +315,6 @@ def confirm(
         callback = _default_confirmation
 
     def _decorator(method: F) -> F:
-        if not isinstance(method, FunctionType):
-            from .utils import thread_worker
-
-            if isinstance(method, thread_worker):
-                _method_type = "thread_worker"
-                method_func = method.func
-            else:
-                raise TypeError(f"Type {type(method)} not supported.")
-        else:
-            _method_type = "function"
-            method_func = method
-
         _name = method.__name__
 
         # set text
@@ -339,37 +326,17 @@ def confirm(
             raise TypeError(
                 f"The first argument of 'confirm' must be a str but got {type(text)}."
             )
-
-        sig = inspect.signature(method)
-
-        @wraps(method_func)
-        def _method(self: BaseGui, *args, **kwargs):
-            if self[_name].running:
-                arguments = sig.bind(self, *args, **kwargs)
-                arguments.apply_defaults()
-                all_args = arguments.arguments
-                need_confirmation = False
-                if isinstance(condition, str):
-                    need_confirmation = eval(condition, {}, all_args)
-                elif callable(condition):
-                    need_confirmation = condition(self)
-                else:
-                    warnings.warn(
-                        f"Condition {condition} should be callable or string but got type "
-                        f"{type(condition)}. No confirmation was executed.",
-                        UserWarning,
-                    )
-                if need_confirmation:
-                    callback(_text.format(**all_args), self)
-
-            return method_func(self, *args, **kwargs)
-
-        if hasattr(method, "__signature__"):
-            _method.__signature__ = method.__signature__
-        if _method_type == "thread_worker":
-            method._func = _method
-            return method
-        return _method
+        upgrade_signature(
+            method,
+            additional_options={
+                "confirm": {
+                    "text": _text,
+                    "condition": condition,
+                    "callback": callback,
+                }
+            },
+        )
+        return method
 
     if f is not None:
         return _decorator(f)

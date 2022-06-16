@@ -59,15 +59,15 @@ class FunctionGuiPlus(FunctionGui[_R]):
         self._previous_bound = bound
 
         self._tqdm_depth = 0  # reset the tqdm stack count
-        with _function_name_pointing_to_widget(self):
-            # 2. Running flag
-            # We sometimes want to know if the function is called programmatically or
-            # from GUI. The "running" argument is True only when it's called via GUI.
-            self.running = True
-            try:
-                value = self._function(*bound.args, **bound.kwargs)
-            finally:
-                self.running = False
+
+        # 2. Running flag
+        # We sometimes want to know if the function is called programmatically or
+        # from GUI. The "running" argument is True only when it's called via GUI.
+        self.running = True
+        try:
+            value = self._function(*bound.args, **bound.kwargs)
+        finally:
+            self.running = False
 
         self._call_count += 1
         if self._result_widget is not None:
