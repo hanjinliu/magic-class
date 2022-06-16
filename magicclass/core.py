@@ -520,8 +520,9 @@ def get_function_gui(ui: MagicTemplate, name: str) -> FunctionGuiPlus:
     if not hasattr(widget, "mgui"):
         raise TypeError(f"Widget {widget} does not have FunctionGui inside it.")
 
-    from ._gui._base import _build_mgui
+    from ._gui._base import _build_mgui, _create_gui_method
 
+    func = _create_gui_method(ui, func)
     mgui = _build_mgui(widget, func, ui)
     return mgui
 

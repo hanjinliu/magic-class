@@ -588,59 +588,14 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
     def _create_widget_from_method(self, obj: MethodType):
         """Convert instance methods into GUI objects, such as push buttons or actions."""
         text = obj.__name__.replace("_", " ")
-        obj_sig = inspect.signature(obj)
         widget = self._component_class(name=obj.__name__, text=text, gui_only=True)
 
-        # confirmation
-        conf = get_additional_option(obj, "confirm", None)
-        if conf is not None:
-            obj = _implement_confirmation(obj, self, **conf)
-
-        # Wrap function to deal with errors in a right way.
-        func = self._error_mode.wrap_handler(obj, parent=self)
-
-        # Signature must be updated like this. Otherwise, already wrapped member function
-        # will have signature with "self".
-        func.__signature__ = obj_sig
+        func = _create_gui_method(self, obj)
 
         # Prepare a button or action
         widget.tooltip = Tooltips(func).desc
         widget._doc = func.__doc__
 
-        # This block enables instance methods in "bind" or "choices" of ValueWidget.
-        all_params: list[inspect.Parameter] = []
-        for param in func.__signature__.parameters.values():
-            if isinstance(param.annotation, _AnnotatedAlias):
-                param = MagicParameter.from_parameter(param)
-
-            if isinstance(param, MagicParameter):
-                _param = MagicParameter(
-                    name=param.name,
-                    default=param.default,
-                    annotation=split_annotated_type(param.annotation)[0],
-                    gui_options=param.options.copy(),
-                )
-                _arg_bind = _param.options.get("bind", None)
-                _arg_choices = _param.options.get("choices", None)
-
-                # If bound method is a class method, use self.method(widget).
-                if is_instance_method(_arg_bind):
-                    _param.options["bind"] = method_as_getter(self, _arg_bind)
-
-                # If a MagicFiled is bound, bind the value of the connected widget.
-                elif isinstance(_arg_bind, MagicField):
-                    _param.options["bind"] = _arg_bind.as_remote_getter(self)
-
-                # If choices are provided by a class method, use self.method(widget).
-                if is_instance_method(_arg_choices):
-                    _param.options["choices"] = method_as_getter(self, _arg_choices)
-
-            else:
-                _param = param
-
-            all_params.append(_param)
-
-        func.__signature__ = func.__signature__.replace(parameters=all_params)
         # Get the number of parameters except for empty widgets.
         # With these lines, "bind" method of magicgui works inside magicclass.
         fgui_classes = callable_to_classes(func)
@@ -648,11 +603,6 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
             [_wdg_cls for _wdg_cls in fgui_classes if _wdg_cls is EmptyWidget]
         )
         nparams = argcount(func) - n_empty
-
-        if isinstance(func.__signature__, MagicMethodSignature):
-            func.__signature__.additional_options = getattr(
-                obj_sig, "additional_options", {}
-            )
 
         has_preview = get_additional_option(func, "preview", None) is not None
 
@@ -686,7 +636,7 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
                 return out
 
         else:
-            _prep_func = _define_popup(self, obj, widget)
+            _prep_func = _define_popup(self, func, widget)
 
             def run_function():
                 mgui = _build_mgui(widget, func, self)
@@ -740,7 +690,7 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
         widget.changed.connect(run_function)
 
         # If design is given, load the options.
-        widget.from_options(obj)
+        widget.from_options(func)
 
         # keybinding
         keybinding = get_additional_option(func, "keybinding", None)
@@ -933,10 +883,68 @@ def _get_widget_name(widget: Widget):
     return widget.name
 
 
+def _create_gui_method(self: BaseGui, obj: MethodType):
+    func_sig = inspect.signature(obj)
+    # Method type cannot set __signature__ attribute.
+    @functools_wraps(obj)
+    def func(*args, **kwargs):
+        return obj(*args, **kwargs)
+
+    func.__signature__ = func_sig
+
+    # This block enables instance methods in "bind" or "choices" of ValueWidget.
+    all_params: list[inspect.Parameter] = []
+    for param in func.__signature__.parameters.values():
+        if isinstance(param.annotation, _AnnotatedAlias):
+            param = MagicParameter.from_parameter(param)
+
+        if isinstance(param, MagicParameter):
+            _param = MagicParameter(
+                name=param.name,
+                default=param.default,
+                annotation=split_annotated_type(param.annotation)[0],
+                gui_options=param.options.copy(),
+            )
+            _arg_bind = _param.options.get("bind", None)
+            _arg_choices = _param.options.get("choices", None)
+
+            # If bound method is a class method, use self.method(widget).
+            if is_instance_method(_arg_bind):
+                _param.options["bind"] = method_as_getter(self, _arg_bind)
+
+            # If a MagicFiled is bound, bind the value of the connected widget.
+            elif isinstance(_arg_bind, MagicField):
+                _param.options["bind"] = _arg_bind.as_remote_getter(self)
+
+            # If choices are provided by a class method, use self.method(widget).
+            if is_instance_method(_arg_choices):
+                _param.options["choices"] = method_as_getter(self, _arg_choices)
+
+        else:
+            _param = param
+
+        all_params.append(_param)
+
+    func.__signature__ = func.__signature__.replace(parameters=all_params)
+    if isinstance(func.__signature__, MagicMethodSignature):
+        func.__signature__.additional_options = getattr(
+            func_sig, "additional_options", {}
+        )
+    return func
+
+
 def _build_mgui(widget_: Action | PushButtonPlus, func: Callable, parent: BaseGui):
     if widget_.mgui is not None:
         return widget_.mgui
     try:
+        # confirmation
+        conf = get_additional_option(func, "confirm", None)
+        if conf is not None:
+            func = _implement_confirmation(func, parent, **conf)
+
+        # Wrap function to deal with errors in a right way.
+        func = parent._error_mode.wrap_handler(func, parent=parent)
+
         sig = getattr(func, "__signature__", None)
         if isinstance(sig, MagicMethodSignature):
             opt = sig.additional_options
