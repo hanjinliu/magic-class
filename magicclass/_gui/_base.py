@@ -1276,46 +1276,47 @@ def convert_attributes(cls: type[_T], hide: tuple[type, ...]) -> dict[str, Any]:
 
 def _define_popup(self: BaseGui, obj, widget: PushButtonPlus | Action):
     # deal with popup mode.
-    if self._popup_mode == PopUpMode.popup:
+    popup_mode = self._popup_mode
+    if popup_mode == PopUpMode.popup:
         # To be popped up correctly, window flags of FunctionGui should be
         # "windowFlags" and should appear at the center.
         def _prep(mgui: FunctionGui):
             mgui.native.setParent(self.native, mgui.native.windowFlags())
             move_to_screen_center(mgui.native)
 
-    elif self._popup_mode == PopUpMode.parentlast:
+    elif popup_mode == PopUpMode.parentlast:
 
         def _prep(mgui: FunctionGui):
             parent_self = self._search_parent_magicclass()
             parent_self.append(mgui)
 
-    elif self._popup_mode == PopUpMode.first:
+    elif popup_mode == PopUpMode.first:
 
         def _prep(mgui: FunctionGui):
             child_self = _child_that_has_widget(self, obj, widget)
             child_self.insert(0, mgui)
 
-    elif self._popup_mode == PopUpMode.last:
+    elif popup_mode == PopUpMode.last:
 
         def _prep(mgui: FunctionGui):
             child_self = _child_that_has_widget(self, obj, widget)
             child_self.append(mgui)
 
-    elif self._popup_mode == PopUpMode.above:
+    elif popup_mode == PopUpMode.above:
 
         def _prep(mgui: FunctionGui):
             child_self = _child_that_has_widget(self, obj, widget)
             i = _get_index(child_self, widget)
             child_self.insert(i, mgui)
 
-    elif self._popup_mode == PopUpMode.below:
+    elif popup_mode == PopUpMode.below:
 
         def _prep(mgui: FunctionGui):
             child_self = _child_that_has_widget(self, obj, widget)
             i = _get_index(child_self, widget)
             child_self.insert(i + 1, mgui)
 
-    elif self._popup_mode == PopUpMode.dock:
+    elif popup_mode == PopUpMode.dock:
         from .class_gui import MainWindowClassGui
 
         def _prep(mgui: FunctionGui):
@@ -1339,13 +1340,13 @@ def _define_popup(self: BaseGui, obj, widget: PushButtonPlus | Action):
                     mgui, name=_get_widget_name(widget), area="right"
                 )
 
-    elif self._popup_mode == PopUpMode.dialog:
+    elif popup_mode == PopUpMode.dialog:
 
         def _prep(mgui: FunctionGui):
             mgui.call_button.visible = False
 
     else:
-        raise RuntimeError
+        raise RuntimeError(popup_mode)
     return _prep
 
 
@@ -1356,26 +1357,27 @@ def _implement_confirmation(
     condition: Callable[[BaseGui], bool] | str,
     callback: Callable[[str, BaseGui], None],
 ):
-    # if isinstance(method.__func__, thread_worker):
-    #     _method_type = "thread_worker"
-    #     method_func = method.func
-    # else:
-    #     _method_type = "function"
-    #     method_func = method
-
-    _name = method.__name__
-
+    """Implement confirmation callback to a method."""
     sig = inspect.signature(method)
 
     @wraps(method)
     def _method(*args, **kwargs):
-        if self[_name].running:
+        if self[method.__name__].running:
             arguments = sig.bind(*args, **kwargs)
             arguments.apply_defaults()
             all_args = arguments.arguments
+            all_args.update(self=self)
             need_confirmation = False
             if isinstance(condition, str):
-                need_confirmation = eval(condition, {}, all_args)
+                try:
+                    need_confirmation = eval(condition, {}, all_args)
+                except Exception as e:
+                    msg = e.args[0]
+                    e.args = (
+                        f"Exception happened on evaluating condition {condition!r}.\n"
+                        f"{type(e).__name__}: {msg}"
+                    )
+                    raise e
             elif callable(condition):
                 need_confirmation = condition(self)
             else:
