@@ -937,19 +937,20 @@ def _build_mgui(widget_: Action | PushButtonPlus, func: Callable, parent: BaseGu
     if widget_.mgui is not None:
         return widget_.mgui
     try:
+        sig = getattr(func, "__signature__", None)
+        if isinstance(sig, MagicMethodSignature):
+            opt = sig.additional_options
+        else:
+            opt = {}
+
         # confirmation
-        conf = get_additional_option(func, "confirm", None)
+        conf = opt.get("confirm", None)
         if conf is not None:
             func = _implement_confirmation(func, parent, **conf)
 
         # Wrap function to deal with errors in a right way.
         func = parent._error_mode.wrap_handler(func, parent=parent)
 
-        sig = getattr(func, "__signature__", None)
-        if isinstance(sig, MagicMethodSignature):
-            opt = sig.additional_options
-        else:
-            opt = {}
         call_button = opt.get("call_button", None)
         layout = opt.get("layout", "vertical")
         labels = opt.get("labels", True)
