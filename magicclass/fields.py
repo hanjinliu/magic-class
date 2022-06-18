@@ -24,7 +24,13 @@ from magicgui.widgets._bases import Widget, ValueWidget, ContainerWidget
 from magicgui.widgets._bases.value_widget import UNSET
 from psygnal import SignalInstance
 
-from .utils import argcount, is_instance_method, method_as_getter, Tooltips
+from .utils import (
+    argcount,
+    is_instance_method,
+    method_as_getter,
+    Tooltips,
+    eval_attribute,
+)
 from ._gui.mgui_ext import Action, WidgetAction
 
 if TYPE_CHECKING:
@@ -136,6 +142,9 @@ class MagicField(_FieldObject, Generic[_W, _V]):
         """Construct a widget."""
         constructor = self.constructor
         _arg_choices = self.options.get("choices", None)
+        if isinstance(_arg_choices, str):
+            _arg_choices = eval_attribute(type(obj), _arg_choices)
+
         if is_instance_method(_arg_choices):
             self.options["choices"] = method_as_getter(obj, _arg_choices)
         try:

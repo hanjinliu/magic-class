@@ -40,7 +40,6 @@ from magicgui.widgets._bases.widget import Widget
 from magicgui.widgets._bases import ButtonWidget, ValueWidget
 from macrokit import Expr, Head, Symbol, symbol
 
-
 from .keybinding import as_shortcut
 from .mgui_ext import (
     AbstractAction,
@@ -61,6 +60,7 @@ from ..utils import (
     argcount,
     is_instance_method,
     method_as_getter,
+    eval_attribute,
     thread_worker,
 )
 from ..widgets import Separator, FreeWidget
@@ -917,6 +917,9 @@ def _create_gui_method(self: BaseGui, obj: MethodType):
                 _param.options["bind"] = _arg_bind.as_remote_getter(self)
 
             # If choices are provided by a class method, use self.method(widget).
+            if isinstance(_arg_choices, str):
+                _arg_choices = eval_attribute(type(self), _arg_choices)
+
             if is_instance_method(_arg_choices):
                 _param.options["choices"] = method_as_getter(self, _arg_choices)
 

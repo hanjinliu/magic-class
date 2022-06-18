@@ -5,6 +5,7 @@ from .functions import (
     argcount,
     is_instance_method,
     method_as_getter,
+    eval_attribute,
     show_tree,
     rst_to_html,
 )

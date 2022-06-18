@@ -47,6 +47,8 @@ def iter_members(cls: type, exclude_prefix: str = "__") -> Iterable[tuple[str, A
 
 
 class Tooltips:
+    """A class to manage dosctring based tooltips."""
+
     def __init__(self, obj: Any):
         self._doc = parse(obj.__doc__)
 
@@ -62,10 +64,12 @@ class Tooltips:
 
     @cached_property
     def parameters(self) -> dict[str, str]:
+        """Parse "Parameters" block to dict."""
         return dict(self._iter_args_of("param"))
 
     @cached_property
     def attributes(self) -> dict[str, str]:
+        """Parse "Attributes" block to dict."""
         return dict(self._iter_args_of("attribute"))
 
     def _iter_args_of(self, type_name: str) -> Iterable[tuple[str, str]]:
@@ -138,6 +142,14 @@ def method_as_getter(self, getter: Callable):
         return getter(ins, w)
 
     return _func
+
+
+def eval_attribute(cls: type, literal: str):
+    attrs = literal.split(".")
+    out = cls
+    for attr in attrs:
+        out = getattr(out, attr)
+    return out
 
 
 def show_tree(ui: BaseGui) -> str:

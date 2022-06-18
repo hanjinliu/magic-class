@@ -254,7 +254,6 @@ class Canceled(RuntimeError):
     """Raised when a function is canceled"""
 
 
-# TODO: confirm is not exchangable with thread_worker
 @overload
 def confirm(
     *,
