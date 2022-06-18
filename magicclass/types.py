@@ -103,7 +103,7 @@ def bound(obj):
         outtype = obj.__annotations__.get("return", Any)
     elif isinstance(obj, MagicField):
         outtype = obj.annotation or Any
-    elif isinstance(obj, type):
+    elif isinstance(obj, (type, str)):
         outtype = Any
     else:
         raise TypeError("'bound' can only convert callable, MagicField or type objects")

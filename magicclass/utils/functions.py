@@ -144,9 +144,9 @@ def method_as_getter(self, getter: Callable):
     return _func
 
 
-def eval_attribute(cls: type, literal: str):
+def eval_attribute(obj: Any, literal: str):
     attrs = literal.split(".")
-    out = cls
+    out = obj
     for attr in attrs:
         out = getattr(out, attr)
     return out

@@ -909,6 +909,9 @@ def _create_gui_method(self: BaseGui, obj: MethodType):
             _arg_choices = _param.options.get("choices", None)
 
             # If bound method is a class method, use self.method(widget).
+            if isinstance(_arg_bind, str):
+                _arg_bind = eval_attribute(type(self), _arg_bind)
+
             if is_instance_method(_arg_bind):
                 _param.options["bind"] = method_as_getter(self, _arg_bind)
 
