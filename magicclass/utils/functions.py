@@ -211,7 +211,7 @@ def _copy_info(src: type, dst: type) -> None:
             # common inner class
             if not isinstance(dst_attr, type):
                 raise TypeError(f"{name} type mismatch.")
-            _copy_info(dst_attr, attr)
+            _copy_info(attr, dst_attr)
         elif callable(attr):
             # common method
             if not callable(dst_attr):
@@ -220,4 +220,5 @@ def _copy_info(src: type, dst: type) -> None:
                 dst_attr.__signature__ = attr.__signature__
             if attr.__doc__:
                 dst_attr.__doc__ = attr.__doc__
+
     return None
