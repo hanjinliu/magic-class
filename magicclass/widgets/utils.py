@@ -81,17 +81,6 @@ class FreeWidget(Widget):
         self._magicclass_parent_ref = weakref.ref(parent)
 
 
-# def magicwidget(qcls: type[QWidget]):
-#     from ..utils import iter_members
-
-#     for name, attr in iter_members(qcls):
-
-#         def _(self: FreeWidget, *args, **kwargs):
-#             return attr(self.central_widget, *args, **kwargs)
-
-#     cls = type(qcls.__name__, (FreeWidget,), {})
-
-
 def merge_super_sigs(cls):
     cls = _merge_super_sigs(cls)
     cls.__module__ = "magicclass.widgets"
