@@ -33,7 +33,7 @@ class FreeWidget(Widget):
             widget_type=QBaseWidget, backend_kwargs={"qwidg": QWidget}, **kwargs
         )
         self.native: QWidget
-        self.central_widget: QWidget
+        self.central_widget: QWidget | None = None
         if layout == "vertical":
             self.native.setLayout(QVBoxLayout())
         elif layout == "horizontal":
@@ -50,6 +50,12 @@ class FreeWidget(Widget):
         self.native.layout().addWidget(widget, *args)
         widget.setParent(self.native)
         self.central_widget = widget
+
+    def remove_widget(self, widget: QWidget):
+        """Set the central widget from the widget."""
+        self.native.layout().removeWidget(widget)
+        widget.setParent(None)
+        self.central_widget = None
 
     def set_contextmenu(self, contextmenugui: ContextMenuGui):
         from .._gui import ContextMenuGui

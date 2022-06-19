@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.types &mdash; magic-class 0.6.0.dev1 documentation</title>
+  <title>magicclass.types &mdash; magic-class 0.6.4 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.0.dev1
+                0.6.4
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -42,28 +42,13 @@
 <li class="toctree-l1"><a class="reference internal" href="../../quick_start.html">Quick Start</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../options.html">Options in magic-class</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../nest.html">Nest magic-classes</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../use_field.html">Use Fields in magic-class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../chap_basics.html">Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../chap_make_better.html">Make Your GUI Better</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../chap_data_vis.html">Data Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../chap_advanced.html">Advanced Topics</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../use_wraps.html">Call Parent Methods from its Child</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../use_bind.html">Binding Values to Arguments</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../use_choices.html">Set Choices Dynamically</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../additional_types.html">Additional types</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../containers.html">Container Variations</a></li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../matplotlib.html">Use Matplotlib Figure</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../pyqtgraph.html">Use PyQtGraph Canvas</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../vispy.html">Vispy Canvas</a></li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../freewidget.html">Convert QtWidgets into a Magic Widget</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../keybinding.html">Define Custom Keybindings</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../customize_macro.html">Customize Macro Recording</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../class_inheritance.html">Inherit Magic Class</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api.html">API References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../best_practice.html">Best Practice</a></li>
 </ul>
 
         </div>
@@ -107,7 +92,7 @@
     <span class="n">_tp_cache</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span>
 
 
-<div class="viewcode-block" id="WidgetType"><a class="viewcode-back" href="../../magicclass.html#magicclass.types.WidgetType">[docs]</a><span class="k">class</span> <span class="nc">WidgetType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<div class="viewcode-block" id="WidgetType"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.types.WidgetType">[docs]</a><span class="k">class</span> <span class="nc">WidgetType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
     <span class="n">none</span> <span class="o">=</span> <span class="s2">&quot;none&quot;</span>
     <span class="n">scrollable</span> <span class="o">=</span> <span class="s2">&quot;scrollable&quot;</span>
     <span class="n">draggable</span> <span class="o">=</span> <span class="s2">&quot;draggable&quot;</span>
@@ -188,7 +173,7 @@
     <span class="o">...</span>
 
 
-<div class="viewcode-block" id="bound"><a class="viewcode-back" href="../../magicclass.html#magicclass.types.bound">[docs]</a><span class="k">def</span> <span class="nf">bound</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+<div class="viewcode-block" id="bound"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.types.bound">[docs]</a><span class="k">def</span> <span class="nf">bound</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Function version of Bound[...].&quot;&quot;&quot;</span>
     <span class="c1"># NOTE: This could be more useful than Bound??</span>
     <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
@@ -199,6 +184,8 @@
         <span class="n">outtype</span> <span class="o">=</span> <span class="n">Any</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;&#39;bound&#39; can only convert callable, MagicField or type objects&quot;</span><span class="p">)</span>
+    <span class="k">while</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">outtype</span><span class="p">,</span> <span class="n">_AnnotatedAlias</span><span class="p">):</span>
+        <span class="n">outtype</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">split_annotated_type</span><span class="p">(</span><span class="n">outtype</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">outtype</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;bind&quot;</span><span class="p">:</span> <span class="n">obj</span><span class="p">,</span> <span class="s2">&quot;widget_type&quot;</span><span class="p">:</span> <span class="n">EmptyWidget</span><span class="p">}]</span></div>
 
 
@@ -241,7 +228,7 @@
         <span class="k">return</span> <span class="n">bound</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="Bound"><a class="viewcode-back" href="../../magicclass.html#magicclass.types.Bound">[docs]</a><span class="k">class</span> <span class="nc">Bound</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">_BoundAlias</span><span class="p">):</span>
+<div class="viewcode-block" id="Bound"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.types.Bound">[docs]</a><span class="k">class</span> <span class="nc">Bound</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">_BoundAlias</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Make Annotated type from a MagicField or a method, such as:</span>
 
@@ -299,7 +286,7 @@
             <span class="k">return</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">value</span><span class="p">],</span> <span class="n">opt</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="Optional"><a class="viewcode-back" href="../../magicclass.html#magicclass.types.Optional">[docs]</a><span class="k">class</span> <span class="nc">Optional</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">_OptionalAlias</span><span class="p">):</span>
+<div class="viewcode-block" id="Optional"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.types.Optional">[docs]</a><span class="k">class</span> <span class="nc">Optional</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">_OptionalAlias</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Make Annotated type similar to ``typing.Optional``.</span>
 
@@ -335,7 +322,7 @@
             <span class="k">return</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">type_</span><span class="p">,</span> <span class="n">opt</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="Tuple"><a class="viewcode-back" href="../../magicclass.html#magicclass.types.Tuple">[docs]</a><span class="k">class</span> <span class="nc">Tuple</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">_TupleAlias</span><span class="p">):</span>
+<div class="viewcode-block" id="Tuple"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.types.Tuple">[docs]</a><span class="k">class</span> <span class="nc">Tuple</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">_TupleAlias</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Make Annotated type similar to ``typing.Tuple``.</span>
 
@@ -362,7 +349,7 @@
         <span class="k">return</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">type_</span><span class="p">,</span> <span class="n">opt</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="List"><a class="viewcode-back" href="../../magicclass.html#magicclass.types.List">[docs]</a><span class="k">class</span> <span class="nc">List</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">_ListAlias</span><span class="p">):</span>
+<div class="viewcode-block" id="List"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.types.List">[docs]</a><span class="k">class</span> <span class="nc">List</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">_ListAlias</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Make Annotated type similar to ``typing.List``.</span>
 

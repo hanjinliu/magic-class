@@ -1,0 +1,1427 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="English" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pandas.io.excel._base &mdash; magic-class 0.6.4 documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/columns.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+</head>
+
+<body class="wy-body-for-nav">
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> magic-class
+          </a>
+              <div class="version">
+                0.6.4
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../quick_start.html">Quick Start</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../chap_basics.html">Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../chap_make_better.html">Make Your GUI Better</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../chap_data_vis.html">Data Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../chap_advanced.html">Advanced Topics</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../best_practice.html">Best Practice</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">magic-class</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+      <li>pandas.io.excel._base</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+
+  <h1>Source code for pandas.io.excel._base</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span> <span class="nn">abc</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">BytesIO</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">textwrap</span> <span class="kn">import</span> <span class="n">fill</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Any</span><span class="p">,</span>
+    <span class="n">Mapping</span><span class="p">,</span>
+    <span class="n">cast</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">zipfile</span>
+
+<span class="kn">from</span> <span class="nn">pandas._config</span> <span class="kn">import</span> <span class="n">config</span>
+
+<span class="kn">from</span> <span class="nn">pandas._libs.parsers</span> <span class="kn">import</span> <span class="n">STR_NA_VALUES</span>
+<span class="kn">from</span> <span class="nn">pandas._typing</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Buffer</span><span class="p">,</span>
+    <span class="n">DtypeArg</span><span class="p">,</span>
+    <span class="n">FilePathOrBuffer</span><span class="p">,</span>
+    <span class="n">StorageOptions</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">pandas.compat._optional</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">get_version</span><span class="p">,</span>
+    <span class="n">import_optional_dependency</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">pandas.errors</span> <span class="kn">import</span> <span class="n">EmptyDataError</span>
+<span class="kn">from</span> <span class="nn">pandas.util._decorators</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Appender</span><span class="p">,</span>
+    <span class="n">deprecate_nonkeyword_arguments</span><span class="p">,</span>
+    <span class="n">doc</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">pandas.util._exceptions</span> <span class="kn">import</span> <span class="n">find_stack_level</span>
+
+<span class="kn">from</span> <span class="nn">pandas.core.dtypes.common</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">is_bool</span><span class="p">,</span>
+    <span class="n">is_float</span><span class="p">,</span>
+    <span class="n">is_integer</span><span class="p">,</span>
+    <span class="n">is_list_like</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">pandas.core.frame</span> <span class="kn">import</span> <span class="n">DataFrame</span>
+<span class="kn">from</span> <span class="nn">pandas.core.shared_docs</span> <span class="kn">import</span> <span class="n">_shared_docs</span>
+<span class="kn">from</span> <span class="nn">pandas.util.version</span> <span class="kn">import</span> <span class="n">Version</span>
+
+<span class="kn">from</span> <span class="nn">pandas.io.common</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">IOHandles</span><span class="p">,</span>
+    <span class="n">get_handle</span><span class="p">,</span>
+    <span class="n">stringify_path</span><span class="p">,</span>
+    <span class="n">validate_header_arg</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">pandas.io.excel._util</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">fill_mi_header</span><span class="p">,</span>
+    <span class="n">get_default_engine</span><span class="p">,</span>
+    <span class="n">get_writer</span><span class="p">,</span>
+    <span class="n">maybe_convert_usecols</span><span class="p">,</span>
+    <span class="n">pop_header_name</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">pandas.io.parsers</span> <span class="kn">import</span> <span class="n">TextParser</span>
+
+<span class="n">_read_excel_doc</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Read an Excel file into a pandas DataFrame.</span>
+
+<span class="sd">Supports `xls`, `xlsx`, `xlsm`, `xlsb`, `odf`, `ods` and `odt` file extensions</span>
+<span class="sd">read from a local filesystem or URL. Supports an option to read</span>
+<span class="sd">a single sheet or a list of sheets.</span>
+
+<span class="sd">Parameters</span>
+<span class="sd">----------</span>
+<span class="sd">io : str, bytes, ExcelFile, xlrd.Book, path object, or file-like object</span>
+<span class="sd">    Any valid string path is acceptable. The string could be a URL. Valid</span>
+<span class="sd">    URL schemes include http, ftp, s3, and file. For file URLs, a host is</span>
+<span class="sd">    expected. A local file could be: ``file://localhost/path/to/table.xlsx``.</span>
+
+<span class="sd">    If you want to pass in a path object, pandas accepts any ``os.PathLike``.</span>
+
+<span class="sd">    By file-like object, we refer to objects with a ``read()`` method,</span>
+<span class="sd">    such as a file handle (e.g. via builtin ``open`` function)</span>
+<span class="sd">    or ``StringIO``.</span>
+<span class="sd">sheet_name : str, int, list, or None, default 0</span>
+<span class="sd">    Strings are used for sheet names. Integers are used in zero-indexed</span>
+<span class="sd">    sheet positions. Lists of strings/integers are used to request</span>
+<span class="sd">    multiple sheets. Specify None to get all sheets.</span>
+
+<span class="sd">    Available cases:</span>
+
+<span class="sd">    * Defaults to ``0``: 1st sheet as a `DataFrame`</span>
+<span class="sd">    * ``1``: 2nd sheet as a `DataFrame`</span>
+<span class="sd">    * ``&quot;Sheet1&quot;``: Load sheet with name &quot;Sheet1&quot;</span>
+<span class="sd">    * ``[0, 1, &quot;Sheet5&quot;]``: Load first, second and sheet named &quot;Sheet5&quot;</span>
+<span class="sd">      as a dict of `DataFrame`</span>
+<span class="sd">    * None: All sheets.</span>
+
+<span class="sd">header : int, list of int, default 0</span>
+<span class="sd">    Row (0-indexed) to use for the column labels of the parsed</span>
+<span class="sd">    DataFrame. If a list of integers is passed those row positions will</span>
+<span class="sd">    be combined into a ``MultiIndex``. Use None if there is no header.</span>
+<span class="sd">names : array-like, default None</span>
+<span class="sd">    List of column names to use. If file contains no header row,</span>
+<span class="sd">    then you should explicitly pass header=None.</span>
+<span class="sd">index_col : int, list of int, default None</span>
+<span class="sd">    Column (0-indexed) to use as the row labels of the DataFrame.</span>
+<span class="sd">    Pass None if there is no such column.  If a list is passed,</span>
+<span class="sd">    those columns will be combined into a ``MultiIndex``.  If a</span>
+<span class="sd">    subset of data is selected with ``usecols``, index_col</span>
+<span class="sd">    is based on the subset.</span>
+<span class="sd">usecols : int, str, list-like, or callable default None</span>
+<span class="sd">    * If None, then parse all columns.</span>
+<span class="sd">    * If str, then indicates comma separated list of Excel column letters</span>
+<span class="sd">      and column ranges (e.g. &quot;A:E&quot; or &quot;A,C,E:F&quot;). Ranges are inclusive of</span>
+<span class="sd">      both sides.</span>
+<span class="sd">    * If list of int, then indicates list of column numbers to be parsed.</span>
+<span class="sd">    * If list of string, then indicates list of column names to be parsed.</span>
+<span class="sd">    * If callable, then evaluate each column name against it and parse the</span>
+<span class="sd">      column if the callable returns ``True``.</span>
+
+<span class="sd">    Returns a subset of the columns according to behavior above.</span>
+<span class="sd">squeeze : bool, default False</span>
+<span class="sd">    If the parsed data only contains one column then return a Series.</span>
+<span class="sd">dtype : Type name or dict of column -&gt; type, default None</span>
+<span class="sd">    Data type for data or columns. E.g. {&#39;a&#39;: np.float64, &#39;b&#39;: np.int32}</span>
+<span class="sd">    Use `object` to preserve data as stored in Excel and not interpret dtype.</span>
+<span class="sd">    If converters are specified, they will be applied INSTEAD</span>
+<span class="sd">    of dtype conversion.</span>
+<span class="sd">engine : str, default None</span>
+<span class="sd">    If io is not a buffer or path, this must be set to identify io.</span>
+<span class="sd">    Supported engines: &quot;xlrd&quot;, &quot;openpyxl&quot;, &quot;odf&quot;, &quot;pyxlsb&quot;.</span>
+<span class="sd">    Engine compatibility :</span>
+
+<span class="sd">    - &quot;xlrd&quot; supports old-style Excel files (.xls).</span>
+<span class="sd">    - &quot;openpyxl&quot; supports newer Excel file formats.</span>
+<span class="sd">    - &quot;odf&quot; supports OpenDocument file formats (.odf, .ods, .odt).</span>
+<span class="sd">    - &quot;pyxlsb&quot; supports Binary Excel files.</span>
+
+<span class="sd">    .. versionchanged:: 1.2.0</span>
+<span class="sd">        The engine `xlrd &lt;https://xlrd.readthedocs.io/en/latest/&gt;`_</span>
+<span class="sd">        now only supports old-style ``.xls`` files.</span>
+<span class="sd">        When ``engine=None``, the following logic will be</span>
+<span class="sd">        used to determine the engine:</span>
+
+<span class="sd">       - If ``path_or_buffer`` is an OpenDocument format (.odf, .ods, .odt),</span>
+<span class="sd">         then `odf &lt;https://pypi.org/project/odfpy/&gt;`_ will be used.</span>
+<span class="sd">       - Otherwise if ``path_or_buffer`` is an xls format,</span>
+<span class="sd">         ``xlrd`` will be used.</span>
+<span class="sd">       - Otherwise if ``path_or_buffer`` is in xlsb format,</span>
+<span class="sd">         ``pyxlsb`` will be used.</span>
+
+<span class="sd">         .. versionadded:: 1.3.0</span>
+<span class="sd">       - Otherwise ``openpyxl`` will be used.</span>
+
+<span class="sd">         .. versionchanged:: 1.3.0</span>
+
+<span class="sd">converters : dict, default None</span>
+<span class="sd">    Dict of functions for converting values in certain columns. Keys can</span>
+<span class="sd">    either be integers or column labels, values are functions that take one</span>
+<span class="sd">    input argument, the Excel cell content, and return the transformed</span>
+<span class="sd">    content.</span>
+<span class="sd">true_values : list, default None</span>
+<span class="sd">    Values to consider as True.</span>
+<span class="sd">false_values : list, default None</span>
+<span class="sd">    Values to consider as False.</span>
+<span class="sd">skiprows : list-like, int, or callable, optional</span>
+<span class="sd">    Line numbers to skip (0-indexed) or number of lines to skip (int) at the</span>
+<span class="sd">    start of the file. If callable, the callable function will be evaluated</span>
+<span class="sd">    against the row indices, returning True if the row should be skipped and</span>
+<span class="sd">    False otherwise. An example of a valid callable argument would be ``lambda</span>
+<span class="sd">    x: x in [0, 2]``.</span>
+<span class="sd">nrows : int, default None</span>
+<span class="sd">    Number of rows to parse.</span>
+<span class="sd">na_values : scalar, str, list-like, or dict, default None</span>
+<span class="sd">    Additional strings to recognize as NA/NaN. If dict passed, specific</span>
+<span class="sd">    per-column NA values. By default the following values are interpreted</span>
+<span class="sd">    as NaN: &#39;&quot;&quot;&quot;</span>
+    <span class="o">+</span> <span class="n">fill</span><span class="p">(</span><span class="s2">&quot;&#39;, &#39;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">STR_NA_VALUES</span><span class="p">)),</span> <span class="mi">70</span><span class="p">,</span> <span class="n">subsequent_indent</span><span class="o">=</span><span class="s2">&quot;    &quot;</span><span class="p">)</span>
+    <span class="o">+</span> <span class="s2">&quot;&quot;&quot;&#39;.</span>
+<span class="s2">keep_default_na : bool, default True</span>
+<span class="s2">    Whether or not to include the default NaN values when parsing the data.</span>
+<span class="s2">    Depending on whether `na_values` is passed in, the behavior is as follows:</span>
+
+<span class="s2">    * If `keep_default_na` is True, and `na_values` are specified, `na_values`</span>
+<span class="s2">      is appended to the default NaN values used for parsing.</span>
+<span class="s2">    * If `keep_default_na` is True, and `na_values` are not specified, only</span>
+<span class="s2">      the default NaN values are used for parsing.</span>
+<span class="s2">    * If `keep_default_na` is False, and `na_values` are specified, only</span>
+<span class="s2">      the NaN values specified `na_values` are used for parsing.</span>
+<span class="s2">    * If `keep_default_na` is False, and `na_values` are not specified, no</span>
+<span class="s2">      strings will be parsed as NaN.</span>
+
+<span class="s2">    Note that if `na_filter` is passed in as False, the `keep_default_na` and</span>
+<span class="s2">    `na_values` parameters will be ignored.</span>
+<span class="s2">na_filter : bool, default True</span>
+<span class="s2">    Detect missing value markers (empty strings and the value of na_values). In</span>
+<span class="s2">    data without any NAs, passing na_filter=False can improve the performance</span>
+<span class="s2">    of reading a large file.</span>
+<span class="s2">verbose : bool, default False</span>
+<span class="s2">    Indicate number of NA values placed in non-numeric columns.</span>
+<span class="s2">parse_dates : bool, list-like, or dict, default False</span>
+<span class="s2">    The behavior is as follows:</span>
+
+<span class="s2">    * bool. If True -&gt; try parsing the index.</span>
+<span class="s2">    * list of int or names. e.g. If [1, 2, 3] -&gt; try parsing columns 1, 2, 3</span>
+<span class="s2">      each as a separate date column.</span>
+<span class="s2">    * list of lists. e.g.  If [[1, 3]] -&gt; combine columns 1 and 3 and parse as</span>
+<span class="s2">      a single date column.</span>
+<span class="s2">    * dict, e.g. {&#39;foo&#39; : [1, 3]} -&gt; parse columns 1, 3 as date and call</span>
+<span class="s2">      result &#39;foo&#39;</span>
+
+<span class="s2">    If a column or index contains an unparsable date, the entire column or</span>
+<span class="s2">    index will be returned unaltered as an object data type. If you don`t want to</span>
+<span class="s2">    parse some cells as date just change their type in Excel to &quot;Text&quot;.</span>
+<span class="s2">    For non-standard datetime parsing, use ``pd.to_datetime`` after ``pd.read_excel``.</span>
+
+<span class="s2">    Note: A fast-path exists for iso8601-formatted dates.</span>
+<span class="s2">date_parser : function, optional</span>
+<span class="s2">    Function to use for converting a sequence of string columns to an array of</span>
+<span class="s2">    datetime instances. The default uses ``dateutil.parser.parser`` to do the</span>
+<span class="s2">    conversion. Pandas will try to call `date_parser` in three different ways,</span>
+<span class="s2">    advancing to the next if an exception occurs: 1) Pass one or more arrays</span>
+<span class="s2">    (as defined by `parse_dates`) as arguments; 2) concatenate (row-wise) the</span>
+<span class="s2">    string values from the columns defined by `parse_dates` into a single array</span>
+<span class="s2">    and pass that; and 3) call `date_parser` once for each row using one or</span>
+<span class="s2">    more strings (corresponding to the columns defined by `parse_dates`) as</span>
+<span class="s2">    arguments.</span>
+<span class="s2">thousands : str, default None</span>
+<span class="s2">    Thousands separator for parsing string columns to numeric.  Note that</span>
+<span class="s2">    this parameter is only necessary for columns stored as TEXT in Excel,</span>
+<span class="s2">    any numeric columns will automatically be parsed, regardless of display</span>
+<span class="s2">    format.</span>
+<span class="s2">comment : str, default None</span>
+<span class="s2">    Comments out remainder of line. Pass a character or characters to this</span>
+<span class="s2">    argument to indicate comments in the input file. Any data between the</span>
+<span class="s2">    comment string and the end of the current line is ignored.</span>
+<span class="s2">skipfooter : int, default 0</span>
+<span class="s2">    Rows at the end to skip (0-indexed).</span>
+<span class="s2">convert_float : bool, default True</span>
+<span class="s2">    Convert integral floats to int (i.e., 1.0 --&gt; 1). If False, all numeric</span>
+<span class="s2">    data will be read in as floats: Excel stores all numbers as floats</span>
+<span class="s2">    internally.</span>
+
+<span class="s2">    .. deprecated:: 1.3.0</span>
+<span class="s2">        convert_float will be removed in a future version</span>
+
+<span class="s2">mangle_dupe_cols : bool, default True</span>
+<span class="s2">    Duplicate columns will be specified as &#39;X&#39;, &#39;X.1&#39;, ...&#39;X.N&#39;, rather than</span>
+<span class="s2">    &#39;X&#39;...&#39;X&#39;. Passing in False will cause data to be overwritten if there</span>
+<span class="s2">    are duplicate names in the columns.</span>
+<span class="s2">storage_options : dict, optional</span>
+<span class="s2">    Extra options that make sense for a particular storage connection, e.g.</span>
+<span class="s2">    host, port, username, password, etc., if using a URL that will</span>
+<span class="s2">    be parsed by ``fsspec``, e.g., starting &quot;s3://&quot;, &quot;gcs://&quot;. An error</span>
+<span class="s2">    will be raised if providing this argument with a local path or</span>
+<span class="s2">    a file-like buffer. See the fsspec and backend storage implementation</span>
+<span class="s2">    docs for the set of allowed keys and values.</span>
+
+<span class="s2">    .. versionadded:: 1.2.0</span>
+
+<span class="s2">Returns</span>
+<span class="s2">-------</span>
+<span class="s2">DataFrame or dict of DataFrames</span>
+<span class="s2">    DataFrame from the passed in Excel file. See notes in sheet_name</span>
+<span class="s2">    argument for more information on when a dict of DataFrames is returned.</span>
+
+<span class="s2">See Also</span>
+<span class="s2">--------</span>
+<span class="s2">DataFrame.to_excel : Write DataFrame to an Excel file.</span>
+<span class="s2">DataFrame.to_csv : Write DataFrame to a comma-separated values (csv) file.</span>
+<span class="s2">read_csv : Read a comma-separated values (csv) file into DataFrame.</span>
+<span class="s2">read_fwf : Read a table of fixed-width formatted lines into DataFrame.</span>
+
+<span class="s2">Examples</span>
+<span class="s2">--------</span>
+<span class="s2">The file can be read using the file name as string or an open file object:</span>
+
+<span class="s2">&gt;&gt;&gt; pd.read_excel(&#39;tmp.xlsx&#39;, index_col=0)  # doctest: +SKIP</span>
+<span class="s2">       Name  Value</span>
+<span class="s2">0   string1      1</span>
+<span class="s2">1   string2      2</span>
+<span class="s2">2  #Comment      3</span>
+
+<span class="s2">&gt;&gt;&gt; pd.read_excel(open(&#39;tmp.xlsx&#39;, &#39;rb&#39;),</span>
+<span class="s2">...               sheet_name=&#39;Sheet3&#39;)  # doctest: +SKIP</span>
+<span class="s2">   Unnamed: 0      Name  Value</span>
+<span class="s2">0           0   string1      1</span>
+<span class="s2">1           1   string2      2</span>
+<span class="s2">2           2  #Comment      3</span>
+
+<span class="s2">Index and header can be specified via the `index_col` and `header` arguments</span>
+
+<span class="s2">&gt;&gt;&gt; pd.read_excel(&#39;tmp.xlsx&#39;, index_col=None, header=None)  # doctest: +SKIP</span>
+<span class="s2">     0         1      2</span>
+<span class="s2">0  NaN      Name  Value</span>
+<span class="s2">1  0.0   string1      1</span>
+<span class="s2">2  1.0   string2      2</span>
+<span class="s2">3  2.0  #Comment      3</span>
+
+<span class="s2">Column types are inferred but can be explicitly specified</span>
+
+<span class="s2">&gt;&gt;&gt; pd.read_excel(&#39;tmp.xlsx&#39;, index_col=0,</span>
+<span class="s2">...               dtype={&#39;Name&#39;: str, &#39;Value&#39;: float})  # doctest: +SKIP</span>
+<span class="s2">       Name  Value</span>
+<span class="s2">0   string1    1.0</span>
+<span class="s2">1   string2    2.0</span>
+<span class="s2">2  #Comment    3.0</span>
+
+<span class="s2">True, False, and NA values, and thousands separators have defaults,</span>
+<span class="s2">but can be explicitly specified, too. Supply the values you would like</span>
+<span class="s2">as strings or lists of strings!</span>
+
+<span class="s2">&gt;&gt;&gt; pd.read_excel(&#39;tmp.xlsx&#39;, index_col=0,</span>
+<span class="s2">...               na_values=[&#39;string1&#39;, &#39;string2&#39;])  # doctest: +SKIP</span>
+<span class="s2">       Name  Value</span>
+<span class="s2">0       NaN      1</span>
+<span class="s2">1       NaN      2</span>
+<span class="s2">2  #Comment      3</span>
+
+<span class="s2">Comment lines in the excel input file can be skipped using the `comment` kwarg</span>
+
+<span class="s2">&gt;&gt;&gt; pd.read_excel(&#39;tmp.xlsx&#39;, index_col=0, comment=&#39;#&#39;)  # doctest: +SKIP</span>
+<span class="s2">      Name  Value</span>
+<span class="s2">0  string1    1.0</span>
+<span class="s2">1  string2    2.0</span>
+<span class="s2">2     None    NaN</span>
+<span class="s2">&quot;&quot;&quot;</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="read_excel"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pandas.html#magicclass.ext.pandas.read_excel">[docs]</a><span class="nd">@deprecate_nonkeyword_arguments</span><span class="p">(</span><span class="n">allowed_args</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;io&quot;</span><span class="p">,</span> <span class="s2">&quot;sheet_name&quot;</span><span class="p">],</span> <span class="n">version</span><span class="o">=</span><span class="s2">&quot;2.0&quot;</span><span class="p">)</span>
+<span class="nd">@Appender</span><span class="p">(</span><span class="n">_read_excel_doc</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">read_excel</span><span class="p">(</span>
+    <span class="n">io</span><span class="p">,</span>
+    <span class="n">sheet_name</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">header</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">index_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">usecols</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">squeeze</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">dtype</span><span class="p">:</span> <span class="n">DtypeArg</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">engine</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">converters</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">true_values</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">false_values</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">skiprows</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">nrows</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">na_values</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">keep_default_na</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">na_filter</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">parse_dates</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">date_parser</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">thousands</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">comment</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">skipfooter</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">convert_float</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">mangle_dupe_cols</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">storage_options</span><span class="p">:</span> <span class="n">StorageOptions</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+
+    <span class="n">should_close</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">io</span><span class="p">,</span> <span class="n">ExcelFile</span><span class="p">):</span>
+        <span class="n">should_close</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">io</span> <span class="o">=</span> <span class="n">ExcelFile</span><span class="p">(</span><span class="n">io</span><span class="p">,</span> <span class="n">storage_options</span><span class="o">=</span><span class="n">storage_options</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="n">engine</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">engine</span> <span class="ow">and</span> <span class="n">engine</span> <span class="o">!=</span> <span class="n">io</span><span class="o">.</span><span class="n">engine</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Engine should not be specified when passing &quot;</span>
+            <span class="s2">&quot;an ExcelFile - ExcelFile already has the engine set&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span>
+            <span class="n">sheet_name</span><span class="o">=</span><span class="n">sheet_name</span><span class="p">,</span>
+            <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span>
+            <span class="n">names</span><span class="o">=</span><span class="n">names</span><span class="p">,</span>
+            <span class="n">index_col</span><span class="o">=</span><span class="n">index_col</span><span class="p">,</span>
+            <span class="n">usecols</span><span class="o">=</span><span class="n">usecols</span><span class="p">,</span>
+            <span class="n">squeeze</span><span class="o">=</span><span class="n">squeeze</span><span class="p">,</span>
+            <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span>
+            <span class="n">converters</span><span class="o">=</span><span class="n">converters</span><span class="p">,</span>
+            <span class="n">true_values</span><span class="o">=</span><span class="n">true_values</span><span class="p">,</span>
+            <span class="n">false_values</span><span class="o">=</span><span class="n">false_values</span><span class="p">,</span>
+            <span class="n">skiprows</span><span class="o">=</span><span class="n">skiprows</span><span class="p">,</span>
+            <span class="n">nrows</span><span class="o">=</span><span class="n">nrows</span><span class="p">,</span>
+            <span class="n">na_values</span><span class="o">=</span><span class="n">na_values</span><span class="p">,</span>
+            <span class="n">keep_default_na</span><span class="o">=</span><span class="n">keep_default_na</span><span class="p">,</span>
+            <span class="n">na_filter</span><span class="o">=</span><span class="n">na_filter</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+            <span class="n">parse_dates</span><span class="o">=</span><span class="n">parse_dates</span><span class="p">,</span>
+            <span class="n">date_parser</span><span class="o">=</span><span class="n">date_parser</span><span class="p">,</span>
+            <span class="n">thousands</span><span class="o">=</span><span class="n">thousands</span><span class="p">,</span>
+            <span class="n">comment</span><span class="o">=</span><span class="n">comment</span><span class="p">,</span>
+            <span class="n">skipfooter</span><span class="o">=</span><span class="n">skipfooter</span><span class="p">,</span>
+            <span class="n">convert_float</span><span class="o">=</span><span class="n">convert_float</span><span class="p">,</span>
+            <span class="n">mangle_dupe_cols</span><span class="o">=</span><span class="n">mangle_dupe_cols</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="c1"># make sure to close opened file handles</span>
+        <span class="k">if</span> <span class="n">should_close</span><span class="p">:</span>
+            <span class="n">io</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">data</span></div>
+
+
+<span class="k">class</span> <span class="nc">BaseExcelReader</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">abc</span><span class="o">.</span><span class="n">ABCMeta</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filepath_or_buffer</span><span class="p">,</span> <span class="n">storage_options</span><span class="p">:</span> <span class="n">StorageOptions</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">handles</span> <span class="o">=</span> <span class="n">IOHandles</span><span class="p">(</span>
+            <span class="n">handle</span><span class="o">=</span><span class="n">filepath_or_buffer</span><span class="p">,</span> <span class="n">compression</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;method&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">filepath_or_buffer</span><span class="p">,</span> <span class="p">(</span><span class="n">ExcelFile</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workbook_class</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">handles</span> <span class="o">=</span> <span class="n">get_handle</span><span class="p">(</span>
+                <span class="n">filepath_or_buffer</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">,</span> <span class="n">storage_options</span><span class="o">=</span><span class="n">storage_options</span><span class="p">,</span> <span class="n">is_text</span><span class="o">=</span><span class="kc">False</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">handles</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workbook_class</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">book</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">handles</span><span class="o">.</span><span class="n">handle</span>
+        <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">handles</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span> <span class="s2">&quot;read&quot;</span><span class="p">):</span>
+            <span class="c1"># N.B. xlrd.Book has a read attribute too</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">handles</span><span class="o">.</span><span class="n">handle</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">book</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_workbook</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">handles</span><span class="o">.</span><span class="n">handle</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                <span class="k">raise</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">handles</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">book</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_workbook</span><span class="p">(</span><span class="n">BytesIO</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">handles</span><span class="o">.</span><span class="n">handle</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Must explicitly set engine if not passing in buffer or path for io.&quot;</span>
+            <span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">_workbook_class</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">load_workbook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filepath_or_buffer</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;book&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">book</span><span class="p">,</span> <span class="s2">&quot;close&quot;</span><span class="p">):</span>
+            <span class="c1"># pyxlsb: opens a TemporaryFile</span>
+            <span class="c1"># openpyxl: https://stackoverflow.com/questions/31416842/</span>
+            <span class="c1">#     openpyxl-does-not-close-excel-workbook-in-read-only-mode</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">book</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">handles</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">sheet_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">get_sheet_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">get_sheet_by_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">get_sheet_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sheet</span><span class="p">,</span> <span class="n">convert_float</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">raise_if_bad_sheet_by_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">n_sheets</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sheet_names</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">index</span> <span class="o">&gt;=</span> <span class="n">n_sheets</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Worksheet index </span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2"> is invalid, </span><span class="si">{</span><span class="n">n_sheets</span><span class="si">}</span><span class="s2"> worksheets found&quot;</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">raise_if_bad_sheet_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sheet_names</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Worksheet named &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; not found&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">sheet_name</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">header</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">index_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">usecols</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">squeeze</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">dtype</span><span class="p">:</span> <span class="n">DtypeArg</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">true_values</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">false_values</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">skiprows</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">nrows</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">na_values</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">parse_dates</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">date_parser</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">thousands</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">comment</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">skipfooter</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">convert_float</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">mangle_dupe_cols</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwds</span><span class="p">,</span>
+    <span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">convert_float</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">convert_float</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">stacklevel</span> <span class="o">=</span> <span class="n">find_stack_level</span><span class="p">()</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s2">&quot;convert_float is deprecated and will be removed in a future version&quot;</span><span class="p">,</span>
+                <span class="ne">FutureWarning</span><span class="p">,</span>
+                <span class="n">stacklevel</span><span class="o">=</span><span class="n">stacklevel</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="n">validate_header_arg</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+
+        <span class="n">ret_dict</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="c1"># Keep sheetname to maintain backwards compatibility.</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sheet_name</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">sheets</span> <span class="o">=</span> <span class="n">sheet_name</span>
+            <span class="n">ret_dict</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">elif</span> <span class="n">sheet_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">sheets</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sheet_names</span>
+            <span class="n">ret_dict</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sheets</span> <span class="o">=</span> <span class="p">[</span><span class="n">sheet_name</span><span class="p">]</span>
+
+        <span class="c1"># handle same-type duplicates.</span>
+        <span class="n">sheets</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">sheets</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+        <span class="n">output</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">asheetname</span> <span class="ow">in</span> <span class="n">sheets</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Reading sheet </span><span class="si">{</span><span class="n">asheetname</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">asheetname</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">sheet</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_sheet_by_name</span><span class="p">(</span><span class="n">asheetname</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>  <span class="c1"># assume an integer if not a string</span>
+                <span class="n">sheet</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_sheet_by_index</span><span class="p">(</span><span class="n">asheetname</span><span class="p">)</span>
+
+            <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_sheet_data</span><span class="p">(</span><span class="n">sheet</span><span class="p">,</span> <span class="n">convert_float</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sheet</span><span class="p">,</span> <span class="s2">&quot;close&quot;</span><span class="p">):</span>
+                <span class="c1"># pyxlsb opens two TemporaryFiles</span>
+                <span class="n">sheet</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="n">usecols</span> <span class="o">=</span> <span class="n">maybe_convert_usecols</span><span class="p">(</span><span class="n">usecols</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">:</span>
+                <span class="n">output</span><span class="p">[</span><span class="n">asheetname</span><span class="p">]</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">()</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="n">is_list_like</span><span class="p">(</span><span class="n">header</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">header</span> <span class="o">=</span> <span class="n">header</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="c1"># forward fill and pull out names for MultiIndex column</span>
+            <span class="n">header_names</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="n">header</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">is_list_like</span><span class="p">(</span><span class="n">header</span><span class="p">):</span>
+                <span class="n">header_names</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">control_row</span> <span class="o">=</span> <span class="p">[</span><span class="kc">True</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+                <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">header</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">is_integer</span><span class="p">(</span><span class="n">skiprows</span><span class="p">):</span>
+                        <span class="n">row</span> <span class="o">+=</span> <span class="n">skiprows</span>
+
+                    <span class="n">data</span><span class="p">[</span><span class="n">row</span><span class="p">],</span> <span class="n">control_row</span> <span class="o">=</span> <span class="n">fill_mi_header</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">row</span><span class="p">],</span> <span class="n">control_row</span><span class="p">)</span>
+
+                    <span class="k">if</span> <span class="n">index_col</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">header_name</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">pop_header_name</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">row</span><span class="p">],</span> <span class="n">index_col</span><span class="p">)</span>
+                        <span class="n">header_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">header_name</span><span class="p">)</span>
+
+            <span class="c1"># If there is a MultiIndex header and an index then there is also</span>
+            <span class="c1"># a row containing just the index name(s)</span>
+            <span class="n">has_index_names</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">is_list_like</span><span class="p">(</span><span class="n">header</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">index_col</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">is_list_like</span><span class="p">(</span><span class="n">index_col</span><span class="p">):</span>
+                <span class="c1"># Forward fill values for MultiIndex index.</span>
+                <span class="k">if</span> <span class="n">header</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">offset</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">elif</span> <span class="ow">not</span> <span class="n">is_list_like</span><span class="p">(</span><span class="n">header</span><span class="p">):</span>
+                    <span class="n">offset</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">header</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">offset</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="nb">max</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+
+                <span class="c1"># GH34673: if MultiIndex names present and not defined in the header,</span>
+                <span class="c1"># offset needs to be incremented so that forward filling starts</span>
+                <span class="c1"># from the first MI value instead of the name</span>
+                <span class="k">if</span> <span class="n">has_index_names</span><span class="p">:</span>
+                    <span class="n">offset</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                <span class="c1"># Check if we have an empty dataset</span>
+                <span class="c1"># before trying to collect data.</span>
+                <span class="k">if</span> <span class="n">offset</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+                    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">index_col</span><span class="p">:</span>
+                        <span class="n">last</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">offset</span><span class="p">][</span><span class="n">col</span><span class="p">]</span>
+
+                        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">offset</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)):</span>
+                            <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="n">row</span><span class="p">][</span><span class="n">col</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="ow">or</span> <span class="n">data</span><span class="p">[</span><span class="n">row</span><span class="p">][</span><span class="n">col</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                                <span class="n">data</span><span class="p">[</span><span class="n">row</span><span class="p">][</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">last</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">last</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">row</span><span class="p">][</span><span class="n">col</span><span class="p">]</span>
+
+            <span class="c1"># GH 12292 : error when read one empty column from excel file</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">parser</span> <span class="o">=</span> <span class="n">TextParser</span><span class="p">(</span>
+                    <span class="n">data</span><span class="p">,</span>
+                    <span class="n">names</span><span class="o">=</span><span class="n">names</span><span class="p">,</span>
+                    <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span>
+                    <span class="n">index_col</span><span class="o">=</span><span class="n">index_col</span><span class="p">,</span>
+                    <span class="n">has_index_names</span><span class="o">=</span><span class="n">has_index_names</span><span class="p">,</span>
+                    <span class="n">squeeze</span><span class="o">=</span><span class="n">squeeze</span><span class="p">,</span>
+                    <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span>
+                    <span class="n">true_values</span><span class="o">=</span><span class="n">true_values</span><span class="p">,</span>
+                    <span class="n">false_values</span><span class="o">=</span><span class="n">false_values</span><span class="p">,</span>
+                    <span class="n">skiprows</span><span class="o">=</span><span class="n">skiprows</span><span class="p">,</span>
+                    <span class="n">nrows</span><span class="o">=</span><span class="n">nrows</span><span class="p">,</span>
+                    <span class="n">na_values</span><span class="o">=</span><span class="n">na_values</span><span class="p">,</span>
+                    <span class="n">skip_blank_lines</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>  <span class="c1"># GH 39808</span>
+                    <span class="n">parse_dates</span><span class="o">=</span><span class="n">parse_dates</span><span class="p">,</span>
+                    <span class="n">date_parser</span><span class="o">=</span><span class="n">date_parser</span><span class="p">,</span>
+                    <span class="n">thousands</span><span class="o">=</span><span class="n">thousands</span><span class="p">,</span>
+                    <span class="n">comment</span><span class="o">=</span><span class="n">comment</span><span class="p">,</span>
+                    <span class="n">skipfooter</span><span class="o">=</span><span class="n">skipfooter</span><span class="p">,</span>
+                    <span class="n">usecols</span><span class="o">=</span><span class="n">usecols</span><span class="p">,</span>
+                    <span class="n">mangle_dupe_cols</span><span class="o">=</span><span class="n">mangle_dupe_cols</span><span class="p">,</span>
+                    <span class="o">**</span><span class="n">kwds</span><span class="p">,</span>
+                <span class="p">)</span>
+
+                <span class="n">output</span><span class="p">[</span><span class="n">asheetname</span><span class="p">]</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="n">nrows</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">squeeze</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output</span><span class="p">[</span><span class="n">asheetname</span><span class="p">],</span> <span class="n">DataFrame</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">header_names</span><span class="p">:</span>
+                        <span class="n">output</span><span class="p">[</span><span class="n">asheetname</span><span class="p">]</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">output</span><span class="p">[</span>
+                            <span class="n">asheetname</span>
+                        <span class="p">]</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">header_names</span><span class="p">)</span>
+
+            <span class="k">except</span> <span class="n">EmptyDataError</span><span class="p">:</span>
+                <span class="c1"># No Data, return an empty DataFrame</span>
+                <span class="n">output</span><span class="p">[</span><span class="n">asheetname</span><span class="p">]</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">ret_dict</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">output</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">output</span><span class="p">[</span><span class="n">asheetname</span><span class="p">]</span>
+
+
+<span class="k">class</span> <span class="nc">ExcelWriter</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">abc</span><span class="o">.</span><span class="n">ABCMeta</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class for writing DataFrame objects into excel sheets.</span>
+
+<span class="sd">    Default is to use xlwt for xls, openpyxl for xlsx, odf for ods.</span>
+<span class="sd">    See DataFrame.to_excel for typical usage.</span>
+
+<span class="sd">    The writer should be used as a context manager. Otherwise, call `close()` to save</span>
+<span class="sd">    and close any opened file handles.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path : str or typing.BinaryIO</span>
+<span class="sd">        Path to xls or xlsx or ods file.</span>
+<span class="sd">    engine : str (optional)</span>
+<span class="sd">        Engine to use for writing. If None, defaults to</span>
+<span class="sd">        ``io.excel.&lt;extension&gt;.writer``.  NOTE: can only be passed as a keyword</span>
+<span class="sd">        argument.</span>
+
+<span class="sd">        .. deprecated:: 1.2.0</span>
+
+<span class="sd">            As the `xlwt &lt;https://pypi.org/project/xlwt/&gt;`__ package is no longer</span>
+<span class="sd">            maintained, the ``xlwt`` engine will be removed in a future</span>
+<span class="sd">            version of pandas.</span>
+
+<span class="sd">    date_format : str, default None</span>
+<span class="sd">        Format string for dates written into Excel files (e.g. &#39;YYYY-MM-DD&#39;).</span>
+<span class="sd">    datetime_format : str, default None</span>
+<span class="sd">        Format string for datetime objects written into Excel files.</span>
+<span class="sd">        (e.g. &#39;YYYY-MM-DD HH:MM:SS&#39;).</span>
+<span class="sd">    mode : {&#39;w&#39;, &#39;a&#39;}, default &#39;w&#39;</span>
+<span class="sd">        File mode to use (write or append). Append does not work with fsspec URLs.</span>
+<span class="sd">    storage_options : dict, optional</span>
+<span class="sd">        Extra options that make sense for a particular storage connection, e.g.</span>
+<span class="sd">        host, port, username, password, etc., if using a URL that will</span>
+<span class="sd">        be parsed by ``fsspec``, e.g., starting &quot;s3://&quot;, &quot;gcs://&quot;.</span>
+
+<span class="sd">        .. versionadded:: 1.2.0</span>
+<span class="sd">    if_sheet_exists : {&#39;error&#39;, &#39;new&#39;, &#39;replace&#39;}, default &#39;error&#39;</span>
+<span class="sd">        How to behave when trying to write to a sheet that already</span>
+<span class="sd">        exists (append mode only).</span>
+
+<span class="sd">        * error: raise a ValueError.</span>
+<span class="sd">        * new: Create a new sheet, with a name determined by the engine.</span>
+<span class="sd">        * replace: Delete the contents of the sheet before writing to it.</span>
+
+<span class="sd">        .. versionadded:: 1.3.0</span>
+<span class="sd">    engine_kwargs : dict, optional</span>
+<span class="sd">        Keyword arguments to be passed into the engine.</span>
+
+<span class="sd">        .. versionadded:: 1.3.0</span>
+<span class="sd">    **kwargs : dict, optional</span>
+<span class="sd">        Keyword arguments to be passed into the engine.</span>
+
+<span class="sd">        .. deprecated:: 1.3.0</span>
+
+<span class="sd">            Use engine_kwargs instead.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    None</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    None</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    None of the methods and properties are considered public.</span>
+
+<span class="sd">    For compatibility with CSV writers, ExcelWriter serializes lists</span>
+<span class="sd">    and dicts to strings before writing.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    Default usage:</span>
+
+<span class="sd">    &gt;&gt;&gt; df = pd.DataFrame([[&quot;ABC&quot;, &quot;XYZ&quot;]], columns=[&quot;Foo&quot;, &quot;Bar&quot;])</span>
+<span class="sd">    &gt;&gt;&gt; with ExcelWriter(&quot;path_to_file.xlsx&quot;) as writer:</span>
+<span class="sd">    ...     df.to_excel(writer)</span>
+
+<span class="sd">    To write to separate sheets in a single file:</span>
+
+<span class="sd">    &gt;&gt;&gt; df1 = pd.DataFrame([[&quot;AAA&quot;, &quot;BBB&quot;]], columns=[&quot;Spam&quot;, &quot;Egg&quot;])</span>
+<span class="sd">    &gt;&gt;&gt; df2 = pd.DataFrame([[&quot;ABC&quot;, &quot;XYZ&quot;]], columns=[&quot;Foo&quot;, &quot;Bar&quot;])</span>
+<span class="sd">    &gt;&gt;&gt; with ExcelWriter(&quot;path_to_file.xlsx&quot;) as writer:</span>
+<span class="sd">    ...     df1.to_excel(writer, sheet_name=&quot;Sheet1&quot;)</span>
+<span class="sd">    ...     df2.to_excel(writer, sheet_name=&quot;Sheet2&quot;)</span>
+
+<span class="sd">    You can set the date format or datetime format:</span>
+
+<span class="sd">    &gt;&gt;&gt; from datetime import date, datetime</span>
+<span class="sd">    &gt;&gt;&gt; df = pd.DataFrame(</span>
+<span class="sd">    ...     [</span>
+<span class="sd">    ...         [date(2014, 1, 31), date(1999, 9, 24)],</span>
+<span class="sd">    ...         [datetime(1998, 5, 26, 23, 33, 4), datetime(2014, 2, 28, 13, 5, 13)],</span>
+<span class="sd">    ...     ],</span>
+<span class="sd">    ...     index=[&quot;Date&quot;, &quot;Datetime&quot;],</span>
+<span class="sd">    ...     columns=[&quot;X&quot;, &quot;Y&quot;],</span>
+<span class="sd">    ... )</span>
+<span class="sd">    &gt;&gt;&gt; with ExcelWriter(</span>
+<span class="sd">    ...     &quot;path_to_file.xlsx&quot;,</span>
+<span class="sd">    ...     date_format=&quot;YYYY-MM-DD&quot;,</span>
+<span class="sd">    ...     datetime_format=&quot;YYYY-MM-DD HH:MM:SS&quot;</span>
+<span class="sd">    ... ) as writer:</span>
+<span class="sd">    ...     df.to_excel(writer)</span>
+
+<span class="sd">    You can also append to an existing Excel file:</span>
+
+<span class="sd">    &gt;&gt;&gt; with ExcelWriter(&quot;path_to_file.xlsx&quot;, mode=&quot;a&quot;, engine=&quot;openpyxl&quot;) as writer:</span>
+<span class="sd">    ...     df.to_excel(writer, sheet_name=&quot;Sheet3&quot;)</span>
+
+<span class="sd">    You can store Excel file in RAM:</span>
+
+<span class="sd">    &gt;&gt;&gt; import io</span>
+<span class="sd">    &gt;&gt;&gt; df = pd.DataFrame([[&quot;ABC&quot;, &quot;XYZ&quot;]], columns=[&quot;Foo&quot;, &quot;Bar&quot;])</span>
+<span class="sd">    &gt;&gt;&gt; buffer = io.BytesIO()</span>
+<span class="sd">    &gt;&gt;&gt; with pd.ExcelWriter(buffer) as writer:</span>
+<span class="sd">    ...     df.to_excel(writer)</span>
+
+<span class="sd">    You can pack Excel file into zip archive:</span>
+
+<span class="sd">    &gt;&gt;&gt; import zipfile</span>
+<span class="sd">    &gt;&gt;&gt; df = pd.DataFrame([[&quot;ABC&quot;, &quot;XYZ&quot;]], columns=[&quot;Foo&quot;, &quot;Bar&quot;])</span>
+<span class="sd">    &gt;&gt;&gt; with zipfile.ZipFile(&quot;path_to_file.zip&quot;, &quot;w&quot;) as zf:</span>
+<span class="sd">    ...     with zf.open(&quot;filename.xlsx&quot;, &quot;w&quot;) as buffer:</span>
+<span class="sd">    ...         with pd.ExcelWriter(buffer) as writer:</span>
+<span class="sd">    ...             df.to_excel(writer)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Defining an ExcelWriter implementation (see abstract methods for more...)</span>
+
+    <span class="c1"># - Mandatory</span>
+    <span class="c1">#   - ``write_cells(self, cells, sheet_name=None, startrow=0, startcol=0)``</span>
+    <span class="c1">#     --&gt; called to write additional DataFrames to disk</span>
+    <span class="c1">#   - ``supported_extensions`` (tuple of supported extensions), used to</span>
+    <span class="c1">#      check that engine supports the given extension.</span>
+    <span class="c1">#   - ``engine`` - string that gives the engine name. Necessary to</span>
+    <span class="c1">#     instantiate class directly and bypass ``ExcelWriterMeta`` engine</span>
+    <span class="c1">#     lookup.</span>
+    <span class="c1">#   - ``save(self)`` --&gt; called to save file to disk</span>
+    <span class="c1"># - Mostly mandatory (i.e. should at least exist)</span>
+    <span class="c1">#   - book, cur_sheet, path</span>
+
+    <span class="c1"># - Optional:</span>
+    <span class="c1">#   - ``__init__(self, path, engine=None, **kwargs)`` --&gt; always called</span>
+    <span class="c1">#     with path as first argument.</span>
+
+    <span class="c1"># You also need to register the class with ``register_writer()``.</span>
+    <span class="c1"># Technically, ExcelWriter implementations don&#39;t need to subclass</span>
+    <span class="c1"># ExcelWriter.</span>
+    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">path</span><span class="p">:</span> <span class="n">FilePathOrBuffer</span> <span class="o">|</span> <span class="n">ExcelWriter</span><span class="p">,</span>
+        <span class="n">engine</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">date_format</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">datetime_format</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span>
+        <span class="n">storage_options</span><span class="p">:</span> <span class="n">StorageOptions</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">if_sheet_exists</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">engine_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="k">if</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">engine_kwargs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot use both engine_kwargs and **kwargs&quot;</span><span class="p">)</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s2">&quot;Use of **kwargs is deprecated, use engine_kwargs instead.&quot;</span><span class="p">,</span>
+                <span class="ne">FutureWarning</span><span class="p">,</span>
+                <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="c1"># only switch class if generic(ExcelWriter)</span>
+
+        <span class="k">if</span> <span class="bp">cls</span> <span class="ow">is</span> <span class="n">ExcelWriter</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">engine</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">engine</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">engine</span> <span class="o">==</span> <span class="s2">&quot;auto&quot;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                    <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">path</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">:]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;xlsx&quot;</span>
+
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">engine</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get_option</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;io.excel.</span><span class="si">{</span><span class="n">ext</span><span class="si">}</span><span class="s2">.writer&quot;</span><span class="p">,</span> <span class="n">silent</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">engine</span> <span class="o">==</span> <span class="s2">&quot;auto&quot;</span><span class="p">:</span>
+                        <span class="n">engine</span> <span class="o">=</span> <span class="n">get_default_engine</span><span class="p">(</span><span class="n">ext</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;writer&quot;</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No engine for filetype: &#39;</span><span class="si">{</span><span class="n">ext</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">err</span>
+
+            <span class="k">if</span> <span class="n">engine</span> <span class="o">==</span> <span class="s2">&quot;xlwt&quot;</span><span class="p">:</span>
+                <span class="n">xls_config_engine</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get_option</span><span class="p">(</span>
+                    <span class="s2">&quot;io.excel.xls.writer&quot;</span><span class="p">,</span> <span class="n">silent</span><span class="o">=</span><span class="kc">True</span>
+                <span class="p">)</span>
+                <span class="c1"># Don&#39;t warn a 2nd time if user has changed the default engine for xls</span>
+                <span class="k">if</span> <span class="n">xls_config_engine</span> <span class="o">!=</span> <span class="s2">&quot;xlwt&quot;</span><span class="p">:</span>
+                    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                        <span class="s2">&quot;As the xlwt package is no longer maintained, the xlwt &quot;</span>
+                        <span class="s2">&quot;engine will be removed in a future version of pandas. &quot;</span>
+                        <span class="s2">&quot;This is the only engine in pandas that supports writing &quot;</span>
+                        <span class="s2">&quot;in the xls format. Install openpyxl and write to an xlsx &quot;</span>
+                        <span class="s2">&quot;file instead. You can set the option io.excel.xls.writer &quot;</span>
+                        <span class="s2">&quot;to &#39;xlwt&#39; to silence this warning. While this option is &quot;</span>
+                        <span class="s2">&quot;deprecated and will also raise a warning, it can &quot;</span>
+                        <span class="s2">&quot;be globally set and the warning suppressed.&quot;</span><span class="p">,</span>
+                        <span class="ne">FutureWarning</span><span class="p">,</span>
+                        <span class="n">stacklevel</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+                    <span class="p">)</span>
+
+            <span class="bp">cls</span> <span class="o">=</span> <span class="n">get_writer</span><span class="p">(</span><span class="n">engine</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">object</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+
+    <span class="c1"># declare external properties you can count on</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">supported_extensions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Extensions that writer engine supports.&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@property</span>
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">engine</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Name of engine.&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">write_cells</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">cells</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">startrow</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">startcol</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">freeze_panes</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Write given formatted cells into Excel an excel sheet</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        cells : generator</span>
+<span class="sd">            cell of formatted data to save to Excel sheet</span>
+<span class="sd">        sheet_name : str, default None</span>
+<span class="sd">            Name of Excel sheet, if None, then use self.cur_sheet</span>
+<span class="sd">        startrow : upper left cell row to dump data frame</span>
+<span class="sd">        startcol : upper left cell column to dump data frame</span>
+<span class="sd">        freeze_panes: int tuple of length 2</span>
+<span class="sd">            contains the bottom-most row and right-most column to freeze</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Save workbook to disk.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">path</span><span class="p">:</span> <span class="n">FilePathOrBuffer</span> <span class="o">|</span> <span class="n">ExcelWriter</span><span class="p">,</span>
+        <span class="n">engine</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">date_format</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">datetime_format</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span>
+        <span class="n">storage_options</span><span class="p">:</span> <span class="n">StorageOptions</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">if_sheet_exists</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">engine_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="c1"># validate that this engine can handle the extension</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">path</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">check_extension</span><span class="p">(</span><span class="n">ext</span><span class="p">)</span>
+
+        <span class="c1"># use mode to open the file</span>
+        <span class="k">if</span> <span class="s2">&quot;b&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">mode</span><span class="p">:</span>
+            <span class="n">mode</span> <span class="o">+=</span> <span class="s2">&quot;b&quot;</span>
+        <span class="c1"># use &quot;a&quot; for the user to append data to excel but internally use &quot;r+&quot; to let</span>
+        <span class="c1"># the excel backend first read the existing file and then write any data to it</span>
+        <span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;r+&quot;</span><span class="p">)</span>
+
+        <span class="c1"># cast ExcelWriter to avoid adding &#39;if self.handles is not None&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">handles</span> <span class="o">=</span> <span class="n">IOHandles</span><span class="p">(</span><span class="n">cast</span><span class="p">(</span><span class="n">Buffer</span><span class="p">,</span> <span class="n">path</span><span class="p">),</span> <span class="n">compression</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;copression&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">})</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">ExcelWriter</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">handles</span> <span class="o">=</span> <span class="n">get_handle</span><span class="p">(</span>
+                <span class="n">path</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">storage_options</span><span class="o">=</span><span class="n">storage_options</span><span class="p">,</span> <span class="n">is_text</span><span class="o">=</span><span class="kc">False</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sheets</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cur_sheet</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">date_format</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">date_format</span> <span class="o">=</span> <span class="s2">&quot;YYYY-MM-DD&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">date_format</span> <span class="o">=</span> <span class="n">date_format</span>
+        <span class="k">if</span> <span class="n">datetime_format</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">datetime_format</span> <span class="o">=</span> <span class="s2">&quot;YYYY-MM-DD HH:MM:SS&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">datetime_format</span> <span class="o">=</span> <span class="n">datetime_format</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span>
+
+        <span class="k">if</span> <span class="n">if_sheet_exists</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">,</span> <span class="s2">&quot;new&quot;</span><span class="p">,</span> <span class="s2">&quot;replace&quot;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">if_sheet_exists</span><span class="si">}</span><span class="s2">&#39; is not valid for if_sheet_exists. &quot;</span>
+                <span class="s2">&quot;Valid options are &#39;error&#39;, &#39;new&#39; and &#39;replace&#39;.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">if_sheet_exists</span> <span class="ow">and</span> <span class="s2">&quot;r+&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">mode</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;if_sheet_exists is only valid in append mode (mode=&#39;a&#39;)&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">if_sheet_exists</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">if_sheet_exists</span> <span class="o">=</span> <span class="s2">&quot;error&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">if_sheet_exists</span> <span class="o">=</span> <span class="n">if_sheet_exists</span>
+
+    <span class="k">def</span> <span class="nf">__fspath__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">handles</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_sheet_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sheet_name</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">sheet_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">sheet_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cur_sheet</span>
+        <span class="k">if</span> <span class="n">sheet_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Must pass explicit sheet_name or set cur_sheet property&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">sheet_name</span>
+
+    <span class="k">def</span> <span class="nf">_value_with_fmt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert numpy types to Python types for the Excel writers.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        val : object</span>
+<span class="sd">            Value to be written into cells</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Tuple with the first element being the converted value and the second</span>
+<span class="sd">            being an optional format</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">fmt</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">is_integer</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">is_float</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">is_bool</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">):</span>
+            <span class="n">fmt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">datetime_format</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">):</span>
+            <span class="n">fmt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_format</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">):</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="n">val</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span> <span class="o">/</span> <span class="mi">86400</span>
+            <span class="n">fmt</span> <span class="o">=</span> <span class="s2">&quot;0&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">val</span><span class="p">,</span> <span class="n">fmt</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">check_extension</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ext</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        checks that path&#39;s extension against the Writer&#39;s supported</span>
+<span class="sd">        extensions.  If it isn&#39;t supported, raises UnsupportedFiletypeError.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">ext</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">):</span>
+            <span class="n">ext</span> <span class="o">=</span> <span class="n">ext</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="c1"># error: &quot;Callable[[ExcelWriter], Any]&quot; has no attribute &quot;__iter__&quot; (not</span>
+        <span class="c1">#  iterable)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span>
+            <span class="n">ext</span> <span class="ow">in</span> <span class="n">extension</span>
+            <span class="k">for</span> <span class="n">extension</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">supported_extensions</span>  <span class="c1"># type: ignore[attr-defined]</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid extension for engine &#39;</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">engine</span><span class="si">}</span><span class="s2">&#39;: &#39;</span><span class="si">{</span><span class="n">ext</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="c1"># Allow use as a contextmanager</span>
+    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;synonym for save, to make it more file-like&quot;&quot;&quot;</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">handles</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">content</span>
+
+
+<span class="n">XLS_SIGNATURES</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="sa">b</span><span class="s2">&quot;</span><span class="se">\x09\x00\x04\x00\x07\x00\x10\x00</span><span class="s2">&quot;</span><span class="p">,</span>  <span class="c1"># BIFF2</span>
+    <span class="sa">b</span><span class="s2">&quot;</span><span class="se">\x09\x02\x06\x00\x00\x00\x10\x00</span><span class="s2">&quot;</span><span class="p">,</span>  <span class="c1"># BIFF3</span>
+    <span class="sa">b</span><span class="s2">&quot;</span><span class="se">\x09\x04\x06\x00\x00\x00\x10\x00</span><span class="s2">&quot;</span><span class="p">,</span>  <span class="c1"># BIFF4</span>
+    <span class="sa">b</span><span class="s2">&quot;</span><span class="se">\xD0\xCF\x11\xE0\xA1\xB1\x1A\xE1</span><span class="s2">&quot;</span><span class="p">,</span>  <span class="c1"># Compound File Binary</span>
+<span class="p">)</span>
+<span class="n">ZIP_SIGNATURE</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;PK</span><span class="se">\x03\x04</span><span class="s2">&quot;</span>
+<span class="n">PEEK_SIZE</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">len</span><span class="p">,</span> <span class="n">XLS_SIGNATURES</span> <span class="o">+</span> <span class="p">(</span><span class="n">ZIP_SIGNATURE</span><span class="p">,)))</span>
+
+
+<span class="nd">@doc</span><span class="p">(</span><span class="n">storage_options</span><span class="o">=</span><span class="n">_shared_docs</span><span class="p">[</span><span class="s2">&quot;storage_options&quot;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">inspect_excel_format</span><span class="p">(</span>
+    <span class="n">content_or_path</span><span class="p">:</span> <span class="n">FilePathOrBuffer</span><span class="p">,</span>
+    <span class="n">storage_options</span><span class="p">:</span> <span class="n">StorageOptions</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Inspect the path or content of an excel file and get its format.</span>
+
+<span class="sd">    Adopted from xlrd: https://github.com/python-excel/xlrd.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    content_or_path : str or file-like object</span>
+<span class="sd">        Path to file or content of file to inspect. May be a URL.</span>
+<span class="sd">    {storage_options}</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str or None</span>
+<span class="sd">        Format of file if it can be determined.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If resulting stream is empty.</span>
+<span class="sd">    BadZipFile</span>
+<span class="sd">        If resulting stream does not have an XLS signature and is not a valid zipfile.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">content_or_path</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+        <span class="n">content_or_path</span> <span class="o">=</span> <span class="n">BytesIO</span><span class="p">(</span><span class="n">content_or_path</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">get_handle</span><span class="p">(</span>
+        <span class="n">content_or_path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">,</span> <span class="n">storage_options</span><span class="o">=</span><span class="n">storage_options</span><span class="p">,</span> <span class="n">is_text</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">)</span> <span class="k">as</span> <span class="n">handle</span><span class="p">:</span>
+        <span class="n">stream</span> <span class="o">=</span> <span class="n">handle</span><span class="o">.</span><span class="n">handle</span>
+        <span class="n">stream</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">buf</span> <span class="o">=</span> <span class="n">stream</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">PEEK_SIZE</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">buf</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;stream is empty&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">)</span>
+            <span class="n">peek</span> <span class="o">=</span> <span class="n">buf</span>
+        <span class="n">stream</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">peek</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">sig</span><span class="p">)</span> <span class="k">for</span> <span class="n">sig</span> <span class="ow">in</span> <span class="n">XLS_SIGNATURES</span><span class="p">):</span>
+            <span class="k">return</span> <span class="s2">&quot;xls&quot;</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="n">peek</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">ZIP_SIGNATURE</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="c1"># ZipFile typing is overly-strict</span>
+        <span class="c1"># https://github.com/python/typeshed/issues/4212</span>
+        <span class="n">zf</span> <span class="o">=</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>  <span class="c1"># type: ignore[arg-type]</span>
+
+        <span class="c1"># Workaround for some third party files that use forward slashes and</span>
+        <span class="c1"># lower case names.</span>
+        <span class="n">component_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;/&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">zf</span><span class="o">.</span><span class="n">namelist</span><span class="p">()]</span>
+
+        <span class="k">if</span> <span class="s2">&quot;xl/workbook.xml&quot;</span> <span class="ow">in</span> <span class="n">component_names</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;xlsx&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;xl/workbook.bin&quot;</span> <span class="ow">in</span> <span class="n">component_names</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;xlsb&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;content.xml&quot;</span> <span class="ow">in</span> <span class="n">component_names</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;ods&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;zip&quot;</span>
+
+
+<span class="k">class</span> <span class="nc">ExcelFile</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class for parsing tabular excel sheets into DataFrame objects.</span>
+
+<span class="sd">    See read_excel for more documentation.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path_or_buffer : str, path object (pathlib.Path or py._path.local.LocalPath),</span>
+<span class="sd">        a file-like object, xlrd workbook or openpyxl workbook.</span>
+<span class="sd">        If a string or path object, expected to be a path to a</span>
+<span class="sd">        .xls, .xlsx, .xlsb, .xlsm, .odf, .ods, or .odt file.</span>
+<span class="sd">    engine : str, default None</span>
+<span class="sd">        If io is not a buffer or path, this must be set to identify io.</span>
+<span class="sd">        Supported engines: ``xlrd``, ``openpyxl``, ``odf``, ``pyxlsb``</span>
+<span class="sd">        Engine compatibility :</span>
+
+<span class="sd">        - ``xlrd`` supports old-style Excel files (.xls).</span>
+<span class="sd">        - ``openpyxl`` supports newer Excel file formats.</span>
+<span class="sd">        - ``odf`` supports OpenDocument file formats (.odf, .ods, .odt).</span>
+<span class="sd">        - ``pyxlsb`` supports Binary Excel files.</span>
+
+<span class="sd">        .. versionchanged:: 1.2.0</span>
+
+<span class="sd">           The engine `xlrd &lt;https://xlrd.readthedocs.io/en/latest/&gt;`_</span>
+<span class="sd">           now only supports old-style ``.xls`` files.</span>
+<span class="sd">           When ``engine=None``, the following logic will be</span>
+<span class="sd">           used to determine the engine:</span>
+
+<span class="sd">           - If ``path_or_buffer`` is an OpenDocument format (.odf, .ods, .odt),</span>
+<span class="sd">             then `odf &lt;https://pypi.org/project/odfpy/&gt;`_ will be used.</span>
+<span class="sd">           - Otherwise if ``path_or_buffer`` is an xls format,</span>
+<span class="sd">             ``xlrd`` will be used.</span>
+<span class="sd">           - Otherwise if ``path_or_buffer`` is in xlsb format,</span>
+<span class="sd">             `pyxlsb &lt;https://pypi.org/project/pyxlsb/&gt;`_ will be used.</span>
+
+<span class="sd">           .. versionadded:: 1.3.0</span>
+<span class="sd">           - Otherwise if `openpyxl &lt;https://pypi.org/project/openpyxl/&gt;`_ is installed,</span>
+<span class="sd">             then ``openpyxl`` will be used.</span>
+<span class="sd">           - Otherwise if ``xlrd &gt;= 2.0`` is installed, a ``ValueError`` will be raised.</span>
+<span class="sd">           - Otherwise ``xlrd`` will be used and a ``FutureWarning`` will be raised.</span>
+<span class="sd">             This case will raise a ``ValueError`` in a future version of pandas.</span>
+
+<span class="sd">           .. warning::</span>
+
+<span class="sd">            Please do not report issues when using ``xlrd`` to read ``.xlsx`` files.</span>
+<span class="sd">            This is not supported, switch to using ``openpyxl`` instead.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="kn">from</span> <span class="nn">pandas.io.excel._odfreader</span> <span class="kn">import</span> <span class="n">ODFReader</span>
+    <span class="kn">from</span> <span class="nn">pandas.io.excel._openpyxl</span> <span class="kn">import</span> <span class="n">OpenpyxlReader</span>
+    <span class="kn">from</span> <span class="nn">pandas.io.excel._pyxlsb</span> <span class="kn">import</span> <span class="n">PyxlsbReader</span>
+    <span class="kn">from</span> <span class="nn">pandas.io.excel._xlrd</span> <span class="kn">import</span> <span class="n">XlrdReader</span>
+
+    <span class="n">_engines</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;xlrd&quot;</span><span class="p">:</span> <span class="n">XlrdReader</span><span class="p">,</span>
+        <span class="s2">&quot;openpyxl&quot;</span><span class="p">:</span> <span class="n">OpenpyxlReader</span><span class="p">,</span>
+        <span class="s2">&quot;odf&quot;</span><span class="p">:</span> <span class="n">ODFReader</span><span class="p">,</span>
+        <span class="s2">&quot;pyxlsb&quot;</span><span class="p">:</span> <span class="n">PyxlsbReader</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">path_or_buffer</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">storage_options</span><span class="p">:</span> <span class="n">StorageOptions</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">):</span>
+        <span class="k">if</span> <span class="n">engine</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">engine</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_engines</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown engine: </span><span class="si">{</span><span class="n">engine</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Could be a str, ExcelFile, Book, etc.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">io</span> <span class="o">=</span> <span class="n">path_or_buffer</span>
+        <span class="c1"># Always a string</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_io</span> <span class="o">=</span> <span class="n">stringify_path</span><span class="p">(</span><span class="n">path_or_buffer</span><span class="p">)</span>
+
+        <span class="c1"># Determine xlrd version if installed</span>
+        <span class="k">if</span> <span class="n">import_optional_dependency</span><span class="p">(</span><span class="s2">&quot;xlrd&quot;</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">xlrd_version</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">xlrd</span>
+
+            <span class="n">xlrd_version</span> <span class="o">=</span> <span class="n">Version</span><span class="p">(</span><span class="n">get_version</span><span class="p">(</span><span class="n">xlrd</span><span class="p">))</span>
+
+        <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">engine</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Only determine ext if it is needed</span>
+            <span class="k">if</span> <span class="n">xlrd_version</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path_or_buffer</span><span class="p">,</span> <span class="n">xlrd</span><span class="o">.</span><span class="n">Book</span><span class="p">):</span>
+                <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;xls&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ext</span> <span class="o">=</span> <span class="n">inspect_excel_format</span><span class="p">(</span>
+                    <span class="n">content_or_path</span><span class="o">=</span><span class="n">path_or_buffer</span><span class="p">,</span> <span class="n">storage_options</span><span class="o">=</span><span class="n">storage_options</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">ext</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="s2">&quot;Excel file format cannot be determined, you must specify &quot;</span>
+                        <span class="s2">&quot;an engine manually.&quot;</span>
+                    <span class="p">)</span>
+
+            <span class="n">engine</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get_option</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;io.excel.</span><span class="si">{</span><span class="n">ext</span><span class="si">}</span><span class="s2">.reader&quot;</span><span class="p">,</span> <span class="n">silent</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">engine</span> <span class="o">==</span> <span class="s2">&quot;auto&quot;</span><span class="p">:</span>
+                <span class="n">engine</span> <span class="o">=</span> <span class="n">get_default_engine</span><span class="p">(</span><span class="n">ext</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;reader&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">engine</span> <span class="o">==</span> <span class="s2">&quot;xlrd&quot;</span> <span class="ow">and</span> <span class="n">xlrd_version</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">ext</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># Need ext to determine ext in order to raise/warn</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path_or_buffer</span><span class="p">,</span> <span class="n">xlrd</span><span class="o">.</span><span class="n">Book</span><span class="p">):</span>
+                    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;xls&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">ext</span> <span class="o">=</span> <span class="n">inspect_excel_format</span><span class="p">(</span>
+                        <span class="n">path_or_buffer</span><span class="p">,</span> <span class="n">storage_options</span><span class="o">=</span><span class="n">storage_options</span>
+                    <span class="p">)</span>
+
+            <span class="c1"># Pass through if ext is None, otherwise check if ext valid for xlrd</span>
+            <span class="k">if</span> <span class="n">ext</span> <span class="ow">and</span> <span class="n">ext</span> <span class="o">!=</span> <span class="s2">&quot;xls&quot;</span> <span class="ow">and</span> <span class="n">xlrd_version</span> <span class="o">&gt;=</span> <span class="n">Version</span><span class="p">(</span><span class="s2">&quot;2&quot;</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Your version of xlrd is </span><span class="si">{</span><span class="n">xlrd_version</span><span class="si">}</span><span class="s2">. In xlrd &gt;= 2.0, &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;only the xls format is supported. Install openpyxl instead.&quot;</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="n">ext</span> <span class="ow">and</span> <span class="n">ext</span> <span class="o">!=</span> <span class="s2">&quot;xls&quot;</span><span class="p">:</span>
+                <span class="n">stacklevel</span> <span class="o">=</span> <span class="n">find_stack_level</span><span class="p">()</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Your version of xlrd is </span><span class="si">{</span><span class="n">xlrd_version</span><span class="si">}</span><span class="s2">. In xlrd &gt;= 2.0, &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;only the xls format is supported. Install &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;openpyxl instead.&quot;</span><span class="p">,</span>
+                    <span class="ne">FutureWarning</span><span class="p">,</span>
+                    <span class="n">stacklevel</span><span class="o">=</span><span class="n">stacklevel</span><span class="p">,</span>
+                <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">engine</span> <span class="o">=</span> <span class="n">engine</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">storage_options</span> <span class="o">=</span> <span class="n">storage_options</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_engines</span><span class="p">[</span><span class="n">engine</span><span class="p">](</span><span class="bp">self</span><span class="o">.</span><span class="n">_io</span><span class="p">,</span> <span class="n">storage_options</span><span class="o">=</span><span class="n">storage_options</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__fspath__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_io</span>
+
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">sheet_name</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">header</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">index_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">usecols</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">squeeze</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">converters</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">true_values</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">false_values</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">skiprows</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">nrows</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">na_values</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">parse_dates</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">date_parser</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">thousands</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">comment</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">skipfooter</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">convert_float</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">mangle_dupe_cols</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwds</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parse specified sheet(s) into a DataFrame.</span>
+
+<span class="sd">        Equivalent to read_excel(ExcelFile, ...)  See the read_excel</span>
+<span class="sd">        docstring for more info on accepted parameters.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        DataFrame or dict of DataFrames</span>
+<span class="sd">            DataFrame from the passed in Excel file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span>
+            <span class="n">sheet_name</span><span class="o">=</span><span class="n">sheet_name</span><span class="p">,</span>
+            <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span>
+            <span class="n">names</span><span class="o">=</span><span class="n">names</span><span class="p">,</span>
+            <span class="n">index_col</span><span class="o">=</span><span class="n">index_col</span><span class="p">,</span>
+            <span class="n">usecols</span><span class="o">=</span><span class="n">usecols</span><span class="p">,</span>
+            <span class="n">squeeze</span><span class="o">=</span><span class="n">squeeze</span><span class="p">,</span>
+            <span class="n">converters</span><span class="o">=</span><span class="n">converters</span><span class="p">,</span>
+            <span class="n">true_values</span><span class="o">=</span><span class="n">true_values</span><span class="p">,</span>
+            <span class="n">false_values</span><span class="o">=</span><span class="n">false_values</span><span class="p">,</span>
+            <span class="n">skiprows</span><span class="o">=</span><span class="n">skiprows</span><span class="p">,</span>
+            <span class="n">nrows</span><span class="o">=</span><span class="n">nrows</span><span class="p">,</span>
+            <span class="n">na_values</span><span class="o">=</span><span class="n">na_values</span><span class="p">,</span>
+            <span class="n">parse_dates</span><span class="o">=</span><span class="n">parse_dates</span><span class="p">,</span>
+            <span class="n">date_parser</span><span class="o">=</span><span class="n">date_parser</span><span class="p">,</span>
+            <span class="n">thousands</span><span class="o">=</span><span class="n">thousands</span><span class="p">,</span>
+            <span class="n">comment</span><span class="o">=</span><span class="n">comment</span><span class="p">,</span>
+            <span class="n">skipfooter</span><span class="o">=</span><span class="n">skipfooter</span><span class="p">,</span>
+            <span class="n">convert_float</span><span class="o">=</span><span class="n">convert_float</span><span class="p">,</span>
+            <span class="n">mangle_dupe_cols</span><span class="o">=</span><span class="n">mangle_dupe_cols</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwds</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">book</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="o">.</span><span class="n">book</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">sheet_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="o">.</span><span class="n">sheet_names</span>
+
+    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;close io if necessary&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Ensure we don&#39;t leak file descriptors, but put in try/except in case</span>
+        <span class="c1"># attributes are already deleted</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">pass</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Hanjin Liu.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+</body>
+</html>

@@ -1,7 +1,6 @@
 from __future__ import annotations
 from typing import Callable, TYPE_CHECKING, Any
 import warnings
-from inspect import signature
 from magicgui.widgets import Image, Table, Label, FunctionGui
 from magicgui.widgets._bases import ButtonWidget
 from magicgui.widgets._bases.widget import Widget
@@ -10,7 +9,7 @@ from qtpy.QtWidgets import QToolBar, QMenu, QWidgetAction, QTabWidget
 
 
 from .mgui_ext import AbstractAction, _LabeledWidgetAction, WidgetAction, ToolButtonPlus
-from .keybinding import as_shortcut
+from .keybinding import register_shortcut
 from ._base import (
     BaseGui,
     PopUpMode,
@@ -124,12 +123,9 @@ class ToolBarGui(ContainerLikeGui):
 
             try:
                 if isinstance(attr, type):
-                    if not issubclass(attr, BaseGui):
-                        continue
                     # Nested magic-menu
                     if cls.__name__ not in attr.__qualname__.split("."):
-                        attr = copy_class(attr)
-                        attr.__qualname__ = f"{cls.__qualname__}.{attr.__name__}"
+                        attr = copy_class(attr, ns=cls)
                     widget = attr()
                     object.__setattr__(self, name, widget)
 
@@ -141,8 +137,7 @@ class ToolBarGui(ContainerLikeGui):
                     widget = getattr(self, name, None)
 
                 if isinstance(widget, FunctionGui):
-                    p0 = list(signature(attr).parameters)[0]
-                    getattr(widget, p0).bind(self)  # set self to the first argument
+                    widget[0].bind(self)  # set self to the first argument
 
                 elif isinstance(widget, BaseGui):
                     widget.__magicclass_parent__ = self
@@ -184,12 +179,9 @@ class ToolBarGui(ContainerLikeGui):
                         ):
                             keybinding = get_additional_option(attr, "keybinding", None)
                             if keybinding:
-                                from qtpy.QtWidgets import QShortcut
-
-                                shortcut = QShortcut(
-                                    as_shortcut(keybinding), self.native
+                                register_shortcut(
+                                    keys=keybinding, parent=self.native, target=widget
                                 )
-                                shortcut.activated.connect(widget)
                             continue
                         widget = self._create_widget_from_method(widget)
 
@@ -257,7 +249,7 @@ class ToolBarGui(ContainerLikeGui):
 
         elif isinstance(_obj, WidgetAction):
             if isinstance(_obj.widget, Separator):
-                insert_action_like(self.native, key, "sep")
+                insert_action_like(self.native, key, "")
 
             else:
                 _hide_labels = (

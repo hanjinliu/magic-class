@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.ext.pyqtgraph.mouse_event &mdash; magic-class 0.5.21.dev0 documentation</title>
+  <title>magicclass.ext.pyqtgraph.mouse_event &mdash; magic-class 0.6.4.dev1 documentation</title>
       <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.21.dev0
+                0.6.4.dev1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
@@ -40,17 +40,15 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../quick_start.html">Quick Start</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../options.html">Options in magic-class</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../nest.html">Nest magic-classes</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../use_field.html">Use Fields in magic-class</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../use_wraps.html">Call Parent Methods from its Child</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../use_bind.html">Binding Values to Arguments</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../keybinding.html">Define Custom Keybindings</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../customize_macro.html">Customize Macro Recording</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../containers.html">Container Variations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../class_inheritance.html">Inherit Magic Class</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../special_methods.html">Special Attributes in Magic class</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../api.html">API References</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../chap_basics.html">Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../chap_make_better.html">Make Your GUI Better</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../chap_data_vis.html">Data Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../chap_advanced.html">Advanced Topics</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../best_practice.html">Best Practice</a></li>
 </ul>
 
         </div>
@@ -107,7 +105,7 @@
     <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="MouseClickEvent"><a class="viewcode-back" href="../../../../magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.mouse_event.MouseClickEvent">[docs]</a><span class="k">class</span> <span class="nc">MouseClickEvent</span><span class="p">(</span><span class="n">_MouseClickEvent</span><span class="p">):</span>
+<div class="viewcode-block" id="MouseClickEvent"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.mouse_event.MouseClickEvent">[docs]</a><span class="k">class</span> <span class="nc">MouseClickEvent</span><span class="p">(</span><span class="n">_MouseClickEvent</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">_MouseClickEvent</span><span class="p">,</span> <span class="n">coord_item</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">accepted</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">accepted</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">currentItem</span> <span class="o">=</span> <span class="p">(</span>
@@ -122,19 +120,19 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_time</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">_time</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">acceptedItem</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">acceptedItem</span>
 
-<div class="viewcode-block" id="MouseClickEvent.pos"><a class="viewcode-back" href="../../../../magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.mouse_event.MouseClickEvent.pos">[docs]</a>    <span class="k">def</span> <span class="nf">pos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="MouseClickEvent.pos"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.mouse_event.MouseClickEvent.pos">[docs]</a>    <span class="k">def</span> <span class="nf">pos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">pos</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">pos</span><span class="p">()</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">pos</span><span class="o">.</span><span class="n">x</span><span class="p">(),</span> <span class="n">pos</span><span class="o">.</span><span class="n">y</span><span class="p">())</span></div>
 
-<div class="viewcode-block" id="MouseClickEvent.lastPos"><a class="viewcode-back" href="../../../../magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.mouse_event.MouseClickEvent.lastPos">[docs]</a>    <span class="k">def</span> <span class="nf">lastPos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="MouseClickEvent.lastPos"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.mouse_event.MouseClickEvent.lastPos">[docs]</a>    <span class="k">def</span> <span class="nf">lastPos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">pos</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">lastPos</span><span class="p">()</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">pos</span><span class="o">.</span><span class="n">x</span><span class="p">(),</span> <span class="n">pos</span><span class="o">.</span><span class="n">y</span><span class="p">())</span></div>
 
-<div class="viewcode-block" id="MouseClickEvent.modifiers"><a class="viewcode-back" href="../../../../magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.mouse_event.MouseClickEvent.modifiers">[docs]</a>    <span class="k">def</span> <span class="nf">modifiers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="MouseClickEvent.modifiers"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.mouse_event.MouseClickEvent.modifiers">[docs]</a>    <span class="k">def</span> <span class="nf">modifiers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">modifiers</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">modifiers</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">_factorize_modifiers</span><span class="p">(</span><span class="n">modifiers</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="MouseClickEvent.buttons"><a class="viewcode-back" href="../../../../magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.mouse_event.MouseClickEvent.buttons">[docs]</a>    <span class="k">def</span> <span class="nf">buttons</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="MouseClickEvent.buttons"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.mouse_event.MouseClickEvent.buttons">[docs]</a>    <span class="k">def</span> <span class="nf">buttons</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">buttons</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">buttons</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">_factorize_buttons</span><span class="p">(</span><span class="n">buttons</span><span class="p">)</span></div></div>
 </pre></div>

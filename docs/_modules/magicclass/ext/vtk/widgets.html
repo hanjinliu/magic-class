@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.ext.vtk.widgets &mdash; magic-class 0.6.2.dev1 documentation</title>
+  <title>magicclass.ext.vtk.widgets &mdash; magic-class 0.6.4.dev1 documentation</title>
       <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.2.dev1
+                0.6.4.dev1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
@@ -43,27 +43,12 @@
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../chap_basics.html">Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../chap_make_better.html">Make Your GUI Better</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../chap_data_vis.html">Data Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../chap_advanced.html">Advanced Topics</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../use_wraps.html">Call Parent Methods from its Child</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../use_bind.html">Binding Values to Arguments</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../use_choices.html">Set Choices Dynamically</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../use_preview.html">Add Preview Functionalities</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../use_worker.html">Multi-threading</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../additional_types.html">Additional types</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../containers.html">Container Variations</a></li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../matplotlib.html">Use Matplotlib Figure</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../pyqtgraph.html">Use PyQtGraph Canvas</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../vispy.html">Vispy Canvas</a></li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../freewidget.html">Convert QtWidgets into a Magic Widget</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../keybinding.html">Define Custom Keybindings</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../customize_macro.html">Customize Macro Recording</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../class_inheritance.html">Inherit Magic Class</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../api.html">API References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../best_practice.html">Best Practice</a></li>
 </ul>
 
         </div>
@@ -106,7 +91,7 @@
 <span class="kn">from</span> <span class="nn">...types</span> <span class="kn">import</span> <span class="n">Color</span>
 
 
-<div class="viewcode-block" id="QtVtkCanvas"><a class="viewcode-back" href="../../../../magicclass.ext.vtk.html#magicclass.ext.vtk.widgets.QtVtkCanvas">[docs]</a><span class="k">class</span> <span class="nc">QtVtkCanvas</span><span class="p">(</span><span class="n">QtW</span><span class="o">.</span><span class="n">QWidget</span><span class="p">):</span>
+<div class="viewcode-block" id="QtVtkCanvas"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vtk.html#magicclass.ext.vtk.widgets.QtVtkCanvas">[docs]</a><span class="k">class</span> <span class="nc">QtVtkCanvas</span><span class="p">(</span><span class="n">QtW</span><span class="o">.</span><span class="n">QWidget</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
         <span class="n">_layout</span> <span class="o">=</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QVBoxLayout</span><span class="p">()</span>
@@ -118,7 +103,7 @@
         <span class="n">_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_vtk_widget</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="LayerList"><a class="viewcode-back" href="../../../../magicclass.ext.vtk.html#magicclass.ext.vtk.widgets.LayerList">[docs]</a><span class="k">class</span> <span class="nc">LayerList</span><span class="p">(</span><span class="n">EventedList</span><span class="p">):</span>
+<div class="viewcode-block" id="LayerList"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vtk.html#magicclass.ext.vtk.widgets.LayerList">[docs]</a><span class="k">class</span> <span class="nc">LayerList</span><span class="p">(</span><span class="n">EventedList</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">(),</span> <span class="n">parent</span><span class="p">:</span> <span class="n">VtkCanvas</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_parent_ref</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
@@ -142,7 +127,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">zoom</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="VtkCanvas"><a class="viewcode-back" href="../../../../magicclass.ext.vtk.html#magicclass.ext.vtk.widgets.VtkCanvas">[docs]</a><span class="k">class</span> <span class="nc">VtkCanvas</span><span class="p">(</span><span class="n">FreeWidget</span><span class="p">):</span>
+<div class="viewcode-block" id="VtkCanvas"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vtk.html#magicclass.ext.vtk.widgets.VtkCanvas">[docs]</a><span class="k">class</span> <span class="nc">VtkCanvas</span><span class="p">(</span><span class="n">FreeWidget</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        A Visualization toolkit (VTK) canvas for magicclass.</span>
@@ -158,13 +143,13 @@
     <span class="k">def</span> <span class="nf">layers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_layers</span>
 
-<div class="viewcode-block" id="VtkCanvas.screenshot"><a class="viewcode-back" href="../../../../magicclass.ext.vtk.html#magicclass.ext.vtk.widgets.VtkCanvas.screenshot">[docs]</a>    <span class="k">def</span> <span class="nf">screenshot</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<div class="viewcode-block" id="VtkCanvas.screenshot"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vtk.html#magicclass.ext.vtk.widgets.VtkCanvas.screenshot">[docs]</a>    <span class="k">def</span> <span class="nf">screenshot</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Get screenshot as a numpy array.&quot;&quot;&quot;</span>
         <span class="n">pic</span><span class="p">:</span> <span class="n">vedo</span><span class="o">.</span><span class="n">Picture</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">plt</span><span class="o">.</span><span class="n">topicture</span><span class="p">()</span>
         <span class="n">img</span> <span class="o">=</span> <span class="n">pic</span><span class="o">.</span><span class="n">tonumpy</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">img</span></div>
 
-<div class="viewcode-block" id="VtkCanvas.add_volume"><a class="viewcode-back" href="../../../../magicclass.ext.vtk.html#magicclass.ext.vtk.widgets.VtkCanvas.add_volume">[docs]</a>    <span class="k">def</span> <span class="nf">add_volume</span><span class="p">(</span>
+<div class="viewcode-block" id="VtkCanvas.add_volume"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vtk.html#magicclass.ext.vtk.widgets.VtkCanvas.add_volume">[docs]</a>    <span class="k">def</span> <span class="nf">add_volume</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">volume</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
         <span class="n">color</span><span class="p">:</span> <span class="n">Color</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">),</span>
@@ -196,7 +181,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">zoom</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">vol</span></div>
 
-<div class="viewcode-block" id="VtkCanvas.add_object"><a class="viewcode-back" href="../../../../magicclass.ext.vtk.html#magicclass.ext.vtk.widgets.VtkCanvas.add_object">[docs]</a>    <span class="k">def</span> <span class="nf">add_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">object_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="VtkCanvas.add_object"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vtk.html#magicclass.ext.vtk.widgets.VtkCanvas.add_object">[docs]</a>    <span class="k">def</span> <span class="nf">add_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">object_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">obj</span> <span class="o">=</span> <span class="n">get_object_type</span><span class="p">(</span><span class="n">object_type</span><span class="o">.</span><span class="n">capitalize</span><span class="p">())(</span>
             <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">_parent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">plt</span>
         <span class="p">)</span>
@@ -205,7 +190,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">obj</span></div>
 
-<div class="viewcode-block" id="VtkCanvas.add_surface"><a class="viewcode-back" href="../../../../magicclass.ext.vtk.html#magicclass.ext.vtk.widgets.VtkCanvas.add_surface">[docs]</a>    <span class="k">def</span> <span class="nf">add_surface</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]):</span>
+<div class="viewcode-block" id="VtkCanvas.add_surface"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vtk.html#magicclass.ext.vtk.widgets.VtkCanvas.add_surface">[docs]</a>    <span class="k">def</span> <span class="nf">add_surface</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]):</span>
         <span class="n">mesh</span> <span class="o">=</span> <span class="n">Mesh</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">_parent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">plt</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>

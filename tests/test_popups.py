@@ -19,6 +19,9 @@ def test_all_works():
     for mode in PopUpMode._member_names_:
         if mode == "dock":
             ui = _make_class(mode, "mainwindow")()
+        elif mode == "dialog":
+            # TODO: how to test dialog?
+            continue
         else:
             ui = _make_class(mode)()
         ui.show(run=False)

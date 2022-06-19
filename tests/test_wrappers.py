@@ -1,6 +1,6 @@
 from types import MethodType
 from unittest.mock import MagicMock
-from magicclass import magicclass, set_options, set_design, do_not_record, nogui, mark_preview
+from magicclass import magicclass, set_options
 from magicgui.widgets import PushButton
 
 from magicclass.core import get_function_gui
@@ -66,6 +66,8 @@ def test_annotated():
     assert ui["f"].mgui.a.max == 5
 
 def test_set_design():
+    from magicclass import set_design
+
     @magicclass
     class A:
         @set_design(text="new-text")
@@ -76,6 +78,7 @@ def test_set_design():
     assert ui["f1"].text == "new-text"
 
 def test_do_not_record():
+    from magicclass import do_not_record
     @magicclass
     class A:
         @do_not_record
@@ -86,6 +89,7 @@ def test_do_not_record():
     assert len(ui.macro) == 1
 
 def test_nogui():
+    from magicclass import nogui
     @magicclass
     class A:
         @nogui
@@ -100,6 +104,8 @@ def test_nogui():
     assert isinstance(ui["g"], PushButton)
 
 def test_mark_preview():
+    from magicclass import mark_preview
+
     mock = MagicMock()
     @magicclass
     class A:
@@ -184,3 +190,135 @@ def test_mark_preview():
     f1_gui[-1].changed()
     mock.assert_called_with(type=type(ui.B), x=10)
     assert str(ui.macro[-1]) == "ui.B.f1(x=10)"
+
+
+class MockConfirmation:
+    """Class used for confirmation test."""
+    def __init__(self):
+        self._last = None
+
+    def __call__(self, text, gui):
+        self._last = (text, gui)
+
+    @property
+    def last(self):
+        return self._last
+
+def test_confirm():
+    from magicclass import confirm
+
+    # The basic usage
+    mconf = MockConfirmation()
+
+    @magicclass
+    class A:
+        @confirm(text="conf-text", callback=mconf)
+        def f(self, a: int):
+            pass
+
+    ui = A()
+
+    assert mconf.last is None
+    ui.f(0)
+    assert mconf.last is None  # no confirmation if executed programatically
+    get_function_gui(ui, "f")()
+    assert mconf.last == ("conf-text", ui)
+
+    # text formating
+    mconf = MockConfirmation()
+
+    @magicclass
+    class A:
+        @confirm(text="<{a}>", callback=mconf)
+        def f(self, a: int):
+            pass
+
+    ui = A()
+
+    assert mconf.last is None
+    fgui = get_function_gui(ui, "f")
+    fgui()
+    assert mconf.last == ("<0>", ui)
+    fgui.a.value = 16
+    fgui()
+    assert mconf.last == ("<16>", ui)
+
+    # test condition
+
+    mconf = MockConfirmation()
+
+    @magicclass
+    class A:
+        @confirm(text="conf-text", condition="a>5", callback=mconf)
+        def f(self, a: int):
+            pass
+
+    ui = A()
+
+    assert mconf.last is None
+    fgui = get_function_gui(ui, "f")
+    fgui()
+    assert mconf.last is None
+    fgui.a.value = 16
+    fgui()
+    assert mconf.last == ("conf-text", ui)
+
+def test_confirm_with_other_wrapper():
+    from magicclass import confirm
+
+    # The basic usage
+    mconf = MockConfirmation()
+
+    @magicclass
+    class A:
+        @set_options(a={"max": 10})
+        @confirm(text="conf-text-1", callback=mconf)
+        def f1(self, a: int):
+            pass
+
+        @confirm(text="conf-text-2", callback=mconf)
+        @set_options(a={"max": 12})
+        def f2(self, a: int):
+            pass
+
+    ui = A()
+    fgui1 = get_function_gui(ui, "f1")
+    fgui2 = get_function_gui(ui, "f2")
+    assert fgui1.a.max == 10
+    assert fgui2.a.max == 12
+
+    assert mconf.last is None
+    fgui1()
+    assert mconf.last == ("conf-text-1", ui)
+    fgui2()
+    assert mconf.last == ("conf-text-2", ui)
+
+def test_confirm_with_thread_worker():
+    from magicclass import confirm
+    from magicclass.utils import thread_worker
+
+    mconf = MockConfirmation()
+
+    @magicclass
+    class A:
+        @thread_worker
+        @confirm(text="conf-text-1", callback=mconf)
+        def f1(self, a: int):
+            pass
+
+        @confirm(text="conf-text-2", callback=mconf)
+        @thread_worker
+        def f2(self, a: int):
+            pass
+
+    ui = A()
+    fgui1 = get_function_gui(ui, "f1")
+    fgui2 = get_function_gui(ui, "f2")
+    assert isinstance(A.f1, thread_worker)
+    assert isinstance(A.f2, thread_worker)
+
+    assert mconf.last is None
+    fgui1()
+    assert mconf.last == ("conf-text-1", ui)
+    fgui2()
+    assert mconf.last == ("conf-text-2", ui)

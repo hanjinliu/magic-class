@@ -37,7 +37,7 @@ def magicclass(
     icon_path: str | None = None,
     stylesheet: str | StyleSheet | None = None,
     parent=None,
-) -> type[ClassGuiBase | _C]: ...
+) -> type[ClassGuiBase] | _C: ...
 @overload
 def magicclass(
     *,
@@ -52,7 +52,7 @@ def magicclass(
     icon_path: str | None = None,
     stylesheet: str | StyleSheet | None = None,
     parent=None,
-) -> Callable[[_C], type[ClassGuiBase | _C]]: ...
+) -> Callable[[_C], type[ClassGuiBase] | _C]: ...
 @overload
 def magicmenu(
     class_: _C,
@@ -64,7 +64,7 @@ def magicmenu(
     name: str | None = None,
     icon_path: str | None = None,
     parent=None,
-) -> type[MenuGui | _C]: ...
+) -> type[MenuGui] | _C: ...
 @overload
 def magicmenu(
     *,
@@ -75,7 +75,7 @@ def magicmenu(
     name: str | None = None,
     icon_path: str | None = None,
     parent=None,
-) -> Callable[[_C], type[MenuGui | _C]]: ...
+) -> Callable[[_C], type[MenuGui] | _C]: ...
 @overload
 def magiccontext(
     class_: _C,
@@ -87,7 +87,7 @@ def magiccontext(
     name: str | None = None,
     icon_path: str | None = None,
     parent=None,
-) -> type[ContextMenuGui | _C]: ...
+) -> type[ContextMenuGui] | _C: ...
 @overload
 def magiccontext(
     *,
@@ -98,7 +98,7 @@ def magiccontext(
     name: str | None = None,
     icon_path: str | None = None,
     parent=None,
-) -> Callable[[_C], type[ContextMenuGui | _C]]: ...
+) -> Callable[[_C], type[ContextMenuGui] | _C]: ...
 @overload
 def magictoolbar(
     class_: _C,
@@ -110,7 +110,7 @@ def magictoolbar(
     name: str | None = None,
     icon_path: str | None = None,
     parent=None,
-) -> type[ToolBarGui | _C]: ...
+) -> type[ToolBarGui] | _C: ...
 @overload
 def magictoolbar(
     *,
@@ -121,7 +121,7 @@ def magictoolbar(
     name: str | None = None,
     icon_path: str | None = None,
     parent=None,
-) -> Callable[[_C], type[ToolBarGui | _C]]: ...
+) -> Callable[[_C], type[ToolBarGui] | _C]: ...
 def redo(ui: MagicTemplate, index: int = -1) -> None: ...
 
 class Parameters:

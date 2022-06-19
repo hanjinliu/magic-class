@@ -58,6 +58,7 @@ PopUpModeStr = Union[
     Literal["above"],
     Literal["below"],
     Literal["dock"],
+    Literal["dialog"],
     Literal["parentlast"],
 ]
 
@@ -102,7 +103,7 @@ def bound(obj):
         outtype = obj.__annotations__.get("return", Any)
     elif isinstance(obj, MagicField):
         outtype = obj.annotation or Any
-    elif isinstance(obj, type):
+    elif isinstance(obj, (type, str)):
         outtype = Any
     else:
         raise TypeError("'bound' can only convert callable, MagicField or type objects")
@@ -165,6 +166,56 @@ class Bound(metaclass=_BoundAlias):
                 ...
 
     ``Bound[value]`` is identical to ``Annotated[Any, {"bind": value}]``.
+    """
+
+    def __new__(cls, *args):
+        raise TypeError(
+            "`Bound(...)` is deprecated since 0.5.21. Bound is now a generic alias instead "
+            "of a function. Please use `Bound[...]`."
+        )
+
+    def __init_subclass__(cls, *args, **kwargs):
+        raise TypeError(f"Cannot subclass {cls.__module__}.Bound")
+
+
+class _ChoicesAlias(type):
+    """
+    This metaclass is necessary for ``mypy`` to reveal type.
+    """
+
+    @overload
+    def __getitem__(cls, value: Callable[_P, _V]) -> type[_V]:
+        ...
+
+    @overload
+    def __getitem__(cls, value: type[_V]) -> type[_V]:
+        ...
+
+    @_tp_cache
+    def __getitem__(cls, value):
+        if callable(value):
+            outtype = value.__annotations__.get("return", Any)
+        elif hasattr(value, "__iter__"):
+            outtype = Any
+        else:
+            raise TypeError("'bound' can only convert callable or iterable objects.")
+        return Annotated[outtype, {"choices": value, "nullable": False}]
+
+
+class Choices(metaclass=_ChoicesAlias):
+    """
+    Make Annotated type from a method, such as:
+
+    .. code-block:: python
+
+        from magicclass import magicclass
+
+        @magicclass
+        class MyClass:
+            def func(self, v: Choices[(1, 2, 3)]):
+                ...
+
+    ``Choices[value]`` is identical to ``Annotated[Any, {"choices": value}]``.
     """
 
     def __new__(cls, *args):

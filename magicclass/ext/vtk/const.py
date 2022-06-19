@@ -1,7 +1,20 @@
 from enum import Enum
 
 
-class Rendering(Enum):
+class StringEnum(Enum):
+    def __eq__(self, other):
+        if isinstance(other, str):
+            return self.name == other
+        return super().__eq__(other)
+
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}.{self.name}"
+
+    def __str__(self) -> str:
+        return self.name
+
+
+class Rendering(StringEnum):
     """Volume rendering mode suppored in vtk."""
 
     composite = 0
@@ -11,7 +24,7 @@ class Rendering(Enum):
     additive = 4
 
 
-class Mode(Enum):
+class Mode(StringEnum):
     volume = "volume"
     iso = "iso"
     lego = "lego"
@@ -19,13 +32,16 @@ class Mode(Enum):
     wireframe = "wireframe"
 
 
-class Representation(Enum):
+class Representation(StringEnum):
     points = 0
     wireframe = 1
     surface = 2
 
+    def __int__(self):
+        return self.value
 
-class AxesMode(Enum):
+
+class AxesMode(StringEnum):
     none = 0
     wall = 1
     cartesian = 2

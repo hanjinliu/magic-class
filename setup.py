@@ -23,6 +23,7 @@ setup(
         "magicgui>=0.4.0",
         "qtpy>=1.10.0",
         "macro-kit>=0.3.5",
+        "superqt>=0.2.5.post1",
     ],
     python_requires=">=3.8",
 )

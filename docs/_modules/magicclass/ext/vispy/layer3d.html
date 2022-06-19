@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="English" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>magicclass.ext.vispy.layer3d &mdash; magic-class 0.6.4 documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/columns.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+</head>
+
+<body class="wy-body-for-nav">
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> magic-class
+          </a>
+              <div class="version">
+                0.6.4
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../quick_start.html">Quick Start</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../chap_basics.html">Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../chap_make_better.html">Make Your GUI Better</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../chap_data_vis.html">Data Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../chap_advanced.html">Advanced Topics</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../best_practice.html">Best Practice</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">magic-class</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+      <li>magicclass.ext.vispy.layer3d</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+
+  <h1>Source code for magicclass.ext.vispy.layer3d</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">vispy.scene</span> <span class="kn">import</span> <span class="n">visuals</span><span class="p">,</span> <span class="n">ViewBox</span>
+<span class="kn">from</span> <span class="nn">vispy.visuals</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">VolumeVisual</span><span class="p">,</span>
+    <span class="n">ImageVisual</span><span class="p">,</span>
+    <span class="n">IsosurfaceVisual</span><span class="p">,</span>
+    <span class="n">MeshVisual</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">vispy.visuals.filters</span> <span class="kn">import</span> <span class="n">WireframeFilter</span>
+<span class="kn">from</span> <span class="nn">._base</span> <span class="kn">import</span> <span class="n">LayerItem</span>
+
+<span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">FloatSlider</span>
+<span class="kn">from</span> <span class="nn">...widgets</span> <span class="kn">import</span> <span class="n">FloatRangeSlider</span>
+<span class="kn">from</span> <span class="nn">...fields</span> <span class="kn">import</span> <span class="n">HasFields</span><span class="p">,</span> <span class="n">vfield</span>
+<span class="kn">from</span> <span class="nn">...types</span> <span class="kn">import</span> <span class="n">Color</span>
+
+
+<div class="viewcode-block" id="Image"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.layer3d.Image">[docs]</a><span class="k">class</span> <span class="nc">Image</span><span class="p">(</span><span class="n">LayerItem</span><span class="p">,</span> <span class="n">HasFields</span><span class="p">):</span>
+    <span class="n">RENDERINGS</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;translucent&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;mip&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;minip&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;attenuated_mip&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;additive&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;iso&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;average&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+    <span class="n">INTERPOLATIONS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;nearest&quot;</span><span class="p">,</span> <span class="s2">&quot;linear&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">data</span><span class="p">,</span>
+        <span class="n">viewbox</span><span class="p">:</span> <span class="n">ViewBox</span><span class="p">,</span>
+        <span class="n">contrast_limits</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">rendering</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;mip&quot;</span><span class="p">,</span>
+        <span class="n">iso_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">attenuation</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">cmap</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;grays&quot;</span><span class="p">,</span>
+        <span class="n">gamma</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">interpolation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;linear&quot;</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cache_lims</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">contrast_limits</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">contrast_limits</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">iso_threshold</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">iso_threshold</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">contrast_limits</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span> <span class="o">=</span> <span class="n">viewbox</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_create_visual</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">,</span>
+            <span class="n">clim</span><span class="o">=</span><span class="n">contrast_limits</span><span class="p">,</span>
+            <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span>
+            <span class="n">rendering</span><span class="o">=</span><span class="n">rendering</span><span class="p">,</span>
+            <span class="n">iso_threshold</span><span class="o">=</span><span class="n">iso_threshold</span><span class="p">,</span>
+            <span class="n">attenuation</span><span class="o">=</span><span class="n">attenuation</span><span class="p">,</span>
+            <span class="n">gamma</span><span class="o">=</span><span class="n">gamma</span><span class="p">,</span>
+            <span class="n">interpolation</span><span class="o">=</span><span class="n">interpolation</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">contrast_limits</span> <span class="o">=</span> <span class="n">contrast_limits</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rendering</span> <span class="o">=</span> <span class="n">rendering</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">iso_threshold</span> <span class="o">=</span> <span class="n">iso_threshold</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attenuation</span> <span class="o">=</span> <span class="n">attenuation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cmap</span> <span class="o">=</span> <span class="n">cmap</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="n">gamma</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">interpolation</span> <span class="o">=</span> <span class="n">interpolation</span>
+
+    <span class="k">def</span> <span class="nf">_create_visual</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">clim</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+        <span class="n">cmap</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">rendering</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">iso_threshold</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">attenuation</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">gamma</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">interpolation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">interpolation</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">interpolation</span> <span class="o">=</span> <span class="s2">&quot;nearest&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span><span class="p">:</span> <span class="n">ImageVisual</span> <span class="o">=</span> <span class="n">visuals</span><span class="o">.</span><span class="n">Image</span><span class="p">(</span>
+                <span class="n">data</span><span class="p">,</span>
+                <span class="n">clim</span><span class="o">=</span><span class="n">clim</span><span class="p">,</span>
+                <span class="n">method</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span>
+                <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span>
+                <span class="n">gamma</span><span class="o">=</span><span class="n">gamma</span><span class="p">,</span>
+                <span class="n">interpolation</span><span class="o">=</span><span class="n">interpolation</span><span class="p">,</span>
+                <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">scene</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">interpolation</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">interpolation</span> <span class="o">=</span> <span class="s2">&quot;linear&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span><span class="p">:</span> <span class="n">VolumeVisual</span> <span class="o">=</span> <span class="n">visuals</span><span class="o">.</span><span class="n">Volume</span><span class="p">(</span>
+                <span class="n">data</span><span class="p">,</span>
+                <span class="n">clim</span><span class="o">=</span><span class="n">clim</span><span class="p">,</span>
+                <span class="n">method</span><span class="o">=</span><span class="n">rendering</span><span class="p">,</span>
+                <span class="n">threshold</span><span class="o">=</span><span class="n">iso_threshold</span><span class="p">,</span>
+                <span class="n">attenuation</span><span class="o">=</span><span class="n">attenuation</span><span class="p">,</span>
+                <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span>
+                <span class="n">gamma</span><span class="o">=</span><span class="n">gamma</span><span class="p">,</span>
+                <span class="n">interpolation</span><span class="o">=</span><span class="n">interpolation</span><span class="p">,</span>
+                <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">scene</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Only 2D and 3D images are supported.&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span>
+
+    <span class="nd">@data</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">value</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">ndim</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_create_visual</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cache_lims</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_cache_lims</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lims</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">contrast_limits</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lims</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">contrast_limits</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lims</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">iso_threshold</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lims</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">iso_threshold</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lims</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># fmt: off</span>
+    <span class="n">rendering</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;choices&quot;</span><span class="p">:</span> <span class="n">RENDERINGS</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;mip&quot;</span><span class="p">})</span>
+    <span class="n">contrast_limits</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">widget_type</span><span class="o">=</span><span class="n">FloatRangeSlider</span><span class="p">)</span>
+    <span class="n">iso_threshold</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">widget_type</span><span class="o">=</span><span class="n">FloatSlider</span><span class="p">)</span>
+    <span class="n">gamma</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">widget_type</span><span class="o">=</span><span class="n">FloatSlider</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="mf">0.</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="mf">1.</span><span class="p">})</span>
+    <span class="n">attenuation</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">widget_type</span><span class="o">=</span><span class="n">FloatSlider</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="mf">0.</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="mf">1.</span><span class="p">})</span>
+    <span class="n">interpolation</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;choices&quot;</span><span class="p">:</span> <span class="n">INTERPOLATIONS</span><span class="p">})</span>
+    <span class="c1"># fmt: on</span>
+
+    <span class="nd">@contrast_limits</span><span class="o">.</span><span class="n">connect</span>
+    <span class="k">def</span> <span class="nf">_on_constrast_limits_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span><span class="o">.</span><span class="n">clim</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+
+    <span class="nd">@rendering</span><span class="o">.</span><span class="n">connect</span>
+    <span class="k">def</span> <span class="nf">_on_rendering_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+
+    <span class="nd">@iso_threshold</span><span class="o">.</span><span class="n">connect</span>
+    <span class="k">def</span> <span class="nf">_on_iso_threshold_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lims</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mf">1e-6</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+
+    <span class="nd">@gamma</span><span class="o">.</span><span class="n">connect</span>
+    <span class="k">def</span> <span class="nf">_on_gamma_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+
+    <span class="nd">@attenuation</span><span class="o">.</span><span class="n">connect</span>
+    <span class="k">def</span> <span class="nf">_on_attenuation_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span><span class="o">.</span><span class="n">attenuation</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+
+    <span class="nd">@interpolation</span><span class="o">.</span><span class="n">connect</span>
+    <span class="k">def</span> <span class="nf">_on_interpolation_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span><span class="o">.</span><span class="n">interpolation</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span><span class="o">.</span><span class="n">update</span><span class="p">()</span></div>
+
+
+<span class="k">class</span> <span class="nc">_SurfaceBase</span><span class="p">(</span><span class="n">LayerItem</span><span class="p">):</span>
+    <span class="n">_visual</span><span class="p">:</span> <span class="n">visuals</span><span class="o">.</span><span class="n">Mesh</span> <span class="o">|</span> <span class="n">visuals</span><span class="o">.</span><span class="n">Isosurface</span>
+    <span class="n">_wireframe</span><span class="p">:</span> <span class="n">WireframeFilter</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">data</span><span class="p">,</span>
+        <span class="n">viewbox</span><span class="p">:</span> <span class="n">ViewBox</span><span class="p">,</span>
+        <span class="n">face_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">edge_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">shading</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span> <span class="o">=</span> <span class="n">viewbox</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_create_visual</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_wireframe</span> <span class="o">=</span> <span class="n">WireframeFilter</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_wireframe</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">data</span>
+
+        <span class="k">if</span> <span class="n">edge_color</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">edge_color</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">edge_color</span> <span class="o">=</span> <span class="n">edge_color</span>
+
+        <span class="k">if</span> <span class="n">face_color</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">face_color</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">face_color</span> <span class="o">=</span> <span class="n">face_color</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">shading</span> <span class="o">=</span> <span class="n">shading</span>
+
+    <span class="k">def</span> <span class="nf">_create_visual</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_on_face_color_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="n">color</span>
+
+    <span class="k">def</span> <span class="nf">_on_edge_color_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_wireframe</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="n">color</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+
+    <span class="n">color</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">fget</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+    <span class="nd">@color</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">color</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">face_color</span> <span class="o">=</span> <span class="n">color</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">edge_color</span> <span class="o">=</span> <span class="n">color</span>
+
+    <span class="k">def</span> <span class="nf">_on_edge_width_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_wireframe</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_on_shading_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">v</span> <span class="o">==</span> <span class="s2">&quot;none&quot;</span><span class="p">:</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span><span class="o">.</span><span class="n">_shading</span> <span class="o">=</span> <span class="n">v</span>
+
+
+<div class="viewcode-block" id="IsoSurface"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.layer3d.IsoSurface">[docs]</a><span class="k">class</span> <span class="nc">IsoSurface</span><span class="p">(</span><span class="n">_SurfaceBase</span><span class="p">,</span> <span class="n">HasFields</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">data</span><span class="p">,</span>
+        <span class="n">viewbox</span><span class="p">:</span> <span class="n">ViewBox</span><span class="p">,</span>
+        <span class="n">contrast_limits</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">iso_threshold</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">face_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">edge_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">shading</span><span class="o">=</span><span class="s2">&quot;smooth&quot;</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">ndim</span><span class="p">))[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">contrast_limits</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">contrast_limits</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">iso_threshold</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">iso_threshold</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">contrast_limits</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">data</span><span class="p">,</span>
+            <span class="n">viewbox</span><span class="o">=</span><span class="n">viewbox</span><span class="p">,</span>
+            <span class="n">face_color</span><span class="o">=</span><span class="n">face_color</span><span class="p">,</span>
+            <span class="n">edge_color</span><span class="o">=</span><span class="n">edge_color</span><span class="p">,</span>
+            <span class="n">shading</span><span class="o">=</span><span class="n">shading</span><span class="p">,</span>
+            <span class="n">iso_threshold</span><span class="o">=</span><span class="n">iso_threshold</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cache_lims</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">contrast_limits</span> <span class="o">=</span> <span class="n">contrast_limits</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">iso_threshold</span> <span class="o">=</span> <span class="n">iso_threshold</span>
+
+    <span class="k">def</span> <span class="nf">_create_visual</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">iso_threshold</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span><span class="p">:</span> <span class="n">IsosurfaceVisual</span> <span class="o">=</span> <span class="n">visuals</span><span class="o">.</span><span class="n">Isosurface</span><span class="p">(</span>
+            <span class="n">data</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">iso_threshold</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">scene</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">_cache_lims</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lims</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">contrast_limits</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lims</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">contrast_limits</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lims</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">iso_threshold</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lims</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">iso_threshold</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lims</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span>
+
+    <span class="nd">@data</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cache_lims</span><span class="p">()</span>
+
+    <span class="c1"># fmt: off</span>
+    <span class="n">contrast_limits</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">widget_type</span><span class="o">=</span><span class="n">FloatRangeSlider</span><span class="p">)</span>
+    <span class="n">shading</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;choices&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="s2">&quot;float&quot;</span><span class="p">,</span> <span class="s2">&quot;smooth&quot;</span><span class="p">],</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;smooth&quot;</span><span class="p">})</span>
+    <span class="n">iso_threshold</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">widget_type</span><span class="o">=</span><span class="n">FloatSlider</span><span class="p">)</span>
+    <span class="n">face_color</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="n">Color</span><span class="p">)</span>
+    <span class="n">edge_color</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="n">Color</span><span class="p">)</span>
+    <span class="n">edge_width</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">widget_type</span><span class="o">=</span><span class="n">FloatSlider</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="mf">10.0</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">})</span>
+    <span class="c1"># fmt: on</span>
+
+    <span class="nd">@contrast_limits</span><span class="o">.</span><span class="n">connect</span>
+    <span class="k">def</span> <span class="nf">_on_contrast_limits_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span><span class="o">.</span><span class="n">clim</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+
+    <span class="nd">@iso_threshold</span><span class="o">.</span><span class="n">connect</span>
+    <span class="k">def</span> <span class="nf">_on_iso_threshold_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span><span class="o">.</span><span class="n">level</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">iso_threshold</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lims</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mf">1e-6</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+
+    <span class="n">shading</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">_SurfaceBase</span><span class="o">.</span><span class="n">_on_shading_change</span><span class="p">)</span>
+    <span class="n">face_color</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">_SurfaceBase</span><span class="o">.</span><span class="n">_on_face_color_change</span><span class="p">)</span>
+    <span class="n">edge_color</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">_SurfaceBase</span><span class="o">.</span><span class="n">_on_edge_color_change</span><span class="p">)</span>
+    <span class="n">edge_width</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">_SurfaceBase</span><span class="o">.</span><span class="n">_on_edge_width_change</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Surface"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.layer3d.Surface">[docs]</a><span class="k">class</span> <span class="nc">Surface</span><span class="p">(</span><span class="n">_SurfaceBase</span><span class="p">,</span> <span class="n">HasFields</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">data</span><span class="p">,</span>
+        <span class="n">viewbox</span><span class="p">:</span> <span class="n">ViewBox</span><span class="p">,</span>
+        <span class="n">face_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">edge_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">shading</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">data</span><span class="p">,</span> <span class="n">viewbox</span><span class="p">,</span> <span class="n">face_color</span><span class="o">=</span><span class="n">face_color</span><span class="p">,</span> <span class="n">edge_color</span><span class="o">=</span><span class="n">edge_color</span><span class="p">,</span> <span class="n">shading</span><span class="o">=</span><span class="n">shading</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_create_visual</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span><span class="p">:</span> <span class="n">MeshVisual</span> <span class="o">=</span> <span class="n">visuals</span><span class="o">.</span><span class="n">Mesh</span><span class="p">(</span>
+            <span class="n">vertices</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">faces</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">scene</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span>
+
+    <span class="nd">@data</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">verts</span><span class="p">,</span> <span class="n">faces</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="n">vals</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">verts</span><span class="p">,</span> <span class="n">faces</span><span class="p">,</span> <span class="n">vals</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Data must be vertices, faces (, values).&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">vertices</span><span class="o">=</span><span class="n">verts</span><span class="p">,</span> <span class="n">faces</span><span class="o">=</span><span class="n">faces</span><span class="p">,</span> <span class="n">vertex_values</span><span class="o">=</span><span class="n">vals</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="p">(</span><span class="n">verts</span><span class="p">,</span> <span class="n">faces</span><span class="p">,</span> <span class="n">vals</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+
+    <span class="n">shading</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span>
+        <span class="nb">str</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;choices&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="s2">&quot;float&quot;</span><span class="p">,</span> <span class="s2">&quot;smooth&quot;</span><span class="p">],</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;smooth&quot;</span><span class="p">}</span>
+    <span class="p">)</span>
+    <span class="n">face_color</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="n">Color</span><span class="p">)</span>
+    <span class="n">edge_color</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="n">Color</span><span class="p">)</span>
+    <span class="n">edge_width</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span>
+        <span class="nb">float</span><span class="p">,</span> <span class="n">widget_type</span><span class="o">=</span><span class="n">FloatSlider</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="mf">10.0</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">}</span>
+    <span class="p">)</span>
+
+    <span class="n">shading</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">_SurfaceBase</span><span class="o">.</span><span class="n">_on_shading_change</span><span class="p">)</span>
+    <span class="n">face_color</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">_SurfaceBase</span><span class="o">.</span><span class="n">_on_face_color_change</span><span class="p">)</span>
+    <span class="n">edge_color</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">_SurfaceBase</span><span class="o">.</span><span class="n">_on_edge_color_change</span><span class="p">)</span>
+    <span class="n">edge_width</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">_SurfaceBase</span><span class="o">.</span><span class="n">_on_edge_width_change</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Hanjin Liu.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+</body>
+</html>

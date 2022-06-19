@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.ext.vispy package &mdash; magic-class 0.6.3 documentation</title>
+  <title>magicclass.ext.vispy package &mdash; magic-class 0.6.4 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/columns.css" type="text/css" />
@@ -31,7 +31,7 @@
             <a href="../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.3
+                0.6.4
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -157,82 +157,173 @@
 </dd></dl>
 
 </section>
-<section id="module-magicclass.ext.vispy.layers3d">
-<span id="magicclass-ext-vispy-layers3d-module"></span><h2>magicclass.ext.vispy.layers3d module<a class="headerlink" href="#module-magicclass.ext.vispy.layers3d" title="Permalink to this headline">¶</a></h2>
+<section id="module-magicclass.ext.vispy.layer3d">
+<span id="magicclass-ext-vispy-layer3d-module"></span><h2>magicclass.ext.vispy.layer3d module<a class="headerlink" href="#module-magicclass.ext.vispy.layer3d" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
-<dt class="sig sig-object py" id="magicclass.ext.vispy.layers3d.Image">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vispy.layers3d.</span></span><span class="sig-name descname"><span class="pre">Image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">viewbox</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">vispy.scene.widgets.viewbox.ViewBox</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contrast_limits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rendering</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mip'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iso_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attenuation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'grays'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interpolation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vispy/layers3d.html#Image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.layers3d.Image" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.vispy._base.LayerItem</span></code></p>
-<dl class="py property">
-<dt class="sig sig-object py" id="magicclass.ext.vispy.layers3d.Image.attenuation">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">attenuation</span></span><em class="property"><span class="pre">:</span> <span class="pre">float</span></em><a class="headerlink" href="#magicclass.ext.vispy.layers3d.Image.attenuation" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.Image">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vispy.layer3d.</span></span><span class="sig-name descname"><span class="pre">Image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">viewbox</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">ViewBox</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contrast_limits</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rendering</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'mip'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iso_threshold</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attenuation</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'grays'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interpolation</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'linear'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vispy/layer3d.html#Image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.vispy._base.LayerItem</span></code>, <a class="reference internal" href="magicclass.html#magicclass.fields.HasFields" title="magicclass.fields.HasFields"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.fields.HasFields</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.Image.INTERPOLATIONS">
+<span class="sig-name descname"><span class="pre">INTERPOLATIONS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">['nearest',</span> <span class="pre">'linear']</span></em><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Image.INTERPOLATIONS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="py property">
-<dt class="sig sig-object py" id="magicclass.ext.vispy.layers3d.Image.contrast_limits">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">contrast_limits</span></span><em class="property"><span class="pre">:</span> <span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#magicclass.ext.vispy.layers3d.Image.contrast_limits" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.Image.RENDERINGS">
+<span class="sig-name descname"><span class="pre">RENDERINGS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">['translucent',</span> <span class="pre">'mip',</span> <span class="pre">'minip',</span> <span class="pre">'attenuated_mip',</span> <span class="pre">'additive',</span> <span class="pre">'iso',</span> <span class="pre">'average']</span></em><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Image.RENDERINGS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="py property">
-<dt class="sig sig-object py" id="magicclass.ext.vispy.layers3d.Image.data">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">data</span></span><em class="property"><span class="pre">:</span> <span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#magicclass.ext.vispy.layers3d.Image.data" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.Image.attenuation">
+<span class="sig-name descname"><span class="pre">attenuation</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Image.attenuation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.Image.contrast_limits">
+<span class="sig-name descname"><span class="pre">contrast_limits</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Image.contrast_limits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
+</dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="magicclass.ext.vispy.layers3d.Image.gamma">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">gamma</span></span><em class="property"><span class="pre">:</span> <span class="pre">float</span></em><a class="headerlink" href="#magicclass.ext.vispy.layers3d.Image.gamma" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.Image.data">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">data</span></span><em class="property"><span class="pre">:</span> <span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Image.data" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="py property">
-<dt class="sig sig-object py" id="magicclass.ext.vispy.layers3d.Image.interpolation">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">interpolation</span></span><em class="property"><span class="pre">:</span> <span class="pre">float</span></em><a class="headerlink" href="#magicclass.ext.vispy.layers3d.Image.interpolation" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.Image.gamma">
+<span class="sig-name descname"><span class="pre">gamma</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Image.gamma" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
+</dd></dl>
 
-<dl class="py property">
-<dt class="sig sig-object py" id="magicclass.ext.vispy.layers3d.Image.iso_threshold">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">iso_threshold</span></span><em class="property"><span class="pre">:</span> <span class="pre">float</span></em><a class="headerlink" href="#magicclass.ext.vispy.layers3d.Image.iso_threshold" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.Image.interpolation">
+<span class="sig-name descname"><span class="pre">interpolation</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Image.interpolation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
+</dd></dl>
 
-<dl class="py property">
-<dt class="sig sig-object py" id="magicclass.ext.vispy.layers3d.Image.rendering">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">rendering</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#magicclass.ext.vispy.layers3d.Image.rendering" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.Image.iso_threshold">
+<span class="sig-name descname"><span class="pre">iso_threshold</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Image.iso_threshold" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.Image.rendering">
+<span class="sig-name descname"><span class="pre">rendering</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Image.rendering" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
+</dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="magicclass.ext.vispy.layers3d.IsoSurface">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vispy.layers3d.</span></span><span class="sig-name descname"><span class="pre">IsoSurface</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">viewbox</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">vispy.scene.widgets.viewbox.ViewBox</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contrast_limits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iso_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">face_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shading</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'smooth'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vispy/layers3d.html#IsoSurface"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.layers3d.IsoSurface" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.vispy.layers3d._SurfaceBase</span></code></p>
-<dl class="py property">
-<dt class="sig sig-object py" id="magicclass.ext.vispy.layers3d.IsoSurface.contrast_limits">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">contrast_limits</span></span><em class="property"><span class="pre">:</span> <span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#magicclass.ext.vispy.layers3d.IsoSurface.contrast_limits" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.IsoSurface">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vispy.layer3d.</span></span><span class="sig-name descname"><span class="pre">IsoSurface</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">viewbox</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">vispy.scene.widgets.viewbox.ViewBox</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contrast_limits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iso_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">face_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shading</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'smooth'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vispy/layer3d.html#IsoSurface"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.layer3d.IsoSurface" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.vispy.layer3d._SurfaceBase</span></code>, <a class="reference internal" href="magicclass.html#magicclass.fields.HasFields" title="magicclass.fields.HasFields"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.fields.HasFields</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.IsoSurface.contrast_limits">
+<span class="sig-name descname"><span class="pre">contrast_limits</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.IsoSurface.contrast_limits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
+</dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="magicclass.ext.vispy.layers3d.IsoSurface.data">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">data</span></span><em class="property"><span class="pre">:</span> <span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#magicclass.ext.vispy.layers3d.IsoSurface.data" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.IsoSurface.data">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">data</span></span><em class="property"><span class="pre">:</span> <span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#magicclass.ext.vispy.layer3d.IsoSurface.data" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="py property">
-<dt class="sig sig-object py" id="magicclass.ext.vispy.layers3d.IsoSurface.iso_threshold">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">iso_threshold</span></span><em class="property"><span class="pre">:</span> <span class="pre">float</span></em><a class="headerlink" href="#magicclass.ext.vispy.layers3d.IsoSurface.iso_threshold" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.IsoSurface.edge_color">
+<span class="sig-name descname"><span class="pre">edge_color</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.IsoSurface.edge_color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.IsoSurface.edge_width">
+<span class="sig-name descname"><span class="pre">edge_width</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.IsoSurface.edge_width" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.IsoSurface.face_color">
+<span class="sig-name descname"><span class="pre">face_color</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.IsoSurface.face_color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.IsoSurface.iso_threshold">
+<span class="sig-name descname"><span class="pre">iso_threshold</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.IsoSurface.iso_threshold" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.IsoSurface.shading">
+<span class="sig-name descname"><span class="pre">shading</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.IsoSurface.shading" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
+</dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="magicclass.ext.vispy.layers3d.Surface">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vispy.layers3d.</span></span><span class="sig-name descname"><span class="pre">Surface</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">viewbox</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">vispy.scene.widgets.viewbox.ViewBox</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">face_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shading</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'none'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vispy/layers3d.html#Surface"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.layers3d.Surface" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.vispy.layers3d._SurfaceBase</span></code></p>
+<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.Surface">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vispy.layer3d.</span></span><span class="sig-name descname"><span class="pre">Surface</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">viewbox</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">vispy.scene.widgets.viewbox.ViewBox</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">face_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shading</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'none'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vispy/layer3d.html#Surface"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Surface" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.vispy.layer3d._SurfaceBase</span></code>, <a class="reference internal" href="magicclass.html#magicclass.fields.HasFields" title="magicclass.fields.HasFields"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.fields.HasFields</span></code></a></p>
 <dl class="py property">
-<dt class="sig sig-object py" id="magicclass.ext.vispy.layers3d.Surface.data">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#magicclass.ext.vispy.layers3d.Surface.data" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.Surface.data">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Surface.data" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="py property">
-<dt class="sig sig-object py" id="magicclass.ext.vispy.layers3d.Surface.face_color">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">face_color</span></span><em class="property"><span class="pre">:</span> <span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#magicclass.ext.vispy.layers3d.Surface.face_color" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.Surface.edge_color">
+<span class="sig-name descname"><span class="pre">edge_color</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Surface.edge_color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.Surface.edge_width">
+<span class="sig-name descname"><span class="pre">edge_width</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Surface.edge_width" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.Surface.face_color">
+<span class="sig-name descname"><span class="pre">face_color</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Surface.face_color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.Surface.shading">
+<span class="sig-name descname"><span class="pre">shading</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Surface.shading" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-magicclass.ext.vispy.layerlist">
+<span id="magicclass-ext-vispy-layerlist-module"></span><h2>magicclass.ext.vispy.layerlist module<a class="headerlink" href="#module-magicclass.ext.vispy.layerlist" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.ext.vispy.layerlist.LayerList">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vispy.layerlist.</span></span><span class="sig-name descname"><span class="pre">LayerList</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vispy/layerlist.html#LayerList"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.layerlist.LayerList" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">psygnal.containers._evented_list.EventedList</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.vispy._base.LayerItem</span></code>]</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.ext.vispy.layerlist.LayerList.events">
+<span class="sig-name descname"><span class="pre">events</span></span><em class="property"><span class="pre">:</span> <span class="pre">ListEvents</span></em><a class="headerlink" href="#magicclass.ext.vispy.layerlist.LayerList.events" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>

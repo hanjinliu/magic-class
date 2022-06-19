@@ -12,7 +12,7 @@ from magicgui.widgets._function_gui import (
 from ..widgets import Separator
 
 if TYPE_CHECKING:
-    from magicgui.widgets._bases import Widget
+    from magicgui.widgets import Widget
 
 
 _R = TypeVar("_R")
@@ -21,7 +21,7 @@ _R = TypeVar("_R")
 class FunctionGuiPlus(FunctionGui[_R]):
     """FunctionGui class with a parameter recording functionality etc."""
 
-    _preview = None
+    _dialog_widget = None
 
     def __call__(self, *args: Any, update_widget: bool = False, **kwargs: Any) -> _R:
         sig = self.__signature__
@@ -59,15 +59,15 @@ class FunctionGuiPlus(FunctionGui[_R]):
         self._previous_bound = bound
 
         self._tqdm_depth = 0  # reset the tqdm stack count
-        with _function_name_pointing_to_widget(self):
-            # 2. Running flag
-            # We sometimes want to know if the function is called programmatically or
-            # from GUI. The "running" argument is True only when it's called via GUI.
-            self.running = True
-            try:
-                value = self._function(*bound.args, **bound.kwargs)
-            finally:
-                self.running = False
+
+        # 2. Running flag
+        # We sometimes want to know if the function is called programmatically or
+        # from GUI. The "running" argument is True only when it's called via GUI.
+        self.running = True
+        try:
+            value = self._function(*bound.args, **bound.kwargs)
+        finally:
+            self.running = False
 
         self._call_count += 1
         if self._result_widget is not None:
@@ -106,6 +106,22 @@ class FunctionGuiPlus(FunctionGui[_R]):
     def append_preview(self, f: Callable, text: str = "Preview"):
         """Append a preview button to the widget."""
         return append_preview(self, f, text)
+
+    def exec_as_dialog(self):
+        """Show container as a dialog."""
+        if self._dialog_widget is None:
+            try:
+                from magicgui.widgets import Dialog
+            except ImportError:
+                raise ImportError(
+                    "Could not import Dialog widget. Using dialog needs magicgui>=0.5."
+                )
+
+            dlg = Dialog(widgets=[self], labels=False)
+            self._dialog_widget = dlg
+        if self._dialog_widget.exec():
+            self()
+        return None
 
 
 def append_preview(self: FunctionGui, f: Callable, text: str = "Preview"):

@@ -1,5 +1,5 @@
-from magicclass import magicclass, set_options, field, vfield
-from magicgui.widgets import Select, ComboBox
+from magicclass import magicclass, set_options, field, vfield, get_function_gui
+from magicgui.widgets import Select
 import pytest
 
 @pytest.mark.parametrize("widget_type", ["ComboBox", "RadioButtons", "Select"])
@@ -92,7 +92,7 @@ def test_field():
             return self._a
 
         a = field(Select, options={"choices": _get_choices})
-        b = vfield(ComboBox, options={"choices": _get_choices})
+        b = vfield(options={"choices": _get_choices})
         c = field(Select, options={"choices": [0, 1]})
 
     ui = A()
@@ -122,9 +122,58 @@ def test_multi_gui():
     assert a1.choices.choices[0] == id(a1)
     assert a0.choices.choices[1] != a1.choices.choices[1]
 
-    a0["f"].changed()
-    a1["f"].changed()
+    fgui0 = get_function_gui(a0, "f")
+    fgui1 = get_function_gui(a1, "f")
 
-    assert a0["f"].mgui.c.choices[0] == id(a0)
-    assert a1["f"].mgui.c.choices[0] == id(a1)
-    assert a0["f"].mgui.c.choices[1] != a1["f"].mgui.c.choices[1]
+    assert fgui0.c.choices[0] == id(a0)
+    assert fgui1.c.choices[0] == id(a1)
+    assert fgui0.c.choices[1] != fgui1.c.choices[1]
+
+def test_choices_with_string():
+    @magicclass
+    class A:
+        choices = field(widget_type="Select", options={"choices": "_get_choices"})
+        @set_options(c={"choices": "_get_choices"})
+        def f(self, c):
+            pass
+        def _get_choices(self, w=None):
+            return [id(self), id(w)]
+
+    ui = A()
+    assert ui.choices.choices[0] == id(ui)
+    fgui = get_function_gui(ui, "f")
+    assert fgui.c.choices[0] == id(ui)
+
+    @magicclass
+    class A:
+        choices = field(widget_type="Select", options={"choices": "B._get_choices"})
+        @set_options(c={"choices": "B._get_choices"})
+        def f(self, c):
+            pass
+
+        @magicclass
+        class B:
+            def _get_choices(self, w=None):
+                return [1, 2]
+
+    ui = A()
+    assert ui.choices.choices[0] == 1
+    fgui = get_function_gui(ui, "f")
+    assert fgui.c.choices[0] == 1
+
+def test_choices_type():
+    from magicclass.types import Choices
+
+    @magicclass
+    class A:
+        @magicclass
+        class B:
+            def _get_choices(self, w=None):
+                return [1, 2]
+
+        def f(self, c: Choices[B._get_choices]):
+            pass
+
+    ui = A()
+    cbox = get_function_gui(ui, "f").c
+    assert cbox.choices == (1, 2)

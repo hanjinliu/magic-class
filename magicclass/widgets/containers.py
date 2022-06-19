@@ -46,7 +46,7 @@ def _btn_text_warning():
 class _Splitter(ContainerBase):
     _qwidget: QtW.QWidget
 
-    def __init__(self, layout="vertical"):
+    def __init__(self, layout="vertical", scrollable: bool = False):
         QBaseWidget.__init__(self, QtW.QWidget)
         # SetLayout is not supported for QSplitter.
         # Layout is just a dummy.
@@ -79,7 +79,7 @@ class _Splitter(ContainerBase):
 class _ToolBox(ContainerBase):
     _qwidget: QtW.QToolBox
 
-    def __init__(self, layout="vertical"):
+    def __init__(self, layout="vertical", scrollable: bool = False):
         QBaseWidget.__init__(self, QtW.QToolBox)
 
         if layout == "horizontal":
@@ -102,7 +102,7 @@ class _ToolBox(ContainerBase):
 
 
 class _Tab(ContainerBase):
-    def __init__(self, layout="vertical"):
+    def __init__(self, layout="vertical", scrollable: bool = False):
         QBaseWidget.__init__(self, QtW.QWidget)
 
         if layout == "horizontal":
@@ -130,7 +130,7 @@ class _Tab(ContainerBase):
 
 
 class _Stack(ContainerBase):
-    def __init__(self, layout="vertical"):
+    def __init__(self, layout="vertical", scrollable: bool = False):
         QBaseWidget.__init__(self, QtW.QWidget)
 
         if layout == "horizontal":
@@ -154,7 +154,7 @@ class _Stack(ContainerBase):
 
 
 class _ScrollableContainer(ContainerBase):
-    def __init__(self, layout="vertical"):
+    def __init__(self, layout="vertical", scrollable: bool = False):
         QBaseWidget.__init__(self, QtW.QWidget)
         self._scroll_area = QtW.QScrollArea(self._qwidget)
         if layout == "horizontal":
@@ -183,7 +183,7 @@ class _WheelDisabledScrollArea(QtW.QScrollArea):
 
 
 class _DraggableContainer(ContainerBase):
-    def __init__(self, layout="vertical"):
+    def __init__(self, layout="vertical", scrollable: bool = False):
         QBaseWidget.__init__(self, QtW.QWidget)
         self._scroll_area = _WheelDisabledScrollArea(self._qwidget)
         if layout == "horizontal":
@@ -211,7 +211,7 @@ class _DraggableContainer(ContainerBase):
 
 
 class _ButtonContainer(ContainerBase):
-    def __init__(self, layout="vertical", text=""):
+    def __init__(self, layout="vertical", text="", scrollable: bool = False):
         QBaseWidget.__init__(self, QtW.QWidget)
         if layout == "horizontal":
             self._layout: QtW.QLayout = QtW.QHBoxLayout()
@@ -254,7 +254,7 @@ class _QCollapsible(QtW.QWidget):
 class _Collapsibles(ContainerBase):
     _setting: dict[str, Any]
 
-    def __init__(self, layout="vertical", text=""):
+    def __init__(self, layout="vertical", text="", scrollable: bool = False):
         QBaseWidget.__init__(self, QtW.QWidget)
         if layout == "horizontal":
             self._layout: QtW.QLayout = QtW.QHBoxLayout()
@@ -345,7 +345,7 @@ class _QListWidget(QtW.QListWidget):
 
 
 class _ListContainer(ContainerBase):
-    def __init__(self, layout="vertical"):
+    def __init__(self, layout="vertical", scrollable: bool = False):
         QBaseWidget.__init__(self, QtW.QWidget)
         self._listwidget = _QListWidget(self._qwidget)
         if layout == "horizontal":
@@ -388,7 +388,7 @@ class _SubWindowsContainer(ContainerBase):
         Qt.CustomizeWindowHint | Qt.WindowTitleHint | Qt.WindowMinMaxButtonsHint
     )
 
-    def __init__(self, layout="vertical"):
+    def __init__(self, layout="vertical", scrollable: bool = False):
         QBaseWidget.__init__(self, QtW.QWidget)
         self._mdiarea = QtW.QMdiArea(self._qwidget)
         if layout == "horizontal":
@@ -409,7 +409,7 @@ class _SubWindowsContainer(ContainerBase):
 
 
 class _GroupBoxContainer(ContainerBase):
-    def __init__(self, layout="vertical"):
+    def __init__(self, layout="vertical", scrollable: bool = False):
         QBaseWidget.__init__(self, QtW.QWidget)
 
         # To precisely control margins, _layout should not be set to the QGroupBox widget.
@@ -433,7 +433,7 @@ class _GroupBoxContainer(ContainerBase):
 
 
 class _FrameContainer(_GroupBoxContainer):
-    def __init__(self, layout="vertical"):
+    def __init__(self, layout="vertical", scrollable: bool = False):
         super().__init__(layout=layout)
         self._groupbox.setTitle("")
 

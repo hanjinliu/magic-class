@@ -2,7 +2,6 @@ from __future__ import annotations
 from functools import wraps
 import inspect
 from typing import Callable, Iterable, Iterator, Union, TYPE_CHECKING, TypeVar, overload
-from typing_extensions import ParamSpec
 import warnings
 from magicgui.widgets import FunctionGui
 
@@ -17,7 +16,6 @@ if TYPE_CHECKING:
 
 nStrings = Union[str, Iterable[str]]
 
-P = ParamSpec("P")
 R = TypeVar("R")
 T = TypeVar("T")
 F = TypeVar("F", bound=Callable)
@@ -256,12 +254,11 @@ class Canceled(RuntimeError):
     """Raised when a function is canceled"""
 
 
-# TODO: confirm is not exchangable with thread_worker
 @overload
 def confirm(
     *,
     text: str | None,
-    condition: Callable[P, bool] | str | None,
+    condition: Callable[..., bool] | str | None,
 ) -> Callable[[F], F]:
     ...
 
@@ -271,7 +268,7 @@ def confirm(
     f: F,
     *,
     text: str | None,
-    condition: Callable[P, bool] | str | None,
+    condition: Callable[..., bool] | str | None,
 ) -> F:
     ...
 
@@ -281,6 +278,7 @@ def confirm(
     *,
     text: str | None = None,
     condition: Callable[[BaseGui], bool] | str = None,
+    callback: Callable[[str, BaseGui], None] | None = None,
 ):
     """
     Confirm if it is OK to run function in GUI.
@@ -305,9 +303,15 @@ def confirm(
         function ``f(a, b)`` decorated by ``confirm(condition="a < b + 1")`` will
         evaluate ``a < b + 1`` to check if confirmation is needed. Always true by
         default.
+    callback : callable, optional
+        Callback function when confirmation is needed. Must take a ``str`` and a
+        ``BaseGui`` object as inputs. By default, message box will be shown. Useful
+        for testing.
     """
     if condition is None:
         condition = lambda x: True
+    if callback is None:
+        callback = _default_confirmation
 
     def _decorator(method: F) -> F:
         _name = method.__name__
@@ -321,45 +325,32 @@ def confirm(
             raise TypeError(
                 f"The first argument of 'confirm' must be a str but got {type(text)}."
             )
-
-        sig = inspect.signature(method)
-
-        @wraps(method)
-        def _method(self: BaseGui, *args, **kwargs):
-            if self[_name].running:
-                arguments = sig.bind(self, *args, **kwargs)
-                arguments.apply_defaults()
-                all_args = arguments.arguments
-                need_confirmation = False
-                if isinstance(condition, str):
-                    need_confirmation = eval(condition, {}, all_args)
-                elif callable(condition):
-                    need_confirmation = condition(self)
-                else:
-                    warnings.warn(
-                        f"Condition {condition} should be callable or string but got type "
-                        f"{type(condition)}. No confirmation was executed.",
-                        UserWarning,
-                    )
-                if need_confirmation:
-                    ok = show_messagebox(
-                        mode="question",
-                        title="Confirmation",
-                        text=_text.format(**all_args),
-                        parent=self.native,
-                    )
-                    if not ok:
-                        raise Canceled("Canceled")
-
-            return method(self, *args, **kwargs)
-
-        if hasattr(method, "__signature__"):
-            _method.__signature__ = method.__signature__
-        return _method
+        upgrade_signature(
+            method,
+            additional_options={
+                "confirm": {
+                    "text": _text,
+                    "condition": condition,
+                    "callback": callback,
+                }
+            },
+        )
+        return method
 
     if f is not None:
         return _decorator(f)
     return _decorator
+
+
+def _default_confirmation(text: str, gui: BaseGui):
+    ok = show_messagebox(
+        mode="question",
+        title="Confirmation",
+        text=text,
+        parent=gui.native,
+    )
+    if not ok:
+        raise Canceled("Canceled")
 
 
 def nogui(method: F) -> F:

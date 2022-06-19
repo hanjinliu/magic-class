@@ -412,6 +412,10 @@ class thread_worker:
 
         self._progress = progress
 
+    @property
+    def func(self) -> Callable[_P, _R1]:
+        return self._func
+
     @classmethod
     def set_default(cls, pbar_cls: Callable | str):
         """

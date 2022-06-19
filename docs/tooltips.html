@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="English" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Add Tooltips &mdash; magic-class 0.6.4 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/columns.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Make Your GUI Better" href="chap_make_better.html" />
+    <link rel="prev" title="Use Fields in magic-class" href="use_field.html" />
+</head>
+
+<body class="wy-body-for-nav">
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> magic-class
+          </a>
+              <div class="version">
+                0.6.4
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="quick_start.html">Quick Start</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="chap_basics.html">Basics</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="options.html">Options in magic-class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nest.html">Nest magic-classes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="use_field.html">Use Fields in magic-class</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Add Tooltips</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#add-tooltips-to-buttons-and-menus">Add tooltips to buttons and menus</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#add-tooltips-to-classes">Add tooltips to classes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#add-tooltips-to-fields">Add tooltips to fields</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="chap_make_better.html">Make Your GUI Better</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chap_data_vis.html">Data Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chap_advanced.html">Advanced Topics</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="best_practice.html">Best Practice</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">magic-class</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="chap_basics.html">Basics</a> &raquo;</li>
+      <li>Add Tooltips</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/tooltips.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+
+  <section id="add-tooltips">
+<h1>Add Tooltips<a class="headerlink" href="#add-tooltips" title="Permalink to this headline">¶</a></h1>
+<p>Adding tooltips is important for usability. If you are going to add all the tooltip
+naively, you will have to set <code class="docutils literal notranslate"><span class="pre">tooltip</span></code> property for every widget.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@magicclass</span>
+<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+    <span class="o">...</span>
+
+<span class="n">ui</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
+<span class="n">ui</span><span class="p">[</span><span class="s2">&quot;widget-1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">tooltip</span> <span class="o">=</span> <span class="s2">&quot;tooltip for widget-1&quot;</span>
+<span class="n">ui</span><span class="p">[</span><span class="s2">&quot;widget-2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">tooltip</span> <span class="o">=</span> <span class="s2">&quot;tooltip for widget-2&quot;</span>
+<span class="c1"># ... and so on</span>
+</pre></div>
+</div>
+<p>However, this kind of documentation is not optimal. <code class="docutils literal notranslate"><span class="pre">magic-class</span></code> is designed to
+avoid GUI-specific lines to make code clean. This chapter shows how to provide
+tooltips in magic-classes in a tidy way.</p>
+<section id="add-tooltips-to-buttons-and-menus">
+<h2>Add tooltips to buttons and menus<a class="headerlink" href="#add-tooltips-to-buttons-and-menus" title="Permalink to this headline">¶</a></h2>
+<p>As explained in previous chapters, methods are converted into buttons in classes
+decorated with <code class="docutils literal notranslate"><span class="pre">&#64;magicclass</span></code> and into menus when <code class="docutils literal notranslate"><span class="pre">&#64;magicmenu</span></code> or
+<code class="docutils literal notranslate"><span class="pre">&#64;magiccontext</span></code> are used. Following <code class="docutils literal notranslate"><span class="pre">magicgui</span></code> tooltip generation procedure,
+function docstrings are very useful for adding tooltips to the buttons and the
+widgets appear in the pop-up function GUI. In the example below:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span>
+
+<span class="nd">@magicclass</span>
+<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Description of the function.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x : int</span>
+<span class="sd">            The first parameter.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>&quot;Description of the function.&quot; will be interpreted as a tooltip for button &quot;f&quot;
+and &quot;The first parameter.&quot; will be added as a tooltip to the <code class="docutils literal notranslate"><span class="pre">SpinBox</span></code> widget
+that will appear when the button &quot;f&quot; is clicked.</p>
+<p>A benefit of adding tooltips in this way is that you don't have to do more than
+documenting a Python code. What's more, these tooltips are compatible with
+auto-documentation using <code class="docutils literal notranslate"><span class="pre">sphinx</span></code>.</p>
+</section>
+<section id="add-tooltips-to-classes">
+<h2>Add tooltips to classes<a class="headerlink" href="#add-tooltips-to-classes" title="Permalink to this headline">¶</a></h2>
+<p>When magic-classes are nested, you may want to add tooltips to child widgets.
+This time, class docstrings will be used for the purpose.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span>
+
+<span class="nd">@magicclass</span>
+<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Description of A.&quot;&quot;&quot;</span>
+
+    <span class="nd">@magicclass</span>
+    <span class="k">class</span> <span class="nc">B</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Description of B.&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="add-tooltips-to-fields">
+<h2>Add tooltips to fields<a class="headerlink" href="#add-tooltips-to-fields" title="Permalink to this headline">¶</a></h2>
+<p>Another important component of magic-classes are fields. In a naive way, you'll
+have to set <code class="docutils literal notranslate"><span class="pre">&quot;tooltip&quot;</span></code> options for every field.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">vfield</span>
+
+<span class="nd">@magicclass</span>
+<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;tooltip&quot;</span><span class="p">:</span> <span class="s2">&quot;Description of what x is.&quot;</span><span class="p">})</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;tooltip&quot;</span><span class="p">:</span> <span class="s2">&quot;Description of what y is.&quot;</span><span class="p">})</span>
+</pre></div>
+</div>
+<p>Again, this can also be substituted with docstrings of class itself.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">vfield</span>
+
+<span class="nd">@magicclass</span>
+<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Description of this class.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : int</span>
+<span class="sd">        Description of what x is.</span>
+<span class="sd">    y : int</span>
+<span class="sd">        Description of what y is.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Note that &quot;Attributes&quot; section is used here because fields are class
+attributes.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="use_field.html" class="btn btn-neutral float-left" title="Use Fields in magic-class" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="chap_make_better.html" class="btn btn-neutral float-right" title="Make Your GUI Better" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Hanjin Liu.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+</body>
+</html>

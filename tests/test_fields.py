@@ -1,7 +1,18 @@
-from magicclass import magicclass, magicmenu, magictoolbar, field, vfield, set_design
+from magicclass import (
+    magicclass,
+    magicmenu,
+    magictoolbar,
+    field,
+    vfield,
+    FieldGroup,
+    HasFields,
+    set_design,
+)
+from magicclass.fields import widget_property
 from magicclass.types import Optional
 from magicgui import widgets
 from typing import Tuple
+from unittest.mock import MagicMock
 from pathlib import Path
 
 def test_field_types():
@@ -358,3 +369,221 @@ def test_generic_and_annotated():
     assert w1[0].text == "XXX"
     assert w1[1].max == 10
     assert w2[1].widget_type == "TupleEdit"
+
+def test_field_in_non_gui():
+    """Test fields can be used in non-GUI classes."""
+    class A:
+        x = field(int)
+        y = vfield(str)
+
+        def __init__(self):
+            self._x_value = None
+            self._y_value = None
+
+        @x.connect
+        def _x(self):
+            self._x_value = self.x.value
+
+        @y.connect
+        def _y(self):
+            self._y_value = self.y
+
+    a = A()
+    assert a.x.widget_type == "SpinBox"
+    a.x.value = 1
+    assert a._x_value == 1
+    a.y = "xxx"
+    assert a._y_value == "xxx"
+
+def test_field_group():
+    from magicgui.widgets import Container
+
+    class Params(FieldGroup):
+        x = field(int)
+        y = vfield(str)
+
+    class A:
+        params = Params(layout="horizontal")
+        params2 = Params(layout="horizontal")
+
+    a0 = A()
+    assert isinstance(a0.params, Container)
+    assert a0.params.x.widget_type == "SpinBox"
+    assert a0.params.y == ""
+    a0.params.x.value = 10
+    a0.params.y = "t"
+    assert a0.params2.x.value == 0
+    assert a0.params2.y == ""
+
+
+    a1 = A()
+    assert a1.params.x.value == 0
+    assert a1.params.y == ""
+
+    @magicclass
+    class Main:
+        params = Params()
+
+    ui = Main()
+    assert ui.params is ui[0]
+
+
+def test_nesting_field_group():
+    class Params(FieldGroup):
+        x = field(int)
+        y = vfield(str)
+
+    class G(FieldGroup):
+        p = Params()
+        u = field(bool)
+        v = vfield(float)
+
+    class A:
+        g = G()
+
+        def __init__(self):
+            self.out = "None"
+            self.g.p.signals.x.connect(lambda: self.set_output("x"))
+            self.g.p.signals.y.connect(lambda: self.set_output("y"))
+
+        def set_output(self, out):
+            self.out = out
+
+    a0 = A()
+    a1 = A()
+
+    assert a0.g.p.x.value == 0
+    assert a0.g.p.y == ""
+    assert a0.g.p is a0.g.p
+    assert a0.g.widgets.p is a0.g.widgets.p
+    assert a0.g.p.widgets.x is a0.g.p.widgets.x
+    assert a0.g.p is not a1.g.p
+
+    a0.g.p.x.value = 1
+    assert a0.out == "x"
+    assert a1.out == "None"
+    a0.g.p.y = "a"
+    assert a0.out == "y"
+    assert a1.out == "None"
+    a1.g.p.y = "xx"
+    assert a0.out == "y"
+    assert a1.out == "y"
+
+
+def test_has_fields():
+    class A(HasFields):
+        x = vfield(int)
+        y = vfield(str)
+        @property
+        def value(self):
+            return self.x, self.y
+
+    a0 = A()
+    a1 = A()
+    assert len(A._fields) == 2
+
+    # test repr works
+    repr(a0)
+    repr(a0.widgets)
+    repr(a0.signals)
+
+    a0.x = 10
+    a0.y = "abc"
+
+    assert (10, "abc") == a0.value
+    assert (0, "") == a1.value
+
+    c0 = a0.widgets.as_container()
+    assert len(c0) == 2
+    assert c0[0].name == "x"
+    assert c0[1].name == "y"
+    assert c0["x"].value == a0.x
+    assert c0["y"].value == a0.y
+
+def test_widget_property():
+    from magicgui.widgets import Slider
+    mock = MagicMock()
+
+    class A(HasFields):
+        def __init__(self, max=5):
+            self._max = max
+            self.result = None
+
+        @widget_property
+        def a(self):
+            return Slider(max=self._max)
+
+        @a.connect
+        def _a(self, v):
+            self.result = v
+
+    x = A(max=10)
+    y = A(max=20)
+
+    assert x.widgets is not y.widgets
+    assert x.widgets.a.max == 10
+    assert y.widgets.a.max == 20
+
+    x.a = 1
+    assert x.result == 1
+    assert y.result is None
+
+def test_tooltip():
+    @magicclass
+    class A:
+        """
+        Test class.
+
+        Attributes
+        ----------
+        a : SpinBox
+            Parameter-a.
+        b : str
+            Parameter-b.
+        """
+        a = field(int)
+        b = vfield(str)
+
+    ui = A()
+    assert ui.a.tooltip == "Parameter-a."
+    assert ui["b"].tooltip == "Parameter-b."
+
+    class B(HasFields):
+        """
+        Test class.
+
+        Attributes
+        ----------
+        a : SpinBox
+            Parameter-a.
+        b : str
+            Parameter-b.
+        """
+        a = field(int)
+        b = vfield(str)
+
+    ui = B()
+    assert ui.widgets.a.tooltip == "Parameter-a."
+    assert ui.widgets.b.tooltip == "Parameter-b."
+
+def test_get_set_hooks():
+    class A:
+        offset = 1
+        suffix = "-0"
+
+        x = vfield(int)
+        y = vfield(str)
+
+        @x.pre_set_hook
+        def _x_set(self, value):
+            return value + self.offset
+
+        @y.post_get_hook
+        def _y_get(self, value):
+            return value + self.suffix
+
+    a = A()
+    a.x = 10
+    assert a.x == 11
+    a.y = "Y"
+    assert a.y == "Y-0"

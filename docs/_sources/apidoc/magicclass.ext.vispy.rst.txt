@@ -12,10 +12,18 @@ magicclass.ext.vispy.layer2d module
    :undoc-members:
    :show-inheritance:
 
-magicclass.ext.vispy.layers3d module
-------------------------------------
+magicclass.ext.vispy.layer3d module
+-----------------------------------
 
-.. automodule:: magicclass.ext.vispy.layers3d
+.. automodule:: magicclass.ext.vispy.layer3d
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+magicclass.ext.vispy.layerlist module
+-------------------------------------
+
+.. automodule:: magicclass.ext.vispy.layerlist
    :members:
    :undoc-members:
    :show-inheritance:

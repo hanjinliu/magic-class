@@ -48,9 +48,12 @@ corresponding magicgui will be popped up.
 
 .. note::
 
-    Methods whose names start with "_" are considered as inner functions so that they will
-    not be converted into widgets.
+    Methods whose names start with "_" are considered as inner functions so that they
+    will not be converted into widgets.
 
+With exactly the same class design, you can also create a menu bar, a context menu or
+a tool bar, using ``@magicmenu``, ``@magiccontext`` and ``@magictoolbar`` respectively.
+Go to :doc:`nest` for more details.
 
 Use Other Widgets in magic-class
 --------------------------------

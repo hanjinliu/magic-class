@@ -1,5 +1,4 @@
 from __future__ import annotations
-from inspect import signature
 from typing import Any, Callable, Sequence, TypeVar
 import warnings
 from qtpy.QtWidgets import QMenuBar, QWidget, QMainWindow, QBoxLayout, QDockWidget
@@ -10,7 +9,7 @@ from magicgui.widgets._concrete import _LabeledWidget, ContainerWidget
 from macrokit import Symbol
 
 
-from .keybinding import as_shortcut
+from .keybinding import register_shortcut
 from .mgui_ext import PushButtonPlus
 from .toolbar import ToolBarGui, QtTabToolBar
 from .menu_gui import MenuGui, ContextMenuGui
@@ -23,7 +22,6 @@ from ._base import (
 )
 from .utils import (
     copy_class,
-    define_callback,
     format_error,
     set_context_menu,
 )
@@ -44,7 +42,7 @@ from ..widgets import (
     FreeWidget,
 )
 
-from ..utils import iter_members, extract_tooltip
+from ..utils import iter_members, Tooltips
 from ..fields import MagicField
 from ..signature import get_additional_option
 from .._app import run_app
@@ -91,10 +89,6 @@ class ClassGuiBase(BaseGui):
                 f = value_widget_callback(self, widget, name, getvalue=getvalue)
                 widget.changed.connect(f)
 
-            for callback in fld.callbacks:
-                # funcname = callback.__name__
-                widget.changed.connect(define_callback(self, callback))
-
         elif fld.callbacks:
             warnings.warn(
                 f"{type(widget).__name__} does not have value-change callback. "
@@ -112,8 +106,8 @@ class ClassGuiBase(BaseGui):
         cls = self.__class__
 
         # Add class docstring as tooltip.
-        doc = extract_tooltip(cls)
-        self.tooltip = doc
+        _tooltips = Tooltips(cls)
+        self.tooltip = _tooltips.desc
 
         # Bind all the methods and annotations
         n_insert = 0
@@ -129,23 +123,21 @@ class ClassGuiBase(BaseGui):
 
             try:
                 if isinstance(attr, type):
-                    if not issubclass(attr, BaseGui):
-                        continue
                     # Nested magic-class
                     if cls.__name__ not in attr.__qualname__.split("."):
-                        attr = copy_class(attr)
-                        attr.__qualname__ = f"{cls.__qualname__}.{attr.__name__}"
+                        attr = copy_class(attr, ns=cls)
                     widget = attr()
                     object.__setattr__(self, name, widget)
 
                 elif isinstance(attr, MagicField):
                     # If MagicField is given by field() function.
                     widget = self._create_widget_from_field(name, attr)
+                    if not widget.tooltip:
+                        widget.tooltip = _tooltips.attributes.get(name, "")
 
                 elif isinstance(attr, FunctionGui):
-                    widget = attr
-                    p0 = list(signature(attr).parameters)[0]
-                    getattr(widget, p0).bind(self)  # set self to the first argument
+                    widget = attr.copy()
+                    widget[0].bind(self)  # bind self to the first argument
 
                 else:
                     # convert class method into instance method
@@ -218,9 +210,7 @@ class ClassGuiBase(BaseGui):
                     _hist.append((name, type(attr), "ToolBarGui"))
 
                 elif isinstance(widget, (Widget, Callable)):
-                    if (not isinstance(widget, Widget)) and isinstance(
-                        widget, Callable
-                    ):
+                    if (not isinstance(widget, Widget)) and callable(widget):
                         # Methods or any callable objects, but FunctionGui is not included.
                         # NOTE: Here any custom callable objects could be given. Some callable
                         # objects can be incompatible (like "Signal" object in magicgui) but
@@ -230,12 +220,9 @@ class ClassGuiBase(BaseGui):
                         ):
                             keybinding = get_additional_option(attr, "keybinding", None)
                             if keybinding:
-                                from qtpy.QtWidgets import QShortcut
-
-                                shortcut = QShortcut(
-                                    as_shortcut(keybinding), self.native
+                                register_shortcut(
+                                    keys=keybinding, parent=self.native, target=widget
                                 )
-                                shortcut.activated.connect(widget)
                             continue
                         try:
                             widget = self._create_widget_from_method(widget)
@@ -342,9 +329,9 @@ class ClassGuiBase(BaseGui):
                 _widget = _LabeledWidget(widget)
                 widget.label_changed.connect(self._unify_label_widths)
 
-        self._list.insert(key, widget)
         if key < 0:
             key += len(self)
+        self._list.insert(key, widget)
         self._widget._mgui_insert_widget(key, _widget)
         return None
 
@@ -494,7 +481,7 @@ def make_gui(container: type[_C], no_margin: bool = True) -> type[_C | ClassGuiB
             # try to convert it into widget. Should decorate with @nogui.
             @nogui
             def add_dock_widget(
-                self: MainWindowClassGui | BaseGui,
+                self: cls,
                 widget: Widget,
                 *,
                 name: str = "",
@@ -520,16 +507,15 @@ def make_gui(container: type[_C], no_margin: bool = True) -> type[_C | ClassGuiB
                 from ._dock_widget import QtDockWidget
 
                 name = name or widget.name
-                mainwin: QMainWindow = self.native
                 dock = QtDockWidget(
-                    mainwin,
+                    self.native,
                     widget.native,
                     name=name.replace("_", " "),
                     area=area,
                     allowed_areas=allowed_areas,
                 )
 
-                mainwin.addDockWidget(QtDockWidget.areas[area], dock)
+                self.native.addDockWidget(QtDockWidget.areas[area], dock)
                 if isinstance(widget, BaseGui):
                     widget.__magicclass_parent__ = self
                     self.__magicclass_children__.append(widget)
@@ -552,12 +538,23 @@ def make_gui(container: type[_C], no_margin: bool = True) -> type[_C | ClassGuiB
                 else:
                     raise RuntimeError("Dock widget not found.")
 
-                mainwin: QMainWindow = self.native
-                mainwin.removeDockWidget(dock)
+                self.native.removeDockWidget(dock)
                 self.__magicclass_children__.pop(i_dock)
+
+            @property
+            def status(self: cls) -> str:
+                """Get status tip."""
+                return self.native.statusTip()
+
+            @status.setter
+            def status(self: cls, text: str):
+                """Set status tip."""
+                self.native.setStatusTip(text)
+                self.native.statusBar().showMessage(text, 5000)
 
             cls.add_dock_widget = add_dock_widget
             cls.remove_dock_widget = remove_dock_widget
+            cls.status = status
 
         cls.__init__ = __init__
         cls.__setattr__ = __setattr__

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass._gui._base &mdash; magic-class 0.6.3 documentation</title>
+  <title>magicclass._gui._base &mdash; magic-class 0.6.4 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.3
+                0.6.4
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -118,6 +118,7 @@
 <span class="kn">from</span> <span class="nn">magicgui.widgets._bases</span> <span class="kn">import</span> <span class="n">ButtonWidget</span><span class="p">,</span> <span class="n">ValueWidget</span>
 <span class="kn">from</span> <span class="nn">macrokit</span> <span class="kn">import</span> <span class="n">Expr</span><span class="p">,</span> <span class="n">Head</span><span class="p">,</span> <span class="n">Symbol</span><span class="p">,</span> <span class="n">symbol</span>
 
+
 <span class="kn">from</span> <span class="nn">.keybinding</span> <span class="kn">import</span> <span class="n">as_shortcut</span>
 <span class="kn">from</span> <span class="nn">.mgui_ext</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">AbstractAction</span><span class="p">,</span>
@@ -127,14 +128,17 @@
     <span class="n">_LabeledWidgetAction</span><span class="p">,</span>
     <span class="n">mguiLike</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">get_parameters</span><span class="p">,</span> <span class="n">define_callback</span><span class="p">,</span> <span class="n">callable_to_classes</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">get_parameters</span><span class="p">,</span> <span class="n">callable_to_classes</span>
 <span class="kn">from</span> <span class="nn">._macro</span> <span class="kn">import</span> <span class="n">GuiMacro</span>
 
 <span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">get_signature</span><span class="p">,</span>
     <span class="n">iter_members</span><span class="p">,</span>
-    <span class="n">extract_tooltip</span><span class="p">,</span>
+    <span class="n">Tooltips</span><span class="p">,</span>
     <span class="n">move_to_screen_center</span><span class="p">,</span>
+    <span class="n">argcount</span><span class="p">,</span>
+    <span class="n">is_instance_method</span><span class="p">,</span>
+    <span class="n">method_as_getter</span><span class="p">,</span>
     <span class="n">thread_worker</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">..widgets</span> <span class="kn">import</span> <span class="n">Separator</span><span class="p">,</span> <span class="n">FreeWidget</span>
@@ -171,10 +175,17 @@
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
 
+<span class="k">def</span> <span class="nf">_napari_notification_raising</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">napari.utils.notifications</span> <span class="kn">import</span> <span class="n">show_error</span>
+
+    <span class="n">show_error</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+
+
 <span class="k">class</span> <span class="nc">ErrorMode</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
     <span class="n">msgbox</span> <span class="o">=</span> <span class="s2">&quot;msgbox&quot;</span>
     <span class="n">stderr</span> <span class="o">=</span> <span class="s2">&quot;stderr&quot;</span>
     <span class="n">stdout</span> <span class="o">=</span> <span class="s2">&quot;stdout&quot;</span>
+    <span class="n">napari</span> <span class="o">=</span> <span class="s2">&quot;napari&quot;</span>
 
     <span class="k">def</span> <span class="nf">get_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get error handler.&quot;&quot;&quot;</span>
@@ -205,6 +216,7 @@
     <span class="n">ErrorMode</span><span class="o">.</span><span class="n">msgbox</span><span class="p">:</span> <span class="n">_msgbox_raising</span><span class="p">,</span>
     <span class="n">ErrorMode</span><span class="o">.</span><span class="n">stderr</span><span class="p">:</span> <span class="n">_stderr_raising</span><span class="p">,</span>
     <span class="n">ErrorMode</span><span class="o">.</span><span class="n">stdout</span><span class="p">:</span> <span class="n">_stdout_raising</span><span class="p">,</span>
+    <span class="n">ErrorMode</span><span class="o">.</span><span class="n">napari</span><span class="p">:</span> <span class="n">_napari_notification_raising</span><span class="p">,</span>
 <span class="p">}</span>
 
 
@@ -667,7 +679,7 @@
         <span class="n">func</span><span class="o">.</span><span class="n">__signature__</span> <span class="o">=</span> <span class="n">obj_sig</span>
 
         <span class="c1"># Prepare a button or action</span>
-        <span class="n">widget</span><span class="o">.</span><span class="n">tooltip</span> <span class="o">=</span> <span class="n">extract_tooltip</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+        <span class="n">widget</span><span class="o">.</span><span class="n">tooltip</span> <span class="o">=</span> <span class="n">Tooltips</span><span class="p">(</span><span class="n">func</span><span class="p">)</span><span class="o">.</span><span class="n">desc</span>
         <span class="n">widget</span><span class="o">.</span><span class="n">_doc</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="vm">__doc__</span>
 
         <span class="c1"># This block enables instance methods in &quot;bind&quot; or &quot;choices&quot; of ValueWidget.</span>
@@ -688,16 +700,16 @@
                 <span class="n">_arg_choices</span> <span class="o">=</span> <span class="n">_param</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;choices&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
                 <span class="c1"># If bound method is a class method, use self.method(widget).</span>
-                <span class="k">if</span> <span class="n">_is_instance_method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_arg_bind</span><span class="p">):</span>
-                    <span class="n">_param</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s2">&quot;bind&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_method_as_getter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_arg_bind</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">is_instance_method</span><span class="p">(</span><span class="n">_arg_bind</span><span class="p">):</span>
+                    <span class="n">_param</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s2">&quot;bind&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">method_as_getter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_arg_bind</span><span class="p">)</span>
 
                 <span class="c1"># If a MagicFiled is bound, bind the value of the connected widget.</span>
                 <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_arg_bind</span><span class="p">,</span> <span class="n">MagicField</span><span class="p">):</span>
-                    <span class="n">_param</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s2">&quot;bind&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_field_as_getter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_arg_bind</span><span class="p">)</span>
+                    <span class="n">_param</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s2">&quot;bind&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_arg_bind</span><span class="o">.</span><span class="n">as_remote_getter</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
                 <span class="c1"># If choices are provided by a class method, use self.method(widget).</span>
-                <span class="k">if</span> <span class="n">_is_instance_method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_arg_choices</span><span class="p">):</span>
-                    <span class="n">_param</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s2">&quot;choices&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_method_as_getter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_arg_choices</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">is_instance_method</span><span class="p">(</span><span class="n">_arg_choices</span><span class="p">):</span>
+                    <span class="n">_param</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s2">&quot;choices&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">method_as_getter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_arg_choices</span><span class="p">)</span>
 
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">_param</span> <span class="o">=</span> <span class="n">param</span>
@@ -711,7 +723,7 @@
         <span class="n">n_empty</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span>
             <span class="p">[</span><span class="n">_wdg_cls</span> <span class="k">for</span> <span class="n">_wdg_cls</span> <span class="ow">in</span> <span class="n">fgui_classes</span> <span class="k">if</span> <span class="n">_wdg_cls</span> <span class="ow">is</span> <span class="n">EmptyWidget</span><span class="p">]</span>
         <span class="p">)</span>
-        <span class="n">nparams</span> <span class="o">=</span> <span class="n">_n_parameters</span><span class="p">(</span><span class="n">func</span><span class="p">)</span> <span class="o">-</span> <span class="n">n_empty</span>
+        <span class="n">nparams</span> <span class="o">=</span> <span class="n">argcount</span><span class="p">(</span><span class="n">func</span><span class="p">)</span> <span class="o">-</span> <span class="n">n_empty</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">func</span><span class="o">.</span><span class="n">__signature__</span><span class="p">,</span> <span class="n">MagicMethodSignature</span><span class="p">):</span>
             <span class="n">func</span><span class="o">.</span><span class="n">__signature__</span><span class="o">.</span><span class="n">additional_options</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span>
@@ -821,7 +833,7 @@
         <span class="sd">&quot;&quot;&quot;Iterate over all the child magic classes&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__magicclass_children__</span><span class="p">:</span>
             <span class="k">yield</span> <span class="n">child</span>
-            <span class="k">yield from</span> <span class="n">child</span><span class="o">.</span><span class="n">__magicclass_children__</span></div>
+            <span class="k">yield from</span> <span class="n">child</span><span class="o">.</span><span class="n">_iter_child_magicclasses</span><span class="p">()</span></div>
 
 
 <span class="k">class</span> <span class="nc">BaseGui</span><span class="p">(</span><span class="n">MagicTemplate</span><span class="p">):</span>
@@ -888,17 +900,11 @@
         <span class="n">fld</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">fld</span><span class="o">.</span><span class="n">name</span> <span class="ow">or</span> <span class="n">name</span>
         <span class="n">action</span> <span class="o">=</span> <span class="n">fld</span><span class="o">.</span><span class="n">get_action</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">action</span><span class="o">.</span><span class="n">support_value</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">action</span><span class="o">.</span><span class="n">support_value</span> <span class="ow">and</span> <span class="n">fld</span><span class="o">.</span><span class="n">record</span><span class="p">:</span>
             <span class="c1"># By default, set value function will be connected to the widget.</span>
-            <span class="k">if</span> <span class="n">fld</span><span class="o">.</span><span class="n">record</span><span class="p">:</span>
-                <span class="n">getvalue</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">fld</span><span class="p">)</span> <span class="ow">is</span> <span class="n">MagicField</span>
-                <span class="n">f</span> <span class="o">=</span> <span class="n">value_widget_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">getvalue</span><span class="o">=</span><span class="n">getvalue</span><span class="p">)</span>
-                <span class="n">action</span><span class="o">.</span><span class="n">changed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-
-            <span class="c1"># If the field has callbacks, connect it to the newly generated widget.</span>
-            <span class="k">for</span> <span class="n">callback</span> <span class="ow">in</span> <span class="n">fld</span><span class="o">.</span><span class="n">callbacks</span><span class="p">:</span>
-                <span class="c1"># funcname = callback.__name__</span>
-                <span class="n">action</span><span class="o">.</span><span class="n">changed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">define_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">))</span>
+            <span class="n">getvalue</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">fld</span><span class="p">)</span> <span class="ow">is</span> <span class="n">MagicField</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="n">value_widget_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">getvalue</span><span class="o">=</span><span class="n">getvalue</span><span class="p">)</span>
+            <span class="n">action</span><span class="o">.</span><span class="n">changed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">action</span>
 
@@ -1107,11 +1113,6 @@
     <span class="k">return</span> <span class="n">wrapper</span></div>
 
 
-<span class="k">def</span> <span class="nf">_n_parameters</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Count the number of parameters of a callable object.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">func</span><span class="p">)</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span>
-
-
 <span class="k">def</span> <span class="nf">_get_index</span><span class="p">(</span><span class="n">container</span><span class="p">:</span> <span class="n">Container</span><span class="p">,</span> <span class="n">widget_or_name</span><span class="p">:</span> <span class="n">Widget</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Identical to container[widget_or_name], which sometimes doesn&#39;t work</span>
@@ -1143,81 +1144,24 @@
     <span class="k">return</span> <span class="n">child_instance</span>
 
 
-<span class="n">_LOCALS</span> <span class="o">=</span> <span class="s2">&quot;&lt;locals&gt;.&quot;</span>
-
-
-<span class="k">def</span> <span class="nf">_method_as_getter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">getter</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
-    <span class="n">qualname</span> <span class="o">=</span> <span class="n">getter</span><span class="o">.</span><span class="vm">__qualname__</span>
-    <span class="k">if</span> <span class="n">_LOCALS</span> <span class="ow">in</span> <span class="n">qualname</span><span class="p">:</span>
-        <span class="n">qualname</span> <span class="o">=</span> <span class="n">qualname</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">_LOCALS</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-    <span class="o">*</span><span class="n">clsnames</span><span class="p">,</span> <span class="n">funcname</span> <span class="o">=</span> <span class="n">qualname</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
-    <span class="n">ins</span> <span class="o">=</span> <span class="bp">self</span>
-    <span class="n">self_cls</span> <span class="o">=</span> <span class="n">ins</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
-    <span class="k">if</span> <span class="n">self_cls</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">clsnames</span><span class="p">:</span>
-        <span class="n">ns</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">clsnames</span><span class="p">)</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Method </span><span class="si">{</span><span class="n">funcname</span><span class="si">}</span><span class="s2"> is in namespace </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">, so it is invisible &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;from magicclass </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__qualname__</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="p">)</span>
-    <span class="n">i</span> <span class="o">=</span> <span class="n">clsnames</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">self_cls</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
-
-    <span class="k">for</span> <span class="n">clsname</span> <span class="ow">in</span> <span class="n">clsnames</span><span class="p">[</span><span class="n">i</span><span class="p">:]:</span>
-        <span class="n">ins</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ins</span><span class="p">,</span> <span class="n">clsname</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_func</span><span class="p">(</span><span class="n">w</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">getter</span><span class="p">(</span><span class="n">ins</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">_func</span>
-
-
-<span class="k">def</span> <span class="nf">_field_as_getter</span><span class="p">(</span><span class="n">bgui</span><span class="p">:</span> <span class="n">BaseGui</span><span class="p">,</span> <span class="n">fld</span><span class="p">:</span> <span class="n">MagicField</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Called when a MagicField is used in Bound method.&quot;&quot;&quot;</span>
-    <span class="n">qualname</span> <span class="o">=</span> <span class="n">fld</span><span class="o">.</span><span class="n">parent_class</span><span class="o">.</span><span class="vm">__qualname__</span>
-    <span class="k">if</span> <span class="n">_LOCALS</span> <span class="ow">in</span> <span class="n">qualname</span><span class="p">:</span>
-        <span class="n">qualname</span> <span class="o">=</span> <span class="n">qualname</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">_LOCALS</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-    <span class="n">clsnames</span> <span class="o">=</span> <span class="n">qualname</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_func</span><span class="p">(</span><span class="n">w</span><span class="p">):</span>
-        <span class="c1"># First we have to know where (which instance) MagicField came from.</span>
-        <span class="k">if</span> <span class="n">bgui</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">clsnames</span><span class="p">:</span>
-            <span class="n">ns</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">clsnames</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Method </span><span class="si">{</span><span class="n">fld</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> is in namespace </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">, so it is invisible &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;from magicclass </span><span class="si">{</span><span class="n">bgui</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__qualname__</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="p">)</span>
-        <span class="n">i</span> <span class="o">=</span> <span class="n">clsnames</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">bgui</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
-        <span class="n">ins</span> <span class="o">=</span> <span class="n">bgui</span>
-        <span class="k">for</span> <span class="n">clsname</span> <span class="ow">in</span> <span class="n">clsnames</span><span class="p">[</span><span class="n">i</span><span class="p">:]:</span>
-            <span class="n">ins</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ins</span><span class="p">,</span> <span class="n">clsname</span><span class="p">,</span> <span class="n">ins</span><span class="p">)</span>
-
-        <span class="c1"># Now, ins is an instance of parent_class.</span>
-        <span class="c1"># Extract correct widget from MagicField</span>
-        <span class="n">_field_widget</span> <span class="o">=</span> <span class="n">fld</span><span class="o">.</span><span class="n">get_widget</span><span class="p">(</span><span class="n">ins</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">_field_widget</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;MagicField </span><span class="si">{</span><span class="n">fld</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> does not return ValueWidget &quot;</span>
-                <span class="s2">&quot;thus cannot be used as a bound value.&quot;</span>
-            <span class="p">)</span>
-        <span class="k">return</span> <span class="n">fld</span><span class="o">.</span><span class="n">as_getter</span><span class="p">(</span><span class="n">ins</span><span class="p">)(</span><span class="n">w</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">_func</span>
-
-
-<span class="k">def</span> <span class="nf">_is_instance_method</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">MagicTemplate</span><span class="p">,</span> <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-    <span class="c1"># NOTE: following implementation is not compatible with @wraps</span>
-    <span class="c1"># if not callable(func):</span>
-    <span class="c1">#     return False</span>
-    <span class="c1"># classes = func.__qualname__.split(&quot;.&quot;)[:-1]</span>
-    <span class="c1"># return self.__class__.__name__ in classes</span>
-    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">Callable</span><span class="p">)</span> <span class="ow">and</span> <span class="n">_n_parameters</span><span class="p">(</span><span class="n">func</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
-
-
 <span class="k">def</span> <span class="nf">value_widget_callback</span><span class="p">(</span>
-    <span class="n">gui</span><span class="p">:</span> <span class="n">MagicTemplate</span><span class="p">,</span> <span class="n">widget</span><span class="p">:</span> <span class="n">ValueWidget</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">getvalue</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">gui</span><span class="p">:</span> <span class="n">MagicTemplate</span><span class="p">,</span>
+    <span class="n">widget</span><span class="p">:</span> <span class="n">ValueWidget</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">getvalue</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Define a ValueWidget callback, including macro recording.&quot;&quot;&quot;</span>
-    <span class="n">sym_name</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-    <span class="n">sym_value</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">sym_name</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">sym_name</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">(</span><span class="n">name</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">name</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+            <span class="n">sym_name</span> <span class="o">=</span> <span class="n">Expr</span><span class="p">(</span><span class="n">head</span><span class="o">=</span><span class="n">Head</span><span class="o">.</span><span class="n">getattr</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="n">sym_name</span><span class="p">,</span> <span class="n">n</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">getvalue</span><span class="p">:</span>
+        <span class="n">sub</span> <span class="o">=</span> <span class="n">Expr</span><span class="p">(</span><span class="n">head</span><span class="o">=</span><span class="n">Head</span><span class="o">.</span><span class="n">getattr</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="n">sym_name</span><span class="p">,</span> <span class="n">Symbol</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">)])</span>  <span class="c1"># name.value</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">sub</span> <span class="o">=</span> <span class="n">sym_name</span>
 
     <span class="k">def</span> <span class="nf">_set_value</span><span class="p">():</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">widget</span><span class="o">.</span><span class="n">enabled</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">gui</span><span class="o">.</span><span class="n">macro</span><span class="o">.</span><span class="n">active</span><span class="p">:</span>
@@ -1226,11 +1170,6 @@
             <span class="k">return</span> <span class="kc">None</span>
 
         <span class="n">gui</span><span class="o">.</span><span class="n">changed</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">gui</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">getvalue</span><span class="p">:</span>
-            <span class="n">sub</span> <span class="o">=</span> <span class="n">Expr</span><span class="p">(</span><span class="n">head</span><span class="o">=</span><span class="n">Head</span><span class="o">.</span><span class="n">getattr</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="n">sym_name</span><span class="p">,</span> <span class="n">sym_value</span><span class="p">])</span>  <span class="c1"># name.value</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">sub</span> <span class="o">=</span> <span class="n">sym_name</span>
 
         <span class="c1"># Make an expression of</span>
         <span class="c1"># &gt;&gt;&gt; x.name.value = value</span>

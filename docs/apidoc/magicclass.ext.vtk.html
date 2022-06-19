@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.ext.vtk package &mdash; magic-class 0.6.3 documentation</title>
+  <title>magicclass.ext.vtk package &mdash; magic-class 0.6.4 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/columns.css" type="text/css" />
@@ -31,7 +31,7 @@
             <a href="../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.3
+                0.6.4
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -91,213 +91,252 @@
 <span id="magicclass-ext-vtk-components-module"></span><h2>magicclass.ext.vtk.components module<a class="headerlink" href="#module-magicclass.ext.vtk.components" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.ext.vtk.components.Arrow">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vtk.components.</span></span><span class="sig-name descname"><span class="pre">Arrow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_parent</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">vedo.plotter.Plotter</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vtk/components.html#Arrow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vtk.components.Arrow" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vtk.components.</span></span><span class="sig-name descname"><span class="pre">Arrow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_parent</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">vedo.plotter.Plotter</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_emit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vtk/components.html#Arrow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vtk.components.Arrow" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#magicclass.ext.vtk.components.Mesh" title="magicclass.ext.vtk.components.Mesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.vtk.components.Mesh</span></code></a></p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.ext.vtk.components.Arrows">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vtk.components.</span></span><span class="sig-name descname"><span class="pre">Arrows</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_parent</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">vedo.plotter.Plotter</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vtk/components.html#Arrows"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vtk.components.Arrows" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vtk.components.</span></span><span class="sig-name descname"><span class="pre">Arrows</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_parent</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">vedo.plotter.Plotter</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_emit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vtk/components.html#Arrows"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vtk.components.Arrows" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#magicclass.ext.vtk.components.Mesh" title="magicclass.ext.vtk.components.Mesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.vtk.components.Mesh</span></code></a></p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.ext.vtk.components.Box">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vtk.components.</span></span><span class="sig-name descname"><span class="pre">Box</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_parent</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">vedo.plotter.Plotter</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vtk/components.html#Box"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vtk.components.Box" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vtk.components.</span></span><span class="sig-name descname"><span class="pre">Box</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_parent</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">vedo.plotter.Plotter</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_emit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vtk/components.html#Box"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vtk.components.Box" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#magicclass.ext.vtk.components.Mesh" title="magicclass.ext.vtk.components.Mesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.vtk.components.Mesh</span></code></a></p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.ext.vtk.components.CSpline">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vtk.components.</span></span><span class="sig-name descname"><span class="pre">CSpline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_parent</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">vedo.plotter.Plotter</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vtk/components.html#CSpline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vtk.components.CSpline" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vtk.components.</span></span><span class="sig-name descname"><span class="pre">CSpline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_parent</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">vedo.plotter.Plotter</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_emit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vtk/components.html#CSpline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vtk.components.CSpline" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#magicclass.ext.vtk.components.Mesh" title="magicclass.ext.vtk.components.Mesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.vtk.components.Mesh</span></code></a></p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.ext.vtk.components.Circle">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vtk.components.</span></span><span class="sig-name descname"><span class="pre">Circle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_parent</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">vedo.plotter.Plotter</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vtk/components.html#Circle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vtk.components.Circle" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vtk.components.</span></span><span class="sig-name descname"><span class="pre">Circle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_parent</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">vedo.plotter.Plotter</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_emit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vtk/components.html#Circle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vtk.components.Circle" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#magicclass.ext.vtk.components.Mesh" title="magicclass.ext.vtk.components.Mesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.vtk.components.Mesh</span></code></a></p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.ext.vtk.components.Cone">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vtk.components.</span></span><span class="sig-name descname"><span class="pre">Cone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_parent</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">vedo.plotter.Plotter</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vtk/components.html#Cone"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vtk.components.Cone" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vtk.components.</span></span><span class="sig-name descname"><span class="pre">Cone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_parent</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">vedo.plotter.Plotter</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_emit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vtk/components.html#Cone"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vtk.components.Cone" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#magicclass.ext.vtk.components.Mesh" title="magicclass.ext.vtk.components.Mesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.vtk.components.Mesh</span></code></a></p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.ext.vtk.components.Cube">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vtk.components.</span></span><span class="sig-name descname"><span class="pre">Cube</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_parent</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">vedo.plotter.Plotter</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vtk/components.html#Cube"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vtk.components.Cube" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vtk.components.</span></span><span class="sig-name descname"><span class="pre">Cube</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_parent</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">vedo.plotter.Plotter</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_emit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vtk/components.html#Cube"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vtk.components.Cube" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#magicclass.ext.vtk.components.Mesh" title="magicclass.ext.vtk.components.Mesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.vtk.components.Mesh</span></code></a></p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.ext.vtk.components.Cylinder">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vtk.components.</span></span><span class="sig-name descname"><span class="pre">Cylinder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_parent</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">vedo.plotter.Plotter</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vtk/components.html#Cylinder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vtk.components.Cylinder" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vtk.components.</span></span><span class="sig-name descname"><span class="pre">Cylinder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_parent</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">vedo.plotter.Plotter</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_emit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vtk/components.html#Cylinder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vtk.components.Cylinder" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#magicclass.ext.vtk.components.Mesh" title="magicclass.ext.vtk.components.Mesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.vtk.components.Mesh</span></code></a></p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.ext.vtk.components.Disc">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vtk.components.</span></span><span class="sig-name descname"><span class="pre">Disc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_parent</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">vedo.plotter.Plotter</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vtk/components.html#Disc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vtk.components.Disc" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vtk.components.</span></span><span class="sig-name descname"><span class="pre">Disc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_parent</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">vedo.plotter.Plotter</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_emit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vtk/components.html#Disc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vtk.components.Disc" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#magicclass.ext.vtk.components.Mesh" title="magicclass.ext.vtk.components.Mesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.vtk.components.Mesh</span></code></a></p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.ext.vtk.components.Earth">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vtk.components.</span></span><span class="sig-name descname"><span class="pre">Earth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_parent</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">vedo.plotter.Plotter</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vtk/components.html#Earth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vtk.components.Earth" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vtk.components.</span></span><span class="sig-name descname"><span class="pre">Earth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_parent</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">vedo.plotter.Plotter</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_emit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vtk/components.html#Earth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vtk.components.Earth" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#magicclass.ext.vtk.components.Mesh" title="magicclass.ext.vtk.components.Mesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.vtk.components.Mesh</span></code></a></p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.ext.vtk.components.Ellipsoid">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vtk.components.</span></span><span class="sig-name descname"><span class="pre">Ellipsoid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_parent</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">vedo.plotter.Plotter</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vtk/components.html#Ellipsoid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vtk.components.Ellipsoid" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vtk.components.</span></span><span class="sig-name descname"><span class="pre">Ellipsoid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_parent</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">vedo.plotter.Plotter</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_emit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vtk/components.html#Ellipsoid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vtk.components.Ellipsoid" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#magicclass.ext.vtk.components.Mesh" title="magicclass.ext.vtk.components.Mesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.vtk.components.Mesh</span></code></a></p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.ext.vtk.components.KSpline">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vtk.components.</span></span><span class="sig-name descname"><span class="pre">KSpline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_parent</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">vedo.plotter.Plotter</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vtk/components.html#KSpline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vtk.components.KSpline" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vtk.components.</span></span><span class="sig-name descname"><span class="pre">KSpline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_parent</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">vedo.plotter.Plotter</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_emit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vtk/components.html#KSpline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vtk.components.KSpline" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#magicclass.ext.vtk.components.Mesh" title="magicclass.ext.vtk.components.Mesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.vtk.components.Mesh</span></code></a></p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.ext.vtk.components.Mesh">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vtk.components.</span></span><span class="sig-name descname"><span class="pre">Mesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_parent</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">vedo.plotter.Plotter</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vtk/components.html#Mesh"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vtk.components.Mesh" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#magicclass.ext.vtk.components.Points" title="magicclass.ext.vtk.components.Points"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.vtk.components.Points</span></code></a></p>
-<dl class="py property">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vtk.components.</span></span><span class="sig-name descname"><span class="pre">Mesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_parent</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">vedo.plotter.Plotter</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_emit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vtk/components.html#Mesh"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vtk.components.Mesh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#magicclass.ext.vtk.components.VtkComponent" title="magicclass.ext.vtk.components.VtkComponent"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.vtk.components.VtkComponent</span></code></a></p>
+<dl class="py attribute">
 <dt class="sig sig-object py" id="magicclass.ext.vtk.components.Mesh.backface_color">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">backface_color</span></span><em class="property"><span class="pre">:</span> <span class="pre">magicclass.ext.vtk.components._V</span></em><a class="headerlink" href="#magicclass.ext.vtk.components.Mesh.backface_color" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">backface_color</span></span><a class="headerlink" href="#magicclass.ext.vtk.components.Mesh.backface_color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
+</dd></dl>
 
-<dl class="py property">
+<dl class="py attribute">
 <dt class="sig sig-object py" id="magicclass.ext.vtk.components.Mesh.backface_culling">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">backface_culling</span></span><em class="property"><span class="pre">:</span> <span class="pre">magicclass.ext.vtk.components._V</span></em><a class="headerlink" href="#magicclass.ext.vtk.components.Mesh.backface_culling" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">backface_culling</span></span><a class="headerlink" href="#magicclass.ext.vtk.components.Mesh.backface_culling" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
+</dd></dl>
 
-<dl class="py property">
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.ext.vtk.components.Mesh.color">
+<span class="sig-name descname"><span class="pre">color</span></span><a class="headerlink" href="#magicclass.ext.vtk.components.Mesh.color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="magicclass.ext.vtk.components.Mesh.frontface_culling">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">frontface_culling</span></span><em class="property"><span class="pre">:</span> <span class="pre">magicclass.ext.vtk.components._V</span></em><a class="headerlink" href="#magicclass.ext.vtk.components.Mesh.frontface_culling" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">frontface_culling</span></span><a class="headerlink" href="#magicclass.ext.vtk.components.Mesh.frontface_culling" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
+</dd></dl>
 
-<dl class="py property">
+<dl class="py attribute">
 <dt class="sig sig-object py" id="magicclass.ext.vtk.components.Mesh.lines_as_tubes">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">lines_as_tubes</span></span><em class="property"><span class="pre">:</span> <span class="pre">magicclass.ext.vtk.components._V</span></em><a class="headerlink" href="#magicclass.ext.vtk.components.Mesh.lines_as_tubes" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">lines_as_tubes</span></span><a class="headerlink" href="#magicclass.ext.vtk.components.Mesh.lines_as_tubes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
+</dd></dl>
 
-<dl class="py property">
+<dl class="py attribute">
 <dt class="sig sig-object py" id="magicclass.ext.vtk.components.Mesh.linewidth">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">linewidth</span></span><em class="property"><span class="pre">:</span> <span class="pre">magicclass.ext.vtk.components._V</span></em><a class="headerlink" href="#magicclass.ext.vtk.components.Mesh.linewidth" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">linewidth</span></span><a class="headerlink" href="#magicclass.ext.vtk.components.Mesh.linewidth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
+</dd></dl>
 
-<dl class="py property">
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.ext.vtk.components.Mesh.occlusion">
+<span class="sig-name descname"><span class="pre">occlusion</span></span><a class="headerlink" href="#magicclass.ext.vtk.components.Mesh.occlusion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="magicclass.ext.vtk.components.Mesh.representation">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">representation</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="#magicclass.ext.vtk.const.Representation" title="magicclass.ext.vtk.const.Representation"><span class="pre">magicclass.ext.vtk.const.Representation</span></a></em><a class="headerlink" href="#magicclass.ext.vtk.components.Mesh.representation" title="Permalink to this definition">¶</a></dt>
-<dd><p>Representation mode of mesh.</p>
-<p>One of &quot;points&quot;, &quot;wireframe&quot;, &quot;surface&quot;.</p>
+<span class="sig-name descname"><span class="pre">representation</span></span><a class="headerlink" href="#magicclass.ext.vtk.components.Mesh.representation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.ext.vtk.components.Mesh.scale">
+<span class="sig-name descname"><span class="pre">scale</span></span><a class="headerlink" href="#magicclass.ext.vtk.components.Mesh.scale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.ext.vtk.components.Path">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vtk.components.</span></span><span class="sig-name descname"><span class="pre">Path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_parent</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">vedo.plotter.Plotter</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vtk/components.html#Path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vtk.components.Path" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vtk.components.</span></span><span class="sig-name descname"><span class="pre">Path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_parent</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">vedo.plotter.Plotter</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_emit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vtk/components.html#Path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vtk.components.Path" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#magicclass.ext.vtk.components.Mesh" title="magicclass.ext.vtk.components.Mesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.vtk.components.Mesh</span></code></a></p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.ext.vtk.components.Points">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vtk.components.</span></span><span class="sig-name descname"><span class="pre">Points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_parent</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">vedo.plotter.Plotter</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vtk/components.html#Points"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vtk.components.Points" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vtk.components.</span></span><span class="sig-name descname"><span class="pre">Points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_parent</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">vedo.plotter.Plotter</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_emit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vtk/components.html#Points"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vtk.components.Points" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#magicclass.ext.vtk.components.VtkComponent" title="magicclass.ext.vtk.components.VtkComponent"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.vtk.components.VtkComponent</span></code></a></p>
-<dl class="py property">
+<dl class="py attribute">
 <dt class="sig sig-object py" id="magicclass.ext.vtk.components.Points.color">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">color</span></span><em class="property"><span class="pre">:</span> <span class="pre">magicclass.ext.vtk.components._V</span></em><a class="headerlink" href="#magicclass.ext.vtk.components.Points.color" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">color</span></span><a class="headerlink" href="#magicclass.ext.vtk.components.Points.color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
+</dd></dl>
 
-<dl class="py property">
+<dl class="py attribute">
 <dt class="sig sig-object py" id="magicclass.ext.vtk.components.Points.occlusion">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">occlusion</span></span><em class="property"><span class="pre">:</span> <span class="pre">magicclass.ext.vtk.components._V</span></em><a class="headerlink" href="#magicclass.ext.vtk.components.Points.occlusion" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">occlusion</span></span><a class="headerlink" href="#magicclass.ext.vtk.components.Points.occlusion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
+</dd></dl>
 
-<dl class="py property">
-<dt class="sig sig-object py" id="magicclass.ext.vtk.components.Points.point_size">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">point_size</span></span><em class="property"><span class="pre">:</span> <span class="pre">magicclass.ext.vtk.components._V</span></em><a class="headerlink" href="#magicclass.ext.vtk.components.Points.point_size" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py property">
+<dl class="py attribute">
 <dt class="sig sig-object py" id="magicclass.ext.vtk.components.Points.pos">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">pos</span></span><em class="property"><span class="pre">:</span> <span class="pre">magicclass.ext.vtk.components._V</span></em><a class="headerlink" href="#magicclass.ext.vtk.components.Points.pos" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">pos</span></span><a class="headerlink" href="#magicclass.ext.vtk.components.Points.pos" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
+</dd></dl>
 
-<dl class="py property">
+<dl class="py attribute">
 <dt class="sig sig-object py" id="magicclass.ext.vtk.components.Points.scale">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">scale</span></span><em class="property"><span class="pre">:</span> <span class="pre">magicclass.ext.vtk.components._V</span></em><a class="headerlink" href="#magicclass.ext.vtk.components.Points.scale" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">scale</span></span><a class="headerlink" href="#magicclass.ext.vtk.components.Points.scale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
+</dd></dl>
 
-<dl class="py property">
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.ext.vtk.components.Points.size">
+<span class="sig-name descname"><span class="pre">size</span></span><a class="headerlink" href="#magicclass.ext.vtk.components.Points.size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="magicclass.ext.vtk.components.Points.spherical">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">spherical</span></span><em class="property"><span class="pre">:</span> <span class="pre">magicclass.ext.vtk.components._V</span></em><a class="headerlink" href="#magicclass.ext.vtk.components.Points.spherical" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">spherical</span></span><a class="headerlink" href="#magicclass.ext.vtk.components.Points.spherical" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
+</dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.ext.vtk.components.Ribbon">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vtk.components.</span></span><span class="sig-name descname"><span class="pre">Ribbon</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_parent</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">vedo.plotter.Plotter</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vtk/components.html#Ribbon"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vtk.components.Ribbon" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vtk.components.</span></span><span class="sig-name descname"><span class="pre">Ribbon</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_parent</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">vedo.plotter.Plotter</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_emit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vtk/components.html#Ribbon"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vtk.components.Ribbon" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#magicclass.ext.vtk.components.Mesh" title="magicclass.ext.vtk.components.Mesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.vtk.components.Mesh</span></code></a></p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.ext.vtk.components.Sphere">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vtk.components.</span></span><span class="sig-name descname"><span class="pre">Sphere</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_parent</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">vedo.plotter.Plotter</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vtk/components.html#Sphere"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vtk.components.Sphere" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vtk.components.</span></span><span class="sig-name descname"><span class="pre">Sphere</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_parent</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">vedo.plotter.Plotter</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_emit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vtk/components.html#Sphere"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vtk.components.Sphere" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#magicclass.ext.vtk.components.Mesh" title="magicclass.ext.vtk.components.Mesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.vtk.components.Mesh</span></code></a></p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.ext.vtk.components.Spheres">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vtk.components.</span></span><span class="sig-name descname"><span class="pre">Spheres</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_parent</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">vedo.plotter.Plotter</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vtk/components.html#Spheres"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vtk.components.Spheres" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vtk.components.</span></span><span class="sig-name descname"><span class="pre">Spheres</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_parent</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">vedo.plotter.Plotter</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_emit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vtk/components.html#Spheres"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vtk.components.Spheres" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#magicclass.ext.vtk.components.Mesh" title="magicclass.ext.vtk.components.Mesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.vtk.components.Mesh</span></code></a></p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.ext.vtk.components.Spline">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vtk.components.</span></span><span class="sig-name descname"><span class="pre">Spline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_parent</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">vedo.plotter.Plotter</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vtk/components.html#Spline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vtk.components.Spline" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vtk.components.</span></span><span class="sig-name descname"><span class="pre">Spline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_parent</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">vedo.plotter.Plotter</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_emit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vtk/components.html#Spline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vtk.components.Spline" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#magicclass.ext.vtk.components.Mesh" title="magicclass.ext.vtk.components.Mesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.vtk.components.Mesh</span></code></a></p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.ext.vtk.components.Spring">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vtk.components.</span></span><span class="sig-name descname"><span class="pre">Spring</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_parent</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">vedo.plotter.Plotter</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vtk/components.html#Spring"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vtk.components.Spring" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vtk.components.</span></span><span class="sig-name descname"><span class="pre">Spring</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_parent</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">vedo.plotter.Plotter</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_emit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vtk/components.html#Spring"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vtk.components.Spring" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#magicclass.ext.vtk.components.Mesh" title="magicclass.ext.vtk.components.Mesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.vtk.components.Mesh</span></code></a></p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.ext.vtk.components.Text">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vtk.components.</span></span><span class="sig-name descname"><span class="pre">Text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_parent</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">vedo.plotter.Plotter</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vtk/components.html#Text"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vtk.components.Text" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vtk.components.</span></span><span class="sig-name descname"><span class="pre">Text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_parent</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">vedo.plotter.Plotter</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_emit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vtk/components.html#Text"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vtk.components.Text" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#magicclass.ext.vtk.components.Mesh" title="magicclass.ext.vtk.components.Mesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.vtk.components.Mesh</span></code></a></p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.ext.vtk.components.Tube">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vtk.components.</span></span><span class="sig-name descname"><span class="pre">Tube</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_parent</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">vedo.plotter.Plotter</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vtk/components.html#Tube"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vtk.components.Tube" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vtk.components.</span></span><span class="sig-name descname"><span class="pre">Tube</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_parent</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">vedo.plotter.Plotter</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_emit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vtk/components.html#Tube"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vtk.components.Tube" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#magicclass.ext.vtk.components.Mesh" title="magicclass.ext.vtk.components.Mesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.vtk.components.Mesh</span></code></a></p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.ext.vtk.components.VtkComponent">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vtk.components.</span></span><span class="sig-name descname"><span class="pre">VtkComponent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_parent</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">vedo.plotter.Plotter</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vtk/components.html#VtkComponent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vtk.components.VtkComponent" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="py property">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vtk.components.</span></span><span class="sig-name descname"><span class="pre">VtkComponent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_parent</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">vedo.plotter.Plotter</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_emit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vtk/components.html#VtkComponent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vtk.components.VtkComponent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="magicclass.html#magicclass.fields.HasFields" title="magicclass.fields.HasFields"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.fields.HasFields</span></code></a></p>
+<dl class="py attribute">
 <dt class="sig sig-object py" id="magicclass.ext.vtk.components.VtkComponent.visible">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">visible</span></span><em class="property"><span class="pre">:</span> <span class="pre">magicclass.ext.vtk.components._V</span></em><a class="headerlink" href="#magicclass.ext.vtk.components.VtkComponent.visible" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
+<span class="sig-name descname"><span class="pre">visible</span></span><a class="headerlink" href="#magicclass.ext.vtk.components.VtkComponent.visible" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
 </dd></dl>
 
-<dl class="py class">
-<dt class="sig sig-object py" id="magicclass.ext.vtk.components.VtkProperty">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vtk.components.</span></span><span class="sig-name descname"><span class="pre">VtkProperty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vedo_fname</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vtk_fname</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">converter</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">type</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">doc</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vtk/components.html#VtkProperty"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vtk.components.VtkProperty" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">property</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">magicclass.ext.vtk.components._L</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">magicclass.ext.vtk.components._V</span></code>]</p>
 </dd></dl>
 
 <dl class="py function">
@@ -311,7 +350,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.ext.vtk.const.AxesMode">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vtk.const.</span></span><span class="sig-name descname"><span class="pre">AxesMode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vtk/const.html#AxesMode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vtk.const.AxesMode" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#magicclass.ext.vtk.const.StringEnum" title="magicclass.ext.vtk.const.StringEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.vtk.const.StringEnum</span></code></a></p>
 <p>An enumeration.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="magicclass.ext.vtk.const.AxesMode.box">
@@ -388,7 +427,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.ext.vtk.const.Mode">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vtk.const.</span></span><span class="sig-name descname"><span class="pre">Mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vtk/const.html#Mode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vtk.const.Mode" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#magicclass.ext.vtk.const.StringEnum" title="magicclass.ext.vtk.const.StringEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.vtk.const.StringEnum</span></code></a></p>
 <p>An enumeration.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="magicclass.ext.vtk.const.Mode.iso">
@@ -420,7 +459,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.ext.vtk.const.Rendering">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vtk.const.</span></span><span class="sig-name descname"><span class="pre">Rendering</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vtk/const.html#Rendering"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vtk.const.Rendering" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#magicclass.ext.vtk.const.StringEnum" title="magicclass.ext.vtk.const.StringEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.vtk.const.StringEnum</span></code></a></p>
 <p>Volume rendering mode suppored in vtk.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="magicclass.ext.vtk.const.Rendering.additive">
@@ -452,7 +491,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.ext.vtk.const.Representation">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vtk.const.</span></span><span class="sig-name descname"><span class="pre">Representation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vtk/const.html#Representation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vtk.const.Representation" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#magicclass.ext.vtk.const.StringEnum" title="magicclass.ext.vtk.const.StringEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.vtk.const.StringEnum</span></code></a></p>
 <p>An enumeration.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="magicclass.ext.vtk.const.Representation.points">
@@ -471,6 +510,13 @@
 
 </dd></dl>
 
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.ext.vtk.const.StringEnum">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vtk.const.</span></span><span class="sig-name descname"><span class="pre">StringEnum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vtk/const.html#StringEnum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vtk.const.StringEnum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>An enumeration.</p>
+</dd></dl>
+
 </section>
 <section id="module-magicclass.ext.vtk.volume">
 <span id="magicclass-ext-vtk-volume-module"></span><h2>magicclass.ext.vtk.volume module<a class="headerlink" href="#module-magicclass.ext.vtk.volume" title="Permalink to this headline">¶</a></h2>
@@ -478,16 +524,18 @@
 <dt class="sig sig-object py" id="magicclass.ext.vtk.volume.Volume">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vtk.volume.</span></span><span class="sig-name descname"><span class="pre">Volume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_parent</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vtk/volume.html#Volume"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vtk.volume.Volume" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#magicclass.ext.vtk.components.VtkComponent" title="magicclass.ext.vtk.components.VtkComponent"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.vtk.components.VtkComponent</span></code></a></p>
-<dl class="py property">
+<dl class="py attribute">
 <dt class="sig sig-object py" id="magicclass.ext.vtk.volume.Volume.color">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">color</span></span><em class="property"><span class="pre">:</span> <span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#magicclass.ext.vtk.volume.Volume.color" title="Permalink to this definition">¶</a></dt>
-<dd><p>Color of the volume.</p>
+<span class="sig-name descname"><span class="pre">color</span></span><a class="headerlink" href="#magicclass.ext.vtk.volume.Volume.color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
 </dd></dl>
 
-<dl class="py property">
+<dl class="py attribute">
 <dt class="sig sig-object py" id="magicclass.ext.vtk.volume.Volume.contrast_limits">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">contrast_limits</span></span><em class="property"><span class="pre">:</span> <span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#magicclass.ext.vtk.volume.Volume.contrast_limits" title="Permalink to this definition">¶</a></dt>
-<dd><p>Contrast limits of volume.</p>
+<span class="sig-name descname"><span class="pre">contrast_limits</span></span><a class="headerlink" href="#magicclass.ext.vtk.volume.Volume.contrast_limits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
 </dd></dl>
 
 <dl class="py property">
@@ -496,224 +544,32 @@
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.ext.vtk.volume.Volume.events">
-<span class="sig-name descname"><span class="pre">events</span></span><em class="property"> <span class="pre">=</span> <span class="pre">&lt;SignalGroup</span> <span class="pre">'VolumeSignalGroup'</span> <span class="pre">with</span> <span class="pre">4</span> <span class="pre">signals&gt;</span></em><a class="headerlink" href="#magicclass.ext.vtk.volume.Volume.events" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py property">
 <dt class="sig sig-object py" id="magicclass.ext.vtk.volume.Volume.iso_threshold">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">iso_threshold</span></span><em class="property"><span class="pre">:</span> <span class="pre">float</span></em><a class="headerlink" href="#magicclass.ext.vtk.volume.Volume.iso_threshold" title="Permalink to this definition">¶</a></dt>
-<dd><p>Threshold value to generate isosurface.</p>
-<p>This property only has effect on &quot;iso&quot; and &quot;wireframe&quot; rendering.</p>
+<span class="sig-name descname"><span class="pre">iso_threshold</span></span><a class="headerlink" href="#magicclass.ext.vtk.volume.Volume.iso_threshold" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
 </dd></dl>
 
-<dl class="py property">
-<dt class="sig sig-object py" id="magicclass.ext.vtk.volume.Volume.jittering">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">jittering</span></span><em class="property"><span class="pre">:</span> <span class="pre">magicclass.ext.vtk.components._V</span></em><a class="headerlink" href="#magicclass.ext.vtk.volume.Volume.jittering" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py property">
+<dl class="py attribute">
 <dt class="sig sig-object py" id="magicclass.ext.vtk.volume.Volume.mode">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">mode</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#magicclass.ext.vtk.volume.Volume.mode" title="Permalink to this definition">¶</a></dt>
-<dd><p>Projection mode of volume.</p>
+<span class="sig-name descname"><span class="pre">mode</span></span><a class="headerlink" href="#magicclass.ext.vtk.volume.Volume.mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
 </dd></dl>
 
-<dl class="py property">
+<dl class="py attribute">
 <dt class="sig sig-object py" id="magicclass.ext.vtk.volume.Volume.rendering">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">rendering</span></span><a class="headerlink" href="#magicclass.ext.vtk.volume.Volume.rendering" title="Permalink to this definition">¶</a></dt>
-<dd><p>Rendering mode of the volume.</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="magicclass.ext.vtk.volume.Volume.shade">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">shade</span></span><em class="property"><span class="pre">:</span> <span class="pre">magicclass.ext.vtk.components._V</span></em><a class="headerlink" href="#magicclass.ext.vtk.volume.Volume.shade" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="magicclass.ext.vtk.volume.VolumeSignalGroup">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vtk.volume.</span></span><span class="sig-name descname"><span class="pre">VolumeSignalGroup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instance</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vtk/volume.html#VolumeSignalGroup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vtk.volume.VolumeSignalGroup" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">psygnal._group.SignalGroup</span></code></p>
-<p>Signal group for a volume.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.ext.vtk.volume.VolumeSignalGroup.color">
-<span class="sig-name descname"><span class="pre">color</span></span><a class="headerlink" href="#magicclass.ext.vtk.volume.VolumeSignalGroup.color" title="Permalink to this definition">¶</a></dt>
-<dd><p>Signal descriptor, for declaring a signal on a class.</p>
-<p>This is designed to be used as a class attribute, with the supported signature(s)
-provided in the contructor:</p>
-<blockquote>
-<div><dl class="simple">
-<dt>class MyEmitter:</dt><dd><p>changed = Signal(int)  # changed will emit an int</p>
-</dd>
-<dt>def receiver(arg: int):</dt><dd><p>print(&quot;new value:&quot;, arg)</p>
-</dd>
-</dl>
-<p>emitter = MyEmitter()
-emitter.changed.connect(receiver)
-emitter.emit(1)</p>
-</div></blockquote>
-<p>Note: in the example above, <cite>MyEmitter.changed</cite> is an instance of <cite>Signal</cite>,
-and <cite>emitter.changed</cite> is an instance of <cite>SignalInstance</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>*types</strong> (<em>sequence of Type</em>) -- A sequence of individual types</p></li>
-<li><p><strong>description</strong> (<em>str</em><em>, </em><em>optional</em>) -- Optional descriptive text for the signal.  (not used internally).</p></li>
-<li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em>) -- Optional name of the signal. If it is not specified then the name of the
-class attribute that is bound to the signal will be used. default None</p></li>
-<li><p><strong>check_nargs_on_connect</strong> (<em>str</em><em>, </em><em>optional</em>) -- Whether to check the number of positional args against <cite>signature</cite> when
-connecting a new callback. This can also be provided at connection time using
-<cite>.connect(..., check_nargs=True)</cite>. By default, True.</p></li>
-<li><p><strong>check_types_on_connect</strong> (<em>str</em><em>, </em><em>optional</em>) -- Whether to check the callback parameter types against <cite>signature</cite> when
-connecting a new callback. This can also be provided at connection time using
-<cite>.connect(..., check_types=True)</cite>. By default, False.</p></li>
-</ul>
-</dd>
-</dl>
+<span class="sig-name descname"><span class="pre">rendering</span></span><a class="headerlink" href="#magicclass.ext.vtk.volume.Volume.rendering" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.ext.vtk.volume.VolumeSignalGroup.iso_threshold">
-<span class="sig-name descname"><span class="pre">iso_threshold</span></span><a class="headerlink" href="#magicclass.ext.vtk.volume.VolumeSignalGroup.iso_threshold" title="Permalink to this definition">¶</a></dt>
-<dd><p>Signal descriptor, for declaring a signal on a class.</p>
-<p>This is designed to be used as a class attribute, with the supported signature(s)
-provided in the contructor:</p>
-<blockquote>
-<div><dl class="simple">
-<dt>class MyEmitter:</dt><dd><p>changed = Signal(int)  # changed will emit an int</p>
-</dd>
-<dt>def receiver(arg: int):</dt><dd><p>print(&quot;new value:&quot;, arg)</p>
-</dd>
-</dl>
-<p>emitter = MyEmitter()
-emitter.changed.connect(receiver)
-emitter.emit(1)</p>
-</div></blockquote>
-<p>Note: in the example above, <cite>MyEmitter.changed</cite> is an instance of <cite>Signal</cite>,
-and <cite>emitter.changed</cite> is an instance of <cite>SignalInstance</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>*types</strong> (<em>sequence of Type</em>) -- A sequence of individual types</p></li>
-<li><p><strong>description</strong> (<em>str</em><em>, </em><em>optional</em>) -- Optional descriptive text for the signal.  (not used internally).</p></li>
-<li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em>) -- Optional name of the signal. If it is not specified then the name of the
-class attribute that is bound to the signal will be used. default None</p></li>
-<li><p><strong>check_nargs_on_connect</strong> (<em>str</em><em>, </em><em>optional</em>) -- Whether to check the number of positional args against <cite>signature</cite> when
-connecting a new callback. This can also be provided at connection time using
-<cite>.connect(..., check_nargs=True)</cite>. By default, True.</p></li>
-<li><p><strong>check_types_on_connect</strong> (<em>str</em><em>, </em><em>optional</em>) -- Whether to check the callback parameter types against <cite>signature</cite> when
-connecting a new callback. This can also be provided at connection time using
-<cite>.connect(..., check_types=True)</cite>. By default, False.</p></li>
-</ul>
-</dd>
-</dl>
+<dt class="sig sig-object py" id="magicclass.ext.vtk.volume.Volume.visible">
+<span class="sig-name descname"><span class="pre">visible</span></span><a class="headerlink" href="#magicclass.ext.vtk.volume.Volume.visible" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
 </dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.ext.vtk.volume.VolumeSignalGroup.mode">
-<span class="sig-name descname"><span class="pre">mode</span></span><a class="headerlink" href="#magicclass.ext.vtk.volume.VolumeSignalGroup.mode" title="Permalink to this definition">¶</a></dt>
-<dd><p>Signal descriptor, for declaring a signal on a class.</p>
-<p>This is designed to be used as a class attribute, with the supported signature(s)
-provided in the contructor:</p>
-<blockquote>
-<div><dl class="simple">
-<dt>class MyEmitter:</dt><dd><p>changed = Signal(int)  # changed will emit an int</p>
-</dd>
-<dt>def receiver(arg: int):</dt><dd><p>print(&quot;new value:&quot;, arg)</p>
-</dd>
-</dl>
-<p>emitter = MyEmitter()
-emitter.changed.connect(receiver)
-emitter.emit(1)</p>
-</div></blockquote>
-<p>Note: in the example above, <cite>MyEmitter.changed</cite> is an instance of <cite>Signal</cite>,
-and <cite>emitter.changed</cite> is an instance of <cite>SignalInstance</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>*types</strong> (<em>sequence of Type</em>) -- A sequence of individual types</p></li>
-<li><p><strong>description</strong> (<em>str</em><em>, </em><em>optional</em>) -- Optional descriptive text for the signal.  (not used internally).</p></li>
-<li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em>) -- Optional name of the signal. If it is not specified then the name of the
-class attribute that is bound to the signal will be used. default None</p></li>
-<li><p><strong>check_nargs_on_connect</strong> (<em>str</em><em>, </em><em>optional</em>) -- Whether to check the number of positional args against <cite>signature</cite> when
-connecting a new callback. This can also be provided at connection time using
-<cite>.connect(..., check_nargs=True)</cite>. By default, True.</p></li>
-<li><p><strong>check_types_on_connect</strong> (<em>str</em><em>, </em><em>optional</em>) -- Whether to check the callback parameter types against <cite>signature</cite> when
-connecting a new callback. This can also be provided at connection time using
-<cite>.connect(..., check_types=True)</cite>. By default, False.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.ext.vtk.volume.VolumeSignalGroup.rendering">
-<span class="sig-name descname"><span class="pre">rendering</span></span><a class="headerlink" href="#magicclass.ext.vtk.volume.VolumeSignalGroup.rendering" title="Permalink to this definition">¶</a></dt>
-<dd><p>Signal descriptor, for declaring a signal on a class.</p>
-<p>This is designed to be used as a class attribute, with the supported signature(s)
-provided in the contructor:</p>
-<blockquote>
-<div><dl class="simple">
-<dt>class MyEmitter:</dt><dd><p>changed = Signal(int)  # changed will emit an int</p>
-</dd>
-<dt>def receiver(arg: int):</dt><dd><p>print(&quot;new value:&quot;, arg)</p>
-</dd>
-</dl>
-<p>emitter = MyEmitter()
-emitter.changed.connect(receiver)
-emitter.emit(1)</p>
-</div></blockquote>
-<p>Note: in the example above, <cite>MyEmitter.changed</cite> is an instance of <cite>Signal</cite>,
-and <cite>emitter.changed</cite> is an instance of <cite>SignalInstance</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>*types</strong> (<em>sequence of Type</em>) -- A sequence of individual types</p></li>
-<li><p><strong>description</strong> (<em>str</em><em>, </em><em>optional</em>) -- Optional descriptive text for the signal.  (not used internally).</p></li>
-<li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em>) -- Optional name of the signal. If it is not specified then the name of the
-class attribute that is bound to the signal will be used. default None</p></li>
-<li><p><strong>check_nargs_on_connect</strong> (<em>str</em><em>, </em><em>optional</em>) -- Whether to check the number of positional args against <cite>signature</cite> when
-connecting a new callback. This can also be provided at connection time using
-<cite>.connect(..., check_nargs=True)</cite>. By default, True.</p></li>
-<li><p><strong>check_types_on_connect</strong> (<em>str</em><em>, </em><em>optional</em>) -- Whether to check the callback parameter types against <cite>signature</cite> when
-connecting a new callback. This can also be provided at connection time using
-<cite>.connect(..., check_types=True)</cite>. By default, False.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="magicclass.ext.vtk.volume.WidgetGroup">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vtk.volume.</span></span><span class="sig-name descname"><span class="pre">WidgetGroup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vol</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#magicclass.ext.vtk.volume.Volume" title="magicclass.ext.vtk.volume.Volume"><span class="pre">magicclass.ext.vtk.volume.Volume</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vtk/volume.html#WidgetGroup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vtk.volume.WidgetGroup" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="py property">
-<dt class="sig sig-object py" id="magicclass.ext.vtk.volume.WidgetGroup.color">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">color</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="magicclass.widgets.html#magicclass.widgets.ColorEdit" title="magicclass.widgets.ColorEdit"><span class="pre">magicclass.widgets.ColorEdit</span></a></em><a class="headerlink" href="#magicclass.ext.vtk.volume.WidgetGroup.color" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="magicclass.ext.vtk.volume.WidgetGroup.iso_threshold">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">iso_threshold</span></span><em class="property"><span class="pre">:</span> <span class="pre">magicgui.widgets.FloatSlider</span></em><a class="headerlink" href="#magicclass.ext.vtk.volume.WidgetGroup.iso_threshold" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="magicclass.ext.vtk.volume.WidgetGroup.mode">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">mode</span></span><em class="property"><span class="pre">:</span> <span class="pre">magicgui.widgets.ComboBox</span></em><a class="headerlink" href="#magicclass.ext.vtk.volume.WidgetGroup.mode" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="magicclass.ext.vtk.volume.WidgetGroup.rendering">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">rendering</span></span><em class="property"><span class="pre">:</span> <span class="pre">magicgui.widgets.ComboBox</span></em><a class="headerlink" href="#magicclass.ext.vtk.volume.WidgetGroup.rendering" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="magicclass.ext.vtk.volume.WidgetGroup.volume">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">volume</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="#magicclass.ext.vtk.volume.Volume" title="magicclass.ext.vtk.volume.Volume"><span class="pre">magicclass.ext.vtk.volume.Volume</span></a></em><a class="headerlink" href="#magicclass.ext.vtk.volume.WidgetGroup.volume" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
 
 </dd></dl>
 

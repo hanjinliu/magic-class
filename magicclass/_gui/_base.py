@@ -49,14 +49,18 @@ from .mgui_ext import (
     _LabeledWidgetAction,
     mguiLike,
 )
-from .utils import get_parameters, define_callback, callable_to_classes
+from .utils import get_parameters, callable_to_classes
 from ._macro import GuiMacro
 
 from ..utils import (
     get_signature,
     iter_members,
-    extract_tooltip,
+    Tooltips,
     move_to_screen_center,
+    argcount,
+    is_instance_method,
+    method_as_getter,
+    eval_attribute,
     thread_worker,
 )
 from ..widgets import Separator, FreeWidget
@@ -70,12 +74,15 @@ if TYPE_CHECKING:
 
 
 class PopUpMode(Enum):
+    """Define how to popup FunctionGui."""
+
     popup = "popup"
     first = "first"
     last = "last"
     above = "above"
     below = "below"
     dock = "dock"
+    dialog = "dialog"
     parentlast = "parentlast"
 
 
@@ -113,6 +120,7 @@ class ErrorMode(Enum):
         """Wrap function with the error handler."""
         handler = self.get_handler()
 
+        @functools_wraps(func)
         def wrapped_func(*args, **kwargs):
             try:
                 out = func(*args, **kwargs)
@@ -120,12 +128,6 @@ class ErrorMode(Enum):
                 handler(e, parent=parent)
                 out = e
             return out
-
-        wrapped_func.__annotations__ = func.__annotations__
-        # wrapped_func.__name__ = func.__name__  # this is not allowed!
-        wrapped_func.__qualname__ = func.__qualname__
-        wrapped_func.__doc__ = func.__doc__
-        wrapped_func.__module__ = func.__module__
 
         return wrapped_func
 
@@ -588,65 +590,19 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
         text = obj.__name__.replace("_", " ")
         widget = self._component_class(name=obj.__name__, text=text, gui_only=True)
 
-        # Wrap function to deal with errors in a right way.
-        func = self._error_mode.wrap_handler(obj, parent=self)
-
-        # Signature must be updated like this. Otherwise, already wrapped member function
-        # will have signature with "self".
-        obj_sig = inspect.signature(obj)
-        func.__signature__ = obj_sig
+        func = _create_gui_method(self, obj)
 
         # Prepare a button or action
-        widget.tooltip = extract_tooltip(func)
+        widget.tooltip = Tooltips(func).desc
         widget._doc = func.__doc__
 
-        # This block enables instance methods in "bind" or "choices" of ValueWidget.
-        all_params: list[inspect.Parameter] = []
-        for param in func.__signature__.parameters.values():
-            if isinstance(param.annotation, _AnnotatedAlias):
-                # TODO: after magicgui supports pydantic, something needs update here.
-                param = MagicParameter.from_parameter(param)
-
-            if isinstance(param, MagicParameter):
-                _param = MagicParameter(
-                    name=param.name,
-                    default=param.default,
-                    annotation=split_annotated_type(param.annotation)[0],
-                    gui_options=param.options.copy(),
-                )
-                _arg_bind = _param.options.get("bind", None)
-                _arg_choices = _param.options.get("choices", None)
-
-                # If bound method is a class method, use self.method(widget).
-                if _is_instance_method(self, _arg_bind):
-                    _param.options["bind"] = _method_as_getter(self, _arg_bind)
-
-                # If a MagicFiled is bound, bind the value of the connected widget.
-                elif isinstance(_arg_bind, MagicField):
-                    _param.options["bind"] = _field_as_getter(self, _arg_bind)
-
-                # If choices are provided by a class method, use self.method(widget).
-                if _is_instance_method(self, _arg_choices):
-                    _param.options["choices"] = _method_as_getter(self, _arg_choices)
-
-            else:
-                _param = param
-
-            all_params.append(_param)
-
-        func.__signature__ = func.__signature__.replace(parameters=all_params)
         # Get the number of parameters except for empty widgets.
         # With these lines, "bind" method of magicgui works inside magicclass.
         fgui_classes = callable_to_classes(func)
         n_empty = len(
             [_wdg_cls for _wdg_cls in fgui_classes if _wdg_cls is EmptyWidget]
         )
-        nparams = _n_parameters(func) - n_empty
-
-        if isinstance(func.__signature__, MagicMethodSignature):
-            func.__signature__.additional_options = getattr(
-                obj_sig, "additional_options", {}
-            )
+        nparams = argcount(func) - n_empty
 
         has_preview = get_additional_option(func, "preview", None) is not None
 
@@ -680,19 +636,23 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
                 return out
 
         else:
-            _prep_func = _define_popup(self, obj, widget)
+            _prep_func = _define_popup(self, func, widget)
 
             def run_function():
                 mgui = _build_mgui(widget, func, self)
                 if mgui.call_count == 0 and len(mgui.called._slots) == 0:
                     _prep_func(mgui)
-                    if self._popup_mode not in (PopUpMode.popup, PopUpMode.dock):
+                    if self._popup_mode not in (
+                        PopUpMode.popup,
+                        PopUpMode.dock,
+                        PopUpMode.dialog,
+                    ):
                         mgui.label = ""
                         # to avoid name collision
                         mgui.name = f"mgui-{id(mgui._function)}"
                         mgui.margins = (0, 0, 0, 0)
                         title = Separator(
-                            orientation="horizontal", text=text, button=True
+                            orientation="horizontal", title=text, button=True
                         )
                         title.btn_text = "-"
                         # TODO: should remove mgui from self?
@@ -700,9 +660,9 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
                         mgui.insert(0, title)
 
                     if self._close_on_run and not mgui._auto_call:
-                        if self._popup_mode != PopUpMode.dock:
+                        if self._popup_mode not in (PopUpMode.dock, PopUpMode.dialog):
                             mgui.called.connect(mgui.hide)
-                        else:
+                        elif self._popup_mode == PopUpMode.dock:
                             # If FunctioGui is docked, we should close QDockWidget.
                             mgui.called.connect(lambda: mgui.parent.hide())
 
@@ -718,17 +678,19 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
                     else:
                         return None
 
-                if self._popup_mode != PopUpMode.dock:
+                if self._popup_mode not in (PopUpMode.dock, PopUpMode.dialog):
                     widget.mgui.show()
-                else:
+                elif self._popup_mode == PopUpMode.dock:
                     mgui.parent.show()  # show dock widget
+                else:
+                    mgui.exec_as_dialog()
 
                 return None
 
         widget.changed.connect(run_function)
 
         # If design is given, load the options.
-        widget.from_options(obj)
+        widget.from_options(func)
 
         # keybinding
         keybinding = get_additional_option(func, "keybinding", None)
@@ -751,7 +713,7 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
         """Iterate over all the child magic classes"""
         for child in self.__magicclass_children__:
             yield child
-            yield from child.__magicclass_children__
+            yield from child._iter_child_magicclasses()
 
 
 class BaseGui(MagicTemplate):
@@ -818,17 +780,11 @@ class ContainerLikeGui(BaseGui, mguiLike, MutableSequence):
         fld.name = fld.name or name
         action = fld.get_action(self)
 
-        if action.support_value:
+        if action.support_value and fld.record:
             # By default, set value function will be connected to the widget.
-            if fld.record:
-                getvalue = type(fld) is MagicField
-                f = value_widget_callback(self, action, name, getvalue=getvalue)
-                action.changed.connect(f)
-
-            # If the field has callbacks, connect it to the newly generated widget.
-            for callback in fld.callbacks:
-                # funcname = callback.__name__
-                action.changed.connect(define_callback(self, callback))
+            getvalue = type(fld) is MagicField
+            f = value_widget_callback(self, action, name, getvalue=getvalue)
+            action.changed.connect(f)
 
         return action
 
@@ -927,6 +883,62 @@ def _get_widget_name(widget: Widget):
     return widget.name
 
 
+def _create_gui_method(self: BaseGui, obj: MethodType):
+    func_sig = inspect.signature(obj)
+    # Method type cannot set __signature__ attribute.
+    @functools_wraps(obj)
+    def func(*args, **kwargs):
+        return obj(*args, **kwargs)
+
+    func.__signature__ = func_sig
+
+    # This block enables instance methods in "bind" or "choices" of ValueWidget.
+    all_params: list[inspect.Parameter] = []
+    for param in func.__signature__.parameters.values():
+        if isinstance(param.annotation, _AnnotatedAlias):
+            param = MagicParameter.from_parameter(param)
+
+        if isinstance(param, MagicParameter):
+            _param = MagicParameter(
+                name=param.name,
+                default=param.default,
+                annotation=split_annotated_type(param.annotation)[0],
+                gui_options=param.options.copy(),
+            )
+            _arg_bind = _param.options.get("bind", None)
+            _arg_choices = _param.options.get("choices", None)
+
+            # If bound method is a class method, use self.method(widget).
+            if isinstance(_arg_bind, str):
+                _arg_bind = eval_attribute(type(self), _arg_bind)
+
+            if is_instance_method(_arg_bind):
+                _param.options["bind"] = method_as_getter(self, _arg_bind)
+
+            # If a MagicFiled is bound, bind the value of the connected widget.
+            elif isinstance(_arg_bind, MagicField):
+                _param.options["bind"] = _arg_bind.as_remote_getter(self)
+
+            # If choices are provided by a class method, use self.method(widget).
+            if isinstance(_arg_choices, str):
+                _arg_choices = eval_attribute(type(self), _arg_choices)
+
+            if is_instance_method(_arg_choices):
+                _param.options["choices"] = method_as_getter(self, _arg_choices)
+
+        else:
+            _param = param
+
+        all_params.append(_param)
+
+    func.__signature__ = func.__signature__.replace(parameters=all_params)
+    if isinstance(func.__signature__, MagicMethodSignature):
+        func.__signature__.additional_options = getattr(
+            func_sig, "additional_options", {}
+        )
+    return func
+
+
 def _build_mgui(widget_: Action | PushButtonPlus, func: Callable, parent: BaseGui):
     if widget_.mgui is not None:
         return widget_.mgui
@@ -936,6 +948,15 @@ def _build_mgui(widget_: Action | PushButtonPlus, func: Callable, parent: BaseGu
             opt = sig.additional_options
         else:
             opt = {}
+
+        # confirmation
+        conf = opt.get("confirm", None)
+        if conf is not None:
+            func = _implement_confirmation(func, parent, **conf)
+
+        # Wrap function to deal with errors in a right way.
+        func = parent._error_mode.wrap_handler(func, parent=parent)
+
         call_button = opt.get("call_button", None)
         layout = opt.get("layout", "vertical")
         labels = opt.get("labels", True)
@@ -1037,11 +1058,6 @@ def wraps(template: Callable | inspect.Signature) -> Callable[[_C], _C]:
     return wrapper
 
 
-def _n_parameters(func: Callable):
-    """Count the number of parameters of a callable object."""
-    return len(inspect.signature(func).parameters)
-
-
 def _get_index(container: Container, widget_or_name: Widget | str) -> int:
     """
     Identical to container[widget_or_name], which sometimes doesn't work
@@ -1073,81 +1089,24 @@ def _child_that_has_widget(
     return child_instance
 
 
-_LOCALS = "<locals>."
-
-
-def _method_as_getter(self, getter: Callable):
-    qualname = getter.__qualname__
-    if _LOCALS in qualname:
-        qualname = qualname.split(_LOCALS)[-1]
-    *clsnames, funcname = qualname.split(".")
-    ins = self
-    self_cls = ins.__class__.__name__
-    if self_cls not in clsnames:
-        ns = ".".join(clsnames)
-        raise ValueError(
-            f"Method {funcname} is in namespace {ns}, so it is invisible "
-            f"from magicclass {self.__class__.__qualname__}"
-        )
-    i = clsnames.index(self_cls) + 1
-
-    for clsname in clsnames[i:]:
-        ins = getattr(ins, clsname)
-
-    def _func(w):
-        return getter(ins, w)
-
-    return _func
-
-
-def _field_as_getter(bgui: BaseGui, fld: MagicField):
-    """Called when a MagicField is used in Bound method."""
-    qualname = fld.parent_class.__qualname__
-    if _LOCALS in qualname:
-        qualname = qualname.split(_LOCALS)[-1]
-    clsnames = qualname.split(".")
-
-    def _func(w):
-        # First we have to know where (which instance) MagicField came from.
-        if bgui.__class__.__name__ not in clsnames:
-            ns = ".".join(clsnames)
-            raise ValueError(
-                f"Method {fld.name} is in namespace {ns}, so it is invisible "
-                f"from magicclass {bgui.__class__.__qualname__}"
-            )
-        i = clsnames.index(type(bgui).__name__) + 1
-        ins = bgui
-        for clsname in clsnames[i:]:
-            ins = getattr(ins, clsname, ins)
-
-        # Now, ins is an instance of parent_class.
-        # Extract correct widget from MagicField
-        _field_widget = fld.get_widget(ins)
-        if not hasattr(_field_widget, "value"):
-            raise TypeError(
-                f"MagicField {fld.name} does not return ValueWidget "
-                "thus cannot be used as a bound value."
-            )
-        return fld.as_getter(ins)(w)
-
-    return _func
-
-
-def _is_instance_method(self: MagicTemplate, func: Callable) -> bool:
-    # NOTE: following implementation is not compatible with @wraps
-    # if not callable(func):
-    #     return False
-    # classes = func.__qualname__.split(".")[:-1]
-    # return self.__class__.__name__ in classes
-    return isinstance(func, Callable) and _n_parameters(func) == 2
-
-
 def value_widget_callback(
-    gui: MagicTemplate, widget: ValueWidget, name: str, getvalue: bool = True
+    gui: MagicTemplate,
+    widget: ValueWidget,
+    name: str | list[str],
+    getvalue: bool = True,
 ):
     """Define a ValueWidget callback, including macro recording."""
-    sym_name = Symbol(name)
-    sym_value = Symbol("value")
+    if isinstance(name, str):
+        sym_name = Symbol(name)
+    else:
+        sym_name = Symbol(name[0])
+        for n in name[1:]:
+            sym_name = Expr(head=Head.getattr, args=[sym_name, n])
+
+    if getvalue:
+        sub = Expr(head=Head.getattr, args=[sym_name, Symbol("value")])  # name.value
+    else:
+        sub = sym_name
 
     def _set_value():
         if not widget.enabled or not gui.macro.active:
@@ -1156,11 +1115,6 @@ def value_widget_callback(
             return None
 
         gui.changed.emit(gui)
-
-        if getvalue:
-            sub = Expr(head=Head.getattr, args=[sym_name, sym_value])  # name.value
-        else:
-            sub = sym_name
 
         # Make an expression of
         # >>> x.name.value = value
@@ -1329,46 +1283,47 @@ def convert_attributes(cls: type[_T], hide: tuple[type, ...]) -> dict[str, Any]:
 
 def _define_popup(self: BaseGui, obj, widget: PushButtonPlus | Action):
     # deal with popup mode.
-    if self._popup_mode == PopUpMode.popup:
+    popup_mode = self._popup_mode
+    if popup_mode == PopUpMode.popup:
         # To be popped up correctly, window flags of FunctionGui should be
         # "windowFlags" and should appear at the center.
         def _prep(mgui: FunctionGui):
             mgui.native.setParent(self.native, mgui.native.windowFlags())
             move_to_screen_center(mgui.native)
 
-    elif self._popup_mode == PopUpMode.parentlast:
+    elif popup_mode == PopUpMode.parentlast:
 
         def _prep(mgui: FunctionGui):
             parent_self = self._search_parent_magicclass()
             parent_self.append(mgui)
 
-    elif self._popup_mode == PopUpMode.first:
+    elif popup_mode == PopUpMode.first:
 
         def _prep(mgui: FunctionGui):
             child_self = _child_that_has_widget(self, obj, widget)
             child_self.insert(0, mgui)
 
-    elif self._popup_mode == PopUpMode.last:
+    elif popup_mode == PopUpMode.last:
 
         def _prep(mgui: FunctionGui):
             child_self = _child_that_has_widget(self, obj, widget)
             child_self.append(mgui)
 
-    elif self._popup_mode == PopUpMode.above:
+    elif popup_mode == PopUpMode.above:
 
         def _prep(mgui: FunctionGui):
             child_self = _child_that_has_widget(self, obj, widget)
             i = _get_index(child_self, widget)
             child_self.insert(i, mgui)
 
-    elif self._popup_mode == PopUpMode.below:
+    elif popup_mode == PopUpMode.below:
 
         def _prep(mgui: FunctionGui):
             child_self = _child_that_has_widget(self, obj, widget)
             i = _get_index(child_self, widget)
             child_self.insert(i + 1, mgui)
 
-    elif self._popup_mode == PopUpMode.dock:
+    elif popup_mode == PopUpMode.dock:
         from .class_gui import MainWindowClassGui
 
         def _prep(mgui: FunctionGui):
@@ -1392,6 +1347,58 @@ def _define_popup(self: BaseGui, obj, widget: PushButtonPlus | Action):
                     mgui, name=_get_widget_name(widget), area="right"
                 )
 
+    elif popup_mode == PopUpMode.dialog:
+
+        def _prep(mgui: FunctionGui):
+            mgui.call_button.visible = False
+
     else:
-        raise RuntimeError
+        raise RuntimeError(popup_mode)
     return _prep
+
+
+def _implement_confirmation(
+    method: MethodType,
+    self: BaseGui,
+    text: str,
+    condition: Callable[[BaseGui], bool] | str,
+    callback: Callable[[str, BaseGui], None],
+):
+    """Implement confirmation callback to a method."""
+    sig = inspect.signature(method)
+
+    @wraps(method)
+    def _method(*args, **kwargs):
+        if self[method.__name__].running:
+            arguments = sig.bind(*args, **kwargs)
+            arguments.apply_defaults()
+            all_args = arguments.arguments
+            all_args.update(self=self)
+            need_confirmation = False
+            if isinstance(condition, str):
+                try:
+                    need_confirmation = eval(condition, {}, all_args)
+                except Exception as e:
+                    msg = e.args[0]
+                    e.args = (
+                        f"Exception happened on evaluating condition {condition!r}.\n"
+                        f"{type(e).__name__}: {msg}"
+                    )
+                    raise e
+            elif callable(condition):
+                need_confirmation = condition(self)
+            else:
+                warnings.warn(
+                    f"Condition {condition} should be callable or string but got type "
+                    f"{type(condition)}. No confirmation was executed.",
+                    UserWarning,
+                )
+            if need_confirmation:
+                callback(text.format(**all_args), self)
+
+        return method(*args, **kwargs)
+
+    if hasattr(method, "__signature__"):
+        _method.__signature__ = method.__signature__
+
+    return _method

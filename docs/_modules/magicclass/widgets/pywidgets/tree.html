@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.widgets.pywidgets.tree &mdash; magic-class 0.5.21.dev0 documentation</title>
+  <title>magicclass.widgets.pywidgets.tree &mdash; magic-class 0.6.4.dev1 documentation</title>
       <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.5.21.dev0
+                0.6.4.dev1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
@@ -40,17 +40,15 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../quick_start.html">Quick Start</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../options.html">Options in magic-class</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../nest.html">Nest magic-classes</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../use_field.html">Use Fields in magic-class</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../use_wraps.html">Call Parent Methods from its Child</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../use_bind.html">Binding Values to Arguments</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../keybinding.html">Define Custom Keybindings</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../customize_macro.html">Customize Macro Recording</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../containers.html">Container Variations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../class_inheritance.html">Inherit Magic Class</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../special_methods.html">Special Attributes in Magic class</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../api.html">API References</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../chap_basics.html">Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../chap_make_better.html">Make Your GUI Better</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../chap_data_vis.html">Data Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../chap_advanced.html">Advanced Topics</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../best_practice.html">Best Practice</a></li>
 </ul>
 
         </div>
@@ -87,7 +85,7 @@
 <span class="c1"># WIP!</span>
 
 
-<div class="viewcode-block" id="DictTreeWidget"><a class="viewcode-back" href="../../../../magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.tree.DictTreeWidget">[docs]</a><span class="k">class</span> <span class="nc">DictTreeWidget</span><span class="p">(</span><span class="n">BaseWidget</span><span class="p">,</span> <span class="n">MutableMapping</span><span class="p">):</span>
+<div class="viewcode-block" id="DictTreeWidget"><a class="viewcode-back" href="../../../../apidoc/magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.tree.DictTreeWidget">[docs]</a><span class="k">class</span> <span class="nc">DictTreeWidget</span><span class="p">(</span><span class="n">BaseWidget</span><span class="p">,</span> <span class="n">MutableMapping</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
@@ -147,13 +145,13 @@
     <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dict</span><span class="p">)</span>
 
-<div class="viewcode-block" id="DictTreeWidget.keys"><a class="viewcode-back" href="../../../../magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.tree.DictTreeWidget.keys">[docs]</a>    <span class="k">def</span> <span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="DictTreeWidget.keys"><a class="viewcode-back" href="../../../../apidoc/magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.tree.DictTreeWidget.keys">[docs]</a>    <span class="k">def</span> <span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the view of dictionary keys.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="DictTreeWidget.values"><a class="viewcode-back" href="../../../../magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.tree.DictTreeWidget.values">[docs]</a>    <span class="k">def</span> <span class="nf">values</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DictValueView</span><span class="p">:</span>
+<div class="viewcode-block" id="DictTreeWidget.values"><a class="viewcode-back" href="../../../../apidoc/magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.tree.DictTreeWidget.values">[docs]</a>    <span class="k">def</span> <span class="nf">values</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DictValueView</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the view of dictionary values as Python objects.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -165,21 +163,21 @@
     <span class="c1">#     &quot;&quot;&quot;</span>
     <span class="c1">#     return DictItemView(self._treewidget)</span>
 
-<div class="viewcode-block" id="DictTreeWidget.update"><a class="viewcode-back" href="../../../../magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.tree.DictTreeWidget.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
+<div class="viewcode-block" id="DictTreeWidget.update"><a class="viewcode-back" href="../../../../apidoc/magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.tree.DictTreeWidget.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Update the dictionary contents.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="bp">self</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span></div>
 
-<div class="viewcode-block" id="DictTreeWidget.clear"><a class="viewcode-back" href="../../../../magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.tree.DictTreeWidget.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="DictTreeWidget.clear"><a class="viewcode-back" href="../../../../apidoc/magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.tree.DictTreeWidget.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Clear dictionary contents.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_treewidget</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="DictTreeWidget.pop"><a class="viewcode-back" href="../../../../magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.tree.DictTreeWidget.pop">[docs]</a>    <span class="k">def</span> <span class="nf">pop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<div class="viewcode-block" id="DictTreeWidget.pop"><a class="viewcode-back" href="../../../../apidoc/magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.tree.DictTreeWidget.pop">[docs]</a>    <span class="k">def</span> <span class="nf">pop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Pop a dictionary content.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -188,15 +186,15 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_treewidget</span><span class="o">.</span><span class="n">removeRow</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">out</span></div>
 
-<div class="viewcode-block" id="DictTreeWidget.get"><a class="viewcode-back" href="../../../../magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.tree.DictTreeWidget.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="DictTreeWidget.get"><a class="viewcode-back" href="../../../../apidoc/magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.tree.DictTreeWidget.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="PyTreeWidget"><a class="viewcode-back" href="../../../../magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.tree.PyTreeWidget">[docs]</a><span class="k">class</span> <span class="nc">PyTreeWidget</span><span class="p">(</span><span class="n">ContextMenuMixin</span><span class="p">,</span> <span class="n">QTreeWidget</span><span class="p">):</span>
-<div class="viewcode-block" id="PyTreeWidget.item"><a class="viewcode-back" href="../../../../magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.tree.PyTreeWidget.item">[docs]</a>    <span class="k">def</span> <span class="nf">item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">column</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PyTreeWidgetItem</span><span class="p">:</span>
+<div class="viewcode-block" id="PyTreeWidget"><a class="viewcode-back" href="../../../../apidoc/magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.tree.PyTreeWidget">[docs]</a><span class="k">class</span> <span class="nc">PyTreeWidget</span><span class="p">(</span><span class="n">ContextMenuMixin</span><span class="p">,</span> <span class="n">QTreeWidget</span><span class="p">):</span>
+<div class="viewcode-block" id="PyTreeWidget.item"><a class="viewcode-back" href="../../../../apidoc/magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.tree.PyTreeWidget.item">[docs]</a>    <span class="k">def</span> <span class="nf">item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">column</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PyTreeWidgetItem</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="PyTreeWidget.itemAt"><a class="viewcode-back" href="../../../../magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.tree.PyTreeWidget.itemAt">[docs]</a>    <span class="k">def</span> <span class="nf">itemAt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">p</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PyTreeWidgetItem</span><span class="p">:</span>
+<div class="viewcode-block" id="PyTreeWidget.itemAt"><a class="viewcode-back" href="../../../../apidoc/magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.tree.PyTreeWidget.itemAt">[docs]</a>    <span class="k">def</span> <span class="nf">itemAt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">p</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PyTreeWidgetItem</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">itemAt</span><span class="p">(</span><span class="o">*</span><span class="n">p</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">:</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -207,13 +205,13 @@
 <span class="n">unbound</span> <span class="o">=</span> <span class="nb">object</span><span class="p">()</span>
 
 
-<div class="viewcode-block" id="PyTreeWidgetItem"><a class="viewcode-back" href="../../../../magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.tree.PyTreeWidgetItem">[docs]</a><span class="k">class</span> <span class="nc">PyTreeWidgetItem</span><span class="p">(</span><span class="n">PyObjectBound</span><span class="p">,</span> <span class="n">QTreeWidgetItem</span><span class="p">):</span>
+<div class="viewcode-block" id="PyTreeWidgetItem"><a class="viewcode-back" href="../../../../apidoc/magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.tree.PyTreeWidgetItem">[docs]</a><span class="k">class</span> <span class="nc">PyTreeWidgetItem</span><span class="p">(</span><span class="n">PyObjectBound</span><span class="p">,</span> <span class="n">QTreeWidgetItem</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setObject</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="DictValueView"><a class="viewcode-back" href="../../../../magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.tree.DictValueView">[docs]</a><span class="k">class</span> <span class="nc">DictValueView</span><span class="p">:</span>
+<div class="viewcode-block" id="DictValueView"><a class="viewcode-back" href="../../../../apidoc/magicclass.widgets.pywidgets.html#magicclass.widgets.pywidgets.tree.DictValueView">[docs]</a><span class="k">class</span> <span class="nc">DictValueView</span><span class="p">:</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">:</span> <span class="n">PyTreeWidget</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="n">widget</span>
 

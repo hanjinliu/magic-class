@@ -1,90 +1,48 @@
 from __future__ import annotations
-from typing import Callable, Generic, Sequence, TypeVar, overload
-from typing_extensions import ParamSpec
+from typing import Callable, Generic, Tuple, TypeVar, overload
 import weakref
 import vedo
 import numpy as np
 from .const import Representation
+from ...fields import vfield, HasFields
+from ...types import Color
 
 _VtkType = TypeVar("_VtkType", bound=vedo.BaseActor)
-_P = ParamSpec("_P")
-_L = TypeVar("_L", bound="VtkComponent")
-_V = TypeVar("_V")
 
 
-class VtkProperty(property, Generic[_L, _V]):
+class VtkComponent(HasFields):
+    _vtk_type: type[_VtkType] | Callable[..., _VtkType]
+
     def __init__(
-        self,
-        vedo_fname: str | None = None,
-        vtk_fname: str | None = None,
-        converter: type | None = None,
-        doc: str | None = None,
-        **kwargs,
+        self, *args, _parent: vedo.Plotter = None, _emit: bool = True, **kwargs
     ):
-        if converter is None:
-            converter = lambda x: x
-        self._converter = converter
-
-        if vedo_fname is not None:
-            fget, fset = self._from_vedo(vedo_fname, **kwargs)
-        else:
-            fget, fset = self._from_vtk(f"Get{vtk_fname}", f"Set{vtk_fname}", **kwargs)
-
-        super().__init__(fget, fset, doc=doc)
-
-    def _from_vedo(self, vedo_fname: str, **kwargs):
-        # getter function
-        def fget(x: _L) -> _V:
-            return self._converter(getattr(x._obj, vedo_fname)())
-
-        # setter function
-        def fset(x: _L, value: _V) -> None:
-            getattr(x._obj, vedo_fname)(self._converter(value), **kwargs)
-            x._update()
-
-        return fget, fset
-
-    def _from_vtk(self, fget_name: str, fset_name: str, **kwargs):
-        # getter function
-        def fget(x: _L) -> _V:
-            return self._converter(getattr(x._obj.GetProperty(), fget_name)())
-
-        # setter function
-        def fset(x: _L, value: _V) -> None:
-            getattr(x._obj.GetProperty(), fset_name)(self._converter(value), **kwargs)
-            x._update()
-
-        return fget, fset
-
-
-class VtkComponent:
-    _vtk_type: type[_VtkType] | Callable[_P, _VtkType]
-
-    def __init__(self, *args, _parent: vedo.Plotter = None, **kwargs):
         if self._vtk_type is None:
             raise TypeError("Base VTK type is unknown.")
         self._obj = self._vtk_type(*args, **kwargs)
         self._parent_ref = weakref.ref(_parent)
-
-        self._set_properties()
-
-    def _set_properties(self):
-        pass
+        if _emit:
+            self.widgets.emit_all()
 
     @overload
     def __init_subclass__(cls, base: type[_VtkType] = None) -> None:  # noqa
         ...
 
     @overload
-    def __init_subclass__(cls, base: Callable[_P, _VtkType] = None) -> None:  # noqa
+    def __init_subclass__(cls, base: Callable[..., _VtkType] = None) -> None:  # noqa
         ...
 
     def __init_subclass__(cls, base=None) -> None:
         cls._vtk_type = base
 
-    visible: VtkProperty[VtkComponent, bool] = VtkProperty(
-        vtk_fname="Visibility", converter=bool, doc="Visibility of the object."
-    )
+    visible = vfield(True, name="visibility")
+
+    @visible.connect
+    def _on_visible_change(self, v: bool):
+        if v:
+            self._obj.on()
+        else:
+            self._obj.off()
+        self._update()
 
     def _update(self):
         self._parent_ref().window.Render()
@@ -94,43 +52,101 @@ class VtkComponent:
 
 
 class Points(VtkComponent, base=vedo.Points):
-    # fmt: off
-    color: VtkProperty[Points, np.ndarray] = VtkProperty("color", doc="Point color.")  # noqa
-    point_size: VtkProperty[Points, float] = VtkProperty(vtk_fname="PointSize", converter=float, doc="Size of points.")  # noqa
-    spherical: VtkProperty[Points, float] = VtkProperty(vtk_fname="RenderPointsAsSpheres", converter=float, doc="Render points to look spherical")  # noqa
-    occlusion: VtkProperty[Points, float] = VtkProperty("occlusion", doc="Occlusion strength.")  # noqa
-    pos: VtkProperty[Points, Sequence[float]] = VtkProperty("pos", doc="position the points.")  # noqa
-    scale: VtkProperty[Points, float] = VtkProperty("scale", absolute=True, doc="scale of the layer.")  # noqa
-    # fmt: on
+    _obj: vedo.Points
+    color = vfield(Color)
+    size = vfield(float)
+    spherical = vfield(False)
+    occlusion = vfield(float)
+    pos = vfield(Tuple[float, float, float])
+    scale = vfield(float)
+
+    @color.connect
+    def _on_color_change(self, v):
+        self._obj.color(v[:3])
+        self._update()
+
+    @size.connect
+    def _on_size_change(self, v):
+        self._obj.PointSize(v)
+        self._update()
+
+    @spherical.connect
+    def _on_spherical_change(self, v):
+        self._obj.RenderPointsAsSpheres(v)
+        self._update()
+
+    @occlusion.connect
+    def _on_occlusion_change(self, v):
+        self._obj.occlusion(v)
+        self._update()
+
+    @pos.connect
+    def _on_pos_change(self, v):
+        self._obj.pos(*v)
+        self._update()
+
+    @scale.connect
+    def _on_scale_change(self, v):
+        self._obj.scale(v, absolute=True)
+        self._update()
 
 
-class Mesh(Points, base=vedo.Mesh):
-    def _set_properties(self):
-        super()._set_properties()
-        self._representation = Representation.surface
+class Mesh(VtkComponent, base=vedo.Mesh):
+    _obj: vedo.Mesh
 
-    # fmt: off
-    linewidth: VtkProperty[Mesh, float] = VtkProperty("lineWidth", doc="Line width of edges.")  # noqa
-    backface_color: VtkProperty[Mesh, np.ndarray] = VtkProperty("backColor", doc="Color of the backside of polygons.")  # noqa
-    frontface_culling: VtkProperty[Points, bool] = VtkProperty(vtk_fname="FrontfaceCulling", converter=bool, doc="Culling of front face.")  # noqa
-    backface_culling: VtkProperty[Points, bool] = VtkProperty(vtk_fname="BackfaceCulling", converter=bool, doc="Culling of back face.")  # noqa
-    lines_as_tubes: VtkProperty[Points, bool] = VtkProperty(vtk_fname="RenderLinesAsTubes", converter=bool, doc="Render mesh lines as tubes.")  # noqa
-    # fmt: on
+    color = vfield(Color)
+    occlusion = vfield(0.0)
+    scale = vfield(1.0)
+    representation = vfield(Representation.surface)
+    linewidth = vfield(0.0, options={"min": 0.0, "max": 10})
+    backface_color = vfield(Color)
+    frontface_culling = vfield(False)
+    backface_culling = vfield(False)
+    lines_as_tubes = vfield(False)
 
-    @property
-    def representation(self) -> Representation:
-        """
-        Representation mode of mesh.
+    @color.connect
+    def _on_color_change(self, v):
+        self._obj.color([v * 255 for v in v[:3]])
+        self._update()
 
-        One of "points", "wireframe", "surface".
-        """
-        return self._representation.name
+    @occlusion.connect
+    def _on_occlusion_change(self, v):
+        self._obj.occlusion(v)
+        self._update()
 
-    @representation.setter
-    def representation(self, value) -> None:
-        rep: Representation = getattr(Representation, value)
-        self._obj.property.SetRepresentation(rep.value)
-        self._representation = rep
+    @scale.connect
+    def _on_scale_change(self, v):
+        self._obj.scale(v, absolute=True)
+        self._update()
+
+    @representation.connect
+    def _on_representation_change(self, v: Representation) -> None:
+        self._obj.property.SetRepresentation(v.value)
+        self._update()
+
+    @linewidth.connect
+    def _on_linewidth_change(self, v):
+        self._obj.lineWidth(v)
+        self._update()
+
+    @backface_color.connect
+    def _on_backface_color_change(self, v):
+        self._obj.backColor([v * 255 for v in v[:3]])
+        self._update()
+
+    @frontface_culling.connect
+    def _on_frontface_culling_change(self, v):
+        self._obj.frontFaceCulling(v)
+        self._update()
+
+    @backface_culling.connect
+    def _on_backface_culling_change(self, v):
+        self._obj.backFaceCulling(v)
+        self._update()
+
+    @lines_as_tubes.connect
+    def _on_lines_as_tubes_change(self, v):
+        self._obj.renderLinesAsTubes(v)
         self._update()
 
 
@@ -161,7 +177,5 @@ class Text(Mesh, base=vedo.Text3D): ...
 def get_object_type(name: str) -> type[VtkComponent]:
     t = globals().get(name, None)
     if not isinstance(t, (type, Generic)):
-        raise ValueError(f"Object type {t} not found.")
-    elif not issubclass(t, VtkComponent):
         raise ValueError(f"Object type {t} not found.")
     return t

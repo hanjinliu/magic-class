@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.ext.vtk.volume &mdash; magic-class 0.6.2.dev1 documentation</title>
+  <title>magicclass.ext.vtk.volume &mdash; magic-class 0.6.4 documentation</title>
       <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.2.dev1
+                0.6.4
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
@@ -43,27 +43,12 @@
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../chap_basics.html">Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../chap_make_better.html">Make Your GUI Better</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../chap_data_vis.html">Data Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../chap_advanced.html">Advanced Topics</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../use_wraps.html">Call Parent Methods from its Child</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../use_bind.html">Binding Values to Arguments</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../use_choices.html">Set Choices Dynamically</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../use_preview.html">Add Preview Functionalities</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../use_worker.html">Multi-threading</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../additional_types.html">Additional types</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../containers.html">Container Variations</a></li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../matplotlib.html">Use Matplotlib Figure</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../pyqtgraph.html">Use PyQtGraph Canvas</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../vispy.html">Vispy Canvas</a></li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../freewidget.html">Convert QtWidgets into a Magic Widget</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../keybinding.html">Define Custom Keybindings</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../customize_macro.html">Customize Macro Recording</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../class_inheritance.html">Inherit Magic Class</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../api.html">API References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../best_practice.html">Best Practice</a></li>
 </ul>
 
         </div>
@@ -93,77 +78,24 @@
   <h1>Source code for magicclass.ext.vtk.volume</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span>
-<span class="kn">import</span> <span class="nn">weakref</span>
+<span class="kn">import</span> <span class="nn">vtk</span>
 <span class="kn">import</span> <span class="nn">vedo</span>
+<span class="kn">from</span> <span class="nn">vedo.utils</span> <span class="kn">import</span> <span class="n">numpy2vtk</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">cached_property</span>
-<span class="kn">from</span> <span class="nn">psygnal</span> <span class="kn">import</span> <span class="n">Signal</span><span class="p">,</span> <span class="n">SignalGroup</span>
-<span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">FloatSlider</span><span class="p">,</span> <span class="n">ComboBox</span>
-<span class="kn">from</span> <span class="nn">magicclass.widgets</span> <span class="kn">import</span> <span class="n">ColorEdit</span>
+<span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">FloatSlider</span>
 
-<span class="kn">from</span> <span class="nn">.components</span> <span class="kn">import</span> <span class="n">VtkProperty</span><span class="p">,</span> <span class="n">VtkComponent</span>
+<span class="kn">from</span> <span class="nn">.components</span> <span class="kn">import</span> <span class="n">VtkComponent</span>
 <span class="kn">from</span> <span class="nn">.const</span> <span class="kn">import</span> <span class="n">Mode</span><span class="p">,</span> <span class="n">Rendering</span>
 
-
-<div class="viewcode-block" id="VolumeSignalGroup"><a class="viewcode-back" href="../../../../magicclass.ext.vtk.html#magicclass.ext.vtk.volume.VolumeSignalGroup">[docs]</a><span class="k">class</span> <span class="nc">VolumeSignalGroup</span><span class="p">(</span><span class="n">SignalGroup</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Signal group for a volume.&quot;&quot;&quot;</span>
-
-    <span class="n">color</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">(</span><span class="nb">tuple</span><span class="p">)</span>
-    <span class="n">mode</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
-    <span class="n">rendering</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
-    <span class="n">iso_threshold</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span></div>
+<span class="kn">from</span> <span class="nn">...fields</span> <span class="kn">import</span> <span class="n">vfield</span>
+<span class="kn">from</span> <span class="nn">...widgets</span> <span class="kn">import</span> <span class="n">FloatRangeSlider</span>
+<span class="kn">from</span> <span class="nn">...types</span> <span class="kn">import</span> <span class="n">Color</span>
 
 
-<div class="viewcode-block" id="WidgetGroup"><a class="viewcode-back" href="../../../../magicclass.ext.vtk.html#magicclass.ext.vtk.volume.WidgetGroup">[docs]</a><span class="k">class</span> <span class="nc">WidgetGroup</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vol</span><span class="p">:</span> <span class="n">Volume</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_vol</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">vol</span><span class="p">)</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">volume</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Volume</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vol</span><span class="p">()</span>
-
-    <span class="nd">@cached_property</span>
-    <span class="k">def</span> <span class="nf">color</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ColorEdit</span><span class="p">:</span>
-        <span class="n">coloredit</span> <span class="o">=</span> <span class="n">ColorEdit</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">volume</span><span class="o">.</span><span class="n">color</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;color&quot;</span><span class="p">)</span>
-        <span class="n">coloredit</span><span class="o">.</span><span class="n">changed</span><span class="o">.</span><span class="n">connect_setattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">volume</span><span class="p">,</span> <span class="s2">&quot;color&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">volume</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">rendering</span><span class="o">.</span><span class="n">connect_setattr</span><span class="p">(</span><span class="n">coloredit</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">coloredit</span>
-
-    <span class="nd">@cached_property</span>
-    <span class="k">def</span> <span class="nf">mode</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComboBox</span><span class="p">:</span>
-        <span class="n">cbox</span> <span class="o">=</span> <span class="n">ComboBox</span><span class="p">(</span><span class="n">choices</span><span class="o">=</span><span class="n">Mode</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">Mode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">volume</span><span class="o">.</span><span class="n">mode</span><span class="p">),</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;mode&quot;</span><span class="p">)</span>
-
-        <span class="nd">@cbox</span><span class="o">.</span><span class="n">changed</span><span class="o">.</span><span class="n">connect</span>
-        <span class="k">def</span> <span class="nf">_</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">volume</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="n">Mode</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">volume</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">connect_setattr</span><span class="p">(</span><span class="n">cbox</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">cbox</span>
-
-    <span class="nd">@cached_property</span>
-    <span class="k">def</span> <span class="nf">rendering</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComboBox</span><span class="p">:</span>
-        <span class="n">cbox</span> <span class="o">=</span> <span class="n">ComboBox</span><span class="p">(</span>
-            <span class="n">choices</span><span class="o">=</span><span class="n">Rendering</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">volume</span><span class="o">.</span><span class="n">rendering</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;rendering&quot;</span>
-        <span class="p">)</span>
-        <span class="n">cbox</span><span class="o">.</span><span class="n">changed</span><span class="o">.</span><span class="n">connect_setattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">volume</span><span class="p">,</span> <span class="s2">&quot;rendering&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">volume</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">rendering</span><span class="o">.</span><span class="n">connect_setattr</span><span class="p">(</span><span class="n">cbox</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">cbox</span>
-
-    <span class="nd">@cached_property</span>
-    <span class="k">def</span> <span class="nf">iso_threshold</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FloatSlider</span><span class="p">:</span>
-        <span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">volume</span><span class="o">.</span><span class="n">contrast_limits</span>
-        <span class="n">sl</span> <span class="o">=</span> <span class="n">FloatSlider</span><span class="p">(</span>
-            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;iso threshold&quot;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="n">vmin</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="n">vmax</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">volume</span><span class="o">.</span><span class="n">iso_threshold</span>
-        <span class="p">)</span>
-        <span class="n">sl</span><span class="o">.</span><span class="n">changed</span><span class="o">.</span><span class="n">connect_setattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">volume</span><span class="p">,</span> <span class="s2">&quot;iso_threshold&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">volume</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">iso_threshold</span><span class="o">.</span><span class="n">connect_setattr</span><span class="p">(</span><span class="n">sl</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">sl</span></div>
-
-
-<div class="viewcode-block" id="split_rgba"><a class="viewcode-back" href="../../../../magicclass.ext.vtk.html#magicclass.ext.vtk.volume.split_rgba">[docs]</a><span class="k">def</span> <span class="nf">split_rgba</span><span class="p">(</span><span class="n">col</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="nb">float</span><span class="p">]:</span>
+<div class="viewcode-block" id="split_rgba"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vtk.html#magicclass.ext.vtk.volume.split_rgba">[docs]</a><span class="k">def</span> <span class="nf">split_rgba</span><span class="p">(</span><span class="n">col</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="nb">float</span><span class="p">]:</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">col</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
-            <span class="n">rgb</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="n">col</span><span class="p">,</span> <span class="mf">1.0</span>
+            <span class="n">rgb</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="n">col</span><span class="p">,</span> <span class="mi">255</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">rgb</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="n">col</span><span class="p">[:</span><span class="mi">3</span><span class="p">],</span> <span class="n">col</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
     <span class="k">elif</span> <span class="n">col</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">):</span>
@@ -177,26 +109,23 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Informal color code: </span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">rgb</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="n">col</span><span class="p">,</span> <span class="mf">1.0</span>
-    <span class="k">return</span> <span class="n">rgb</span><span class="p">,</span> <span class="n">alpha</span></div>
+        <span class="n">rgb</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="n">col</span><span class="p">,</span> <span class="mi">255</span>
+    <span class="k">return</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">c</span> <span class="o">*</span> <span class="mi">255</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">rgb</span><span class="p">],</span> <span class="n">alpha</span> <span class="o">*</span> <span class="mi">255</span></div>
 
 
-<div class="viewcode-block" id="Volume"><a class="viewcode-back" href="../../../../magicclass.ext.vtk.html#magicclass.ext.vtk.volume.Volume">[docs]</a><span class="k">class</span> <span class="nc">Volume</span><span class="p">(</span><span class="n">VtkComponent</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="n">vedo</span><span class="o">.</span><span class="n">Volume</span><span class="p">):</span>
+<div class="viewcode-block" id="Volume"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vtk.html#magicclass.ext.vtk.volume.Volume">[docs]</a><span class="k">class</span> <span class="nc">Volume</span><span class="p">(</span><span class="n">VtkComponent</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="n">vedo</span><span class="o">.</span><span class="n">Volume</span><span class="p">):</span>
     <span class="n">_obj</span><span class="p">:</span> <span class="n">vedo</span><span class="o">.</span><span class="n">Volume</span>
-    <span class="n">events</span> <span class="o">=</span> <span class="n">VolumeSignalGroup</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">_parent</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">_parent</span><span class="o">=</span><span class="n">_parent</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">_parent</span><span class="o">=</span><span class="n">_parent</span><span class="p">,</span> <span class="n">_emit</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_current_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_color</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_alpha</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_rendering</span> <span class="o">=</span> <span class="n">Rendering</span><span class="o">.</span><span class="n">composite</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_mode</span> <span class="o">=</span> <span class="n">Mode</span><span class="o">.</span><span class="n">volume</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_contrast_limits</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_iso_threshold</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_contrast_limits</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rendering</span> <span class="o">=</span> <span class="n">Rendering</span><span class="o">.</span><span class="n">composite</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="n">Mode</span><span class="o">.</span><span class="n">volume</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">widgets</span> <span class="o">=</span> <span class="n">WidgetGroup</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">contrast_limits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lims</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">iso_threshold</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_lims</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">emit_all</span><span class="p">()</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
@@ -204,78 +133,99 @@
 
     <span class="nd">@data</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">_update</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cache_lims</span><span class="p">()</span>
+        <span class="n">vimg</span> <span class="o">=</span> <span class="n">vtk</span><span class="o">.</span><span class="n">vtkImageData</span><span class="p">()</span>
+        <span class="n">varr</span> <span class="o">=</span> <span class="n">numpy2vtk</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="s2">&quot;F&quot;</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">varr</span><span class="o">.</span><span class="n">SetName</span><span class="p">(</span><span class="s2">&quot;input_scalars&quot;</span><span class="p">)</span>
+        <span class="n">vimg</span><span class="o">.</span><span class="n">SetDimensions</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="n">vimg</span><span class="o">.</span><span class="n">GetPointData</span><span class="p">()</span><span class="o">.</span><span class="n">AddArray</span><span class="p">(</span><span class="n">varr</span><span class="p">)</span>
+        <span class="n">vimg</span><span class="o">.</span><span class="n">GetPointData</span><span class="p">()</span><span class="o">.</span><span class="n">SetActiveScalars</span><span class="p">(</span><span class="n">varr</span><span class="o">.</span><span class="n">GetName</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">_update</span><span class="p">(</span><span class="n">vimg</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_actor</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">v</span>
 
-    <span class="c1"># fmt: off</span>
-    <span class="n">shade</span><span class="p">:</span> <span class="n">VtkProperty</span><span class="p">[</span><span class="n">Volume</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="n">VtkProperty</span><span class="p">(</span><span class="n">vtk_fname</span><span class="o">=</span><span class="s2">&quot;Shade&quot;</span><span class="p">,</span> <span class="n">converter</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">&quot;Turn on/off shading.&quot;</span><span class="p">)</span>  <span class="c1"># noqa</span>
-    <span class="n">jittering</span><span class="p">:</span> <span class="n">VtkProperty</span><span class="p">[</span><span class="n">Volume</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="n">VtkProperty</span><span class="p">(</span><span class="s2">&quot;jittering&quot;</span><span class="p">,</span> <span class="n">converter</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">&quot;Turn on/off jittering.&quot;</span><span class="p">)</span>  <span class="c1"># noqa</span>
-    <span class="c1"># fmt: on</span>
+    <span class="k">def</span> <span class="nf">_cache_lims</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lims</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">contrast_limits</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lims</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">contrast_limits</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lims</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">iso_threshold</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lims</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">iso_threshold</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lims</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">color</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Color of the volume.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_color</span>
+    <span class="n">color</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="n">Color</span><span class="p">)</span>
+    <span class="n">mode</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="n">Mode</span><span class="o">.</span><span class="n">volume</span><span class="p">)</span>
+    <span class="n">rendering</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="n">Rendering</span><span class="o">.</span><span class="n">mip</span><span class="p">)</span>
+    <span class="n">iso_threshold</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">widget_type</span><span class="o">=</span><span class="n">FloatSlider</span><span class="p">)</span>
+    <span class="n">contrast_limits</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">widget_type</span><span class="o">=</span><span class="n">FloatRangeSlider</span><span class="p">)</span>
+    <span class="n">visible</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;visibility&quot;</span><span class="p">)</span>
 
-    <span class="nd">@color</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">color</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">col</span><span class="p">):</span>
+    <span class="nd">@visible</span><span class="o">.</span><span class="n">connect</span>
+    <span class="k">def</span> <span class="nf">_on_visible_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">v</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_current_obj</span><span class="o">.</span><span class="n">on</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_current_obj</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update</span><span class="p">()</span>
+
+    <span class="nd">@color</span><span class="o">.</span><span class="n">connect</span>
+    <span class="k">def</span> <span class="nf">_on_color_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">col</span><span class="p">):</span>
         <span class="n">rgb</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="n">split_rgba</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">color</span><span class="p">(</span>
-            <span class="n">rgb</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_contrast_limits</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">vmax</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_contrast_limits</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="p">)</span>
-        <span class="c1"># self._obj.alpha(alpha)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_color</span> <span class="o">=</span> <span class="n">rgb</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_update_actor</span><span class="p">()</span>
+        <span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">contrast_limits</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">rgb</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">vmax</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">alpha</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="n">alpha</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_cmap</span><span class="p">()</span>
 
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">rendering</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Rendering mode of the volume.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rendering</span><span class="o">.</span><span class="n">name</span>
+    <span class="nd">@rendering</span><span class="o">.</span><span class="n">connect</span>
+    <span class="k">def</span> <span class="nf">_on_rendering_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n">Rendering</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">mode</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_cmap</span><span class="p">()</span>
 
-    <span class="nd">@rendering</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">rendering</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
-        <span class="n">r</span><span class="p">:</span> <span class="n">Rendering</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">Rendering</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">mode</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_rendering</span> <span class="o">=</span> <span class="n">r</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_update_actor</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">iso_threshold</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Threshold value to generate isosurface.</span>
-
-<span class="sd">        This property only has effect on &quot;iso&quot; and &quot;wireframe&quot; rendering.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iso_threshold</span>
-
-    <span class="nd">@iso_threshold</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">iso_threshold</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_iso_threshold</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mode</span> <span class="ow">in</span> <span class="p">(</span><span class="n">Mode</span><span class="o">.</span><span class="n">iso</span><span class="p">,</span> <span class="n">Mode</span><span class="o">.</span><span class="n">wireframe</span><span class="p">):</span>
+    <span class="nd">@iso_threshold</span><span class="o">.</span><span class="n">connect</span>
+    <span class="k">def</span> <span class="nf">_on_iso_threshold_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="ow">in</span> <span class="p">(</span><span class="n">Mode</span><span class="o">.</span><span class="n">iso</span><span class="p">,</span> <span class="n">Mode</span><span class="o">.</span><span class="n">wireframe</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_update_actor</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">iso_threshold</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+
+    <span class="nd">@mode</span><span class="o">.</span><span class="n">connect</span>
+    <span class="k">def</span> <span class="nf">_on_mode_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_actor</span><span class="p">()</span>
+
+    <span class="nd">@contrast_limits</span><span class="o">.</span><span class="n">connect</span>
+    <span class="k">def</span> <span class="nf">_on_contrast_limits_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_cmap</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_update_cmap</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">contrast_limits</span>
+        <span class="n">rgb</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="n">split_rgba</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">color</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="n">Mode</span><span class="o">.</span><span class="n">volume</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_current_obj</span><span class="o">.</span><span class="n">color</span><span class="p">(</span>
+                <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">rgb</span><span class="p">],</span>
+                <span class="n">alpha</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">alpha</span><span class="p">],</span>
+                <span class="n">vmin</span><span class="o">=</span><span class="n">vmin</span><span class="p">,</span>
+                <span class="n">vmax</span><span class="o">=</span><span class="n">vmax</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_current_obj</span><span class="o">.</span><span class="n">color</span><span class="p">(</span>
+                <span class="n">rgb</span><span class="p">,</span>
+                <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">_update_actor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contrast_limits</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mode</span> <span class="o">==</span> <span class="n">Mode</span><span class="o">.</span><span class="n">volume</span><span class="p">:</span>
-            <span class="n">actor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">color</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">vmax</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mode</span> <span class="o">==</span> <span class="n">Mode</span><span class="o">.</span><span class="n">mesh</span><span class="p">:</span>
+        <span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">contrast_limits</span>
+        <span class="n">rgb</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="n">split_rgba</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">color</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="n">Mode</span><span class="o">.</span><span class="n">volume</span><span class="p">:</span>
+            <span class="n">actor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="n">Mode</span><span class="o">.</span><span class="n">mesh</span><span class="p">:</span>
             <span class="n">actor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">tomesh</span><span class="p">()</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mode</span> <span class="o">==</span> <span class="n">Mode</span><span class="o">.</span><span class="n">iso</span><span class="p">:</span>
-            <span class="n">actor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">isosurface</span><span class="p">(</span><span class="n">threshold</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_iso_threshold</span><span class="p">)</span><span class="o">.</span><span class="n">color</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_color</span>
-            <span class="p">)</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mode</span> <span class="o">==</span> <span class="n">Mode</span><span class="o">.</span><span class="n">wireframe</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="n">Mode</span><span class="o">.</span><span class="n">iso</span><span class="p">:</span>
+            <span class="n">actor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">isosurface</span><span class="p">(</span><span class="n">threshold</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">iso_threshold</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="n">Mode</span><span class="o">.</span><span class="n">wireframe</span><span class="p">:</span>
             <span class="n">actor</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">isosurface</span><span class="p">(</span><span class="n">threshold</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_iso_threshold</span><span class="p">)</span>
-                <span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_color</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">isosurface</span><span class="p">(</span><span class="n">threshold</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">iso_threshold</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">rgb</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">)</span>
                 <span class="o">.</span><span class="n">wireframe</span><span class="p">()</span>
             <span class="p">)</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mode</span> <span class="o">==</span> <span class="n">Mode</span><span class="o">.</span><span class="n">lego</span><span class="p">:</span>
-            <span class="n">actor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">legosurface</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">vmax</span><span class="p">)</span><span class="o">.</span><span class="n">color</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_color</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">vmax</span>
-            <span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="n">Mode</span><span class="o">.</span><span class="n">lego</span><span class="p">:</span>
+            <span class="n">actor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">legosurface</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">vmax</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
 
@@ -284,31 +234,8 @@
         <span class="n">plotter</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">actor</span><span class="p">)</span>
         <span class="n">plotter</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">Render</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_current_obj</span> <span class="o">=</span> <span class="n">actor</span>
-        <span class="k">return</span> <span class="kc">None</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">mode</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Projection mode of volume.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mode</span><span class="o">.</span><span class="n">value</span>
-
-    <span class="nd">@mode</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_mode</span> <span class="o">=</span> <span class="n">Mode</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_update_actor</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mode</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">contrast_limits</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Contrast limits of volume.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contrast_limits</span>
-
-    <span class="nd">@contrast_limits</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">contrast_limits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
-        <span class="n">x0</span><span class="p">,</span> <span class="n">x1</span> <span class="o">=</span> <span class="n">v</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_contrast_limits</span> <span class="o">=</span> <span class="p">(</span><span class="n">x0</span><span class="p">,</span> <span class="n">x1</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mode</span> <span class="o">==</span> <span class="n">Mode</span><span class="o">.</span><span class="n">lego</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_update_actor</span><span class="p">()</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_cmap</span><span class="p">()</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
 </pre></div>
 
            </div>

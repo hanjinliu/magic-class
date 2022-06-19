@@ -1,7 +1,6 @@
 from __future__ import annotations
 from typing import Callable
 import warnings
-from inspect import signature
 from magicgui.widgets import Image, Table, Label, FunctionGui
 from magicgui.widgets._bases import ButtonWidget
 from magicgui.widgets._bases.widget import Widget
@@ -9,7 +8,7 @@ from macrokit import Symbol
 from qtpy.QtWidgets import QMenu
 
 from .mgui_ext import AbstractAction, WidgetAction, _LabeledWidgetAction
-from .keybinding import as_shortcut
+from .keybinding import register_shortcut
 from ._base import (
     BaseGui,
     PopUpMode,
@@ -85,12 +84,9 @@ class MenuGuiBase(ContainerLikeGui):
 
             try:
                 if isinstance(attr, type):
-                    if not issubclass(attr, BaseGui):
-                        continue
                     # Nested magic-menu
                     if cls.__name__ not in attr.__qualname__.split("."):
-                        attr = copy_class(attr)
-                        attr.__qualname__ = f"{cls.__qualname__}.{attr.__name__}"
+                        attr = copy_class(attr, ns=cls)
                     widget = attr()
                     object.__setattr__(self, name, widget)
 
@@ -102,8 +98,7 @@ class MenuGuiBase(ContainerLikeGui):
                     widget = getattr(self, name, None)
 
                 if isinstance(widget, FunctionGui):
-                    p0 = list(signature(attr).parameters)[0]
-                    getattr(widget, p0).bind(self)  # set self to the first argument
+                    widget[0].bind(self)  # set self to the first argument
 
                 elif isinstance(widget, BaseGui):
                     widget.__magicclass_parent__ = self
@@ -132,12 +127,9 @@ class MenuGuiBase(ContainerLikeGui):
                         ):
                             keybinding = get_additional_option(attr, "keybinding", None)
                             if keybinding:
-                                from qtpy.QtWidgets import QShortcut
-
-                                shortcut = QShortcut(
-                                    as_shortcut(keybinding), self.native
+                                register_shortcut(
+                                    keys=keybinding, parent=self.native, target=widget
                                 )
-                                shortcut.activated.connect(widget)
                             continue
                         widget = self._create_widget_from_method(widget)
 
@@ -196,7 +188,7 @@ class MenuGuiBase(ContainerLikeGui):
             from .toolbar import ToolBarGui
 
             if isinstance(_obj.widget, Separator):
-                insert_action_like(self.native, key, "sep")
+                insert_action_like(self.native, key, _obj.widget.title)
 
             elif isinstance(_obj.widget, ToolBarGui):
                 qmenu = QMenu(_obj.widget.name, self.native)
@@ -250,7 +242,7 @@ def insert_action_like(qmenu: QMenu, key: int, obj):
         QMenu object to which object will be inserted.
     key : int
         Position to insert.
-    obj : QMenu or QAction or "sep"
+    obj : QMenu or QAction or str
         Object to be inserted.
     """
     actions = qmenu.actions()
@@ -260,8 +252,11 @@ def insert_action_like(qmenu: QMenu, key: int, obj):
     if key == l:
         if isinstance(obj, QMenu):
             qmenu.addMenu(obj).setText(obj.objectName().replace("_", " "))
-        elif obj == "sep":
-            qmenu.addSeparator()
+        elif isinstance(obj, str):
+            if obj:
+                qmenu.addSection(obj)
+            else:
+                qmenu.addSeparator()
         else:
             qmenu.addAction(obj)
     else:
@@ -269,8 +264,11 @@ def insert_action_like(qmenu: QMenu, key: int, obj):
         before = new_action
         if isinstance(obj, QMenu):
             qmenu.insertMenu(before, obj).setText(obj.objectName().replace("_", " "))
-        elif obj == "sep":
-            qmenu.insertSeparator(before)
+        elif isinstance(obj, str):
+            if obj:
+                qmenu.insertSection(before, obj)
+            else:
+                qmenu.insertSeparator(before)
         else:
             qmenu.insertAction(before, obj)
 

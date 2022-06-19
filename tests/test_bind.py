@@ -175,7 +175,6 @@ def test_multi_gui():
     a0 = A()
     a1 = A()
 
-
     a0["f"].changed()
     a1["f"].changed()
 
@@ -197,3 +196,29 @@ def test_annotated():
     ui["f"].changed()
     assert ui._out is not None
     assert ui._out == (0.5, (1, "z"))
+
+def test_bind_with_string():
+    @magicclass
+    class A:
+        _out = None
+        def f(self, x0: Bound["x"], y0: Bound["_get"]):
+            self._out = (x0, y0)
+        x = field(3)
+
+        def _get(self, w=None):
+            return 0
+
+        def g(self, x0: Bound["B.bx"], y0: Bound["B._b_get"]):
+            self._out = (x0, y0)
+
+        @magicclass
+        class B:
+            bx = field(4)
+            def _b_get(self, w=None):
+                return 1
+
+    ui = A()
+    ui["f"].changed()
+    assert ui._out == (3, 0)
+    ui["g"].changed()
+    assert ui._out == (4, 1)

@@ -1,4 +1,4 @@
-__version__ = "0.6.4.dev0"
+__version__ = "0.6.5.dev0"
 
 from .core import (
     magicclass,
@@ -22,7 +22,7 @@ from .wrappers import (
     mark_preview,
 )
 
-from .fields import field, vfield
+from .fields import field, vfield, widget_property, FieldGroup, HasFields
 from ._gui._base import wraps, defaults, MagicTemplate, PopUpMode
 from ._gui.keybinding import Key
 from . import widgets, utils, types
@@ -49,6 +49,9 @@ __all__ = [
     "mark_preview",
     "field",
     "vfield",
+    "widget_property",
+    "FieldGroup",
+    "HasFields",
     "wraps",
     "defaults",
     "MagicTemplate",
