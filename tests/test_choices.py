@@ -160,3 +160,20 @@ def test_choices_with_string():
     assert ui.choices.choices[0] == 1
     fgui = get_function_gui(ui, "f")
     assert fgui.c.choices[0] == 1
+
+def test_choices_type():
+    from magicclass.types import Choices
+
+    @magicclass
+    class A:
+        @magicclass
+        class B:
+            def _get_choices(self, w=None):
+                return [1, 2]
+
+        def f(self, c: Choices[B._get_choices]):
+            pass
+
+    ui = A()
+    cbox = get_function_gui(ui, "f").c
+    assert cbox.choices == (1, 2)
