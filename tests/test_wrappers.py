@@ -1,9 +1,9 @@
 from types import MethodType
 from unittest.mock import MagicMock
-from magicclass import magicclass, set_options
+from magicclass import magicclass, set_options, get_function_gui
+from magicclass.testing import MockConfirmation
 from magicgui.widgets import PushButton
 
-from magicclass.core import get_function_gui
 
 def test_set_options():
     @magicclass
@@ -191,19 +191,6 @@ def test_mark_preview():
     mock.assert_called_with(type=type(ui.B), x=10)
     assert str(ui.macro[-1]) == "ui.B.f1(x=10)"
 
-
-class MockConfirmation:
-    """Class used for confirmation test."""
-    def __init__(self):
-        self._last = None
-
-    def __call__(self, text, gui):
-        self._last = (text, gui)
-
-    @property
-    def last(self):
-        return self._last
-
 def test_confirm():
     from magicclass import confirm
 
@@ -218,11 +205,11 @@ def test_confirm():
 
     ui = A()
 
-    assert mconf.last is None
+    mconf.assert_not_called()
     ui.f(0)
-    assert mconf.last is None  # no confirmation if executed programatically
+    mconf.assert_not_called()  # no confirmation if executed programatically
     get_function_gui(ui, "f")()
-    assert mconf.last == ("conf-text", ui)
+    mconf.assert_value("conf-text")
 
     # text formating
     mconf = MockConfirmation()
@@ -235,13 +222,13 @@ def test_confirm():
 
     ui = A()
 
-    assert mconf.last is None
+    mconf.assert_not_called()
     fgui = get_function_gui(ui, "f")
     fgui()
-    assert mconf.last == ("<0>", ui)
+    mconf.assert_value("<0>")
     fgui.a.value = 16
     fgui()
-    assert mconf.last == ("<16>", ui)
+    mconf.assert_value("<16>")
 
     # test condition
 
@@ -255,13 +242,13 @@ def test_confirm():
 
     ui = A()
 
-    assert mconf.last is None
+    mconf.assert_not_called()
     fgui = get_function_gui(ui, "f")
     fgui()
-    assert mconf.last is None
+    mconf.assert_not_called()
     fgui.a.value = 16
     fgui()
-    assert mconf.last == ("conf-text", ui)
+    mconf.assert_value("conf-text")
 
 def test_confirm_with_other_wrapper():
     from magicclass import confirm
@@ -287,11 +274,11 @@ def test_confirm_with_other_wrapper():
     assert fgui1.a.max == 10
     assert fgui2.a.max == 12
 
-    assert mconf.last is None
+    mconf.assert_not_called()
     fgui1()
-    assert mconf.last == ("conf-text-1", ui)
+    mconf.assert_value("conf-text-1")
     fgui2()
-    assert mconf.last == ("conf-text-2", ui)
+    mconf.assert_value("conf-text-2")
 
 def test_confirm_with_thread_worker():
     from magicclass import confirm
@@ -317,8 +304,8 @@ def test_confirm_with_thread_worker():
     assert isinstance(A.f1, thread_worker)
     assert isinstance(A.f2, thread_worker)
 
-    assert mconf.last is None
+    mconf.assert_not_called()
     fgui1()
-    assert mconf.last == ("conf-text-1", ui)
+    mconf.assert_value("conf-text-1")
     fgui2()
-    assert mconf.last == ("conf-text-2", ui)
+    mconf.assert_value("conf-text-2")

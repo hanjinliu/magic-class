@@ -6,6 +6,7 @@ from .functions import (
     is_instance_method,
     method_as_getter,
     eval_attribute,
+    copy_info,
     show_tree,
     rst_to_html,
 )
