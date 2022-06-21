@@ -37,6 +37,7 @@ class PushButtonPlus(PushButton):
         return getattr(self.mgui, "running", False)
 
     def set_shortcut(self, key):
+        """Set keyboard shortcut to the button."""
         self.native.setShortcut(key)
 
     def reset_choices(self, *_: Any):
@@ -46,6 +47,7 @@ class PushButtonPlus(PushButton):
 
     @property
     def background_color(self):
+        """The background color of the button."""
         return self.native.palette().button().color().getRgb()
 
     @background_color.setter
@@ -58,6 +60,7 @@ class PushButtonPlus(PushButton):
 
     @property
     def icon_path(self) -> str | None:
+        """Path to the icon image."""
         return self._icon_path
 
     @icon_path.setter
@@ -65,20 +68,12 @@ class PushButtonPlus(PushButton):
         path = str(path)
         icon = QIcon(path)
         self.native.setIcon(icon)
+        self.native.setIconSize(self.native.size())
         self._icon_path = path
 
     @property
-    def icon_size(self) -> tuple[int, int]:
-        qsize = self.native.iconSize()
-        return qsize.width(), qsize.height()
-
-    @icon_size.setter
-    def icon_size(self, size: tuple[int, int]):
-        w, h = size
-        self.native.setIconSize(QSize(w, h))
-
-    @property
     def font_size(self):
+        """Font size of the button."""
         return self.native.font().pointSize()
 
     @font_size.setter
@@ -89,6 +84,7 @@ class PushButtonPlus(PushButton):
 
     @property
     def font_color(self):
+        """Font color of the button."""
         return self.native.palette().text().color().getRgb()
 
     @font_color.setter
@@ -101,6 +97,7 @@ class PushButtonPlus(PushButton):
 
     @property
     def font_family(self):
+        """Font family of the button."""
         return self.native.font().family()
 
     @font_family.setter
@@ -138,11 +135,13 @@ class ToolButtonPlus(PushButtonPlus):
         self.native: QToolButton
 
     def set_menu(self, qmenu: QMenu):
+        """Set menu-like behavior to the tool button."""
         self.native.setMenu(qmenu)
         self.native.setPopupMode(QToolButton.InstantPopup)
         self.native.setIcon(qmenu.icon())  # icon have to be copied.
 
     def set_shortcut(self, key):
+        """Set keyboard shortcut to the tool button."""
         self.native.setShortcut(key)
 
     def reset_choices(self, *_: Any):
@@ -293,6 +292,8 @@ _W = TypeVar("_W", bound=Widget)
 
 
 class WidgetAction(AbstractAction, Generic[_W]):
+    """An Action class that contains a Widget object."""
+
     def __init__(self, widget: _W, label: str = None, parent=None):
         if not isinstance(widget, (Widget, mguiLike)):
             raise TypeError(
@@ -376,9 +377,7 @@ class _LabeledWidgetAction(WidgetAction):
 
     @classmethod
     def from_action(cls, action: WidgetAction):
-        """
-        Construct a labeled action using another action.
-        """
+        """Construct a labeled action using another action."""
         self = cls(action.widget, action.label)
         action.parent = self
         return self

@@ -97,7 +97,6 @@ def set_design(
     max_height: int = None,
     text: str = None,
     icon_path: str = None,
-    icon_size: tuple[int, int] = None,
     font_size: int = None,
     font_family: int = None,
     font_color: Color = None,
@@ -126,18 +125,11 @@ def set_design(
     icon_path : str, optional
         Path to icon file. ``min_width`` and ``min_height`` will be automatically set to the icon size
         if not given.
-    icon_size : tuple of two int, optional
-        Icon size.
     font_size : int, optional
         Font size of the text.
     visible : bool default is True
         Button visibility.
     """
-    if icon_size is not None:
-        if min_width is None:
-            min_width = icon_size[0]
-        if min_height is None:
-            min_height = icon_size[1]
 
     caller_options = locals()
     caller_options = {k: v for k, v in caller_options.items() if v is not None}
