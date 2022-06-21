@@ -1,6 +1,6 @@
 from magicclass import magicclass, magicmenu, set_options, do_not_record, vfield, get_function_gui
 from magicclass.types import Bound
-from magicclass.utils.qthreading import thread_worker
+from magicclass.utils import thread_worker
 import time
 from unittest.mock import MagicMock
 
@@ -10,6 +10,7 @@ def test_worker_basic():
     class A:
         @thread_worker
         def f(self):
+            """doc"""
             time.sleep(0.01)
 
         @f.returned.connect
@@ -17,6 +18,7 @@ def test_worker_basic():
             mock()
 
     ui = A()
+    assert ui["f"].tooltip == "doc"
     ui.f()
     mock.assert_called_once()
     assert str(ui.macro[-1]) == "ui.f()"

@@ -195,6 +195,7 @@ def confirm(
     *,
     text: str | None,
     condition: Callable[..., bool] | str | None,
+    callback: Callable[[str, BaseGui], None] | None = None,
 ) -> Callable[[F], F]:
     ...
 
@@ -205,6 +206,7 @@ def confirm(
     *,
     text: str | None,
     condition: Callable[..., bool] | str | None,
+    callback: Callable[[str, BaseGui], None] | None = None,
 ) -> F:
     ...
 

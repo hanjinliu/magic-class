@@ -13,7 +13,6 @@ from .core import (
 
 from .wrappers import (
     set_options,
-    click,
     set_design,
     do_not_record,
     bind_key,

@@ -450,6 +450,14 @@ class thread_worker:
         """True if bound function is a generator function."""
         return inspect.isgeneratorfunction(self._func)
 
+    @property
+    def __doc__(self) -> str:
+        return self.func.__doc__
+
+    @__doc__.setter
+    def __doc__(self, doc: str):
+        self.func.__doc__ = doc
+
     def _set_recorder(self, recorder: Callable[_P, Any]):
         """
         Set macro recorder function.
