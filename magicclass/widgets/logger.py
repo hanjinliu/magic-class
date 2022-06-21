@@ -24,7 +24,6 @@ except ImportError:
 if TYPE_CHECKING:
     import numpy as np
     from matplotlib.figure import Figure
-    from PIL import Image
     from pathlib import Path
 
 # See https://stackoverflow.com/questions/28655198/best-way-to-display-logs-in-pyqt
@@ -207,6 +206,7 @@ class Logger(Widget, logging.Handler):
         Widget.__init__(
             self, widget_type=QBaseWidget, backend_kwargs={"qwidg": QtLogger}
         )
+        self.native: QtLogger
 
     def emit(self, record):
         msg = self.format(record)
@@ -270,7 +270,7 @@ class Logger(Widget, logging.Handler):
 
     def print_image(
         self,
-        arr: str | Path | np.ndarray | Image,
+        arr: str | Path | np.ndarray,
         vmin=None,
         vmax=None,
         cmap=None,

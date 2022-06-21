@@ -3,9 +3,9 @@ from typing import Any, TYPE_CHECKING
 import weakref
 from qtpy.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QHBoxLayout
 from magicgui.widgets import Widget, _protocols
-from magicgui.widgets._bases import ValueWidget
+from magicgui.widgets._bases import ValueWidget, RangedWidget
 from magicgui.widgets._concrete import merge_super_sigs as _merge_super_sigs
-from magicgui.backends._qtpy.widgets import QBaseWidget, QBaseValueWidget
+from magicgui.backends._qtpy.widgets import QBaseWidget
 
 if TYPE_CHECKING:
     from .._gui import BaseGui, ContextMenuGui
@@ -82,15 +82,17 @@ class FreeWidget(Widget):
         self._magicclass_parent_ref = weakref.ref(parent)
 
 
-WIDGET_OPTIONS = {
-    "name",
-    "annotation",
-    "label",
-    "tooltip",
-    "visible",
-    "enabled",
-    "gui_only",
-}
+WIDGET_OPTIONS = frozenset(
+    {
+        "name",
+        "annotation",
+        "label",
+        "tooltip",
+        "visible",
+        "enabled",
+        "gui_only",
+    }
+)
 
 
 class _MagicWidgetMeta(type):
@@ -165,6 +167,9 @@ class _ValueWidgetProtocol(QBaseWidget, _protocols.ValueWidgetProtocol):
         self._qwidget._mgui_bind_change_callback(callback)
 
 
+VALUE_WIDGET_OPTIONS = WIDGET_OPTIONS | frozenset({"value", "nullable", "bind"})
+
+
 class _MagicValueWidgetMeta(_MagicWidgetMeta):
     @staticmethod
     def _define_init(base_cls, base_qwidget: type[QWidget]):
@@ -174,7 +179,7 @@ class _MagicValueWidgetMeta(_MagicWidgetMeta):
             widget_options: dict[str, Any] = {}
             qt_options: dict[str, Any] = {}
             for k, v in kwargs.items():
-                if k in WIDGET_OPTIONS:
+                if k in VALUE_WIDGET_OPTIONS:
                     widget_options[k] = v
                 else:
                     qt_options[k] = v
@@ -203,6 +208,120 @@ class MagicValueWidgetBase(ValueWidget, metaclass=_MagicValueWidgetMeta):
         raise NotImplementedError()
 
     def _mgui_bind_change_callback(self, callback):
+        raise NotImplementedError()
+
+
+class _RangedWidgetProtocol(QBaseWidget, _protocols.RangedWidgetProtocol):
+    def __init__(self, qwidg: QWidget):
+        super().__init__(qwidg)
+
+    def _mgui_get_value(self) -> Any:
+        return self._qwidget._mgui_get_value()
+
+    def _mgui_set_value(self, val) -> None:
+        self._qwidget._mgui_set_value(val)
+
+    def _mgui_bind_change_callback(self, callback):
+        self._qwidget._mgui_bind_change_callback(callback)
+
+    def _mgui_get_min(self) -> Any:
+        return self._qwidget._mgui_get_min()
+
+    def _mgui_set_min(self, value: float) -> None:
+        self._qwidget._mgui_set_min(value)
+
+    def _mgui_get_max(self) -> float:
+        return self._qwidget._mgui_get_max()
+
+    def _mgui_set_max(self, value: float) -> None:
+        self._qwidget._mgui_set_max(value)
+
+    def _mgui_get_step(self) -> float:
+        return self._qwidget._mgui_get_step()
+
+    def _mgui_set_step(self, value: float) -> None:
+        self._qwidget._mgui_set_step(value)
+
+    def _mgui_get_adaptive_step(self) -> float:
+        raise self._qwidget._mgui_get_adaptive_step()
+
+    def _mgui_set_adaptive_step(self, value: float) -> None:
+        self._qwidget._mgui_set_adaptive_step(value)
+
+
+RANGED_WIDGET_OPTIONS = VALUE_WIDGET_OPTIONS | frozenset(
+    {
+        "min",
+        "max",
+        "step",
+    }
+)
+
+
+class _MagicRangedWidgetMeta(_MagicValueWidgetMeta):
+    @staticmethod
+    def _define_init(base_cls, base_qwidget: type[QWidget]):
+        cls_init = base_cls.__init__
+
+        def __init__(self, *args, **kwargs):
+            widget_options: dict[str, Any] = {}
+            qt_options: dict[str, Any] = {}
+            for k, v in kwargs.items():
+                if k in VALUE_WIDGET_OPTIONS:
+                    widget_options[k] = v
+                else:
+                    qt_options[k] = v
+
+            protocol = type(
+                f"{base_cls.__name__}Protocol", (_RangedWidgetProtocol,), {}
+            )
+
+            ValueWidget.__init__(
+                self,
+                widget_type=protocol,
+                backend_kwargs={"qwidg": base_qwidget},
+                **widget_options,
+            )
+            cls_init(self, *args, **qt_options)
+
+        return __init__
+
+
+class MagicRangedWidgetBase(RangedWidget, metaclass=_MagicRangedWidgetMeta):
+    def __init__(self):
+        pass
+
+    def _mgui_get_value(self):
+        raise NotImplementedError()
+
+    def _mgui_set_value(self, value):
+        raise NotImplementedError()
+
+    def _mgui_bind_change_callback(self, callback):
+        raise NotImplementedError()
+
+    def _mgui_get_min(self) -> Any:
+        raise NotImplementedError()
+
+    def _mgui_set_min(self, value: float) -> None:
+        raise NotImplementedError()
+
+    def _mgui_get_max(self) -> float:
+        raise NotImplementedError()
+
+    def _mgui_set_max(self, value: float) -> None:
+        raise NotImplementedError()
+
+    def _mgui_get_step(self) -> float:
+        raise NotImplementedError()
+
+    def _mgui_set_step(self, value: float) -> None:
+        raise NotImplementedError()
+
+    def _mgui_get_adaptive_step(self) -> float:
+        raise NotImplementedError()
+
+    def _mgui_set_adaptive_step(self, value: float) -> None:
         raise NotImplementedError()
 
 

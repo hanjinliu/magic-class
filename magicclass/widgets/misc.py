@@ -2,7 +2,6 @@ from __future__ import annotations
 import sys
 from typing import (
     TYPE_CHECKING,
-    Generic,
     Iterable,
     MutableSequence,
     Any,
@@ -29,11 +28,11 @@ from magicgui.backends._qtpy.widgets import (
     QBaseWidget,
     LineEdit as BaseLineEdit,
 )
-from .utils import FreeWidget, merge_super_sigs
+from .utils import FreeWidget, MagicRangedWidgetBase, merge_super_sigs
+from superqt import QLabeledRangeSlider, QLabeledDoubleRangeSlider
 
 if TYPE_CHECKING:
     from qtpy.QtWidgets import QTextEdit
-    from superqt import QLabeledRangeSlider
 
 
 if sys.platform == "win32":
@@ -254,20 +253,47 @@ class FloatEdit(LineEdit):
 _V = TypeVar("_V")
 
 
-class QRangeSlider(QBaseWidget):
-    _qwidget: QLabeledRangeSlider
-
-    def _mgui_get_value(self):
-        pass
+class _QRangeSlider(QLabeledRangeSlider):
+    def __init__(self):
+        super().__init__()
+        self.setHandleLabelPosition(QLabeledRangeSlider.LabelPosition.LabelsAbove)
+        self.setEdgeLabelMode(QLabeledRangeSlider.EdgeLabelMode.NoLabel)
 
     def _mgui_bind_change_callback(self, callback):
-        pass
+        self.valueChanged.connect(callback)
 
-    def _mgui_set_value(self, rng):
-        pass
+    _mgui_get_value = QLabeledRangeSlider.value
+    _mgui_set_value = QLabeledRangeSlider.setValue
+
+    _mgui_get_min = QLabeledRangeSlider.minimum
+    _mgui_set_min = QLabeledRangeSlider.setMinimum
+    _mgui_get_max = QLabeledRangeSlider.maximum
+    _mgui_set_max = QLabeledRangeSlider.setMaximum
+    _mgui_get_step = QLabeledRangeSlider.singleStep
+    _mgui_set_step = QLabeledRangeSlider.setSingleStep
 
 
-class AbstractRangeSlider(ValueWidget, Generic[_V]):
+class _QFloatRangeSlider(QLabeledDoubleRangeSlider):
+    def __init__(self):
+        super().__init__()
+        self.setHandleLabelPosition(QLabeledDoubleRangeSlider.LabelPosition.LabelsAbove)
+        self.setEdgeLabelMode(QLabeledDoubleRangeSlider.EdgeLabelMode.NoLabel)
+
+    def _mgui_bind_change_callback(self, callback):
+        self.valueChanged.connect(callback)
+
+    _mgui_get_value = QLabeledDoubleRangeSlider.value
+    _mgui_set_value = QLabeledDoubleRangeSlider.setValue
+
+    _mgui_get_min = QLabeledDoubleRangeSlider.minimum
+    _mgui_set_min = QLabeledDoubleRangeSlider.setMinimum
+    _mgui_get_max = QLabeledDoubleRangeSlider.maximum
+    _mgui_set_max = QLabeledDoubleRangeSlider.setMaximum
+    _mgui_get_step = QLabeledDoubleRangeSlider.singleStep
+    _mgui_set_step = QLabeledDoubleRangeSlider.setSingleStep
+
+
+class RangeSlider(MagicRangedWidgetBase, base=_QRangeSlider):
     """
     A slider widget that represent a range like (2, 5).
 
@@ -275,104 +301,33 @@ class AbstractRangeSlider(ValueWidget, Generic[_V]):
     See https://github.com/napari/magicgui/pull/337.
     """
 
-    changed = Signal(tuple)
-
-    def __init__(
-        self,
-        value=UNSET,
-        min=0,
-        max=1000,
-        orientation: str = "horizontal",
-        nullable: bool = True,
-        **kwargs,
-    ):
-        sl = self._construct_qt()
-        sl.setMinimum(min)
-        sl.setMaximum(max)
-        sl.valueChanged.connect(self.changed)
+    def __init__(self, orientation="horizontal"):
+        super().__init__()
         if orientation == "horizontal":
-            sl.setOrientation(Qt.Horizontal)
+            self.native.setOrientation(Qt.Horizontal)
         elif orientation == "vertical":
-            sl.setOrientation(Qt.Vertical)
+            self.native.setOrientation(Qt.Vertical)
         else:
             raise ValueError(
                 "Only horizontal and vertical orientation are currently supported"
             )
-        self._slider = sl
-        super().__init__(
-            value=value,
-            widget_type=QRangeSlider,
-            backend_kwargs={"qwidg": QtW.QWidget},
-            **kwargs,
-        )
-        self.native.setLayout(QtW.QVBoxLayout())
-        self.native.setContentsMargins(0, 0, 0, 0)
-        self.native.layout().addWidget(sl)
-
-    @classmethod
-    def _construct_qt(cls, *args, **kwargs) -> QLabeledRangeSlider:
-        raise NotImplementedError()
-
-    @property
-    def value(self) -> tuple[_V, _V]:
-        return self._slider.value()
-
-    @value.setter
-    def value(self, rng: tuple[_V, _V]) -> None:
-        x0, x1 = rng
-        if x0 > x1:
-            raise ValueError(f"lower value exceeds higher value ({x0} > {x1}).")
-        self._slider.setValue((x0, x1))
-
-    @property
-    def range(self) -> tuple[_V, _V]:
-        return self._slider.minimum(), self._slider.maximum()
-
-    @range.setter
-    def range(self, rng: tuple[_V, _V]) -> None:
-        x0, x1 = rng
-        if x0 > x1:
-            raise ValueError(f"Minimum value exceeds maximum value ({x0} > {x1}).")
-        self._slider.setMinimum(x0)
-        self._slider.setMaximum(x1)
-
-    @property
-    def min(self) -> _V:
-        return self._slider.minimum()
-
-    @min.setter
-    def min(self, value: _V) -> None:
-        self._slider.setMinimum(value)
-
-    @property
-    def max(self) -> _V:
-        return self._slider.maximum()
-
-    @max.setter
-    def max(self, value: _V) -> None:
-        self._slider.setMaximum(value)
 
 
-class RangeSlider(AbstractRangeSlider[int]):
-    @classmethod
-    def _construct_qt(cls, *args, **kwargs):
-        from superqt import QLabeledRangeSlider
+class FloatRangeSlider(MagicRangedWidgetBase, base=_QFloatRangeSlider):
+    """
+    A float version of ranged slider
+    """
 
-        sl = QLabeledRangeSlider()
-        sl.setHandleLabelPosition(QLabeledRangeSlider.LabelPosition.LabelsAbove)
-        sl.setEdgeLabelMode(QLabeledRangeSlider.EdgeLabelMode.NoLabel)
-        return sl
-
-
-class FloatRangeSlider(AbstractRangeSlider[float]):
-    @classmethod
-    def _construct_qt(cls, *args, **kwargs):
-        from superqt import QLabeledDoubleRangeSlider
-
-        sl = QLabeledDoubleRangeSlider()
-        sl.setHandleLabelPosition(QLabeledDoubleRangeSlider.LabelPosition.LabelsAbove)
-        sl.setEdgeLabelMode(QLabeledDoubleRangeSlider.EdgeLabelMode.NoLabel)
-        return sl
+    def __init__(self, orientation="horizontal"):
+        super().__init__()
+        if orientation == "horizontal":
+            self.native.setOrientation(Qt.Horizontal)
+        elif orientation == "vertical":
+            self.native.setOrientation(Qt.Vertical)
+        else:
+            raise ValueError(
+                "Only horizontal and vertical orientation are currently supported"
+            )
 
 
 class _QtSpreadSheet(QtW.QTabWidget):
