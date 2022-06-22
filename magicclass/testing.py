@@ -25,3 +25,7 @@ class MockConfirmation:
 
     def assert_not_called(self):
         assert self.text is None and self.gui is None
+
+
+def click_all(ui):
+    ...

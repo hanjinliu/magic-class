@@ -5,12 +5,12 @@ from typing import TYPE_CHECKING, Annotated, Iterable, Tuple, List
 if TYPE_CHECKING:
     import pandas as pd
 
-    Feature = pd.DataFrame
+    Features = pd.DataFrame
     FeatureColumn = pd.Series
 else:
     from typing import Protocol, Iterable
 
-    class Feature(Protocol):
+    class Features(Protocol):
         @property
         def columns(self) -> Iterable[str]:
             ...
@@ -19,7 +19,7 @@ else:
         pass
 
 
-__all__ = ["Feature", "FeatureColumn", "FeatureInfo"]
+__all__ = ["Features", "FeatureColumn", "FeatureInfo"]
 
 
 class _FeatureInfoAlias(type):

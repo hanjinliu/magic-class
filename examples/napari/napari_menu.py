@@ -1,14 +1,14 @@
 import napari
 from napari.layers import Image, Points
 import numpy as np
-from magicclass import magicmenu
+from magicclass import magicmenu, MagicTemplate
 from magicclass.ext.napari import to_napari
 
 
 if __name__ == "__main__":
     @to_napari
     @magicmenu
-    class MyMenu:
+    class MyMenu(MagicTemplate):
         def Add_random_points(self, number: int = 40, dimensions: int = 2) -> Points:
             return Points(np.random.random((number, dimensions)) * 100)
 
@@ -16,7 +16,7 @@ if __name__ == "__main__":
             return Image(np.random.normal(size=(size_y, size_x)))
 
         @magicmenu
-        class Others:
+        class Others(MagicTemplate):
             def Show_text(self, text: str):
                 self.parent_viewer.text_overlay.visible = True
                 self.parent_viewer.text_overlay.text = text

@@ -8,15 +8,15 @@ from magicgui.widgets._bases import CategoricalWidget
 from napari.utils._magicgui import find_viewer_ancestor
 
 if TYPE_CHECKING:
-    from .types import Feature, FeatureColumn
+    from .types import Features, FeatureColumn
 
 
-def get_features(widget: CategoricalWidget) -> list[tuple[str, Feature]]:
+def get_features(widget: CategoricalWidget) -> list[tuple[str, Features]]:
     """Get all the non-empty feature data from the viewer."""
     viewer = find_viewer_ancestor(widget)
     if viewer is None:
         return []
-    features: list[Feature] = []
+    features: list[Features] = []
     for layer in viewer.layers:
         if len(feat := getattr(layer, "features", [])) > 0:
             features.append((layer.name, feat))
@@ -27,7 +27,7 @@ def get_features(widget: CategoricalWidget) -> list[tuple[str, Feature]]:
 class ColumnChoice(Container):
     def __init__(
         self,
-        data_choices: Iterable[Feature] | Callable[[Widget], Iterable[Feature]],
+        data_choices: Iterable[Features] | Callable[[Widget], Iterable[Features]],
         value=None,
         **kwargs,
     ):
@@ -35,9 +35,9 @@ class ColumnChoice(Container):
         self._column_cbox = ComboBox(choices=self._get_available_columns)
         _measure = app.use_app().get_obj("get_text_width")
         _label_l = Label(value='.features["')
-        _label_l.max_width = _measure(_label_l)
+        _label_l.max_width = _measure(_label_l.value)
         _label_r = Label(value='"]')
-        _label_r.max_width = _measure(_label_r)
+        _label_r.max_width = _measure(_label_r.value)
 
         super().__init__(
             layout="horizontal",
@@ -49,7 +49,7 @@ class ColumnChoice(Container):
         self._dataframe_cbox.changed.connect(self._set_available_columns)
 
     def _get_available_columns(self, w=None):
-        df: Feature = self._dataframe_cbox.value
+        df: Features = self._dataframe_cbox.value
         cols = getattr(df, "columns", [])
         return cols
 
@@ -75,7 +75,7 @@ class ColumnNameChoice(Container):
 
     def __init__(
         self,
-        data_choices: Iterable[Feature] | Callable[[Widget], Iterable[Feature]],
+        data_choices: Iterable[Features] | Callable[[Widget], Iterable[Features]],
         column_choice_names: Iterable[str],
         value=None,
         **kwargs,
@@ -100,7 +100,7 @@ class ColumnNameChoice(Container):
         self._dataframe_cbox.changed.connect(self._set_available_columns)
 
     def _get_available_columns(self, w=None):
-        df: Feature = self._dataframe_cbox.value
+        df: Features = self._dataframe_cbox.value
         cols = getattr(df, "columns", [])
         return cols
 
@@ -111,16 +111,16 @@ class ColumnNameChoice(Container):
         return None
 
     @property
-    def value(self) -> tuple[Feature, list[str]]:
+    def value(self) -> tuple[Features, list[str]]:
         df = self._dataframe_cbox.value
         colnames = [cbox.value for cbox in self._column_names_cbox]
         return (df, colnames)
 
 
 def _register_mgui_types():
-    from .types import Feature, FeatureColumn, FeatureInfoInstance
+    from .types import Features, FeatureColumn, FeatureInfoInstance
 
-    register_type(Feature, choices=get_features, nullable=False)
+    register_type(Features, choices=get_features, nullable=False)
 
     register_type(
         FeatureColumn,
