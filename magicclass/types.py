@@ -184,11 +184,11 @@ class _ChoicesAlias(type):
     """
 
     @overload
-    def __getitem__(cls, value: Callable[_P, _V]) -> type[_V]:
+    def __getitem__(cls, value: Callable[_P, Iterable[_V]]) -> type[_V]:
         ...
 
     @overload
-    def __getitem__(cls, value: type[_V]) -> type[_V]:
+    def __getitem__(cls, value: Iterable[_V]) -> type[_V]:
         ...
 
     @_tp_cache
@@ -265,6 +265,21 @@ class Optional(metaclass=_OptionalAlias):
 
     Arguments annotated with ``Optional[int]`` will create a
     ``OptionalWidget`` with a ``SpinBox`` as an inner widget.
+
+    Examples
+    --------
+
+    from magicclass import magicclass, set_options
+    from magicclass.types import Optional
+
+    @magicclass
+    class A:
+        @set_options(a={"options": {"min": -1}})
+        def f(self, a: Optional[int]):
+            print(a)
+
+    ui = A()
+    ui.show()
     """
 
     def __new__(cls, *args, **kwargs):
@@ -335,26 +350,3 @@ class List(metaclass=_ListAlias):
 
     def __init_subclass__(cls, *args, **kwargs):
         raise TypeError(f"Cannot subclass {cls.__module__}.List.")
-
-
-"""
-Examples
---------
-
-from magicclass import magicclass, set_options
-from magicclass.types import Tuple, List, Optional
-@magicclass
-class A:
-    @set_options(a={"options": {"min": -1}})
-    def f(self, a: Tuple[int, int]):
-        print(a)
-    @set_options(a={"options": {"min": -1}})
-    def g(self, a: List[float]):
-        print(a)
-    @set_options(a={"options": {"min": -1}})
-    def h(self, a: Optional[int]):
-        print(a)
-ui = A()
-ui.show()
-
-"""
