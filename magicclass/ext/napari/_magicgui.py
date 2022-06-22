@@ -1,12 +1,14 @@
 from __future__ import annotations
 
-from typing import Iterable, Callable
+from typing import Iterable, Callable, TYPE_CHECKING
 from magicgui import register_type, application as app
 from magicgui.widgets import Container, ComboBox, Label, Widget
 from magicgui.widgets._bases import CategoricalWidget
 
 from napari.utils._magicgui import find_viewer_ancestor
-from .types import Feature, FeatureColumn, FeatureInfoInstance
+
+if TYPE_CHECKING:
+    from .types import Feature, FeatureColumn
 
 
 def get_features(widget: CategoricalWidget) -> list[tuple[str, Feature]]:
@@ -16,7 +18,7 @@ def get_features(widget: CategoricalWidget) -> list[tuple[str, Feature]]:
         return []
     features: list[Feature] = []
     for layer in viewer.layers:
-        if feat := getattr(layer, "features", None):
+        if len(feat := getattr(layer, "features", [])) > 0:
             features.append((layer.name, feat))
     return features
 
@@ -60,16 +62,6 @@ class ColumnChoice(Container):
     def value(self) -> FeatureColumn:
         df = self._dataframe_cbox.value
         return df[self._column_cbox.value]
-
-
-register_type(Feature, choices=get_features, nullable=False)
-
-register_type(
-    FeatureColumn,
-    widget_type=ColumnChoice,
-    data_choices=get_features,
-    nullable=False,
-)
 
 
 class ColumnNameChoice(Container):
@@ -125,6 +117,20 @@ class ColumnNameChoice(Container):
         return (df, colnames)
 
 
-register_type(
-    FeatureInfoInstance, widget_type=ColumnNameChoice, data_choices=get_features
-)
+def _register_mgui_types():
+    from .types import Feature, FeatureColumn, FeatureInfoInstance
+
+    register_type(Feature, choices=get_features, nullable=False)
+
+    register_type(
+        FeatureColumn,
+        widget_type=ColumnChoice,
+        data_choices=get_features,
+        nullable=False,
+    )
+
+    register_type(
+        FeatureInfoInstance,
+        widget_type=ColumnNameChoice,
+        data_choices=get_features,
+    )
