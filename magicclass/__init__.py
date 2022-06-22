@@ -39,7 +39,6 @@ __all__ = [
     "redo",
     "update_widget",
     "set_options",
-    "click",
     "set_design",
     "do_not_record",
     "bind_key",
@@ -57,3 +56,19 @@ __all__ = [
     "PopUpMode",
     "Key",
 ]
+
+
+def __getattr__(key: str):
+    if key == "click":
+        import warnings
+
+        warnings.warn(
+            "Function click is moving to magicclass.utils and will be deleted from "
+            "magicclass namespace. Please 'from magicclass.utils import click'.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        from .utils import click
+
+        return click
+    raise AttributeError(f"module {__name__!r} has no attribute {key!r}")
