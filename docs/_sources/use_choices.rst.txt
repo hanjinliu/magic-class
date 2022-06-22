@@ -108,3 +108,25 @@ Following example is a file explorer similar to the previous one but defined usi
             else:
                 self.cd.value = os.path.join(self.cd.value, f)  # go to new directory
             self.reset_choices()
+
+Choices type
+------------
+
+Like ``Bound`` type, ``Choices`` type is also useful for type annotation with choices.
+
+.. code-block:: python
+
+    from magicclass.types import Choices
+
+    @magicclass
+    class A:
+        def f(self, x: Choices[1, 2, 3]):
+            """choose 1, 2 or 3."""
+            print(x)
+
+        def _get_choices(self, w=None):
+            return ("choice-0", "choice-1")
+
+        def g(self, x: Choices[_get_choices]):
+            """Can also use a function."""
+            print(x)

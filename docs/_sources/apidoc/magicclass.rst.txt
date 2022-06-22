@@ -47,10 +47,10 @@ magicclass.signature module
    :undoc-members:
    :show-inheritance:
 
-magicclass.tqdm module
-----------------------
+magicclass.testing module
+-------------------------
 
-.. automodule:: magicclass.tqdm
+.. automodule:: magicclass.testing
    :members:
    :undoc-members:
    :show-inheritance:

@@ -4,6 +4,14 @@ magicclass.ext.napari package
 Submodules
 ----------
 
+magicclass.ext.napari.types module
+----------------------------------
+
+.. automodule:: magicclass.ext.napari.types
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 magicclass.ext.napari.utils module
 ----------------------------------
 

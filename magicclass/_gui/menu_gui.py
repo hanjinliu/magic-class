@@ -279,5 +279,3 @@ class MenuGui(MenuGuiBase):
 
 class ContextMenuGui(MenuGuiBase):
     """Magic class that will be converted into a context menu."""
-
-    # TODO: Prevent more than one context menu

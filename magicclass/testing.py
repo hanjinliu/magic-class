@@ -28,4 +28,5 @@ class MockConfirmation:
 
 
 def click_all(ui):
+    # TODO
     ...

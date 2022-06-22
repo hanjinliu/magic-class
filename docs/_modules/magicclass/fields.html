@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.fields &mdash; magic-class 0.6.4 documentation</title>
+  <title>magicclass.fields &mdash; magic-class 0.6.5.dev0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.4
+                0.6.5.dev0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -102,7 +102,13 @@
 <span class="kn">from</span> <span class="nn">magicgui.widgets._bases.value_widget</span> <span class="kn">import</span> <span class="n">UNSET</span>
 <span class="kn">from</span> <span class="nn">psygnal</span> <span class="kn">import</span> <span class="n">SignalInstance</span>
 
-<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">argcount</span><span class="p">,</span> <span class="n">is_instance_method</span><span class="p">,</span> <span class="n">method_as_getter</span><span class="p">,</span> <span class="n">Tooltips</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">argcount</span><span class="p">,</span>
+    <span class="n">is_instance_method</span><span class="p">,</span>
+    <span class="n">method_as_getter</span><span class="p">,</span>
+    <span class="n">Tooltips</span><span class="p">,</span>
+    <span class="n">eval_attribute</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">._gui.mgui_ext</span> <span class="kn">import</span> <span class="n">Action</span><span class="p">,</span> <span class="n">WidgetAction</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
@@ -214,6 +220,9 @@
         <span class="sd">&quot;&quot;&quot;Construct a widget.&quot;&quot;&quot;</span>
         <span class="n">constructor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">constructor</span>
         <span class="n">_arg_choices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;choices&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_arg_choices</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">_arg_choices</span> <span class="o">=</span> <span class="n">eval_attribute</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">),</span> <span class="n">_arg_choices</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="n">is_instance_method</span><span class="p">(</span><span class="n">_arg_choices</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s2">&quot;choices&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">method_as_getter</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">_arg_choices</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>

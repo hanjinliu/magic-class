@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Annotated, Iterable, Tuple, List
 
+# for now...
 if TYPE_CHECKING:
     import pandas as pd
 
@@ -30,7 +31,7 @@ class _FeatureInfoAlias(type):
             for name in names:
                 if not isinstance(name, str):
                     raise ValueError(
-                        f"Cannot subscribe type {type(name)} to TableInfo."
+                        f"Cannot subscribe type {type(name)} to FeatureInfo."
                     )
 
         return Annotated[FeatureInfoInstance, {"column_choice_names": names}]
@@ -44,6 +45,8 @@ class FeatureInfo(metaclass=_FeatureInfoAlias):
 
         def func(x: FeatureInfo["x", "y"]): ...
 
+    Type annotation ``FeatureInfo["x", "y"]`` is essentially equivalent to
+    ``tuple[pd.DataFrame, tuple[str, str]]``.
     """
 
     def __new__(cls, *args, **kwargs):
