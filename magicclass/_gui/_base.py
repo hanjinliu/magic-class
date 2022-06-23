@@ -683,7 +683,7 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
                 elif self._popup_mode == PopUpMode.dock:
                     mgui.parent.show()  # show dock widget
                 else:
-                    mgui.exec_as_dialog()
+                    mgui.exec_as_dialog(parent=self)
 
                 return None
 

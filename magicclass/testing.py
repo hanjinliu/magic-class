@@ -27,6 +27,6 @@ class MockConfirmation:
         assert self.text is None and self.gui is None
 
 
-def click_all(ui):
+def click_methods(ui):
     # TODO
     ...

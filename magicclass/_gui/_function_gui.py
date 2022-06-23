@@ -107,21 +107,19 @@ class FunctionGuiPlus(FunctionGui[_R]):
         """Append a preview button to the widget."""
         return append_preview(self, f, text)
 
-    def exec_as_dialog(self):
+    def exec_as_dialog(self, parent=None):
         """Show container as a dialog."""
         if self._dialog_widget is None:
-            try:
-                from magicgui.widgets import Dialog
-            except ImportError:
-                raise ImportError(
-                    "Could not import Dialog widget. Using dialog needs magicgui>=0.5."
-                )
+            from magicgui.widgets import Dialog
 
             dlg = Dialog(widgets=[self], labels=False)
             self._dialog_widget = dlg
+        else:
+            dlg = self._dialog_widget
+        dlg.native.setParent(parent.native, dlg.native.windowFlags())
         if self._dialog_widget.exec():
             self()
-        return None
+        return self._dialog_widget
 
 
 def append_preview(self: FunctionGui, f: Callable, text: str = "Preview"):
