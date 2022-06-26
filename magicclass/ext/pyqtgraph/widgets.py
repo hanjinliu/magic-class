@@ -30,6 +30,12 @@ class LayerList(MutableSequence[LayerItem]):
     def __init__(self, parent: HasDataItems):
         self.parent = parent
 
+    def __repr__(self) -> str:
+        if len(self) == 0:
+            return f"{type(self).__name__}()"
+        s = ",\n\t".join(repr(layer) for layer in self)
+        return f"{type(self).__name__}(\n\t{s}\n)"
+
     def __getitem__(self, key: int | str) -> LayerItem:
         if isinstance(key, int):
             return self.parent._items[key]
@@ -952,8 +958,8 @@ class _MultiPlot(HasBackground, Generic[_C]):
 
     def __init__(
         self,
-        nrows: int = 0,
-        ncols: int = 0,
+        nrows: int = 1,
+        ncols: int = 1,
         sharex: bool = False,
         sharey: bool = False,
         **kwargs,
@@ -964,9 +970,9 @@ class _MultiPlot(HasBackground, Generic[_C]):
 
         Parameters
         ----------
-        nrows : int, default is 0
+        nrows : int, default is 1
             Initial rows of axes.
-        ncols : int, default is 0
+        ncols : int, default is 1
             Initail columns of axes.
         sharex : bool, default is False
             If true, all the x-axes will be linked.
