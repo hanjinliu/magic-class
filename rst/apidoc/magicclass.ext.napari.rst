@@ -20,6 +20,14 @@ magicclass.ext.napari.utils module
    :undoc-members:
    :show-inheritance:
 
+magicclass.ext.napari.viewer module
+-----------------------------------
+
+.. automodule:: magicclass.ext.napari.viewer
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 magicclass.ext.napari.widgets module
 ------------------------------------
 
