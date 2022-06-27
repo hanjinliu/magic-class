@@ -656,6 +656,7 @@ class PlotItem(HasViewBox):
 
     @property
     def title(self) -> str:
+        """Title text of the graph."""
         return self.pgitem.titleLabel.text
 
     @title.setter
@@ -768,6 +769,7 @@ class ImageItem(HasViewBox):
 
     @property
     def title(self) -> str:
+        """Title text of the graph."""
         return self._title.text
 
     @title.setter
@@ -776,6 +778,7 @@ class ImageItem(HasViewBox):
 
     @property
     def xlabel(self) -> str:
+        """Label of X-axis."""
         return self._xlabel.text
 
     @xlabel.setter
@@ -784,6 +787,7 @@ class ImageItem(HasViewBox):
 
     @property
     def ylabel(self) -> str:
+        """Label of Y-axis."""
         return self._ylabel.text
 
     @xlabel.setter
@@ -797,6 +801,7 @@ class ImageItem(HasViewBox):
 
     @property
     def lock_contrast_limits(self):
+        """True if enable auto-contrast."""
         return self._lock_contrast_limits
 
     @lock_contrast_limits.setter
@@ -882,9 +887,7 @@ class HasBackground(FreeWidget):
 
 
 class QtPlotCanvas(HasBackground, PlotItem):
-    """
-    A 1-D data viewer that have similar API as napari Viewer.
-    """
+    """A 1-D data viewer that have similar API as napari Viewer."""
 
     def __init__(self, **kwargs):
         app = get_app()
@@ -899,6 +902,8 @@ class QtPlotCanvas(HasBackground, PlotItem):
 
 
 class QtImageCanvas(HasBackground, ImageItem):
+    """A 2-D image viewer that have similar API as napari Viewer."""
+
     def __init__(self, lock_contrast_limits: bool = False, **kwargs):
         app = get_app()
         # prepare widget
@@ -921,6 +926,8 @@ class QtImageCanvas(HasBackground, ImageItem):
 
 
 class Qt2YPlotCanvas(HasBackground):
+    """A plot canvas with two Y-axis."""
+
     def __init__(self, **kwargs):
         app = get_app()
         self.layoutwidget = pg.GraphicsLayoutWidget()

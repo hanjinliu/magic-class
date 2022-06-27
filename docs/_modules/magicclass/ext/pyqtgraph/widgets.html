@@ -97,6 +97,7 @@
 <span class="kn">from</span> <span class="nn">.._shared_utils</span> <span class="kn">import</span> <span class="n">convert_color_code</span><span class="p">,</span> <span class="n">to_rgba</span>
 <span class="kn">from</span> <span class="nn">.._doc</span> <span class="kn">import</span> <span class="n">write_docs</span>
 <span class="kn">from</span> <span class="nn">...widgets.utils</span> <span class="kn">import</span> <span class="n">FreeWidget</span>
+<span class="kn">from</span> <span class="nn">..._app</span> <span class="kn">import</span> <span class="n">get_app</span>
 
 <span class="n">BOTTOM</span> <span class="o">=</span> <span class="s2">&quot;bottom&quot;</span>
 <span class="n">LEFT</span> <span class="o">=</span> <span class="s2">&quot;left&quot;</span>
@@ -733,6 +734,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">title</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Title text of the graph.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pgitem</span><span class="o">.</span><span class="n">titleLabel</span><span class="o">.</span><span class="n">text</span>
 
     <span class="nd">@title</span><span class="o">.</span><span class="n">setter</span>
@@ -845,6 +847,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">title</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Title text of the graph.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_title</span><span class="o">.</span><span class="n">text</span>
 
     <span class="nd">@title</span><span class="o">.</span><span class="n">setter</span>
@@ -853,6 +856,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">xlabel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Label of X-axis.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_xlabel</span><span class="o">.</span><span class="n">text</span>
 
     <span class="nd">@xlabel</span><span class="o">.</span><span class="n">setter</span>
@@ -861,6 +865,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">ylabel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Label of Y-axis.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ylabel</span><span class="o">.</span><span class="n">text</span>
 
     <span class="nd">@xlabel</span><span class="o">.</span><span class="n">setter</span>
@@ -874,6 +879,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">lock_contrast_limits</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;True if enable auto-contrast.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock_contrast_limits</span>
 
     <span class="nd">@lock_contrast_limits</span><span class="o">.</span><span class="n">setter</span>
@@ -959,11 +965,10 @@
 
 
 <div class="viewcode-block" id="QtPlotCanvas"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.QtPlotCanvas">[docs]</a><span class="k">class</span> <span class="nc">QtPlotCanvas</span><span class="p">(</span><span class="n">HasBackground</span><span class="p">,</span> <span class="n">PlotItem</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A 1-D data viewer that have similar API as napari Viewer.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;A 1-D data viewer that have similar API as napari Viewer.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">app</span> <span class="o">=</span> <span class="n">get_app</span><span class="p">()</span>
         <span class="c1"># prepare widget</span>
         <span class="n">PlotItem</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">layoutwidget</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">GraphicsLayoutWidget</span><span class="p">()</span>
@@ -975,7 +980,9 @@
 
 
 <div class="viewcode-block" id="QtImageCanvas"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.QtImageCanvas">[docs]</a><span class="k">class</span> <span class="nc">QtImageCanvas</span><span class="p">(</span><span class="n">HasBackground</span><span class="p">,</span> <span class="n">ImageItem</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A 2-D image viewer that have similar API as napari Viewer.&quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lock_contrast_limits</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">app</span> <span class="o">=</span> <span class="n">get_app</span><span class="p">()</span>
         <span class="c1"># prepare widget</span>
         <span class="n">ImageItem</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lock_contrast_limits</span><span class="o">=</span><span class="n">lock_contrast_limits</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">layoutwidget</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">GraphicsLayoutWidget</span><span class="p">()</span>
@@ -996,7 +1003,10 @@
 
 
 <div class="viewcode-block" id="Qt2YPlotCanvas"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.Qt2YPlotCanvas">[docs]</a><span class="k">class</span> <span class="nc">Qt2YPlotCanvas</span><span class="p">(</span><span class="n">HasBackground</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A plot canvas with two Y-axis.&quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">app</span> <span class="o">=</span> <span class="n">get_app</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">layoutwidget</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">GraphicsLayoutWidget</span><span class="p">()</span>
 
         <span class="n">item_l</span> <span class="o">=</span> <span class="n">PlotItem</span><span class="p">()</span>
@@ -1057,6 +1067,7 @@
 <span class="sd">        sharey : bool, default is False</span>
 <span class="sd">            If true, all the y-axes will be linked.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">app</span> <span class="o">=</span> <span class="n">get_app</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">layoutwidget</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">GraphicsLayoutWidget</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_axes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">_C</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_sharex</span> <span class="o">=</span> <span class="n">sharex</span>

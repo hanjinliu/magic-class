@@ -38,10 +38,6 @@ QtPlotCanvas
     canvas = QtPlotCanvas()
     canvas.show()
 
-.. note::
-
-    If you are using such as Jupyter QtConsole, you'll have to run ``%gui qt`` first.
-
 A ``QtPlotCanvas`` is composed of several "layers" and each layer corresponds to a plot item
 that is in the canvas. Basically you'll add new layers to visualize data.
 
