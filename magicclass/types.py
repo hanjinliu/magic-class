@@ -184,6 +184,10 @@ class _ChoicesAlias(type):
     """metaclass of ``Choices``."""
 
     @overload
+    def __getitem__(cls, value: Callable[_P, Iterable[tuple[Any, _V]]]) -> type[_V]:
+        ...
+
+    @overload
     def __getitem__(cls, value: Callable[_P, Iterable[_V]]) -> type[_V]:
         ...
 
@@ -239,6 +243,12 @@ class _SomeOfAlias(type):
     """
     This metaclass is necessary for ``mypy`` to reveal type.
     """
+
+    @overload
+    def __getitem__(
+        cls, value: Callable[_P, Iterable[tuple[Any, _V]]]
+    ) -> type[list[_V]]:
+        ...
 
     @overload
     def __getitem__(cls, value: Callable[_P, Iterable[_V]]) -> type[list[_V]]:

@@ -171,8 +171,12 @@ def test_choices_type():
             def _get_choices(self, w=None):
                 return [1, 2]
 
-        def f(self, c: Choices[B._get_choices]):
+            def _get_choices_with_name(self, w=None) -> list[tuple[str, int]]:
+                return [("a", 1), ("b", 2)]
+
+        def f(self, c: Choices[B._get_choices], d: Choices[B._get_choices_with_name]):
             c.bit_length()
+            d.bit_length()
 
         def g(self, c: Choices[("a", 0), ("b", 1)]):
             c.bit_length()
@@ -193,8 +197,12 @@ def test_someof_type():
             def _get_choices(self, w=None):
                 return [1, 2]
 
-        def f(self, c: SomeOf[B._get_choices]):
+            def _get_choices_with_name(self, w=None) -> list[tuple[str, int]]:
+                return [("a", 1), ("b", 2)]
+
+        def f(self, c: SomeOf[B._get_choices], d: SomeOf[B._get_choices_with_name]):
             c[0].bit_length()
+            d[0].bit_length()
 
         def g(self, c: SomeOf[("a", 0), ("b", 1)]):
             c[0].bit_length()
