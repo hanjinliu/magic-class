@@ -19,6 +19,7 @@ from .mouse_event import MouseClickEvent
 from .._shared_utils import convert_color_code, to_rgba
 from .._doc import write_docs
 from ...widgets.utils import FreeWidget
+from ..._app import get_app
 
 BOTTOM = "bottom"
 LEFT = "left"
@@ -886,6 +887,7 @@ class QtPlotCanvas(HasBackground, PlotItem):
     """
 
     def __init__(self, **kwargs):
+        app = get_app()
         # prepare widget
         PlotItem.__init__(self)
         self.layoutwidget = pg.GraphicsLayoutWidget()
@@ -898,6 +900,7 @@ class QtPlotCanvas(HasBackground, PlotItem):
 
 class QtImageCanvas(HasBackground, ImageItem):
     def __init__(self, lock_contrast_limits: bool = False, **kwargs):
+        app = get_app()
         # prepare widget
         ImageItem.__init__(self, lock_contrast_limits=lock_contrast_limits)
         self.layoutwidget = pg.GraphicsLayoutWidget()
@@ -919,6 +922,7 @@ class QtImageCanvas(HasBackground, ImageItem):
 
 class Qt2YPlotCanvas(HasBackground):
     def __init__(self, **kwargs):
+        app = get_app()
         self.layoutwidget = pg.GraphicsLayoutWidget()
 
         item_l = PlotItem()
@@ -979,6 +983,7 @@ class _MultiPlot(HasBackground, Generic[_C]):
         sharey : bool, default is False
             If true, all the y-axes will be linked.
         """
+        app = get_app()
         self.layoutwidget = pg.GraphicsLayoutWidget()
         self._axes: list[_C] = []
         self._sharex = sharex
