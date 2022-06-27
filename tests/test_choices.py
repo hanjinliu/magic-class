@@ -172,8 +172,35 @@ def test_choices_type():
                 return [1, 2]
 
         def f(self, c: Choices[B._get_choices]):
-            pass
+            c.bit_length()
+
+        def g(self, c: Choices[("a", 0), ("b", 1)]):
+            c.bit_length()
 
     ui = A()
     cbox = get_function_gui(ui, "f").c
     assert cbox.choices == (1, 2)
+    cbox = get_function_gui(ui, "g").c
+    assert cbox.choices == (0, 1)
+
+def test_someof_type():
+    from magicclass.types import SomeOf
+
+    @magicclass
+    class A:
+        @magicclass
+        class B:
+            def _get_choices(self, w=None):
+                return [1, 2]
+
+        def f(self, c: SomeOf[B._get_choices]):
+            c[0].bit_length()
+
+        def g(self, c: SomeOf[("a", 0), ("b", 1)]):
+            c[0].bit_length()
+
+    ui = A()
+    cbox = get_function_gui(ui, "f").c
+    assert cbox.choices == (1, 2)
+    cbox = get_function_gui(ui, "g").c
+    assert cbox.choices == (0, 1)
