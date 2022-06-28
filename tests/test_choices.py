@@ -212,3 +212,17 @@ def test_someof_type():
     assert cbox.choices == (1, 2)
     cbox = get_function_gui(ui, "g").c
     assert cbox.choices == (0, 1)
+
+def test_slice_choices():
+    from magicclass.types import Choices
+
+    @magicclass
+    class A:
+        def f(self, x: Choices[3:6], y: Choices[0.1:0.3:0.05]):
+            x.bit_length()
+            y.is_integer()
+
+    ui = A()
+    fgui = get_function_gui(ui, "f")
+    assert fgui.x.choices == (3, 4, 5)
+    assert fgui.y.choices == (0.1, 0.15, 0.2, 0.25)

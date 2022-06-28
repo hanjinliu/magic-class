@@ -199,15 +199,46 @@ class _ChoicesAlias(type):
     def __getitem__(cls, value: Iterable[_V]) -> type[_V]:
         ...
 
+    @overload
+    def __getitem__(cls, value: slice) -> type[int | float]:
+        ...
+
     @_tp_cache
     def __getitem__(cls, value):
         if callable(value):
             outtype = value.__annotations__.get("return", Any)
         elif hasattr(value, "__iter__"):
             outtype = Any
+        elif isinstance(value, slice):
+            outtype, value = _normalize_slice(value)
         else:
             raise TypeError("'bound' can only convert callable or iterable objects.")
         return Annotated[outtype, {"choices": value, "nullable": False}]
+
+
+def _normalize_slice(value: slice) -> type | list:
+    start, stop, step = value.start or 0, value.stop or 0, value.step or 1
+    if float in [type(start), type(stop), type(step)]:
+        import math
+
+        ndigits = -int(min(math.log10(start), math.log10(stop), math.log10(step))) + 4
+        outtype = float
+        outvalue: list[float] = []
+        if step > 0:
+            x = start
+            while x < stop:
+                outvalue.append(x)
+                x = round(x + step, ndigits)
+        else:
+            x = stop
+            while start < x:
+                outvalue.append(x)
+                x = round(x + step, ndigits)
+
+    else:
+        outtype = int
+        outvalue = list(range(start, stop, step))
+    return outtype, outvalue
 
 
 class Choices(metaclass=_ChoicesAlias):
@@ -262,12 +293,18 @@ class _SomeOfAlias(type):
     def __getitem__(cls, value: Iterable[_V]) -> type[list[_V]]:
         ...
 
+    @overload
+    def __getitem__(cls, value: slice) -> type[int | float]:
+        ...
+
     @_tp_cache
     def __getitem__(cls, value):
         if callable(value):
             outtype = value.__annotations__.get("return", Any)
         elif hasattr(value, "__iter__"):
             outtype = Any
+        elif isinstance(value, slice):
+            outtype, value = _normalize_slice(value)
         else:
             raise TypeError("'bound' can only convert callable or iterable objects.")
         return Annotated[
