@@ -399,64 +399,16 @@ class Optional(metaclass=_OptionalAlias):
         raise TypeError(f"Cannot subclass {cls.__module__}.Optional.")
 
 
-_S = TypeVar("_S", bound=tuple)
+def __getattr__(key: str):
+    if key in ["List", "Tuple"]:
+        import warnings
 
-
-class _TupleAlias(type):
-    def __getitem__(cls, value: _S) -> type[_S]:
-        from .widgets import TupleEdit
-
-        opt = dict(
-            widget_type=TupleEdit,
+        warnings.warn(
+            f"Type {key!r} is deprecated. Please use typing.{key}.",
+            DeprecationWarning,
+            stacklevel=2,
         )
-        if isinstance(value, _AnnotatedAlias):
-            type0, opt0 = split_annotated_type(value)
-            type_ = typing.Tuple[type0]
-            opt.update(annotation=type_, **opt0)
-            return Annotated[typing.Optional[type0], opt0]
-        else:
-            type_ = typing.Tuple[value]
-            opt.update(annotation=type_)
-            return Annotated[type_, opt]
+        import typing
 
-
-class Tuple(metaclass=_TupleAlias):
-    """
-    Make Annotated type similar to ``typing.Tuple``.
-
-    Arguments annotated with ``Tuple[...]`` will create a
-    ``TupleEdit`` with a annotated sub types.
-    """
-
-    def __new__(cls, *args, **kwargs):
-        raise TypeError("Type Tuple cannot be instantiated.")
-
-    def __init_subclass__(cls, *args, **kwargs):
-        raise TypeError(f"Cannot subclass {cls.__module__}.Tuple.")
-
-
-class _ListAlias(type):
-    def __getitem__(cls, value: _T) -> type[list[_T]]:
-        from .widgets import ListEdit
-
-        type_ = typing.List[value]
-        opt = dict(
-            widget_type=ListEdit,
-            annotation=type_,
-        )
-        return Annotated[type_, opt]
-
-
-class List(metaclass=_ListAlias):
-    """
-    Make Annotated type similar to ``typing.List``.
-
-    Arguments annotated with ``List[...]`` will create a
-    ``ListEdit`` with a annotated sub types.
-    """
-
-    def __new__(cls, *args, **kwargs):
-        raise TypeError("Type List cannot be instantiated.")
-
-    def __init_subclass__(cls, *args, **kwargs):
-        raise TypeError(f"Cannot subclass {cls.__module__}.List.")
+        return getattr(typing, key)
+    raise AttributeError(f"module {__name__!r} has no attribute {key!r}")
