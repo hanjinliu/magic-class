@@ -192,3 +192,35 @@ def test_error(qtbot):
     with qtbot.capture_exceptions():
         ui.f(20)
     assert str(ui.macro[-1]) == "ui.f(n=3)"
+
+def test_callback():
+    @magicclass
+    class A:
+        def __init__(self):
+            self._func_returned = []
+            self._gen_yielded = []
+
+        @thread_worker
+        def func(self):
+            local = 0
+
+            @thread_worker.to_callback
+            def _returned():
+                self._func_returned.append(local)
+            return _returned
+
+        @thread_worker
+        def gen(self):
+            @thread_worker.to_callback
+            def _yielded():
+                self._gen_yielded.append(t)
+            t = 0
+            for _ in range(10):
+                yield _yielded
+                t += 1
+
+    ui = A()
+    ui.func()
+    assert ui._func_returned == [0]
+    ui.gen()
+    assert ui._gen_yielded == [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]

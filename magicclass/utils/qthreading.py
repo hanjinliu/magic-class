@@ -445,6 +445,11 @@ class thread_worker:
         cls._DEFAULT_PROGRESS_BAR = pbar_cls
         return pbar_cls
 
+    @staticmethod
+    def to_callback(callback: Callable) -> CallbackObject:
+        """Convert a callback to a callback object."""
+        return CallbackObject(callback)
+
     @property
     def is_generator(self) -> bool:
         """True if bound function is a generator function."""
@@ -452,6 +457,7 @@ class thread_worker:
 
     @property
     def __doc__(self) -> str:
+        """Synchronize docstring with bound function."""
         return self.func.__doc__
 
     @__doc__.setter
@@ -625,6 +631,7 @@ class thread_worker:
             worker.started.connect(c)
         for c in self.returned._iter_as_method(gui):
             worker.returned.connect(c)
+        worker.returned.connect(CallbackObject.catch)
         for c in self.errored._iter_as_method(gui):
             worker.errored.connect(c)
         for c in self.finished._iter_as_method(gui):
@@ -635,6 +642,7 @@ class thread_worker:
                 worker.aborted.connect(c)
             for c in self.yielded._iter_as_method(gui):
                 worker.yielded.connect(c)
+            worker.yielded.connect(CallbackObject.catch)
 
     @property
     def __signature__(self) -> inspect.Signature:
@@ -751,3 +759,15 @@ def increment(pbar: ProgressBarLike):
     else:
         pbar.value += 1
     return None
+
+
+class CallbackObject:
+    def __init__(self, f: Callable[[], Any]):
+        if not callable(f):
+            raise TypeError(f"{f} is not callable.")
+        self._func = f
+
+    @staticmethod
+    def catch(out):
+        if isinstance(out, CallbackObject):
+            out._func()
