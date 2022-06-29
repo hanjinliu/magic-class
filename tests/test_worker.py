@@ -224,3 +224,24 @@ def test_callback():
     assert ui._func_returned == [0]
     ui.gen()
     assert ui._gen_yielded == [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+def test_callback_partial():
+    @magicclass
+    class A:
+        def __init__(self):
+            self._gen_yielded = []
+
+        @thread_worker
+        def gen(self):
+            t = 0
+            for _ in range(10):
+                yield self._callback(t)
+                t += 1
+
+        @thread_worker.to_callback
+        def _callback(self, x):
+            self._gen_yielded.append(x)
+
+    ui = A()
+    ui.gen()
+    assert ui._gen_yielded == [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]

@@ -23,4 +23,4 @@ from .qt import (
 
 from ._click import click
 from .qtsignal import QtSignal
-from .qthreading import thread_worker, Timer
+from .qthreading import thread_worker, Timer, Callback

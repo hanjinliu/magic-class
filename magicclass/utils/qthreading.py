@@ -31,7 +31,7 @@ if TYPE_CHECKING:
     from .._gui.mgui_ext import PushButtonPlus, Action
     from ..fields import MagicField
 
-__all__ = ["thread_worker", "Timer"]
+__all__ = ["thread_worker", "Timer", "Callback"]
 
 
 class ProgressDict(TypedDict):
@@ -86,7 +86,7 @@ _R1 = TypeVar("_R1")
 _R2 = TypeVar("_R2")
 
 
-class Callbacks(Generic[_R1]):
+class CallbackList(Generic[_R1]):
     """List of callback functions."""
 
     def __init__(self):
@@ -386,12 +386,12 @@ class thread_worker:
     ) -> None:
         self._func: Callable[_P, _R1] | None = None
         self._callback_dict_ = {
-            "started": Callbacks(),
-            "returned": Callbacks(),
-            "errored": Callbacks(),
-            "yielded": Callbacks(),
-            "finished": Callbacks(),
-            "aborted": Callbacks(),
+            "started": CallbackList(),
+            "returned": CallbackList(),
+            "errored": CallbackList(),
+            "yielded": CallbackList(),
+            "finished": CallbackList(),
+            "aborted": CallbackList(),
         }
 
         self._ignore_errors = ignore_errors
@@ -446,9 +446,9 @@ class thread_worker:
         return pbar_cls
 
     @staticmethod
-    def to_callback(callback: Callable) -> CallbackObject:
+    def to_callback(callback: Callable) -> Callback:
         """Convert a callback to a callback object."""
-        return CallbackObject(callback)
+        return Callback(callback)
 
     @property
     def is_generator(self) -> bool:
@@ -631,7 +631,7 @@ class thread_worker:
             worker.started.connect(c)
         for c in self.returned._iter_as_method(gui):
             worker.returned.connect(c)
-        worker.returned.connect(CallbackObject.catch)
+        worker.returned.connect(Callback.catch)
         for c in self.errored._iter_as_method(gui):
             worker.errored.connect(c)
         for c in self.finished._iter_as_method(gui):
@@ -642,7 +642,7 @@ class thread_worker:
                 worker.aborted.connect(c)
             for c in self.yielded._iter_as_method(gui):
                 worker.yielded.connect(c)
-            worker.yielded.connect(CallbackObject.catch)
+            worker.yielded.connect(Callback.catch)
 
     @property
     def __signature__(self) -> inspect.Signature:
@@ -695,22 +695,22 @@ class thread_worker:
         return _pbar
 
     @property
-    def started(self) -> Callbacks[None]:
+    def started(self) -> CallbackList[None]:
         """Event that will be emitted on started."""
         return self._callback_dict_["started"]
 
     @property
-    def returned(self) -> Callbacks[_R1]:
+    def returned(self) -> CallbackList[_R1]:
         """Event that will be emitted on returned."""
         return self._callback_dict_["returned"]
 
     @property
-    def errored(self) -> Callbacks[Exception]:
+    def errored(self) -> CallbackList[Exception]:
         """Event that will be emitted on errored."""
         return self._callback_dict_["errored"]
 
     @property
-    def yielded(self) -> Callbacks[_R1]:
+    def yielded(self) -> CallbackList[_R1]:
         """Event that will be emitted on yielded."""
         if not self.is_generator:
             raise TypeError(
@@ -720,12 +720,12 @@ class thread_worker:
         return self._callback_dict_["yielded"]
 
     @property
-    def finished(self) -> Callbacks[None]:
+    def finished(self) -> CallbackList[None]:
         """Event that will be emitted on finished."""
         return self._callback_dict_["finished"]
 
     @property
-    def aborted(self) -> Callbacks[None]:
+    def aborted(self) -> CallbackList[None]:
         """Event that will be emitted on aborted."""
         if not self.is_generator:
             raise TypeError(
@@ -761,7 +761,7 @@ def increment(pbar: ProgressBarLike):
     return None
 
 
-class CallbackObject:
+class Callback:
     def __init__(self, f: Callable[[], Any]):
         if not callable(f):
             raise TypeError(f"{f} is not callable.")
@@ -769,5 +769,14 @@ class CallbackObject:
 
     @staticmethod
     def catch(out):
-        if isinstance(out, CallbackObject):
+        if isinstance(out, Callback):
             out._func()
+
+    def __call__(self, *args, **kwargs) -> Callback:
+        """Return a partial callback."""
+        return self.__class__(partial(self._func, *args, *kwargs))
+
+    def __get__(self, obj, type=None) -> Callback:
+        if obj is None:
+            return self
+        return self(obj)
