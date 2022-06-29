@@ -446,9 +446,12 @@ class thread_worker:
         return pbar_cls
 
     @staticmethod
-    def to_callback(callback: Callable) -> Callback:
+    def to_callback(callback: Callable, *args, **kwargs) -> Callback:
         """Convert a callback to a callback object."""
-        return Callback(callback)
+        cb = Callback(callback)
+        if args or kwargs:
+            cb = cb(*args, **kwargs)
+        return cb
 
     @property
     def is_generator(self) -> bool:
