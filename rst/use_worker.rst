@@ -10,9 +10,8 @@ Multi-threading is an important idea in GUI development. If you want to
 implement background execution or progress bar, you'll usually have to
 rely on multi-threading.
 
-Since ``magic-class >= 0.6.1``, a helper class ``thread_worker`` is available.
-It makes multi-threaded implementation much easier, without rewriting the
-existing single-threaded code. It is available in:
+``thread_worker`` makes multi-threaded implementation much easier, without
+rewriting the existing single-threaded code. It is available in:
 
 .. code-block:: python
 
@@ -178,6 +177,11 @@ Following example shows how you can update widget every 0.3 second.
 
 Better Way to Define Callbacks
 ------------------------------
+
+.. note::
+
+    This feature is available since ``magicclass >= 0.6.7``.
+
 
 The ``returned`` callbacks and the ``yielded`` callbacks are very useful for letting
 users know the progress and results of the function. However, a problem occurs when

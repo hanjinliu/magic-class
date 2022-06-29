@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass package &mdash; magic-class 0.6.6 documentation</title>
+  <title>magicclass package &mdash; magic-class 0.6.7.dev0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/columns.css" type="text/css" />
@@ -31,7 +31,7 @@
             <a href="../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.6
+                0.6.7.dev0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -1079,13 +1079,10 @@ a inspect.Signature or magicgui.signature.Magicsignature.</p>
 <p><code class="docutils literal notranslate"><span class="pre">Choices[value]</span></code> is identical to <code class="docutils literal notranslate"><span class="pre">Annotated[Any,</span> <span class="pre">{&quot;choices&quot;:</span> <span class="pre">value}]</span></code>.</p>
 </dd></dl>
 
-<dl class="py class">
-<dt class="sig sig-object py" id="magicclass.types.List">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.types.</span></span><span class="sig-name descname"><span class="pre">List</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/types.html#List"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.types.List" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Make Annotated type similar to <code class="docutils literal notranslate"><span class="pre">typing.List</span></code>.</p>
-<p>Arguments annotated with <code class="docutils literal notranslate"><span class="pre">List[...]</span></code> will create a
-<code class="docutils literal notranslate"><span class="pre">ListEdit</span></code> with a annotated sub types.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.types.OneOf">
+<span class="sig-prename descclassname"><span class="pre">magicclass.types.</span></span><span class="sig-name descname"><span class="pre">OneOf</span></span><a class="headerlink" href="#magicclass.types.OneOf" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#magicclass.types.Choices" title="magicclass.types.Choices"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.types.Choices</span></code></a></p>
 </dd></dl>
 
 <dl class="py class">
@@ -1112,12 +1109,19 @@ ui.show()</p>
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="magicclass.types.Tuple">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.types.</span></span><span class="sig-name descname"><span class="pre">Tuple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/types.html#Tuple"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.types.Tuple" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="magicclass.types.SomeOf">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.types.</span></span><span class="sig-name descname"><span class="pre">SomeOf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/types.html#SomeOf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.types.SomeOf" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Make Annotated type similar to <code class="docutils literal notranslate"><span class="pre">typing.Tuple</span></code>.</p>
-<p>Arguments annotated with <code class="docutils literal notranslate"><span class="pre">Tuple[...]</span></code> will create a
-<code class="docutils literal notranslate"><span class="pre">TupleEdit</span></code> with a annotated sub types.</p>
+<p>Make Annotated type from a method, such as:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span>
+
+<span class="nd">@magicclass</span>
+<span class="k">class</span> <span class="nc">MyClass</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n">Choices</span><span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)]):</span>
+        <span class="o">...</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Choices[value]</span></code> is identical to <code class="docutils literal notranslate"><span class="pre">Annotated[Any,</span> <span class="pre">{&quot;choices&quot;:</span> <span class="pre">value}]</span></code>.</p>
 </dd></dl>
 
 <dl class="py class">

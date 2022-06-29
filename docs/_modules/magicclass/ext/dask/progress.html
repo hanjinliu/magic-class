@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.ext.dask.progress &mdash; magic-class 0.6.4.dev1 documentation</title>
+  <title>magicclass.ext.dask.progress &mdash; magic-class 0.6.7.dev0 documentation</title>
       <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.4.dev1
+                0.6.7.dev0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
@@ -85,7 +85,7 @@
 
 <span class="kn">from</span> <span class="nn">...utils</span> <span class="kn">import</span> <span class="n">move_to_screen_center</span><span class="p">,</span> <span class="n">QtSignal</span>
 <span class="kn">from</span> <span class="nn">...utils.qthreading</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">Callbacks</span><span class="p">,</span>
+    <span class="n">CallbackList</span><span class="p">,</span>
     <span class="n">DefaultProgressBar</span><span class="p">,</span>
     <span class="n">thread_worker</span><span class="p">,</span>
     <span class="n">ProgressDict</span><span class="p">,</span>
@@ -221,10 +221,10 @@
         <span class="n">progress</span><span class="p">:</span> <span class="n">ProgressDict</span> <span class="o">|</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="o">=</span><span class="n">ignore_errors</span><span class="p">,</span> <span class="n">progress</span><span class="o">=</span><span class="n">progress</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_callback_dict_</span><span class="p">[</span><span class="s2">&quot;computed&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Callbacks</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_callback_dict_</span><span class="p">[</span><span class="s2">&quot;computed&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">CallbackList</span><span class="p">()</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">computed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callbacks</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">computed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CallbackList</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_callback_dict_</span><span class="p">[</span><span class="s2">&quot;computed&quot;</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">_create_method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gui</span><span class="p">:</span> <span class="n">BaseGui</span><span class="p">):</span>
