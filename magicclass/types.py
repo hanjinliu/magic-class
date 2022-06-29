@@ -338,16 +338,18 @@ class SomeOf(metaclass=_SomeOfAlias):
         raise TypeError(f"Cannot subclass {cls.__module__}.SomeOf")
 
 
-_T = TypeVar("_T", bound=type)
+_T = TypeVar("_T")
 
 
 class _OptionalAlias(type):
     @overload
-    def __getitem__(cls, value: _T) -> type[typing.Optional[_T]]:
+    def __getitem__(cls, value: type[_T]) -> type[typing.Optional[_T]]:
         ...
 
     @overload
-    def __getitem__(cls, value: tuple[_T, dict[str, Any]]) -> type[typing.Optional[_T]]:
+    def __getitem__(
+        cls, value: tuple[type[_T], dict[str, Any]]
+    ) -> type[typing.Optional[_T]]:
         ...
 
     def __getitem__(cls, value):

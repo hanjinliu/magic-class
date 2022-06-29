@@ -19,7 +19,7 @@ def test_set_options():
     class A:
         @set_options(x={"text": "x-text", "options": {"min": -1}})
         def f(self, x: Optional[int] = 0):
-            pass
+            x.as_integer_ratio()
 
     ui = A()
     ui["f"].changed()
