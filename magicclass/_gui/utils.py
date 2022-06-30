@@ -59,11 +59,13 @@ def copy_class(cls: _C, ns: type, name: str | None = None) -> _C:
 
 def _update_qualnames(cls: type, cls_qualname: str) -> None:
     cls.__qualname__ = cls_qualname
+    # NOTE: updating cls.__name__ will make `wraps` incompatible.
     for key, attr in cls.__dict__.items():
         if isinstance(attr, FunctionType):
             attr.__qualname__ = f"{cls_qualname}.{key}"
         elif isinstance(attr, type):
             _update_qualnames(attr, f"{cls_qualname}.{key}")
+
     return None
 
 

@@ -120,13 +120,13 @@ def is_instance_method(func: Callable) -> bool:
     return callable(func) and "." in func.__qualname__.split(_LOCALS)[-1]
 
 
-def method_as_getter(self, getter: Callable):
+def method_as_getter(self: BaseGui, getter: Callable):
     qualname = getter.__qualname__
     if _LOCALS in qualname:
         qualname = qualname.split(_LOCALS)[-1]
     *clsnames, funcname = qualname.split(".")
     ins = self
-    self_cls = ins.__class__.__name__
+    self_cls = ins.__class__.__qualname__.split(".")[-1]
     if self_cls not in clsnames:
         ns = ".".join(clsnames)
         raise ValueError(
