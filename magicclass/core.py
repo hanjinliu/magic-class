@@ -1,7 +1,6 @@
 from __future__ import annotations
 from functools import wraps as functools_wraps
 import inspect
-from dataclasses import is_dataclass
 from weakref import WeakValueDictionary
 from typing import Any, TYPE_CHECKING
 
@@ -136,8 +135,6 @@ def magicclass(
     def wrapper(cls) -> type[ClassGui]:
         if not isinstance(cls, type):
             raise TypeError(f"magicclass can only wrap classes, not {type(cls)}")
-        elif is_dataclass(cls):
-            raise TypeError("dataclass is not compatible with magicclass.")
 
         class_gui = _TYPE_MAP[widget_type]
 
@@ -394,8 +391,6 @@ def _call_magicmenu(
     def wrapper(cls) -> type[menugui_class]:
         if not isinstance(cls, type):
             raise TypeError(f"magicclass can only wrap classes, not {type(cls)}")
-        elif is_dataclass(cls):
-            raise TypeError("dataclass is not compatible with magicclass.")
 
         if not issubclass(cls, MagicTemplate):
             check_override(cls)

@@ -124,8 +124,6 @@ class ClassGuiBase(BaseGui):
             try:
                 if isinstance(attr, type):
                     # Nested magic-class
-                    if cls.__name__ not in attr.__qualname__.split("."):
-                        attr = copy_class(attr, ns=cls)
                     widget = attr()
                     object.__setattr__(self, name, widget)
 

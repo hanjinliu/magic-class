@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import Any, TYPE_CHECKING, TypeVar
-from magicgui.widgets import FunctionGui, _protocols, _bases, Widget
+from magicgui.widgets import FunctionGui, Widget
 from magicgui.widgets._bases.value_widget import UNSET
 from magicgui.type_map import get_widget_class
 from magicgui.signature import magic_signature, MagicParameter, split_annotated_type
@@ -28,9 +28,12 @@ def set_context_menu(contextmenu: ContextMenuGui, parent: BaseGui) -> None:
 _C = TypeVar("_C", bound=type)
 
 
-def copy_class(cls: _C, ns: type) -> _C:
+def copy_class(cls: _C, ns: type, name: str | None = None) -> _C:
+    """Copy a class in a new namespace."""
     out = type(cls.__name__, cls.__bases__, dict(cls.__dict__))
-    out.__qualname__ = f"{ns.__qualname__}.{out.__name__}"
+    if name is None:
+        name = out.__name__
+    out.__qualname__ = f"{ns.__qualname__}.{name}"
     return out
 
 
@@ -56,6 +59,14 @@ def format_error(
         e.args = (f"\n{hist_str}\n{e}",)
         raise e
     else:
+        # TODO: should format like this?
+        # import traceback, sys
+        # exc = traceback.format_exception(*sys.exc_info())
+        # exc_short = [line for line in exc if "_create_widget_from_method" not in line]
+        # formatted = "".join(exc_short)
+        # raise MagicClassConstructionError(
+        #     f"\n{hist_str}\n\n{formatted}"
+        # ) from None
         raise MagicClassConstructionError(
             f"\n{hist_str}\n\n{type(e).__name__}: {e}"
         ) from e

@@ -49,7 +49,7 @@ from .mgui_ext import (
     _LabeledWidgetAction,
     mguiLike,
 )
-from .utils import get_parameters, callable_to_classes
+from .utils import copy_class, get_parameters, callable_to_classes
 from ._macro import GuiMacro
 
 from ..utils import (
@@ -1269,7 +1269,11 @@ def convert_attributes(cls: type[_T], hide: tuple[type, ...]) -> dict[str, Any]:
     mro = [c for c in cls.__mro__ if c not in hide]
     for subcls in reversed(mro):
         for name, obj in subcls.__dict__.items():
-            if name.startswith("_") or isinstance(obj, _pass_type) or not callable(obj):
+            if isinstance(obj, _MagicTemplateMeta):
+                new_attr = copy_class(obj, cls, name=name)
+            elif (
+                name.startswith("_") or isinstance(obj, _pass_type) or not callable(obj)
+            ):
                 # private method, non-action-like object, not-callable object are passed.
                 new_attr = obj
             elif callable(obj) and get_additional_option(obj, "record", True):
