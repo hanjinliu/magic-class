@@ -1,5 +1,6 @@
 from __future__ import annotations
 from typing import Any, TYPE_CHECKING, TypeVar
+from types import FunctionType
 from magicgui.widgets import FunctionGui, Widget
 from magicgui.widgets._bases.value_widget import UNSET
 from magicgui.type_map import get_widget_class
@@ -29,18 +30,45 @@ _C = TypeVar("_C", bound=type)
 
 
 def copy_class(cls: _C, ns: type, name: str | None = None) -> _C:
-    """Copy a class in a new namespace."""
+    """
+    Copy a class in a new namespace.
+
+    This function not only copies the class object but also update all the
+    ``__qualname__`` recursively.
+
+    Parameters
+    ----------
+    cls : type
+        Class to be copied.
+    ns : type
+        New namespace of ``cls``.
+    name : str, optional
+        New name of ``cls``. If not given, the original name will be used.
+
+    Returns
+    -------
+    type
+        Copied class object.
+    """
     out = type(cls.__name__, cls.__bases__, dict(cls.__dict__))
     if name is None:
         name = out.__name__
-    out.__qualname__ = f"{ns.__qualname__}.{name}"
+    _update_qualnames(out, f"{ns.__qualname__}.{name}")
     return out
 
 
+def _update_qualnames(cls: type, cls_qualname: str) -> None:
+    cls.__qualname__ = cls_qualname
+    for key, attr in cls.__dict__.items():
+        if isinstance(attr, FunctionType):
+            attr.__qualname__ = f"{cls_qualname}.{key}"
+        elif isinstance(attr, type):
+            _update_qualnames(attr, f"{cls_qualname}.{key}")
+    return None
+
+
 class MagicClassConstructionError(Exception):
-    """
-    This exception will be raised when class definition is not a valid magic-class.
-    """
+    """Raised when class definition is not a valid magic-class."""
 
 
 def format_error(
