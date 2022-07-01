@@ -71,6 +71,7 @@ from ..wrappers import upgrade_signature
 if TYPE_CHECKING:
     import numpy as np
     import napari
+    from types import TracebackType
 
 
 class PopUpMode(Enum):
@@ -125,6 +126,7 @@ class ErrorMode(Enum):
             try:
                 out = func(*args, **kwargs)
             except Exception as e:
+                e.__traceback__ = _cleanup_tb(e.__traceback__)
                 handler(e, parent=parent)
                 out = e
             return out
@@ -1406,3 +1408,14 @@ def _implement_confirmation(
         _method.__signature__ = method.__signature__
 
     return _method
+
+
+def _cleanup_tb(tb: TracebackType):
+    """Remove useless info from a traceback object."""
+    current_tb = tb
+    while current_tb is not None:
+        if current_tb.tb_frame.f_code.co_name == "_recordable":
+            tb = current_tb.tb_next
+            break
+        current_tb = current_tb.tb_next
+    return tb

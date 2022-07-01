@@ -89,17 +89,11 @@ def format_error(
         e.args = (f"\n{hist_str}\n{e}",)
         raise e
     else:
-        # TODO: should format like this?
-        # import traceback, sys
-        # exc = traceback.format_exception(*sys.exc_info())
-        # exc_short = [line for line in exc if "_create_widget_from_method" not in line]
-        # formatted = "".join(exc_short)
-        # raise MagicClassConstructionError(
-        #     f"\n{hist_str}\n\n{formatted}"
-        # ) from None
-        raise MagicClassConstructionError(
+        tb = e.__traceback__
+        construction_err = MagicClassConstructionError(
             f"\n{hist_str}\n\n{type(e).__name__}: {e}"
-        ) from e
+        ).with_traceback(tb)
+        raise construction_err from None
 
 
 def callable_to_classes(f) -> list[type[Widget]]:
