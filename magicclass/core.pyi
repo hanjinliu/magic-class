@@ -14,6 +14,7 @@ if TYPE_CHECKING:
     from .stylesheets import StyleSheet
     from qtpy.QtWidgets import QWidget
     from .help import HelpWidget
+    from macrokit import Macro
 
 Layout = Union[Literal["vertical"], Literal["horizontal"]]
 
@@ -123,6 +124,9 @@ def magictoolbar(
     parent=None,
 ) -> Callable[[_C], type[ToolBarGui] | _C]: ...
 def redo(ui: MagicTemplate, index: int = -1) -> None: ...
+def update_widget_state(
+    ui: MagicTemplate, macro: Macro | str | None = None
+) -> None: ...
 
 class Parameters:
     def __init__(self): ...
