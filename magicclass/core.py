@@ -539,7 +539,12 @@ def redo(ui: MagicTemplate, index: int = -1) -> None:
         By default the last operation will be redone.
     """
     line = ui.macro[index]
-    line.eval({"ui": ui})
+    try:
+        line.eval({"ui": ui})
+    except Exception as e:
+        msg = e.args[0]
+        msg = f"Caused by >>> {line}. {msg}"
+        raise e
     return None
 
 
