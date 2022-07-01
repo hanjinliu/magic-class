@@ -207,6 +207,7 @@ def test_callback():
             @thread_worker.to_callback
             def _returned():
                 self._func_returned.append(local)
+                self.dummy()
             return _returned
 
         @thread_worker
@@ -214,16 +215,22 @@ def test_callback():
             @thread_worker.to_callback
             def _yielded():
                 self._gen_yielded.append(t)
+                self.dummy()
             t = 0
             for _ in range(10):
                 yield _yielded
                 t += 1
 
+        def dummy(self):
+            pass
+
     ui = A()
     ui.func()
     assert ui._func_returned == [0]
+    assert "dummy" not in str(ui.macro)
     ui.gen()
     assert ui._gen_yielded == [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    assert "dummy" not in str(ui.macro)
 
 def test_callback_partial():
     @magicclass
