@@ -1213,25 +1213,35 @@ def _inject_recorder(func: Callable, is_method: bool = True) -> Callable:
         return _func
 
 
-def _define_macro_recorder(sig, func):
+def _define_macro_recorder(sig: inspect.Signature, func: Callable):
     if isinstance(sig, MagicMethodSignature):
         opt = sig.additional_options
         _auto_call = opt.get("auto_call", False)
     else:
         _auto_call = False
 
-    # TODO: if function has a return_annotation, macro should be recorded like ui["f"](...)
+    if sig.return_annotation is inspect.Parameter.empty:
+        _create_expr = lambda _bgui, _func, _kwargs: Expr.parse_method(
+            _bgui, _func, (), _kwargs
+        )
+        _head_val = Head.getattr
+    else:
+        _create_expr = lambda _bgui, _func, _kwargs: Expr.parse_call(
+            Expr(Head.getitem, [_bgui, _func.__name__]), (), _kwargs
+        )
+        _head_val = Head.getitem
+
     def _record_macro(bgui: MagicTemplate, *args, **kwargs):
         bound = sig.bind(*args, **kwargs)
         kwargs = dict(bound.arguments.items())
-        expr = Expr.parse_method(bgui, func, (), kwargs)
+        expr = _create_expr(bgui, func, kwargs)
         if _auto_call:
             # Auto-call will cause many redundant macros. To avoid this, only the last
             # input will be recorded in magic-class.
             last_expr = bgui.macro[-1]
             if (
                 last_expr.head == Head.call
-                and last_expr.args[0].head == Head.getattr
+                and last_expr.args[0].head == _head_val
                 and last_expr.at(0, 1) == expr.at(0, 1)
                 and len(bgui.macro) > 0
             ):
