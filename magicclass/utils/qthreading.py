@@ -29,6 +29,7 @@ from .qtsignal import QtSignal
 if TYPE_CHECKING:
     from .._gui import BaseGui
     from .._gui.mgui_ext import PushButtonPlus, Action
+    from .._gui._macro import GuiMacro
     from ..fields import MagicField
 
 __all__ = ["thread_worker", "Timer", "Callback"]
@@ -627,14 +628,14 @@ class thread_worker:
         params = list(sig.parameters.values())[1:]
         return sig.replace(parameters=params)
 
-    def _bind_callbacks(self, worker: FunctionWorker | GeneratorWorker, gui):
+    def _bind_callbacks(self, worker: FunctionWorker | GeneratorWorker, gui: BaseGui):
         # bind callbacks
         is_generator = isinstance(worker, GeneratorWorker)
         for c in self.started._iter_as_method(gui):
             worker.started.connect(c)
         for c in self.returned._iter_as_method(gui):
             worker.returned.connect(c)
-        worker.returned.connect(Callback.catch)
+        worker.returned.connect(partial(Callback.catch, macro=gui.macro))
         for c in self.errored._iter_as_method(gui):
             worker.errored.connect(c)
         for c in self.finished._iter_as_method(gui):
@@ -645,7 +646,7 @@ class thread_worker:
                 worker.aborted.connect(c)
             for c in self.yielded._iter_as_method(gui):
                 worker.yielded.connect(c)
-            worker.yielded.connect(Callback.catch)
+            worker.yielded.connect(partial(Callback.catch, macro=gui.macro))
 
     @property
     def __signature__(self) -> inspect.Signature:
@@ -765,15 +766,18 @@ def increment(pbar: ProgressBarLike):
 
 
 class Callback:
+    """Callback object that can be recognized by thread_worker."""
+
     def __init__(self, f: Callable[[], Any]):
         if not callable(f):
             raise TypeError(f"{f} is not callable.")
         self._func = f
 
     @staticmethod
-    def catch(out):
+    def catch(out, macro: GuiMacro):
         if isinstance(out, Callback):
-            out._func()
+            with macro.blocked():
+                out._func()
 
     def __call__(self, *args, **kwargs) -> Callback:
         """Return a partial callback."""

@@ -9,6 +9,7 @@ from .core import (
     build_help,
     get_function_gui,
     redo,
+    update_widget_state,
 )
 
 from .wrappers import (

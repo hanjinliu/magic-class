@@ -41,6 +41,7 @@ if TYPE_CHECKING:
     from ._gui._function_gui import FunctionGuiPlus
     from .types import WidgetTypeStr, PopUpModeStr, ErrorModeStr
     from .help import HelpWidget
+    from macrokit import Macro
 
 _BASE_CLASS_SUFFIX = "_Base"
 
@@ -522,10 +523,6 @@ def get_function_gui(ui: MagicTemplate, name: str) -> FunctionGuiPlus:
     return mgui
 
 
-# def capitalize(cls: type[MagicTemplate]):
-#     ...
-
-
 def redo(ui: MagicTemplate, index: int = -1) -> None:
     """
     Redo operation on GUI using recorded macro.
@@ -539,21 +536,65 @@ def redo(ui: MagicTemplate, index: int = -1) -> None:
         By default the last operation will be redone.
     """
     line = ui.macro[index]
-    line.eval({"ui": ui})
+    try:
+        line.eval({"ui": ui})
+    except Exception as e:
+        msg = e.args[0]
+        msg = f"Caused by >>> {line}. {msg}"
+        raise e
     return None
 
 
-# def update_widget(ui: MagicTemplate) -> None:
-#     from macrokit import Head, Expr, Mock
-#     for expr in ui.macro:
-#         if expr.head == Head.call:
-#             target = expr.args[0]
-#             target_widget = Expr(Head.getitem, [target.args[0], str(target.args[1])])
-#             mock = Mock(target_widget)
-#             e = Expr(Head.call, [mock.mgui.update] + expr.args[1:])
+def update_widget_state(ui: MagicTemplate, macro: Macro | str | None = None) -> None:
+    """
+    Update widget values based on a macro.
 
-#         elif expr.head == Head.assign:
-#             expr.eval({}, {str(ui._my_symbol): ui})
+    This helper function works similar to the ``update_widget`` method of ``FunctionGui``.
+    In most cases, this function will be used for restoring a state from a macro recorded
+    before.
+
+    Parameters
+    ----------
+    ui : MagicTemplate
+        Magic class instance.
+    macro : Macro or str, optional
+        An executable macro or string that dictates how GUI will be updated.
+    """
+    from macrokit import Head, Expr, Macro
+
+    if macro is None:
+        macro = ui.macro
+    elif isinstance(macro, str):
+        s = macro
+        macro = Macro()
+        for line in s.split("\n"):
+            macro.append(line)
+    elif not isinstance(macro, Macro):
+        raise TypeError(
+            f"The second argument must be a Macro or str, got {type(macro)}."
+        )
+
+    for expr in macro:
+        if expr.head == Head.call:
+            # ui.func(...)
+            ui_f, *arguments = expr.args
+            f = ui_f.args[1]
+            for i, arg in enumerate(arguments):
+                if isinstance(arg, Expr) and arg.head == Head.kw:
+                    break
+            args = arguments[:i]
+            kwargs: list[Expr] = arguments[i:]
+            args = Expr(Head.call, [tuple] + args).eval()
+            kwargs = Expr(Head.call, [dict] + kwargs).eval()
+            fgui = get_function_gui(ui, str(f))
+            fgui.update(kwargs)
+
+        elif expr.head == Head.assign:
+            # ui.field.value = ...
+            # ui.vfield = ...
+            expr.eval({}, {str(ui._my_symbol): ui})
+
+    return None
 
 
 class Parameters:
