@@ -516,6 +516,9 @@ def get_function_gui(ui: MagicTemplate, name: str) -> FunctionGuiPlus:
     if not hasattr(widget, "mgui"):
         raise TypeError(f"Widget {widget} does not have FunctionGui inside it.")
 
+    if widget.mgui is not None:
+        return widget.mgui
+
     from ._gui._base import _build_mgui, _create_gui_method
 
     func = _create_gui_method(ui, func)
@@ -578,7 +581,10 @@ def update_widget_state(ui: MagicTemplate, macro: Macro | str | None = None) -> 
         if expr.head == Head.call:
             # ui.func(...)
             ui_f, *arguments = expr.args
-            f = ui_f.args[1]
+            fname = str(ui_f.args[1])
+            if fname.startswith("_"):
+                # TODO: call with return callback
+                continue
             for i, arg in enumerate(arguments):
                 if isinstance(arg, Expr) and arg.head == Head.kw:
                     break
@@ -586,7 +592,7 @@ def update_widget_state(ui: MagicTemplate, macro: Macro | str | None = None) -> 
             kwargs: list[Expr] = arguments[i:]
             args = Expr(Head.call, [tuple] + args).eval()
             kwargs = Expr(Head.call, [dict] + kwargs).eval()
-            fgui = get_function_gui(ui, str(f))
+            fgui = get_function_gui(ui, fname)
             fgui.update(kwargs)
 
         elif expr.head == Head.assign:
