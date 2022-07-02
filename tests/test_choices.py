@@ -1,5 +1,6 @@
 from magicclass import magicclass, set_options, field, vfield, get_function_gui
 from magicgui.widgets import Select
+from typing import List, Tuple
 import pytest
 
 @pytest.mark.parametrize("widget_type", ["ComboBox", "RadioButtons", "Select"])
@@ -162,7 +163,7 @@ def test_choices_with_string():
     assert fgui.c.choices[0] == 1
 
 def test_choices_type():
-    from magicclass.types import Choices
+    from magicclass.types import OneOf
 
     @magicclass
     class A:
@@ -171,14 +172,14 @@ def test_choices_type():
             def _get_choices(self, w=None):
                 return [1, 2]
 
-            def _get_choices_with_name(self, w=None) -> list[tuple[str, int]]:
+            def _get_choices_with_name(self, w=None) -> List[Tuple[str, int]]:
                 return [("a", 1), ("b", 2)]
 
-        def f(self, c: Choices[B._get_choices], d: Choices[B._get_choices_with_name]):
+        def f(self, c: OneOf[B._get_choices], d: OneOf[B._get_choices_with_name]):
             c.bit_length()
             d.bit_length()
 
-        def g(self, c: Choices[("a", 0), ("b", 1)]):
+        def g(self, c: OneOf[("a", 0), ("b", 1)]):
             c.bit_length()
 
     ui = A()
@@ -197,7 +198,7 @@ def test_someof_type():
             def _get_choices(self, w=None):
                 return [1, 2]
 
-            def _get_choices_with_name(self, w=None) -> list[tuple[str, int]]:
+            def _get_choices_with_name(self, w=None) -> List[Tuple[str, int]]:
                 return [("a", 1), ("b", 2)]
 
         def f(self, c: SomeOf[B._get_choices], d: SomeOf[B._get_choices_with_name]):
@@ -214,11 +215,11 @@ def test_someof_type():
     assert cbox.choices == (0, 1)
 
 def test_slice_choices():
-    from magicclass.types import Choices
+    from magicclass.types import OneOf
 
     @magicclass
     class A:
-        def f(self, x: Choices[3:6], y: Choices[0.1:0.3:0.05]):
+        def f(self, x: OneOf[3:6], y: OneOf[0.1:0.3:0.05]):
             x.bit_length()
             y.is_integer()
 

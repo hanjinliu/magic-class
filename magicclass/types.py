@@ -180,8 +180,8 @@ class Bound(metaclass=_BoundAlias):
         raise TypeError(f"Cannot subclass {cls.__module__}.Bound")
 
 
-class _ChoicesAlias(type):
-    """metaclass of ``Choices``."""
+class _OneOfAlias(type):
+    """metaclass of ``OneOf``."""
 
     @overload
     def __getitem__(cls, value: Callable[_P, Iterable[tuple[Any, _V]]]) -> type[_V]:
@@ -241,7 +241,7 @@ def _normalize_slice(value: slice) -> type | list:
     return outtype, outvalue
 
 
-class Choices(metaclass=_ChoicesAlias):
+class OneOf(metaclass=_OneOfAlias):
     """
     Make Annotated type from a method, such as:
 
@@ -251,10 +251,10 @@ class Choices(metaclass=_ChoicesAlias):
 
         @magicclass
         class MyClass:
-            def func(self, v: Choices[(1, 2, 3)]):
+            def func(self, v: OneOf[(1, 2, 3)]):
                 ...
 
-    ``Choices[value]`` is identical to ``Annotated[Any, {"choices": value}]``.
+    ``OneOf[value]`` is identical to ``Annotated[Any, {"choices": value}]``.
     """
 
     def __new__(cls, *args):
@@ -264,10 +264,10 @@ class Choices(metaclass=_ChoicesAlias):
         )
 
     def __init_subclass__(cls, *args, **kwargs):
-        raise TypeError(f"Cannot subclass {cls.__module__}.Choices")
+        raise TypeError(f"Cannot subclass {cls.__module__}.{cls.__name__}")
 
 
-OneOf = Choices  # alias
+Choices = OneOf  # alias
 
 
 class _SomeOfAlias(type):

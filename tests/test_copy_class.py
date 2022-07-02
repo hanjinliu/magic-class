@@ -1,5 +1,5 @@
 from magicclass import magicclass, field
-from magicclass.types import Bound, Choices
+from magicclass.types import Bound, OneOf
 
 @magicclass
 class B:
@@ -96,7 +96,7 @@ def test_field():
         def _get_ints(self, w=None):
             return [1, 2, 4]
 
-        f = field(Choices[_get_ints])
+        f = field(OneOf[_get_ints])
 
         @f.connect
         def _on_change(self):
