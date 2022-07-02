@@ -287,7 +287,7 @@ class MagicField(_FieldObject, Generic[_W, _V]):
         return _func
 
     @overload
-    def __get__(self, obj: Literal[None], objtype=None) -> MagicField[_W, _V] | _W:
+    def __get__(self, obj: Literal[None], objtype=None) -> MagicField[_W, _V]:
         ...
 
     @overload
