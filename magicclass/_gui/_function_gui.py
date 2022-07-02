@@ -4,10 +4,7 @@ import re
 from magicgui.widgets import PushButton
 from magicgui.widgets._concrete import _LabeledWidget
 from magicgui.widgets._bases import ValueWidget, ButtonWidget, ContainerWidget
-from magicgui.widgets._function_gui import (
-    FunctionGui,
-    _function_name_pointing_to_widget,
-)
+from magicgui.widgets._function_gui import FunctionGui
 
 from ..widgets import Separator
 
