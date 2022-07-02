@@ -9,7 +9,6 @@ from ...widgets import FreeWidget
 
 class HasViewBox(FreeWidget):
     def __init__(self, grid_pos: tuple[int, int] = (0, 0), _scene=None, _row=0, _col=0):
-        super().__init__()
         if _scene is None:
             _scene = scene.SceneCanvas(keys="interactive")
         self._scene = _scene
@@ -18,6 +17,7 @@ class HasViewBox(FreeWidget):
         self._viewbox: ViewBox = grid.add_view(row=_row, col=_col, camera="panzoom")
         self._items = []
         self._grid = grid
+        super().__init__()
         self._scene.create_native()
         self.set_widget(self._scene.native)
 
@@ -38,6 +38,14 @@ class HasViewBox(FreeWidget):
     def yrange(self, rng: tuple[float, float]):
         y0, y1 = rng
         self._viewbox.camera.set_range(y=(y0, y1))
+
+    @property
+    def enabled(self) -> bool:
+        return self._viewbox.interactive
+
+    @enabled.setter
+    def enabled(self, value) -> bool:
+        self._viewbox.interactive = value
 
     @property
     def layers(self):
@@ -241,9 +249,13 @@ class ImageItem(HasViewBox):
 
     @image.setter
     def image(self, img):
+        no_image = self._image._data is None
         self._image.set_data(img)
         if not self._lock_contrast_limits:
             self._image.clim = "auto"
+        if no_image:
+            self.yrange = (0, self._image._data.shape[0])
+            self.xrange = (0, self._image._data.shape[1])
 
     @image.deleter
     def image(self):
@@ -260,13 +272,11 @@ class ImageItem(HasViewBox):
 
 
 class VispyPlotCanvas(PlotItem):
-    """
-    A Vispy based 2-D plot canvas for curve, histogram, bar plot etc.
-    """
+    """A Vispy based 2-D plot canvas for curve, histogram, bar plot etc."""
 
 
 class VispyImageCanvas(ImageItem):
-    ...
+    """A Vispy based 2-D plot canvas for images."""
 
 
 class _MultiPlot(FreeWidget):
