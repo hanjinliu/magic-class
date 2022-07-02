@@ -17,6 +17,7 @@ def test_get_function_gui():
 
 def test_update_widget_state():
     from magicclass import update_widget_state
+
     @magicclass
     class A:
         x = field(0)

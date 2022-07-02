@@ -516,6 +516,9 @@ def get_function_gui(ui: MagicTemplate, name: str) -> FunctionGuiPlus:
     if not hasattr(widget, "mgui"):
         raise TypeError(f"Widget {widget} does not have FunctionGui inside it.")
 
+    if widget.mgui is not None:
+        return widget.mgui
+
     from ._gui._base import _build_mgui, _create_gui_method
 
     func = _create_gui_method(ui, func)
@@ -551,7 +554,7 @@ def update_widget_state(ui: MagicTemplate, macro: Macro | str | None = None) -> 
 
     This helper function works similar to the ``update_widget`` method of ``FunctionGui``.
     In most cases, this function will be used for restoring a state from a macro recorded
-    before.
+    before. Value changed signal will not be emitted within this operation.
 
     Parameters
     ----------
@@ -578,16 +581,20 @@ def update_widget_state(ui: MagicTemplate, macro: Macro | str | None = None) -> 
         if expr.head == Head.call:
             # ui.func(...)
             ui_f, *arguments = expr.args
-            f = ui_f.args[1]
-            for i, arg in enumerate(arguments):
-                if isinstance(arg, Expr) and arg.head == Head.kw:
-                    break
-            args = arguments[:i]
-            kwargs: list[Expr] = arguments[i:]
-            args = Expr(Head.call, [tuple] + args).eval()
-            kwargs = Expr(Head.call, [dict] + kwargs).eval()
-            fgui = get_function_gui(ui, str(f))
-            fgui.update(kwargs)
+            fname = str(ui_f.args[1])
+            if fname.startswith("_"):
+                if fname != "_call_with_return_callback":
+                    continue
+                args, kwargs = _arguments_to_values(arguments)
+                fgui = get_function_gui(ui, args[0])
+
+            else:
+                args, kwargs = _arguments_to_values(arguments)
+                fgui = get_function_gui(ui, fname)
+
+            with fgui.changed.blocked():
+                for key, value in kwargs.items():
+                    getattr(fgui, key).value = value
 
         elif expr.head == Head.assign:
             # ui.field.value = ...
@@ -595,6 +602,23 @@ def update_widget_state(ui: MagicTemplate, macro: Macro | str | None = None) -> 
             expr.eval({}, {str(ui._my_symbol): ui})
 
     return None
+
+
+def _tuple(*args) -> tuple:
+    return args
+
+
+def _arguments_to_values(arguments) -> tuple[tuple, dict[str, Any]]:
+    from macrokit import Head, Expr, symbol
+
+    for i, arg in enumerate(arguments):
+        if isinstance(arg, Expr) and arg.head == Head.kw:
+            break
+    args = arguments[:i]
+    kwargs: list[Expr] = arguments[i:]
+    args = Expr(Head.call, [_tuple] + args).eval({symbol(_tuple): _tuple})
+    kwargs = Expr(Head.call, [dict] + kwargs).eval()
+    return args, kwargs
 
 
 class Parameters:
