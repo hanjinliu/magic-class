@@ -717,6 +717,13 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
             yield child
             yield from child._iter_child_magicclasses()
 
+    def _call_with_return_callback(self, fname: str, *args, **kwargs) -> None:
+        from ..core import get_function_gui
+
+        fgui = get_function_gui(self, fname)
+        fgui(*args, **kwargs)
+        return None
+
 
 class BaseGui(MagicTemplate):
     def __init__(self, close_on_run, popup_mode, error_mode):
@@ -1039,7 +1046,7 @@ def wraps(template: Callable | inspect.Signature) -> Callable[[_C], _C]:
                 new_params.append(v)
 
         # update empty return annotation
-        if old_signature.return_annotation is inspect._empty:
+        if old_signature.return_annotation is inspect.Parameter.empty:
             return_annotation = template_signature.return_annotation
         else:
             return_annotation = old_signature.return_annotation
@@ -1213,34 +1220,60 @@ def _inject_recorder(func: Callable, is_method: bool = True) -> Callable:
         return _func
 
 
-def _define_macro_recorder(sig, func):
+def _define_macro_recorder(sig: inspect.Signature, func: Callable):
     if isinstance(sig, MagicMethodSignature):
         opt = sig.additional_options
         _auto_call = opt.get("auto_call", False)
     else:
         _auto_call = False
 
-    # TODO: if function has a return_annotation, macro should be recorded like ui["f"](...)
-    def _record_macro(bgui: MagicTemplate, *args, **kwargs):
-        bound = sig.bind(*args, **kwargs)
-        kwargs = dict(bound.arguments.items())
-        expr = Expr.parse_method(bgui, func, (), kwargs)
-        if _auto_call:
-            # Auto-call will cause many redundant macros. To avoid this, only the last
-            # input will be recorded in magic-class.
-            last_expr = bgui.macro[-1]
-            if (
-                last_expr.head == Head.call
-                and last_expr.args[0].head == Head.getattr
-                and last_expr.at(0, 1) == expr.at(0, 1)
-                and len(bgui.macro) > 0
-            ):
-                bgui.macro.pop()
-                bgui.macro._erase_last()
+    if sig.return_annotation is inspect.Parameter.empty:
 
-        bgui.macro.append(expr)
-        bgui.macro._last_setval = None
-        return None
+        def _record_macro(bgui: MagicTemplate, *args, **kwargs):
+            bound = sig.bind(*args, **kwargs)
+            kwargs = dict(bound.arguments.items())
+            expr = Expr.parse_method(bgui, func, (), kwargs)
+            if _auto_call:
+                # Auto-call will cause many redundant macros. To avoid this, only the last
+                # input will be recorded in magic-class.
+                last_expr = bgui.macro[-1]
+                if (
+                    last_expr.head == Head.call
+                    and last_expr.args[0].head == Head.getattr
+                    and last_expr.at(0, 1) == expr.at(0, 1)
+                    and len(bgui.macro) > 0
+                ):
+                    bgui.macro.pop()
+                    bgui.macro._erase_last()
+
+            bgui.macro.append(expr)
+            bgui.macro._last_setval = None
+            return None
+
+    else:
+        _cname_ = "_call_with_return_callback"
+
+        def _record_macro(bgui: MagicTemplate, *args, **kwargs):
+            bound = sig.bind(*args, **kwargs)
+            kwargs = dict(bound.arguments.items())
+            expr = Expr.parse_method(bgui, _cname_, (func.__name__,), kwargs)
+            if _auto_call:
+                # Auto-call will cause many redundant macros. To avoid this, only the last
+                # input will be recorded in magic-class.
+                last_expr = bgui.macro[-1]
+                if (
+                    last_expr.head == Head.call
+                    and last_expr.args[0].head == Head.getattr
+                    and last_expr.at(0, 1) == expr.at(0, 1)
+                    and last_expr.args[1] == expr.args[1]
+                    and len(bgui.macro) > 0
+                ):
+                    bgui.macro.pop()
+                    bgui.macro._erase_last()
+
+            bgui.macro.append(expr)
+            bgui.macro._last_setval = None
+            return None
 
     return _record_macro
 
