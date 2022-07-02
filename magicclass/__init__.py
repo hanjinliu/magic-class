@@ -25,6 +25,7 @@ from .wrappers import (
 from .fields import field, vfield, widget_property, FieldGroup, HasFields
 from ._gui._base import wraps, defaults, MagicTemplate, PopUpMode
 from ._gui.keybinding import Key
+from ._gui._icon import Icon
 from . import widgets, utils, types
 
 from magicgui import *
@@ -56,6 +57,7 @@ __all__ = [
     "MagicTemplate",
     "PopUpMode",
     "Key",
+    "Icon",
 ]
 
 

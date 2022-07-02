@@ -96,6 +96,7 @@ def set_design(
     max_width: int = None,
     max_height: int = None,
     text: str = None,
+    icon: str = None,
     icon_path: str = None,
     font_size: int = None,
     font_family: int = None,

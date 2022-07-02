@@ -1,4 +1,5 @@
 from __future__ import annotations
+import os
 from typing import Callable, Iterable, Any, Generic, TypeVar
 from qtpy.QtWidgets import (
     QPushButton,
@@ -8,14 +9,13 @@ from qtpy.QtWidgets import (
     QWidget,
     QMenu,
 )
-from qtpy.QtGui import QIcon
-from qtpy.QtCore import QSize
 from psygnal import Signal
 from magicgui.widgets import PushButton
 from magicgui.widgets._concrete import _LabeledWidget
 from magicgui.widgets._bases import Widget, ValueWidget
 from magicgui.backends._qtpy.widgets import QBaseButtonWidget
 from ._function_gui import FunctionGuiPlus
+from ._icon import StandardIcon, IconPath, _IconBase
 
 # magicgui widgets that need to be extended to fit into magicclass
 
@@ -26,7 +26,7 @@ class PushButtonPlus(PushButton):
     def __init__(self, text: str | None = None, **kwargs):
         super().__init__(text=text, **kwargs)
         self.native: QPushButton
-        self._icon_path = None
+        self._icon = None
         self.mgui: FunctionGuiPlus | None = None  # tagged function GUI
         self._doc = ""
         self._unwrapped = False
@@ -59,17 +59,23 @@ class PushButtonPlus(PushButton):
         self.native.setStyleSheet(stylesheet)
 
     @property
-    def icon_path(self) -> str | None:
-        """Path to the icon image."""
-        return self._icon_path
+    def icon(self):
+        """Get icon object."""
+        return self._icon
 
-    @icon_path.setter
-    def icon_path(self, path):
-        path = str(path)
-        icon = QIcon(path)
-        self.native.setIcon(icon)
+    @icon.setter
+    def icon(self, val):
+        if isinstance(val, _IconBase):
+            icon = val
+        if os.path.exists(val):
+            icon = IconPath(val)
+        else:
+            icon = StandardIcon(val)
+        icon.install(self)
+        self._icon = icon
         self.native.setIconSize(self.native.size())
-        self._icon_path = path
+
+    icon_path = icon
 
     @property
     def font_size(self):
@@ -229,7 +235,7 @@ class Action(AbstractAction):
         self._doc = ""
         self._unwrapped = False
 
-        self._icon_path = None
+        self._icon = None
         if text:
             self.text = text
         if name:
@@ -267,14 +273,21 @@ class Action(AbstractAction):
         self.native.setChecked(checked)
 
     @property
-    def icon_path(self):
-        return self._icon_path
+    def icon(self):
+        return self._icon
 
-    @icon_path.setter
-    def icon_path(self, path):
-        path = str(path)
-        icon = QIcon(path)
-        self.native.setIcon(icon)
+    @icon.setter
+    def icon(self, val):
+        if isinstance(val, _IconBase):
+            icon = val
+        if os.path.exists(val):
+            icon = IconPath(val)
+        else:
+            icon = StandardIcon(val)
+        icon.install(self)
+        self._icon = icon
+
+    icon_path = icon
 
     def from_options(self, options: dict[str] | Callable):
         if callable(options):

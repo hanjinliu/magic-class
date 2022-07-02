@@ -299,38 +299,6 @@ def test_dont_record():
     assert str(ui.macro[-2]) != "ui.t = 10"
     assert str(ui.macro[-1]) == "ui.t = 20"
 
-
-def test_icon():
-    def _icon_byte(a):
-        return a.native.icon().pixmap(10,10).toImage().byteCount()
-    path = Path(__file__).parent / "icons" / "star.png"
-
-    @magicclass
-    class A:
-        @magicmenu
-        class Menu:
-            a = field(bool, options={"icon_path": path})
-            @set_design(icon_path=path)
-            def func(self): ...
-
-    ui = A()
-
-    assert _icon_byte(ui.Menu.a) > 0
-    assert _icon_byte(ui.Menu["func"]) > 0
-
-    @magicclass
-    class A:
-        @magictoolbar
-        class Menu:
-            a = field(bool, options={"icon_path": path})
-            @set_design(icon_path=path)
-            def func(self): ...
-
-    ui = A()
-
-    assert _icon_byte(ui.Menu.a) > 0
-    assert _icon_byte(ui.Menu["func"]) > 0
-
 def test_enabled():
     @magicclass
     class A:
