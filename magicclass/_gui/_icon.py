@@ -59,6 +59,7 @@ class Icon(SimpleNamespace):
 
     """
 
+    # fmt: off
     TitleBarMenuButton = QStyle.StandardPixmap.SP_TitleBarMenuButton
     TitleBarMinButton = QStyle.StandardPixmap.SP_TitleBarMinButton
     TitleBarMaxButton = QStyle.StandardPixmap.SP_TitleBarMaxButton
@@ -85,12 +86,8 @@ class Icon(SimpleNamespace):
     DirLinkIcon = QStyle.StandardPixmap.SP_DirLinkIcon
     FileIcon = QStyle.StandardPixmap.SP_FileIcon
     FileLinkIcon = QStyle.StandardPixmap.SP_FileLinkIcon
-    ToolBarHorizontalExtensionButton = (
-        QStyle.StandardPixmap.SP_ToolBarHorizontalExtensionButton
-    )
-    ToolBarVerticalExtensionButton = (
-        QStyle.StandardPixmap.SP_ToolBarVerticalExtensionButton
-    )
+    ToolBarHorizontalExtensionButton = QStyle.StandardPixmap.SP_ToolBarHorizontalExtensionButton
+    ToolBarVerticalExtensionButton = QStyle.StandardPixmap.SP_ToolBarVerticalExtensionButton
     FileDialogStart = QStyle.StandardPixmap.SP_FileDialogStart
     FileDialogEnd = QStyle.StandardPixmap.SP_FileDialogEnd
     FileDialogToParent = QStyle.StandardPixmap.SP_FileDialogToParent
@@ -142,3 +139,4 @@ class Icon(SimpleNamespace):
     DialogIgnoreButton = QStyle.StandardPixmap.SP_DialogIgnoreButton
     RestoreDefaultsButton = QStyle.StandardPixmap.SP_RestoreDefaultsButton
     CustomBase = QStyle.StandardPixmap.SP_CustomBase
+    # fmt: on
