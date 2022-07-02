@@ -890,7 +890,7 @@ def _define_callback_gui(self: MagicTemplate, callback: Callable):
             current_self = self
             while not (
                 hasattr(current_self, funcname)
-                and current_self.__class__.__name__ == clsname
+                and current_self.__class__.__qualname__.split(".")[-1] == clsname
             ):
                 current_self = current_self.__magicclass_parent__
             _func = _normalize_argcount(getattr(current_self, funcname))

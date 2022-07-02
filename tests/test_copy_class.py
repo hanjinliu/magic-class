@@ -92,10 +92,15 @@ def test_getter_and_wraps():
 def test_field():
     @magicclass
     class C:
+        _value = None
         def _get_ints(self, w=None):
             return [1, 2, 4]
 
         f = field(Choices[_get_ints])
+
+        @f.connect
+        def _on_change(self):
+            self._value = self.f.value
 
     @magicclass
     class A:
@@ -110,3 +115,7 @@ def test_field():
     assert ui._c.f.choices == (1, 2, 4)
     ui["f"].changed()
     assert ui.out == 1
+
+    # check value-changed event
+    ui._c.f.value = 2
+    assert ui._c._value == 2
