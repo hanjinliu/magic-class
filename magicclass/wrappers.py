@@ -89,21 +89,21 @@ def set_options(
 
 
 def set_design(
-    width: int = None,
-    height: int = None,
-    min_width: int = None,
-    min_height: int = None,
-    max_width: int = None,
-    max_height: int = None,
-    text: str = None,
-    icon: str = None,
-    icon_path: str = None,
-    font_size: int = None,
-    font_family: int = None,
-    font_color: Color = None,
-    background_color: Color = None,
-    visible: bool = None,
-):
+    width: int | None = None,
+    height: int | None = None,
+    min_width: int | None = None,
+    min_height: int | None = None,
+    max_width: int | None = None,
+    max_height: int | None = None,
+    text: str | None = None,
+    icon: str | None = None,
+    icon_path: str | None = None,
+    font_size: int | None = None,
+    font_family: int | None = None,
+    font_color: Color | None = None,
+    background_color: Color | None = None,
+    visible: bool | None = None,
+) -> Callable[[type[T]], type[T]] | Callable[[F], F]:
     """
     Change button/action design by calling setter when the widget is created.
 
@@ -123,7 +123,7 @@ def set_design(
         Button maximum height. Call ``button.max_height = max_height``.
     text : str, optional
         Button text. Call ``button.text = text``.
-    icon_path : str, optional
+    icon : str, optional
         Path to icon file. ``min_width`` and ``min_height`` will be automatically set to the icon size
         if not given.
     font_size : int, optional
@@ -131,17 +131,14 @@ def set_design(
     visible : bool default is True
         Button visibility.
     """
-
     caller_options = locals()
     caller_options = {k: v for k, v in caller_options.items() if v is not None}
 
-    @overload
-    def wrapper(obj: type[T]) -> type[T]:
-        ...
-
-    @overload
-    def wrapper(obj: F) -> F:
-        ...
+    if "icon_path" in caller_options.keys():
+        warnings.warn(
+            "`icon_path` is deprecated. Use `icon` instead.", DeprecationWarning
+        )
+        caller_options["icon"] = caller_options.pop("icon_path")
 
     def wrapper(obj):
         if isinstance(obj, type):

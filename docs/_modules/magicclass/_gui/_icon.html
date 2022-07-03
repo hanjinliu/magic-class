@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="English" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>magicclass._gui._icon &mdash; magic-class 0.6.7.dev2 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+</head>
+
+<body class="wy-body-for-nav">
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> magic-class
+          </a>
+              <div class="version">
+                0.6.7.dev2
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../quick_start.html">Quick Start</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../chap_basics.html">Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../chap_make_better.html">Make Your GUI Better</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../chap_data_vis.html">Data Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../chap_advanced.html">Advanced Topics</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../best_practice.html">Best Practice</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">magic-class</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>magicclass._gui._icon</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+
+  <h1>Source code for magicclass._gui._icon</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="n">SimpleNamespace</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">qtpy.QtWidgets</span> <span class="kn">import</span> <span class="n">QStyle</span><span class="p">,</span> <span class="n">QApplication</span>
+<span class="kn">from</span> <span class="nn">qtpy.QtGui</span> <span class="kn">import</span> <span class="n">QIcon</span><span class="p">,</span> <span class="n">QImage</span><span class="p">,</span> <span class="n">QPixmap</span>
+<span class="kn">from</span> <span class="nn">qtpy.QtCore</span> <span class="kn">import</span> <span class="n">Qt</span><span class="p">,</span> <span class="n">QSize</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">.mgui_ext</span> <span class="kn">import</span> <span class="n">PushButtonPlus</span><span class="p">,</span> <span class="n">AbstractAction</span>
+
+
+<span class="k">class</span> <span class="nc">_IconBase</span><span class="p">:</span>
+    <span class="n">_source</span><span class="p">:</span> <span class="n">Any</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_source</span><span class="si">!r}</span><span class="s2">)&quot;</span>
+
+    <span class="k">def</span> <span class="nf">install</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dst</span><span class="p">:</span> <span class="n">PushButtonPlus</span> <span class="o">|</span> <span class="n">AbstractAction</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+
+
+<span class="k">class</span> <span class="nc">StandardIcon</span><span class="p">(</span><span class="n">_IconBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;An object of a standard icon.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">source</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">Icon</span><span class="p">,</span> <span class="n">source</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_source</span> <span class="o">=</span> <span class="n">source</span>
+
+    <span class="k">def</span> <span class="nf">install</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dst</span><span class="p">:</span> <span class="n">PushButtonPlus</span> <span class="o">|</span> <span class="n">AbstractAction</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">icon</span> <span class="o">=</span> <span class="n">QApplication</span><span class="o">.</span><span class="n">style</span><span class="p">()</span><span class="o">.</span><span class="n">standardIcon</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_source</span><span class="p">)</span>
+        <span class="n">dst</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">icon</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">IconPath</span><span class="p">(</span><span class="n">_IconBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;An object of an icon from a path.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_source</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source</span>
+
+    <span class="k">def</span> <span class="nf">install</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dst</span><span class="p">:</span> <span class="n">PushButtonPlus</span> <span class="o">|</span> <span class="n">AbstractAction</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">icon</span> <span class="o">=</span> <span class="n">QIcon</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_source</span><span class="p">)</span>
+        <span class="n">dst</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">icon</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+
+<span class="k">class</span> <span class="nc">ArrayIcon</span><span class="p">(</span><span class="n">_IconBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;An object of an icon from numpy array.&quot;&quot;&quot;</span>
+
+    <span class="n">_source</span><span class="p">:</span> <span class="n">QImage</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+        <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+
+        <span class="kn">from</span> <span class="nn">magicgui</span> <span class="kn">import</span> <span class="n">_mpl_image</span>
+
+        <span class="n">img</span> <span class="o">=</span> <span class="n">_mpl_image</span><span class="o">.</span><span class="n">Image</span><span class="p">()</span>
+
+        <span class="n">img</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+
+        <span class="n">val</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">make_image</span><span class="p">()</span>
+        <span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">val</span><span class="o">.</span><span class="n">shape</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_source</span> <span class="o">=</span> <span class="n">QImage</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">QImage</span><span class="o">.</span><span class="n">Format</span><span class="o">.</span><span class="n">Format_RGBA8888</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">install</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dst</span><span class="p">:</span> <span class="n">PushButtonPlus</span> <span class="o">|</span> <span class="n">AbstractAction</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">dst</span><span class="o">.</span><span class="n">native</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">):</span>
+            <span class="n">qsize</span> <span class="o">=</span> <span class="n">dst</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">qsize</span> <span class="o">=</span> <span class="n">QSize</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">32</span><span class="p">)</span>
+        <span class="n">qimg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source</span><span class="o">.</span><span class="n">scaled</span><span class="p">(</span>
+            <span class="n">qsize</span><span class="p">,</span>
+            <span class="n">Qt</span><span class="o">.</span><span class="n">AspectRatioMode</span><span class="o">.</span><span class="n">KeepAspectRatio</span><span class="p">,</span>
+            <span class="n">Qt</span><span class="o">.</span><span class="n">TransformationMode</span><span class="o">.</span><span class="n">SmoothTransformation</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">qpix</span> <span class="o">=</span> <span class="n">QPixmap</span><span class="o">.</span><span class="n">fromImage</span><span class="p">(</span><span class="n">qimg</span><span class="p">)</span>
+        <span class="n">icon</span> <span class="o">=</span> <span class="n">QIcon</span><span class="p">(</span><span class="n">qpix</span><span class="p">)</span>
+        <span class="n">dst</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">icon</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+
+<span class="k">def</span> <span class="nf">get_icon</span><span class="p">(</span><span class="n">val</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_IconBase</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Get a proper icon object from a value.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">_IconBase</span><span class="p">):</span>
+        <span class="n">icon</span> <span class="o">=</span> <span class="n">val</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="n">icon</span> <span class="o">=</span> <span class="n">StandardIcon</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">Path</span><span class="p">)</span> <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+        <span class="n">icon</span> <span class="o">=</span> <span class="n">IconPath</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="s2">&quot;__array__&quot;</span><span class="p">):</span>
+        <span class="n">icon</span> <span class="o">=</span> <span class="n">ArrayIcon</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">Icon</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+        <span class="n">icon</span> <span class="o">=</span> <span class="n">StandardIcon</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Input </span><span class="si">{</span><span class="n">val</span><span class="si">!r}</span><span class="s2"> cannot be converted to an icon.&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">icon</span>
+
+
+<div class="viewcode-block" id="Icon"><a class="viewcode-back" href="../../../apidoc/magicclass.html#magicclass.Icon">[docs]</a><span class="k">class</span> <span class="nc">Icon</span><span class="p">(</span><span class="n">SimpleNamespace</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Namespace of icons.</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        from magicclass import magicclass, set_design, Icon</span>
+
+<span class="sd">        @magicclass</span>
+<span class="sd">        class A:</span>
+<span class="sd">            @set_design(icon=Icon.FileIcon)</span>
+<span class="sd">            def func(self):</span>
+<span class="sd">                ...</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># fmt: off</span>
+    <span class="n">TitleBarMenuButton</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_TitleBarMenuButton</span>
+    <span class="n">TitleBarMinButton</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_TitleBarMinButton</span>
+    <span class="n">TitleBarMaxButton</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_TitleBarMaxButton</span>
+    <span class="n">TitleBarCloseButton</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_TitleBarCloseButton</span>
+    <span class="n">TitleBarNormalButton</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_TitleBarNormalButton</span>
+    <span class="n">TitleBarShadeButton</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_TitleBarShadeButton</span>
+    <span class="n">TitleBarUnshadeButton</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_TitleBarUnshadeButton</span>
+    <span class="n">TitleBarContextHelpButton</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_TitleBarContextHelpButton</span>
+    <span class="n">MessageBoxInformation</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_MessageBoxInformation</span>
+    <span class="n">MessageBoxWarning</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_MessageBoxWarning</span>
+    <span class="n">MessageBoxCritical</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_MessageBoxCritical</span>
+    <span class="n">MessageBoxQuestion</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_MessageBoxQuestion</span>
+    <span class="n">DockWidgetCloseButton</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_DockWidgetCloseButton</span>
+    <span class="n">DesktopIcon</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_DesktopIcon</span>
+    <span class="n">TrashIcon</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_TrashIcon</span>
+    <span class="n">ComputerIcon</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_ComputerIcon</span>
+    <span class="n">DriveFDIcon</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_DriveFDIcon</span>
+    <span class="n">DriveHDIcon</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_DriveHDIcon</span>
+    <span class="n">DriveCDIcon</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_DriveCDIcon</span>
+    <span class="n">DriveDVDIcon</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_DriveDVDIcon</span>
+    <span class="n">DriveNetIcon</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_DriveNetIcon</span>
+    <span class="n">DirOpenIcon</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_DirOpenIcon</span>
+    <span class="n">DirClosedIcon</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_DirClosedIcon</span>
+    <span class="n">DirLinkIcon</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_DirLinkIcon</span>
+    <span class="n">FileIcon</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_FileIcon</span>
+    <span class="n">FileLinkIcon</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_FileLinkIcon</span>
+    <span class="n">ToolBarHorizontalExtensionButton</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_ToolBarHorizontalExtensionButton</span>
+    <span class="n">ToolBarVerticalExtensionButton</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_ToolBarVerticalExtensionButton</span>
+    <span class="n">FileDialogStart</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_FileDialogStart</span>
+    <span class="n">FileDialogEnd</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_FileDialogEnd</span>
+    <span class="n">FileDialogToParent</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_FileDialogToParent</span>
+    <span class="n">FileDialogNewFolder</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_FileDialogNewFolder</span>
+    <span class="n">FileDialogDetailedView</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_FileDialogDetailedView</span>
+    <span class="n">FileDialogInfoView</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_FileDialogInfoView</span>
+    <span class="n">FileDialogContentsView</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_FileDialogContentsView</span>
+    <span class="n">FileDialogListView</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_FileDialogListView</span>
+    <span class="n">FileDialogBack</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_FileDialogBack</span>
+    <span class="n">DirIcon</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_DirIcon</span>
+    <span class="n">DialogOkButton</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_DialogOkButton</span>
+    <span class="n">DialogCancelButton</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_DialogCancelButton</span>
+    <span class="n">DialogHelpButton</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_DialogHelpButton</span>
+    <span class="n">DialogOpenButton</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_DialogOpenButton</span>
+    <span class="n">DialogSaveButton</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_DialogSaveButton</span>
+    <span class="n">DialogCloseButton</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_DialogCloseButton</span>
+    <span class="n">DialogApplyButton</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_DialogApplyButton</span>
+    <span class="n">DialogResetButton</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_DialogResetButton</span>
+    <span class="n">DialogDiscardButton</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_DialogDiscardButton</span>
+    <span class="n">DialogYesButton</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_DialogYesButton</span>
+    <span class="n">DialogNoButton</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_DialogNoButton</span>
+    <span class="n">ArrowUp</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_ArrowUp</span>
+    <span class="n">ArrowDown</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_ArrowDown</span>
+    <span class="n">ArrowLeft</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_ArrowLeft</span>
+    <span class="n">ArrowRight</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_ArrowRight</span>
+    <span class="n">ArrowBack</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_ArrowBack</span>
+    <span class="n">ArrowForward</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_ArrowForward</span>
+    <span class="n">DirHomeIcon</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_DirHomeIcon</span>
+    <span class="n">CommandLink</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_CommandLink</span>
+    <span class="n">VistaShield</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_VistaShield</span>
+    <span class="n">BrowserReload</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_BrowserReload</span>
+    <span class="n">BrowserStop</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_BrowserStop</span>
+    <span class="n">MediaPlay</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_MediaPlay</span>
+    <span class="n">MediaStop</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_MediaStop</span>
+    <span class="n">MediaPause</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_MediaPause</span>
+    <span class="n">MediaSkipForward</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_MediaSkipForward</span>
+    <span class="n">MediaSkipBackward</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_MediaSkipBackward</span>
+    <span class="n">MediaSeekForward</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_MediaSeekForward</span>
+    <span class="n">MediaSeekBackward</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_MediaSeekBackward</span>
+    <span class="n">MediaVolume</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_MediaVolume</span>
+    <span class="n">MediaVolumeMuted</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_MediaVolumeMuted</span>
+    <span class="n">DirLinkOpenIcon</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_DirLinkOpenIcon</span>
+    <span class="n">LineEditClearButton</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_LineEditClearButton</span>
+    <span class="n">DialogYesToAllButton</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_DialogYesToAllButton</span>
+    <span class="n">DialogNoToAllButton</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_DialogNoToAllButton</span>
+    <span class="n">DialogSaveAllButton</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_DialogSaveAllButton</span>
+    <span class="n">DialogAbortButton</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_DialogAbortButton</span>
+    <span class="n">DialogRetryButton</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_DialogRetryButton</span>
+    <span class="n">DialogIgnoreButton</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_DialogIgnoreButton</span>
+    <span class="n">RestoreDefaultsButton</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_RestoreDefaultsButton</span>
+    <span class="n">CustomBase</span> <span class="o">=</span> <span class="n">QStyle</span><span class="o">.</span><span class="n">StandardPixmap</span><span class="o">.</span><span class="n">SP_CustomBase</span></div>
+    <span class="c1"># fmt: on</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Hanjin Liu.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+</body>
+</html>

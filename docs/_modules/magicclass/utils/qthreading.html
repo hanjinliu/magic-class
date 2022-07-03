@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.utils.qthreading &mdash; magic-class 0.6.7.dev0 documentation</title>
+  <title>magicclass.utils.qthreading &mdash; magic-class 0.6.7.dev2 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.7.dev0
+                0.6.7.dev2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -107,6 +107,7 @@
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">.._gui</span> <span class="kn">import</span> <span class="n">BaseGui</span>
     <span class="kn">from</span> <span class="nn">.._gui.mgui_ext</span> <span class="kn">import</span> <span class="n">PushButtonPlus</span><span class="p">,</span> <span class="n">Action</span>
+    <span class="kn">from</span> <span class="nn">.._gui._macro</span> <span class="kn">import</span> <span class="n">GuiMacro</span>
     <span class="kn">from</span> <span class="nn">..fields</span> <span class="kn">import</span> <span class="n">MagicField</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;thread_worker&quot;</span><span class="p">,</span> <span class="s2">&quot;Timer&quot;</span><span class="p">,</span> <span class="s2">&quot;Callback&quot;</span><span class="p">]</span>
@@ -524,9 +525,12 @@
         <span class="k">return</span> <span class="n">pbar_cls</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">to_callback</span><span class="p">(</span><span class="n">callback</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callback</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">to_callback</span><span class="p">(</span><span class="n">callback</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callback</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Convert a callback to a callback object.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">Callback</span><span class="p">(</span><span class="n">callback</span><span class="p">)</span>
+        <span class="n">cb</span> <span class="o">=</span> <span class="n">Callback</span><span class="p">(</span><span class="n">callback</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">args</span> <span class="ow">or</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">cb</span> <span class="o">=</span> <span class="n">cb</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">cb</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">is_generator</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
@@ -702,14 +706,14 @@
         <span class="n">params</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">sig</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">1</span><span class="p">:]</span>
         <span class="k">return</span> <span class="n">sig</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">parameters</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_bind_callbacks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">worker</span><span class="p">:</span> <span class="n">FunctionWorker</span> <span class="o">|</span> <span class="n">GeneratorWorker</span><span class="p">,</span> <span class="n">gui</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_bind_callbacks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">worker</span><span class="p">:</span> <span class="n">FunctionWorker</span> <span class="o">|</span> <span class="n">GeneratorWorker</span><span class="p">,</span> <span class="n">gui</span><span class="p">:</span> <span class="n">BaseGui</span><span class="p">):</span>
         <span class="c1"># bind callbacks</span>
         <span class="n">is_generator</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">worker</span><span class="p">,</span> <span class="n">GeneratorWorker</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">started</span><span class="o">.</span><span class="n">_iter_as_method</span><span class="p">(</span><span class="n">gui</span><span class="p">):</span>
             <span class="n">worker</span><span class="o">.</span><span class="n">started</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">returned</span><span class="o">.</span><span class="n">_iter_as_method</span><span class="p">(</span><span class="n">gui</span><span class="p">):</span>
             <span class="n">worker</span><span class="o">.</span><span class="n">returned</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
-        <span class="n">worker</span><span class="o">.</span><span class="n">returned</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">Callback</span><span class="o">.</span><span class="n">catch</span><span class="p">)</span>
+        <span class="n">worker</span><span class="o">.</span><span class="n">returned</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">partial</span><span class="p">(</span><span class="n">Callback</span><span class="o">.</span><span class="n">catch</span><span class="p">,</span> <span class="n">macro</span><span class="o">=</span><span class="n">gui</span><span class="o">.</span><span class="n">macro</span><span class="p">))</span>
         <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">errored</span><span class="o">.</span><span class="n">_iter_as_method</span><span class="p">(</span><span class="n">gui</span><span class="p">):</span>
             <span class="n">worker</span><span class="o">.</span><span class="n">errored</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">finished</span><span class="o">.</span><span class="n">_iter_as_method</span><span class="p">(</span><span class="n">gui</span><span class="p">):</span>
@@ -720,7 +724,7 @@
                 <span class="n">worker</span><span class="o">.</span><span class="n">aborted</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">yielded</span><span class="o">.</span><span class="n">_iter_as_method</span><span class="p">(</span><span class="n">gui</span><span class="p">):</span>
                 <span class="n">worker</span><span class="o">.</span><span class="n">yielded</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
-            <span class="n">worker</span><span class="o">.</span><span class="n">yielded</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">Callback</span><span class="o">.</span><span class="n">catch</span><span class="p">)</span>
+            <span class="n">worker</span><span class="o">.</span><span class="n">yielded</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">partial</span><span class="p">(</span><span class="n">Callback</span><span class="o">.</span><span class="n">catch</span><span class="p">,</span> <span class="n">macro</span><span class="o">=</span><span class="n">gui</span><span class="o">.</span><span class="n">macro</span><span class="p">))</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">__signature__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Signature</span><span class="p">:</span>
@@ -840,15 +844,18 @@
 
 
 <div class="viewcode-block" id="Callback"><a class="viewcode-back" href="../../../apidoc/magicclass.utils.html#magicclass.utils.qthreading.Callback">[docs]</a><span class="k">class</span> <span class="nc">Callback</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Callback object that can be recognized by thread_worker.&quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="n">Any</span><span class="p">]):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">callable</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">f</span><span class="si">}</span><span class="s2"> is not callable.&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_func</span> <span class="o">=</span> <span class="n">f</span>
 
 <div class="viewcode-block" id="Callback.catch"><a class="viewcode-back" href="../../../apidoc/magicclass.utils.html#magicclass.utils.qthreading.Callback.catch">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">catch</span><span class="p">(</span><span class="n">out</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">catch</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">macro</span><span class="p">:</span> <span class="n">GuiMacro</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">Callback</span><span class="p">):</span>
-            <span class="n">out</span><span class="o">.</span><span class="n">_func</span><span class="p">()</span></div>
+            <span class="k">with</span> <span class="n">macro</span><span class="o">.</span><span class="n">blocked</span><span class="p">():</span>
+                <span class="n">out</span><span class="o">.</span><span class="n">_func</span><span class="p">()</span></div>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callback</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Return a partial callback.&quot;&quot;&quot;</span>
