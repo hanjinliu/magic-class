@@ -1,8 +1,11 @@
 from __future__ import annotations
+import os
 from types import SimpleNamespace
 from typing import TYPE_CHECKING, Any
+from pathlib import Path
 from qtpy.QtWidgets import QStyle, QApplication
-from qtpy.QtGui import QIcon
+from qtpy.QtGui import QIcon, QImage, QPixmap
+from qtpy.QtCore import Qt, QSize
 
 if TYPE_CHECKING:
     from .mgui_ext import PushButtonPlus, AbstractAction
@@ -26,7 +29,7 @@ class StandardIcon(_IconBase):
             source = getattr(Icon, source)
         self._source = source
 
-    def install(self, dst: PushButtonPlus | AbstractAction):
+    def install(self, dst: PushButtonPlus | AbstractAction) -> None:
         icon = QApplication.style().standardIcon(self._source)
         dst.native.setIcon(icon)
 
@@ -37,10 +40,67 @@ class IconPath(_IconBase):
     def __init__(self, source: Any):
         self._source = str(source)
 
-    def install(self, dst: PushButtonPlus | AbstractAction):
+    def __str__(self) -> str:
+        return self._source
+
+    def install(self, dst: PushButtonPlus | AbstractAction) -> None:
         icon = QIcon(self._source)
         dst.native.setIcon(icon)
         return None
+
+
+class ArrayIcon(_IconBase):
+    """An object of an icon from numpy array."""
+
+    _source: QImage
+
+    def __init__(self, source: Any):
+        import numpy as np
+
+        arr = np.asarray(source)
+
+        from magicgui import _mpl_image
+
+        img = _mpl_image.Image()
+
+        img.set_data(arr)
+
+        val: np.ndarray = img.make_image()
+        h, w, _ = val.shape
+        self._source = QImage(val, w, h, QImage.Format.Format_RGBA8888)
+
+    def install(self, dst: PushButtonPlus | AbstractAction):
+        if hasattr(dst.native, "size"):
+            qsize = dst.native.size()
+        else:
+            qsize = QSize(32, 32)
+        qimg = self._source.scaled(
+            qsize,
+            Qt.AspectRatioMode.KeepAspectRatio,
+            Qt.TransformationMode.SmoothTransformation,
+        )
+
+        qpix = QPixmap.fromImage(qimg)
+        icon = QIcon(qpix)
+        dst.native.setIcon(icon)
+        return None
+
+
+def get_icon(val: Any) -> _IconBase:
+    """Get a proper icon object from a value."""
+    if isinstance(val, _IconBase):
+        icon = val
+    elif isinstance(val, int):
+        icon = StandardIcon(val)
+    elif isinstance(val, Path) or os.path.exists(val):
+        icon = IconPath(val)
+    elif hasattr(val, "__array__"):
+        icon = ArrayIcon(val)
+    elif isinstance(val, str) and hasattr(Icon, val):
+        icon = StandardIcon(val)
+    else:
+        raise TypeError(f"Input {val!r} cannot be converted to an icon.")
+    return icon
 
 
 class Icon(SimpleNamespace):

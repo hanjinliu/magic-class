@@ -1,5 +1,4 @@
 from __future__ import annotations
-import os
 from typing import Callable, Iterable, Any, Generic, TypeVar
 from qtpy.QtWidgets import (
     QPushButton,
@@ -15,7 +14,7 @@ from magicgui.widgets._concrete import _LabeledWidget
 from magicgui.widgets._bases import Widget, ValueWidget
 from magicgui.backends._qtpy.widgets import QBaseButtonWidget
 from ._function_gui import FunctionGuiPlus
-from ._icon import StandardIcon, IconPath, _IconBase
+from ._icon import get_icon
 
 # magicgui widgets that need to be extended to fit into magicclass
 
@@ -65,12 +64,7 @@ class PushButtonPlus(PushButton):
 
     @icon.setter
     def icon(self, val):
-        if isinstance(val, _IconBase):
-            icon = val
-        if os.path.exists(val):
-            icon = IconPath(val)
-        else:
-            icon = StandardIcon(val)
+        icon = get_icon(val)
         icon.install(self)
         self._icon = icon
         self.native.setIconSize(self.native.size())
@@ -278,12 +272,7 @@ class Action(AbstractAction):
 
     @icon.setter
     def icon(self, val):
-        if isinstance(val, _IconBase):
-            icon = val
-        if os.path.exists(val):
-            icon = IconPath(val)
-        else:
-            icon = StandardIcon(val)
+        icon = get_icon(val)
         icon.install(self)
         self._icon = icon
 
