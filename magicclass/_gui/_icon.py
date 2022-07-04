@@ -9,6 +9,7 @@ from qtpy.QtCore import Qt, QSize
 
 if TYPE_CHECKING:
     from .mgui_ext import PushButtonPlus, AbstractAction
+    from magicgui.widgets import Widget
 
 
 class _IconBase:
@@ -17,8 +18,12 @@ class _IconBase:
     def __repr__(self) -> str:
         return f"{type(self).__name__}({self._source!r})"
 
-    def install(self, dst: PushButtonPlus | AbstractAction) -> None:
+    def get_qicon(self, dst: Widget | AbstractAction) -> QIcon:
         raise NotImplementedError()
+
+    def install(self, dst: PushButtonPlus | AbstractAction) -> None:
+        icon = self.get_qicon(dst)
+        dst.native.setIcon(icon)
 
 
 class StandardIcon(_IconBase):
@@ -29,9 +34,8 @@ class StandardIcon(_IconBase):
             source = getattr(Icon, source)
         self._source = source
 
-    def install(self, dst: PushButtonPlus | AbstractAction) -> None:
-        icon = QApplication.style().standardIcon(self._source)
-        dst.native.setIcon(icon)
+    def get_qicon(self, dst) -> QIcon:
+        return QApplication.style().standardIcon(self._source)
 
 
 class IconPath(_IconBase):
@@ -43,10 +47,8 @@ class IconPath(_IconBase):
     def __str__(self) -> str:
         return self._source
 
-    def install(self, dst: PushButtonPlus | AbstractAction) -> None:
-        icon = QIcon(self._source)
-        dst.native.setIcon(icon)
-        return None
+    def get_qicon(self, dst) -> QIcon:
+        return QIcon(self._source)
 
 
 class ArrayIcon(_IconBase):
@@ -69,7 +71,7 @@ class ArrayIcon(_IconBase):
         h, w, _ = val.shape
         self._source = QImage(val, w, h, QImage.Format.Format_RGBA8888)
 
-    def install(self, dst: PushButtonPlus | AbstractAction):
+    def get_qicon(self, dst) -> QIcon:
         if hasattr(dst.native, "size"):
             qsize = dst.native.size()
         else:
@@ -81,9 +83,7 @@ class ArrayIcon(_IconBase):
         )
 
         qpix = QPixmap.fromImage(qimg)
-        icon = QIcon(qpix)
-        dst.native.setIcon(icon)
-        return None
+        return QIcon(qpix)
 
 
 def get_icon(val: Any) -> _IconBase:

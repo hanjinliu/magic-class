@@ -35,7 +35,7 @@ def magicclass(
     popup_mode: PopUpModeStr | PopUpMode | None = None,
     error_mode: ErrorModeStr | ErrorMode | None = None,
     widget_type: WidgetTypeStr | WidgetType = WidgetType.none,
-    icon_path: str | None = None,
+    icon: Any | None = None,
     stylesheet: str | StyleSheet | None = None,
     parent=None,
 ) -> type[ClassGuiBase] | _C: ...
@@ -50,7 +50,7 @@ def magicclass(
     popup_mode: PopUpModeStr | PopUpMode | None = None,
     error_mode: ErrorModeStr | ErrorMode | None = None,
     widget_type: WidgetTypeStr | WidgetType = WidgetType.none,
-    icon_path: str | None = None,
+    icon: Any | None = None,
     stylesheet: str | StyleSheet | None = None,
     parent=None,
 ) -> Callable[[_C], type[ClassGuiBase] | _C]: ...
@@ -63,7 +63,7 @@ def magicmenu(
     error_mode: str | ErrorMode | None = None,
     labels: bool = True,
     name: str | None = None,
-    icon_path: str | None = None,
+    icon: Any | None = None,
     parent=None,
 ) -> type[MenuGui] | _C: ...
 @overload
@@ -74,7 +74,7 @@ def magicmenu(
     error_mode: str | ErrorMode | None = None,
     labels: bool = True,
     name: str | None = None,
-    icon_path: str | None = None,
+    icon: Any | None = None,
     parent=None,
 ) -> Callable[[_C], type[MenuGui] | _C]: ...
 @overload
@@ -87,7 +87,7 @@ def magiccontext(
     error_mode: str | ErrorMode | None = None,
     labels: bool = True,
     name: str | None = None,
-    icon_path: str | None = None,
+    icon: Any | None = None,
     parent=None,
 ) -> type[ContextMenuGui] | _C: ...
 @overload
@@ -99,7 +99,7 @@ def magiccontext(
     error_mode: str | ErrorMode | None = None,
     labels: bool = True,
     name: str | None = None,
-    icon_path: str | None = None,
+    icon: Any | None = None,
     parent=None,
 ) -> Callable[[_C], type[ContextMenuGui] | _C]: ...
 @overload
@@ -111,7 +111,7 @@ def magictoolbar(
     error_mode: str | ErrorMode | None = None,
     labels: bool = True,
     name: str | None = None,
-    icon_path: str | None = None,
+    icon: Any | None = None,
     parent=None,
 ) -> type[ToolBarGui] | _C: ...
 @overload
@@ -122,7 +122,7 @@ def magictoolbar(
     error_mode: str | ErrorMode | None = None,
     labels: bool = True,
     name: str | None = None,
-    icon_path: str | None = None,
+    icon: Any | None = None,
     parent=None,
 ) -> Callable[[_C], type[ToolBarGui] | _C]: ...
 def redo(ui: MagicTemplate, index: int = -1) -> None: ...

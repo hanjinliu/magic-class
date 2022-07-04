@@ -61,3 +61,16 @@ def test_standard_icon():
 
     assert _icon_byte(ui.Menu.a) > 0
     assert _icon_byte(ui.Menu["func"]) > 0
+
+def test_icon_in_class_construction():
+    @magicclass(icon=Icon.ArrowUp)
+    class A:
+        @magicmenu
+        class Menu:
+            @magicmenu(icon=Icon.ArrowBack)
+            class X:
+                pass
+
+    ui = A()
+    assert ui.native.windowIcon().pixmap(10,10).toImage().byteCount() > 0
+    assert _icon_byte(ui.Menu.X) > 0

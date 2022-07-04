@@ -15,7 +15,6 @@ from abc import ABCMeta
 from typing_extensions import _AnnotatedAlias, Literal
 import inspect
 import warnings
-import os
 from enum import Enum
 import warnings
 from docstring_parser import parse, compose
@@ -51,6 +50,7 @@ from .mgui_ext import (
 )
 from .utils import copy_class, get_parameters, callable_to_classes
 from ._macro import GuiMacro
+from ._icon import get_icon
 
 from ..utils import (
     get_signature,
@@ -245,7 +245,7 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
     enabled: bool
     gui_only: bool
     height: int
-    icon_path: str
+    icon: Any
     label_changed: Signal
     label: str
     layout: str
@@ -737,9 +737,27 @@ class BaseGui(MagicTemplate):
         self._popup_mode = popup_mode or PopUpMode.popup
         self._error_mode = error_mode or ErrorMode.msgbox
         self._my_symbol = Symbol.var("ui")
-        self._icon_path = None
+        self._icon = None
 
         self.macro.widget.__magicclass_parent__ = self
+
+    @property
+    def icon(self):
+        return self._icon
+
+    @icon.setter
+    def icon(self, val):
+        icon = get_icon(val)
+        qicon = icon.get_qicon(self)
+        self._icon = icon
+        if hasattr(self.native, "setIcon"):
+            self.native.setIcon(qicon)
+        else:
+            self.native.setWindowIcon(qicon)
+        if hasattr(self.native, "setIconSize"):
+            self.native.setIconSize(self.native.size())
+
+    icon_path = icon
 
 
 class ContainerLikeGui(BaseGui, mguiLike, MutableSequence):
@@ -748,25 +766,6 @@ class ContainerLikeGui(BaseGui, mguiLike, MutableSequence):
     _component_class = Action
     changed = Signal(object)
     _list: list[AbstractAction | ContainerLikeGui]
-
-    @property
-    def icon_path(self):
-        return self._icon_path
-
-    @icon_path.setter
-    def icon_path(self, path: str):
-        path = str(path)
-        if os.path.exists(path):
-            icon = QIcon(path)
-            if hasattr(self.native, "setIcon"):
-                self.native.setIcon(icon)
-            else:
-                self.native.setWindowIcon(icon)
-            self._icon_path = path
-        else:
-            warnings.warn(
-                f"Path {path} does not exists. Could not set icon.", UserWarning
-            )
 
     def reset_choices(self, *_: Any):
         """Reset child Categorical widgets"""
