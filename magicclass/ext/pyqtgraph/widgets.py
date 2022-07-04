@@ -92,11 +92,11 @@ class HasDataItems:
         return LayerList(self)
 
     @overload
-    def add_curve(self, x: Sequence[float], **kwargs):
+    def add_curve(self, x: Sequence[float], **kwargs) -> Curve:
         ...
 
     @overload
-    def add_curve(self, x: Sequence[float], y: Sequence[float], **kwargs):
+    def add_curve(self, x: Sequence[float], y: Sequence[float], **kwargs) -> Curve:
         ...
 
     @write_docs
@@ -112,7 +112,7 @@ class HasDataItems:
         lw: float = 1,
         ls: str = "-",
         symbol=None,
-    ):
+    ) -> Curve:
         """
         Add a line plot like ``plt.plot(x, y)``.
 
@@ -153,11 +153,11 @@ class HasDataItems:
         return item
 
     @overload
-    def add_scatter(self, x: Sequence[float], **kwargs):
+    def add_scatter(self, x: Sequence[float], **kwargs) -> Scatter:
         ...
 
     @overload
-    def add_scatter(self, x: Sequence[float], y: Sequence[float], **kwargs):
+    def add_scatter(self, x: Sequence[float], y: Sequence[float], **kwargs) -> Scatter:
         ...
 
     @write_docs
@@ -173,7 +173,7 @@ class HasDataItems:
         lw: float = 1,
         ls: str = "-",
         symbol="o",
-    ):
+    ) -> Scatter:
         """
         Add scatter plot like ``plt.scatter(x, y)``.
 
@@ -226,7 +226,7 @@ class HasDataItems:
         name: str | None = None,
         lw: float = 1,
         ls: str = "-",
-    ):
+    ) -> Histogram:
         """
         Add histogram like ``plt.hist(data)``.
 
@@ -270,11 +270,11 @@ class HasDataItems:
         return item
 
     @overload
-    def add_bar(self, x: Sequence[float], **kwargs):
+    def add_bar(self, x: Sequence[float], **kwargs) -> BarPlot:
         ...
 
     @overload
-    def add_bar(self, x: Sequence[float], y: Sequence[float], **kwargs):
+    def add_bar(self, x: Sequence[float], y: Sequence[float], **kwargs) -> BarPlot:
         ...
 
     @write_docs
@@ -289,7 +289,7 @@ class HasDataItems:
         name: str | None = None,
         lw: float = 1,
         ls: str = "-",
-    ):
+    ) -> BarPlot:
         """
         Add a bar plot like ``plt.bar(x, y)``.
 
@@ -328,11 +328,13 @@ class HasDataItems:
         return item
 
     @overload
-    def add_fillbetween(self, x: Sequence[float], **kwargs):
+    def add_fillbetween(self, x: Sequence[float], **kwargs) -> FillBetween:
         ...
 
     @overload
-    def add_fillbetween(self, x: Sequence[float], y: Sequence[float], **kwargs):
+    def add_fillbetween(
+        self, x: Sequence[float], y: Sequence[float], **kwargs
+    ) -> FillBetween:
         ...
 
     @write_docs
@@ -347,7 +349,7 @@ class HasDataItems:
         name: str | None = None,
         lw: float = 1,
         ls: str = "-",
-    ):
+    ) -> FillBetween:
         x, y1 = _check_xy(x, y1)
         name = self._find_unique_name(name or "FillBetween")
         face_color, edge_color = _check_colors(face_color, edge_color, color)
@@ -373,7 +375,7 @@ class HasDataItems:
         name: str | None = None,
         lw: float = 1,
         ls: str = "-",
-    ):
+    ) -> InfLine:
         ...
 
     @overload
@@ -385,7 +387,7 @@ class HasDataItems:
         name: str | None = None,
         lw: float = 1,
         ls: str = "-",
-    ):
+    ) -> InfLine:
         ...
 
     def add_infline(
@@ -396,7 +398,7 @@ class HasDataItems:
         lw: float = 1,
         ls: str = "-",
         **kwargs,
-    ):
+    ) -> InfLine:
         if kwargs:
             if args:
                 raise TypeError(
@@ -437,16 +439,16 @@ class HasDataItems:
         self._add_item(item)
 
     @overload
-    def add_text(self, x: float, y: float, text: str, **kwargs):
+    def add_text(self, x: float, y: float, text: str, **kwargs) -> TextGroup:
         ...
 
     @overload
     def add_text(
         self, x: Sequence[float], y: Sequence[float], text: Sequence[str], **kwargs
-    ):
+    ) -> TextGroup:
         ...
 
-    def add_text(self, x, y, text, color=None, name=None):
+    def add_text(self, x, y, text, color=None, name=None) -> TextGroup:
         if np.isscalar(x) and np.isscalar(y):
             x = [x]
             y = [y]
