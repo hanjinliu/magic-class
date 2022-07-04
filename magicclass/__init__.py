@@ -20,7 +20,6 @@ from .wrappers import (
     confirm,
     nogui,
     mark_preview,
-    mark_contextmenu,
 )
 
 from .fields import field, vfield, widget_property, FieldGroup, HasFields
@@ -48,7 +47,6 @@ __all__ = [
     "confirm",
     "nogui",
     "mark_preview",
-    "mark_contextmenu",
     "field",
     "vfield",
     "widget_property",

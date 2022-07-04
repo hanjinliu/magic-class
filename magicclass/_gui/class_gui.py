@@ -42,7 +42,6 @@ from ..utils import iter_members, Tooltips
 from ..fields import MagicField
 from ..signature import get_additional_option
 from .._app import run_app
-from .._registry import MagicClassNamespace
 
 # For Containers that belong to these classes, menubar must be set to _qwidget.layout().
 _USE_OUTER_LAYOUT = (
@@ -129,9 +128,6 @@ class ClassGuiBase(BaseGui):
                     widget = self._create_widget_from_field(name, attr)
                     if not widget.tooltip:
                         widget.tooltip = _tooltips.attributes.get(name, "")
-
-                elif isinstance(attr, MagicClassNamespace):
-                    widget = attr.construct()
 
                 elif isinstance(attr, FunctionGui):
                     widget = attr.copy()
@@ -231,18 +227,11 @@ class ClassGuiBase(BaseGui):
                             continue
 
                         # contextmenu
-                        contextmenu_id = get_additional_option(
-                            attr, "contextmenu", None
-                        )
-                        if contextmenu_id is not None:
-                            from ..wrappers import Registry
-
-                            menu = Registry.construct(
-                                contextmenu_id, type(self), ContextMenuGui
-                            )
-                            menu._convert_attributes_into_widgets()
-                            menu._set_magic_context_menu(widget)
-                            connect_magicclasses(self, menu, menu.name)
+                        contextmenu = get_additional_option(attr, "context_menu", None)
+                        if contextmenu is not None:
+                            contextmenu: ContextMenuGui
+                            contextmenu._set_magic_context_menu(widget)
+                            connect_magicclasses(self, contextmenu, contextmenu.name)
 
                     elif hasattr(widget, _MCLS_PAREMT) or hasattr(
                         widget.__class__, _MCLS_PAREMT

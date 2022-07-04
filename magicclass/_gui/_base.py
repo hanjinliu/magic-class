@@ -739,6 +739,8 @@ class BaseGui(MagicTemplate):
         self._my_symbol = Symbol.var("ui")
         self._icon_path = None
 
+        self.macro.widget.__magicclass_parent__ = self
+
 
 class ContainerLikeGui(BaseGui, mguiLike, MutableSequence):
     # This class enables similar API between magicgui widgets and additional widgets
