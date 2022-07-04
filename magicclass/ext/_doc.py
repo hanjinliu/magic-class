@@ -37,6 +37,7 @@ def write_docs(func):
     doc = func.__doc__
     if doc is not None:
         summary, params, rest = _split_doc(doc)
+        params = params.replace("}{", "}\n\t\t{")
         for key, value in shared_docs.items():
             value = value.strip()
             params = re.sub("{" + key + "}", value, params)

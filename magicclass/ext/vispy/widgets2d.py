@@ -71,17 +71,10 @@ class HasViewBox(FreeWidget):
 
         Parameters
         ----------
-        {x}
-        {y}
-        {face_color}
-        {edge_color}
-        {color}
+        {x}{y}{face_color}{edge_color}{color}
         size: float, default is 7
             Symbol size.
-        {name}
-        {lw}
-        {ls}
-        {symbol}
+        {name}{lw}{ls}{symbol}
 
         Returns
         -------
@@ -128,15 +121,10 @@ class HasViewBox(FreeWidget):
 
         Parameters
         ----------
-        {x}
-        {y}
-        {face_color}
-        {edge_color}
-        {color}
+        {x}{y}{face_color}{edge_color}{color}
         size: float, default is 7
             Symbol size.
-        {name}
-        {symbol}
+        {name}{symbol}
 
         Returns
         -------

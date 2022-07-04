@@ -118,17 +118,10 @@ class HasDataItems:
 
         Parameters
         ----------
-        {x}
-        {y}
-        {face_color}
-        {edge_color}
-        {color}
+        {x}{y}{face_color}{edge_color}{color}
         size: float, default is 7
             Symbol size.
-        {name}
-        {lw}
-        {ls}
-        {symbol}
+        {name}{lw}{ls}{symbol}
 
         Returns
         -------
@@ -179,17 +172,10 @@ class HasDataItems:
 
         Parameters
         ----------
-        {x}
-        {y}
-        {face_color}
-        {edge_color}
-        {color}
+        {x}{y}{face_color}{edge_color}{color}
         size: float, default is 7
             Symbol size.
-        {name}
-        {lw}
-        {ls}
-        {symbol}
+        {name}{lw}{ls}{symbol}
 
         Returns
         -------
@@ -241,12 +227,7 @@ class HasDataItems:
         density : bool, default is False
             If true, plot the density instead of the counts. See ``np.histogram`` for
             detail.
-        {face_color}
-        {edge_color}
-        {color}
-        {name}
-        {lw}
-        {ls}
+        {face_color}{edge_color}{color}{name}{lw}{ls}
 
         Returns
         -------
@@ -295,16 +276,10 @@ class HasDataItems:
 
         Parameters
         ----------
-        {x}
-        {y}
+        {x}{y}
         width : float, default is 0.6
             Width of each bar.
-        {face_color}
-        {edge_color}
-        {color}
-        {name}
-        {lw}
-        {ls}
+        {face_color}{edge_color}{color}{name}{lw}{ls}
 
         Returns
         -------
