@@ -377,3 +377,17 @@ def mark_preview(function: Callable, text: str = "Preview") -> Callable[[F], F]:
         return preview
 
     return _wrapper
+
+
+from ._registry import MagicClassRegistry
+
+Registry = MagicClassRegistry()
+
+
+def mark_contextmenu(function: F, *, text: str | None = None):
+    def _wrapper(f):
+        _id = id(function)
+        Registry.register(_id, f, name=text)
+        upgrade_signature(function, additional_options={"contextmenu": _id})
+
+    return _wrapper

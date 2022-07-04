@@ -151,7 +151,7 @@ class ToolBarGui(ContainerLikeGui):
 
                     elif isinstance(widget, ContextMenuGui):
                         # Add context menu to toolbar
-                        set_context_menu(widget, self)
+                        widget._set_magic_context_menu(self)
                         _hist.append((name, type(attr), "ContextMenuGui"))
 
                     elif isinstance(widget, ToolBarGui):

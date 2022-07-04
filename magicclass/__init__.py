@@ -1,4 +1,4 @@
-__version__ = "0.6.7"
+__version__ = "0.6.8.dev0"
 
 from .core import (
     magicclass,
@@ -20,6 +20,7 @@ from .wrappers import (
     confirm,
     nogui,
     mark_preview,
+    mark_contextmenu,
 )
 
 from .fields import field, vfield, widget_property, FieldGroup, HasFields
@@ -47,6 +48,7 @@ __all__ = [
     "confirm",
     "nogui",
     "mark_preview",
+    "mark_contextmenu",
     "field",
     "vfield",
     "widget_property",

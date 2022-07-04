@@ -277,3 +277,8 @@ class MenuGui(MenuGuiBase):
 
 class ContextMenuGui(MenuGuiBase):
     """Magic class that will be converted into a context menu."""
+
+    def _set_magic_context_menu(self, parent: Widget | BaseGui) -> None:
+        from .utils import set_context_menu
+
+        set_context_menu(self, parent)

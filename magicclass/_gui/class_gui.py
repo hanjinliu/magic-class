@@ -20,11 +20,7 @@ from ._base import (
     value_widget_callback,
     nested_function_gui_callback,
 )
-from .utils import (
-    copy_class,
-    format_error,
-    set_context_menu,
-)
+from .utils import format_error, connect_magicclasses
 from ..widgets import (
     ButtonContainer,
     GroupBoxContainer,
@@ -46,6 +42,7 @@ from ..utils import iter_members, Tooltips
 from ..fields import MagicField
 from ..signature import get_additional_option
 from .._app import run_app
+from .._registry import MagicClassNamespace
 
 # For Containers that belong to these classes, menubar must be set to _qwidget.layout().
 _USE_OUTER_LAYOUT = (
@@ -133,6 +130,9 @@ class ClassGuiBase(BaseGui):
                     if not widget.tooltip:
                         widget.tooltip = _tooltips.attributes.get(name, "")
 
+                elif isinstance(attr, MagicClassNamespace):
+                    widget = attr.construct()
+
                 elif isinstance(attr, FunctionGui):
                     widget = attr.copy()
                     widget[0].bind(self)  # bind self to the first argument
@@ -142,9 +142,7 @@ class ClassGuiBase(BaseGui):
                     widget = getattr(self, name, None)
 
                 if isinstance(widget, BaseGui):
-                    widget.__magicclass_parent__ = self
-                    self.__magicclass_children__.append(widget)
-                    widget._my_symbol = Symbol(name)
+                    connect_magicclasses(self, widget, name)
 
                 if isinstance(widget, MenuGui):
                     # Add menubar to container
@@ -176,7 +174,7 @@ class ClassGuiBase(BaseGui):
 
                 elif isinstance(widget, ContextMenuGui):
                     # Add context menu to container
-                    set_context_menu(widget, self)
+                    widget._set_magic_context_menu(self)
                     _hist.append((name, type(attr), "ContextMenuGui"))
 
                 elif isinstance(widget, ToolBarGui):
@@ -231,6 +229,20 @@ class ClassGuiBase(BaseGui):
                                 UserWarning,
                             )
                             continue
+
+                        # contextmenu
+                        contextmenu_id = get_additional_option(
+                            attr, "contextmenu", None
+                        )
+                        if contextmenu_id is not None:
+                            from ..wrappers import Registry
+
+                            menu = Registry.construct(
+                                contextmenu_id, type(self), ContextMenuGui
+                            )
+                            menu._convert_attributes_into_widgets()
+                            menu._set_magic_context_menu(widget)
+                            connect_magicclasses(self, menu, menu.name)
 
                     elif hasattr(widget, _MCLS_PAREMT) or hasattr(
                         widget.__class__, _MCLS_PAREMT
