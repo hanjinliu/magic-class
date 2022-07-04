@@ -6,6 +6,7 @@ from magicgui.widgets._bases import ButtonWidget
 from magicgui.widgets._bases.widget import Widget
 from macrokit import Symbol
 from qtpy.QtWidgets import QMenu
+from qtpy.QtCore import Qt
 
 from .mgui_ext import AbstractAction, WidgetAction, _LabeledWidgetAction
 from .keybinding import register_shortcut
@@ -277,6 +278,10 @@ class ContextMenuGui(MenuGuiBase):
     """Magic class that will be converted into a context menu."""
 
     def _set_magic_context_menu(self, parent: Widget | BaseGui) -> None:
-        from .utils import set_context_menu
+        parent.native.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
 
-        set_context_menu(self, parent)
+        @parent.native.customContextMenuRequested.connect
+        def rightClickContextMenu(point):
+            self.native.exec_(parent.native.mapToGlobal(point))
+
+        return None
