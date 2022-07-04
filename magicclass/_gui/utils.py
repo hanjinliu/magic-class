@@ -1,29 +1,20 @@
 from __future__ import annotations
 from typing import Any, TYPE_CHECKING, Callable, TypeVar
 from types import FunctionType
+
 from magicgui.widgets import FunctionGui, Widget
 from magicgui.widgets._bases.value_widget import UNSET
 from magicgui.type_map import get_widget_class
 from magicgui.signature import magic_signature, MagicParameter, split_annotated_type
-from qtpy.QtCore import Qt
+
+from macrokit import Symbol
 
 if TYPE_CHECKING:
     from ._base import BaseGui
-    from .menu_gui import ContextMenuGui
 
 
 def get_parameters(fgui: FunctionGui):
     return {k: v.default for k, v in fgui.__signature__.parameters.items()}
-
-
-def set_context_menu(contextmenu: ContextMenuGui, parent: Widget | BaseGui) -> None:
-    parent.native.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-
-    @parent.native.customContextMenuRequested.connect
-    def rightClickContextMenu(point):
-        contextmenu.native.exec_(parent.native.mapToGlobal(point))
-
-    return None
 
 
 _C = TypeVar("_C", bound=type)
@@ -94,6 +85,14 @@ def format_error(
             f"\n{hist_str}\n\n{type(e).__name__}: {e}"
         ).with_traceback(tb)
         raise construction_err from None
+
+
+def connect_magicclasses(parent: BaseGui, child: BaseGui, child_name: str):
+    """Connect magicclass parent/child."""
+
+    child.__magicclass_parent__ = parent
+    parent.__magicclass_children__.append(child)
+    child._my_symbol = Symbol(child_name)
 
 
 def callable_to_classes(f: Callable) -> list[type[Widget]]:

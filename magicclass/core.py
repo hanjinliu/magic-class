@@ -2,7 +2,7 @@ from __future__ import annotations
 from functools import wraps as functools_wraps
 import inspect
 from weakref import WeakValueDictionary
-from typing import Any, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING, Callable
 
 from ._gui.class_gui import (
     ClassGuiBase,
@@ -189,7 +189,6 @@ def magicclass(
             # prepare macro
             macrowidget = self.macro.widget.native
             macrowidget.setParent(self.native, macrowidget.windowFlags())
-            self.macro.widget.__magicclass_parent__ = self
 
             with self.macro.blocked():
                 super(oldclass, self).__init__(*args, **kwargs)
@@ -230,15 +229,14 @@ def magicmenu(
     name: str | None = None,
     icon_path: str = None,
 ):
-    """
-    Decorator that can convert a Python class into a menu bar.
-    """
+    """Decorator that converts a Python class into a menu bar."""
     return _call_magicmenu(**locals(), menugui_class=MenuGui)
 
 
 def magiccontext(
     class_: type = None,
     *,
+    into: Callable | None = None,
     close_on_run: bool = None,
     popup_mode: str | PopUpMode = None,
     error_mode: str | ErrorMode = None,
@@ -246,10 +244,94 @@ def magiccontext(
     name: str | None = None,
     icon_path: str = None,
 ):
-    """
-    Decorator that can convert a Python class into a context menu.
-    """
-    return _call_magicmenu(**locals(), menugui_class=ContextMenuGui)
+    """Decorator that converts a Python class into a context menu."""
+
+    if popup_mode is None:
+        popup_mode = defaults["popup_mode"]
+    if close_on_run is None:
+        close_on_run = defaults["close_on_run"]
+    if error_mode is None:
+        error_mode = defaults["error_mode"]
+
+    if popup_mode in (
+        PopUpMode.above,
+        PopUpMode.below,
+        PopUpMode.first,
+        PopUpMode.last,
+    ):
+        raise ValueError(f"Mode {popup_mode.value} is not compatible with Menu.")
+
+    def wrapper(cls) -> type[ContextMenuGui]:
+        if not isinstance(cls, type):
+            raise TypeError(f"magicclass can only wrap classes, not {type(cls)}")
+
+        if not issubclass(cls, MagicTemplate):
+            check_override(cls)
+
+        # get class attributes first
+        doc = cls.__doc__
+        sig = inspect.signature(cls)
+        mod = cls.__module__
+        qualname = cls.__qualname__
+
+        new_attrs = convert_attributes(cls, hide=ContextMenuGui.__mro__)
+        oldclass = type(cls.__name__ + _BASE_CLASS_SUFFIX, (cls,), {})
+        newclass = type(cls.__name__, (ContextMenuGui, oldclass), new_attrs)
+
+        newclass.__signature__ = sig
+        newclass.__doc__ = doc
+        newclass.__module__ = mod
+        newclass.__qualname__ = qualname
+
+        @functools_wraps(oldclass.__init__)
+        def __init__(self: MagicTemplate, *args, **kwargs):
+            # Without "app = " Jupyter freezes after closing the window!
+            app = get_app()
+
+            gui_kwargs = dict(
+                close_on_run=close_on_run,
+                popup_mode=PopUpMode(popup_mode),
+                error_mode=ErrorMode(error_mode),
+                labels=labels,
+                name=name or cls.__name__,
+            )
+
+            # Inheriting Container's constructor is the most intuitive way.
+            if kwargs and "__init__" not in cls.__dict__:
+                gui_kwargs.update(kwargs)
+                kwargs = {}
+
+            ContextMenuGui.__init__(
+                self,
+                **gui_kwargs,
+            )
+
+            macrowidget = self.macro.widget.native
+            macrowidget.setParent(self.native, macrowidget.windowFlags())
+
+            with self.macro.blocked():
+                super(oldclass, self).__init__(*args, **kwargs)
+
+            self._convert_attributes_into_widgets()
+
+            if icon_path:
+                self.icon_path = icon_path
+            if hasattr(self, "__post_init__"):
+                with self.macro.blocked():
+                    self.__post_init__()
+            if into is not None:
+                from .signature import upgrade_signature
+
+                upgrade_signature(into, additional_options={"context_menu": self})
+
+        newclass.__init__ = __init__
+
+        # Users may want to override repr
+        newclass.__repr__ = oldclass.__repr__
+
+        return newclass
+
+    return wrapper if class_ is None else wrapper(class_)
 
 
 def magictoolbar(
@@ -262,9 +344,7 @@ def magictoolbar(
     name: str | None = None,
     icon_path: str = None,
 ):
-    """
-    Decorator that can convert a Python class into a menu bar.
-    """
+    """Decorator that converts a Python class into a menu bar."""
     return _call_magicmenu(**locals(), menugui_class=ToolBarGui)
 
 
@@ -365,7 +445,7 @@ def _call_magicmenu(
     close_on_run : bool, default is True
         If True, magicgui created by every method will be deleted after the method is completed without
         exceptions, i.e. magicgui is more like a dialog.
-    popup : bool, default is True
+    popup_mode : bool, default is True
         If True, magicgui created by every method will be poped up, else they will be appended as a
         part of the main widget.
 
@@ -436,7 +516,6 @@ def _call_magicmenu(
 
             macrowidget = self.macro.widget.native
             macrowidget.setParent(self.native, macrowidget.windowFlags())
-            self.macro.widget.__magicclass_parent__ = self
 
             with self.macro.blocked():
                 super(oldclass, self).__init__(*args, **kwargs)

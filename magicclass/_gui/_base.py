@@ -377,7 +377,7 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
             current_self = current_self.__magicclass_parent__
             if current_self is None:
                 raise RuntimeError(
-                    f"Magic class {ancestor.__name__} not found. {ancestor.__name__} it "
+                    f"Magic class {ancestor.__name__} not found. {ancestor.__name__} "
                     f"is not an ancestor of {self.__class__.__name__}"
                 )
         return current_self
@@ -734,10 +734,12 @@ class BaseGui(MagicTemplate):
         self.__magicclass_parent__: BaseGui | None = None
         self.__magicclass_children__: list[MagicTemplate] = []
         self._close_on_run = close_on_run
-        self._popup_mode = popup_mode
-        self._error_mode = error_mode
+        self._popup_mode = popup_mode or PopUpMode.popup
+        self._error_mode = error_mode or ErrorMode.msgbox
         self._my_symbol = Symbol.var("ui")
         self._icon_path = None
+
+        self.macro.widget.__magicclass_parent__ = self
 
 
 class ContainerLikeGui(BaseGui, mguiLike, MutableSequence):

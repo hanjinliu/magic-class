@@ -20,11 +20,7 @@ from ._base import (
     value_widget_callback,
     nested_function_gui_callback,
 )
-from .utils import (
-    copy_class,
-    format_error,
-    set_context_menu,
-)
+from .utils import format_error, connect_magicclasses
 from ..widgets import (
     ButtonContainer,
     GroupBoxContainer,
@@ -142,9 +138,7 @@ class ClassGuiBase(BaseGui):
                     widget = getattr(self, name, None)
 
                 if isinstance(widget, BaseGui):
-                    widget.__magicclass_parent__ = self
-                    self.__magicclass_children__.append(widget)
-                    widget._my_symbol = Symbol(name)
+                    connect_magicclasses(self, widget, name)
 
                 if isinstance(widget, MenuGui):
                     # Add menubar to container
@@ -176,7 +170,7 @@ class ClassGuiBase(BaseGui):
 
                 elif isinstance(widget, ContextMenuGui):
                     # Add context menu to container
-                    set_context_menu(widget, self)
+                    widget._set_magic_context_menu(self)
                     _hist.append((name, type(attr), "ContextMenuGui"))
 
                 elif isinstance(widget, ToolBarGui):
@@ -231,6 +225,13 @@ class ClassGuiBase(BaseGui):
                                 UserWarning,
                             )
                             continue
+
+                        # contextmenu
+                        contextmenu = get_additional_option(attr, "context_menu", None)
+                        if contextmenu is not None:
+                            contextmenu: ContextMenuGui
+                            contextmenu._set_magic_context_menu(widget)
+                            connect_magicclasses(self, contextmenu, contextmenu.name)
 
                     elif hasattr(widget, _MCLS_PAREMT) or hasattr(
                         widget.__class__, _MCLS_PAREMT

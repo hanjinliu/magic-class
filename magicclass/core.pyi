@@ -81,6 +81,7 @@ def magicmenu(
 def magiccontext(
     class_: _C,
     *,
+    into: Callable | None = None,
     close_on_run: bool | None = None,
     popup_mode: str | PopUpMode | None = None,
     error_mode: str | ErrorMode | None = None,
@@ -92,6 +93,7 @@ def magiccontext(
 @overload
 def magiccontext(
     *,
+    into: Callable | None = None,
     close_on_run: bool | None = None,
     popup_mode: str | PopUpMode | None = None,
     error_mode: str | ErrorMode | None = None,
