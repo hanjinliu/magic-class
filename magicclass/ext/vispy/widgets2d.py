@@ -1,32 +1,21 @@
 from __future__ import annotations
 import numpy as np
+
 from vispy import scene
 from vispy.scene import visuals, ViewBox
 
 from .layer2d import Curve, Scatter
+from ._base import HasViewBox, SceneCanvas, MultiPlot
+
 from .._doc import write_docs
 from ...widgets import FreeWidget
 from ..._app import get_app
 
-# self._viewbox: ViewBox = grid.add_view(row=_row, col=_col, camera="panzoom")
-# self._scene = _scene
-# grid = self._scene.central_widget.add_grid(pos=(0, 0))
-# grid.spacing = 0
-# self._grid = grid
-# self._scene.create_native()
-# self.set_widget(self._scene.native)
 
-# if _scene is None:
-#     _scene = scene.SceneCanvas(keys="interactive")
-
-
-class HasViewBox:
-    def __init__(self, viewbox: ViewBox):
-        self._viewbox = viewbox
-        self._items = []
-
+class Has2DViewBox(HasViewBox):
     @property
     def xrange(self) -> tuple[float, float]:
+        """Range of X dimension."""
         return self._viewbox.camera._xlim
 
     @xrange.setter
@@ -36,24 +25,13 @@ class HasViewBox:
 
     @property
     def yrange(self) -> tuple[float, float]:
+        """Range of Y dimension."""
         return self._viewbox.camera._ylim
 
     @yrange.setter
     def yrange(self, rng: tuple[float, float]):
         y0, y1 = rng
         self._viewbox.camera.set_range(y=(y0, y1))
-
-    @property
-    def enabled(self) -> bool:
-        return self._viewbox.interactive
-
-    @enabled.setter
-    def enabled(self, value) -> bool:
-        self._viewbox.interactive = value
-
-    @property
-    def layers(self):
-        return self._items
 
     @write_docs
     def add_curve(
@@ -156,7 +134,7 @@ class HasViewBox:
         return line
 
 
-class PlotItem(HasViewBox):
+class PlotItem(Has2DViewBox):
     def __init__(self, viewbox: ViewBox):
         grid = viewbox.add_grid()
         grid.spacing = 0
@@ -228,7 +206,7 @@ class PlotItem(HasViewBox):
         self._y_axis.axis.axis_label = text
 
 
-class ImageItem(HasViewBox):
+class ImageItem(Has2DViewBox):
     def __init__(
         self,
         viewbox: ViewBox | None = None,
@@ -270,6 +248,12 @@ class ImageItem(HasViewBox):
     @image.setter
     def image(self, img):
         no_image = self._image._data is None
+        if isinstance(img, np.ndarray):
+            if img.dtype == "float64":
+                img = img.astype("float32")
+        else:
+            img = np.asarray(img, dtype=np.float32)
+
         self._image.set_data(img)
         if not self._lock_contrast_limits:
             self._image.clim = "auto"
@@ -325,7 +309,7 @@ class VispyPlotCanvas(FreeWidget, PlotItem):
         app = get_app()
         # prepare widget
 
-        _scene = scene.SceneCanvas(keys="interactive")
+        _scene = SceneCanvas(keys="interactive")
         _scene.create_native()
         viewbox = _scene.central_widget.add_view()
         PlotItem.__init__(self, viewbox)
@@ -340,7 +324,7 @@ class VispyImageCanvas(FreeWidget, ImageItem):
         app = get_app()
 
         # prepare widget
-        _scene = scene.SceneCanvas(keys="interactive")
+        _scene = SceneCanvas(keys="interactive")
         _scene.create_native()
         viewbox = _scene.central_widget.add_view()
         ImageItem.__init__(self, viewbox)
@@ -348,33 +332,15 @@ class VispyImageCanvas(FreeWidget, ImageItem):
         self.set_widget(_scene.native)
 
 
-class _MultiPlot(FreeWidget):
-    _base_class: type[HasViewBox]
+class VispyMultiPlotCanvas(MultiPlot):
+    """A multiple Vispy based 2-D plot canvas."""
 
-    def __init__(self, nrows: int = 1, ncols: int = 1):
-        app = get_app()
-        super().__init__()
-        self._canvas: list[HasViewBox] = []
-        self._scene = scene.SceneCanvas(keys="interactive")
-        grid = self._scene.central_widget.add_grid()
-        for r in range(nrows):
-            for c in range(ncols):
-                viewbox = grid.add_view(row=r, col=c)
-                canvas = self._base_class(viewbox)
-                self._canvas.append(canvas)
-
-        self._scene.create_native()
-        self.set_widget(self._scene.native)
-
-    def __getitem__(self, i):
-        return self._canvas[i]
-
-
-class VispyMultiPlotCanvas(_MultiPlot):
     _base_class = PlotItem
 
 
-class VispyMultiImageCanvas(_MultiPlot):
+class VispyMultiImageCanvas(MultiPlot):
+    """A multiple Vispy based 2-D plot canvas for images."""
+
     _base_class = ImageItem
 
 

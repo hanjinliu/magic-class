@@ -144,8 +144,9 @@ class Image(LayerItem, HasFields):
 
     @contrast_limits.connect
     def _on_constrast_limits_change(self, value):
-        self._visual.clim = value
-        self._visual.update()
+        if hasattr(self, "_visual"):
+            self._visual.clim = value
+            self._visual.update()
 
     @rendering.connect
     def _on_rendering_change(self, value):
@@ -154,8 +155,9 @@ class Image(LayerItem, HasFields):
 
     @iso_threshold.connect
     def _on_iso_threshold_change(self, value):
-        self._visual.threshold = max(value, self._lims[0] + 1e-6)
-        self._visual.update()
+        if hasattr(self, "_visual"):
+            self._visual.threshold = max(value, self._lims[0] + 1e-6)
+            self._visual.update()
 
     @gamma.connect
     def _on_gamma_change(self, value):

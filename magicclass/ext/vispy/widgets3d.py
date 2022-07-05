@@ -5,11 +5,13 @@ from vispy import scene
 
 from .layer3d import Image, IsoSurface, Surface
 from .layerlist import LayerList
+from ._base import SceneCanvas, HasViewBox, MultiPlot
+
 from ...widgets import FreeWidget
 from ...types import Color
 
 
-class Vispy3DCanvas(FreeWidget):
+class Has3DViewBox(HasViewBox):
     """
     A Vispy canvas for 3-D object visualization.
 
@@ -17,16 +19,10 @@ class Vispy3DCanvas(FreeWidget):
     as a mini-viewer of napari.
     """
 
-    def __init__(self):
-        super().__init__()
-        self._scene = scene.SceneCanvas()
-        grid = self._scene.central_widget.add_grid()
-        self._viewbox = grid.add_view()
+    def __init__(self, viewbox: scene.ViewBox):
+        super().__init__(viewbox)
         self._viewbox.camera = scene.ArcballCamera(fov=0)
         self._layerlist = LayerList()
-
-        self._scene.create_native()
-        self.set_widget(self._scene.native)
 
     @property
     def layers(self):
@@ -113,3 +109,25 @@ class Vispy3DCanvas(FreeWidget):
         self._viewbox.camera.scale_factor = max(maxs - mins)
         self._viewbox.camera.center = [(s1 + s0) / 2 for s0, s1 in zip(mins, maxs)]
         return surface
+
+
+class Vispy3DCanvas(FreeWidget, Has3DViewBox):
+    """A Vispy based 3-D canvas."""
+
+    def __init__(self):
+        super().__init__()
+        self._scene = SceneCanvas()
+        grid = self._scene.central_widget.add_grid()
+        _viewbox = grid.add_view()
+        Has3DViewBox.__init__(self, _viewbox)
+        self._layerlist = LayerList()
+        self._scene.create_native()
+        self.set_widget(self._scene.native)
+
+
+class VispyMulti3DCanvas(MultiPlot):
+    """A multiple Vispy based 3-D canvas."""
+
+    _base_class = Has3DViewBox
+
+    # BUG: the second canvas has wrong offset. Need updates in event object?

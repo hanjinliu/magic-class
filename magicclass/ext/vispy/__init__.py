@@ -4,7 +4,7 @@ from .widgets2d import (
     VispyMultiPlotCanvas,
     VispyMultiImageCanvas,
 )
-from .widgets3d import Vispy3DCanvas
+from .widgets3d import Vispy3DCanvas, VispyMulti3DCanvas
 
 __all__ = [
     "VispyPlotCanvas",
@@ -12,4 +12,5 @@ __all__ = [
     "VispyMultiPlotCanvas",
     "VispyMultiImageCanvas",
     "Vispy3DCanvas",
+    "VispyMulti3DCanvas",
 ]
