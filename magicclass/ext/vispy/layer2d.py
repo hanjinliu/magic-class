@@ -3,8 +3,10 @@ from typing import Sequence
 import numpy as np
 from numpy.typing import ArrayLike
 from vispy.scene import visuals, ViewBox
+from vispy.color import get_color_dict
 from ._base import LayerItem
 from .._shared_utils import convert_color_code, to_rgba
+
 
 _SYMBOL_MAP = {
     "s": "square",
@@ -154,3 +156,57 @@ class Scatter(PlotDataLayer):
         )
         self._name = name
         self._visual.update()
+
+
+class Histogram(LayerItem):
+    def __init__(
+        self,
+        viewbox: ViewBox,
+        data: np.ndarray,
+        bins: int = 10,
+        face_color=None,
+        edge_color=None,
+        name: str | None = None,
+    ) -> None:
+        self._viewbox = viewbox
+        self._visual = visuals.Histogram(
+            data,
+            bins=bins,
+            # color=edge_color,
+            parent=self._viewbox.scene,
+        )
+
+        if isinstance(face_color, str):
+            rgb_html = get_color_dict()[face_color][1:]
+            face_color = np.array(
+                [
+                    int(rgb_html[0:2], 16) / 255,
+                    int(rgb_html[2:4], 16) / 255,
+                    int(rgb_html[4:6], 16) / 255,
+                ]
+            )
+
+        if isinstance(edge_color, str):
+            rgb_html = get_color_dict()[edge_color][1:]
+            edge_color = np.array(
+                [
+                    int(rgb_html[0:2], 16) / 255,
+                    int(rgb_html[2:4], 16) / 255,
+                    int(rgb_html[4:6], 16) / 255,
+                ]
+            )
+
+        self._visual.mesh_data.set_face_colors(
+            np.stack([face_color] * self._visual.mesh_data.n_faces, axis=0)
+        )
+        self._visual.mesh_data.set_vertex_colors(
+            np.stack([edge_color] * self._visual.mesh_data.n_vertices, axis=0)
+        )
+        self._visual.mesh_data_changed()
+
+        self._name = name
+        self._visual.update()
+
+    @property
+    def name(self):
+        return self._name

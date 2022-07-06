@@ -46,6 +46,8 @@ class LayerItem:
 
 
 class HasViewBox:
+    """The base class for all the vispy based visual objects."""
+
     def __init__(self, viewbox: ViewBox):
         from .layerlist import LayerList
 
@@ -90,9 +92,27 @@ class MultiPlot(FreeWidget):
 
         self._scene.create_native()
         self.set_widget(self._scene.native)
+        self._shape = (nrows, ncols)
 
-    def __getitem__(self, i):
-        return self._canvas[i]
+    def __getitem__(self, key: int | tuple[int, int]):
+        if isinstance(key, tuple):
+            r, c = key
+            nr, nc = self.shape
+            if r >= nr or c >= nc:
+                raise IndexError(f"Index out of range: {key}")
+            return self._canvas[r * nc + c]
+        else:
+            key = int(key)
+        return self._canvas[key]
+
+    @property
+    def shape(self) -> tuple[int, int]:
+        return self._shape
+
+    @property
+    def size(self) -> int:
+        r, c = self.shape
+        return r * c
 
 
 class SceneCanvas(scene.SceneCanvas):

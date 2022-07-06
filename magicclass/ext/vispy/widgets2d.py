@@ -4,7 +4,7 @@ import numpy as np
 from vispy import scene
 from vispy.scene import visuals, ViewBox
 
-from .layer2d import Curve, Scatter
+from .layer2d import Curve, Scatter, Histogram
 from ._base import HasViewBox, SceneCanvas, MultiPlot
 
 from .._doc import write_docs
@@ -132,6 +132,32 @@ class Has2DViewBox(HasViewBox):
             self.xrange = (np.min(x), np.max(x))
             self.yrange = (np.min(y), np.max(y))
         return line
+
+    @write_docs
+    def add_hist(
+        self,
+        data,
+        bins: int = 10,
+        face_color=None,
+        edge_color=None,
+        color=None,
+        name: str | None = None,
+    ) -> Histogram:
+        data = np.asarray(data)
+        face_color, edge_color = _check_colors(face_color, edge_color, color)
+
+        hist = Histogram(
+            self._viewbox,
+            data=data,
+            bins=bins,
+            face_color=face_color,
+            edge_color=edge_color,
+            name=name,
+        )
+        self._layerlist.append(hist)
+        if len(self._layerlist) == 1:
+            self.xrange = (np.min(data), np.max(data))
+        return hist
 
 
 class PlotItem(Has2DViewBox):
@@ -300,6 +326,15 @@ class ImageItem(Has2DViewBox):
     @xlabel.setter
     def ylabel(self, text: str):
         self._y_axis.text = text
+
+    @property
+    def contrast_limits(self) -> tuple[float, float]:
+        """Contrast limits of the image."""
+        return self._image.clim
+
+    @contrast_limits.setter
+    def contrast_limits(self, val: tuple[float, float]):
+        self._image.clim = val
 
 
 class VispyPlotCanvas(FreeWidget, PlotItem):
