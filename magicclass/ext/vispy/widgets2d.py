@@ -79,8 +79,8 @@ class Has2DViewBox(HasViewBox):
             ls=ls,
             symbol=symbol,
         )
-        self._items.append(line)
-        if len(self._items) == 1:
+        self._layerlist.append(line)
+        if len(self._layerlist) == 1:
             self.xrange = (np.min(x), np.max(x))
             self.yrange = (np.min(y), np.max(y))
         return line
@@ -127,8 +127,8 @@ class Has2DViewBox(HasViewBox):
             name=name,
             symbol=symbol,
         )
-        self._items.append(line)
-        if len(self._items) == 1:
+        self._layerlist.append(line)
+        if len(self._layerlist) == 1:
             self.xrange = (np.min(x), np.max(x))
             self.yrange = (np.min(y), np.max(y))
         return line

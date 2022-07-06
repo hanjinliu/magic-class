@@ -18,6 +18,10 @@ if TYPE_CHECKING:
 
 class LayerItem:
     _visual: Visual
+    name: str
+
+    def __repr__(self) -> str:
+        return f"<{type(self).__name__} {self.name}>"
 
     @property
     def visible(self) -> bool:
@@ -43,9 +47,11 @@ class LayerItem:
 
 class HasViewBox:
     def __init__(self, viewbox: ViewBox):
+        from .layerlist import LayerList
+
         viewbox.unfreeze()
         self._viewbox = viewbox
-        self._items = []
+        self._layerlist = LayerList()
         self._mouse_click_callbacks = []
         viewbox._parent_widget_ref = weakref.ref(self)
 
@@ -64,7 +70,7 @@ class HasViewBox:
 
     @property
     def layers(self):
-        return self._items
+        return self._layerlist
 
 
 class MultiPlot(FreeWidget):

@@ -1,7 +1,7 @@
 from __future__ import annotations
 from enum import Enum
 import typing
-from typing import Any, Union, Iterable, overload, TypeVar, Callable
+from typing import Any, NamedTuple, Union, Iterable, overload, TypeVar, Callable
 from typing_extensions import Literal, Annotated, ParamSpec, _AnnotatedAlias
 from magicgui.signature import split_annotated_type
 from magicgui.widgets import Widget, EmptyWidget
@@ -72,6 +72,25 @@ ErrorModeStr = Union[
 ]
 
 Color = Union[Iterable[float], str]
+
+
+class ColorArray(NamedTuple):
+    r: float
+    g: float
+    b: float
+    a: float
+
+    # def __eq__(self, other) -> bool:
+    #     if isinstance(other, str):
+    #         ...
+    #     return super().__eq__(other)
+
+    # def __str__(self) -> str:
+    #     code = "#" + "".join(hex(int(c * 255))[2:].upper().zfill(2) for c in self)
+    #     if code.endswith("FF"):
+    #         code = code[:-2]
+    #     return code
+
 
 _W = TypeVar("_W", bound=Widget)
 _V = TypeVar("_V", bound=object)

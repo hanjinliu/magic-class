@@ -22,7 +22,6 @@ class Has3DViewBox(HasViewBox):
     def __init__(self, viewbox: scene.ViewBox):
         super().__init__(viewbox)
         self._viewbox.camera = scene.ArcballCamera(fov=0)
-        self._layerlist = LayerList()
 
     @property
     def layers(self):

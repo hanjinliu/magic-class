@@ -22,8 +22,9 @@ class PlotDataLayer(LayerItem):
 
     @xdata.setter
     def xdata(self, value: Sequence[float]):
-
-        self._visual.set_data
+        x = np.atleast_2d(value)
+        y = self._data[:, 1]
+        self._visual.set_data(np.concatenate([x, y], axis=1))
 
     @property
     def ydata(self) -> np.ndarray:
@@ -31,7 +32,9 @@ class PlotDataLayer(LayerItem):
 
     @ydata.setter
     def ydata(self, value: Sequence[float]):
-        self.native.setData(self.xdata, value)
+        x = self._data[:, 0]
+        y = np.atleast_2d(value)
+        self._visual.set_data(np.concatenate([x, y], axis=1))
 
     @property
     def ndata(self) -> int:
@@ -45,7 +48,7 @@ class PlotDataLayer(LayerItem):
     def name(self, value: str):
         self._name = str(value)
 
-    def add(self, points: np.ndarray | Sequence, **kwargs):
+    def add(self, points: np.ndarray | Sequence):
         """Add new points to the plot data item."""
         points = np.atleast_2d(points)
         if points.shape[1] != 2:
@@ -59,30 +62,32 @@ class PlotDataLayer(LayerItem):
         if isinstance(i, int):
             i = [i]
         sl = list(set(range(self.ndata)) - set(i))
-        xdata = self.xdata[sl]
-        ydata = self.ydata[sl]
-        self.native.setData(xdata, ydata)
+        x = self.xdata[sl]
+        y = self.ydata[sl]
+        self._visual.set_data(np.concatenate([x, y], axis=1))
         return None
 
     @property
     def edge_color(self) -> np.ndarray:
         """Edge color of the data."""
-        return to_rgba(self.native.opts["pen"])
+        col = self._visual._line.color
+        return to_rgba(col)
 
     @edge_color.setter
     def edge_color(self, value: str | Sequence):
         value = convert_color_code(value)
-        self.native.setPen(value, width=self.lw, style=self.ls)
+        self._visual.set_data(edge_color=value)
 
     @property
     def face_color(self) -> np.ndarray:
         """Face color of the data."""
-        return to_rgba(self.native.opts["brush"])
+        col = self._visual._markers._data["face_color"]
+        return to_rgba(col)
 
     @face_color.setter
     def face_color(self, value: str | Sequence):
         value = convert_color_code(value)
-        self.native.setBrush(value)
+        self._visual.set_data(face_color=value)
 
     color = property()
 
