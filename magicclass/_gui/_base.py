@@ -85,6 +85,7 @@ class PopUpMode(Enum):
     dock = "dock"
     dialog = "dialog"
     parentlast = "parentlast"
+    parentsub = "parentsub"
 
 
 def _msgbox_raising(e, parent):
@@ -649,6 +650,7 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
                     if self._popup_mode not in (
                         PopUpMode.popup,
                         PopUpMode.dock,
+                        PopUpMode.parentsub,
                         PopUpMode.dialog,
                     ):
                         mgui.label = ""
@@ -664,11 +666,23 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
                         mgui.insert(0, title)
 
                     if self._close_on_run and not mgui._auto_call:
-                        if self._popup_mode not in (PopUpMode.dock, PopUpMode.dialog):
+                        if self._popup_mode not in (
+                            PopUpMode.dock,
+                            PopUpMode.parentsub,
+                            PopUpMode.dialog,
+                        ):
                             mgui.called.connect(mgui.hide)
                         elif self._popup_mode == PopUpMode.dock:
                             # If FunctioGui is docked, we should close QDockWidget.
                             mgui.called.connect(lambda: mgui.parent.hide())
+                        elif self._popup_mode == PopUpMode.parentsub:
+                            mgui.called.connect(lambda: mgui.parent.hide())
+                            # from .class_gui import find_window_ancestor
+                            # @mgui.called.connect
+                            # def _():
+                            #     parent_self = find_window_ancestor(self)
+                            #     subwindow = mgui.parent
+                            #     parent_self._widget._mdiarea.removeSubWindow(subwindow)
 
                 if nparams == 1 and issubclass(fgui_classes[0], FileEdit):
                     fdialog: FileEdit = mgui[0]
@@ -682,10 +696,16 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
                     else:
                         return None
 
-                if self._popup_mode not in (PopUpMode.dock, PopUpMode.dialog):
+                if self._popup_mode not in (
+                    PopUpMode.dock,
+                    PopUpMode.dialog,
+                    PopUpMode.parentsub,
+                ):
                     widget.mgui.show()
                 elif self._popup_mode == PopUpMode.dock:
                     mgui.parent.show()  # show dock widget
+                elif self._popup_mode == PopUpMode.parentsub:
+                    mgui.native.parent().setVisible(True)
                 else:
                     mgui.exec_as_dialog(parent=self)
 
@@ -1388,6 +1408,14 @@ def _define_popup(self: BaseGui, obj, widget: PushButtonPlus | Action):
                 viewer.window.add_dock_widget(
                     mgui, name=_get_widget_name(widget), area="right"
                 )
+
+    elif popup_mode == PopUpMode.parentsub:
+
+        def _prep(mgui: FunctionGui):
+            from .class_gui import find_window_ancestor
+
+            parent_self = find_window_ancestor(self)
+            parent_self._widget._mdiarea.addSubWindow(mgui.native)
 
     elif popup_mode == PopUpMode.dialog:
 

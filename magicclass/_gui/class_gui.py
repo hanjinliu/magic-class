@@ -335,10 +335,29 @@ class ClassGuiBase(BaseGui):
         return None
 
 
+def find_window_ancestor(widget: Widget) -> SubWindowsClassGui:
+    parent_self = widget
+    while (parent := getattr(parent_self, "__magicclass_parent__", None)) is not None:
+        parent_self = parent
+        if isinstance(parent_self, SubWindowsClassGui):
+            break
+
+    if not isinstance(parent_self, SubWindowsClassGui):
+        raise RuntimeError(
+            "Could not find GUI class that support sub-windows. Please use\n"
+            ">>> @magicclass(widget_type='subwindows')\n"
+            "to create main window widget."
+        )
+    return parent_self
+
+
 _C = TypeVar("_C", bound=ContainerWidget)
+_C2 = TypeVar("_C2")
 
 
-def make_gui(container: type[_C], no_margin: bool = True) -> type[_C | ClassGuiBase]:
+def make_gui(
+    container: type[_C], no_margin: bool = True
+) -> Callable[[_C2], type[_C | _C2 | ClassGuiBase]]:
     """
     Make a ClassGui class from a Container widget.
     Because GUI class inherits Container here, functions that need overriden must be defined
