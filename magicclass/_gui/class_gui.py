@@ -49,6 +49,7 @@ _USE_OUTER_LAYOUT = (
     DraggableContainer,
     SplitterContainer,
     TabbedContainer,
+    SubWindowsContainer,
 )
 
 _MCLS_PAREMT = "__magicclass_parent__"

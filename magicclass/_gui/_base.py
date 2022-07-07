@@ -672,17 +672,10 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
                             PopUpMode.dialog,
                         ):
                             mgui.called.connect(mgui.hide)
-                        elif self._popup_mode == PopUpMode.dock:
-                            # If FunctioGui is docked, we should close QDockWidget.
+                        elif self._popup_mode in (PopUpMode.dock, PopUpMode.parentsub):
+                            # If FunctioGui is docked or in a subwindow, we should close
+                            # the parent QDockWidget/QMdiSubwindow.
                             mgui.called.connect(lambda: mgui.parent.hide())
-                        elif self._popup_mode == PopUpMode.parentsub:
-                            mgui.called.connect(lambda: mgui.parent.hide())
-                            # from .class_gui import find_window_ancestor
-                            # @mgui.called.connect
-                            # def _():
-                            #     parent_self = find_window_ancestor(self)
-                            #     subwindow = mgui.parent
-                            #     parent_self._widget._mdiarea.removeSubWindow(subwindow)
 
                 if nparams == 1 and issubclass(fgui_classes[0], FileEdit):
                     fdialog: FileEdit = mgui[0]
