@@ -22,7 +22,7 @@ from .wrappers import (
     mark_preview,
 )
 
-from .fields import field, vfield, widget_property, FieldGroup, HasFields
+from .fields import field, vfield, widget_property, FieldGroup, HasFields, dataclass_gui
 from ._gui._base import wraps, defaults, MagicTemplate, PopUpMode
 from ._gui.keybinding import Key
 from ._gui._icon import Icon
@@ -52,6 +52,7 @@ __all__ = [
     "widget_property",
     "FieldGroup",
     "HasFields",
+    "dataclass_gui",
     "wraps",
     "defaults",
     "MagicTemplate",
