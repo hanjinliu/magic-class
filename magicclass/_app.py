@@ -1,4 +1,6 @@
 from qtpy.QtWidgets import QApplication
+from qtpy import PYQT5
+from qtpy.QtCore import Qt
 
 APPLICATION = None
 
@@ -44,3 +46,11 @@ def run_app():
     """Start the event loop."""
     if not gui_qt_is_active():
         return get_app().exec_()
+
+
+# def consistent_dpi():
+#     QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
+#     QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps)
+
+# def menubar_in_widget():
+#     QApplication.setAttribute(Qt.AA_DontUseNativeMenuBar)
