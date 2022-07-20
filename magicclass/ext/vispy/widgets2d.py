@@ -1,28 +1,21 @@
 from __future__ import annotations
 import numpy as np
+
 from vispy import scene
 from vispy.scene import visuals, ViewBox
-from .layer2d import Curve, Scatter
+
+from .layer2d import Curve, Scatter, Histogram
+from ._base import HasViewBox, SceneCanvas, MultiPlot
+
 from .._doc import write_docs
 from ...widgets import FreeWidget
+from ..._app import get_app
 
 
-class HasViewBox(FreeWidget):
-    def __init__(self, grid_pos: tuple[int, int] = (0, 0), _scene=None, _row=0, _col=0):
-        super().__init__()
-        if _scene is None:
-            _scene = scene.SceneCanvas(keys="interactive")
-        self._scene = _scene
-        grid = self._scene.central_widget.add_grid(pos=grid_pos)
-        grid.spacing = 0
-        self._viewbox: ViewBox = grid.add_view(row=_row, col=_col, camera="panzoom")
-        self._items = []
-        self._grid = grid
-        self._scene.create_native()
-        self.set_widget(self._scene.native)
-
+class Has2DViewBox(HasViewBox):
     @property
     def xrange(self) -> tuple[float, float]:
+        """Range of X dimension."""
         return self._viewbox.camera._xlim
 
     @xrange.setter
@@ -32,16 +25,13 @@ class HasViewBox(FreeWidget):
 
     @property
     def yrange(self) -> tuple[float, float]:
+        """Range of Y dimension."""
         return self._viewbox.camera._ylim
 
     @yrange.setter
     def yrange(self, rng: tuple[float, float]):
         y0, y1 = rng
         self._viewbox.camera.set_range(y=(y0, y1))
-
-    @property
-    def layers(self):
-        return self._items
 
     @write_docs
     def add_curve(
@@ -63,17 +53,10 @@ class HasViewBox(FreeWidget):
 
         Parameters
         ----------
-        {x}
-        {y}
-        {face_color}
-        {edge_color}
-        {color}
+        {x}{y}{face_color}{edge_color}{color}
         size: float, default is 7
             Symbol size.
-        {name}
-        {lw}
-        {ls}
-        {symbol}
+        {name}{lw}{ls}{symbol}
 
         Returns
         -------
@@ -96,8 +79,8 @@ class HasViewBox(FreeWidget):
             ls=ls,
             symbol=symbol,
         )
-        self._items.append(line)
-        if len(self._items) == 1:
+        self._layerlist.append(line)
+        if len(self._layerlist) == 1:
             self.xrange = (np.min(x), np.max(x))
             self.yrange = (np.min(y), np.max(y))
         return line
@@ -120,15 +103,10 @@ class HasViewBox(FreeWidget):
 
         Parameters
         ----------
-        {x}
-        {y}
-        {face_color}
-        {edge_color}
-        {color}
+        {x}{y}{face_color}{edge_color}{color}
         size: float, default is 7
             Symbol size.
-        {name}
-        {symbol}
+        {name}{symbol}
 
         Returns
         -------
@@ -149,20 +127,49 @@ class HasViewBox(FreeWidget):
             name=name,
             symbol=symbol,
         )
-        self._items.append(line)
-        if len(self._items) == 1:
+        self._layerlist.append(line)
+        if len(self._layerlist) == 1:
             self.xrange = (np.min(x), np.max(x))
             self.yrange = (np.min(y), np.max(y))
         return line
 
+    @write_docs
+    def add_hist(
+        self,
+        data,
+        bins: int = 10,
+        face_color=None,
+        edge_color=None,
+        color=None,
+        name: str | None = None,
+    ) -> Histogram:
+        data = np.asarray(data)
+        face_color, edge_color = _check_colors(face_color, edge_color, color)
 
-class PlotItem(HasViewBox):
-    def __init__(self, grid_pos=(0, 0), _scene=None):
-        super().__init__(grid_pos=grid_pos, _scene=_scene, _row=1, _col=1)
+        hist = Histogram(
+            self._viewbox,
+            data=data,
+            bins=bins,
+            face_color=face_color,
+            edge_color=edge_color,
+            name=name,
+        )
+        self._layerlist.append(hist)
+        if len(self._layerlist) == 1:
+            self.xrange = (np.min(data), np.max(data))
+        return hist
+
+
+class PlotItem(Has2DViewBox):
+    def __init__(self, viewbox: ViewBox):
+        grid = viewbox.add_grid()
+        grid.spacing = 0
+        _viewbox = grid.add_view(row=1, col=1, camera="panzoom")
+        super().__init__(_viewbox)
 
         title = scene.Label("", color="white", font_size=7)
         title.height_max = 40
-        self._grid.add_widget(title, row=0, col=0, col_span=2)
+        grid.add_widget(title, row=0, col=0, col_span=2)
         self._title = title
         x_axis = scene.AxisWidget(
             orientation="bottom",
@@ -176,7 +183,7 @@ class PlotItem(HasViewBox):
         x_axis.height_max = 80
         x_axis.stretch = (1, 0.1)
         self._x_axis = x_axis
-        self._grid.add_widget(x_axis, row=2, col=1)
+        grid.add_widget(x_axis, row=2, col=1)
         x_axis.link_view(self._viewbox)
         y_axis = scene.AxisWidget(
             orientation="left",
@@ -188,7 +195,7 @@ class PlotItem(HasViewBox):
         )
         y_axis.width_max = 80
         y_axis.stretch = (0.1, 1)
-        self._grid.add_widget(y_axis, row=1, col=0)
+        grid.add_widget(y_axis, row=1, col=0)
         y_axis.link_view(self._viewbox)
         self._y_axis = y_axis
 
@@ -225,15 +232,40 @@ class PlotItem(HasViewBox):
         self._y_axis.axis.axis_label = text
 
 
-class ImageItem(HasViewBox):
+class ImageItem(Has2DViewBox):
     def __init__(
-        self, lock_contrast_limits: bool = False, grid_pos=(0, 0), _scene=None
+        self,
+        viewbox: ViewBox | None = None,
+        lock_contrast_limits: bool = False,
     ):
-        super().__init__(grid_pos=grid_pos, _scene=_scene)
+        grid = viewbox.add_grid()
+        grid.spacing = 0
+        _viewbox = grid.add_view(row=1, col=1, camera="panzoom")
+        super().__init__(_viewbox)
+
         self._viewbox.camera.aspect = 1.0
         self._viewbox.camera.flip = (False, True, False)
+
         self._image = visuals.Image(cmap="gray", parent=self._viewbox.scene)
         self._lock_contrast_limits = lock_contrast_limits
+
+        title = scene.Label("", color="white", font_size=7)
+        title.height_max = 40
+        grid.add_widget(title, row=0, col=0, col_span=2)
+        self._title = title
+        x_axis = scene.Label("", color="white", font_size=7)
+        x_axis.height_min = 35
+        x_axis.height_max = 40
+        x_axis.stretch = (1, 0.1)
+        self._x_axis = x_axis
+        grid.add_widget(x_axis, row=2, col=1)
+
+        y_axis = scene.Label("", rotation=-90, color="white", font_size=7)
+        y_axis.width_max = 40
+        y_axis.stretch = (0.1, 1)
+        grid.add_widget(y_axis, row=1, col=0)
+
+        self._y_axis = y_axis
 
     @property
     def image(self):
@@ -241,9 +273,19 @@ class ImageItem(HasViewBox):
 
     @image.setter
     def image(self, img):
+        no_image = self._image._data is None
+        if isinstance(img, np.ndarray):
+            if img.dtype == "float64":
+                img = img.astype("float32")
+        else:
+            img = np.asarray(img, dtype=np.float32)
+
         self._image.set_data(img)
         if not self._lock_contrast_limits:
             self._image.clim = "auto"
+        if no_image:
+            self.yrange = (0, self._image._data.shape[0])
+            self.xrange = (0, self._image._data.shape[1])
 
     @image.deleter
     def image(self):
@@ -258,42 +300,83 @@ class ImageItem(HasViewBox):
     def cmap(self, c):
         self._image.cmap = c
 
+    @property
+    def title(self) -> str:
+        """The title string."""
+        return self._title.text
 
-class VispyPlotCanvas(PlotItem):
-    """
-    A Vispy based 2-D plot canvas for curve, histogram, bar plot etc.
-    """
+    @title.setter
+    def title(self, text: str):
+        self._title.text = text
+
+    @property
+    def xlabel(self) -> str:
+        """The x-label string."""
+        return self._x_axis.text
+
+    @xlabel.setter
+    def xlabel(self, text: str):
+        self._x_axis.text = text
+
+    @property
+    def ylabel(self) -> str:
+        """The y-label string."""
+        return self._y_axis.text
+
+    @xlabel.setter
+    def ylabel(self, text: str):
+        self._y_axis.text = text
+
+    @property
+    def contrast_limits(self) -> tuple[float, float]:
+        """Contrast limits of the image."""
+        return self._image.clim
+
+    @contrast_limits.setter
+    def contrast_limits(self, val: tuple[float, float]):
+        self._image.clim = val
 
 
-class VispyImageCanvas(ImageItem):
-    ...
+class VispyPlotCanvas(FreeWidget, PlotItem):
+    """A Vispy based 2-D plot canvas for curve, histogram, bar plot etc."""
+
+    def __init__(self, **kwargs):
+        app = get_app()
+        # prepare widget
+
+        _scene = SceneCanvas(keys="interactive")
+        _scene.create_native()
+        viewbox = _scene.central_widget.add_view()
+        PlotItem.__init__(self, viewbox)
+        super().__init__(**kwargs)
+        self.set_widget(_scene.native)
 
 
-class _MultiPlot(FreeWidget):
-    _base_class: type[HasViewBox]
+class VispyImageCanvas(FreeWidget, ImageItem):
+    """A Vispy based 2-D plot canvas for images."""
 
-    def __init__(self, nrows: int = 1, ncols: int = 1):
-        super().__init__()
-        self._canvas = []
-        self._scene = scene.SceneCanvas()
-        for r in range(nrows):
-            for c in range(ncols):
-                canvas = self._base_class(grid_pos=(r, c), _scene=self._scene)
-                self._canvas.append(canvas)
+    def __init__(self, **kwargs):
+        app = get_app()
 
-        self._scene.create_native()
-        self.set_widget(self._scene.native)
-
-    def __getitem__(self, i):
-        return self._canvas[i]
+        # prepare widget
+        _scene = SceneCanvas(keys="interactive")
+        _scene.create_native()
+        viewbox = _scene.central_widget.add_view()
+        ImageItem.__init__(self, viewbox)
+        super().__init__(**kwargs)
+        self.set_widget(_scene.native)
 
 
-class VispyMultiPlotCanvas(_MultiPlot):
-    _base_class = VispyPlotCanvas
+class VispyMultiPlotCanvas(MultiPlot):
+    """A multiple Vispy based 2-D plot canvas."""
+
+    _base_class = PlotItem
 
 
-class VispyMultiImageCanvas(_MultiPlot):
-    _base_class = VispyImageCanvas
+class VispyMultiImageCanvas(MultiPlot):
+    """A multiple Vispy based 2-D plot canvas for images."""
+
+    _base_class = ImageItem
 
 
 def _check_xy(x, y):

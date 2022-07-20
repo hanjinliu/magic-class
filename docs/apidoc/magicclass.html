@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass package &mdash; magic-class 0.6.4 documentation</title>
+  <title>magicclass package &mdash; magic-class 0.6.7.dev2 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/columns.css" type="text/css" />
@@ -31,7 +31,7 @@
             <a href="../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.4
+                0.6.7.dev2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -97,7 +97,9 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="magicclass.ext.napari.html">magicclass.ext.napari package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#module-magicclass.ext.napari.types">magicclass.ext.napari.types module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#module-magicclass.ext.napari.utils">magicclass.ext.napari.utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#module-magicclass.ext.napari.viewer">magicclass.ext.napari.viewer module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#module-magicclass.ext.napari.widgets">magicclass.ext.napari.widgets module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="magicclass.ext.napari.html#module-magicclass.ext.napari">Module contents</a></li>
 </ul>
@@ -154,7 +156,6 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="magicclass.utils.html">magicclass.utils package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="magicclass.utils.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="magicclass.utils.html#module-magicclass.utils.functions">magicclass.utils.functions module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="magicclass.utils.html#module-magicclass.utils.qt">magicclass.utils.qt module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="magicclass.utils.html#module-magicclass.utils.qthreading">magicclass.utils.qthreading module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="magicclass.utils.html#module-magicclass.utils.qtsignal">magicclass.utils.qtsignal module</a></li>
@@ -379,6 +380,23 @@ part of the main widget.</p></li>
 <li><p><strong>ui</strong> (<a class="reference internal" href="#magicclass.MagicTemplate" title="magicclass.MagicTemplate"><em>MagicTemplate</em></a>) -- Target magic-class widget.</p></li>
 <li><p><strong>index</strong> (<em>int</em><em>, </em><em>default is -1</em>) -- Which execution will be redone. Any object that support list slicing can be used.
 By default the last operation will be redone.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="magicclass.core.update_widget_state">
+<span class="sig-prename descclassname"><span class="pre">magicclass.core.</span></span><span class="sig-name descname"><span class="pre">update_widget_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ui</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">MagicTemplate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">macro</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Macro</span> <span class="p"><span class="pre">|</span></span> <span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/magicclass/core.html#update_widget_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.core.update_widget_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update widget values based on a macro.</p>
+<p>This helper function works similar to the <code class="docutils literal notranslate"><span class="pre">update_widget</span></code> method of <code class="docutils literal notranslate"><span class="pre">FunctionGui</span></code>.
+In most cases, this function will be used for restoring a state from a macro recorded
+before. Value changed signal will not be emitted within this operation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ui</strong> (<a class="reference internal" href="#magicclass.MagicTemplate" title="magicclass.MagicTemplate"><em>MagicTemplate</em></a>) -- Magic class instance.</p></li>
+<li><p><strong>macro</strong> (<em>Macro</em><em> or </em><em>str</em><em>, </em><em>optional</em>) -- An executable macro or string that dictates how GUI will be updated.</p></li>
 </ul>
 </dd>
 </dl>
@@ -1013,53 +1031,34 @@ a inspect.Signature or magicgui.signature.Magicsignature.</p>
 </dd></dl>
 
 </section>
-<section id="module-magicclass.tqdm">
-<span id="magicclass-tqdm-module"></span><h2>magicclass.tqdm module<a class="headerlink" href="#module-magicclass.tqdm" title="Permalink to this headline">¶</a></h2>
+<section id="module-magicclass.testing">
+<span id="magicclass-testing-module"></span><h2>magicclass.testing module<a class="headerlink" href="#module-magicclass.testing" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
-<dt class="sig sig-object py" id="magicclass.tqdm.ProgressBar">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.tqdm.</span></span><span class="sig-name descname"><span class="pre">ProgressBar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotation</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tooltip</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">visible</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enabled</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gui_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">UNSET</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bind</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">UNSET</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nullable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orientation</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'horizontal'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">readout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tracking</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/tqdm.html#ProgressBar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.tqdm.ProgressBar" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.widgets.ProgressBar</span></code></p>
+<dt class="sig sig-object py" id="magicclass.testing.MockConfirmation">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.testing.</span></span><span class="sig-name descname"><span class="pre">MockConfirmation</span></span><a class="reference internal" href="../_modules/magicclass/testing.html#MockConfirmation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.testing.MockConfirmation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class used for confirmation test.</p>
 <dl class="py method">
-<dt class="sig sig-object py" id="magicclass.tqdm.ProgressBar.tqdm">
-<span class="sig-name descname"><span class="pre">tqdm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iterable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/tqdm.html#ProgressBar.tqdm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.tqdm.ProgressBar.tqdm" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="magicclass.testing.MockConfirmation.assert_not_called">
+<span class="sig-name descname"><span class="pre">assert_not_called</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/testing.html#MockConfirmation.assert_not_called"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.testing.MockConfirmation.assert_not_called" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="magicclass.tqdm.ProgressBar.trange">
-<span class="sig-name descname"><span class="pre">trange</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/tqdm.html#ProgressBar.trange"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.tqdm.ProgressBar.trange" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="magicclass.testing.MockConfirmation.assert_value">
+<span class="sig-name descname"><span class="pre">assert_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gui</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/testing.html#MockConfirmation.assert_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.testing.MockConfirmation.assert_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="magicclass.tqdm.tqdm">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.tqdm.</span></span><span class="sig-name descname"><span class="pre">tqdm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">_</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">__</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/tqdm.html#tqdm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.tqdm.tqdm" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tqdm.std.tqdm</span></code></p>
-<p>Re-implementation of <code class="docutils literal notranslate"><span class="pre">magicgui</span></code>'s <code class="docutils literal notranslate"><span class="pre">tqdm</span></code>.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="magicclass.tqdm.tqdm.close">
-<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/magicclass/tqdm.html#tqdm.close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.tqdm.tqdm.close" title="Permalink to this definition">¶</a></dt>
-<dd><p>Cleanup and (if leave=False) close the progressbar.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="magicclass.tqdm.tqdm.disable">
-<span class="sig-name descname"><span class="pre">disable</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#magicclass.tqdm.tqdm.disable" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.testing.MockConfirmation.value">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">value</span></span><a class="headerlink" href="#magicclass.testing.MockConfirmation.value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="magicclass.tqdm.tqdm.display">
-<span class="sig-name descname"><span class="pre">display</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/magicclass/tqdm.html#tqdm.display"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.tqdm.tqdm.display" title="Permalink to this definition">¶</a></dt>
-<dd><p>Update the display.</p>
-</dd></dl>
 
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="magicclass.tqdm.trange">
-<span class="sig-prename descclassname"><span class="pre">magicclass.tqdm.</span></span><span class="sig-name descname"><span class="pre">trange</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#magicclass.tqdm.tqdm" title="magicclass.tqdm.tqdm"><span class="pre">magicclass.tqdm.tqdm</span></a></span></span><a class="reference internal" href="../_modules/magicclass/tqdm.html#trange"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.tqdm.trange" title="Permalink to this definition">¶</a></dt>
-<dd><p>Shortcut for <code class="docutils literal notranslate"><span class="pre">tqdm(range(*args),</span> <span class="pre">**kwargs)</span></code>.</p>
-</dd></dl>
+<dt class="sig sig-object py" id="magicclass.testing.click_methods">
+<span class="sig-prename descclassname"><span class="pre">magicclass.testing.</span></span><span class="sig-name descname"><span class="pre">click_methods</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ui</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/testing.html#click_methods"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.testing.click_methods" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </section>
 <section id="module-magicclass.types">
@@ -1081,13 +1080,26 @@ a inspect.Signature or magicgui.signature.Magicsignature.</p>
 <p><code class="docutils literal notranslate"><span class="pre">Bound[value]</span></code> is identical to <code class="docutils literal notranslate"><span class="pre">Annotated[Any,</span> <span class="pre">{&quot;bind&quot;:</span> <span class="pre">value}]</span></code>.</p>
 </dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.types.Choices">
+<span class="sig-prename descclassname"><span class="pre">magicclass.types.</span></span><span class="sig-name descname"><span class="pre">Choices</span></span><a class="headerlink" href="#magicclass.types.Choices" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#magicclass.types.OneOf" title="magicclass.types.OneOf"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.types.OneOf</span></code></a></p>
+</dd></dl>
+
 <dl class="py class">
-<dt class="sig sig-object py" id="magicclass.types.List">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.types.</span></span><span class="sig-name descname"><span class="pre">List</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/types.html#List"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.types.List" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="magicclass.types.OneOf">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.types.</span></span><span class="sig-name descname"><span class="pre">OneOf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/types.html#OneOf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.types.OneOf" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Make Annotated type similar to <code class="docutils literal notranslate"><span class="pre">typing.List</span></code>.</p>
-<p>Arguments annotated with <code class="docutils literal notranslate"><span class="pre">List[...]</span></code> will create a
-<code class="docutils literal notranslate"><span class="pre">ListEdit</span></code> with a annotated sub types.</p>
+<p>Make Annotated type from a method, such as:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span>
+
+<span class="nd">@magicclass</span>
+<span class="k">class</span> <span class="nc">MyClass</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n">OneOf</span><span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)]):</span>
+        <span class="o">...</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">OneOf[value]</span></code> is identical to <code class="docutils literal notranslate"><span class="pre">Annotated[Any,</span> <span class="pre">{&quot;choices&quot;:</span> <span class="pre">value}]</span></code>.</p>
 </dd></dl>
 
 <dl class="py class">
@@ -1097,15 +1109,36 @@ a inspect.Signature or magicgui.signature.Magicsignature.</p>
 <p>Make Annotated type similar to <code class="docutils literal notranslate"><span class="pre">typing.Optional</span></code>.</p>
 <p>Arguments annotated with <code class="docutils literal notranslate"><span class="pre">Optional[int]</span></code> will create a
 <code class="docutils literal notranslate"><span class="pre">OptionalWidget</span></code> with a <code class="docutils literal notranslate"><span class="pre">SpinBox</span></code> as an inner widget.</p>
+<p class="rubric">Examples</p>
+<p>from magicclass import magicclass, set_options
+from magicclass.types import Optional</p>
+<p>&#64;magicclass
+class A:</p>
+<blockquote>
+<div><p>&#64;set_options(a={&quot;options&quot;: {&quot;min&quot;: -1}})
+def f(self, a: Optional[int]):</p>
+<blockquote>
+<div><p>print(a)</p>
+</div></blockquote>
+</div></blockquote>
+<p>ui = A()
+ui.show()</p>
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="magicclass.types.Tuple">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.types.</span></span><span class="sig-name descname"><span class="pre">Tuple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/types.html#Tuple"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.types.Tuple" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="magicclass.types.SomeOf">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.types.</span></span><span class="sig-name descname"><span class="pre">SomeOf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/types.html#SomeOf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.types.SomeOf" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Make Annotated type similar to <code class="docutils literal notranslate"><span class="pre">typing.Tuple</span></code>.</p>
-<p>Arguments annotated with <code class="docutils literal notranslate"><span class="pre">Tuple[...]</span></code> will create a
-<code class="docutils literal notranslate"><span class="pre">TupleEdit</span></code> with a annotated sub types.</p>
+<p>Make Annotated type from a method, such as:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span>
+
+<span class="nd">@magicclass</span>
+<span class="k">class</span> <span class="nc">MyClass</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n">Choices</span><span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)]):</span>
+        <span class="o">...</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Choices[value]</span></code> is identical to <code class="docutils literal notranslate"><span class="pre">Annotated[Any,</span> <span class="pre">{&quot;choices&quot;:</span> <span class="pre">value}]</span></code>.</p>
 </dd></dl>
 
 <dl class="py class">
@@ -1226,28 +1259,10 @@ This function accepts several styles of shortcut expression.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="magicclass.wrappers.click">
-<span class="sig-prename descclassname"><span class="pre">magicclass.wrappers.</span></span><span class="sig-name descname"><span class="pre">click</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">enables</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disables</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enabled</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shows</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hides</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">visible</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/wrappers.html#click"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.wrappers.click" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set options of push buttons related to button clickability.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>enables</strong> (<em>str</em><em> or </em><em>iterable of str</em><em>, </em><em>optional</em>) -- Enables other button(s) in this list when clicked.</p></li>
-<li><p><strong>disables</strong> (<em>str</em><em> or </em><em>iterable of str</em><em>, </em><em>optional</em>) -- Disables other button(s) in this list when clicked.</p></li>
-<li><p><strong>enabled</strong> (<em>bool</em><em>, </em><em>default is True</em>) -- The initial clickability state of the button.</p></li>
-<li><p><strong>shows</strong> (<em>str</em><em> or </em><em>iterable of str</em><em>, </em><em>optional</em>) -- Make other button(s) in this list visible when clicked.</p></li>
-<li><p><strong>hides</strong> (<em>str</em><em> or </em><em>iterable of str</em><em>, </em><em>optional</em>) -- Make other button(s) in this list invisible when clicked.</p></li>
-<li><p><strong>visible</strong> (<em>bool</em><em>, </em><em>default is True</em>) -- The initial visibility of the button.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="magicclass.wrappers.confirm">
-<span class="sig-prename descclassname"><span class="pre">magicclass.wrappers.</span></span><span class="sig-name descname"><span class="pre">confirm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">condition</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="pre">P</span><span class="p"><span class="pre">,</span> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span> <span class="p"><span class="pre">|</span></span> <span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">magicclass.wrappers.F</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">magicclass.wrappers.F</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/magicclass/wrappers.html#confirm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.wrappers.confirm" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">magicclass.wrappers.</span></span><span class="sig-name descname"><span class="pre">confirm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">condition</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span> <span class="p"><span class="pre">|</span></span> <span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">callback</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">BaseGui</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'None'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">magicclass.wrappers.F</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">magicclass.wrappers.F</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/magicclass/wrappers.html#confirm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.wrappers.confirm" title="Permalink to this definition">¶</a></dt>
 <dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">magicclass.wrappers.</span></span><span class="sig-name descname"><span class="pre">confirm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">magicclass.wrappers.F</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">condition</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="pre">P</span><span class="p"><span class="pre">,</span> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span> <span class="p"><span class="pre">|</span></span> <span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">magicclass.wrappers.F</span></span></span></dt>
+<span class="sig-prename descclassname"><span class="pre">magicclass.wrappers.</span></span><span class="sig-name descname"><span class="pre">confirm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">magicclass.wrappers.F</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">condition</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span> <span class="p"><span class="pre">|</span></span> <span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">callback</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">BaseGui</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'None'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">magicclass.wrappers.F</span></span></span></dt>
 <dd><p>Confirm if it is OK to run function in GUI.</p>
 <p>Useful when the function will irreversibly delete or update something in GUI.
 Confirmation will be executed only when function is called in GUI.</p>
@@ -1267,6 +1282,9 @@ evaluable as literal with input arguments as local namespace. For instance,
 function <code class="docutils literal notranslate"><span class="pre">f(a,</span> <span class="pre">b)</span></code> decorated by <code class="docutils literal notranslate"><span class="pre">confirm(condition=&quot;a</span> <span class="pre">&lt;</span> <span class="pre">b</span> <span class="pre">+</span> <span class="pre">1&quot;)</span></code> will
 evaluate <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">&lt;</span> <span class="pre">b</span> <span class="pre">+</span> <span class="pre">1</span></code> to check if confirmation is needed. Always true by
 default.</p></li>
+<li><p><strong>callback</strong> (<em>callable</em><em>, </em><em>optional</em>) -- Callback function when confirmation is needed. Must take a <code class="docutils literal notranslate"><span class="pre">str</span></code> and a
+<code class="docutils literal notranslate"><span class="pre">BaseGui</span></code> object as inputs. By default, message box will be shown. Useful
+for testing.</p></li>
 </ul>
 </dd>
 </dl>
@@ -1314,7 +1332,7 @@ the selected file.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="magicclass.wrappers.set_design">
-<span class="sig-prename descclassname"><span class="pre">magicclass.wrappers.</span></span><span class="sig-name descname"><span class="pre">set_design</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_width</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_height</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_width</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_height</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">icon_path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">icon_size</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">font_size</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">font_family</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">font_color</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background_color</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">visible</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/wrappers.html#set_design"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.wrappers.set_design" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">magicclass.wrappers.</span></span><span class="sig-name descname"><span class="pre">set_design</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_width</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_height</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_width</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_height</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">icon</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">icon_path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">font_size</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">font_family</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">font_color</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Color</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background_color</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Color</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">visible</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">type</span><span class="p"><span class="pre">[</span></span><span class="pre">T</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">type</span><span class="p"><span class="pre">[</span></span><span class="pre">T</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span> <span class="p"><span class="pre">|</span></span> <span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">F</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">F</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/magicclass/wrappers.html#set_design"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.wrappers.set_design" title="Permalink to this definition">¶</a></dt>
 <dd><p>Change button/action design by calling setter when the widget is created.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1326,9 +1344,8 @@ the selected file.</p>
 <li><p><strong>max_width</strong> (<em>int</em><em>, </em><em>optional</em>) -- Button maximum width. Call <code class="docutils literal notranslate"><span class="pre">button.max_width</span> <span class="pre">=</span> <span class="pre">max_width</span></code>.</p></li>
 <li><p><strong>max_height</strong> (<em>int</em><em>, </em><em>optional</em>) -- Button maximum height. Call <code class="docutils literal notranslate"><span class="pre">button.max_height</span> <span class="pre">=</span> <span class="pre">max_height</span></code>.</p></li>
 <li><p><strong>text</strong> (<em>str</em><em>, </em><em>optional</em>) -- Button text. Call <code class="docutils literal notranslate"><span class="pre">button.text</span> <span class="pre">=</span> <span class="pre">text</span></code>.</p></li>
-<li><p><strong>icon_path</strong> (<em>str</em><em>, </em><em>optional</em>) -- Path to icon file. <code class="docutils literal notranslate"><span class="pre">min_width</span></code> and <code class="docutils literal notranslate"><span class="pre">min_height</span></code> will be automatically set to the icon size
+<li><p><strong>icon</strong> (<em>str</em><em>, </em><em>optional</em>) -- Path to icon file. <code class="docutils literal notranslate"><span class="pre">min_width</span></code> and <code class="docutils literal notranslate"><span class="pre">min_height</span></code> will be automatically set to the icon size
 if not given.</p></li>
-<li><p><strong>icon_size</strong> (<em>tuple of two int</em><em>, </em><em>optional</em>) -- Icon size.</p></li>
 <li><p><strong>font_size</strong> (<em>int</em><em>, </em><em>optional</em>) -- Font size of the text.</p></li>
 <li><p><strong>visible</strong> (<em>bool default is True</em>) -- Button visibility.</p></li>
 </ul>
@@ -1430,6 +1447,417 @@ the same attribute names.</p>
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">widgets</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="#magicclass.fields.WidgetView" title="magicclass.fields.WidgetView"><span class="pre">magicclass.fields.WidgetView</span></a></em><a class="headerlink" href="#magicclass.HasFields.widgets" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a view of widgets.</p>
 </dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.Icon">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.</span></span><span class="sig-name descname"><span class="pre">Icon</span></span><a class="reference internal" href="../_modules/magicclass/_gui/_icon.html#Icon"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.Icon" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">types.SimpleNamespace</span></code></p>
+<p>Namespace of icons.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">set_design</span><span class="p">,</span> <span class="n">Icon</span>
+
+<span class="nd">@magicclass</span>
+<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+    <span class="nd">@set_design</span><span class="p">(</span><span class="n">icon</span><span class="o">=</span><span class="n">Icon</span><span class="o">.</span><span class="n">FileIcon</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="o">...</span>
+</pre></div>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.ArrowBack">
+<span class="sig-name descname"><span class="pre">ArrowBack</span></span><em class="property"> <span class="pre">=</span> <span class="pre">54</span></em><a class="headerlink" href="#magicclass.Icon.ArrowBack" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.ArrowDown">
+<span class="sig-name descname"><span class="pre">ArrowDown</span></span><em class="property"> <span class="pre">=</span> <span class="pre">51</span></em><a class="headerlink" href="#magicclass.Icon.ArrowDown" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.ArrowForward">
+<span class="sig-name descname"><span class="pre">ArrowForward</span></span><em class="property"> <span class="pre">=</span> <span class="pre">55</span></em><a class="headerlink" href="#magicclass.Icon.ArrowForward" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.ArrowLeft">
+<span class="sig-name descname"><span class="pre">ArrowLeft</span></span><em class="property"> <span class="pre">=</span> <span class="pre">52</span></em><a class="headerlink" href="#magicclass.Icon.ArrowLeft" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.ArrowRight">
+<span class="sig-name descname"><span class="pre">ArrowRight</span></span><em class="property"> <span class="pre">=</span> <span class="pre">53</span></em><a class="headerlink" href="#magicclass.Icon.ArrowRight" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.ArrowUp">
+<span class="sig-name descname"><span class="pre">ArrowUp</span></span><em class="property"> <span class="pre">=</span> <span class="pre">50</span></em><a class="headerlink" href="#magicclass.Icon.ArrowUp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.BrowserReload">
+<span class="sig-name descname"><span class="pre">BrowserReload</span></span><em class="property"> <span class="pre">=</span> <span class="pre">59</span></em><a class="headerlink" href="#magicclass.Icon.BrowserReload" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.BrowserStop">
+<span class="sig-name descname"><span class="pre">BrowserStop</span></span><em class="property"> <span class="pre">=</span> <span class="pre">60</span></em><a class="headerlink" href="#magicclass.Icon.BrowserStop" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.CommandLink">
+<span class="sig-name descname"><span class="pre">CommandLink</span></span><em class="property"> <span class="pre">=</span> <span class="pre">57</span></em><a class="headerlink" href="#magicclass.Icon.CommandLink" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.ComputerIcon">
+<span class="sig-name descname"><span class="pre">ComputerIcon</span></span><em class="property"> <span class="pre">=</span> <span class="pre">15</span></em><a class="headerlink" href="#magicclass.Icon.ComputerIcon" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.CustomBase">
+<span class="sig-name descname"><span class="pre">CustomBase</span></span><em class="property"> <span class="pre">=</span> <span class="pre">-268435456</span></em><a class="headerlink" href="#magicclass.Icon.CustomBase" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.DesktopIcon">
+<span class="sig-name descname"><span class="pre">DesktopIcon</span></span><em class="property"> <span class="pre">=</span> <span class="pre">13</span></em><a class="headerlink" href="#magicclass.Icon.DesktopIcon" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.DialogAbortButton">
+<span class="sig-name descname"><span class="pre">DialogAbortButton</span></span><em class="property"> <span class="pre">=</span> <span class="pre">74</span></em><a class="headerlink" href="#magicclass.Icon.DialogAbortButton" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.DialogApplyButton">
+<span class="sig-name descname"><span class="pre">DialogApplyButton</span></span><em class="property"> <span class="pre">=</span> <span class="pre">45</span></em><a class="headerlink" href="#magicclass.Icon.DialogApplyButton" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.DialogCancelButton">
+<span class="sig-name descname"><span class="pre">DialogCancelButton</span></span><em class="property"> <span class="pre">=</span> <span class="pre">40</span></em><a class="headerlink" href="#magicclass.Icon.DialogCancelButton" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.DialogCloseButton">
+<span class="sig-name descname"><span class="pre">DialogCloseButton</span></span><em class="property"> <span class="pre">=</span> <span class="pre">44</span></em><a class="headerlink" href="#magicclass.Icon.DialogCloseButton" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.DialogDiscardButton">
+<span class="sig-name descname"><span class="pre">DialogDiscardButton</span></span><em class="property"> <span class="pre">=</span> <span class="pre">47</span></em><a class="headerlink" href="#magicclass.Icon.DialogDiscardButton" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.DialogHelpButton">
+<span class="sig-name descname"><span class="pre">DialogHelpButton</span></span><em class="property"> <span class="pre">=</span> <span class="pre">41</span></em><a class="headerlink" href="#magicclass.Icon.DialogHelpButton" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.DialogIgnoreButton">
+<span class="sig-name descname"><span class="pre">DialogIgnoreButton</span></span><em class="property"> <span class="pre">=</span> <span class="pre">76</span></em><a class="headerlink" href="#magicclass.Icon.DialogIgnoreButton" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.DialogNoButton">
+<span class="sig-name descname"><span class="pre">DialogNoButton</span></span><em class="property"> <span class="pre">=</span> <span class="pre">49</span></em><a class="headerlink" href="#magicclass.Icon.DialogNoButton" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.DialogNoToAllButton">
+<span class="sig-name descname"><span class="pre">DialogNoToAllButton</span></span><em class="property"> <span class="pre">=</span> <span class="pre">72</span></em><a class="headerlink" href="#magicclass.Icon.DialogNoToAllButton" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.DialogOkButton">
+<span class="sig-name descname"><span class="pre">DialogOkButton</span></span><em class="property"> <span class="pre">=</span> <span class="pre">39</span></em><a class="headerlink" href="#magicclass.Icon.DialogOkButton" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.DialogOpenButton">
+<span class="sig-name descname"><span class="pre">DialogOpenButton</span></span><em class="property"> <span class="pre">=</span> <span class="pre">42</span></em><a class="headerlink" href="#magicclass.Icon.DialogOpenButton" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.DialogResetButton">
+<span class="sig-name descname"><span class="pre">DialogResetButton</span></span><em class="property"> <span class="pre">=</span> <span class="pre">46</span></em><a class="headerlink" href="#magicclass.Icon.DialogResetButton" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.DialogRetryButton">
+<span class="sig-name descname"><span class="pre">DialogRetryButton</span></span><em class="property"> <span class="pre">=</span> <span class="pre">75</span></em><a class="headerlink" href="#magicclass.Icon.DialogRetryButton" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.DialogSaveAllButton">
+<span class="sig-name descname"><span class="pre">DialogSaveAllButton</span></span><em class="property"> <span class="pre">=</span> <span class="pre">73</span></em><a class="headerlink" href="#magicclass.Icon.DialogSaveAllButton" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.DialogSaveButton">
+<span class="sig-name descname"><span class="pre">DialogSaveButton</span></span><em class="property"> <span class="pre">=</span> <span class="pre">43</span></em><a class="headerlink" href="#magicclass.Icon.DialogSaveButton" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.DialogYesButton">
+<span class="sig-name descname"><span class="pre">DialogYesButton</span></span><em class="property"> <span class="pre">=</span> <span class="pre">48</span></em><a class="headerlink" href="#magicclass.Icon.DialogYesButton" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.DialogYesToAllButton">
+<span class="sig-name descname"><span class="pre">DialogYesToAllButton</span></span><em class="property"> <span class="pre">=</span> <span class="pre">71</span></em><a class="headerlink" href="#magicclass.Icon.DialogYesToAllButton" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.DirClosedIcon">
+<span class="sig-name descname"><span class="pre">DirClosedIcon</span></span><em class="property"> <span class="pre">=</span> <span class="pre">22</span></em><a class="headerlink" href="#magicclass.Icon.DirClosedIcon" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.DirHomeIcon">
+<span class="sig-name descname"><span class="pre">DirHomeIcon</span></span><em class="property"> <span class="pre">=</span> <span class="pre">56</span></em><a class="headerlink" href="#magicclass.Icon.DirHomeIcon" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.DirIcon">
+<span class="sig-name descname"><span class="pre">DirIcon</span></span><em class="property"> <span class="pre">=</span> <span class="pre">38</span></em><a class="headerlink" href="#magicclass.Icon.DirIcon" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.DirLinkIcon">
+<span class="sig-name descname"><span class="pre">DirLinkIcon</span></span><em class="property"> <span class="pre">=</span> <span class="pre">23</span></em><a class="headerlink" href="#magicclass.Icon.DirLinkIcon" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.DirLinkOpenIcon">
+<span class="sig-name descname"><span class="pre">DirLinkOpenIcon</span></span><em class="property"> <span class="pre">=</span> <span class="pre">24</span></em><a class="headerlink" href="#magicclass.Icon.DirLinkOpenIcon" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.DirOpenIcon">
+<span class="sig-name descname"><span class="pre">DirOpenIcon</span></span><em class="property"> <span class="pre">=</span> <span class="pre">21</span></em><a class="headerlink" href="#magicclass.Icon.DirOpenIcon" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.DockWidgetCloseButton">
+<span class="sig-name descname"><span class="pre">DockWidgetCloseButton</span></span><em class="property"> <span class="pre">=</span> <span class="pre">8</span></em><a class="headerlink" href="#magicclass.Icon.DockWidgetCloseButton" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.DriveCDIcon">
+<span class="sig-name descname"><span class="pre">DriveCDIcon</span></span><em class="property"> <span class="pre">=</span> <span class="pre">18</span></em><a class="headerlink" href="#magicclass.Icon.DriveCDIcon" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.DriveDVDIcon">
+<span class="sig-name descname"><span class="pre">DriveDVDIcon</span></span><em class="property"> <span class="pre">=</span> <span class="pre">19</span></em><a class="headerlink" href="#magicclass.Icon.DriveDVDIcon" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.DriveFDIcon">
+<span class="sig-name descname"><span class="pre">DriveFDIcon</span></span><em class="property"> <span class="pre">=</span> <span class="pre">16</span></em><a class="headerlink" href="#magicclass.Icon.DriveFDIcon" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.DriveHDIcon">
+<span class="sig-name descname"><span class="pre">DriveHDIcon</span></span><em class="property"> <span class="pre">=</span> <span class="pre">17</span></em><a class="headerlink" href="#magicclass.Icon.DriveHDIcon" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.DriveNetIcon">
+<span class="sig-name descname"><span class="pre">DriveNetIcon</span></span><em class="property"> <span class="pre">=</span> <span class="pre">20</span></em><a class="headerlink" href="#magicclass.Icon.DriveNetIcon" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.FileDialogBack">
+<span class="sig-name descname"><span class="pre">FileDialogBack</span></span><em class="property"> <span class="pre">=</span> <span class="pre">37</span></em><a class="headerlink" href="#magicclass.Icon.FileDialogBack" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.FileDialogContentsView">
+<span class="sig-name descname"><span class="pre">FileDialogContentsView</span></span><em class="property"> <span class="pre">=</span> <span class="pre">35</span></em><a class="headerlink" href="#magicclass.Icon.FileDialogContentsView" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.FileDialogDetailedView">
+<span class="sig-name descname"><span class="pre">FileDialogDetailedView</span></span><em class="property"> <span class="pre">=</span> <span class="pre">33</span></em><a class="headerlink" href="#magicclass.Icon.FileDialogDetailedView" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.FileDialogEnd">
+<span class="sig-name descname"><span class="pre">FileDialogEnd</span></span><em class="property"> <span class="pre">=</span> <span class="pre">30</span></em><a class="headerlink" href="#magicclass.Icon.FileDialogEnd" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.FileDialogInfoView">
+<span class="sig-name descname"><span class="pre">FileDialogInfoView</span></span><em class="property"> <span class="pre">=</span> <span class="pre">34</span></em><a class="headerlink" href="#magicclass.Icon.FileDialogInfoView" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.FileDialogListView">
+<span class="sig-name descname"><span class="pre">FileDialogListView</span></span><em class="property"> <span class="pre">=</span> <span class="pre">36</span></em><a class="headerlink" href="#magicclass.Icon.FileDialogListView" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.FileDialogNewFolder">
+<span class="sig-name descname"><span class="pre">FileDialogNewFolder</span></span><em class="property"> <span class="pre">=</span> <span class="pre">32</span></em><a class="headerlink" href="#magicclass.Icon.FileDialogNewFolder" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.FileDialogStart">
+<span class="sig-name descname"><span class="pre">FileDialogStart</span></span><em class="property"> <span class="pre">=</span> <span class="pre">29</span></em><a class="headerlink" href="#magicclass.Icon.FileDialogStart" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.FileDialogToParent">
+<span class="sig-name descname"><span class="pre">FileDialogToParent</span></span><em class="property"> <span class="pre">=</span> <span class="pre">31</span></em><a class="headerlink" href="#magicclass.Icon.FileDialogToParent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.FileIcon">
+<span class="sig-name descname"><span class="pre">FileIcon</span></span><em class="property"> <span class="pre">=</span> <span class="pre">25</span></em><a class="headerlink" href="#magicclass.Icon.FileIcon" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.FileLinkIcon">
+<span class="sig-name descname"><span class="pre">FileLinkIcon</span></span><em class="property"> <span class="pre">=</span> <span class="pre">26</span></em><a class="headerlink" href="#magicclass.Icon.FileLinkIcon" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.LineEditClearButton">
+<span class="sig-name descname"><span class="pre">LineEditClearButton</span></span><em class="property"> <span class="pre">=</span> <span class="pre">70</span></em><a class="headerlink" href="#magicclass.Icon.LineEditClearButton" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.MediaPause">
+<span class="sig-name descname"><span class="pre">MediaPause</span></span><em class="property"> <span class="pre">=</span> <span class="pre">63</span></em><a class="headerlink" href="#magicclass.Icon.MediaPause" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.MediaPlay">
+<span class="sig-name descname"><span class="pre">MediaPlay</span></span><em class="property"> <span class="pre">=</span> <span class="pre">61</span></em><a class="headerlink" href="#magicclass.Icon.MediaPlay" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.MediaSeekBackward">
+<span class="sig-name descname"><span class="pre">MediaSeekBackward</span></span><em class="property"> <span class="pre">=</span> <span class="pre">67</span></em><a class="headerlink" href="#magicclass.Icon.MediaSeekBackward" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.MediaSeekForward">
+<span class="sig-name descname"><span class="pre">MediaSeekForward</span></span><em class="property"> <span class="pre">=</span> <span class="pre">66</span></em><a class="headerlink" href="#magicclass.Icon.MediaSeekForward" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.MediaSkipBackward">
+<span class="sig-name descname"><span class="pre">MediaSkipBackward</span></span><em class="property"> <span class="pre">=</span> <span class="pre">65</span></em><a class="headerlink" href="#magicclass.Icon.MediaSkipBackward" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.MediaSkipForward">
+<span class="sig-name descname"><span class="pre">MediaSkipForward</span></span><em class="property"> <span class="pre">=</span> <span class="pre">64</span></em><a class="headerlink" href="#magicclass.Icon.MediaSkipForward" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.MediaStop">
+<span class="sig-name descname"><span class="pre">MediaStop</span></span><em class="property"> <span class="pre">=</span> <span class="pre">62</span></em><a class="headerlink" href="#magicclass.Icon.MediaStop" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.MediaVolume">
+<span class="sig-name descname"><span class="pre">MediaVolume</span></span><em class="property"> <span class="pre">=</span> <span class="pre">68</span></em><a class="headerlink" href="#magicclass.Icon.MediaVolume" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.MediaVolumeMuted">
+<span class="sig-name descname"><span class="pre">MediaVolumeMuted</span></span><em class="property"> <span class="pre">=</span> <span class="pre">69</span></em><a class="headerlink" href="#magicclass.Icon.MediaVolumeMuted" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.MessageBoxCritical">
+<span class="sig-name descname"><span class="pre">MessageBoxCritical</span></span><em class="property"> <span class="pre">=</span> <span class="pre">11</span></em><a class="headerlink" href="#magicclass.Icon.MessageBoxCritical" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.MessageBoxInformation">
+<span class="sig-name descname"><span class="pre">MessageBoxInformation</span></span><em class="property"> <span class="pre">=</span> <span class="pre">9</span></em><a class="headerlink" href="#magicclass.Icon.MessageBoxInformation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.MessageBoxQuestion">
+<span class="sig-name descname"><span class="pre">MessageBoxQuestion</span></span><em class="property"> <span class="pre">=</span> <span class="pre">12</span></em><a class="headerlink" href="#magicclass.Icon.MessageBoxQuestion" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.MessageBoxWarning">
+<span class="sig-name descname"><span class="pre">MessageBoxWarning</span></span><em class="property"> <span class="pre">=</span> <span class="pre">10</span></em><a class="headerlink" href="#magicclass.Icon.MessageBoxWarning" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.RestoreDefaultsButton">
+<span class="sig-name descname"><span class="pre">RestoreDefaultsButton</span></span><em class="property"> <span class="pre">=</span> <span class="pre">77</span></em><a class="headerlink" href="#magicclass.Icon.RestoreDefaultsButton" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.TitleBarCloseButton">
+<span class="sig-name descname"><span class="pre">TitleBarCloseButton</span></span><em class="property"> <span class="pre">=</span> <span class="pre">3</span></em><a class="headerlink" href="#magicclass.Icon.TitleBarCloseButton" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.TitleBarContextHelpButton">
+<span class="sig-name descname"><span class="pre">TitleBarContextHelpButton</span></span><em class="property"> <span class="pre">=</span> <span class="pre">7</span></em><a class="headerlink" href="#magicclass.Icon.TitleBarContextHelpButton" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.TitleBarMaxButton">
+<span class="sig-name descname"><span class="pre">TitleBarMaxButton</span></span><em class="property"> <span class="pre">=</span> <span class="pre">2</span></em><a class="headerlink" href="#magicclass.Icon.TitleBarMaxButton" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.TitleBarMenuButton">
+<span class="sig-name descname"><span class="pre">TitleBarMenuButton</span></span><em class="property"> <span class="pre">=</span> <span class="pre">0</span></em><a class="headerlink" href="#magicclass.Icon.TitleBarMenuButton" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.TitleBarMinButton">
+<span class="sig-name descname"><span class="pre">TitleBarMinButton</span></span><em class="property"> <span class="pre">=</span> <span class="pre">1</span></em><a class="headerlink" href="#magicclass.Icon.TitleBarMinButton" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.TitleBarNormalButton">
+<span class="sig-name descname"><span class="pre">TitleBarNormalButton</span></span><em class="property"> <span class="pre">=</span> <span class="pre">4</span></em><a class="headerlink" href="#magicclass.Icon.TitleBarNormalButton" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.TitleBarShadeButton">
+<span class="sig-name descname"><span class="pre">TitleBarShadeButton</span></span><em class="property"> <span class="pre">=</span> <span class="pre">5</span></em><a class="headerlink" href="#magicclass.Icon.TitleBarShadeButton" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.TitleBarUnshadeButton">
+<span class="sig-name descname"><span class="pre">TitleBarUnshadeButton</span></span><em class="property"> <span class="pre">=</span> <span class="pre">6</span></em><a class="headerlink" href="#magicclass.Icon.TitleBarUnshadeButton" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.ToolBarHorizontalExtensionButton">
+<span class="sig-name descname"><span class="pre">ToolBarHorizontalExtensionButton</span></span><em class="property"> <span class="pre">=</span> <span class="pre">27</span></em><a class="headerlink" href="#magicclass.Icon.ToolBarHorizontalExtensionButton" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.ToolBarVerticalExtensionButton">
+<span class="sig-name descname"><span class="pre">ToolBarVerticalExtensionButton</span></span><em class="property"> <span class="pre">=</span> <span class="pre">28</span></em><a class="headerlink" href="#magicclass.Icon.ToolBarVerticalExtensionButton" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.TrashIcon">
+<span class="sig-name descname"><span class="pre">TrashIcon</span></span><em class="property"> <span class="pre">=</span> <span class="pre">14</span></em><a class="headerlink" href="#magicclass.Icon.TrashIcon" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.Icon.VistaShield">
+<span class="sig-name descname"><span class="pre">VistaShield</span></span><em class="property"> <span class="pre">=</span> <span class="pre">58</span></em><a class="headerlink" href="#magicclass.Icon.VistaShield" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -2085,7 +2513,7 @@ the parent widget. Basically, this function is used as a wrapper like below.</p>
 <dt class="sig sig-object py" id="magicclass.PopUpMode">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.</span></span><span class="sig-name descname"><span class="pre">PopUpMode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/_gui/_base.html#PopUpMode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.PopUpMode" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
-<p>An enumeration.</p>
+<p>Define how to popup FunctionGui.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="magicclass.PopUpMode.above">
 <span class="sig-name descname"><span class="pre">above</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'above'</span></em><a class="headerlink" href="#magicclass.PopUpMode.above" title="Permalink to this definition">¶</a></dt>
@@ -2094,6 +2522,11 @@ the parent widget. Basically, this function is used as a wrapper like below.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="magicclass.PopUpMode.below">
 <span class="sig-name descname"><span class="pre">below</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'below'</span></em><a class="headerlink" href="#magicclass.PopUpMode.below" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.PopUpMode.dialog">
+<span class="sig-name descname"><span class="pre">dialog</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'dialog'</span></em><a class="headerlink" href="#magicclass.PopUpMode.dialog" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -2154,26 +2587,8 @@ This function accepts several styles of shortcut expression.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="magicclass.click">
-<span class="sig-prename descclassname"><span class="pre">magicclass.</span></span><span class="sig-name descname"><span class="pre">click</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">enables</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disables</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enabled</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shows</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hides</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">visible</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/wrappers.html#click"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.click" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set options of push buttons related to button clickability.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>enables</strong> (<em>str</em><em> or </em><em>iterable of str</em><em>, </em><em>optional</em>) -- Enables other button(s) in this list when clicked.</p></li>
-<li><p><strong>disables</strong> (<em>str</em><em> or </em><em>iterable of str</em><em>, </em><em>optional</em>) -- Disables other button(s) in this list when clicked.</p></li>
-<li><p><strong>enabled</strong> (<em>bool</em><em>, </em><em>default is True</em>) -- The initial clickability state of the button.</p></li>
-<li><p><strong>shows</strong> (<em>str</em><em> or </em><em>iterable of str</em><em>, </em><em>optional</em>) -- Make other button(s) in this list visible when clicked.</p></li>
-<li><p><strong>hides</strong> (<em>str</em><em> or </em><em>iterable of str</em><em>, </em><em>optional</em>) -- Make other button(s) in this list invisible when clicked.</p></li>
-<li><p><strong>visible</strong> (<em>bool</em><em>, </em><em>default is True</em>) -- The initial visibility of the button.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="magicclass.confirm">
-<span class="sig-prename descclassname"><span class="pre">magicclass.</span></span><span class="sig-name descname"><span class="pre">confirm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">F</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">condition</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">BaseGui</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span> <span class="p"><span class="pre">|</span></span> <span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/wrappers.html#confirm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.confirm" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">magicclass.</span></span><span class="sig-name descname"><span class="pre">confirm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">F</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">condition</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">BaseGui</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span> <span class="p"><span class="pre">|</span></span> <span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">callback</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">BaseGui</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/wrappers.html#confirm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.confirm" title="Permalink to this definition">¶</a></dt>
 <dd><p>Confirm if it is OK to run function in GUI.</p>
 <p>Useful when the function will irreversibly delete or update something in GUI.
 Confirmation will be executed only when function is called in GUI.</p>
@@ -2193,6 +2608,9 @@ evaluable as literal with input arguments as local namespace. For instance,
 function <code class="docutils literal notranslate"><span class="pre">f(a,</span> <span class="pre">b)</span></code> decorated by <code class="docutils literal notranslate"><span class="pre">confirm(condition=&quot;a</span> <span class="pre">&lt;</span> <span class="pre">b</span> <span class="pre">+</span> <span class="pre">1&quot;)</span></code> will
 evaluate <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">&lt;</span> <span class="pre">b</span> <span class="pre">+</span> <span class="pre">1</span></code> to check if confirmation is needed. Always true by
 default.</p></li>
+<li><p><strong>callback</strong> (<em>callable</em><em>, </em><em>optional</em>) -- Callback function when confirmation is needed. Must take a <code class="docutils literal notranslate"><span class="pre">str</span></code> and a
+<code class="docutils literal notranslate"><span class="pre">BaseGui</span></code> object as inputs. By default, message box will be shown. Useful
+for testing.</p></li>
 </ul>
 </dd>
 </dl>
@@ -2398,7 +2816,7 @@ By default the last operation will be redone.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="magicclass.set_design">
-<span class="sig-prename descclassname"><span class="pre">magicclass.</span></span><span class="sig-name descname"><span class="pre">set_design</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_width</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_height</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_width</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_height</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">icon_path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">icon_size</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">font_size</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">font_family</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">font_color</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background_color</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">visible</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/wrappers.html#set_design"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.set_design" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">magicclass.</span></span><span class="sig-name descname"><span class="pre">set_design</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_width</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_height</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_width</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_height</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">icon</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">icon_path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">font_size</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">font_family</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">font_color</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Color</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background_color</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Color</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">visible</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">type</span><span class="p"><span class="pre">[</span></span><span class="pre">T</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">type</span><span class="p"><span class="pre">[</span></span><span class="pre">T</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span> <span class="p"><span class="pre">|</span></span> <span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">F</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">F</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/magicclass/wrappers.html#set_design"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.set_design" title="Permalink to this definition">¶</a></dt>
 <dd><p>Change button/action design by calling setter when the widget is created.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2410,9 +2828,8 @@ By default the last operation will be redone.</p></li>
 <li><p><strong>max_width</strong> (<em>int</em><em>, </em><em>optional</em>) -- Button maximum width. Call <code class="docutils literal notranslate"><span class="pre">button.max_width</span> <span class="pre">=</span> <span class="pre">max_width</span></code>.</p></li>
 <li><p><strong>max_height</strong> (<em>int</em><em>, </em><em>optional</em>) -- Button maximum height. Call <code class="docutils literal notranslate"><span class="pre">button.max_height</span> <span class="pre">=</span> <span class="pre">max_height</span></code>.</p></li>
 <li><p><strong>text</strong> (<em>str</em><em>, </em><em>optional</em>) -- Button text. Call <code class="docutils literal notranslate"><span class="pre">button.text</span> <span class="pre">=</span> <span class="pre">text</span></code>.</p></li>
-<li><p><strong>icon_path</strong> (<em>str</em><em>, </em><em>optional</em>) -- Path to icon file. <code class="docutils literal notranslate"><span class="pre">min_width</span></code> and <code class="docutils literal notranslate"><span class="pre">min_height</span></code> will be automatically set to the icon size
+<li><p><strong>icon</strong> (<em>str</em><em>, </em><em>optional</em>) -- Path to icon file. <code class="docutils literal notranslate"><span class="pre">min_width</span></code> and <code class="docutils literal notranslate"><span class="pre">min_height</span></code> will be automatically set to the icon size
 if not given.</p></li>
-<li><p><strong>icon_size</strong> (<em>tuple of two int</em><em>, </em><em>optional</em>) -- Icon size.</p></li>
 <li><p><strong>font_size</strong> (<em>int</em><em>, </em><em>optional</em>) -- Font size of the text.</p></li>
 <li><p><strong>visible</strong> (<em>bool default is True</em>) -- Button visibility.</p></li>
 </ul>
@@ -2451,6 +2868,23 @@ otherwise.</p></li>
 <li><p><strong>auto_call</strong> (<em>bool</em><em>, </em><em>optional</em>) -- If <code class="docutils literal notranslate"><span class="pre">True</span></code>, changing any parameter in either the GUI or the widget attributes
 will call the original function with the current settings. by default False</p></li>
 <li><p><strong>options</strong> (<em>dict</em>) -- Parameter options.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="magicclass.update_widget_state">
+<span class="sig-prename descclassname"><span class="pre">magicclass.</span></span><span class="sig-name descname"><span class="pre">update_widget_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ui</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#magicclass.MagicTemplate" title="magicclass.MagicTemplate"><span class="pre">MagicTemplate</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">macro</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Macro</span> <span class="p"><span class="pre">|</span></span> <span class="pre">str</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/magicclass/core.html#update_widget_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.update_widget_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update widget values based on a macro.</p>
+<p>This helper function works similar to the <code class="docutils literal notranslate"><span class="pre">update_widget</span></code> method of <code class="docutils literal notranslate"><span class="pre">FunctionGui</span></code>.
+In most cases, this function will be used for restoring a state from a macro recorded
+before. Value changed signal will not be emitted within this operation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ui</strong> (<a class="reference internal" href="#magicclass.MagicTemplate" title="magicclass.MagicTemplate"><em>MagicTemplate</em></a>) -- Magic class instance.</p></li>
+<li><p><strong>macro</strong> (<em>Macro</em><em> or </em><em>str</em><em>, </em><em>optional</em>) -- An executable macro or string that dictates how GUI will be updated.</p></li>
 </ul>
 </dd>
 </dl>

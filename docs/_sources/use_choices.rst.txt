@@ -2,6 +2,10 @@
 Set Choices Dynamically
 =======================
 
+.. contents:: Contents
+    :local:
+    :depth: 1
+
 Choices in magicgui
 -------------------
 
@@ -108,3 +112,56 @@ Following example is a file explorer similar to the previous one but defined usi
             else:
                 self.cd.value = os.path.join(self.cd.value, f)  # go to new directory
             self.reset_choices()
+
+Choices type
+------------
+
+.. note::
+
+    This feature is available since ``magicclass >= 0.6.7``.
+
+Like ``Bound`` type, ``Choices`` type is also useful for type annotation with choices.
+
+.. code-block:: python
+
+    from magicclass.types import Choices
+
+    @magicclass
+    class A:
+        def f(self, x: Choices[1, 2, 3]):
+            """choose 1, 2 or 3."""
+            print(x)
+
+        def _get_choices(self, w=None):
+            return ("choice-0", "choice-1")
+
+        def g(self, x: Choices[_get_choices]):
+            """Can also use a function."""
+            print(x)
+
+If you intend to use the ``Select`` widget, there is another type ``SomeOf`` for this
+purpose.
+
+.. code-block:: python
+
+    from magicclass.types import SomeOf
+
+    @magicclass
+    class A:
+        def f(self, x: SomeOf[1, 2, 3]):
+            """choose values from 1, 2 or 3."""
+            print(x)
+
+        def _get_choices(self, w=None):
+            return ("choice-0", "choice-1")
+
+        def g(self, x: SomeOf[_get_choices]):
+            """Can also use a function."""
+            print(x)
+
+``SomeOf[...]`` returns a ``list[...]`` like type annotation based on the contents
+so that the function passes type checkers.
+
+.. note::
+
+    For consistency, ``OneOf`` can also be used as an alias of ``Choices``.

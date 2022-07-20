@@ -120,13 +120,13 @@ def is_instance_method(func: Callable) -> bool:
     return callable(func) and "." in func.__qualname__.split(_LOCALS)[-1]
 
 
-def method_as_getter(self, getter: Callable):
+def method_as_getter(self: BaseGui, getter: Callable):
     qualname = getter.__qualname__
     if _LOCALS in qualname:
         qualname = qualname.split(_LOCALS)[-1]
     *clsnames, funcname = qualname.split(".")
     ins = self
-    self_cls = ins.__class__.__name__
+    self_cls = ins.__class__.__qualname__.split(".")[-1]
     if self_cls not in clsnames:
         ns = ".".join(clsnames)
         raise ValueError(
@@ -190,3 +190,35 @@ def rst_to_html(rst: str, unescape: bool = True) -> str:
         )
         html = rst
     return html
+
+
+def copy_info(source: type):
+    def wrapper(dst):
+        _copy_info(source, dst)
+        return dst
+
+    return wrapper
+
+
+def _copy_info(src: type, dst: type) -> None:
+    if src.__doc__:
+        dst.__doc__ = src.__doc__
+    for name, attr in src.__dict__.items():
+        if not hasattr(dst, name) or name.startswith("_"):
+            continue
+        dst_attr = getattr(dst, name)
+        if isinstance(attr, type):
+            # common inner class
+            if not isinstance(dst_attr, type):
+                raise TypeError(f"{name} type mismatch.")
+            _copy_info(attr, dst_attr)
+        elif callable(attr):
+            # common method
+            if not callable(dst_attr):
+                raise TypeError(f"{name} type mismatch.")
+            if hasattr(attr, "__signature__"):
+                dst_attr.__signature__ = attr.__signature__
+            if attr.__doc__:
+                dst_attr.__doc__ = attr.__doc__
+
+    return None

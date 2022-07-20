@@ -14,5 +14,6 @@ and tidiness of the source code.
    use_choices
    use_preview
    use_worker
+   use_icon
    additional_types
    containers

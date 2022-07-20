@@ -15,7 +15,6 @@ from abc import ABCMeta
 from typing_extensions import _AnnotatedAlias, Literal
 import inspect
 import warnings
-import os
 from enum import Enum
 import warnings
 from docstring_parser import parse, compose
@@ -49,8 +48,9 @@ from .mgui_ext import (
     _LabeledWidgetAction,
     mguiLike,
 )
-from .utils import get_parameters, callable_to_classes
+from .utils import copy_class, get_parameters, callable_to_classes
 from ._macro import GuiMacro
+from ._icon import get_icon
 
 from ..utils import (
     get_signature,
@@ -71,6 +71,7 @@ from ..wrappers import upgrade_signature
 if TYPE_CHECKING:
     import numpy as np
     import napari
+    from types import TracebackType
 
 
 class PopUpMode(Enum):
@@ -84,6 +85,7 @@ class PopUpMode(Enum):
     dock = "dock"
     dialog = "dialog"
     parentlast = "parentlast"
+    parentsub = "parentsub"
 
 
 def _msgbox_raising(e, parent):
@@ -125,6 +127,7 @@ class ErrorMode(Enum):
             try:
                 out = func(*args, **kwargs)
             except Exception as e:
+                e.__traceback__ = _cleanup_tb(e.__traceback__)
                 handler(e, parent=parent)
                 out = e
             return out
@@ -147,42 +150,44 @@ defaults = {
     "macro-max-history": 1000,
 }
 
-_RESERVED = {
-    "__magicclass_parent__",
-    "__magicclass_children__",
-    "_close_on_run",
-    "_error_mode",
-    "_popup_mode",
-    "_my_symbol",
-    "_macro_instance",
-    "macro",
-    "annotation",
-    "enabled",
-    "find_ancestor",
-    "gui_only",
-    "height",
-    "label_changed",
-    "label",
-    "layout",
-    "labels",
-    "margins",
-    "max_height",
-    "max_width",
-    "min_height",
-    "min_width",
-    "name",
-    "options",
-    "param_kind",
-    "parent_changed",
-    "tooltip",
-    "visible",
-    "widget_type",
-    "width",
-    "wraps",
-    "_unwrap_method",
-    "_search_parent_magicclass",
-    "_iter_child_magicclasses",
-}
+_RESERVED = frozenset(
+    {
+        "__magicclass_parent__",
+        "__magicclass_children__",
+        "_close_on_run",
+        "_error_mode",
+        "_popup_mode",
+        "_my_symbol",
+        "_macro_instance",
+        "macro",
+        "annotation",
+        "enabled",
+        "find_ancestor",
+        "gui_only",
+        "height",
+        "label_changed",
+        "label",
+        "layout",
+        "labels",
+        "margins",
+        "max_height",
+        "max_width",
+        "min_height",
+        "min_width",
+        "name",
+        "options",
+        "param_kind",
+        "parent_changed",
+        "tooltip",
+        "visible",
+        "widget_type",
+        "width",
+        "wraps",
+        "_unwrap_method",
+        "_search_parent_magicclass",
+        "_iter_child_magicclasses",
+    }
+)
 
 
 def check_override(cls: type):
@@ -243,7 +248,7 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
     enabled: bool
     gui_only: bool
     height: int
-    icon_path: str
+    icon: Any
     label_changed: Signal
     label: str
     layout: str
@@ -375,7 +380,7 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
             current_self = current_self.__magicclass_parent__
             if current_self is None:
                 raise RuntimeError(
-                    f"Magic class {ancestor.__name__} not found. {ancestor.__name__} it "
+                    f"Magic class {ancestor.__name__} not found. {ancestor.__name__} "
                     f"is not an ancestor of {self.__class__.__name__}"
                 )
         return current_self
@@ -645,6 +650,7 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
                     if self._popup_mode not in (
                         PopUpMode.popup,
                         PopUpMode.dock,
+                        PopUpMode.parentsub,
                         PopUpMode.dialog,
                     ):
                         mgui.label = ""
@@ -660,10 +666,15 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
                         mgui.insert(0, title)
 
                     if self._close_on_run and not mgui._auto_call:
-                        if self._popup_mode not in (PopUpMode.dock, PopUpMode.dialog):
+                        if self._popup_mode not in (
+                            PopUpMode.dock,
+                            PopUpMode.parentsub,
+                            PopUpMode.dialog,
+                        ):
                             mgui.called.connect(mgui.hide)
-                        elif self._popup_mode == PopUpMode.dock:
-                            # If FunctioGui is docked, we should close QDockWidget.
+                        elif self._popup_mode in (PopUpMode.dock, PopUpMode.parentsub):
+                            # If FunctioGui is docked or in a subwindow, we should close
+                            # the parent QDockWidget/QMdiSubwindow.
                             mgui.called.connect(lambda: mgui.parent.hide())
 
                 if nparams == 1 and issubclass(fgui_classes[0], FileEdit):
@@ -678,12 +689,18 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
                     else:
                         return None
 
-                if self._popup_mode not in (PopUpMode.dock, PopUpMode.dialog):
+                if self._popup_mode not in (
+                    PopUpMode.dock,
+                    PopUpMode.dialog,
+                    PopUpMode.parentsub,
+                ):
                     widget.mgui.show()
                 elif self._popup_mode == PopUpMode.dock:
                     mgui.parent.show()  # show dock widget
+                elif self._popup_mode == PopUpMode.parentsub:
+                    mgui.native.parent().setVisible(True)
                 else:
-                    mgui.exec_as_dialog()
+                    mgui.exec_as_dialog(parent=self)
 
                 return None
 
@@ -715,6 +732,13 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
             yield child
             yield from child._iter_child_magicclasses()
 
+    def _call_with_return_callback(self, fname: str, *args, **kwargs) -> None:
+        from ..core import get_function_gui
+
+        fgui = get_function_gui(self, fname)
+        fgui(*args, **kwargs)
+        return None
+
 
 class BaseGui(MagicTemplate):
     def __init__(self, close_on_run, popup_mode, error_mode):
@@ -725,10 +749,30 @@ class BaseGui(MagicTemplate):
         self.__magicclass_parent__: BaseGui | None = None
         self.__magicclass_children__: list[MagicTemplate] = []
         self._close_on_run = close_on_run
-        self._popup_mode = popup_mode
-        self._error_mode = error_mode
+        self._popup_mode = popup_mode or PopUpMode.popup
+        self._error_mode = error_mode or ErrorMode.msgbox
         self._my_symbol = Symbol.var("ui")
-        self._icon_path = None
+        self._icon = None
+
+        self.macro.widget.__magicclass_parent__ = self
+
+    @property
+    def icon(self):
+        return self._icon
+
+    @icon.setter
+    def icon(self, val):
+        icon = get_icon(val)
+        qicon = icon.get_qicon(self)
+        self._icon = icon
+        if hasattr(self.native, "setIcon"):
+            self.native.setIcon(qicon)
+        else:
+            self.native.setWindowIcon(qicon)
+        if hasattr(self.native, "setIconSize"):
+            self.native.setIconSize(self.native.size())
+
+    icon_path = icon
 
 
 class ContainerLikeGui(BaseGui, mguiLike, MutableSequence):
@@ -737,25 +781,6 @@ class ContainerLikeGui(BaseGui, mguiLike, MutableSequence):
     _component_class = Action
     changed = Signal(object)
     _list: list[AbstractAction | ContainerLikeGui]
-
-    @property
-    def icon_path(self):
-        return self._icon_path
-
-    @icon_path.setter
-    def icon_path(self, path: str):
-        path = str(path)
-        if os.path.exists(path):
-            icon = QIcon(path)
-            if hasattr(self.native, "setIcon"):
-                self.native.setIcon(icon)
-            else:
-                self.native.setWindowIcon(icon)
-            self._icon_path = path
-        else:
-            warnings.warn(
-                f"Path {path} does not exists. Could not set icon.", UserWarning
-            )
 
     def reset_choices(self, *_: Any):
         """Reset child Categorical widgets"""
@@ -1037,7 +1062,7 @@ def wraps(template: Callable | inspect.Signature) -> Callable[[_C], _C]:
                 new_params.append(v)
 
         # update empty return annotation
-        if old_signature.return_annotation is inspect._empty:
+        if old_signature.return_annotation is inspect.Parameter.empty:
             return_annotation = template_signature.return_annotation
         else:
             return_annotation = old_signature.return_annotation
@@ -1211,34 +1236,60 @@ def _inject_recorder(func: Callable, is_method: bool = True) -> Callable:
         return _func
 
 
-def _define_macro_recorder(sig, func):
+def _define_macro_recorder(sig: inspect.Signature, func: Callable):
     if isinstance(sig, MagicMethodSignature):
         opt = sig.additional_options
         _auto_call = opt.get("auto_call", False)
     else:
         _auto_call = False
 
-    # TODO: if function has a return_annotation, macro should be recorded like ui["f"](...)
-    def _record_macro(bgui: MagicTemplate, *args, **kwargs):
-        bound = sig.bind(*args, **kwargs)
-        kwargs = dict(bound.arguments.items())
-        expr = Expr.parse_method(bgui, func, (), kwargs)
-        if _auto_call:
-            # Auto-call will cause many redundant macros. To avoid this, only the last
-            # input will be recorded in magic-class.
-            last_expr = bgui.macro[-1]
-            if (
-                last_expr.head == Head.call
-                and last_expr.args[0].head == Head.getattr
-                and last_expr.at(0, 1) == expr.at(0, 1)
-                and len(bgui.macro) > 0
-            ):
-                bgui.macro.pop()
-                bgui.macro._erase_last()
+    if sig.return_annotation is inspect.Parameter.empty:
 
-        bgui.macro.append(expr)
-        bgui.macro._last_setval = None
-        return None
+        def _record_macro(bgui: MagicTemplate, *args, **kwargs):
+            bound = sig.bind(*args, **kwargs)
+            kwargs = dict(bound.arguments.items())
+            expr = Expr.parse_method(bgui, func, (), kwargs)
+            if _auto_call:
+                # Auto-call will cause many redundant macros. To avoid this, only the last
+                # input will be recorded in magic-class.
+                last_expr = bgui.macro[-1]
+                if (
+                    last_expr.head == Head.call
+                    and last_expr.args[0].head == Head.getattr
+                    and last_expr.at(0, 1) == expr.at(0, 1)
+                    and len(bgui.macro) > 0
+                ):
+                    bgui.macro.pop()
+                    bgui.macro._erase_last()
+
+            bgui.macro.append(expr)
+            bgui.macro._last_setval = None
+            return None
+
+    else:
+        _cname_ = "_call_with_return_callback"
+
+        def _record_macro(bgui: MagicTemplate, *args, **kwargs):
+            bound = sig.bind(*args, **kwargs)
+            kwargs = dict(bound.arguments.items())
+            expr = Expr.parse_method(bgui, _cname_, (func.__name__,), kwargs)
+            if _auto_call:
+                # Auto-call will cause many redundant macros. To avoid this, only the last
+                # input will be recorded in magic-class.
+                last_expr = bgui.macro[-1]
+                if (
+                    last_expr.head == Head.call
+                    and last_expr.args[0].head == Head.getattr
+                    and last_expr.at(0, 1) == expr.at(0, 1)
+                    and last_expr.args[1] == expr.args[1]
+                    and len(bgui.macro) > 0
+                ):
+                    bgui.macro.pop()
+                    bgui.macro._erase_last()
+
+            bgui.macro.append(expr)
+            bgui.macro._last_setval = None
+            return None
 
     return _record_macro
 
@@ -1269,7 +1320,11 @@ def convert_attributes(cls: type[_T], hide: tuple[type, ...]) -> dict[str, Any]:
     mro = [c for c in cls.__mro__ if c not in hide]
     for subcls in reversed(mro):
         for name, obj in subcls.__dict__.items():
-            if name.startswith("_") or isinstance(obj, _pass_type) or not callable(obj):
+            if isinstance(obj, _MagicTemplateMeta):
+                new_attr = copy_class(obj, cls, name=name)
+            elif (
+                name.startswith("_") or isinstance(obj, _pass_type) or not callable(obj)
+            ):
                 # private method, non-action-like object, not-callable object are passed.
                 new_attr = obj
             elif callable(obj) and get_additional_option(obj, "record", True):
@@ -1347,6 +1402,14 @@ def _define_popup(self: BaseGui, obj, widget: PushButtonPlus | Action):
                     mgui, name=_get_widget_name(widget), area="right"
                 )
 
+    elif popup_mode == PopUpMode.parentsub:
+
+        def _prep(mgui: FunctionGui):
+            from .class_gui import find_window_ancestor
+
+            parent_self = find_window_ancestor(self)
+            parent_self._widget._mdiarea.addSubWindow(mgui.native)
+
     elif popup_mode == PopUpMode.dialog:
 
         def _prep(mgui: FunctionGui):
@@ -1402,3 +1465,14 @@ def _implement_confirmation(
         _method.__signature__ = method.__signature__
 
     return _method
+
+
+def _cleanup_tb(tb: TracebackType):
+    """Remove useless info from a traceback object."""
+    current_tb = tb
+    while current_tb is not None:
+        if current_tb.tb_frame.f_code.co_name == "_recordable":
+            tb = current_tb.tb_next
+            break
+        current_tb = current_tb.tb_next
+    return tb

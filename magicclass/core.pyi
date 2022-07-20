@@ -14,6 +14,7 @@ if TYPE_CHECKING:
     from .stylesheets import StyleSheet
     from qtpy.QtWidgets import QWidget
     from .help import HelpWidget
+    from macrokit import Macro
 
 Layout = Union[Literal["vertical"], Literal["horizontal"]]
 
@@ -34,7 +35,7 @@ def magicclass(
     popup_mode: PopUpModeStr | PopUpMode | None = None,
     error_mode: ErrorModeStr | ErrorMode | None = None,
     widget_type: WidgetTypeStr | WidgetType = WidgetType.none,
-    icon_path: str | None = None,
+    icon: Any | None = None,
     stylesheet: str | StyleSheet | None = None,
     parent=None,
 ) -> type[ClassGuiBase] | _C: ...
@@ -49,7 +50,7 @@ def magicclass(
     popup_mode: PopUpModeStr | PopUpMode | None = None,
     error_mode: ErrorModeStr | ErrorMode | None = None,
     widget_type: WidgetTypeStr | WidgetType = WidgetType.none,
-    icon_path: str | None = None,
+    icon: Any | None = None,
     stylesheet: str | StyleSheet | None = None,
     parent=None,
 ) -> Callable[[_C], type[ClassGuiBase] | _C]: ...
@@ -62,7 +63,7 @@ def magicmenu(
     error_mode: str | ErrorMode | None = None,
     labels: bool = True,
     name: str | None = None,
-    icon_path: str | None = None,
+    icon: Any | None = None,
     parent=None,
 ) -> type[MenuGui] | _C: ...
 @overload
@@ -73,30 +74,32 @@ def magicmenu(
     error_mode: str | ErrorMode | None = None,
     labels: bool = True,
     name: str | None = None,
-    icon_path: str | None = None,
+    icon: Any | None = None,
     parent=None,
 ) -> Callable[[_C], type[MenuGui] | _C]: ...
 @overload
 def magiccontext(
     class_: _C,
     *,
+    into: Callable | None = None,
     close_on_run: bool | None = None,
     popup_mode: str | PopUpMode | None = None,
     error_mode: str | ErrorMode | None = None,
     labels: bool = True,
     name: str | None = None,
-    icon_path: str | None = None,
+    icon: Any | None = None,
     parent=None,
 ) -> type[ContextMenuGui] | _C: ...
 @overload
 def magiccontext(
     *,
+    into: Callable | None = None,
     close_on_run: bool | None = None,
     popup_mode: str | PopUpMode | None = None,
     error_mode: str | ErrorMode | None = None,
     labels: bool = True,
     name: str | None = None,
-    icon_path: str | None = None,
+    icon: Any | None = None,
     parent=None,
 ) -> Callable[[_C], type[ContextMenuGui] | _C]: ...
 @overload
@@ -108,7 +111,7 @@ def magictoolbar(
     error_mode: str | ErrorMode | None = None,
     labels: bool = True,
     name: str | None = None,
-    icon_path: str | None = None,
+    icon: Any | None = None,
     parent=None,
 ) -> type[ToolBarGui] | _C: ...
 @overload
@@ -119,10 +122,13 @@ def magictoolbar(
     error_mode: str | ErrorMode | None = None,
     labels: bool = True,
     name: str | None = None,
-    icon_path: str | None = None,
+    icon: Any | None = None,
     parent=None,
 ) -> Callable[[_C], type[ToolBarGui] | _C]: ...
 def redo(ui: MagicTemplate, index: int = -1) -> None: ...
+def update_widget_state(
+    ui: MagicTemplate, macro: Macro | str | None = None
+) -> None: ...
 
 class Parameters:
     def __init__(self): ...

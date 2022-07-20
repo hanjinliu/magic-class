@@ -1,7 +1,7 @@
 from __future__ import annotations
 from enum import Enum
 import typing
-from typing import Any, Union, Iterable, overload, TypeVar, Callable
+from typing import Any, NamedTuple, Union, Iterable, overload, TypeVar, Callable
 from typing_extensions import Literal, Annotated, ParamSpec, _AnnotatedAlias
 from magicgui.signature import split_annotated_type
 from magicgui.widgets import Widget, EmptyWidget
@@ -12,6 +12,8 @@ try:
     from typing import _tp_cache
 except ImportError:
     _tp_cache = lambda x: x
+
+__all__ = ["WidgetType", "bound", "Bound", "Choices", "OneOf", "SomeOf", "Optional"]
 
 
 class WidgetType(Enum):
@@ -70,6 +72,25 @@ ErrorModeStr = Union[
 ]
 
 Color = Union[Iterable[float], str]
+
+
+class ColorArray(NamedTuple):
+    r: float
+    g: float
+    b: float
+    a: float
+
+    # def __eq__(self, other) -> bool:
+    #     if isinstance(other, str):
+    #         ...
+    #     return super().__eq__(other)
+
+    # def __str__(self) -> str:
+    #     code = "#" + "".join(hex(int(c * 255))[2:].upper().zfill(2) for c in self)
+    #     if code.endswith("FF"):
+    #         code = code[:-2]
+    #     return code
+
 
 _W = TypeVar("_W", bound=Widget)
 _V = TypeVar("_V", bound=object)
@@ -178,17 +199,27 @@ class Bound(metaclass=_BoundAlias):
         raise TypeError(f"Cannot subclass {cls.__module__}.Bound")
 
 
-class _ChoicesAlias(type):
-    """
-    This metaclass is necessary for ``mypy`` to reveal type.
-    """
+class _OneOfAlias(type):
+    """metaclass of ``OneOf``."""
 
     @overload
-    def __getitem__(cls, value: Callable[_P, _V]) -> type[_V]:
+    def __getitem__(cls, value: Callable[_P, Iterable[tuple[Any, _V]]]) -> type[_V]:
         ...
 
     @overload
-    def __getitem__(cls, value: type[_V]) -> type[_V]:
+    def __getitem__(cls, value: Callable[_P, Iterable[_V]]) -> type[_V]:
+        ...
+
+    @overload
+    def __getitem__(cls, value: Iterable[tuple[Any, _V]]) -> type[_V]:
+        ...
+
+    @overload
+    def __getitem__(cls, value: Iterable[_V]) -> type[_V]:
+        ...
+
+    @overload
+    def __getitem__(cls, value: slice) -> type[int | float]:
         ...
 
     @_tp_cache
@@ -197,12 +228,110 @@ class _ChoicesAlias(type):
             outtype = value.__annotations__.get("return", Any)
         elif hasattr(value, "__iter__"):
             outtype = Any
+        elif isinstance(value, slice):
+            outtype, value = _normalize_slice(value)
         else:
             raise TypeError("'bound' can only convert callable or iterable objects.")
         return Annotated[outtype, {"choices": value, "nullable": False}]
 
 
-class Choices(metaclass=_ChoicesAlias):
+def _normalize_slice(value: slice) -> type | list:
+    start, stop, step = value.start or 0, value.stop or 0, value.step or 1
+    if float in [type(start), type(stop), type(step)]:
+        import math
+
+        ndigits = -int(min(math.log10(start), math.log10(stop), math.log10(step))) + 4
+        outtype = float
+        outvalue: list[float] = []
+        if step > 0:
+            x = start
+            while x < stop:
+                outvalue.append(x)
+                x = round(x + step, ndigits)
+        else:
+            x = stop
+            while start < x:
+                outvalue.append(x)
+                x = round(x + step, ndigits)
+
+    else:
+        outtype = int
+        outvalue = list(range(start, stop, step))
+    return outtype, outvalue
+
+
+class OneOf(metaclass=_OneOfAlias):
+    """
+    Make Annotated type from a method, such as:
+
+    .. code-block:: python
+
+        from magicclass import magicclass
+
+        @magicclass
+        class MyClass:
+            def func(self, v: OneOf[(1, 2, 3)]):
+                ...
+
+    ``OneOf[value]`` is identical to ``Annotated[Any, {"choices": value}]``.
+    """
+
+    def __new__(cls, *args):
+        raise TypeError(
+            "`Bound(...)` is deprecated since 0.5.21. Bound is now a generic alias instead "
+            "of a function. Please use `Bound[...]`."
+        )
+
+    def __init_subclass__(cls, *args, **kwargs):
+        raise TypeError(f"Cannot subclass {cls.__module__}.{cls.__name__}")
+
+
+Choices = OneOf  # alias
+
+
+class _SomeOfAlias(type):
+    """
+    This metaclass is necessary for ``mypy`` to reveal type.
+    """
+
+    @overload
+    def __getitem__(
+        cls, value: Callable[_P, Iterable[tuple[Any, _V]]]
+    ) -> type[list[_V]]:
+        ...
+
+    @overload
+    def __getitem__(cls, value: Callable[_P, Iterable[_V]]) -> type[list[_V]]:
+        ...
+
+    @overload
+    def __getitem__(cls, value: Iterable[tuple[Any, _V]]) -> type[list[_V]]:
+        ...
+
+    @overload
+    def __getitem__(cls, value: Iterable[_V]) -> type[list[_V]]:
+        ...
+
+    @overload
+    def __getitem__(cls, value: slice) -> type[int | float]:
+        ...
+
+    @_tp_cache
+    def __getitem__(cls, value):
+        if callable(value):
+            outtype = value.__annotations__.get("return", Any)
+        elif hasattr(value, "__iter__"):
+            outtype = Any
+        elif isinstance(value, slice):
+            outtype, value = _normalize_slice(value)
+        else:
+            raise TypeError("'bound' can only convert callable or iterable objects.")
+        return Annotated[
+            outtype, {"choices": value, "nullable": False, "widget_type": "Select"}
+        ]
+
+
+class SomeOf(metaclass=_SomeOfAlias):
     """
     Make Annotated type from a method, such as:
 
@@ -225,19 +354,21 @@ class Choices(metaclass=_ChoicesAlias):
         )
 
     def __init_subclass__(cls, *args, **kwargs):
-        raise TypeError(f"Cannot subclass {cls.__module__}.Bound")
+        raise TypeError(f"Cannot subclass {cls.__module__}.SomeOf")
 
 
-_T = TypeVar("_T", bound=type)
+_T = TypeVar("_T")
 
 
 class _OptionalAlias(type):
     @overload
-    def __getitem__(cls, value: _T) -> type[typing.Optional[_T]]:
+    def __getitem__(cls, value: type[_T]) -> type[typing.Optional[_T]]:
         ...
 
     @overload
-    def __getitem__(cls, value: tuple[_T, dict[str, Any]]) -> type[typing.Optional[_T]]:
+    def __getitem__(
+        cls, value: tuple[type[_T], dict[str, Any]]
+    ) -> type[typing.Optional[_T]]:
         ...
 
     def __getitem__(cls, value):
@@ -265,6 +396,21 @@ class Optional(metaclass=_OptionalAlias):
 
     Arguments annotated with ``Optional[int]`` will create a
     ``OptionalWidget`` with a ``SpinBox`` as an inner widget.
+
+    Examples
+    --------
+
+    from magicclass import magicclass, set_options
+    from magicclass.types import Optional
+
+    @magicclass
+    class A:
+        @set_options(a={"options": {"min": -1}})
+        def f(self, a: Optional[int]):
+            print(a)
+
+    ui = A()
+    ui.show()
     """
 
     def __new__(cls, *args, **kwargs):
@@ -274,87 +420,16 @@ class Optional(metaclass=_OptionalAlias):
         raise TypeError(f"Cannot subclass {cls.__module__}.Optional.")
 
 
-_S = TypeVar("_S", bound=tuple)
+def __getattr__(key: str):
+    if key in ["List", "Tuple"]:
+        import warnings
 
-
-class _TupleAlias(type):
-    def __getitem__(cls, value: _S) -> type[_S]:
-        from .widgets import TupleEdit
-
-        opt = dict(
-            widget_type=TupleEdit,
+        warnings.warn(
+            f"Type {key!r} is deprecated. Please use typing.{key}.",
+            DeprecationWarning,
+            stacklevel=2,
         )
-        if isinstance(value, _AnnotatedAlias):
-            type0, opt0 = split_annotated_type(value)
-            type_ = typing.Tuple[type0]
-            opt.update(annotation=type_, **opt0)
-            return Annotated[typing.Optional[type0], opt0]
-        else:
-            type_ = typing.Tuple[value]
-            opt.update(annotation=type_)
-            return Annotated[type_, opt]
+        import typing
 
-
-class Tuple(metaclass=_TupleAlias):
-    """
-    Make Annotated type similar to ``typing.Tuple``.
-
-    Arguments annotated with ``Tuple[...]`` will create a
-    ``TupleEdit`` with a annotated sub types.
-    """
-
-    def __new__(cls, *args, **kwargs):
-        raise TypeError("Type Tuple cannot be instantiated.")
-
-    def __init_subclass__(cls, *args, **kwargs):
-        raise TypeError(f"Cannot subclass {cls.__module__}.Tuple.")
-
-
-class _ListAlias(type):
-    def __getitem__(cls, value: _T) -> type[list[_T]]:
-        from .widgets import ListEdit
-
-        type_ = typing.List[value]
-        opt = dict(
-            widget_type=ListEdit,
-            annotation=type_,
-        )
-        return Annotated[type_, opt]
-
-
-class List(metaclass=_ListAlias):
-    """
-    Make Annotated type similar to ``typing.List``.
-
-    Arguments annotated with ``List[...]`` will create a
-    ``ListEdit`` with a annotated sub types.
-    """
-
-    def __new__(cls, *args, **kwargs):
-        raise TypeError("Type List cannot be instantiated.")
-
-    def __init_subclass__(cls, *args, **kwargs):
-        raise TypeError(f"Cannot subclass {cls.__module__}.List.")
-
-
-"""
-Examples
---------
-
-from magicclass import magicclass, set_options
-from magicclass.types import Tuple, List, Optional
-@magicclass
-class A:
-    @set_options(a={"options": {"min": -1}})
-    def f(self, a: Tuple[int, int]):
-        print(a)
-    @set_options(a={"options": {"min": -1}})
-    def g(self, a: List[float]):
-        print(a)
-    @set_options(a={"options": {"min": -1}})
-    def h(self, a: Optional[int]):
-        print(a)
-ui = A()
-ui.show()
-
-"""
+        return getattr(typing, key)
+    raise AttributeError(f"module {__name__!r} has no attribute {key!r}")

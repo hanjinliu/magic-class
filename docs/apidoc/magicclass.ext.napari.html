@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.ext.napari package &mdash; magic-class 0.6.4 documentation</title>
+  <title>magicclass.ext.napari package &mdash; magic-class 0.6.7.dev2 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/columns.css" type="text/css" />
@@ -31,7 +31,7 @@
             <a href="../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.4
+                0.6.7.dev2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -87,6 +87,38 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </section>
+<section id="module-magicclass.ext.napari.types">
+<span id="magicclass-ext-napari-types-module"></span><h2>magicclass.ext.napari.types module<a class="headerlink" href="#module-magicclass.ext.napari.types" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.ext.napari.types.FeatureColumn">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.napari.types.</span></span><span class="sig-name descname"><span class="pre">FeatureColumn</span></span><a class="reference internal" href="../_modules/magicclass/ext/napari/types.html#FeatureColumn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.napari.types.FeatureColumn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.ext.napari.types.FeatureInfo">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.napari.types.</span></span><span class="sig-name descname"><span class="pre">FeatureInfo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/napari/types.html#FeatureInfo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.napari.types.FeatureInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A type representing a tuple of a DataFrame and its column names.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">FeatureInfo</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">]):</span> <span class="o">...</span>
+</pre></div>
+</div>
+<p>Type annotation <code class="docutils literal notranslate"><span class="pre">FeatureInfo[&quot;x&quot;,</span> <span class="pre">&quot;y&quot;]</span></code> is essentially equivalent to
+<code class="docutils literal notranslate"><span class="pre">tuple[pd.DataFrame,</span> <span class="pre">tuple[str,</span> <span class="pre">str]]</span></code>.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.ext.napari.types.Features">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.napari.types.</span></span><span class="sig-name descname"><span class="pre">Features</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/napari/types.html#Features"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.napari.types.Features" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Protocol</span></code></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.ext.napari.types.Features.columns">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">columns</span></span><em class="property"><span class="pre">:</span> <span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#magicclass.ext.napari.types.Features.columns" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
 <section id="module-magicclass.ext.napari.utils">
 <span id="magicclass-ext-napari-utils-module"></span><h2>magicclass.ext.napari.utils module<a class="headerlink" href="#module-magicclass.ext.napari.utils" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
@@ -108,6 +140,102 @@ causes inconsistency between operations on GUI and on Python interpreter.</p>
 </dd></dl>
 
 </section>
+<section id="module-magicclass.ext.napari.viewer">
+<span id="magicclass-ext-napari-viewer-module"></span><h2>magicclass.ext.napari.viewer module<a class="headerlink" href="#module-magicclass.ext.napari.viewer" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.ext.napari.viewer.QtLayerWidget">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.napari.viewer.</span></span><span class="sig-name descname"><span class="pre">QtLayerWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#magicclass.ext.napari.viewer.QtViewerWidget" title="magicclass.ext.napari.viewer.QtViewerWidget"><span class="pre">magicclass.ext.napari.viewer.QtViewerWidget</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/napari/viewer.html#QtLayerWidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.napari.viewer.QtLayerWidget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QSplitter</span></code></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.ext.napari.viewer.QtViewerWidget">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.napari.viewer.</span></span><span class="sig-name descname"><span class="pre">QtViewerWidget</span></span><a class="reference internal" href="../_modules/magicclass/ext/napari/viewer.html#QtViewerWidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.napari.viewer.QtViewerWidget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QSplitter</span></code></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.ext.napari.viewer.ViewerWidget">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.napari.viewer.</span></span><span class="sig-name descname"><span class="pre">ViewerWidget</span></span><a class="reference internal" href="../_modules/magicclass/ext/napari/viewer.html#ViewerWidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.napari.viewer.ViewerWidget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="magicclass.widgets.html#magicclass.widgets.utils.FreeWidget" title="magicclass.widgets.utils.FreeWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.widgets.utils.FreeWidget</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.ext.napari.viewer.ViewerWidget.add_image">
+<span class="sig-name descname"><span class="pre">add_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">nl.Image</span></span></span><a class="reference internal" href="../_modules/magicclass/ext/napari/viewer.html#ViewerWidget.add_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.napari.viewer.ViewerWidget.add_image" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.ext.napari.viewer.ViewerWidget.add_labels">
+<span class="sig-name descname"><span class="pre">add_labels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">nl.Labels</span></span></span><a class="reference internal" href="../_modules/magicclass/ext/napari/viewer.html#ViewerWidget.add_labels"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.napari.viewer.ViewerWidget.add_labels" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.ext.napari.viewer.ViewerWidget.add_points">
+<span class="sig-name descname"><span class="pre">add_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">nl.Points</span></span></span><a class="reference internal" href="../_modules/magicclass/ext/napari/viewer.html#ViewerWidget.add_points"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.napari.viewer.ViewerWidget.add_points" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.ext.napari.viewer.ViewerWidget.add_shapes">
+<span class="sig-name descname"><span class="pre">add_shapes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">nl.Shapes</span></span></span><a class="reference internal" href="../_modules/magicclass/ext/napari/viewer.html#ViewerWidget.add_shapes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.napari.viewer.ViewerWidget.add_shapes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.ext.napari.viewer.ViewerWidget.add_surface">
+<span class="sig-name descname"><span class="pre">add_surface</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">nl.Surface</span></span></span><a class="reference internal" href="../_modules/magicclass/ext/napari/viewer.html#ViewerWidget.add_surface"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.napari.viewer.ViewerWidget.add_surface" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.ext.napari.viewer.ViewerWidget.add_tracks">
+<span class="sig-name descname"><span class="pre">add_tracks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">nl.Tracks</span></span></span><a class="reference internal" href="../_modules/magicclass/ext/napari/viewer.html#ViewerWidget.add_tracks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.napari.viewer.ViewerWidget.add_tracks" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.ext.napari.viewer.ViewerWidget.add_vectors">
+<span class="sig-name descname"><span class="pre">add_vectors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">nl.Vectors</span></span></span><a class="reference internal" href="../_modules/magicclass/ext/napari/viewer.html#ViewerWidget.add_vectors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.napari.viewer.ViewerWidget.add_vectors" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.ext.napari.viewer.ViewerWidget.axes">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">axes</span></span><a class="headerlink" href="#magicclass.ext.napari.viewer.ViewerWidget.axes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.ext.napari.viewer.ViewerWidget.camera">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">camera</span></span><a class="headerlink" href="#magicclass.ext.napari.viewer.ViewerWidget.camera" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.ext.napari.viewer.ViewerWidget.cursor">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">cursor</span></span><a class="headerlink" href="#magicclass.ext.napari.viewer.ViewerWidget.cursor" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.ext.napari.viewer.ViewerWidget.dims">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">dims</span></span><a class="headerlink" href="#magicclass.ext.napari.viewer.ViewerWidget.dims" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.ext.napari.viewer.ViewerWidget.grid">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">grid</span></span><a class="headerlink" href="#magicclass.ext.napari.viewer.ViewerWidget.grid" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.ext.napari.viewer.ViewerWidget.layers">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">layers</span></span><a class="headerlink" href="#magicclass.ext.napari.viewer.ViewerWidget.layers" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.ext.napari.viewer.ViewerWidget.scale_bar">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">scale_bar</span></span><a class="headerlink" href="#magicclass.ext.napari.viewer.ViewerWidget.scale_bar" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.ext.napari.viewer.ViewerWidget.text_overlay">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">text_overlay</span></span><a class="headerlink" href="#magicclass.ext.napari.viewer.ViewerWidget.text_overlay" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
 <section id="module-magicclass.ext.napari.widgets">
 <span id="magicclass-ext-napari-widgets-module"></span><h2>magicclass.ext.napari.widgets module<a class="headerlink" href="#module-magicclass.ext.napari.widgets" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
@@ -123,6 +251,87 @@ causes inconsistency between operations on GUI and on Python interpreter.</p>
 <dt class="sig sig-object py" id="magicclass.ext.napari.NapariCanvas">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.napari.</span></span><span class="sig-name descname"><span class="pre">NapariCanvas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ndisplay</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis_labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/napari/widgets.html#NapariCanvas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.napari.NapariCanvas" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="magicclass.widgets.html#magicclass.widgets.utils.FreeWidget" title="magicclass.widgets.utils.FreeWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.widgets.utils.FreeWidget</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.ext.napari.ViewerWidget">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.napari.</span></span><span class="sig-name descname"><span class="pre">ViewerWidget</span></span><a class="reference internal" href="../_modules/magicclass/ext/napari/viewer.html#ViewerWidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.napari.ViewerWidget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="magicclass.widgets.html#magicclass.widgets.utils.FreeWidget" title="magicclass.widgets.utils.FreeWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.widgets.utils.FreeWidget</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.ext.napari.ViewerWidget.add_image">
+<span class="sig-name descname"><span class="pre">add_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">nl.Image</span></span></span><a class="reference internal" href="../_modules/magicclass/ext/napari/viewer.html#ViewerWidget.add_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.napari.ViewerWidget.add_image" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.ext.napari.ViewerWidget.add_labels">
+<span class="sig-name descname"><span class="pre">add_labels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">nl.Labels</span></span></span><a class="reference internal" href="../_modules/magicclass/ext/napari/viewer.html#ViewerWidget.add_labels"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.napari.ViewerWidget.add_labels" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.ext.napari.ViewerWidget.add_points">
+<span class="sig-name descname"><span class="pre">add_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">nl.Points</span></span></span><a class="reference internal" href="../_modules/magicclass/ext/napari/viewer.html#ViewerWidget.add_points"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.napari.ViewerWidget.add_points" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.ext.napari.ViewerWidget.add_shapes">
+<span class="sig-name descname"><span class="pre">add_shapes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">nl.Shapes</span></span></span><a class="reference internal" href="../_modules/magicclass/ext/napari/viewer.html#ViewerWidget.add_shapes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.napari.ViewerWidget.add_shapes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.ext.napari.ViewerWidget.add_surface">
+<span class="sig-name descname"><span class="pre">add_surface</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">nl.Surface</span></span></span><a class="reference internal" href="../_modules/magicclass/ext/napari/viewer.html#ViewerWidget.add_surface"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.napari.ViewerWidget.add_surface" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.ext.napari.ViewerWidget.add_tracks">
+<span class="sig-name descname"><span class="pre">add_tracks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">nl.Tracks</span></span></span><a class="reference internal" href="../_modules/magicclass/ext/napari/viewer.html#ViewerWidget.add_tracks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.napari.ViewerWidget.add_tracks" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.ext.napari.ViewerWidget.add_vectors">
+<span class="sig-name descname"><span class="pre">add_vectors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">nl.Vectors</span></span></span><a class="reference internal" href="../_modules/magicclass/ext/napari/viewer.html#ViewerWidget.add_vectors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.napari.ViewerWidget.add_vectors" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.ext.napari.ViewerWidget.axes">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">axes</span></span><a class="headerlink" href="#magicclass.ext.napari.ViewerWidget.axes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.ext.napari.ViewerWidget.camera">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">camera</span></span><a class="headerlink" href="#magicclass.ext.napari.ViewerWidget.camera" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.ext.napari.ViewerWidget.cursor">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">cursor</span></span><a class="headerlink" href="#magicclass.ext.napari.ViewerWidget.cursor" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.ext.napari.ViewerWidget.dims">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">dims</span></span><a class="headerlink" href="#magicclass.ext.napari.ViewerWidget.dims" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.ext.napari.ViewerWidget.grid">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">grid</span></span><a class="headerlink" href="#magicclass.ext.napari.ViewerWidget.grid" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.ext.napari.ViewerWidget.layers">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">layers</span></span><a class="headerlink" href="#magicclass.ext.napari.ViewerWidget.layers" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.ext.napari.ViewerWidget.scale_bar">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">scale_bar</span></span><a class="headerlink" href="#magicclass.ext.napari.ViewerWidget.scale_bar" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.ext.napari.ViewerWidget.text_overlay">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">text_overlay</span></span><a class="headerlink" href="#magicclass.ext.napari.ViewerWidget.text_overlay" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="py function">

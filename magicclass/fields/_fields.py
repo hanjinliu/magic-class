@@ -1,43 +1,35 @@
 from __future__ import annotations
-from contextlib import contextmanager
-from functools import wraps, cached_property
-import weakref
-import types
 from typing import (
     Any,
     TYPE_CHECKING,
     Callable,
-    Iterator,
     TypeVar,
     overload,
     Generic,
     Union,
 )
-from abc import ABCMeta
 from typing_extensions import Literal, _AnnotatedAlias
 from pathlib import Path
 import datetime
 import sys
 from enum import Enum
-from magicgui.widgets import create_widget, Container
+from magicgui.widgets import create_widget
 from magicgui.widgets._bases import Widget, ValueWidget, ContainerWidget
 from magicgui.widgets._bases.value_widget import UNSET
-from psygnal import SignalInstance
 
-from .utils import (
+from ..utils import (
     argcount,
     is_instance_method,
     method_as_getter,
-    Tooltips,
     eval_attribute,
 )
-from ._gui.mgui_ext import Action, WidgetAction
+from .._gui.mgui_ext import Action, WidgetAction
 
 if TYPE_CHECKING:
     from magicgui.widgets._protocols import WidgetProtocol
     from typing_extensions import Self
-    from ._gui._base import MagicTemplate
-    from ._gui.mgui_ext import AbstractAction
+    from .._gui._base import MagicTemplate
+    from .._gui.mgui_ext import AbstractAction
 
     _M = TypeVar("_M", bound=MagicTemplate)
 
@@ -187,7 +179,7 @@ class MagicField(_FieldObject, Generic[_W, _V]):
         Get a widget from ``obj``. This function will be called every time MagicField is referred
         by ``obj.field``.
         """
-        from ._gui import MagicTemplate
+        from .._gui import MagicTemplate
 
         obj_id = id(obj)
         if obj_id in self._guis.keys():
@@ -213,7 +205,7 @@ class MagicField(_FieldObject, Generic[_W, _V]):
         Get an action from ``obj``. This function will be called every time MagicField is referred
         by ``obj.field``.
         """
-        from ._gui import MagicTemplate
+        from .._gui import MagicTemplate
 
         obj_id = id(obj)
         if obj_id in self._guis.keys():
@@ -287,7 +279,7 @@ class MagicField(_FieldObject, Generic[_W, _V]):
         return _func
 
     @overload
-    def __get__(self, obj: Literal[None], objtype=None) -> MagicField[_W, _V] | _W:
+    def __get__(self, obj: Literal[None], objtype=None) -> MagicField[_W, _V]:
         ...
 
     @overload
@@ -405,7 +397,7 @@ class MagicField(_FieldObject, Generic[_W, _V]):
         Callable
             Same method as input, but has updated signature.
         """
-        from ._gui._base import BaseGui
+        from .._gui import BaseGui
 
         cls = self.constructor
         if not (isinstance(cls, type) and issubclass(cls, BaseGui)):
@@ -890,7 +882,7 @@ def _define_callback_gui(self: MagicTemplate, callback: Callable):
             current_self = self
             while not (
                 hasattr(current_self, funcname)
-                and current_self.__class__.__name__ == clsname
+                and current_self.__class__.__qualname__.split(".")[-1] == clsname
             ):
                 current_self = current_self.__magicclass_parent__
             _func = _normalize_argcount(getattr(current_self, funcname))
@@ -906,311 +898,3 @@ def _normalize_argcount(func: Callable) -> Callable[[Any], Any]:
     if argcount(func) == 0:
         return lambda v: func()
     return func
-
-
-class _FieldGroupMeta(ABCMeta):
-    _fields: dict[str, MagicField]
-
-    def __new__(
-        fcls: type,
-        name: str,
-        bases: tuple,
-        namespace: dict,
-        **kwds,
-    ) -> _FieldGroupMeta:
-        cls: _FieldGroupMeta = type.__new__(fcls, name, bases, namespace, **kwds)
-        _tooltips = Tooltips(cls)
-        _fields: dict[str, MagicField] = {}
-        for base in cls.__mro__[1:-1]:
-            if type(base) is _FieldGroupMeta:
-                _fields.update(base._fields)
-
-        for k, v in namespace.items():
-            if isinstance(v, _FieldObject):
-                if k in _View._METHODS:
-                    raise ValueError(f"Attribute {k} cannot be used in HasFields.")
-                _fields[k] = v
-                if not v.tooltip:
-                    v.tooltip = _tooltips.attributes.get(k, "")
-
-        cls._fields = types.MappingProxyType(_fields)
-
-        return cls
-
-
-class HasFields(metaclass=_FieldGroupMeta):
-    """
-    A trait implemented with widgets and signals.
-
-    Subclasses can easily handle widgets and their value-change signals using
-    the same attribute names.
-
-    >>> class A(HasFields):
-    >>>     a = vfield(int)
-    >>>     b = vfield(str)
-    >>> ins = A()
-    >>> ins.a  # type: int
-    >>> ins.widgets.a  # type: SpinBox
-    >>> ins.signals.a  # type: SignalInstance
-
-    """
-
-    @cached_property
-    def widgets(self) -> WidgetView:
-        """Return a view of widgets."""
-        return WidgetView(self)
-
-    @cached_property
-    def signals(self) -> SignalView:
-        """Return a view of signals."""
-        return SignalView(self)
-
-    def __repr__(self) -> str:
-        """List up child widgets."""
-        _repr = ",\n\t".join(
-            f"{name} = {repr(wdt)}" for name, wdt in self.widgets.iteritems()
-        )
-        return f"{self.__class__.__name__}(\n\t{_repr}\n)"
-
-
-# NOTE: Typing of FieldGroup is tricky. When it is referred to via __get__, it
-# must return a object of same type as itself to guarantee the child fields are
-# also defined there. Thus, FieldGroup must inherit magicgui Container although
-# the original container will never be used.
-class FieldGroup(Container, HasFields, _FieldObject):
-    def __init__(
-        self,
-        layout: str = "vertical",
-        labels: bool = True,
-        name: str | None = None,
-        **kwargs,
-    ):
-        widgets = [fld.get_widget(self) for fld in self.__class__._fields.values()]
-        super().__init__(
-            layout=layout, widgets=widgets, labels=labels, name=name, **kwargs
-        )
-        self._containers: dict[int, Self] = {}
-        self._callbacks: list[Callable] = []
-
-    def __init_subclass__(cls) -> None:
-        if "__init__" not in cls.__dict__.keys():
-            return
-
-        cls.__base_init__ = cls.__init__
-
-        @wraps(cls.__init__)
-        def __init__(self: cls, *args, **kwargs):
-            self.__input_arguments = (args, kwargs)
-            cls.__base_init__(self, *args, **kwargs)
-
-        def __newlike__(self):
-            args, kwargs = self.__input_arguments
-            return cls(*args, **kwargs)
-
-        cls.__init__ = __init__
-        cls.__newlike__ = __newlike__
-
-    def __newlike__(self) -> Self:
-        """
-        Make a copy of a FieldGroup.
-
-        This method needs override if __init__ is overrided in a subclass.
-        """
-        return self.__class__(
-            layout=self.layout,
-            labels=self.labels,
-            label=self.label,
-            enabled=self.enabled,
-            name=self.name,
-            tooltip=self.tooltip,
-        )
-
-    def __set_name__(self, owner: type, name: str):
-        """Set variable name as the container's name."""
-        # self._parent_class = owner
-        if self.name is None:
-            self.name = name
-
-    # Unlike Container, `self.x = value` should be allowed because `x` can be a value field.
-    __setattr__ = object.__setattr__
-
-    def copy(self) -> Self:
-        """Copy widget."""
-        wdt = self.__newlike__()
-        for callback in self._callbacks:
-            wdt.connect(callback)
-        return wdt
-
-    @property
-    def callbacks(self) -> tuple[Callable, ...]:
-        """Return callbacks in an immutable way."""
-        return tuple(self._callbacks)
-
-    @overload
-    def __get__(self, obj: Literal[None], objtype: Any | None = None) -> Self:
-        ...
-
-    @overload
-    def __get__(self, obj: Any, objtype: Any | None = None) -> Self:
-        ...
-
-    def __get__(self, obj, objtype=None):
-        if obj is None:
-            return self
-        return self.get_widget(obj)
-
-    def __set__(self, obj, value) -> None:
-        raise AttributeError(f"Cannot set value to {self.__class__.__name__}.")
-
-    def get_widget(self, obj) -> Container:
-        _id = id(obj)
-        wdt = self._containers.get(_id, None)
-        if wdt is None:
-            wdt = self.copy()
-            self._containers[_id] = wdt
-        return wdt
-
-    def connect(self, callback: Callable):
-        # self.changed.connect(callback)  NOTE: the original container doesn't need signals!
-        self._callbacks.append(callback)
-        return callback
-
-
-class _View:
-    _METHODS = (
-        "iternames",
-        "iterwidgets",
-        "itersignals",
-    )
-
-    def __init__(self, obj: HasFields):
-        self._obj_ref = weakref.ref(obj)
-
-    def __repr__(self) -> str:
-        _it = zip(self.iternames(), self.iterwidgets())
-        _repr = ",\n\t".join(f"{name} = {repr(wdt)}" for name, wdt in _it)
-        return f"{self.__class__.__name__}(\n\t{_repr}\n)"
-
-    def iternames(self) -> Iterator[str]:
-        """Iterate widget names."""
-        return iter(self._obj_ref().__class__._fields.keys())
-
-    def iterwidgets(self) -> Iterator[Widget]:
-        """Iterate widgets."""
-        obj = self._obj_ref()
-        for fld in obj.__class__._fields.values():
-            wdt = fld.get_widget(obj)
-            yield wdt
-
-    def itersignals(self, skip_undef: bool = False) -> Iterator[SignalInstance | None]:
-        """Iterate value-changed signals."""
-        obj = self._obj_ref()
-        for fld in obj.__class__._fields.values():
-            wdt = fld.get_widget(obj)
-            sig = getattr(wdt, "changed", None)
-            if isinstance(sig, SignalInstance):
-                yield sig
-            elif not skip_undef:
-                yield None
-
-
-class WidgetView(_View):
-    """View of widgets."""
-
-    def __getattr__(self, name: str) -> Widget:
-        obj = self._obj_ref()
-        fld = obj.__class__._fields.get(name, None)
-        if isinstance(fld, _FieldObject):
-            return fld.get_widget(obj)
-        raise AttributeError(f"{obj!r} does not have attribute {name!r}.")
-
-    def __getitem__(self, key: str | int) -> Widget:
-        """Similar to Container's __getitem__."""
-        if isinstance(key, int):
-            obj = self._obj_ref()
-            key = list(obj.__class__._fields.keys())[key]
-        try:
-            wdt = self.__getattr__(key)
-        except AttributeError:
-            raise KeyError(key)
-        return wdt
-
-    def iteritems(self) -> Iterator[tuple[str, Widget]]:
-        """Iterate widget names and widgets themselves."""
-        return iter(zip(self.iternames(), self.iterwidgets()))
-
-    def __iter__(self) -> Iterator[Widget]:
-        """Iterate widgets."""
-        return self.iterwidgets()
-
-    def as_container(
-        self,
-        layout: str = "vertical",
-        labels: bool = True,
-        keys: list[str] | None = None,
-        **kwargs,
-    ) -> Container:
-        """Convert view into a Container widget."""
-        if keys is None:
-            widgets = list(self)
-        else:
-            widgets = [getattr(self, name) for name in keys]
-        return Container(layout=layout, widgets=widgets, labels=labels, **kwargs)
-
-    def emit_all(self) -> None:
-        """Emit all the signals with current value."""
-        for wdt, sig in zip(self.iterwidgets(), self.itersignals()):
-            if sig is not None:
-                sig.emit(wdt.value)
-
-
-class SignalView(_View):
-    """View of signals."""
-
-    def __getattr__(self, name: str) -> SignalInstance:
-        obj = self._obj_ref()
-        fld = obj.__class__._fields.get(name, None)
-        if isinstance(fld, _FieldObject):
-            wdt = fld.get_widget(obj)
-            sig = getattr(wdt, "changed", None)
-            if not isinstance(sig, SignalInstance):
-                raise AttributeError(f"Widget {wdt!r} does not have 'changed' signal")
-            return sig
-        raise AttributeError(f"{obj!r} does not have attribute {name!r}.")
-
-    def __getitem__(self, key: str | int) -> SignalInstance:
-        """Similar to list.__getitem__."""
-        if isinstance(key, int):
-            obj = self._obj_ref()
-            key = list(obj.__class__._fields.keys())[key]
-        try:
-            wdt = self.__getattr__(key)
-        except AttributeError:
-            raise KeyError(key)
-        return wdt
-
-    def iteritems(self) -> Iterator[tuple[str, SignalInstance | None]]:
-        """Iterate widget names and value-changed signals."""
-        return iter(zip(self.iternames(), self.itersignals()))
-
-    def __iter__(self) -> Iterator[SignalInstance | None]:
-        return self.itersignals()
-
-    def block(self) -> None:
-        """Block all the signals."""
-        for sig in self.itersignals(skip_undef=True):
-            sig.block()
-
-    def unblock(self) -> None:
-        """Unblock all the signals."""
-        for sig in self.itersignals(skip_undef=True):
-            sig.unblock()
-
-    @contextmanager
-    def blocked(self):
-        """Temporarly block all signals."""
-        self.block()
-        try:
-            yield
-        finally:
-            self.unblock()

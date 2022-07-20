@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Use PyQtGraph Canvas &mdash; magic-class 0.6.4 documentation</title>
+  <title>Use PyQtGraph Canvas &mdash; magic-class 0.6.7.dev2 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/columns.css" type="text/css" />
@@ -31,7 +31,7 @@
             <a href="index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.4
+                0.6.7.dev2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -49,7 +49,16 @@
 <li class="toctree-l1"><a class="reference internal" href="chap_make_better.html">Make Your GUI Better</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="chap_data_vis.html">Data Visualization</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="matplotlib.html">Use Matplotlib Figure</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Use PyQtGraph Canvas</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Use PyQtGraph Canvas</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#qtplotcanvas">QtPlotCanvas</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#methods-and-attributes">Methods and Attributes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#add-curves">Add curves</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#handle-layers">Handle layers</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#qtmultiplotcanvas">QtMultiPlotCanvas</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="vispy.html">Vispy Canvas</a></li>
 </ul>
 </li>
@@ -94,12 +103,133 @@ widgets to provide a consistent, <code class="docutils literal notranslate"><spa
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">pyqtgraph</span>
 </pre></div>
 </div>
+<p>Then several <code class="docutils literal notranslate"><span class="pre">pyqtgraph</span></code> canvases are now available.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass.ext.pyqtgraph</span> <span class="kn">import</span> <span class="n">QtPlotCanvas</span>  <span class="c1"># 1-D plot, like plt.plot</span>
-<span class="kn">from</span> <span class="nn">magicclass.ext.pyqtgraph</span> <span class="kn">import</span> <span class="n">QtImageCanvas</span>  <span class="c1"># 2-D image, like plt.imshow</span>
 <span class="kn">from</span> <span class="nn">magicclass.ext.pyqtgraph</span> <span class="kn">import</span> <span class="n">QtMultiPlotCanvas</span>  <span class="c1"># multiple QtPlotCanvas</span>
+<span class="kn">from</span> <span class="nn">magicclass.ext.pyqtgraph</span> <span class="kn">import</span> <span class="n">QtImageCanvas</span>  <span class="c1"># 2-D image, like plt.imshow</span>
 <span class="kn">from</span> <span class="nn">magicclass.ext.pyqtgraph</span> <span class="kn">import</span> <span class="n">QtMultiImageCanvas</span>  <span class="c1"># multiple QtImageCanvas</span>
 </pre></div>
 </div>
+<div class="contents local topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#qtplotcanvas" id="id1">QtPlotCanvas</a></p>
+<ul>
+<li><p><a class="reference internal" href="#methods-and-attributes" id="id2">Methods and Attributes</a></p></li>
+<li><p><a class="reference internal" href="#add-curves" id="id3">Add curves</a></p></li>
+<li><p><a class="reference internal" href="#handle-layers" id="id4">Handle layers</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#qtmultiplotcanvas" id="id5">QtMultiPlotCanvas</a></p></li>
+</ul>
+</div>
+<section id="qtplotcanvas">
+<h2><a class="toc-backref" href="#id1">QtPlotCanvas</a><a class="headerlink" href="#qtplotcanvas" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">QtPlotCanvas</span></code> is a canvas for 1-D plotting.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass.ext.pyqtgraph</span> <span class="kn">import</span> <span class="n">QtPlotCanvas</span>
+
+<span class="n">canvas</span> <span class="o">=</span> <span class="n">QtPlotCanvas</span><span class="p">()</span>
+<span class="n">canvas</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>A <code class="docutils literal notranslate"><span class="pre">QtPlotCanvas</span></code> is composed of several &quot;layers&quot; and each layer corresponds to a plot item
+that is in the canvas. Basically you'll add new layers to visualize data.</p>
+<section id="methods-and-attributes">
+<h3><a class="toc-backref" href="#id2">Methods and Attributes</a><a class="headerlink" href="#methods-and-attributes" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Major methods
+- <code class="docutils literal notranslate"><span class="pre">add_curve()</span></code> ... Add a curve possibly with symbols, similar to <code class="docutils literal notranslate"><span class="pre">plt.plot</span></code>.
+- <code class="docutils literal notranslate"><span class="pre">add_scatter()</span></code> ... Add scatter plot item, similar to <code class="docutils literal notranslate"><span class="pre">plt.scatter</span></code>.
+- <code class="docutils literal notranslate"><span class="pre">add_hist()</span></code> ... Build a histogram from input data, similar to <code class="docutils literal notranslate"><span class="pre">plt.hist</span></code>.
+- <code class="docutils literal notranslate"><span class="pre">add_bar()</span></code> ... Add a bar plot, similar to <code class="docutils literal notranslate"><span class="pre">plt.bar</span></code>.
+- <code class="docutils literal notranslate"><span class="pre">add_infline()</span></code> ... Add a infinite line, similar to <code class="docutils literal notranslate"><span class="pre">plt.axline</span></code>.
+- <code class="docutils literal notranslate"><span class="pre">add_text()</span></code> ... Add list of texts, similar to <code class="docutils literal notranslate"><span class="pre">plt.text</span></code>.
+- <code class="docutils literal notranslate"><span class="pre">show()</span></code> ... Show canvas.</p></li>
+<li><p>Major attributes and properties
+- <code class="docutils literal notranslate"><span class="pre">layers</span></code> ... List of all the layers.
+- <code class="docutils literal notranslate"><span class="pre">visible</span></code> ... Visibility of canvas.
+- <code class="docutils literal notranslate"><span class="pre">enabled</span></code> ... Interactivity of canvas.
+- <code class="docutils literal notranslate"><span class="pre">xlim</span></code> ... Minumum and maximum value of x-axis in viewbox.
+- <code class="docutils literal notranslate"><span class="pre">ylim</span></code> ... Minumum and maximum value of y-axis in viewbox.
+- <code class="docutils literal notranslate"><span class="pre">xlabel</span></code> ... Label text of x-axis.
+- <code class="docutils literal notranslate"><span class="pre">ylabel</span></code> ... Label text of y-axis.
+- <code class="docutils literal notranslate"><span class="pre">title</span></code> ... Title text of the plot canvas.
+- <code class="docutils literal notranslate"><span class="pre">legend</span></code> ... Legend item of the canvas.
+- <code class="docutils literal notranslate"><span class="pre">mouse_click_callbacks</span></code> ... list of callback functions that will get called on mouse click.</p></li>
+</ul>
+</section>
+<section id="add-curves">
+<h3><a class="toc-backref" href="#id3">Add curves</a><a class="headerlink" href="#add-curves" title="Permalink to this headline">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">add_curve</span></code> method will add a <code class="docutils literal notranslate"><span class="pre">Curve</span></code> layer to the canvas, store the layer in the <code class="docutils literal notranslate"><span class="pre">layers</span></code>
+attribute and return the layer.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">xdata</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+<span class="n">ydata</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">xdata</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">xdata</span><span class="p">)</span>
+<span class="n">layer</span> <span class="o">=</span> <span class="n">canvas</span><span class="o">.</span><span class="n">add_curve</span><span class="p">(</span><span class="n">xdata</span><span class="p">,</span> <span class="n">ydata</span><span class="p">)</span>  <span class="c1"># or canvas.add_curve(ydata) if you don&#39;t need x scale.</span>
+</pre></div>
+</div>
+<p>There are other keyword argument that will be useful to visualize differently.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">canvas</span><span class="o">.</span><span class="n">add_curve</span><span class="p">(</span><span class="n">xdata</span><span class="p">,</span> <span class="n">ydata</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Data-1&quot;</span><span class="p">)</span>  <span class="c1"># name of the layer</span>
+<span class="n">canvas</span><span class="o">.</span><span class="n">add_curve</span><span class="p">(</span><span class="n">xdata</span><span class="p">,</span> <span class="n">ydata</span><span class="p">,</span> <span class="n">edge_color</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">)</span>  <span class="c1"># change color</span>
+<span class="n">canvas</span><span class="o">.</span><span class="n">add_curve</span><span class="p">(</span><span class="n">xdata</span><span class="p">,</span> <span class="n">ydata</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">)</span>  <span class="c1"># change line width and line style</span>
+<span class="n">canvas</span><span class="o">.</span><span class="n">add_curve</span><span class="p">(</span><span class="n">xdata</span><span class="p">,</span> <span class="n">ydata</span><span class="p">,</span> <span class="n">symbol</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">)</span>  <span class="c1"># show symbol at the data points</span>
+</pre></div>
+</div>
+<p>Layer is available in <code class="docutils literal notranslate"><span class="pre">layers</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">layer</span> <span class="o">=</span> <span class="n">canvas</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># the first layer</span>
+</pre></div>
+</div>
+</section>
+<section id="handle-layers">
+<h3><a class="toc-backref" href="#id4">Handle layers</a><a class="headerlink" href="#handle-layers" title="Permalink to this headline">¶</a></h3>
+<p>The layer objects are also designed to be easily</p>
+<ol class="arabic">
+<li><p>Show/hide layer</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">layer</span><span class="o">.</span><span class="n">visible</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># show</span>
+<span class="n">layer</span><span class="o">.</span><span class="n">visible</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># hide</span>
+</pre></div>
+</div>
+</li>
+<li><p>Change color</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">layer</span><span class="o">.</span><span class="n">face_color</span> <span class="o">=</span> <span class="s2">&quot;red&quot;</span>  <span class="c1"># str</span>
+<span class="n">layer</span><span class="o">.</span><span class="n">face_color</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]</span>  <span class="c1"># float RGBA</span>
+<span class="n">layer</span><span class="o">.</span><span class="n">edge_color</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]</span>  <span class="c1"># change edge color</span>
+<span class="n">layer</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="s2">&quot;white&quot;</span>  <span class="c1"># change face color and edge color</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Get data</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">layer</span><span class="o">.</span><span class="n">xdata</span>  <span class="c1"># the x data</span>
+<span class="n">layer</span><span class="o">.</span><span class="n">ydata</span>  <span class="c1"># the y data</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ol>
+</section>
+</section>
+<section id="qtmultiplotcanvas">
+<h2><a class="toc-backref" href="#id5">QtMultiPlotCanvas</a><a class="headerlink" href="#qtmultiplotcanvas" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">QtMultiPlotCanvas</span></code> is a collection of <code class="docutils literal notranslate"><span class="pre">QtPlotCanvas</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass.ext.pyqtgraph</span> <span class="kn">import</span> <span class="n">QtMultiPlotCanvas</span>
+
+<span class="n">canvas</span> <span class="o">=</span> <span class="n">QtMultiPlotCanvas</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># 1 x 2 canvases</span>
+<span class="n">canvas</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>If you want to synchronize axes movements, set <code class="docutils literal notranslate"><span class="pre">sharex</span></code> and <code class="docutils literal notranslate"><span class="pre">sharey</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">canvas</span> <span class="o">=</span> <span class="n">QtMultiPlotCanvas</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <cite>i</cite>-th canvas is available by simple indexing. Returned items have the same API as
+<code class="docutils literal notranslate"><span class="pre">QtPlotCanvas</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">canvas</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">add_curve</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="mi">100</span><span class="p">))</span>  <span class="c1"># add curve to the 0-th canvas.</span>
+<span class="n">canvas</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">layers</span>  <span class="c1"># Layer list of the 1st canvas.</span>
+</pre></div>
+</div>
+</section>
 </section>
 
 

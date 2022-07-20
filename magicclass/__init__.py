@@ -1,4 +1,4 @@
-__version__ = "0.6.5.dev0"
+__version__ = "0.6.8.dev0"
 
 from .core import (
     magicclass,
@@ -9,11 +9,11 @@ from .core import (
     build_help,
     get_function_gui,
     redo,
+    update_widget_state,
 )
 
 from .wrappers import (
     set_options,
-    click,
     set_design,
     do_not_record,
     bind_key,
@@ -22,9 +22,10 @@ from .wrappers import (
     mark_preview,
 )
 
-from .fields import field, vfield, widget_property, FieldGroup, HasFields
+from .fields import field, vfield, widget_property, FieldGroup, HasFields, dataclass_gui
 from ._gui._base import wraps, defaults, MagicTemplate, PopUpMode
 from ._gui.keybinding import Key
+from ._gui._icon import Icon
 from . import widgets, utils, types
 
 from magicgui import *
@@ -38,9 +39,8 @@ __all__ = [
     "build_help",
     "get_function_gui",
     "redo",
-    "update_widget",
+    "update_widget_state",
     "set_options",
-    "click",
     "set_design",
     "do_not_record",
     "bind_key",
@@ -52,9 +52,27 @@ __all__ = [
     "widget_property",
     "FieldGroup",
     "HasFields",
+    "dataclass_gui",
     "wraps",
     "defaults",
     "MagicTemplate",
     "PopUpMode",
     "Key",
+    "Icon",
 ]
+
+
+def __getattr__(key: str):
+    if key == "click":
+        import warnings
+
+        warnings.warn(
+            "Function click is moving to magicclass.utils and will be deleted from "
+            "magicclass namespace. Please 'from magicclass.utils import click'.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        from .utils import click
+
+        return click
+    raise AttributeError(f"module {__name__!r} has no attribute {key!r}")

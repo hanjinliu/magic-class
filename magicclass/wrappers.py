@@ -1,7 +1,6 @@
 from __future__ import annotations
-from functools import wraps
 import inspect
-from typing import Callable, Iterable, Iterator, Union, TYPE_CHECKING, TypeVar, overload
+from typing import Callable, Iterable, Union, TYPE_CHECKING, TypeVar, overload
 import warnings
 from magicgui.widgets import FunctionGui
 
@@ -11,8 +10,6 @@ from .signature import upgrade_signature
 
 if TYPE_CHECKING:
     from ._gui import BaseGui
-    from ._gui.mgui_ext import Action
-    from magicgui.widgets._bases import ButtonWidget
 
 nStrings = Union[str, Iterable[str]]
 
@@ -92,21 +89,21 @@ def set_options(
 
 
 def set_design(
-    width: int = None,
-    height: int = None,
-    min_width: int = None,
-    min_height: int = None,
-    max_width: int = None,
-    max_height: int = None,
-    text: str = None,
-    icon_path: str = None,
-    icon_size: tuple[int, int] = None,
-    font_size: int = None,
-    font_family: int = None,
-    font_color: Color = None,
-    background_color: Color = None,
-    visible: bool = None,
-):
+    width: int | None = None,
+    height: int | None = None,
+    min_width: int | None = None,
+    min_height: int | None = None,
+    max_width: int | None = None,
+    max_height: int | None = None,
+    text: str | None = None,
+    icon: str | None = None,
+    icon_path: str | None = None,
+    font_size: int | None = None,
+    font_family: int | None = None,
+    font_color: Color | None = None,
+    background_color: Color | None = None,
+    visible: bool | None = None,
+) -> Callable[[type[T]], type[T]] | Callable[[F], F]:
     """
     Change button/action design by calling setter when the widget is created.
 
@@ -126,32 +123,22 @@ def set_design(
         Button maximum height. Call ``button.max_height = max_height``.
     text : str, optional
         Button text. Call ``button.text = text``.
-    icon_path : str, optional
+    icon : str, optional
         Path to icon file. ``min_width`` and ``min_height`` will be automatically set to the icon size
         if not given.
-    icon_size : tuple of two int, optional
-        Icon size.
     font_size : int, optional
         Font size of the text.
     visible : bool default is True
         Button visibility.
     """
-    if icon_size is not None:
-        if min_width is None:
-            min_width = icon_size[0]
-        if min_height is None:
-            min_height = icon_size[1]
-
     caller_options = locals()
     caller_options = {k: v for k, v in caller_options.items() if v is not None}
 
-    @overload
-    def wrapper(obj: type[T]) -> type[T]:
-        ...
-
-    @overload
-    def wrapper(obj: F) -> F:
-        ...
+    if "icon_path" in caller_options.keys():
+        warnings.warn(
+            "`icon_path` is deprecated. Use `icon` instead.", DeprecationWarning
+        )
+        caller_options["icon"] = caller_options.pop("icon_path")
 
     def wrapper(obj):
         if isinstance(obj, type):
@@ -166,59 +153,6 @@ def set_design(
         else:
             upgrade_signature(obj, caller_options=caller_options)
         return obj
-
-    return wrapper
-
-
-def click(
-    enables: nStrings = None,
-    disables: nStrings = None,
-    enabled: bool = True,
-    shows: nStrings = None,
-    hides: nStrings = None,
-    visible: bool = True,
-):
-    """
-    Set options of push buttons related to button clickability.
-
-    Parameters
-    ----------
-    enables : str or iterable of str, optional
-        Enables other button(s) in this list when clicked.
-    disables : str or iterable of str, optional
-        Disables other button(s) in this list when clicked.
-    enabled : bool, default is True
-        The initial clickability state of the button.
-    shows : str or iterable of str, optional
-        Make other button(s) in this list visible when clicked.
-    hides : str or iterable of str, optional
-        Make other button(s) in this list invisible when clicked.
-    visible: bool, default is True
-        The initial visibility of the button.
-    """
-    enables = _assert_iterable(enables)
-    disables = _assert_iterable(disables)
-    shows = _assert_iterable(shows)
-    hides = _assert_iterable(hides)
-
-    def wrapper(func):
-        @wraps(func)
-        def f(self, *args, **kwargs):
-            out = func(self, *args, **kwargs)
-            for button in _iter_widgets(self, enables):
-                button.enabled = True
-            for button in _iter_widgets(self, disables):
-                button.enabled = False
-            for button in _iter_widgets(self, shows):
-                button.visible = True
-            for button in _iter_widgets(self, hides):
-                button.visible = False
-
-            return out
-
-        caller_options = {"enabled": enabled, "visible": visible}
-        upgrade_signature(f, caller_options=caller_options)
-        return f
 
     return wrapper
 
@@ -259,6 +193,7 @@ def confirm(
     *,
     text: str | None,
     condition: Callable[..., bool] | str | None,
+    callback: Callable[[str, BaseGui], None] | None = None,
 ) -> Callable[[F], F]:
     ...
 
@@ -269,6 +204,7 @@ def confirm(
     *,
     text: str | None,
     condition: Callable[..., bool] | str | None,
+    callback: Callable[[str, BaseGui], None] | None = None,
 ) -> F:
     ...
 
@@ -441,35 +377,3 @@ def mark_preview(function: Callable, text: str = "Preview") -> Callable[[F], F]:
         return preview
 
     return _wrapper
-
-
-def _assert_iterable(obj):
-    if obj is None:
-        obj = []
-    elif isinstance(obj, str) or callable(obj):
-        obj = [obj]
-    return obj
-
-
-def _iter_widgets(
-    self: BaseGui, descriptors: Iterable[list[str]] | Iterable[Callable]
-) -> Iterator[ButtonWidget | Action]:
-    for f in descriptors:
-        if callable(f):
-            # A.B.func -> B.func, if self is an object of A.
-            f = f.__qualname__.split(self.__class__.__name__)[1][1:]
-
-        if isinstance(f, str):
-            *clsnames, funcname = f.split(".")
-            # search for parent class that match the description.
-            ins = self
-            for a in clsnames:
-                if a != "":
-                    ins = getattr(ins, a)
-                else:
-                    ins = ins.__magicclass_parent__
-
-            button = ins[funcname]
-        else:
-            raise TypeError(f"Unexpected type in click decorator: {type(f)}")
-        yield button

@@ -7,7 +7,7 @@ from superqt.utils import FunctionWorker, GeneratorWorker, create_worker
 
 from ...utils import move_to_screen_center, QtSignal
 from ...utils.qthreading import (
-    Callbacks,
+    CallbackList,
     DefaultProgressBar,
     thread_worker,
     ProgressDict,
@@ -143,10 +143,10 @@ class dask_thread_worker(thread_worker):
         progress: ProgressDict | bool | None = True,
     ) -> None:
         super().__init__(f, ignore_errors=ignore_errors, progress=progress)
-        self._callback_dict_["computed"] = Callbacks()
+        self._callback_dict_["computed"] = CallbackList()
 
     @property
-    def computed(self) -> Callbacks[Any]:
+    def computed(self) -> CallbackList[Any]:
         return self._callback_dict_["computed"]
 
     def _create_method(self, gui: BaseGui):

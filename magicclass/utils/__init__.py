@@ -1,4 +1,4 @@
-from .functions import (
+from ._functions import (
     iter_members,
     Tooltips,
     get_signature,
@@ -6,6 +6,7 @@ from .functions import (
     is_instance_method,
     method_as_getter,
     eval_attribute,
+    copy_info,
     show_tree,
     rst_to_html,
 )
@@ -20,5 +21,6 @@ from .qt import (
     screen_scale,
 )
 
+from ._click import click
 from .qtsignal import QtSignal
-from .qthreading import thread_worker, Timer
+from .qthreading import thread_worker, Timer, Callback

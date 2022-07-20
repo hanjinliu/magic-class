@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.utils package &mdash; magic-class 0.6.4 documentation</title>
+  <title>magicclass.utils package &mdash; magic-class 0.6.7.dev2 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/columns.css" type="text/css" />
@@ -31,7 +31,7 @@
             <a href="../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.4
+                0.6.7.dev2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -85,75 +85,6 @@
 <h1>magicclass.utils package<a class="headerlink" href="#magicclass-utils-package" title="Permalink to this headline">¶</a></h1>
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
-</section>
-<section id="module-magicclass.utils.functions">
-<span id="magicclass-utils-functions-module"></span><h2>magicclass.utils.functions module<a class="headerlink" href="#module-magicclass.utils.functions" title="Permalink to this headline">¶</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="magicclass.utils.functions.Tooltips">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.utils.functions.</span></span><span class="sig-name descname"><span class="pre">Tooltips</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/utils/functions.html#Tooltips"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.utils.functions.Tooltips" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="py property">
-<dt class="sig sig-object py" id="magicclass.utils.functions.Tooltips.attributes">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">attributes</span></span><em class="property"><span class="pre">:</span> <span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#magicclass.utils.functions.Tooltips.attributes" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="magicclass.utils.functions.Tooltips.desc">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">desc</span></span><a class="headerlink" href="#magicclass.utils.functions.Tooltips.desc" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="magicclass.utils.functions.Tooltips.parameters">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">parameters</span></span><em class="property"><span class="pre">:</span> <span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#magicclass.utils.functions.Tooltips.parameters" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="magicclass.utils.functions.argcount">
-<span class="sig-prename descclassname"><span class="pre">magicclass.utils.functions.</span></span><span class="sig-name descname"><span class="pre">argcount</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../_modules/magicclass/utils/functions.html#argcount"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.utils.functions.argcount" title="Permalink to this definition">¶</a></dt>
-<dd><p>Count the number of parameters of a callable object.</p>
-<p>Basically, this function returns identical result as:
-&gt;&gt;&gt; len(inspect.signature(func).parameters)
-but ~10x faster.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="magicclass.utils.functions.get_signature">
-<span class="sig-prename descclassname"><span class="pre">magicclass.utils.functions.</span></span><span class="sig-name descname"><span class="pre">get_signature</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/utils/functions.html#get_signature"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.utils.functions.get_signature" title="Permalink to this definition">¶</a></dt>
-<dd><p>Similar to <code class="docutils literal notranslate"><span class="pre">inspect.signature</span></code> but safely returns <code class="docutils literal notranslate"><span class="pre">Signature</span></code>.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="magicclass.utils.functions.is_instance_method">
-<span class="sig-prename descclassname"><span class="pre">magicclass.utils.functions.</span></span><span class="sig-name descname"><span class="pre">is_instance_method</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../_modules/magicclass/utils/functions.html#is_instance_method"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.utils.functions.is_instance_method" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check if a function is defined in a class.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="magicclass.utils.functions.iter_members">
-<span class="sig-prename descclassname"><span class="pre">magicclass.utils.functions.</span></span><span class="sig-name descname"><span class="pre">iter_members</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cls</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude_prefix</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'__'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">typing.Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/magicclass/utils/functions.html#iter_members"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.utils.functions.iter_members" title="Permalink to this definition">¶</a></dt>
-<dd><p>Iterate over all the members in the order of source code line number.
-This function is identical to inspect.getmembers except for the order
-of the results. We have to sort the name in the order of line number.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="magicclass.utils.functions.method_as_getter">
-<span class="sig-prename descclassname"><span class="pre">magicclass.utils.functions.</span></span><span class="sig-name descname"><span class="pre">method_as_getter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">getter</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/utils/functions.html#method_as_getter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.utils.functions.method_as_getter" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="magicclass.utils.functions.rst_to_html">
-<span class="sig-prename descclassname"><span class="pre">magicclass.utils.functions.</span></span><span class="sig-name descname"><span class="pre">rst_to_html</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rst</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unescape</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/magicclass/utils/functions.html#rst_to_html"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.utils.functions.rst_to_html" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convert rST string into HTML.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="magicclass.utils.functions.show_tree">
-<span class="sig-prename descclassname"><span class="pre">magicclass.utils.functions.</span></span><span class="sig-name descname"><span class="pre">show_tree</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ui</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">BaseGui</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/magicclass/utils/functions.html#show_tree"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.utils.functions.show_tree" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 </section>
 <section id="module-magicclass.utils.qt">
 <span id="magicclass-utils-qt-module"></span><h2>magicclass.utils.qt module<a class="headerlink" href="#module-magicclass.utils.qt" title="Permalink to this headline">¶</a></h2>
@@ -256,6 +187,18 @@ You can copy text, ndarray as an image or data frame as a table data.</p>
 <section id="module-magicclass.utils.qthreading">
 <span id="magicclass-utils-qthreading-module"></span><h2>magicclass.utils.qthreading module<a class="headerlink" href="#module-magicclass.utils.qthreading" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
+<dt class="sig sig-object py" id="magicclass.utils.qthreading.Callback">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.utils.qthreading.</span></span><span class="sig-name descname"><span class="pre">Callback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/utils/qthreading.html#Callback"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.utils.qthreading.Callback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Callback object that can be recognized by thread_worker.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.utils.qthreading.Callback.catch">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">catch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">macro</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">GuiMacro</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/utils/qthreading.html#Callback.catch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.utils.qthreading.Callback.catch" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="magicclass.utils.qthreading.Timer">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.utils.qthreading.</span></span><span class="sig-name descname"><span class="pre">Timer</span></span><a class="reference internal" href="../_modules/magicclass/utils/qthreading.html#Timer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.utils.qthreading.Timer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
@@ -294,70 +237,6 @@ You can copy text, ndarray as an image or data frame as a table data.</p>
 <dt class="sig sig-object py" id="magicclass.utils.qthreading.Timer.stop">
 <span class="sig-name descname"><span class="pre">stop</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../_modules/magicclass/utils/qthreading.html#Timer.stop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.utils.qthreading.Timer.stop" title="Permalink to this definition">¶</a></dt>
 <dd><p>Stop timer.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="magicclass.utils.qthreading.thread_worker">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.utils.qthreading.</span></span><span class="sig-name descname"><span class="pre">thread_worker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="pre">_P</span><span class="p"><span class="pre">,</span> </span><span class="pre">_R1</span><span class="p"><span class="pre">]</span></span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_errors</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">progress</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">ProgressDict</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/utils/qthreading.html#thread_worker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.utils.qthreading.thread_worker" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Create a worker in a superqt/napari style.</p>
-<dl class="py property">
-<dt class="sig sig-object py" id="magicclass.utils.qthreading.thread_worker.aborted">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">aborted</span></span><em class="property"><span class="pre">:</span> <span class="pre">magicclass.utils.qthreading.Callbacks</span><span class="p"><span class="pre">[</span></span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#magicclass.utils.qthreading.thread_worker.aborted" title="Permalink to this definition">¶</a></dt>
-<dd><p>Event that will be emitted on aborted.</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="magicclass.utils.qthreading.thread_worker.errored">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">errored</span></span><em class="property"><span class="pre">:</span> <span class="pre">magicclass.utils.qthreading.Callbacks</span><span class="p"><span class="pre">[</span></span><span class="pre">Exception</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#magicclass.utils.qthreading.thread_worker.errored" title="Permalink to this definition">¶</a></dt>
-<dd><p>Event that will be emitted on errored.</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="magicclass.utils.qthreading.thread_worker.finished">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">finished</span></span><em class="property"><span class="pre">:</span> <span class="pre">magicclass.utils.qthreading.Callbacks</span><span class="p"><span class="pre">[</span></span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#magicclass.utils.qthreading.thread_worker.finished" title="Permalink to this definition">¶</a></dt>
-<dd><p>Event that will be emitted on finished.</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="magicclass.utils.qthreading.thread_worker.is_generator">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">is_generator</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#magicclass.utils.qthreading.thread_worker.is_generator" title="Permalink to this definition">¶</a></dt>
-<dd><p>True if bound function is a generator function.</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="magicclass.utils.qthreading.thread_worker.returned">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">returned</span></span><em class="property"><span class="pre">:</span> <span class="pre">magicclass.utils.qthreading.Callbacks</span><span class="p"><span class="pre">[</span></span><span class="pre">magicclass.utils.qthreading._R1</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#magicclass.utils.qthreading.thread_worker.returned" title="Permalink to this definition">¶</a></dt>
-<dd><p>Event that will be emitted on returned.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="magicclass.utils.qthreading.thread_worker.set_default">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">set_default</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pbar_cls</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span> <span class="p"><span class="pre">|</span></span> <span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/utils/qthreading.html#thread_worker.set_default"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.utils.qthreading.thread_worker.set_default" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set the default progressbar class.</p>
-<p>This class method is useful when there is an user-defined class that
-follows <code class="docutils literal notranslate"><span class="pre">_SupportProgress</span></code> protocol.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>pbar_cls</strong> (<em>callable</em><em> or </em><em>str</em>) -- The default class. In principle this parameter does not have to be a
-class. As long as <code class="docutils literal notranslate"><span class="pre">pbar_cls(max=...)</span></code> returns a <code class="docutils literal notranslate"><span class="pre">_SupportProgress</span></code>
-object it works. Either &quot;default&quot; or &quot;napari&quot; is also accepted.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="magicclass.utils.qthreading.thread_worker.started">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">started</span></span><em class="property"><span class="pre">:</span> <span class="pre">magicclass.utils.qthreading.Callbacks</span><span class="p"><span class="pre">[</span></span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#magicclass.utils.qthreading.thread_worker.started" title="Permalink to this definition">¶</a></dt>
-<dd><p>Event that will be emitted on started.</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="magicclass.utils.qthreading.thread_worker.yielded">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">yielded</span></span><em class="property"><span class="pre">:</span> <span class="pre">magicclass.utils.qthreading.Callbacks</span><span class="p"><span class="pre">[</span></span><span class="pre">magicclass.utils.qthreading._R1</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#magicclass.utils.qthreading.thread_worker.yielded" title="Permalink to this definition">¶</a></dt>
-<dd><p>Event that will be emitted on yielded.</p>
 </dd></dl>
 
 </dd></dl>

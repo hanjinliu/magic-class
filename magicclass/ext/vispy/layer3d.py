@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import Tuple
 import numpy as np
 from vispy.scene import visuals, ViewBox
 from vispy.visuals import (
@@ -35,6 +36,7 @@ class Image(LayerItem, HasFields):
         contrast_limits: tuple[float, float] | None = None,
         rendering: str = "mip",
         iso_threshold: float | None = None,
+        name: str = "",
         attenuation: float = 1.0,
         cmap: str = "grays",
         gamma: str = 1.0,
@@ -59,6 +61,8 @@ class Image(LayerItem, HasFields):
             gamma=gamma,
             interpolation=interpolation,
         )
+
+        self._name = name
 
         self.contrast_limits = contrast_limits
         self.rendering = rendering
@@ -126,6 +130,10 @@ class Image(LayerItem, HasFields):
         self._cache_lims()
         self._visual.update()
 
+    @property
+    def name(self) -> str:
+        return self._name
+
     def _cache_lims(self):
         self._lims = np.min(self._data), np.max(self._data)
         self.widgets.contrast_limits.min = self._lims[0]
@@ -135,7 +143,7 @@ class Image(LayerItem, HasFields):
 
     # fmt: off
     rendering = vfield(str, options={"choices": RENDERINGS, "value": "mip"})
-    contrast_limits = vfield(tuple[float, float], widget_type=FloatRangeSlider)
+    contrast_limits = vfield(Tuple[float, float], widget_type=FloatRangeSlider)
     iso_threshold = vfield(float, widget_type=FloatSlider)
     gamma = vfield(float, widget_type=FloatSlider, options={"min": 0., "max": 1.})
     attenuation = vfield(float, widget_type=FloatSlider, options={"min": 0., "max": 1.})
@@ -144,8 +152,9 @@ class Image(LayerItem, HasFields):
 
     @contrast_limits.connect
     def _on_constrast_limits_change(self, value):
-        self._visual.clim = value
-        self._visual.update()
+        if hasattr(self, "_visual"):
+            self._visual.clim = value
+            self._visual.update()
 
     @rendering.connect
     def _on_rendering_change(self, value):
@@ -154,8 +163,9 @@ class Image(LayerItem, HasFields):
 
     @iso_threshold.connect
     def _on_iso_threshold_change(self, value):
-        self._visual.threshold = max(value, self._lims[0] + 1e-6)
-        self._visual.update()
+        if hasattr(self, "_visual"):
+            self._visual.threshold = max(value, self._lims[0] + 1e-6)
+            self._visual.update()
 
     @gamma.connect
     def _on_gamma_change(self, value):
@@ -184,6 +194,7 @@ class _SurfaceBase(LayerItem):
         face_color=None,
         edge_color=None,
         shading="none",
+        name: str = "",
         **kwargs,
     ):
         self._viewbox = viewbox
@@ -201,6 +212,11 @@ class _SurfaceBase(LayerItem):
         self.face_color = face_color
 
         self.shading = shading
+        self._name = name
+
+    @property
+    def name(self) -> str:
+        return self._name
 
     def _create_visual(self, data):
         raise NotImplementedError()
@@ -239,6 +255,7 @@ class IsoSurface(_SurfaceBase, HasFields):
         face_color=None,
         edge_color=None,
         shading="smooth",
+        name: str | None = None,
     ):
         data = np.asarray(data)
         data = data.transpose(list(range(data.ndim))[::-1])
@@ -256,6 +273,7 @@ class IsoSurface(_SurfaceBase, HasFields):
             edge_color=edge_color,
             shading=shading,
             iso_threshold=iso_threshold,
+            name=name,
         )
         self._cache_lims()
 
@@ -288,7 +306,7 @@ class IsoSurface(_SurfaceBase, HasFields):
         self._cache_lims()
 
     # fmt: off
-    contrast_limits = vfield(tuple[float, float], widget_type=FloatRangeSlider)
+    contrast_limits = vfield(Tuple[float, float], widget_type=FloatRangeSlider)
     shading = vfield(str, options={"choices": ["none", "float", "smooth"], "value": "smooth"})
     iso_threshold = vfield(float, widget_type=FloatSlider)
     face_color = vfield(Color)
@@ -320,9 +338,15 @@ class Surface(_SurfaceBase, HasFields):
         face_color=None,
         edge_color=None,
         shading="none",
+        name: str | None = None,
     ):
         super().__init__(
-            data, viewbox, face_color=face_color, edge_color=edge_color, shading=shading
+            data,
+            viewbox,
+            face_color=face_color,
+            edge_color=edge_color,
+            shading=shading,
+            name=name,
         )
 
     def _create_visual(self, data):

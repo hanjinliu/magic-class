@@ -1,4 +1,7 @@
 from magicclass import magicclass, PopUpMode
+import pytest
+
+from magicclass._gui.mgui_ext import PushButtonPlus
 
 def _make_class(mode: PopUpMode, widget_type="none"):
     @magicclass(popup_mode=mode, widget_type=widget_type)
@@ -15,20 +18,28 @@ def _make_class(mode: PopUpMode, widget_type="none"):
 
     return A
 
-def test_all_works():
-    for mode in PopUpMode._member_names_:
-        if mode == "dock":
-            ui = _make_class(mode, "mainwindow")()
-        elif mode == "dialog":
-            # TODO: how to test dialog?
-            continue
-        else:
-            ui = _make_class(mode)()
-        ui.show(run=False)
-        ui[1].changed()
-        ui.B[0].changed()
-        ui.B[1].changed()
-        ui.close()
+@pytest.mark.parametrize("popup_mode", PopUpMode._member_names_)
+def test_all_works(popup_mode):
+    if popup_mode == "dock":
+        ui = _make_class(popup_mode, "mainwindow")()
+    elif popup_mode == "dialog":
+        # TODO: how to test dialog?
+        return
+    elif popup_mode == "parentsub":
+        ui = _make_class(popup_mode, "subwindows")()
+    else:
+        ui = _make_class(popup_mode)()
+    ui.show(run=False)
+    for btn in [ui["a1"], ui["b1"], ui.B["b2"]]:
+        btn: PushButtonPlus
+        btn.changed()
+        assert btn.mgui.visible
+        btn.mgui.call_button.changed()
+        assert not btn.mgui.visible
+        btn.changed()
+        assert btn.mgui.visible
+
+    ui.close()
 
 
 def _make_class_2(mode: PopUpMode):

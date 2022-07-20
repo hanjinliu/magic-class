@@ -59,13 +59,7 @@ class FreeWidget(Widget):
         self.central_widget = None
 
     def set_contextmenu(self, contextmenugui: ContextMenuGui):
-        from .._gui import ContextMenuGui
-
-        if not isinstance(contextmenugui, ContextMenuGui):
-            raise TypeError
-        from .._gui.utils import set_context_menu
-
-        set_context_menu(contextmenugui, self)
+        contextmenugui._set_magic_context_menu(self)
 
     @property
     def __magicclass_parent__(self) -> BaseGui | None:
@@ -249,13 +243,7 @@ class _RangedWidgetProtocol(QBaseWidget, _protocols.RangedWidgetProtocol):
         self._qwidget._mgui_set_adaptive_step(value)
 
 
-RANGED_WIDGET_OPTIONS = VALUE_WIDGET_OPTIONS | frozenset(
-    {
-        "min",
-        "max",
-        "step",
-    }
-)
+RANGED_WIDGET_OPTIONS = VALUE_WIDGET_OPTIONS | frozenset({"min", "max", "step"})
 
 
 class _MagicRangedWidgetMeta(_MagicValueWidgetMeta):

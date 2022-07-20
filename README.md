@@ -3,7 +3,7 @@
 
 # magic-class
 
-![](Figs/Example.gif)
+![](https://github.com/hanjinliu/magic-class/blob/main/Figs/Example.gif)
 
 `magic-class` makes GUI development as easy as daily coding by converting well-typed Python class directly into GUI. It is powered by [magicgui](https://github.com/napari/magicgui) and has smooth interface with [napari](https://github.com/napari/napari). `magic-class` is also implemented with useful widgets such as `matplotlib` figure canvas, logger widget and color edit.
 
@@ -84,7 +84,7 @@ You can continue analysis in console.
 ui.plot()
 ```
 
-For people doing image analysis, it can added to a `napari` viewer as a dock widget.
+For people doing image analysis, it can be added to a `napari` viewer as a dock widget.
 
 ```python
 import napari

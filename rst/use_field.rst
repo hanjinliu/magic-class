@@ -220,6 +220,9 @@ Now, ``LabeledLineEdit`` can be used as ``field`` or ``vfield``.
 Use Fields in Non-GUI Classes
 =============================
 
+HasFields trait
+---------------
+
 ``MagicField`` and ``FieldGroup`` are also designed for general usage of widgets.
 This means that essentially you can use ``vfield`` instead of ``property`` for
 getting or setting parameters.
@@ -257,3 +260,37 @@ The ``widgets`` interface becomes available by subclassing ``HasFields`` class.
 .. note::
 
     Actually, ``FieldGroup`` is also a subclass of ``HasFields``.
+
+Dataclass-like Usage
+--------------------
+
+A typical way to use ``HasFields`` is to combine it with ``@dataclass``.
+
+.. code-block:: python
+
+    from dataclasses import dataclass
+    from magicclass import HasFields, vfield
+
+    @dataclass
+    class A(HasFields):
+        x: int
+        y: int = vfield(int)
+        z: str = vfield("abc")
+
+Unfortunately, however, ``@dataclass`` does not detect ``MagicField`` as a field.
+
+``magicclass`` provides a ``dataclass`` like decorator for this purpose.
+
+.. code-block:: python
+
+    from magicclass import dataclass_gui, vfield
+
+    @dataclass_gui
+    class A:
+        x: int
+        y: int = vfield(int)
+        z: str = vfield("abc")
+
+    a = A()  # OK
+    a = A(10, y=20, z="str")  # OK
+    a.widgets  # OK

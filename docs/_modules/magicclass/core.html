@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.core &mdash; magic-class 0.6.4 documentation</title>
+  <title>magicclass.core &mdash; magic-class 0.6.7.dev2 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.4
+                0.6.7.dev2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -79,7 +79,6 @@
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span> <span class="k">as</span> <span class="n">functools_wraps</span>
 <span class="kn">import</span> <span class="nn">inspect</span>
-<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">is_dataclass</span>
 <span class="kn">from</span> <span class="nn">weakref</span> <span class="kn">import</span> <span class="n">WeakValueDictionary</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span>
 
@@ -120,6 +119,7 @@
     <span class="kn">from</span> <span class="nn">._gui._function_gui</span> <span class="kn">import</span> <span class="n">FunctionGuiPlus</span>
     <span class="kn">from</span> <span class="nn">.types</span> <span class="kn">import</span> <span class="n">WidgetTypeStr</span><span class="p">,</span> <span class="n">PopUpModeStr</span><span class="p">,</span> <span class="n">ErrorModeStr</span>
     <span class="kn">from</span> <span class="nn">.help</span> <span class="kn">import</span> <span class="n">HelpWidget</span>
+    <span class="kn">from</span> <span class="nn">macrokit</span> <span class="kn">import</span> <span class="n">Macro</span>
 
 <span class="n">_BASE_CLASS_SUFFIX</span> <span class="o">=</span> <span class="s2">&quot;_Base&quot;</span>
 
@@ -214,8 +214,6 @@
     <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">[</span><span class="n">ClassGui</span><span class="p">]:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;magicclass can only wrap classes, not </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">is_dataclass</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;dataclass is not compatible with magicclass.&quot;</span><span class="p">)</span>
 
         <span class="n">class_gui</span> <span class="o">=</span> <span class="n">_TYPE_MAP</span><span class="p">[</span><span class="n">widget_type</span><span class="p">]</span>
 
@@ -472,8 +470,6 @@
     <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">[</span><span class="n">menugui_class</span><span class="p">]:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;magicclass can only wrap classes, not </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">is_dataclass</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;dataclass is not compatible with magicclass.&quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">MagicTemplate</span><span class="p">):</span>
             <span class="n">check_override</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
@@ -598,14 +594,14 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="s2">&quot;mgui&quot;</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Widget </span><span class="si">{</span><span class="n">widget</span><span class="si">}</span><span class="s2"> does not have FunctionGui inside it.&quot;</span><span class="p">)</span>
 
-    <span class="kn">from</span> <span class="nn">._gui._base</span> <span class="kn">import</span> <span class="n">_build_mgui</span>
+    <span class="k">if</span> <span class="n">widget</span><span class="o">.</span><span class="n">mgui</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">widget</span><span class="o">.</span><span class="n">mgui</span>
 
+    <span class="kn">from</span> <span class="nn">._gui._base</span> <span class="kn">import</span> <span class="n">_build_mgui</span><span class="p">,</span> <span class="n">_create_gui_method</span>
+
+    <span class="n">func</span> <span class="o">=</span> <span class="n">_create_gui_method</span><span class="p">(</span><span class="n">ui</span><span class="p">,</span> <span class="n">func</span><span class="p">)</span>
     <span class="n">mgui</span> <span class="o">=</span> <span class="n">_build_mgui</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">ui</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">mgui</span></div>
-
-
-<span class="c1"># def capitalize(cls: type[MagicTemplate]):</span>
-<span class="c1">#     ...</span>
 
 
 <div class="viewcode-block" id="redo"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.core.redo">[docs]</a><span class="k">def</span> <span class="nf">redo</span><span class="p">(</span><span class="n">ui</span><span class="p">:</span> <span class="n">MagicTemplate</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -621,21 +617,86 @@
 <span class="sd">        By default the last operation will be redone.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">line</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">macro</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
-    <span class="n">line</span><span class="o">.</span><span class="n">eval</span><span class="p">({</span><span class="s2">&quot;ui&quot;</span><span class="p">:</span> <span class="n">ui</span><span class="p">})</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">line</span><span class="o">.</span><span class="n">eval</span><span class="p">({</span><span class="s2">&quot;ui&quot;</span><span class="p">:</span> <span class="n">ui</span><span class="p">})</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Caused by &gt;&gt;&gt; </span><span class="si">{</span><span class="n">line</span><span class="si">}</span><span class="s2">. </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">raise</span> <span class="n">e</span>
     <span class="k">return</span> <span class="kc">None</span></div>
 
 
-<span class="c1"># def update_widget(ui: MagicTemplate) -&gt; None:</span>
-<span class="c1">#     from macrokit import Head, Expr, Mock</span>
-<span class="c1">#     for expr in ui.macro:</span>
-<span class="c1">#         if expr.head == Head.call:</span>
-<span class="c1">#             target = expr.args[0]</span>
-<span class="c1">#             target_widget = Expr(Head.getitem, [target.args[0], str(target.args[1])])</span>
-<span class="c1">#             mock = Mock(target_widget)</span>
-<span class="c1">#             e = Expr(Head.call, [mock.mgui.update] + expr.args[1:])</span>
+<div class="viewcode-block" id="update_widget_state"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.core.update_widget_state">[docs]</a><span class="k">def</span> <span class="nf">update_widget_state</span><span class="p">(</span><span class="n">ui</span><span class="p">:</span> <span class="n">MagicTemplate</span><span class="p">,</span> <span class="n">macro</span><span class="p">:</span> <span class="n">Macro</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Update widget values based on a macro.</span>
 
-<span class="c1">#         elif expr.head == Head.assign:</span>
-<span class="c1">#             expr.eval({}, {str(ui._my_symbol): ui})</span>
+<span class="sd">    This helper function works similar to the ``update_widget`` method of ``FunctionGui``.</span>
+<span class="sd">    In most cases, this function will be used for restoring a state from a macro recorded</span>
+<span class="sd">    before. Value changed signal will not be emitted within this operation.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ui : MagicTemplate</span>
+<span class="sd">        Magic class instance.</span>
+<span class="sd">    macro : Macro or str, optional</span>
+<span class="sd">        An executable macro or string that dictates how GUI will be updated.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">macrokit</span> <span class="kn">import</span> <span class="n">Head</span><span class="p">,</span> <span class="n">Expr</span><span class="p">,</span> <span class="n">Macro</span>
+
+    <span class="k">if</span> <span class="n">macro</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">macro</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">macro</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">macro</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">macro</span>
+        <span class="n">macro</span> <span class="o">=</span> <span class="n">Macro</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">):</span>
+            <span class="n">macro</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">macro</span><span class="p">,</span> <span class="n">Macro</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;The second argument must be a Macro or str, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">macro</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">expr</span> <span class="ow">in</span> <span class="n">macro</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">expr</span><span class="o">.</span><span class="n">head</span> <span class="o">==</span> <span class="n">Head</span><span class="o">.</span><span class="n">call</span><span class="p">:</span>
+            <span class="c1"># ui.func(...)</span>
+            <span class="n">ui_f</span><span class="p">,</span> <span class="o">*</span><span class="n">arguments</span> <span class="o">=</span> <span class="n">expr</span><span class="o">.</span><span class="n">args</span>
+            <span class="n">fname</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">ui_f</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">fname</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">fname</span> <span class="o">!=</span> <span class="s2">&quot;_call_with_return_callback&quot;</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span> <span class="o">=</span> <span class="n">_arguments_to_values</span><span class="p">(</span><span class="n">arguments</span><span class="p">)</span>
+                <span class="n">fgui</span> <span class="o">=</span> <span class="n">get_function_gui</span><span class="p">(</span><span class="n">ui</span><span class="p">,</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span> <span class="o">=</span> <span class="n">_arguments_to_values</span><span class="p">(</span><span class="n">arguments</span><span class="p">)</span>
+                <span class="n">fgui</span> <span class="o">=</span> <span class="n">get_function_gui</span><span class="p">(</span><span class="n">ui</span><span class="p">,</span> <span class="n">fname</span><span class="p">)</span>
+
+            <span class="k">with</span> <span class="n">fgui</span><span class="o">.</span><span class="n">changed</span><span class="o">.</span><span class="n">blocked</span><span class="p">():</span>
+                <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="nb">getattr</span><span class="p">(</span><span class="n">fgui</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
+
+        <span class="k">elif</span> <span class="n">expr</span><span class="o">.</span><span class="n">head</span> <span class="o">==</span> <span class="n">Head</span><span class="o">.</span><span class="n">assign</span><span class="p">:</span>
+            <span class="c1"># ui.field.value = ...</span>
+            <span class="c1"># ui.vfield = ...</span>
+            <span class="n">expr</span><span class="o">.</span><span class="n">eval</span><span class="p">({},</span> <span class="p">{</span><span class="nb">str</span><span class="p">(</span><span class="n">ui</span><span class="o">.</span><span class="n">_my_symbol</span><span class="p">):</span> <span class="n">ui</span><span class="p">})</span>
+
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<span class="k">def</span> <span class="nf">_tuple</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">args</span>
+
+
+<span class="k">def</span> <span class="nf">_arguments_to_values</span><span class="p">(</span><span class="n">arguments</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+    <span class="kn">from</span> <span class="nn">macrokit</span> <span class="kn">import</span> <span class="n">Head</span><span class="p">,</span> <span class="n">Expr</span><span class="p">,</span> <span class="n">symbol</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">arg</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">arguments</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">Expr</span><span class="p">)</span> <span class="ow">and</span> <span class="n">arg</span><span class="o">.</span><span class="n">head</span> <span class="o">==</span> <span class="n">Head</span><span class="o">.</span><span class="n">kw</span><span class="p">:</span>
+            <span class="k">break</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">arguments</span><span class="p">[:</span><span class="n">i</span><span class="p">]</span>
+    <span class="n">kwargs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Expr</span><span class="p">]</span> <span class="o">=</span> <span class="n">arguments</span><span class="p">[</span><span class="n">i</span><span class="p">:]</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">Expr</span><span class="p">(</span><span class="n">Head</span><span class="o">.</span><span class="n">call</span><span class="p">,</span> <span class="p">[</span><span class="n">_tuple</span><span class="p">]</span> <span class="o">+</span> <span class="n">args</span><span class="p">)</span><span class="o">.</span><span class="n">eval</span><span class="p">({</span><span class="n">symbol</span><span class="p">(</span><span class="n">_tuple</span><span class="p">):</span> <span class="n">_tuple</span><span class="p">})</span>
+    <span class="n">kwargs</span> <span class="o">=</span> <span class="n">Expr</span><span class="p">(</span><span class="n">Head</span><span class="o">.</span><span class="n">call</span><span class="p">,</span> <span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">+</span> <span class="n">kwargs</span><span class="p">)</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span>
 
 
 <div class="viewcode-block" id="Parameters"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.core.Parameters">[docs]</a><span class="k">class</span> <span class="nc">Parameters</span><span class="p">:</span>

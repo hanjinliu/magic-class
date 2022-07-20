@@ -19,6 +19,7 @@ from .mouse_event import MouseClickEvent
 from .._shared_utils import convert_color_code, to_rgba
 from .._doc import write_docs
 from ...widgets.utils import FreeWidget
+from ..._app import get_app
 
 BOTTOM = "bottom"
 LEFT = "left"
@@ -29,6 +30,12 @@ class LayerList(MutableSequence[LayerItem]):
 
     def __init__(self, parent: HasDataItems):
         self.parent = parent
+
+    def __repr__(self) -> str:
+        if len(self) == 0:
+            return f"{type(self).__name__}()"
+        s = ",\n\t".join(repr(layer) for layer in self)
+        return f"{type(self).__name__}(\n\t{s}\n)"
 
     def __getitem__(self, key: int | str) -> LayerItem:
         if isinstance(key, int):
@@ -85,11 +92,11 @@ class HasDataItems:
         return LayerList(self)
 
     @overload
-    def add_curve(self, x: Sequence[float], **kwargs):
+    def add_curve(self, x: Sequence[float], **kwargs) -> Curve:
         ...
 
     @overload
-    def add_curve(self, x: Sequence[float], y: Sequence[float], **kwargs):
+    def add_curve(self, x: Sequence[float], y: Sequence[float], **kwargs) -> Curve:
         ...
 
     @write_docs
@@ -105,23 +112,16 @@ class HasDataItems:
         lw: float = 1,
         ls: str = "-",
         symbol=None,
-    ):
+    ) -> Curve:
         """
         Add a line plot like ``plt.plot(x, y)``.
 
         Parameters
         ----------
-        {x}
-        {y}
-        {face_color}
-        {edge_color}
-        {color}
+        {x}{y}{face_color}{edge_color}{color}
         size: float, default is 7
             Symbol size.
-        {name}
-        {lw}
-        {ls}
-        {symbol}
+        {name}{lw}{ls}{symbol}
 
         Returns
         -------
@@ -146,11 +146,11 @@ class HasDataItems:
         return item
 
     @overload
-    def add_scatter(self, x: Sequence[float], **kwargs):
+    def add_scatter(self, x: Sequence[float], **kwargs) -> Scatter:
         ...
 
     @overload
-    def add_scatter(self, x: Sequence[float], y: Sequence[float], **kwargs):
+    def add_scatter(self, x: Sequence[float], y: Sequence[float], **kwargs) -> Scatter:
         ...
 
     @write_docs
@@ -166,23 +166,16 @@ class HasDataItems:
         lw: float = 1,
         ls: str = "-",
         symbol="o",
-    ):
+    ) -> Scatter:
         """
         Add scatter plot like ``plt.scatter(x, y)``.
 
         Parameters
         ----------
-        {x}
-        {y}
-        {face_color}
-        {edge_color}
-        {color}
+        {x}{y}{face_color}{edge_color}{color}
         size: float, default is 7
             Symbol size.
-        {name}
-        {lw}
-        {ls}
-        {symbol}
+        {name}{lw}{ls}{symbol}
 
         Returns
         -------
@@ -219,7 +212,7 @@ class HasDataItems:
         name: str | None = None,
         lw: float = 1,
         ls: str = "-",
-    ):
+    ) -> Histogram:
         """
         Add histogram like ``plt.hist(data)``.
 
@@ -234,12 +227,7 @@ class HasDataItems:
         density : bool, default is False
             If true, plot the density instead of the counts. See ``np.histogram`` for
             detail.
-        {face_color}
-        {edge_color}
-        {color}
-        {name}
-        {lw}
-        {ls}
+        {face_color}{edge_color}{color}{name}{lw}{ls}
 
         Returns
         -------
@@ -263,11 +251,11 @@ class HasDataItems:
         return item
 
     @overload
-    def add_bar(self, x: Sequence[float], **kwargs):
+    def add_bar(self, x: Sequence[float], **kwargs) -> BarPlot:
         ...
 
     @overload
-    def add_bar(self, x: Sequence[float], y: Sequence[float], **kwargs):
+    def add_bar(self, x: Sequence[float], y: Sequence[float], **kwargs) -> BarPlot:
         ...
 
     @write_docs
@@ -282,22 +270,16 @@ class HasDataItems:
         name: str | None = None,
         lw: float = 1,
         ls: str = "-",
-    ):
+    ) -> BarPlot:
         """
         Add a bar plot like ``plt.bar(x, y)``.
 
         Parameters
         ----------
-        {x}
-        {y}
+        {x}{y}
         width : float, default is 0.6
             Width of each bar.
-        {face_color}
-        {edge_color}
-        {color}
-        {name}
-        {lw}
-        {ls}
+        {face_color}{edge_color}{color}{name}{lw}{ls}
 
         Returns
         -------
@@ -321,11 +303,13 @@ class HasDataItems:
         return item
 
     @overload
-    def add_fillbetween(self, x: Sequence[float], **kwargs):
+    def add_fillbetween(self, x: Sequence[float], **kwargs) -> FillBetween:
         ...
 
     @overload
-    def add_fillbetween(self, x: Sequence[float], y: Sequence[float], **kwargs):
+    def add_fillbetween(
+        self, x: Sequence[float], y: Sequence[float], **kwargs
+    ) -> FillBetween:
         ...
 
     @write_docs
@@ -340,7 +324,7 @@ class HasDataItems:
         name: str | None = None,
         lw: float = 1,
         ls: str = "-",
-    ):
+    ) -> FillBetween:
         x, y1 = _check_xy(x, y1)
         name = self._find_unique_name(name or "FillBetween")
         face_color, edge_color = _check_colors(face_color, edge_color, color)
@@ -366,7 +350,7 @@ class HasDataItems:
         name: str | None = None,
         lw: float = 1,
         ls: str = "-",
-    ):
+    ) -> InfLine:
         ...
 
     @overload
@@ -378,7 +362,7 @@ class HasDataItems:
         name: str | None = None,
         lw: float = 1,
         ls: str = "-",
-    ):
+    ) -> InfLine:
         ...
 
     def add_infline(
@@ -389,7 +373,7 @@ class HasDataItems:
         lw: float = 1,
         ls: str = "-",
         **kwargs,
-    ):
+    ) -> InfLine:
         if kwargs:
             if args:
                 raise TypeError(
@@ -430,16 +414,16 @@ class HasDataItems:
         self._add_item(item)
 
     @overload
-    def add_text(self, x: float, y: float, text: str, **kwargs):
+    def add_text(self, x: float, y: float, text: str, **kwargs) -> TextGroup:
         ...
 
     @overload
     def add_text(
         self, x: Sequence[float], y: Sequence[float], text: Sequence[str], **kwargs
-    ):
+    ) -> TextGroup:
         ...
 
-    def add_text(self, x, y, text, color=None, name=None):
+    def add_text(self, x, y, text, color=None, name=None) -> TextGroup:
         if np.isscalar(x) and np.isscalar(y):
             x = [x]
             y = [y]
@@ -649,6 +633,7 @@ class PlotItem(HasViewBox):
 
     @property
     def title(self) -> str:
+        """Title text of the graph."""
         return self.pgitem.titleLabel.text
 
     @title.setter
@@ -761,6 +746,7 @@ class ImageItem(HasViewBox):
 
     @property
     def title(self) -> str:
+        """Title text of the graph."""
         return self._title.text
 
     @title.setter
@@ -769,6 +755,7 @@ class ImageItem(HasViewBox):
 
     @property
     def xlabel(self) -> str:
+        """Label of X-axis."""
         return self._xlabel.text
 
     @xlabel.setter
@@ -777,6 +764,7 @@ class ImageItem(HasViewBox):
 
     @property
     def ylabel(self) -> str:
+        """Label of Y-axis."""
         return self._ylabel.text
 
     @xlabel.setter
@@ -790,6 +778,7 @@ class ImageItem(HasViewBox):
 
     @property
     def lock_contrast_limits(self):
+        """True if enable auto-contrast."""
         return self._lock_contrast_limits
 
     @lock_contrast_limits.setter
@@ -875,11 +864,10 @@ class HasBackground(FreeWidget):
 
 
 class QtPlotCanvas(HasBackground, PlotItem):
-    """
-    A 1-D data viewer that have similar API as napari Viewer.
-    """
+    """A 1-D data viewer that have similar API as napari Viewer."""
 
     def __init__(self, **kwargs):
+        app = get_app()
         # prepare widget
         PlotItem.__init__(self)
         self.layoutwidget = pg.GraphicsLayoutWidget()
@@ -891,7 +879,10 @@ class QtPlotCanvas(HasBackground, PlotItem):
 
 
 class QtImageCanvas(HasBackground, ImageItem):
+    """A 2-D image viewer that have similar API as napari Viewer."""
+
     def __init__(self, lock_contrast_limits: bool = False, **kwargs):
+        app = get_app()
         # prepare widget
         ImageItem.__init__(self, lock_contrast_limits=lock_contrast_limits)
         self.layoutwidget = pg.GraphicsLayoutWidget()
@@ -912,7 +903,10 @@ class QtImageCanvas(HasBackground, ImageItem):
 
 
 class Qt2YPlotCanvas(HasBackground):
+    """A plot canvas with two Y-axis."""
+
     def __init__(self, **kwargs):
+        app = get_app()
         self.layoutwidget = pg.GraphicsLayoutWidget()
 
         item_l = PlotItem()
@@ -952,8 +946,8 @@ class _MultiPlot(HasBackground, Generic[_C]):
 
     def __init__(
         self,
-        nrows: int = 0,
-        ncols: int = 0,
+        nrows: int = 1,
+        ncols: int = 1,
         sharex: bool = False,
         sharey: bool = False,
         **kwargs,
@@ -964,15 +958,16 @@ class _MultiPlot(HasBackground, Generic[_C]):
 
         Parameters
         ----------
-        nrows : int, default is 0
+        nrows : int, default is 1
             Initial rows of axes.
-        ncols : int, default is 0
+        ncols : int, default is 1
             Initail columns of axes.
         sharex : bool, default is False
             If true, all the x-axes will be linked.
         sharey : bool, default is False
             If true, all the y-axes will be linked.
         """
+        app = get_app()
         self.layoutwidget = pg.GraphicsLayoutWidget()
         self._axes: list[_C] = []
         self._sharex = sharex

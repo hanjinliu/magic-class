@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.ext.dask package &mdash; magic-class 0.6.4 documentation</title>
+  <title>magicclass.ext.dask package &mdash; magic-class 0.6.7.dev2 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/columns.css" type="text/css" />
@@ -31,7 +31,7 @@
             <a href="../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.4
+                0.6.7.dev2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -142,7 +142,7 @@ connecting a new callback. This can also be provided at connection time using
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.ext.dask.progress.dask_thread_worker">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.dask.progress.</span></span><span class="sig-name descname"><span class="pre">dask_thread_worker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_errors</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">progress</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">ProgressDict</span> <span class="p"><span class="pre">|</span></span> <span class="pre">bool</span> <span class="p"><span class="pre">|</span></span> <span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/dask/progress.html#dask_thread_worker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.dask.progress.dask_thread_worker" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="magicclass.utils.html#magicclass.utils.qthreading.thread_worker" title="magicclass.utils.qthreading.thread_worker"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.utils.qthreading.thread_worker</span></code></a></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.utils.qthreading.thread_worker</span></code></p>
 <p>Create a dask's worker in a superqt/napari style.</p>
 <p>This thread worker class can monitor the progress of dask computation.
 Callback function connected to <code class="docutils literal notranslate"><span class="pre">computed</span></code> signal will get called when any one
@@ -166,7 +166,7 @@ parameter since dask progress bar knows it.</p>
 </div>
 <dl class="py property">
 <dt class="sig sig-object py" id="magicclass.ext.dask.progress.dask_thread_worker.computed">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">computed</span></span><em class="property"><span class="pre">:</span> <span class="pre">magicclass.utils.qthreading.Callbacks</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#magicclass.ext.dask.progress.dask_thread_worker.computed" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">computed</span></span><em class="property"><span class="pre">:</span> <span class="pre">magicclass.utils.qthreading.CallbackList</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#magicclass.ext.dask.progress.dask_thread_worker.computed" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>

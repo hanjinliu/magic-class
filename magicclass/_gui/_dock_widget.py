@@ -20,7 +20,7 @@ class QtDockWidget(_QDockWidget):
         *,
         name: str = "",
         area: str = "right",
-        allowed_areas: list[str] = None,
+        allowed_areas: list[str] | None = None,
     ):
         super().__init__(name, parent)
         areas = self.__class__.areas

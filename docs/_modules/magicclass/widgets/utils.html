@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.widgets.utils &mdash; magic-class 0.6.4 documentation</title>
+  <title>magicclass.widgets.utils &mdash; magic-class 0.6.5.dev0 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.4
+                0.6.5.dev0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -157,17 +157,6 @@
         <span class="k">if</span> <span class="n">parent</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_magicclass_parent_ref</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span></div>
-
-
-<span class="c1"># def magicwidget(qcls: type[QWidget]):</span>
-<span class="c1">#     from ..utils import iter_members</span>
-
-<span class="c1">#     for name, attr in iter_members(qcls):</span>
-
-<span class="c1">#         def _(self: FreeWidget, *args, **kwargs):</span>
-<span class="c1">#             return attr(self.central_widget, *args, **kwargs)</span>
-
-<span class="c1">#     cls = type(qcls.__name__, (FreeWidget,), {})</span>
 
 
 <div class="viewcode-block" id="merge_super_sigs"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.utils.merge_super_sigs">[docs]</a><span class="k">def</span> <span class="nf">merge_super_sigs</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>

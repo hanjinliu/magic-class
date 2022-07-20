@@ -1,6 +1,6 @@
 from magicclass import magicclass, magicmenu, set_options, do_not_record, vfield, get_function_gui
 from magicclass.types import Bound
-from magicclass.utils.qthreading import thread_worker
+from magicclass.utils import thread_worker
 import time
 from unittest.mock import MagicMock
 
@@ -10,6 +10,7 @@ def test_worker_basic():
     class A:
         @thread_worker
         def f(self):
+            """doc"""
             time.sleep(0.01)
 
         @f.returned.connect
@@ -17,6 +18,7 @@ def test_worker_basic():
             mock()
 
     ui = A()
+    assert ui["f"].tooltip == "doc"
     ui.f()
     mock.assert_called_once()
     assert str(ui.macro[-1]) == "ui.f()"
@@ -190,3 +192,63 @@ def test_error(qtbot):
     with qtbot.capture_exceptions():
         ui.f(20)
     assert str(ui.macro[-1]) == "ui.f(n=3)"
+
+def test_callback():
+    @magicclass
+    class A:
+        def __init__(self):
+            self._func_returned = []
+            self._gen_yielded = []
+
+        @thread_worker
+        def func(self):
+            local = 0
+
+            @thread_worker.to_callback
+            def _returned():
+                self._func_returned.append(local)
+                self.dummy()
+            return _returned
+
+        @thread_worker
+        def gen(self):
+            @thread_worker.to_callback
+            def _yielded():
+                self._gen_yielded.append(t)
+                self.dummy()
+            t = 0
+            for _ in range(10):
+                yield _yielded
+                t += 1
+
+        def dummy(self):
+            pass
+
+    ui = A()
+    ui.func()
+    assert ui._func_returned == [0]
+    assert "dummy" not in str(ui.macro)
+    ui.gen()
+    assert ui._gen_yielded == [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    assert "dummy" not in str(ui.macro)
+
+def test_callback_partial():
+    @magicclass
+    class A:
+        def __init__(self):
+            self._gen_yielded = []
+
+        @thread_worker
+        def gen(self):
+            t = 0
+            for _ in range(10):
+                yield self._callback(t)
+                t += 1
+
+        @thread_worker.to_callback
+        def _callback(self, x):
+            self._gen_yielded.append(x)
+
+    ui = A()
+    ui.gen()
+    assert ui._gen_yielded == [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]

@@ -18,7 +18,7 @@ from ._base import (
     nested_function_gui_callback,
     _inject_recorder,
 )
-from .utils import copy_class, format_error, set_context_menu
+from .utils import format_error, connect_magicclasses
 from .menu_gui import ContextMenuGui, MenuGui, MenuGuiBase, insert_action_like
 
 from ..signature import get_additional_option
@@ -124,8 +124,6 @@ class ToolBarGui(ContainerLikeGui):
             try:
                 if isinstance(attr, type):
                     # Nested magic-menu
-                    if cls.__name__ not in attr.__qualname__.split("."):
-                        attr = copy_class(attr, ns=cls)
                     widget = attr()
                     object.__setattr__(self, name, widget)
 
@@ -140,9 +138,7 @@ class ToolBarGui(ContainerLikeGui):
                     widget[0].bind(self)  # set self to the first argument
 
                 elif isinstance(widget, BaseGui):
-                    widget.__magicclass_parent__ = self
-                    self.__magicclass_children__.append(widget)
-                    widget._my_symbol = Symbol(name)
+                    connect_magicclasses(self, widget, name)
 
                     if isinstance(widget, MenuGui):
                         tb = ToolButtonPlus(widget.name)
@@ -153,7 +149,7 @@ class ToolBarGui(ContainerLikeGui):
 
                     elif isinstance(widget, ContextMenuGui):
                         # Add context menu to toolbar
-                        set_context_menu(widget, self)
+                        widget._set_magic_context_menu(self)
                         _hist.append((name, type(attr), "ContextMenuGui"))
 
                     elif isinstance(widget, ToolBarGui):
@@ -184,6 +180,13 @@ class ToolBarGui(ContainerLikeGui):
                                 )
                             continue
                         widget = self._create_widget_from_method(widget)
+
+                        # contextmenu
+                        contextmenu = get_additional_option(attr, "context_menu", None)
+                        if contextmenu is not None:
+                            contextmenu: ContextMenuGui
+                            contextmenu._set_magic_context_menu(widget)
+                            connect_magicclasses(self, contextmenu, contextmenu.name)
 
                     elif hasattr(widget, "__magicclass_parent__") or hasattr(
                         widget.__class__, "__magicclass_parent__"

@@ -1,4 +1,4 @@
-from magicclass import magicclass, magictoolbar, magicmenu, MagicTemplate
+from magicclass import magicclass, magictoolbar, magiccontext, magicmenu, MagicTemplate
 from unittest.mock import MagicMock
 from pathlib import Path
 from types import MethodType
@@ -253,6 +253,9 @@ class Main:
     @magicmenu
     class Menu:
         menu1 = Menu1
+    @magiccontext
+    class ContextMenu:
+        def g(self): ...
     MyWidget = MyWidget
 
 def test_names():
@@ -281,3 +284,16 @@ def test_default_init():
 
     ui = B(param=10)
     assert ui.param == 10
+
+def test_contextmenu_injection():
+    @magicclass
+    class A:
+        def f(self): ...
+        @magiccontext(into=f)
+        class X:
+            def g(self):
+                ...
+
+    ui = A()
+    ui.X.g()
+    assert str(ui.macro[-1]) == "ui.X.g()"
