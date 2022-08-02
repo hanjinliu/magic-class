@@ -23,7 +23,7 @@ class QtTracebackDialog(QDialog):
         self._text = QTextEdit(self)
         self._text.setReadOnly(True)
         self._text.setFontFamily(_FONT)
-        self._text.setLineWrapMode(QTextEdit.NoWrap)
+        self._text.setLineWrapMode(QTextEdit.LineWrapMode.NoWrap)
         layout.addWidget(self._text)
 
         self.resize(600, 400)

@@ -1,4 +1,4 @@
-from magicclass import magicclass, magicmenu, set_options, defaults, redo
+from magicclass import magicclass, magicmenu, set_options, defaults, repeat
 from enum import Enum
 from pathlib import Path
 from datetime import datetime, date, time
@@ -132,7 +132,7 @@ def test_init():
     ui = A()
     assert len(ui.macro) == 1
 
-def test_redo():
+def test_repeat():
     @magicclass
     class A:
         def f(self):
@@ -141,9 +141,9 @@ def test_redo():
             pass
     ui = A()
     ui.f()
-    redo(ui)
+    repeat(ui)
     ui.g(2)
-    redo(ui)
+    repeat(ui)
     assert str(ui.macro[1]) == "ui.f()"
     assert str(ui.macro[2]) == "ui.f()"
     assert str(ui.macro[3]) == "ui.g(a=2)"

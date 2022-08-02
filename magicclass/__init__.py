@@ -8,7 +8,7 @@ from .core import (
     Parameters,
     build_help,
     get_function_gui,
-    redo,
+    repeat,
     update_widget_state,
 )
 
@@ -38,7 +38,7 @@ __all__ = [
     "Parameters",
     "build_help",
     "get_function_gui",
-    "redo",
+    "repeat",
     "update_widget_state",
     "set_options",
     "set_design",
@@ -63,11 +63,11 @@ __all__ = [
 
 
 def __getattr__(key: str):
-    if key == "click":
-        import warnings
+    import warnings
 
+    if key == "click":
         warnings.warn(
-            "Function click is moving to magicclass.utils and will be deleted from "
+            "Function `click` is moving to magicclass.utils and will be deleted from "
             "magicclass namespace. Please 'from magicclass.utils import click'.",
             DeprecationWarning,
             stacklevel=2,
@@ -75,4 +75,15 @@ def __getattr__(key: str):
         from .utils import click
 
         return click
+    elif key == "redo":
+        warnings.warn(
+            "Function `redo` is deprecated because its name is confusing. Please "
+            "use `repeat` instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        from .core import repeat
+
+        return repeat
+
     raise AttributeError(f"module {__name__!r} has no attribute {key!r}")
