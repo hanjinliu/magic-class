@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.ext.vispy.widgets3d &mdash; magic-class 0.6.4.dev1 documentation</title>
+  <title>magicclass.ext.vispy.widgets3d &mdash; magic-class 0.6.8.dev0 documentation</title>
       <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.4.dev1
+                0.6.8.dev0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
@@ -83,11 +83,13 @@
 
 <span class="kn">from</span> <span class="nn">.layer3d</span> <span class="kn">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">IsoSurface</span><span class="p">,</span> <span class="n">Surface</span>
 <span class="kn">from</span> <span class="nn">.layerlist</span> <span class="kn">import</span> <span class="n">LayerList</span>
+<span class="kn">from</span> <span class="nn">._base</span> <span class="kn">import</span> <span class="n">SceneCanvas</span><span class="p">,</span> <span class="n">HasViewBox</span><span class="p">,</span> <span class="n">MultiPlot</span>
+
 <span class="kn">from</span> <span class="nn">...widgets</span> <span class="kn">import</span> <span class="n">FreeWidget</span>
 <span class="kn">from</span> <span class="nn">...types</span> <span class="kn">import</span> <span class="n">Color</span>
 
 
-<div class="viewcode-block" id="Vispy3DCanvas"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.widgets3d.Vispy3DCanvas">[docs]</a><span class="k">class</span> <span class="nc">Vispy3DCanvas</span><span class="p">(</span><span class="n">FreeWidget</span><span class="p">):</span>
+<div class="viewcode-block" id="Has3DViewBox"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.widgets3d.Has3DViewBox">[docs]</a><span class="k">class</span> <span class="nc">Has3DViewBox</span><span class="p">(</span><span class="n">HasViewBox</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A Vispy canvas for 3-D object visualization.</span>
 
@@ -95,16 +97,9 @@
 <span class="sd">    as a mini-viewer of napari.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_scene</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">SceneCanvas</span><span class="p">()</span>
-        <span class="n">grid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scene</span><span class="o">.</span><span class="n">central_widget</span><span class="o">.</span><span class="n">add_grid</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">add_view</span><span class="p">()</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">viewbox</span><span class="p">:</span> <span class="n">scene</span><span class="o">.</span><span class="n">ViewBox</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">viewbox</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">camera</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">ArcballCamera</span><span class="p">(</span><span class="n">fov</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_layerlist</span> <span class="o">=</span> <span class="n">LayerList</span><span class="p">()</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_scene</span><span class="o">.</span><span class="n">create_native</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">set_widget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scene</span><span class="o">.</span><span class="n">native</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">layers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -116,7 +111,7 @@
         <span class="sd">&quot;&quot;&quot;Return the native camera.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">camera</span>
 
-<div class="viewcode-block" id="Vispy3DCanvas.add_image"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.widgets3d.Vispy3DCanvas.add_image">[docs]</a>    <span class="k">def</span> <span class="nf">add_image</span><span class="p">(</span>
+<div class="viewcode-block" id="Has3DViewBox.add_image"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.widgets3d.Has3DViewBox.add_image">[docs]</a>    <span class="k">def</span> <span class="nf">add_image</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">data</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
@@ -145,7 +140,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">camera</span><span class="o">.</span><span class="n">center</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">image</span></div>
 
-<div class="viewcode-block" id="Vispy3DCanvas.add_isosurface"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.widgets3d.Vispy3DCanvas.add_isosurface">[docs]</a>    <span class="k">def</span> <span class="nf">add_isosurface</span><span class="p">(</span>
+<div class="viewcode-block" id="Has3DViewBox.add_isosurface"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.widgets3d.Has3DViewBox.add_isosurface">[docs]</a>    <span class="k">def</span> <span class="nf">add_isosurface</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">data</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
@@ -170,7 +165,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">camera</span><span class="o">.</span><span class="n">center</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">surface</span></div>
 
-<div class="viewcode-block" id="Vispy3DCanvas.add_surface"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.widgets3d.Vispy3DCanvas.add_surface">[docs]</a>    <span class="k">def</span> <span class="nf">add_surface</span><span class="p">(</span>
+<div class="viewcode-block" id="Has3DViewBox.add_surface"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.widgets3d.Has3DViewBox.add_surface">[docs]</a>    <span class="k">def</span> <span class="nf">add_surface</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">data</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ArrayLike</span><span class="p">,</span> <span class="n">ArrayLike</span><span class="p">]</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ArrayLike</span><span class="p">,</span> <span class="n">ArrayLike</span><span class="p">,</span> <span class="n">ArrayLike</span><span class="p">],</span>
         <span class="o">*</span><span class="p">,</span>
@@ -191,6 +186,28 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">camera</span><span class="o">.</span><span class="n">scale_factor</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">maxs</span> <span class="o">-</span> <span class="n">mins</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">camera</span><span class="o">.</span><span class="n">center</span> <span class="o">=</span> <span class="p">[(</span><span class="n">s1</span> <span class="o">+</span> <span class="n">s0</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span> <span class="k">for</span> <span class="n">s0</span><span class="p">,</span> <span class="n">s1</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">mins</span><span class="p">,</span> <span class="n">maxs</span><span class="p">)]</span>
         <span class="k">return</span> <span class="n">surface</span></div></div>
+
+
+<div class="viewcode-block" id="Vispy3DCanvas"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.widgets3d.Vispy3DCanvas">[docs]</a><span class="k">class</span> <span class="nc">Vispy3DCanvas</span><span class="p">(</span><span class="n">FreeWidget</span><span class="p">,</span> <span class="n">Has3DViewBox</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A Vispy based 3-D canvas.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_scene</span> <span class="o">=</span> <span class="n">SceneCanvas</span><span class="p">()</span>
+        <span class="n">grid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scene</span><span class="o">.</span><span class="n">central_widget</span><span class="o">.</span><span class="n">add_grid</span><span class="p">()</span>
+        <span class="n">_viewbox</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">add_view</span><span class="p">()</span>
+        <span class="n">Has3DViewBox</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_viewbox</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_layerlist</span> <span class="o">=</span> <span class="n">LayerList</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_scene</span><span class="o">.</span><span class="n">create_native</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_widget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scene</span><span class="o">.</span><span class="n">native</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="VispyMulti3DCanvas"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.widgets3d.VispyMulti3DCanvas">[docs]</a><span class="k">class</span> <span class="nc">VispyMulti3DCanvas</span><span class="p">(</span><span class="n">MultiPlot</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A multiple Vispy based 3-D canvas.&quot;&quot;&quot;</span>
+
+    <span class="n">_base_class</span> <span class="o">=</span> <span class="n">Has3DViewBox</span></div>
+
+    <span class="c1"># BUG: the second canvas has wrong offset. Need updates in event object?</span>
 </pre></div>
 
            </div>

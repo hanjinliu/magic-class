@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.ext.vispy.widgets2d &mdash; magic-class 0.6.7.dev2 documentation</title>
+  <title>magicclass.ext.vispy.widgets2d &mdash; magic-class 0.6.8.dev0 documentation</title>
       <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.7.dev2
+                0.6.8.dev0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
@@ -78,29 +78,22 @@
   <h1>Source code for magicclass.ext.vispy.widgets2d</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
 <span class="kn">from</span> <span class="nn">vispy</span> <span class="kn">import</span> <span class="n">scene</span>
 <span class="kn">from</span> <span class="nn">vispy.scene</span> <span class="kn">import</span> <span class="n">visuals</span><span class="p">,</span> <span class="n">ViewBox</span>
-<span class="kn">from</span> <span class="nn">.layer2d</span> <span class="kn">import</span> <span class="n">Curve</span><span class="p">,</span> <span class="n">Scatter</span>
+
+<span class="kn">from</span> <span class="nn">.layer2d</span> <span class="kn">import</span> <span class="n">Curve</span><span class="p">,</span> <span class="n">Scatter</span><span class="p">,</span> <span class="n">Histogram</span>
+<span class="kn">from</span> <span class="nn">._base</span> <span class="kn">import</span> <span class="n">HasViewBox</span><span class="p">,</span> <span class="n">SceneCanvas</span><span class="p">,</span> <span class="n">MultiPlot</span>
+
 <span class="kn">from</span> <span class="nn">.._doc</span> <span class="kn">import</span> <span class="n">write_docs</span>
 <span class="kn">from</span> <span class="nn">...widgets</span> <span class="kn">import</span> <span class="n">FreeWidget</span>
+<span class="kn">from</span> <span class="nn">..._app</span> <span class="kn">import</span> <span class="n">get_app</span>
 
 
-<div class="viewcode-block" id="HasViewBox"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.widgets2d.HasViewBox">[docs]</a><span class="k">class</span> <span class="nc">HasViewBox</span><span class="p">(</span><span class="n">FreeWidget</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid_pos</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">_scene</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">_row</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">_col</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">_scene</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">_scene</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">SceneCanvas</span><span class="p">(</span><span class="n">keys</span><span class="o">=</span><span class="s2">&quot;interactive&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_scene</span> <span class="o">=</span> <span class="n">_scene</span>
-        <span class="n">grid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scene</span><span class="o">.</span><span class="n">central_widget</span><span class="o">.</span><span class="n">add_grid</span><span class="p">(</span><span class="n">pos</span><span class="o">=</span><span class="n">grid_pos</span><span class="p">)</span>
-        <span class="n">grid</span><span class="o">.</span><span class="n">spacing</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="p">:</span> <span class="n">ViewBox</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">add_view</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="n">_row</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="n">_col</span><span class="p">,</span> <span class="n">camera</span><span class="o">=</span><span class="s2">&quot;panzoom&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_items</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_grid</span> <span class="o">=</span> <span class="n">grid</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_scene</span><span class="o">.</span><span class="n">create_native</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">set_widget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scene</span><span class="o">.</span><span class="n">native</span><span class="p">)</span>
-
+<div class="viewcode-block" id="Has2DViewBox"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.widgets2d.Has2DViewBox">[docs]</a><span class="k">class</span> <span class="nc">Has2DViewBox</span><span class="p">(</span><span class="n">HasViewBox</span><span class="p">):</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">xrange</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Range of X dimension.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">camera</span><span class="o">.</span><span class="n">_xlim</span>
 
     <span class="nd">@xrange</span><span class="o">.</span><span class="n">setter</span>
@@ -110,6 +103,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">yrange</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Range of Y dimension.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">camera</span><span class="o">.</span><span class="n">_ylim</span>
 
     <span class="nd">@yrange</span><span class="o">.</span><span class="n">setter</span>
@@ -117,19 +111,7 @@
         <span class="n">y0</span><span class="p">,</span> <span class="n">y1</span> <span class="o">=</span> <span class="n">rng</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">camera</span><span class="o">.</span><span class="n">set_range</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="p">(</span><span class="n">y0</span><span class="p">,</span> <span class="n">y1</span><span class="p">))</span>
 
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">enabled</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">interactive</span>
-
-    <span class="nd">@enabled</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">enabled</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">interactive</span> <span class="o">=</span> <span class="n">value</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">layers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_items</span>
-
-<div class="viewcode-block" id="HasViewBox.add_curve"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.widgets2d.HasViewBox.add_curve">[docs]</a>    <span class="nd">@write_docs</span>
+<div class="viewcode-block" id="Has2DViewBox.add_curve"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.widgets2d.Has2DViewBox.add_curve">[docs]</a>    <span class="nd">@write_docs</span>
     <span class="k">def</span> <span class="nf">add_curve</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -149,17 +131,10 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        {x}</span>
-<span class="sd">        {y}</span>
-<span class="sd">        {face_color}</span>
-<span class="sd">        {edge_color}</span>
-<span class="sd">        {color}</span>
+<span class="sd">        {x}{y}{face_color}{edge_color}{color}</span>
 <span class="sd">        size: float, default is 7</span>
 <span class="sd">            Symbol size.</span>
-<span class="sd">        {name}</span>
-<span class="sd">        {lw}</span>
-<span class="sd">        {ls}</span>
-<span class="sd">        {symbol}</span>
+<span class="sd">        {name}{lw}{ls}{symbol}</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -182,13 +157,13 @@
             <span class="n">ls</span><span class="o">=</span><span class="n">ls</span><span class="p">,</span>
             <span class="n">symbol</span><span class="o">=</span><span class="n">symbol</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_layerlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_layerlist</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">xrange</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">yrange</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">line</span></div>
 
-<div class="viewcode-block" id="HasViewBox.add_scatter"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.widgets2d.HasViewBox.add_scatter">[docs]</a>    <span class="nd">@write_docs</span>
+<div class="viewcode-block" id="Has2DViewBox.add_scatter"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.widgets2d.Has2DViewBox.add_scatter">[docs]</a>    <span class="nd">@write_docs</span>
     <span class="k">def</span> <span class="nf">add_scatter</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -206,15 +181,10 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        {x}</span>
-<span class="sd">        {y}</span>
-<span class="sd">        {face_color}</span>
-<span class="sd">        {edge_color}</span>
-<span class="sd">        {color}</span>
+<span class="sd">        {x}{y}{face_color}{edge_color}{color}</span>
 <span class="sd">        size: float, default is 7</span>
 <span class="sd">            Symbol size.</span>
-<span class="sd">        {name}</span>
-<span class="sd">        {symbol}</span>
+<span class="sd">        {name}{symbol}</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -235,20 +205,49 @@
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
             <span class="n">symbol</span><span class="o">=</span><span class="n">symbol</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_layerlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_layerlist</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">xrange</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">yrange</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">line</span></div></div>
+        <span class="k">return</span> <span class="n">line</span></div>
+
+<div class="viewcode-block" id="Has2DViewBox.add_hist"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.widgets2d.Has2DViewBox.add_hist">[docs]</a>    <span class="nd">@write_docs</span>
+    <span class="k">def</span> <span class="nf">add_hist</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">data</span><span class="p">,</span>
+        <span class="n">bins</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="n">face_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">edge_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Histogram</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">face_color</span><span class="p">,</span> <span class="n">edge_color</span> <span class="o">=</span> <span class="n">_check_colors</span><span class="p">(</span><span class="n">face_color</span><span class="p">,</span> <span class="n">edge_color</span><span class="p">,</span> <span class="n">color</span><span class="p">)</span>
+
+        <span class="n">hist</span> <span class="o">=</span> <span class="n">Histogram</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="p">,</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+            <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span>
+            <span class="n">face_color</span><span class="o">=</span><span class="n">face_color</span><span class="p">,</span>
+            <span class="n">edge_color</span><span class="o">=</span><span class="n">edge_color</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_layerlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hist</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_layerlist</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">xrange</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">hist</span></div></div>
 
 
-<div class="viewcode-block" id="PlotItem"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.widgets2d.PlotItem">[docs]</a><span class="k">class</span> <span class="nc">PlotItem</span><span class="p">(</span><span class="n">HasViewBox</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid_pos</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">_scene</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">grid_pos</span><span class="o">=</span><span class="n">grid_pos</span><span class="p">,</span> <span class="n">_scene</span><span class="o">=</span><span class="n">_scene</span><span class="p">,</span> <span class="n">_row</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">_col</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<div class="viewcode-block" id="PlotItem"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.widgets2d.PlotItem">[docs]</a><span class="k">class</span> <span class="nc">PlotItem</span><span class="p">(</span><span class="n">Has2DViewBox</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">viewbox</span><span class="p">:</span> <span class="n">ViewBox</span><span class="p">):</span>
+        <span class="n">grid</span> <span class="o">=</span> <span class="n">viewbox</span><span class="o">.</span><span class="n">add_grid</span><span class="p">()</span>
+        <span class="n">grid</span><span class="o">.</span><span class="n">spacing</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">_viewbox</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">add_view</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">camera</span><span class="o">=</span><span class="s2">&quot;panzoom&quot;</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">_viewbox</span><span class="p">)</span>
 
         <span class="n">title</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
         <span class="n">title</span><span class="o">.</span><span class="n">height_max</span> <span class="o">=</span> <span class="mi">40</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_grid</span><span class="o">.</span><span class="n">add_widget</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">row</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">col_span</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">grid</span><span class="o">.</span><span class="n">add_widget</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">row</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">col_span</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_title</span> <span class="o">=</span> <span class="n">title</span>
         <span class="n">x_axis</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">AxisWidget</span><span class="p">(</span>
             <span class="n">orientation</span><span class="o">=</span><span class="s2">&quot;bottom&quot;</span><span class="p">,</span>
@@ -262,7 +261,7 @@
         <span class="n">x_axis</span><span class="o">.</span><span class="n">height_max</span> <span class="o">=</span> <span class="mi">80</span>
         <span class="n">x_axis</span><span class="o">.</span><span class="n">stretch</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_x_axis</span> <span class="o">=</span> <span class="n">x_axis</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_grid</span><span class="o">.</span><span class="n">add_widget</span><span class="p">(</span><span class="n">x_axis</span><span class="p">,</span> <span class="n">row</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">grid</span><span class="o">.</span><span class="n">add_widget</span><span class="p">(</span><span class="n">x_axis</span><span class="p">,</span> <span class="n">row</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">x_axis</span><span class="o">.</span><span class="n">link_view</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="p">)</span>
         <span class="n">y_axis</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">AxisWidget</span><span class="p">(</span>
             <span class="n">orientation</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span>
@@ -274,7 +273,7 @@
         <span class="p">)</span>
         <span class="n">y_axis</span><span class="o">.</span><span class="n">width_max</span> <span class="o">=</span> <span class="mi">80</span>
         <span class="n">y_axis</span><span class="o">.</span><span class="n">stretch</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_grid</span><span class="o">.</span><span class="n">add_widget</span><span class="p">(</span><span class="n">y_axis</span><span class="p">,</span> <span class="n">row</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">grid</span><span class="o">.</span><span class="n">add_widget</span><span class="p">(</span><span class="n">y_axis</span><span class="p">,</span> <span class="n">row</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">y_axis</span><span class="o">.</span><span class="n">link_view</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_y_axis</span> <span class="o">=</span> <span class="n">y_axis</span>
 
@@ -311,15 +310,40 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_y_axis</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">axis_label</span> <span class="o">=</span> <span class="n">text</span></div>
 
 
-<div class="viewcode-block" id="ImageItem"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.widgets2d.ImageItem">[docs]</a><span class="k">class</span> <span class="nc">ImageItem</span><span class="p">(</span><span class="n">HasViewBox</span><span class="p">):</span>
+<div class="viewcode-block" id="ImageItem"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.widgets2d.ImageItem">[docs]</a><span class="k">class</span> <span class="nc">ImageItem</span><span class="p">(</span><span class="n">Has2DViewBox</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">lock_contrast_limits</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">grid_pos</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">_scene</span><span class="o">=</span><span class="kc">None</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">viewbox</span><span class="p">:</span> <span class="n">ViewBox</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">lock_contrast_limits</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">grid_pos</span><span class="o">=</span><span class="n">grid_pos</span><span class="p">,</span> <span class="n">_scene</span><span class="o">=</span><span class="n">_scene</span><span class="p">)</span>
+        <span class="n">grid</span> <span class="o">=</span> <span class="n">viewbox</span><span class="o">.</span><span class="n">add_grid</span><span class="p">()</span>
+        <span class="n">grid</span><span class="o">.</span><span class="n">spacing</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">_viewbox</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">add_view</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">camera</span><span class="o">=</span><span class="s2">&quot;panzoom&quot;</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">_viewbox</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">camera</span><span class="o">.</span><span class="n">aspect</span> <span class="o">=</span> <span class="mf">1.0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">camera</span><span class="o">.</span><span class="n">flip</span> <span class="o">=</span> <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_image</span> <span class="o">=</span> <span class="n">visuals</span><span class="o">.</span><span class="n">Image</span><span class="p">(</span><span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">scene</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_lock_contrast_limits</span> <span class="o">=</span> <span class="n">lock_contrast_limits</span>
+
+        <span class="n">title</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+        <span class="n">title</span><span class="o">.</span><span class="n">height_max</span> <span class="o">=</span> <span class="mi">40</span>
+        <span class="n">grid</span><span class="o">.</span><span class="n">add_widget</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">row</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">col_span</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_title</span> <span class="o">=</span> <span class="n">title</span>
+        <span class="n">x_axis</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+        <span class="n">x_axis</span><span class="o">.</span><span class="n">height_min</span> <span class="o">=</span> <span class="mi">35</span>
+        <span class="n">x_axis</span><span class="o">.</span><span class="n">height_max</span> <span class="o">=</span> <span class="mi">40</span>
+        <span class="n">x_axis</span><span class="o">.</span><span class="n">stretch</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_x_axis</span> <span class="o">=</span> <span class="n">x_axis</span>
+        <span class="n">grid</span><span class="o">.</span><span class="n">add_widget</span><span class="p">(</span><span class="n">x_axis</span><span class="p">,</span> <span class="n">row</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">y_axis</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=-</span><span class="mi">90</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+        <span class="n">y_axis</span><span class="o">.</span><span class="n">width_max</span> <span class="o">=</span> <span class="mi">40</span>
+        <span class="n">y_axis</span><span class="o">.</span><span class="n">stretch</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">grid</span><span class="o">.</span><span class="n">add_widget</span><span class="p">(</span><span class="n">y_axis</span><span class="p">,</span> <span class="n">row</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_y_axis</span> <span class="o">=</span> <span class="n">y_axis</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">image</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -328,6 +352,12 @@
     <span class="nd">@image</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">):</span>
         <span class="n">no_image</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image</span><span class="o">.</span><span class="n">_data</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">img</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="s2">&quot;float64&quot;</span><span class="p">:</span>
+                <span class="n">img</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float32&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_image</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock_contrast_limits</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_image</span><span class="o">.</span><span class="n">clim</span> <span class="o">=</span> <span class="s2">&quot;auto&quot;</span>
@@ -346,42 +376,85 @@
 
     <span class="nd">@cmap</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">cmap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_image</span><span class="o">.</span><span class="n">cmap</span> <span class="o">=</span> <span class="n">c</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_image</span><span class="o">.</span><span class="n">cmap</span> <span class="o">=</span> <span class="n">c</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">title</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;The title string.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_title</span><span class="o">.</span><span class="n">text</span>
+
+    <span class="nd">@title</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">title</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_title</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">text</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">xlabel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;The x-label string.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x_axis</span><span class="o">.</span><span class="n">text</span>
+
+    <span class="nd">@xlabel</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">xlabel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_x_axis</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">text</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ylabel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;The y-label string.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y_axis</span><span class="o">.</span><span class="n">text</span>
+
+    <span class="nd">@xlabel</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">ylabel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_y_axis</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">text</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">contrast_limits</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Contrast limits of the image.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image</span><span class="o">.</span><span class="n">clim</span>
+
+    <span class="nd">@contrast_limits</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">contrast_limits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_image</span><span class="o">.</span><span class="n">clim</span> <span class="o">=</span> <span class="n">val</span></div>
 
 
-<div class="viewcode-block" id="VispyPlotCanvas"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.widgets2d.VispyPlotCanvas">[docs]</a><span class="k">class</span> <span class="nc">VispyPlotCanvas</span><span class="p">(</span><span class="n">PlotItem</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A Vispy based 2-D plot canvas for curve, histogram, bar plot etc.&quot;&quot;&quot;</span></div>
+<div class="viewcode-block" id="VispyPlotCanvas"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.widgets2d.VispyPlotCanvas">[docs]</a><span class="k">class</span> <span class="nc">VispyPlotCanvas</span><span class="p">(</span><span class="n">FreeWidget</span><span class="p">,</span> <span class="n">PlotItem</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A Vispy based 2-D plot canvas for curve, histogram, bar plot etc.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">app</span> <span class="o">=</span> <span class="n">get_app</span><span class="p">()</span>
+        <span class="c1"># prepare widget</span>
+
+        <span class="n">_scene</span> <span class="o">=</span> <span class="n">SceneCanvas</span><span class="p">(</span><span class="n">keys</span><span class="o">=</span><span class="s2">&quot;interactive&quot;</span><span class="p">)</span>
+        <span class="n">_scene</span><span class="o">.</span><span class="n">create_native</span><span class="p">()</span>
+        <span class="n">viewbox</span> <span class="o">=</span> <span class="n">_scene</span><span class="o">.</span><span class="n">central_widget</span><span class="o">.</span><span class="n">add_view</span><span class="p">()</span>
+        <span class="n">PlotItem</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">viewbox</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_widget</span><span class="p">(</span><span class="n">_scene</span><span class="o">.</span><span class="n">native</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="VispyImageCanvas"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.widgets2d.VispyImageCanvas">[docs]</a><span class="k">class</span> <span class="nc">VispyImageCanvas</span><span class="p">(</span><span class="n">ImageItem</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A Vispy based 2-D plot canvas for images.&quot;&quot;&quot;</span></div>
+<div class="viewcode-block" id="VispyImageCanvas"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.widgets2d.VispyImageCanvas">[docs]</a><span class="k">class</span> <span class="nc">VispyImageCanvas</span><span class="p">(</span><span class="n">FreeWidget</span><span class="p">,</span> <span class="n">ImageItem</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A Vispy based 2-D plot canvas for images.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">app</span> <span class="o">=</span> <span class="n">get_app</span><span class="p">()</span>
+
+        <span class="c1"># prepare widget</span>
+        <span class="n">_scene</span> <span class="o">=</span> <span class="n">SceneCanvas</span><span class="p">(</span><span class="n">keys</span><span class="o">=</span><span class="s2">&quot;interactive&quot;</span><span class="p">)</span>
+        <span class="n">_scene</span><span class="o">.</span><span class="n">create_native</span><span class="p">()</span>
+        <span class="n">viewbox</span> <span class="o">=</span> <span class="n">_scene</span><span class="o">.</span><span class="n">central_widget</span><span class="o">.</span><span class="n">add_view</span><span class="p">()</span>
+        <span class="n">ImageItem</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">viewbox</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_widget</span><span class="p">(</span><span class="n">_scene</span><span class="o">.</span><span class="n">native</span><span class="p">)</span></div>
 
 
-<span class="k">class</span> <span class="nc">_MultiPlot</span><span class="p">(</span><span class="n">FreeWidget</span><span class="p">):</span>
-    <span class="n">_base_class</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">HasViewBox</span><span class="p">]</span>
+<div class="viewcode-block" id="VispyMultiPlotCanvas"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.widgets2d.VispyMultiPlotCanvas">[docs]</a><span class="k">class</span> <span class="nc">VispyMultiPlotCanvas</span><span class="p">(</span><span class="n">MultiPlot</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A multiple Vispy based 2-D plot canvas.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nrows</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_canvas</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_scene</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">SceneCanvas</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nrows</span><span class="p">):</span>
-            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ncols</span><span class="p">):</span>
-                <span class="n">canvas</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_base_class</span><span class="p">(</span><span class="n">grid_pos</span><span class="o">=</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">c</span><span class="p">),</span> <span class="n">_scene</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_scene</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_canvas</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">canvas</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_scene</span><span class="o">.</span><span class="n">create_native</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">set_widget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scene</span><span class="o">.</span><span class="n">native</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_canvas</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="n">_base_class</span> <span class="o">=</span> <span class="n">PlotItem</span></div>
 
 
-<div class="viewcode-block" id="VispyMultiPlotCanvas"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.widgets2d.VispyMultiPlotCanvas">[docs]</a><span class="k">class</span> <span class="nc">VispyMultiPlotCanvas</span><span class="p">(</span><span class="n">_MultiPlot</span><span class="p">):</span>
-    <span class="n">_base_class</span> <span class="o">=</span> <span class="n">VispyPlotCanvas</span></div>
+<div class="viewcode-block" id="VispyMultiImageCanvas"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.widgets2d.VispyMultiImageCanvas">[docs]</a><span class="k">class</span> <span class="nc">VispyMultiImageCanvas</span><span class="p">(</span><span class="n">MultiPlot</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A multiple Vispy based 2-D plot canvas for images.&quot;&quot;&quot;</span>
 
-
-<div class="viewcode-block" id="VispyMultiImageCanvas"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.widgets2d.VispyMultiImageCanvas">[docs]</a><span class="k">class</span> <span class="nc">VispyMultiImageCanvas</span><span class="p">(</span><span class="n">_MultiPlot</span><span class="p">):</span>
-    <span class="n">_base_class</span> <span class="o">=</span> <span class="n">VispyImageCanvas</span></div>
+    <span class="n">_base_class</span> <span class="o">=</span> <span class="n">ImageItem</span></div>
 
 
 <span class="k">def</span> <span class="nf">_check_xy</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>

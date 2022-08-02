@@ -8,6 +8,7 @@ Subpackages
    :maxdepth: 4
 
    magicclass.ext
+   magicclass.fields
    magicclass.stylesheets
    magicclass.utils
    magicclass.widgets
@@ -19,14 +20,6 @@ magicclass.core module
 ----------------------
 
 .. automodule:: magicclass.core
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-magicclass.fields module
-------------------------
-
-.. automodule:: magicclass.fields
    :members:
    :undoc-members:
    :show-inheritance:

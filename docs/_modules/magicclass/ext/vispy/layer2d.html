@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.ext.vispy.layer2d &mdash; magic-class 0.6.4.dev1 documentation</title>
+  <title>magicclass.ext.vispy.layer2d &mdash; magic-class 0.6.8.dev0 documentation</title>
       <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.4.dev1
+                0.6.8.dev0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
@@ -81,8 +81,10 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">numpy.typing</span> <span class="kn">import</span> <span class="n">ArrayLike</span>
 <span class="kn">from</span> <span class="nn">vispy.scene</span> <span class="kn">import</span> <span class="n">visuals</span><span class="p">,</span> <span class="n">ViewBox</span>
+<span class="kn">from</span> <span class="nn">vispy.color</span> <span class="kn">import</span> <span class="n">get_color_dict</span>
 <span class="kn">from</span> <span class="nn">._base</span> <span class="kn">import</span> <span class="n">LayerItem</span>
 <span class="kn">from</span> <span class="nn">.._shared_utils</span> <span class="kn">import</span> <span class="n">convert_color_code</span><span class="p">,</span> <span class="n">to_rgba</span>
+
 
 <span class="n">_SYMBOL_MAP</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;s&quot;</span><span class="p">:</span> <span class="s2">&quot;square&quot;</span><span class="p">,</span>
@@ -100,8 +102,9 @@
 
     <span class="nd">@xdata</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">xdata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]):</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span><span class="o">.</span><span class="n">set_data</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">ydata</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
@@ -109,7 +112,9 @@
 
     <span class="nd">@ydata</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">ydata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xdata</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">ndata</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
@@ -123,7 +128,7 @@
     <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
-<div class="viewcode-block" id="PlotDataLayer.add"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.layer2d.PlotDataLayer.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="PlotDataLayer.add"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.layer2d.PlotDataLayer.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Add new points to the plot data item.&quot;&quot;&quot;</span>
         <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
@@ -137,30 +142,32 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
             <span class="n">i</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="p">]</span>
         <span class="n">sl</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ndata</span><span class="p">))</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
-        <span class="n">xdata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xdata</span><span class="p">[</span><span class="n">sl</span><span class="p">]</span>
-        <span class="n">ydata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ydata</span><span class="p">[</span><span class="n">sl</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="n">xdata</span><span class="p">,</span> <span class="n">ydata</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xdata</span><span class="p">[</span><span class="n">sl</span><span class="p">]</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ydata</span><span class="p">[</span><span class="n">sl</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
         <span class="k">return</span> <span class="kc">None</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">edge_color</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Edge color of the data.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">to_rgba</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;pen&quot;</span><span class="p">])</span>
+        <span class="n">col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span><span class="o">.</span><span class="n">_line</span><span class="o">.</span><span class="n">color</span>
+        <span class="k">return</span> <span class="n">to_rgba</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
 
     <span class="nd">@edge_color</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">edge_color</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">):</span>
         <span class="n">value</span> <span class="o">=</span> <span class="n">convert_color_code</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lw</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ls</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">edge_color</span><span class="o">=</span><span class="n">value</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">face_color</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Face color of the data.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">to_rgba</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;brush&quot;</span><span class="p">])</span>
+        <span class="n">col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span><span class="o">.</span><span class="n">_markers</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="s2">&quot;face_color&quot;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">to_rgba</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
 
     <span class="nd">@face_color</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">face_color</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">):</span>
         <span class="n">value</span> <span class="o">=</span> <span class="n">convert_color_code</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setBrush</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">face_color</span><span class="o">=</span><span class="n">value</span><span class="p">)</span>
 
     <span class="n">color</span> <span class="o">=</span> <span class="nb">property</span><span class="p">()</span>
 
@@ -227,6 +234,60 @@
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span><span class="o">.</span><span class="n">update</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Histogram"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.layer2d.Histogram">[docs]</a><span class="k">class</span> <span class="nc">Histogram</span><span class="p">(</span><span class="n">LayerItem</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">viewbox</span><span class="p">:</span> <span class="n">ViewBox</span><span class="p">,</span>
+        <span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">bins</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="n">face_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">edge_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span> <span class="o">=</span> <span class="n">viewbox</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span> <span class="o">=</span> <span class="n">visuals</span><span class="o">.</span><span class="n">Histogram</span><span class="p">(</span>
+            <span class="n">data</span><span class="p">,</span>
+            <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span>
+            <span class="c1"># color=edge_color,</span>
+            <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">scene</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">face_color</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">rgb_html</span> <span class="o">=</span> <span class="n">get_color_dict</span><span class="p">()[</span><span class="n">face_color</span><span class="p">][</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="n">face_color</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="nb">int</span><span class="p">(</span><span class="n">rgb_html</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">],</span> <span class="mi">16</span><span class="p">)</span> <span class="o">/</span> <span class="mi">255</span><span class="p">,</span>
+                    <span class="nb">int</span><span class="p">(</span><span class="n">rgb_html</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">4</span><span class="p">],</span> <span class="mi">16</span><span class="p">)</span> <span class="o">/</span> <span class="mi">255</span><span class="p">,</span>
+                    <span class="nb">int</span><span class="p">(</span><span class="n">rgb_html</span><span class="p">[</span><span class="mi">4</span><span class="p">:</span><span class="mi">6</span><span class="p">],</span> <span class="mi">16</span><span class="p">)</span> <span class="o">/</span> <span class="mi">255</span><span class="p">,</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">edge_color</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">rgb_html</span> <span class="o">=</span> <span class="n">get_color_dict</span><span class="p">()[</span><span class="n">edge_color</span><span class="p">][</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="n">edge_color</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="nb">int</span><span class="p">(</span><span class="n">rgb_html</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">],</span> <span class="mi">16</span><span class="p">)</span> <span class="o">/</span> <span class="mi">255</span><span class="p">,</span>
+                    <span class="nb">int</span><span class="p">(</span><span class="n">rgb_html</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">4</span><span class="p">],</span> <span class="mi">16</span><span class="p">)</span> <span class="o">/</span> <span class="mi">255</span><span class="p">,</span>
+                    <span class="nb">int</span><span class="p">(</span><span class="n">rgb_html</span><span class="p">[</span><span class="mi">4</span><span class="p">:</span><span class="mi">6</span><span class="p">],</span> <span class="mi">16</span><span class="p">)</span> <span class="o">/</span> <span class="mi">255</span><span class="p">,</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span><span class="o">.</span><span class="n">mesh_data</span><span class="o">.</span><span class="n">set_face_colors</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">face_color</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span><span class="o">.</span><span class="n">mesh_data</span><span class="o">.</span><span class="n">n_faces</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span><span class="o">.</span><span class="n">mesh_data</span><span class="o">.</span><span class="n">set_vertex_colors</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">edge_color</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span><span class="o">.</span><span class="n">mesh_data</span><span class="o">.</span><span class="n">n_vertices</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span><span class="o">.</span><span class="n">mesh_data_changed</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span></div>
 </pre></div>
 
            </div>

@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.ext.qtconsole package &mdash; magic-class 0.6.7.dev2 documentation</title>
+  <title>magicclass.ext.qtconsole package &mdash; magic-class 0.6.8 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/columns.css" type="text/css" />
@@ -31,7 +31,7 @@
             <a href="../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.7.dev2
+                0.6.8
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -102,33 +102,42 @@
 <dl class="py attribute">
 <dt class="sig sig-object py" id="magicclass.ext.qtconsole.widgets.QtConsole.executed">
 <span class="sig-name descname"><span class="pre">executed</span></span><a class="headerlink" href="#magicclass.ext.qtconsole.widgets.QtConsole.executed" title="Permalink to this definition">¶</a></dt>
-<dd><p>Signal descriptor, for declaring a signal on a class.</p>
-<p>This is designed to be used as a class attribute, with the supported signature(s)
+<dd><p>Declares a signal emitter on a class.</p>
+<p>This is class implements the [descriptor
+protocol](<a class="reference external" href="https://docs.python.org/3/howto/descriptor.html#descriptorhowto">https://docs.python.org/3/howto/descriptor.html#descriptorhowto</a>)
+and is designed to be used as a class attribute, with the supported signature types
 provided in the contructor:</p>
-<blockquote>
-<div><dl class="simple">
-<dt>class MyEmitter:</dt><dd><p>changed = Signal(int)  # changed will emit an int</p>
+<p><a href="#id1"><span class="problematic" id="id2">``</span></a><a href="#id3"><span class="problematic" id="id4">`</span></a>python
+from psygnal import Signal</p>
+<dl class="simple">
+<dt>class MyEmitter:</dt><dd><p>changed = Signal(int)</p>
 </dd>
 <dt>def receiver(arg: int):</dt><dd><p>print(&quot;new value:&quot;, arg)</p>
 </dd>
 </dl>
 <p>emitter = MyEmitter()
 emitter.changed.connect(receiver)
-emitter.emit(1)</p>
+emitter.changed.emit(1)  # prints 'new value: 1'
+<a href="#id5"><span class="problematic" id="id6">``</span></a><a href="#id7"><span class="problematic" id="id8">`</span></a></p>
+<p>!!! note</p>
+<blockquote>
+<div><p>in the example above, <cite>MyEmitter.changed</cite> is an instance of <cite>Signal</cite>,
+and <cite>emitter.changed</cite> is an instance of <cite>SignalInstance</cite>.  See the
+documentation on [<cite>SignalInstance</cite>][psygnal.SignalInstance] for details
+on how to connect to and/or emit a signal on an instance of an object
+that has a <cite>Signal</cite>.</p>
 </div></blockquote>
-<p>Note: in the example above, <cite>MyEmitter.changed</cite> is an instance of <cite>Signal</cite>,
-and <cite>emitter.changed</cite> is an instance of <cite>SignalInstance</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>*types</strong> (<em>sequence of Type</em>) -- A sequence of individual types</p></li>
-<li><p><strong>description</strong> (<em>str</em><em>, </em><em>optional</em>) -- Optional descriptive text for the signal.  (not used internally).</p></li>
-<li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em>) -- Optional name of the signal. If it is not specified then the name of the
+<li><p><strong>*types</strong> (<em>Union</em><em>[</em><em>Type</em><em>[</em><em>Any</em><em>]</em><em>, </em><em>Signature</em><em>]</em>) -- A sequence of individual types, or a <em>single</em> [<cite>inspect.Signature</cite>][] object.</p></li>
+<li><p><strong>description</strong> (<em>str</em>) -- Optional descriptive text for the signal.  (not used internally).</p></li>
+<li><p><strong>name</strong> (<a class="reference internal" href="magicclass.html#magicclass.types.Optional" title="magicclass.types.Optional"><em>Optional</em></a><em>[</em><em>str</em><em>]</em>) -- Optional name of the signal. If it is not specified then the name of the
 class attribute that is bound to the signal will be used. default None</p></li>
-<li><p><strong>check_nargs_on_connect</strong> (<em>str</em><em>, </em><em>optional</em>) -- Whether to check the number of positional args against <cite>signature</cite> when
+<li><p><strong>check_nargs_on_connect</strong> (<em>bool</em>) -- Whether to check the number of positional args against <cite>signature</cite> when
 connecting a new callback. This can also be provided at connection time using
 <cite>.connect(..., check_nargs=True)</cite>. By default, True.</p></li>
-<li><p><strong>check_types_on_connect</strong> (<em>str</em><em>, </em><em>optional</em>) -- Whether to check the callback parameter types against <cite>signature</cite> when
+<li><p><strong>check_types_on_connect</strong> (<em>bool</em>) -- Whether to check the callback parameter types against <cite>signature</cite> when
 connecting a new callback. This can also be provided at connection time using
 <cite>.connect(..., check_types=True)</cite>. By default, False.</p></li>
 </ul>
@@ -191,33 +200,42 @@ executable GUI.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="magicclass.ext.qtconsole.QtConsole.executed">
 <span class="sig-name descname"><span class="pre">executed</span></span><a class="headerlink" href="#magicclass.ext.qtconsole.QtConsole.executed" title="Permalink to this definition">¶</a></dt>
-<dd><p>Signal descriptor, for declaring a signal on a class.</p>
-<p>This is designed to be used as a class attribute, with the supported signature(s)
+<dd><p>Declares a signal emitter on a class.</p>
+<p>This is class implements the [descriptor
+protocol](<a class="reference external" href="https://docs.python.org/3/howto/descriptor.html#descriptorhowto">https://docs.python.org/3/howto/descriptor.html#descriptorhowto</a>)
+and is designed to be used as a class attribute, with the supported signature types
 provided in the contructor:</p>
-<blockquote>
-<div><dl class="simple">
-<dt>class MyEmitter:</dt><dd><p>changed = Signal(int)  # changed will emit an int</p>
+<p><a href="#id9"><span class="problematic" id="id10">``</span></a><a href="#id11"><span class="problematic" id="id12">`</span></a>python
+from psygnal import Signal</p>
+<dl class="simple">
+<dt>class MyEmitter:</dt><dd><p>changed = Signal(int)</p>
 </dd>
 <dt>def receiver(arg: int):</dt><dd><p>print(&quot;new value:&quot;, arg)</p>
 </dd>
 </dl>
 <p>emitter = MyEmitter()
 emitter.changed.connect(receiver)
-emitter.emit(1)</p>
+emitter.changed.emit(1)  # prints 'new value: 1'
+<a href="#id13"><span class="problematic" id="id14">``</span></a><a href="#id15"><span class="problematic" id="id16">`</span></a></p>
+<p>!!! note</p>
+<blockquote>
+<div><p>in the example above, <cite>MyEmitter.changed</cite> is an instance of <cite>Signal</cite>,
+and <cite>emitter.changed</cite> is an instance of <cite>SignalInstance</cite>.  See the
+documentation on [<cite>SignalInstance</cite>][psygnal.SignalInstance] for details
+on how to connect to and/or emit a signal on an instance of an object
+that has a <cite>Signal</cite>.</p>
 </div></blockquote>
-<p>Note: in the example above, <cite>MyEmitter.changed</cite> is an instance of <cite>Signal</cite>,
-and <cite>emitter.changed</cite> is an instance of <cite>SignalInstance</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>*types</strong> (<em>sequence of Type</em>) -- A sequence of individual types</p></li>
-<li><p><strong>description</strong> (<em>str</em><em>, </em><em>optional</em>) -- Optional descriptive text for the signal.  (not used internally).</p></li>
-<li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em>) -- Optional name of the signal. If it is not specified then the name of the
+<li><p><strong>*types</strong> (<em>Union</em><em>[</em><em>Type</em><em>[</em><em>Any</em><em>]</em><em>, </em><em>Signature</em><em>]</em>) -- A sequence of individual types, or a <em>single</em> [<cite>inspect.Signature</cite>][] object.</p></li>
+<li><p><strong>description</strong> (<em>str</em>) -- Optional descriptive text for the signal.  (not used internally).</p></li>
+<li><p><strong>name</strong> (<a class="reference internal" href="magicclass.html#magicclass.types.Optional" title="magicclass.types.Optional"><em>Optional</em></a><em>[</em><em>str</em><em>]</em>) -- Optional name of the signal. If it is not specified then the name of the
 class attribute that is bound to the signal will be used. default None</p></li>
-<li><p><strong>check_nargs_on_connect</strong> (<em>str</em><em>, </em><em>optional</em>) -- Whether to check the number of positional args against <cite>signature</cite> when
+<li><p><strong>check_nargs_on_connect</strong> (<em>bool</em>) -- Whether to check the number of positional args against <cite>signature</cite> when
 connecting a new callback. This can also be provided at connection time using
 <cite>.connect(..., check_nargs=True)</cite>. By default, True.</p></li>
-<li><p><strong>check_types_on_connect</strong> (<em>str</em><em>, </em><em>optional</em>) -- Whether to check the callback parameter types against <cite>signature</cite> when
+<li><p><strong>check_types_on_connect</strong> (<em>bool</em>) -- Whether to check the callback parameter types against <cite>signature</cite> when
 connecting a new callback. This can also be provided at connection time using
 <cite>.connect(..., check_types=True)</cite>. By default, False.</p></li>
 </ul>

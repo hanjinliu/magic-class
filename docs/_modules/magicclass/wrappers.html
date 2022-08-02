@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.wrappers &mdash; magic-class 0.6.7.dev2 documentation</title>
+  <title>magicclass.wrappers &mdash; magic-class 0.6.8.dev0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.7.dev2
+                0.6.8.dev0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -213,7 +213,9 @@
     <span class="n">caller_options</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">caller_options</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">}</span>
 
     <span class="k">if</span> <span class="s2">&quot;icon_path&quot;</span> <span class="ow">in</span> <span class="n">caller_options</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;`icon_path` is deprecated. Use `icon` instead.&quot;</span><span class="p">,</span> <span class="ne">DeprecationWarning</span><span class="p">)</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="s2">&quot;`icon_path` is deprecated. Use `icon` instead.&quot;</span><span class="p">,</span> <span class="ne">DeprecationWarning</span>
+        <span class="p">)</span>
         <span class="n">caller_options</span><span class="p">[</span><span class="s2">&quot;icon&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">caller_options</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;icon_path&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>

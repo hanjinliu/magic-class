@@ -1,6 +1,14 @@
 magicclass.ext.vispy package
 ============================
 
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   magicclass.ext.vispy.tests
+
 Submodules
 ----------
 
@@ -24,6 +32,14 @@ magicclass.ext.vispy.layerlist module
 -------------------------------------
 
 .. automodule:: magicclass.ext.vispy.layerlist
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+magicclass.ext.vispy.plot\_api module
+-------------------------------------
+
+.. automodule:: magicclass.ext.vispy.plot_api
    :members:
    :undoc-members:
    :show-inheritance:

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.core &mdash; magic-class 0.6.7.dev2 documentation</title>
+  <title>magicclass.core &mdash; magic-class 0.6.8.dev0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.7.dev2
+                0.6.8.dev0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -79,8 +79,9 @@
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span> <span class="k">as</span> <span class="n">functools_wraps</span>
 <span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">weakref</span> <span class="kn">import</span> <span class="n">WeakValueDictionary</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Callable</span>
 
 <span class="kn">from</span> <span class="nn">._gui.class_gui</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">ClassGuiBase</span><span class="p">,</span>
@@ -111,7 +112,7 @@
 <span class="kn">from</span> <span class="nn">._gui</span> <span class="kn">import</span> <span class="n">ContextMenuGui</span><span class="p">,</span> <span class="n">MenuGui</span><span class="p">,</span> <span class="n">ToolBarGui</span>
 <span class="kn">from</span> <span class="nn">._app</span> <span class="kn">import</span> <span class="n">get_app</span>
 <span class="kn">from</span> <span class="nn">.types</span> <span class="kn">import</span> <span class="n">WidgetType</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">_register</span>  <span class="c1"># activate type registration things.</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">_register_types</span>  <span class="c1"># activate type registration things.</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">.stylesheets</span> <span class="kn">import</span> <span class="n">StyleSheet</span>
@@ -153,8 +154,9 @@
     <span class="n">popup_mode</span><span class="p">:</span> <span class="n">PopUpModeStr</span> <span class="o">|</span> <span class="n">PopUpMode</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">error_mode</span><span class="p">:</span> <span class="n">ErrorModeStr</span> <span class="o">|</span> <span class="n">ErrorMode</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">widget_type</span><span class="p">:</span> <span class="n">WidgetTypeStr</span> <span class="o">|</span> <span class="n">WidgetType</span> <span class="o">=</span> <span class="n">WidgetType</span><span class="o">.</span><span class="n">none</span><span class="p">,</span>
-    <span class="n">icon_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">icon</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">stylesheet</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">StyleSheet</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">icon_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Decorator that can convert a Python class into a widget.</span>
@@ -190,8 +192,8 @@
 <span class="sd">        Option of how to raise errors during function calls.</span>
 <span class="sd">    widget_type : WidgetType or str, optional</span>
 <span class="sd">        Widget type of container.</span>
-<span class="sd">    icon_path : str, optional</span>
-<span class="sd">        Path to the icon image.</span>
+<span class="sd">    icon : Any, optional</span>
+<span class="sd">        Path to the icon image or any object that can be converted into an icon.</span>
 <span class="sd">    stylesheet : str or StyleSheet object, optional</span>
 <span class="sd">        Set stylesheet to the widget if given.</span>
 
@@ -205,6 +207,11 @@
         <span class="n">close_on_run</span> <span class="o">=</span> <span class="n">defaults</span><span class="p">[</span><span class="s2">&quot;close_on_run&quot;</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">error_mode</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">error_mode</span> <span class="o">=</span> <span class="n">defaults</span><span class="p">[</span><span class="s2">&quot;error_mode&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">icon_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">icon</span> <span class="o">=</span> <span class="n">icon_path</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="s2">&quot;`icon_path` is deprecated. Use `icon` instead.&quot;</span><span class="p">,</span> <span class="ne">DeprecationWarning</span>
+        <span class="p">)</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">widget_type</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">widget_type</span> <span class="o">=</span> <span class="n">widget_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
@@ -267,7 +274,6 @@
             <span class="c1"># prepare macro</span>
             <span class="n">macrowidget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">macro</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">native</span>
             <span class="n">macrowidget</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="p">,</span> <span class="n">macrowidget</span><span class="o">.</span><span class="n">windowFlags</span><span class="p">())</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">macro</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">__magicclass_parent__</span> <span class="o">=</span> <span class="bp">self</span>
 
             <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">macro</span><span class="o">.</span><span class="n">blocked</span><span class="p">():</span>
                 <span class="nb">super</span><span class="p">(</span><span class="n">oldclass</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -277,8 +283,8 @@
             <span class="k">if</span> <span class="n">widget_type</span> <span class="ow">in</span> <span class="p">(</span><span class="n">WidgetType</span><span class="o">.</span><span class="n">collapsible</span><span class="p">,</span> <span class="n">WidgetType</span><span class="o">.</span><span class="n">button</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
 
-            <span class="k">if</span> <span class="n">icon_path</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">icon_path</span> <span class="o">=</span> <span class="n">icon_path</span>
+            <span class="k">if</span> <span class="n">icon</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">icon</span> <span class="o">=</span> <span class="n">icon</span>
             <span class="k">if</span> <span class="n">stylesheet</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">stylesheet</span><span class="p">))</span>
             <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;__post_init__&quot;</span><span class="p">):</span>
@@ -306,28 +312,118 @@
     <span class="n">error_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">ErrorMode</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">labels</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">icon</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">icon_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Decorator that can convert a Python class into a menu bar.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Decorator that converts a Python class into a menu bar.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">_call_magicmenu</span><span class="p">(</span><span class="o">**</span><span class="nb">locals</span><span class="p">(),</span> <span class="n">menugui_class</span><span class="o">=</span><span class="n">MenuGui</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="magiccontext"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.core.magiccontext">[docs]</a><span class="k">def</span> <span class="nf">magiccontext</span><span class="p">(</span>
     <span class="n">class_</span><span class="p">:</span> <span class="nb">type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
+    <span class="n">into</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">close_on_run</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">popup_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">PopUpMode</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">error_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">ErrorMode</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">labels</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">icon</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">icon_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Decorator that can convert a Python class into a context menu.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">_call_magicmenu</span><span class="p">(</span><span class="o">**</span><span class="nb">locals</span><span class="p">(),</span> <span class="n">menugui_class</span><span class="o">=</span><span class="n">ContextMenuGui</span><span class="p">)</span></div>
+    <span class="sd">&quot;&quot;&quot;Decorator that converts a Python class into a context menu.&quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">popup_mode</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">popup_mode</span> <span class="o">=</span> <span class="n">defaults</span><span class="p">[</span><span class="s2">&quot;popup_mode&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">close_on_run</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">close_on_run</span> <span class="o">=</span> <span class="n">defaults</span><span class="p">[</span><span class="s2">&quot;close_on_run&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">error_mode</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">error_mode</span> <span class="o">=</span> <span class="n">defaults</span><span class="p">[</span><span class="s2">&quot;error_mode&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">icon_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">icon</span> <span class="o">=</span> <span class="n">icon_path</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="s2">&quot;`icon_path` is deprecated. Use `icon` instead.&quot;</span><span class="p">,</span> <span class="ne">DeprecationWarning</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">popup_mode</span> <span class="ow">in</span> <span class="p">(</span>
+        <span class="n">PopUpMode</span><span class="o">.</span><span class="n">above</span><span class="p">,</span>
+        <span class="n">PopUpMode</span><span class="o">.</span><span class="n">below</span><span class="p">,</span>
+        <span class="n">PopUpMode</span><span class="o">.</span><span class="n">first</span><span class="p">,</span>
+        <span class="n">PopUpMode</span><span class="o">.</span><span class="n">last</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mode </span><span class="si">{</span><span class="n">popup_mode</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2"> is not compatible with Menu.&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">[</span><span class="n">ContextMenuGui</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;magicclass can only wrap classes, not </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">MagicTemplate</span><span class="p">):</span>
+            <span class="n">check_override</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+
+        <span class="c1"># get class attributes first</span>
+        <span class="n">doc</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__doc__</span>
+        <span class="n">sig</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+        <span class="n">mod</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__module__</span>
+        <span class="n">qualname</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__qualname__</span>
+
+        <span class="n">new_attrs</span> <span class="o">=</span> <span class="n">convert_attributes</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">hide</span><span class="o">=</span><span class="n">ContextMenuGui</span><span class="o">.</span><span class="vm">__mro__</span><span class="p">)</span>
+        <span class="n">oldclass</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="n">_BASE_CLASS_SUFFIX</span><span class="p">,</span> <span class="p">(</span><span class="bp">cls</span><span class="p">,),</span> <span class="p">{})</span>
+        <span class="n">newclass</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="p">(</span><span class="n">ContextMenuGui</span><span class="p">,</span> <span class="n">oldclass</span><span class="p">),</span> <span class="n">new_attrs</span><span class="p">)</span>
+
+        <span class="n">newclass</span><span class="o">.</span><span class="n">__signature__</span> <span class="o">=</span> <span class="n">sig</span>
+        <span class="n">newclass</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">doc</span>
+        <span class="n">newclass</span><span class="o">.</span><span class="vm">__module__</span> <span class="o">=</span> <span class="n">mod</span>
+        <span class="n">newclass</span><span class="o">.</span><span class="vm">__qualname__</span> <span class="o">=</span> <span class="n">qualname</span>
+
+        <span class="nd">@functools_wraps</span><span class="p">(</span><span class="n">oldclass</span><span class="o">.</span><span class="fm">__init__</span><span class="p">)</span>
+        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">MagicTemplate</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="c1"># Without &quot;app = &quot; Jupyter freezes after closing the window!</span>
+            <span class="n">app</span> <span class="o">=</span> <span class="n">get_app</span><span class="p">()</span>
+
+            <span class="n">gui_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                <span class="n">close_on_run</span><span class="o">=</span><span class="n">close_on_run</span><span class="p">,</span>
+                <span class="n">popup_mode</span><span class="o">=</span><span class="n">PopUpMode</span><span class="p">(</span><span class="n">popup_mode</span><span class="p">),</span>
+                <span class="n">error_mode</span><span class="o">=</span><span class="n">ErrorMode</span><span class="p">(</span><span class="n">error_mode</span><span class="p">),</span>
+                <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">name</span> <span class="ow">or</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Inheriting Container&#39;s constructor is the most intuitive way.</span>
+            <span class="k">if</span> <span class="n">kwargs</span> <span class="ow">and</span> <span class="s2">&quot;__init__&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
+                <span class="n">gui_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+
+            <span class="n">ContextMenuGui</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+                <span class="bp">self</span><span class="p">,</span>
+                <span class="o">**</span><span class="n">gui_kwargs</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="n">macrowidget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">macro</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">native</span>
+            <span class="n">macrowidget</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="p">,</span> <span class="n">macrowidget</span><span class="o">.</span><span class="n">windowFlags</span><span class="p">())</span>
+
+            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">macro</span><span class="o">.</span><span class="n">blocked</span><span class="p">():</span>
+                <span class="nb">super</span><span class="p">(</span><span class="n">oldclass</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_convert_attributes_into_widgets</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">icon</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">icon</span> <span class="o">=</span> <span class="n">icon</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;__post_init__&quot;</span><span class="p">):</span>
+                <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">macro</span><span class="o">.</span><span class="n">blocked</span><span class="p">():</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">__post_init__</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">into</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="kn">from</span> <span class="nn">.signature</span> <span class="kn">import</span> <span class="n">upgrade_signature</span>
+
+                <span class="n">upgrade_signature</span><span class="p">(</span><span class="n">into</span><span class="p">,</span> <span class="n">additional_options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;context_menu&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="p">})</span>
+
+        <span class="n">newclass</span><span class="o">.</span><span class="fm">__init__</span> <span class="o">=</span> <span class="fm">__init__</span>
+
+        <span class="c1"># Users may want to override repr</span>
+        <span class="n">newclass</span><span class="o">.</span><span class="fm">__repr__</span> <span class="o">=</span> <span class="n">oldclass</span><span class="o">.</span><span class="fm">__repr__</span>
+
+        <span class="k">return</span> <span class="n">newclass</span>
+
+    <span class="k">return</span> <span class="n">wrapper</span> <span class="k">if</span> <span class="n">class_</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">wrapper</span><span class="p">(</span><span class="n">class_</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="magictoolbar"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.core.magictoolbar">[docs]</a><span class="k">def</span> <span class="nf">magictoolbar</span><span class="p">(</span>
@@ -338,91 +434,11 @@
     <span class="n">error_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">ErrorMode</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">labels</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">icon</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">icon_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Decorator that can convert a Python class into a menu bar.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Decorator that converts a Python class into a menu bar.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">_call_magicmenu</span><span class="p">(</span><span class="o">**</span><span class="nb">locals</span><span class="p">(),</span> <span class="n">menugui_class</span><span class="o">=</span><span class="n">ToolBarGui</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="MagicClassFactory"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.core.MagicClassFactory">[docs]</a><span class="k">class</span> <span class="nc">MagicClassFactory</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Factory class that can make any magic-class.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">layout</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;vertical&quot;</span><span class="p">,</span>
-        <span class="n">labels</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="n">close_on_run</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">popup_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">PopUpMode</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">error_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">ErrorMode</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">widget_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">WidgetType</span> <span class="o">=</span> <span class="n">WidgetType</span><span class="o">.</span><span class="n">none</span><span class="p">,</span>
-        <span class="n">icon_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">attrs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">layout</span> <span class="o">=</span> <span class="n">layout</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="n">labels</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">close_on_run</span> <span class="o">=</span> <span class="n">close_on_run</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">popup_mode</span> <span class="o">=</span> <span class="n">popup_mode</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">error_mode</span> <span class="o">=</span> <span class="n">error_mode</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">widget_type</span> <span class="o">=</span> <span class="n">widget_type</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">icon_path</span> <span class="o">=</span> <span class="n">icon_path</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">attrs</span> <span class="o">=</span> <span class="n">attrs</span>
-
-<div class="viewcode-block" id="MagicClassFactory.as_magicclass"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.core.MagicClassFactory.as_magicclass">[docs]</a>    <span class="k">def</span> <span class="nf">as_magicclass</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ClassGuiBase</span><span class="p">:</span>
-        <span class="n">_cls</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">attrs</span><span class="p">)</span>
-        <span class="bp">cls</span> <span class="o">=</span> <span class="n">magicclass</span><span class="p">(</span>
-            <span class="n">_cls</span><span class="p">,</span>
-            <span class="n">layout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="p">,</span>
-            <span class="n">labels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">,</span>
-            <span class="n">close_on_run</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">close_on_run</span><span class="p">,</span>
-            <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-            <span class="n">popup_mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">popup_mode</span><span class="p">,</span>
-            <span class="n">error_mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">error_mode</span><span class="p">,</span>
-            <span class="n">widget_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">widget_type</span><span class="p">,</span>
-            <span class="n">icon_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">icon_path</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="k">return</span> <span class="bp">cls</span></div>
-
-<div class="viewcode-block" id="MagicClassFactory.as_magictoolbar"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.core.MagicClassFactory.as_magictoolbar">[docs]</a>    <span class="k">def</span> <span class="nf">as_magictoolbar</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ToolBarGui</span><span class="p">:</span>
-        <span class="n">_cls</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">attrs</span><span class="p">)</span>
-        <span class="bp">cls</span> <span class="o">=</span> <span class="n">magictoolbar</span><span class="p">(</span>
-            <span class="n">_cls</span><span class="p">,</span>
-            <span class="n">close_on_run</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">close_on_run</span><span class="p">,</span>
-            <span class="n">popup_mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">popup_mode</span><span class="p">,</span>
-            <span class="n">error_mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">error_mode</span><span class="p">,</span>
-            <span class="n">labels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">,</span>
-            <span class="n">icon_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">icon_path</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="k">return</span> <span class="bp">cls</span></div>
-
-<div class="viewcode-block" id="MagicClassFactory.as_magicmenu"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.core.MagicClassFactory.as_magicmenu">[docs]</a>    <span class="k">def</span> <span class="nf">as_magicmenu</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MenuGui</span><span class="p">:</span>
-        <span class="n">_cls</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">attrs</span><span class="p">)</span>
-        <span class="bp">cls</span> <span class="o">=</span> <span class="n">magicmenu</span><span class="p">(</span>
-            <span class="n">_cls</span><span class="p">,</span>
-            <span class="n">close_on_run</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">close_on_run</span><span class="p">,</span>
-            <span class="n">popup_mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">popup_mode</span><span class="p">,</span>
-            <span class="n">error_mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">error_mode</span><span class="p">,</span>
-            <span class="n">labels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">,</span>
-            <span class="n">icon_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">icon_path</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="k">return</span> <span class="bp">cls</span></div>
-
-<div class="viewcode-block" id="MagicClassFactory.as_magiccontext"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.core.MagicClassFactory.as_magiccontext">[docs]</a>    <span class="k">def</span> <span class="nf">as_magiccontext</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ContextMenuGui</span><span class="p">:</span>
-        <span class="n">_cls</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">attrs</span><span class="p">)</span>
-        <span class="bp">cls</span> <span class="o">=</span> <span class="n">magiccontext</span><span class="p">(</span>
-            <span class="n">_cls</span><span class="p">,</span>
-            <span class="n">close_on_run</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">close_on_run</span><span class="p">,</span>
-            <span class="n">popup_mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">popup_mode</span><span class="p">,</span>
-            <span class="n">error_mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">error_mode</span><span class="p">,</span>
-            <span class="n">labels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">,</span>
-            <span class="n">icon_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">icon_path</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="k">return</span> <span class="bp">cls</span></div></div>
 
 
 <span class="k">def</span> <span class="nf">_call_magicmenu</span><span class="p">(</span>
@@ -432,6 +448,7 @@
     <span class="n">error_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">ErrorMode</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">labels</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">icon</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">icon_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">menugui_class</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">MenuGuiBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
@@ -443,7 +460,7 @@
 <span class="sd">    close_on_run : bool, default is True</span>
 <span class="sd">        If True, magicgui created by every method will be deleted after the method is completed without</span>
 <span class="sd">        exceptions, i.e. magicgui is more like a dialog.</span>
-<span class="sd">    popup : bool, default is True</span>
+<span class="sd">    popup_mode : bool, default is True</span>
 <span class="sd">        If True, magicgui created by every method will be poped up, else they will be appended as a</span>
 <span class="sd">        part of the main widget.</span>
 
@@ -458,6 +475,11 @@
         <span class="n">close_on_run</span> <span class="o">=</span> <span class="n">defaults</span><span class="p">[</span><span class="s2">&quot;close_on_run&quot;</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">error_mode</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">error_mode</span> <span class="o">=</span> <span class="n">defaults</span><span class="p">[</span><span class="s2">&quot;error_mode&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">icon_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">icon</span> <span class="o">=</span> <span class="n">icon_path</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="s2">&quot;`icon_path` is deprecated. Use `icon` instead.&quot;</span><span class="p">,</span> <span class="ne">DeprecationWarning</span>
+        <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">popup_mode</span> <span class="ow">in</span> <span class="p">(</span>
         <span class="n">PopUpMode</span><span class="o">.</span><span class="n">above</span><span class="p">,</span>
@@ -514,15 +536,14 @@
 
             <span class="n">macrowidget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">macro</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">native</span>
             <span class="n">macrowidget</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="p">,</span> <span class="n">macrowidget</span><span class="o">.</span><span class="n">windowFlags</span><span class="p">())</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">macro</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">__magicclass_parent__</span> <span class="o">=</span> <span class="bp">self</span>
 
             <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">macro</span><span class="o">.</span><span class="n">blocked</span><span class="p">():</span>
                 <span class="nb">super</span><span class="p">(</span><span class="n">oldclass</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_convert_attributes_into_widgets</span><span class="p">()</span>
 
-            <span class="k">if</span> <span class="n">icon_path</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">icon_path</span> <span class="o">=</span> <span class="n">icon_path</span>
+            <span class="k">if</span> <span class="n">icon</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">icon</span> <span class="o">=</span> <span class="n">icon</span>
             <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;__post_init__&quot;</span><span class="p">):</span>
                 <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">macro</span><span class="o">.</span><span class="n">blocked</span><span class="p">():</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">__post_init__</span><span class="p">()</span>
@@ -604,17 +625,17 @@
     <span class="k">return</span> <span class="n">mgui</span></div>
 
 
-<div class="viewcode-block" id="redo"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.core.redo">[docs]</a><span class="k">def</span> <span class="nf">redo</span><span class="p">(</span><span class="n">ui</span><span class="p">:</span> <span class="n">MagicTemplate</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="repeat"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.core.repeat">[docs]</a><span class="k">def</span> <span class="nf">repeat</span><span class="p">(</span><span class="n">ui</span><span class="p">:</span> <span class="n">MagicTemplate</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Redo operation on GUI using recorded macro.</span>
+<span class="sd">    Repeat last operation on GUI using recorded macro.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    ui : MagicTemplate</span>
 <span class="sd">        Target magic-class widget.</span>
 <span class="sd">    index : int, default is -1</span>
-<span class="sd">        Which execution will be redone. Any object that support list slicing can be used.</span>
-<span class="sd">        By default the last operation will be redone.</span>
+<span class="sd">        Which execution will be repeated. Any object that support list slicing can be used.</span>
+<span class="sd">        By default the last operation will be repeated.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">line</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">macro</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
     <span class="k">try</span><span class="p">:</span>
