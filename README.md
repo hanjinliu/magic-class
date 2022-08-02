@@ -1,5 +1,8 @@
+[![License BSD-3](https://img.shields.io/pypi/l/magic-class.svg?color=green)](https://github.com/hanjinliu/magic-class/raw/main/LICENSE)
 [![Downloads](https://pepy.tech/badge/magic-class/month)](https://pepy.tech/project/magic-class)
 [![PyPI version](https://badge.fury.io/py/magic-class.svg)](https://badge.fury.io/py/magic-class)
+[![Conda version](https://anaconda.org/conda-forge/magic-class/badges/version.svg)](https://anaconda.org/conda-forge/magic-class/badges/version.svg)
+
 
 # magic-class
 
@@ -28,16 +31,17 @@ Documentation is available [here](https://hanjinliu.github.io/magic-class/).
 
 ## Installation
 
+
 - use pip
 
 ```
 pip install magic-class
 ```
 
-- from source
+- get latest version
 
 ```
-git clone https://github.com/hanjinliu/magic-class
+pip install git+https://github.com/hanjinliu/magic-class.git
 ```
 
 ## Example
