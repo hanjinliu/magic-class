@@ -29,20 +29,20 @@ Contents
 .. toctree::
    :maxdepth: 1
 
-   quick_start
+   ./main/quick_start
 
 .. toctree::
    :maxdepth: 2
 
-   chap_basics
-   chap_make_better
-   chap_data_vis
-   chap_advanced
+   ./main/chap_basics
+   ./main/chap_make_better
+   ./main/chap_data_vis
+   ./main/chap_advanced
 
 .. toctree::
    :maxdepth: 1
 
-   best_practice
+   ./main/best_practice
 
 
 Indices and tables

@@ -36,6 +36,14 @@ magicclass.ext.pyqtgraph.mouse\_event module
    :undoc-members:
    :show-inheritance:
 
+magicclass.ext.pyqtgraph.plot\_api module
+-----------------------------------------
+
+.. automodule:: magicclass.ext.pyqtgraph.plot_api
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 magicclass.ext.pyqtgraph.widgets module
 ---------------------------------------
 
