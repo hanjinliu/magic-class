@@ -980,6 +980,7 @@ class _MultiPlot(HasBackground, Generic[_C]):
             for r in range(nrows):
                 for c in range(ncols):
                     self.addaxis(r, c)
+        self.shape = (nrows, ncols)
 
     def __init_subclass__(cls) -> None:
         """Update doc."""
@@ -1004,8 +1005,20 @@ class _MultiPlot(HasBackground, Generic[_C]):
             item._viewbox.setYLink(self._axes[0]._viewbox)
         return item
 
-    def __getitem__(self, k: int) -> _C:
-        return self._axes[k]
+    def __getitem__(self, key: int | tuple[int, int]) -> _C:
+        if isinstance(key, tuple):
+            r, c = key
+            nr, nc = self.shape
+            if r >= nr or c >= nc:
+                raise IndexError(f"Index out of range: {key}")
+            return self._axes[r * nc + c]
+        else:
+            key = int(key)
+        return self._axes[key]
+
+    @property
+    def shape(self) -> tuple[int, int]:
+        return self._shape
 
     def __delitem__(self, k: int):
         item = self._axes[k]
