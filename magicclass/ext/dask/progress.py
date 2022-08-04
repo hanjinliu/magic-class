@@ -165,15 +165,13 @@ class dask_thread_worker(thread_worker):
         self, gui, *args, **kwargs
     ) -> FunctionWorker | GeneratorWorker:
         gui_id = id(gui)
-        if gui_id in self._progressbars:
-            pbar = self._progressbars[gui_id]
-        else:
-            pbar = self._DEFAULT_PROGRESS_BAR(max=self._DEFAULT_TOTAL)
-            self._progressbars[gui_id] = pbar
-            for c in self.computed._iter_as_method(gui):
-                pbar.computed.connect(c)
-            pbar.native.setParent(gui.native, self.__class__._WINDOW_FLAG)
-            move_to_screen_center(pbar.native)
+
+        pbar = self._DEFAULT_PROGRESS_BAR(max=self._DEFAULT_TOTAL)
+        self._progressbars[gui_id] = pbar
+        for c in self.computed._iter_as_method(gui):
+            pbar.computed.connect(c)
+        pbar.native.setParent(gui.native, self.__class__._WINDOW_FLAG)
+        move_to_screen_center(pbar.native)
 
         worker = create_worker(
             self._define_function(pbar).__get__(gui),

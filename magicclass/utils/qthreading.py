@@ -246,7 +246,7 @@ class DefaultProgressBar(Container, _SupportProgress):
         )
         cnt.margins = (0, 0, 0, 0)
         self.footer = cnt
-        self.pbar.min_width = 200
+        self.pbar.min_width = 360
         self._timer = Timer()
         self._time_signal = QtSignal()
         self._time_signal.connect(self._on_timer_updated)
