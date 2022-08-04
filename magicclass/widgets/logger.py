@@ -1,8 +1,10 @@
 from __future__ import annotations
 import sys
 import logging
+from pathlib import Path
 from contextlib import contextmanager
 from qtpy import QtWidgets as QtW, QtGui, QtCore
+from qtpy.QtCore import Qt, Signal
 from magicgui.backends._qtpy.widgets import QBaseWidget
 from magicgui.widgets import Widget
 import logging
@@ -25,7 +27,6 @@ if TYPE_CHECKING:
     import numpy as np
     from matplotlib.figure import Figure
     from PIL import Image
-    from pathlib import Path
 
 # See https://stackoverflow.com/questions/28655198/best-way-to-display-logs-in-pyqt
 
@@ -40,17 +41,17 @@ Printable = Union[str, QtGui.QImage]
 
 
 class QtLogger(QtW.QTextEdit):
-    process = QtCore.Signal(tuple)
+    process = Signal(tuple)
 
     def __init__(self, parent=None, max_history: int = 500):
         super().__init__(parent=parent)
         self.setReadOnly(True)
-        self.setWordWrapMode(QtGui.QTextOption.NoWrap)
+        self.setWordWrapMode(QtGui.QTextOption.WrapMode.NoWrap)
         self._max_history = int(max_history)
         self._n_lines = 0
         self.process.connect(self.update)
 
-        self.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
 
         @self.customContextMenuRequested.connect
         def rightClickContextMenu(point):
@@ -58,16 +59,18 @@ class QtLogger(QtW.QTextEdit):
             if menu:
                 menu.exec_(self.mapToGlobal(point))
 
+        self._last_save_path = None
+
     def update(self, output: tuple[int, Printable]):
         output_type, obj = output
         if output_type == Output.TEXT:
-            self.moveCursor(QtGui.QTextCursor.End)
+            self.moveCursor(QtGui.QTextCursor.MoveOperation.End)
             self.insertPlainText(obj)
-            self.moveCursor(QtGui.QTextCursor.End)
+            self.moveCursor(QtGui.QTextCursor.MoveOperation.End)
         elif output_type == Output.HTML:
-            self.moveCursor(QtGui.QTextCursor.End)
+            self.moveCursor(QtGui.QTextCursor.MoveOperation.End)
             self.insertHtml(obj)
-            self.moveCursor(QtGui.QTextCursor.End)
+            self.moveCursor(QtGui.QTextCursor.MoveOperation.End)
         elif output_type == Output.IMAGE:
             cursor = self.textCursor()
             cursor.insertImage(obj)
@@ -95,12 +98,12 @@ class QtLogger(QtW.QTextEdit):
             self._n_lines += 1
             return None
         cursor = self.textCursor()
-        cursor.movePosition(QtGui.QTextCursor.Start)
-        cursor.select(QtGui.QTextCursor.LineUnderCursor)
+        cursor.movePosition(QtGui.QTextCursor.MoveOperation.Start)
+        cursor.select(QtGui.QTextCursor.SelectionType.LineUnderCursor)
         cursor.removeSelectedText()
-        cursor.movePosition(QtGui.QTextCursor.Down)
+        cursor.movePosition(QtGui.QTextCursor.MoveOperation.Down)
         cursor.deletePreviousChar()
-        cursor.movePosition(QtGui.QTextCursor.End)
+        cursor.movePosition(QtGui.QTextCursor.MoveOperation.End)
         self.setTextCursor(cursor)
         return None
 
@@ -112,7 +115,7 @@ class QtLogger(QtW.QTextEdit):
     def _make_contextmenu(self, pos):
         """Reimplemented to return a custom context menu for images."""
         format = self.cursorForPosition(pos).charFormat()
-        name = format.stringProperty(QtGui.QTextFormat.ImageName)
+        name = format.stringProperty(QtGui.QTextFormat.Property.ImageName)
         if name:
             menu = QtW.QMenu(self)
 
@@ -128,18 +131,24 @@ class QtLogger(QtW.QTextEdit):
     def _save_image(self, name, format="PNG"):
         """Shows a save dialog for the ImageResource with 'name'."""
         dialog = QtW.QFileDialog(self, "Save Image")
-        dialog.setAcceptMode(QtW.QFileDialog.AcceptSave)
+        dialog.setAcceptMode(QtW.QFileDialog.AcceptMode.AcceptSave)
         dialog.setDefaultSuffix(format.lower())
+        if self._last_save_path is None:
+            self._last_save_path = Path.cwd()
+        dialog.setDirectory(str(self._last_save_path))
         dialog.setNameFilter(f"{format} file (*.{format.lower()})")
         if dialog.exec_():
             filename = dialog.selectedFiles()[0]
             image = self._get_image(name)
             image.save(filename, format)
+            self._last_save_path = Path(filename).parent
 
     def _get_image(self, name):
         """Returns the QImage stored as the ImageResource with 'name'."""
         document = self.document()
-        image = document.resource(QtGui.QTextDocument.ImageResource, QtCore.QUrl(name))
+        image = document.resource(
+            QtGui.QTextDocument.ResourceType.ImageResource, QtCore.QUrl(name)
+        )
         return image
 
 
@@ -270,7 +279,7 @@ class Logger(Widget, logging.Handler):
 
     def print_image(
         self,
-        arr: str | Path | np.ndarray | Image,
+        arr: str | Path | np.ndarray,
         vmin=None,
         vmax=None,
         cmap=None,
@@ -290,7 +299,7 @@ class Logger(Widget, logging.Handler):
 
         val = img.make_image()
         h, w, _ = val.shape
-        image = QtGui.QImage(val, w, h, QtGui.QImage.Format_RGBA8888)
+        image = QtGui.QImage(val, w, h, QtGui.QImage.Format.Format_RGBA8888)
 
         # set scale of image
         if width is None and height is None:
