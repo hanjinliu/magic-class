@@ -285,10 +285,12 @@ class DefaultProgressBar(Container, _SupportProgress):
 
     @property
     def paused(self) -> bool:
+        """True if paused."""
         return not self._timer._running
 
     @property
     def value(self) -> int:
+        """Progress bar value."""
         return self.pbar.value
 
     @value.setter
@@ -376,7 +378,11 @@ class thread_worker:
 
     _DEFAULT_PROGRESS_BAR = DefaultProgressBar
     _DEFAULT_TOTAL = 0
-    _WINDOW_FLAG = Qt.WindowTitleHint | Qt.WindowMinimizeButtonHint | Qt.Window
+    _WINDOW_FLAG = (
+        Qt.WindowType.WindowTitleHint
+        | Qt.WindowType.WindowMinimizeButtonHint
+        | Qt.WindowType.Window
+    )
 
     def __init__(
         self,
@@ -530,44 +536,15 @@ class thread_worker:
             is_generator = isinstance(worker, GeneratorWorker)
 
             if self._progress:
-                _desc = self._progress["desc"]
-                _total = self._progress["total"]
+                # prepare progress bar
                 _pbar = self._progress["pbar"]
-
-                all_args = None
-                if callable(_desc):
-                    arguments = self.__signature__.bind(gui, *args, **kwargs)
-                    arguments.apply_defaults()
-                    all_args = arguments.arguments
-                    desc = _desc(**all_args)
-                else:
-                    desc = str(_desc or self._func.__name__)
-
-                if isinstance(_total, str):
-                    if all_args is None:
-                        arguments = self.__signature__.bind(gui, *args, **kwargs)
-                        arguments.apply_defaults()
-                        all_args = arguments.arguments
-                    total = eval(_total, {}, all_args)
-                elif callable(_total):
-                    total = _total(gui)
-                elif isinstance(_total, int):
-                    total = _total
-                else:
-                    raise TypeError(
-                        "'total' must be int, callable or evaluatable string."
-                    )
-
+                desc, total = self._normalize_desc_and_total(gui, *args, **kwargs)
                 if not is_generator:
                     total = self._DEFAULT_TOTAL
 
                 # create progressbar widget (or any proper widget)
                 if _pbar is None:
-                    pbar = self._find_progressbar(
-                        gui,
-                        desc=desc,
-                        total=total,
-                    )
+                    pbar = self._find_progressbar(gui, desc=desc, total=total)
                 elif isinstance(_pbar, MagicField):
                     pbar = _pbar.get_widget(gui)
                     if not isinstance(pbar, ProgressBar):
@@ -697,6 +674,36 @@ class thread_worker:
         else:
             _pbar.label = desc
         return _pbar
+
+    def _normalize_desc_and_total(self, gui, *args, **kwargs):
+        _desc = self._progress["desc"]
+        _total = self._progress["total"]
+
+        all_args = None
+        # progress bar description
+        if callable(_desc):
+            arguments = self.__signature__.bind(gui, *args, **kwargs)
+            arguments.apply_defaults()
+            all_args = arguments.arguments
+            desc = _desc(**all_args)
+        else:
+            desc = str(_desc or self._func.__name__)
+
+        # total number of steps
+        if isinstance(_total, str):
+            if all_args is None:
+                arguments = self.__signature__.bind(gui, *args, **kwargs)
+                arguments.apply_defaults()
+                all_args = arguments.arguments
+            total = eval(_total, {}, all_args)
+        elif callable(_total):
+            total = _total(gui)
+        elif isinstance(_total, int):
+            total = _total
+        else:
+            raise TypeError("'total' must be int, callable or evaluatable string.")
+
+        return desc, total
 
     @property
     def started(self) -> CallbackList[None]:
