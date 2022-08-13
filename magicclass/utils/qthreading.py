@@ -58,27 +58,34 @@ class _SupportProgress(Protocol):
 
     @property
     def value(self) -> int:
+        """Return the current progress."""
         raise NotImplementedError()
 
     @value.setter
     def value(self, v) -> None:
+        """Set the current progress."""
         raise NotImplementedError()
 
     @property
     def max(self) -> int:
+        """Return the maximum progress value."""
         raise NotImplementedError()
 
     @max.setter
     def max(self, v) -> None:
+        """Set the maximum progress value."""
         raise NotImplementedError()
 
     def set_description(self, desc: str):
+        """Set the description of the progressbar."""
         raise NotImplementedError()
 
     def show(self):
+        """Show the progressbar."""
         raise NotImplementedError()
 
     def close(self):
+        """Close the progressbar."""
         raise NotImplementedError()
 
 
