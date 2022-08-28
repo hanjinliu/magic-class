@@ -1,8 +1,17 @@
 from __future__ import annotations
 from enum import Enum
 import typing
-from typing import Any, NamedTuple, Union, Iterable, overload, TypeVar, Callable
-from typing_extensions import Literal, Annotated, ParamSpec, _AnnotatedAlias
+from typing import (
+    Any,
+    NamedTuple,
+    Union,
+    Iterable,
+    overload,
+    TypeVar,
+    Callable,
+    Literal,
+)
+from typing_extensions import Annotated, ParamSpec, _AnnotatedAlias
 from magicgui.signature import split_annotated_type
 from magicgui.widgets import Widget, EmptyWidget
 
@@ -96,25 +105,16 @@ _W = TypeVar("_W", bound=Widget)
 _V = TypeVar("_V", bound=object)
 _P = ParamSpec("_P")
 
-
+# fmt: off
 @overload
-def bound(obj: Callable[[_W], _V]) -> type[_V]:
-    ...
-
-
+def bound(obj: Callable[[_W], _V]) -> type[_V]: ...
 @overload
-def bound(obj: Callable[[Any, _W], _V]) -> type[_V]:
-    ...
-
-
+def bound(obj: Callable[[Any, _W], _V]) -> type[_V]: ...
 @overload
-def bound(obj: MagicField[_W, _V]) -> type[_V]:
-    ...
-
-
+def bound(obj: MagicField[_W, _V]) -> type[_V]: ...
 @overload
-def bound(obj: type[_W]) -> type:
-    ...
+def bound(obj: type[_W]) -> type: ...
+# fmt: on
 
 
 def bound(obj):

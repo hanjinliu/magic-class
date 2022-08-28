@@ -25,5 +25,14 @@ setup(
         "macro-kit>=0.3.5",
         "superqt>=0.2.5.post1",
     ],
+    tests_require=[
+        "pytest",
+        "pytest-qt",
+        "numpy",
+        "pyqt5",
+        "superqt",
+        "pyqtgraph",
+        "vispy",
+    ],
     python_requires=">=3.8",
 )
