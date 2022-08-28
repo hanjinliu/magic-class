@@ -24,7 +24,7 @@ from .menu_gui import ContextMenuGui, MenuGui, MenuGuiBase, insert_action_like
 from ..signature import get_additional_option
 from ..fields import MagicField
 from ..widgets import FreeWidget, Separator
-from ..utils import iter_members
+from ..utils import iter_members, Tooltips
 
 if TYPE_CHECKING:
     from napari.viewer import Viewer
@@ -107,9 +107,9 @@ class ToolBarGui(ContainerLikeGui):
     def _convert_attributes_into_widgets(self):
         cls = self.__class__
 
-        # Add class docstring as label.
-        if cls.__doc__:
-            self.native.setToolTip(cls.__doc__)
+        # Add class docstring as tooltip.
+        _tooltips = Tooltips(cls)
+        self.native.setToolTip(_tooltips.desc)
 
         # Bind all the methods and annotations
         base_members = {x[0] for x in iter_members(ToolBarGui)}
@@ -129,6 +129,8 @@ class ToolBarGui(ContainerLikeGui):
 
                 elif isinstance(attr, MagicField):
                     widget = self._create_widget_from_field(name, attr)
+                    if not widget.tooltip:
+                        widget.tooltip = _tooltips.attributes.get(name, "")
 
                 else:
                     # convert class method into instance method
@@ -264,11 +266,11 @@ class ToolBarGui(ContainerLikeGui):
                     Image,
                     Table,
                 )
-                _obj = _obj
+                _obj_labeled = _obj
                 if (not isinstance(_obj.widget, _hide_labels)) and self.labels:
-                    _obj = _LabeledWidgetAction.from_action(_obj)
-                _obj.parent = self
-                insert_action_like(self.native, key, _obj.native)
+                    _obj_labeled = _LabeledWidgetAction.from_action(_obj)
+                _obj_labeled.parent = self
+                insert_action_like(self.native, key, _obj_labeled.native)
             self._list.insert(key, _obj)
         else:
             raise TypeError(f"{type(_obj)} is not supported.")

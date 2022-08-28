@@ -157,42 +157,52 @@ class mguiLike:
 
     @property
     def parent(self):
+        """Return the parent object."""
         return self.native.parent()
 
     @parent.setter
     def parent(self, obj: mguiLike | Widget):
+        """Set the parent object."""
         self.native.setParent(obj.native)
 
     @property
     def name(self) -> str:
+        """Name of the object."""
         return self.native.objectName()
 
     @name.setter
     def name(self, value: str):
+        """Set the name of the object."""
         self.native.setObjectName(value)
 
     @property
     def tooltip(self) -> str:
+        """Tooltip of the object."""
         return self.native.toolTip()
 
     @tooltip.setter
     def tooltip(self, value: str):
+        """Set the tooltip of the object."""
         self.native.setToolTip(value)
 
     @property
     def enabled(self) -> bool:
+        """True if the object is enabled."""
         return self.native.isEnabled()
 
     @enabled.setter
     def enabled(self, value: bool):
+        """Set the enabled state of the object."""
         self.native.setEnabled(value)
 
     @property
     def visible(self) -> bool:
+        """Visibility of the object."""
         return self.native.isVisible()
 
     @visible.setter
     def visible(self, value: bool):
+        """Set the visibility of the object."""
         self.native.setVisible(value)
 
     @property
@@ -352,6 +362,16 @@ class WidgetAction(AbstractAction, Generic[_W]):
         self.native.setText(value)
         if hasattr(self.widget, "text"):
             self.widget.text = value
+
+    @property
+    def tooltip(self) -> str:
+        """Tooltip of the inner widget."""
+        return self.widget.tooltip
+
+    @tooltip.setter
+    def tooltip(self, value: str):
+        """Set the tooltip of the inner widget."""
+        self.widget.tooltip = value
 
     def _labeled_widget(self):
         return self.widget._labeled_widget()

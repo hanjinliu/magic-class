@@ -496,7 +496,7 @@ def test_widget_property():
     assert x.result == 1
     assert y.result is None
 
-def test_tooltip():
+def test_tooltip_magicclass():
     @magicclass
     class A:
         """
@@ -516,6 +516,7 @@ def test_tooltip():
     assert ui.a.tooltip == "Parameter-a."
     assert ui["b"].tooltip == "Parameter-b."
 
+def test_tooltip_hasfields():
     class B(HasFields):
         """
         Test class.
@@ -533,6 +534,47 @@ def test_tooltip():
     ui = B()
     assert ui.widgets.a.tooltip == "Parameter-a."
     assert ui.widgets.b.tooltip == "Parameter-b."
+
+def test_tooltip_magicmenu():
+    @magicmenu
+    class A:
+        """
+        Test class.
+
+        Attributes
+        ----------
+        a : SpinBox
+            Parameter-a.
+        b : str
+            Parameter-b.
+        """
+        a = field(int)
+        b = vfield(str)
+
+    ui = A()
+    assert ui.a.tooltip == "Parameter-a."
+    assert ui["b"].tooltip == "Parameter-b."
+
+def test_tooltip_magictoolbar():
+    @magictoolbar
+    class A:
+        """
+        Test class.
+
+        Attributes
+        ----------
+        a : SpinBox
+            Parameter-a.
+        b : str
+            Parameter-b.
+        """
+        a = field(int)
+        b = vfield(str)
+
+    ui = A()
+    assert ui.a.tooltip == "Parameter-a."
+    assert ui["b"].tooltip == "Parameter-b."
+
 
 def test_get_set_hooks():
     class A:

@@ -23,7 +23,7 @@ from .utils import format_error, connect_magicclasses
 from ..signature import get_additional_option
 from ..fields import MagicField
 from ..widgets import Separator, FreeWidget
-from ..utils import iter_members
+from ..utils import iter_members, Tooltips
 
 
 def _check_popupmode(popup_mode: PopUpMode):
@@ -69,9 +69,9 @@ class MenuGuiBase(ContainerLikeGui):
     def _convert_attributes_into_widgets(self):
         cls = self.__class__
 
-        # Add class docstring as label.
-        if cls.__doc__:
-            self.native.setToolTip(cls.__doc__)
+        # Add class docstring as tooltip.
+        _tooltips = Tooltips(cls)
+        self.native.setToolTip(_tooltips.desc)
 
         # Bind all the methods and annotations
         base_members = {x[0] for x in iter_members(MenuGuiBase)}
@@ -91,6 +91,8 @@ class MenuGuiBase(ContainerLikeGui):
 
                 elif isinstance(attr, MagicField):
                     widget = self._create_widget_from_field(name, attr)
+                    if not widget.tooltip:
+                        widget.tooltip = _tooltips.attributes.get(name, "")
 
                 else:
                     # convert class method into instance method
@@ -106,7 +108,6 @@ class MenuGuiBase(ContainerLikeGui):
                         widget.native.setParent(
                             self.native, widget.native.windowFlags()
                         )
-
                     else:
                         widget = WidgetAction(widget)
 
@@ -204,11 +205,11 @@ class MenuGuiBase(ContainerLikeGui):
                     Image,
                     Table,
                 )
-                _obj = _obj
+                _obj_labeled = _obj
                 if (not isinstance(_obj.widget, _hide_labels)) and self.labels:
-                    _obj = _LabeledWidgetAction.from_action(_obj)
-                _obj.parent = self
-                insert_action_like(self.native, key, _obj.native)
+                    _obj_labeled = _LabeledWidgetAction.from_action(_obj)
+                _obj_labeled.parent = self
+                insert_action_like(self.native, key, _obj_labeled.native)
 
             self._list.insert(key, _obj)
         else:
