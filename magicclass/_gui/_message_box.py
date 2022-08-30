@@ -44,21 +44,21 @@ class QtErrorMessageBox(QMessageBox):
             text = text_or_exception.args[0]
             exc = text_or_exception
         super().__init__(
-            QMessageBox.Critical,
+            QMessageBox.Icon.Critical,
             str(title),
             str(text),
-            QMessageBox.Ok | QMessageBox.Help,
+            QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.Help,
             parent=parent,
         )
 
         self._exc = exc
 
-        self.traceback_button = self.button(QMessageBox.Help)
+        self.traceback_button = self.button(QMessageBox.StandardButton.Help)
         self.traceback_button.setText("Show trackback")
 
     def exec_(self):
         returned = super().exec_()
-        if returned == QMessageBox.Help:
+        if returned == QMessageBox.StandardButton.Help:
             tb = self._get_traceback()
             dlg = QtTracebackDialog(self)
             dlg.setText(tb)

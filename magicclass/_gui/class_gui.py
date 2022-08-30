@@ -191,7 +191,9 @@ class ClassGuiBase(BaseGui):
                                 _layout.setMenuBar(self._toolbar)
                             else:
                                 _layout.insertWidget(
-                                    0, self._toolbar, alignment=Qt.AlignTop
+                                    0,
+                                    self._toolbar,
+                                    alignment=Qt.AlignmentFlag.AlignTop,
                                 )
                                 self._toolbar.setContentsMargins(0, 0, 0, 0)
                                 n_insert += 1

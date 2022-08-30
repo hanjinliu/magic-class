@@ -135,7 +135,7 @@ class ToolButtonPlus(PushButtonPlus):
     def set_menu(self, qmenu: QMenu):
         """Set menu-like behavior to the tool button."""
         self.native.setMenu(qmenu)
-        self.native.setPopupMode(QToolButton.InstantPopup)
+        self.native.setPopupMode(QToolButton.ToolButtonPopupMode.InstantPopup)
         self.native.setIcon(qmenu.icon())  # icon have to be copied.
 
     def set_shortcut(self, key):

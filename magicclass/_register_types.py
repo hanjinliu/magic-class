@@ -44,10 +44,4 @@ def find_myname(gui: MagicTemplate):
 
 import magicgui as mgui
 
-if tuple(int(v) for v in mgui.__version__.split(".")[:2]) < (0, 4):
-    # magicgui<0.4 has bug in type registration
-    from magicgui.type_map import _TYPE_DEFS
-
-    _TYPE_DEFS[Color] = (ColorEdit, {})
-else:
-    mgui.register_type(Color, widget_type=ColorEdit)
+mgui.register_type(Color, widget_type=ColorEdit)
