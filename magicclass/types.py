@@ -11,7 +11,7 @@ from typing import (
     Callable,
     Literal,
 )
-from typing_extensions import Annotated, ParamSpec, _AnnotatedAlias
+from typing_extensions import Annotated, _AnnotatedAlias
 from magicgui.signature import split_annotated_type
 from magicgui.widgets import Widget, EmptyWidget
 
@@ -103,7 +103,6 @@ class ColorArray(NamedTuple):
 
 _W = TypeVar("_W", bound=Widget)
 _V = TypeVar("_V", bound=object)
-_P = ParamSpec("_P")
 
 # fmt: off
 @overload
@@ -155,7 +154,7 @@ class _BoundAlias(type):
         ...
 
     @overload
-    def __getitem__(cls, value: Callable[_P, _V]) -> type[_V]:
+    def __getitem__(cls, value: Callable[..., _V]) -> type[_V]:
         ...
 
     @overload
@@ -203,11 +202,11 @@ class _OneOfAlias(type):
     """metaclass of ``OneOf``."""
 
     @overload
-    def __getitem__(cls, value: Callable[_P, Iterable[tuple[Any, _V]]]) -> type[_V]:
+    def __getitem__(cls, value: Callable[..., Iterable[tuple[Any, _V]]]) -> type[_V]:
         ...
 
     @overload
-    def __getitem__(cls, value: Callable[_P, Iterable[_V]]) -> type[_V]:
+    def __getitem__(cls, value: Callable[..., Iterable[_V]]) -> type[_V]:
         ...
 
     @overload
@@ -296,12 +295,12 @@ class _SomeOfAlias(type):
 
     @overload
     def __getitem__(
-        cls, value: Callable[_P, Iterable[tuple[Any, _V]]]
+        cls, value: Callable[..., Iterable[tuple[Any, _V]]]
     ) -> type[list[_V]]:
         ...
 
     @overload
-    def __getitem__(cls, value: Callable[_P, Iterable[_V]]) -> type[list[_V]]:
+    def __getitem__(cls, value: Callable[..., Iterable[_V]]) -> type[list[_V]]:
         ...
 
     @overload
