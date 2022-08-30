@@ -980,7 +980,7 @@ class _MultiPlot(HasBackground, Generic[_C]):
             for r in range(nrows):
                 for c in range(ncols):
                     self.addaxis(r, c)
-        self.shape = (nrows, ncols)
+        self._shape = (nrows, ncols)
 
     def __init_subclass__(cls) -> None:
         """Update doc."""

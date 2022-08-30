@@ -118,6 +118,15 @@ class FunctionGuiPlus(FunctionGui[_R]):
             self()
         return self._dialog_widget
 
+    def reset_choices(self, *_: Any):
+        if self.visible:
+            return super().reset_choices()
+        with self.changed.blocked():
+            # in magicclass, magicgui tagged to a button or an action may be invisible,
+            # which causes unexpected function call
+            super().reset_choices()
+        return None
+
 
 def append_preview(self: FunctionGui, f: Callable, text: str = "Preview"):
     """Append a preview button to a FunctionGui widget."""
