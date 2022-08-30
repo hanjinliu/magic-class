@@ -78,7 +78,6 @@ Methods and Attributes
 
   - ``title`` ... Title text of the plot canvas.
 
-
   - ``legend`` ... Legend item of the canvas.
 
   - ``mouse_click_callbacks`` ... list of callback functions that will get called on mouse click.

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass._gui.keybinding &mdash; magic-class 0.6.8.dev0 documentation</title>
+  <title>magicclass._gui.keybinding &mdash; magic-class 0.6.9 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
@@ -14,6 +14,7 @@
         <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
         <script src="../../../_static/jquery.js"></script>
         <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../_static/doctools.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -28,7 +29,7 @@
             <a href="../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.8.dev0
+                0.6.9
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -77,12 +78,19 @@
 
   <h1>Source code for magicclass._gui.keybinding</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
-<span class="kn">from</span> <span class="nn">qtpy.QtCore</span> <span class="kn">import</span> <span class="n">Qt</span>
-<span class="kn">from</span> <span class="nn">qtpy.QtGui</span> <span class="kn">import</span> <span class="n">QKeySequence</span>
-<span class="kn">from</span> <span class="nn">qtpy.QtWidgets</span> <span class="kn">import</span> <span class="n">QShortcut</span>
 <span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">NewType</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span>
 <span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">reduce</span>
+<span class="kn">from</span> <span class="nn">operator</span> <span class="kn">import</span> <span class="n">or_</span>
+<span class="kn">from</span> <span class="nn">qtpy</span> <span class="kn">import</span> <span class="n">QT6</span>
+<span class="kn">from</span> <span class="nn">qtpy.QtCore</span> <span class="kn">import</span> <span class="n">Qt</span>
+<span class="kn">from</span> <span class="nn">qtpy.QtGui</span> <span class="kn">import</span> <span class="n">QKeySequence</span>
+
+<span class="k">if</span> <span class="n">QT6</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">qtpy.QtGui</span> <span class="kn">import</span> <span class="n">QShortcut</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">qtpy.QtWidgets</span> <span class="kn">import</span> <span class="n">QShortcut</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">qtpy.QtWidgets</span> <span class="kn">import</span> <span class="n">QWidget</span>
@@ -92,6 +100,11 @@
 <span class="n">KeyCombo</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span>
     <span class="n">Tuple</span><span class="p">[</span><span class="n">QtKey</span><span class="p">],</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">QtModifier</span><span class="p">,</span> <span class="n">QtKey</span><span class="p">],</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">QtModifier</span><span class="p">,</span> <span class="n">QtModifier</span><span class="p">,</span> <span class="n">QtKey</span><span class="p">]</span>
 <span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">_bit_sum</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Equivalent to a | b | c | d | ... operation.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">reduce</span><span class="p">(</span><span class="n">or_</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="Key"><a class="viewcode-back" href="../../../apidoc/magicclass.html#magicclass.Key">[docs]</a><span class="k">class</span> <span class="nc">Key</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
@@ -263,7 +276,7 @@
         <span class="n">qtkeycombo</span> <span class="o">=</span> <span class="n">parse_key_combo</span><span class="p">(</span><span class="o">*</span><span class="n">key_combo</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">qtkeycombo</span> <span class="o">=</span> <span class="n">strs2keycombo</span><span class="p">(</span><span class="o">*</span><span class="n">key_combo</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">QKeySequence</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">qtkeycombo</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">QKeySequence</span><span class="p">(</span><span class="n">_bit_sum</span><span class="p">(</span><span class="n">qtkeycombo</span><span class="p">))</span>
 
 
 <span class="k">def</span> <span class="nf">register_shortcut</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="n">parent</span><span class="p">:</span> <span class="n">QWidget</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>

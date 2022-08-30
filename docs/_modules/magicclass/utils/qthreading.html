@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.utils.qthreading &mdash; magic-class 0.6.8.dev0 documentation</title>
+  <title>magicclass.utils.qthreading &mdash; magic-class 0.6.9 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
@@ -14,6 +14,7 @@
         <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
         <script src="../../../_static/jquery.js"></script>
         <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../_static/doctools.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -28,7 +29,7 @@
             <a href="../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.8.dev0
+                0.6.9
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -136,27 +137,34 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return the current progress.&quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
     <span class="nd">@value</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Set the current progress.&quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">max</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return the maximum progress value.&quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
     <span class="nd">@max</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">max</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Set the maximum progress value.&quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">set_description</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">desc</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set the description of the progressbar.&quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Show the progressbar.&quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Close the progressbar.&quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
 
@@ -324,7 +332,7 @@
         <span class="p">)</span>
         <span class="n">cnt</span><span class="o">.</span><span class="n">margins</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">footer</span> <span class="o">=</span> <span class="n">cnt</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pbar</span><span class="o">.</span><span class="n">min_width</span> <span class="o">=</span> <span class="mi">200</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pbar</span><span class="o">.</span><span class="n">min_width</span> <span class="o">=</span> <span class="mi">360</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_timer</span> <span class="o">=</span> <span class="n">Timer</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_time_signal</span> <span class="o">=</span> <span class="n">QtSignal</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_time_signal</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_on_timer_updated</span><span class="p">)</span>
@@ -363,10 +371,12 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">paused</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;True if paused.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timer</span><span class="o">.</span><span class="n">_running</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Progress bar value.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pbar</span><span class="o">.</span><span class="n">value</span>
 
     <span class="nd">@value</span><span class="o">.</span><span class="n">setter</span>
@@ -449,12 +459,16 @@
 <span class="n">ProgressBarLike</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">ProgressBar</span><span class="p">,</span> <span class="n">_SupportProgress</span><span class="p">]</span>
 
 
-<span class="k">class</span> <span class="nc">thread_worker</span><span class="p">:</span>
+<div class="viewcode-block" id="thread_worker"><a class="viewcode-back" href="../../../apidoc/magicclass.utils.html#magicclass.utils.qthreading.thread_worker">[docs]</a><span class="k">class</span> <span class="nc">thread_worker</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Create a worker in a superqt/napari style.&quot;&quot;&quot;</span>
 
     <span class="n">_DEFAULT_PROGRESS_BAR</span> <span class="o">=</span> <span class="n">DefaultProgressBar</span>
     <span class="n">_DEFAULT_TOTAL</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="n">_WINDOW_FLAG</span> <span class="o">=</span> <span class="n">Qt</span><span class="o">.</span><span class="n">WindowTitleHint</span> <span class="o">|</span> <span class="n">Qt</span><span class="o">.</span><span class="n">WindowMinimizeButtonHint</span> <span class="o">|</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Window</span>
+    <span class="n">_WINDOW_FLAG</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">Qt</span><span class="o">.</span><span class="n">WindowType</span><span class="o">.</span><span class="n">WindowTitleHint</span>
+        <span class="o">|</span> <span class="n">Qt</span><span class="o">.</span><span class="n">WindowType</span><span class="o">.</span><span class="n">WindowMinimizeButtonHint</span>
+        <span class="o">|</span> <span class="n">Qt</span><span class="o">.</span><span class="n">WindowType</span><span class="o">.</span><span class="n">Window</span>
+    <span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -495,7 +509,7 @@
     <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[</span><span class="n">_P</span><span class="p">,</span> <span class="n">_R1</span><span class="p">]:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_func</span>
 
-    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="thread_worker.set_default"><a class="viewcode-back" href="../../../apidoc/magicclass.utils.html#magicclass.utils.qthreading.thread_worker.set_default">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">set_default</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">pbar_cls</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">|</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the default progressbar class.</span>
@@ -522,15 +536,15 @@
                     <span class="s2">&quot;&#39;napari&#39;, or a proper type object.&quot;</span>
                 <span class="p">)</span>
         <span class="bp">cls</span><span class="o">.</span><span class="n">_DEFAULT_PROGRESS_BAR</span> <span class="o">=</span> <span class="n">pbar_cls</span>
-        <span class="k">return</span> <span class="n">pbar_cls</span>
+        <span class="k">return</span> <span class="n">pbar_cls</span></div>
 
-    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="thread_worker.to_callback"><a class="viewcode-back" href="../../../apidoc/magicclass.utils.html#magicclass.utils.qthreading.thread_worker.to_callback">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">to_callback</span><span class="p">(</span><span class="n">callback</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callback</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Convert a callback to a callback object.&quot;&quot;&quot;</span>
         <span class="n">cb</span> <span class="o">=</span> <span class="n">Callback</span><span class="p">(</span><span class="n">callback</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">args</span> <span class="ow">or</span> <span class="n">kwargs</span><span class="p">:</span>
             <span class="n">cb</span> <span class="o">=</span> <span class="n">cb</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">cb</span>
+        <span class="k">return</span> <span class="n">cb</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">is_generator</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
@@ -608,44 +622,15 @@
             <span class="n">is_generator</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">worker</span><span class="p">,</span> <span class="n">GeneratorWorker</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_progress</span><span class="p">:</span>
-                <span class="n">_desc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_progress</span><span class="p">[</span><span class="s2">&quot;desc&quot;</span><span class="p">]</span>
-                <span class="n">_total</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_progress</span><span class="p">[</span><span class="s2">&quot;total&quot;</span><span class="p">]</span>
+                <span class="c1"># prepare progress bar</span>
                 <span class="n">_pbar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_progress</span><span class="p">[</span><span class="s2">&quot;pbar&quot;</span><span class="p">]</span>
-
-                <span class="n">all_args</span> <span class="o">=</span> <span class="kc">None</span>
-                <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">_desc</span><span class="p">):</span>
-                    <span class="n">arguments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__signature__</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="n">gui</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-                    <span class="n">arguments</span><span class="o">.</span><span class="n">apply_defaults</span><span class="p">()</span>
-                    <span class="n">all_args</span> <span class="o">=</span> <span class="n">arguments</span><span class="o">.</span><span class="n">arguments</span>
-                    <span class="n">desc</span> <span class="o">=</span> <span class="n">_desc</span><span class="p">(</span><span class="o">**</span><span class="n">all_args</span><span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">desc</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">_desc</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
-
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_total</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-                    <span class="k">if</span> <span class="n">all_args</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                        <span class="n">arguments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__signature__</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="n">gui</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-                        <span class="n">arguments</span><span class="o">.</span><span class="n">apply_defaults</span><span class="p">()</span>
-                        <span class="n">all_args</span> <span class="o">=</span> <span class="n">arguments</span><span class="o">.</span><span class="n">arguments</span>
-                    <span class="n">total</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">_total</span><span class="p">,</span> <span class="p">{},</span> <span class="n">all_args</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="n">callable</span><span class="p">(</span><span class="n">_total</span><span class="p">):</span>
-                    <span class="n">total</span> <span class="o">=</span> <span class="n">_total</span><span class="p">(</span><span class="n">gui</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_total</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
-                    <span class="n">total</span> <span class="o">=</span> <span class="n">_total</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                        <span class="s2">&quot;&#39;total&#39; must be int, callable or evaluatable string.&quot;</span>
-                    <span class="p">)</span>
-
+                <span class="n">desc</span><span class="p">,</span> <span class="n">total</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_normalize_desc_and_total</span><span class="p">(</span><span class="n">gui</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">is_generator</span><span class="p">:</span>
                     <span class="n">total</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_DEFAULT_TOTAL</span>
 
                 <span class="c1"># create progressbar widget (or any proper widget)</span>
                 <span class="k">if</span> <span class="n">_pbar</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">pbar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_progressbar</span><span class="p">(</span>
-                        <span class="n">gui</span><span class="p">,</span>
-                        <span class="n">desc</span><span class="o">=</span><span class="n">desc</span><span class="p">,</span>
-                        <span class="n">total</span><span class="o">=</span><span class="n">total</span><span class="p">,</span>
-                    <span class="p">)</span>
+                    <span class="n">pbar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_progressbar</span><span class="p">(</span><span class="n">gui</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="n">desc</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="n">total</span><span class="p">)</span>
                 <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_pbar</span><span class="p">,</span> <span class="n">MagicField</span><span class="p">):</span>
                     <span class="n">pbar</span> <span class="o">=</span> <span class="n">_pbar</span><span class="o">.</span><span class="n">get_widget</span><span class="p">(</span><span class="n">gui</span><span class="p">)</span>
                     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pbar</span><span class="p">,</span> <span class="n">ProgressBar</span><span class="p">):</span>
@@ -776,6 +761,36 @@
             <span class="n">_pbar</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">desc</span>
         <span class="k">return</span> <span class="n">_pbar</span>
 
+    <span class="k">def</span> <span class="nf">_normalize_desc_and_total</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gui</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">_desc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_progress</span><span class="p">[</span><span class="s2">&quot;desc&quot;</span><span class="p">]</span>
+        <span class="n">_total</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_progress</span><span class="p">[</span><span class="s2">&quot;total&quot;</span><span class="p">]</span>
+
+        <span class="n">all_args</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># progress bar description</span>
+        <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">_desc</span><span class="p">):</span>
+            <span class="n">arguments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__signature__</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="n">gui</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">arguments</span><span class="o">.</span><span class="n">apply_defaults</span><span class="p">()</span>
+            <span class="n">all_args</span> <span class="o">=</span> <span class="n">arguments</span><span class="o">.</span><span class="n">arguments</span>
+            <span class="n">desc</span> <span class="o">=</span> <span class="n">_desc</span><span class="p">(</span><span class="o">**</span><span class="n">all_args</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">desc</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">_desc</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+
+        <span class="c1"># total number of steps</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_total</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">all_args</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">arguments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__signature__</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="n">gui</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="n">arguments</span><span class="o">.</span><span class="n">apply_defaults</span><span class="p">()</span>
+                <span class="n">all_args</span> <span class="o">=</span> <span class="n">arguments</span><span class="o">.</span><span class="n">arguments</span>
+            <span class="n">total</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">_total</span><span class="p">,</span> <span class="p">{},</span> <span class="n">all_args</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">callable</span><span class="p">(</span><span class="n">_total</span><span class="p">):</span>
+            <span class="n">total</span> <span class="o">=</span> <span class="n">_total</span><span class="p">(</span><span class="n">gui</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_total</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="n">total</span> <span class="o">=</span> <span class="n">_total</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;&#39;total&#39; must be int, callable or evaluatable string.&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">desc</span><span class="p">,</span> <span class="n">total</span>
+
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">started</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CallbackList</span><span class="p">[</span><span class="kc">None</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Event that will be emitted on started.&quot;&quot;&quot;</span>
@@ -814,7 +829,7 @@
                 <span class="sa">f</span><span class="s2">&quot;Worker of non-generator function </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_func</span><span class="si">!r}</span><span class="s2"> does not have &quot;</span>
                 <span class="s2">&quot;aborted signal.&quot;</span>
             <span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_callback_dict_</span><span class="p">[</span><span class="s2">&quot;aborted&quot;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_callback_dict_</span><span class="p">[</span><span class="s2">&quot;aborted&quot;</span><span class="p">]</span></div>
 
 
 <span class="k">def</span> <span class="nf">init_pbar</span><span class="p">(</span><span class="n">pbar</span><span class="p">:</span> <span class="n">ProgressBarLike</span><span class="p">):</span>

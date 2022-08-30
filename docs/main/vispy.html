@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vispy Canvas &mdash; magic-class 0.6.8.dev0 documentation</title>
+  <title>Vispy Canvas &mdash; magic-class 0.6.9 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/columns.css" type="text/css" />
@@ -15,6 +15,7 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -31,7 +32,7 @@
             <a href="../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.8.dev0
+                0.6.9
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -92,7 +93,7 @@
            <div itemprop="articleBody">
 
   <section id="vispy-canvas">
-<h1>Vispy Canvas<a class="headerlink" href="#vispy-canvas" title="Permalink to this headline">¶</a></h1>
+<h1>Vispy Canvas<a class="headerlink" href="#vispy-canvas" title="Permalink to this heading">¶</a></h1>
 <p><a class="reference external" href="https://github.com/vispy/vispy">vispy</a>. is a 2D/3D visualization library that has Qt
 backend.</p>
 <div class="admonition warning">
@@ -100,7 +101,7 @@ backend.</p>
 <p>This submodule is largely work in progress!</p>
 </div>
 <section id="d-canvas">
-<h2>2D Canvas<a class="headerlink" href="#d-canvas" title="Permalink to this headline">¶</a></h2>
+<h2>2D Canvas<a class="headerlink" href="#d-canvas" title="Permalink to this heading">¶</a></h2>
 <p>For 2D plot, use <code class="docutils literal notranslate"><span class="pre">VispyPlotCanvas</span></code>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass.ext.vispy</span> <span class="kn">import</span> <span class="n">VispyPlotCanvas</span>
 <span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">field</span>
@@ -116,7 +117,7 @@ backend.</p>
 </div>
 </section>
 <section id="id1">
-<h2>3D Canvas<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<h2>3D Canvas<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h2>
 <p>For 3D visualization, use <code class="docutils literal notranslate"><span class="pre">Vispy3DCanvas</span></code>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass.ext.vispy</span> <span class="kn">import</span> <span class="n">Vispy3DCanvas</span>
 <span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">field</span>
@@ -136,7 +137,7 @@ backend.</p>
 </div>
 <p>This widget is useful in providing a mini-viewer as a <code class="docutils literal notranslate"><span class="pre">napari</span></code> dock widget.</p>
 <section id="supported-methods">
-<h3>Supported Methods<a class="headerlink" href="#supported-methods" title="Permalink to this headline">¶</a></h3>
+<h3>Supported Methods<a class="headerlink" href="#supported-methods" title="Permalink to this heading">¶</a></h3>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">add_image</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">add_isosurface</span></code></p></li>

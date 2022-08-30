@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.ext.dask.progress &mdash; magic-class 0.6.8.dev0 documentation</title>
+  <title>magicclass.ext.dask.progress &mdash; magic-class 0.6.9 documentation</title>
       <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/columns.css" type="text/css" />
@@ -14,6 +14,7 @@
         <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
         <script src="../../../../_static/jquery.js"></script>
         <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../../_static/doctools.js"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
@@ -28,7 +29,7 @@
             <a href="../../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.8.dev0
+                0.6.9
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
@@ -243,15 +244,13 @@
         <span class="bp">self</span><span class="p">,</span> <span class="n">gui</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FunctionWorker</span> <span class="o">|</span> <span class="n">GeneratorWorker</span><span class="p">:</span>
         <span class="n">gui_id</span> <span class="o">=</span> <span class="nb">id</span><span class="p">(</span><span class="n">gui</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">gui_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_progressbars</span><span class="p">:</span>
-            <span class="n">pbar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_progressbars</span><span class="p">[</span><span class="n">gui_id</span><span class="p">]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">pbar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_DEFAULT_PROGRESS_BAR</span><span class="p">(</span><span class="nb">max</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_DEFAULT_TOTAL</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_progressbars</span><span class="p">[</span><span class="n">gui_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">pbar</span>
-            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">computed</span><span class="o">.</span><span class="n">_iter_as_method</span><span class="p">(</span><span class="n">gui</span><span class="p">):</span>
-                <span class="n">pbar</span><span class="o">.</span><span class="n">computed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
-            <span class="n">pbar</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span><span class="n">gui</span><span class="o">.</span><span class="n">native</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">_WINDOW_FLAG</span><span class="p">)</span>
-            <span class="n">move_to_screen_center</span><span class="p">(</span><span class="n">pbar</span><span class="o">.</span><span class="n">native</span><span class="p">)</span>
+
+        <span class="n">pbar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_DEFAULT_PROGRESS_BAR</span><span class="p">(</span><span class="nb">max</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_DEFAULT_TOTAL</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_progressbars</span><span class="p">[</span><span class="n">gui_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">pbar</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">computed</span><span class="o">.</span><span class="n">_iter_as_method</span><span class="p">(</span><span class="n">gui</span><span class="p">):</span>
+            <span class="n">pbar</span><span class="o">.</span><span class="n">computed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+        <span class="n">pbar</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span><span class="n">gui</span><span class="o">.</span><span class="n">native</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">_WINDOW_FLAG</span><span class="p">)</span>
+        <span class="n">move_to_screen_center</span><span class="p">(</span><span class="n">pbar</span><span class="o">.</span><span class="n">native</span><span class="p">)</span>
 
         <span class="n">worker</span> <span class="o">=</span> <span class="n">create_worker</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_define_function</span><span class="p">(</span><span class="n">pbar</span><span class="p">)</span><span class="o">.</span><span class="fm">__get__</span><span class="p">(</span><span class="n">gui</span><span class="p">),</span>

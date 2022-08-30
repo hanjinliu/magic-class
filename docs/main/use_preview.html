@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Add Preview Functionalities &mdash; magic-class 0.6.8.dev0 documentation</title>
+  <title>Add Preview Functionalities &mdash; magic-class 0.6.9 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/columns.css" type="text/css" />
@@ -15,6 +15,7 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -31,7 +32,7 @@
             <a href="../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.8.dev0
+                0.6.9
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -93,7 +94,7 @@
            <div itemprop="articleBody">
 
   <section id="add-preview-functionalities">
-<h1>Add Preview Functionalities<a class="headerlink" href="#add-preview-functionalities" title="Permalink to this headline">¶</a></h1>
+<h1>Add Preview Functionalities<a class="headerlink" href="#add-preview-functionalities" title="Permalink to this heading">¶</a></h1>
 <p>It is a very usual case when you want to preview something before actually running a
 function. Suppose in your GUI you implemented a function that can load a csv file and
 summarize its contents, you may want to open the csv file and see if you chose the
@@ -110,7 +111,7 @@ bottom of the <code class="docutils literal notranslate"><span class="pre">Funct
 <p>In <code class="docutils literal notranslate"><span class="pre">magic-class</span></code>, <code class="docutils literal notranslate"><span class="pre">mark_preview</span></code> decorator is very useful for this purpose. You can
 define a preview function and directly integrate it into another function easily.</p>
 <section id="basic-usage">
-<h2>Basic Usage<a class="headerlink" href="#basic-usage" title="Permalink to this headline">¶</a></h2>
+<h2>Basic Usage<a class="headerlink" href="#basic-usage" title="Permalink to this heading">¶</a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@mark_preview</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">_f_prev</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xxx</span><span class="p">):</span>
     <span class="o">...</span>

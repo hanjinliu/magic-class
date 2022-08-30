@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Binding Values to Arguments &mdash; magic-class 0.6.8.dev0 documentation</title>
+  <title>Binding Values to Arguments &mdash; magic-class 0.6.9 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/columns.css" type="text/css" />
@@ -15,6 +15,7 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -31,7 +32,7 @@
             <a href="../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.8.dev0
+                0.6.9
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -95,7 +96,7 @@
            <div itemprop="articleBody">
 
   <section id="binding-values-to-arguments">
-<h1>Binding Values to Arguments<a class="headerlink" href="#binding-values-to-arguments" title="Permalink to this headline">¶</a></h1>
+<h1>Binding Values to Arguments<a class="headerlink" href="#binding-values-to-arguments" title="Permalink to this heading">¶</a></h1>
 <p>In <code class="docutils literal notranslate"><span class="pre">magicgui</span></code>, you can bind values to function arguments instead of annotating them.
 The <code class="docutils literal notranslate"><span class="pre">&quot;bind&quot;</span></code> option is useful when the parameter is determined programatically, such
 as time, random value or parameters in other widgets.</p>
@@ -115,7 +116,7 @@ Since many parameters will be obtained from widgets that are created by <code cl
 or retrieved by some get-value instance methods, magic-class is desined in a way that
 also works with these options.</p>
 <section id="use-methods">
-<h2>Use Methods<a class="headerlink" href="#use-methods" title="Permalink to this headline">¶</a></h2>
+<h2>Use Methods<a class="headerlink" href="#use-methods" title="Permalink to this heading">¶</a></h2>
 <p>If a method defined in a class is given as a bind option, magic-class calls it as an instance
 method every time the value is accessed. A bind option should be set using <code class="docutils literal notranslate"><span class="pre">set_options</span></code> wrapper
 as usual.</p>
@@ -171,7 +172,7 @@ some information from the viewer, you can record the viewer's state.</p>
 </div>
 </section>
 <section id="use-fields">
-<h2>Use Fields<a class="headerlink" href="#use-fields" title="Permalink to this headline">¶</a></h2>
+<h2>Use Fields<a class="headerlink" href="#use-fields" title="Permalink to this heading">¶</a></h2>
 <p>Many GUIs let users to set global parameters by widgets, and use these parameters in other functions.
 However, if you want to run the function from the script, you don't want to do this like:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ui</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mi">1</span>
@@ -201,7 +202,7 @@ directly (See also <a class="reference internal" href="use_field.html"><span cla
 <p>In this example, values <code class="docutils literal notranslate"><span class="pre">x0</span></code> and <code class="docutils literal notranslate"><span class="pre">x1</span></code> is determined by refering to <code class="docutils literal notranslate"><span class="pre">a.value</span></code> and <code class="docutils literal notranslate"><span class="pre">b.value</span></code>.</p>
 </section>
 <section id="use-annotated-type">
-<h2>Use Annotated Type<a class="headerlink" href="#use-annotated-type" title="Permalink to this headline">¶</a></h2>
+<h2>Use Annotated Type<a class="headerlink" href="#use-annotated-type" title="Permalink to this heading">¶</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">magicgui</span></code> supports <code class="docutils literal notranslate"><span class="pre">typing_extensions</span></code>'s <code class="docutils literal notranslate"><span class="pre">Annotated</span></code> type, which makes GUI configurations much
 clearer.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Annotated</span>

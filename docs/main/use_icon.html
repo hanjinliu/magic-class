@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Set Custom Icons &mdash; magic-class 0.6.8.dev0 documentation</title>
+  <title>Set Custom Icons &mdash; magic-class 0.6.9 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/columns.css" type="text/css" />
@@ -15,6 +15,7 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -31,7 +32,7 @@
             <a href="../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.8.dev0
+                0.6.9
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -95,7 +96,7 @@
            <div itemprop="articleBody">
 
   <section id="set-custom-icons">
-<h1>Set Custom Icons<a class="headerlink" href="#set-custom-icons" title="Permalink to this headline">¶</a></h1>
+<h1>Set Custom Icons<a class="headerlink" href="#set-custom-icons" title="Permalink to this heading">¶</a></h1>
 <p>An icon often tells more than a text. If you don't hesitate to prepare icons, using them
 in your GUI will be a good idea especially in a tool bar.</p>
 <p>Basically you'll set icons with the <code class="docutils literal notranslate"><span class="pre">icon</span></code> keyword argument of <code class="docutils literal notranslate"><span class="pre">&#64;set_design</span></code> decorator.
@@ -109,7 +110,7 @@ There are several ways to do that in <code class="docutils literal notranslate">
 </ul>
 </div>
 <section id="image-file-as-an-icon">
-<h2><a class="toc-backref" href="#id1">Image File as an Icon</a><a class="headerlink" href="#image-file-as-an-icon" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id1">Image File as an Icon</a><a class="headerlink" href="#image-file-as-an-icon" title="Permalink to this heading">¶</a></h2>
 <p>If you have your icon file in such as .jpg or .svg format, you can use the path.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">magictoolbar</span><span class="p">,</span> <span class="n">set_design</span>
 
@@ -126,7 +127,7 @@ There are several ways to do that in <code class="docutils literal notranslate">
 </div>
 </section>
 <section id="standard-icons">
-<h2><a class="toc-backref" href="#id2">Standard Icons</a><a class="headerlink" href="#standard-icons" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id2">Standard Icons</a><a class="headerlink" href="#standard-icons" title="Permalink to this heading">¶</a></h2>
 <p>Qt supplies several standard icons. You can use them by their name. Since it is tough to
 find out the name of a icon, you can use the <code class="docutils literal notranslate"><span class="pre">Icon</span></code> namespace.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">magictoolbar</span><span class="p">,</span> <span class="n">set_design</span><span class="p">,</span> <span class="n">Icon</span>
@@ -142,7 +143,7 @@ find out the name of a icon, you can use the <code class="docutils literal notra
 </div>
 </section>
 <section id="array-as-an-icon">
-<h2><a class="toc-backref" href="#id3">Array as an Icon</a><a class="headerlink" href="#array-as-an-icon" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id3">Array as an Icon</a><a class="headerlink" href="#array-as-an-icon" title="Permalink to this heading">¶</a></h2>
 <p>You may want to apply some transformation to an icon image. In this case, an array-like object
 can be used.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">magictoolbar</span><span class="p">,</span> <span class="n">set_design</span>

@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Container Variations &mdash; magic-class 0.6.8.dev0 documentation</title>
+  <title>Container Variations &mdash; magic-class 0.6.9 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/columns.css" type="text/css" />
@@ -15,6 +15,7 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -31,7 +32,7 @@
             <a href="../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.8.dev0
+                0.6.9
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -112,9 +113,9 @@
            <div itemprop="articleBody">
 
   <section id="container-variations">
-<h1>Container Variations<a class="headerlink" href="#container-variations" title="Permalink to this headline">¶</a></h1>
+<h1>Container Variations<a class="headerlink" href="#container-variations" title="Permalink to this heading">¶</a></h1>
 <section id="use-other-qt-widgets-as-container">
-<h2>Use Other Qt Widgets as Container<a class="headerlink" href="#use-other-qt-widgets-as-container" title="Permalink to this headline">¶</a></h2>
+<h2>Use Other Qt Widgets as Container<a class="headerlink" href="#use-other-qt-widgets-as-container" title="Permalink to this heading">¶</a></h2>
 <p>In <code class="docutils literal notranslate"><span class="pre">magic-class</span></code>, many Qt widget variations are available in a same API as <code class="docutils literal notranslate"><span class="pre">magicgui</span></code>'s <code class="docutils literal notranslate"><span class="pre">Container</span></code>.
 You can use them by importing from <code class="docutils literal notranslate"><span class="pre">magicclass.widgets</span></code>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">LineEdit</span><span class="p">,</span> <span class="n">ScrollableContainer</span>
@@ -130,12 +131,12 @@ You can use them by importing from <code class="docutils literal notranslate"><s
 <img alt="../_images/fig_5-1.png" src="../_images/fig_5-1.png" />
 </section>
 <section id="available-containers">
-<h2>Available Containers<a class="headerlink" href="#available-containers" title="Permalink to this headline">¶</a></h2>
+<h2>Available Containers<a class="headerlink" href="#available-containers" title="Permalink to this heading">¶</a></h2>
 <p>Container variations are available in magic classes using <cite>widget_type=...</cite> keyword argument.
 For instance, you can create <code class="docutils literal notranslate"><span class="pre">ButtonContainer</span></code> by <code class="docutils literal notranslate"><span class="pre">&#64;magicclass(widget_type=&quot;button&quot;)</span></code>. Menu bar and
 tool bar will be added to appropriate spaces according to the container type.</p>
 <section id="default-container">
-<h3>Default Container<a class="headerlink" href="#default-container" title="Permalink to this headline">¶</a></h3>
+<h3>Default Container<a class="headerlink" href="#default-container" title="Permalink to this heading">¶</a></h3>
 <p>This is the most basic one. Same as <code class="docutils literal notranslate"><span class="pre">magicgui</span></code>'s <code class="docutils literal notranslate"><span class="pre">Container</span></code>.</p>
 <img alt="../_images/fig_5-none.png" src="../_images/fig_5-none.png" />
 <ul class="simple">
@@ -143,7 +144,7 @@ tool bar will be added to appropriate spaces according to the container type.</p
 </ul>
 </section>
 <section id="mainwindow">
-<h3>MainWindow<a class="headerlink" href="#mainwindow" title="Permalink to this headline">¶</a></h3>
+<h3>MainWindow<a class="headerlink" href="#mainwindow" title="Permalink to this heading">¶</a></h3>
 <p>Main window is used. Same as <code class="docutils literal notranslate"><span class="pre">magicgui</span></code>'s <code class="docutils literal notranslate"><span class="pre">MainWindow</span></code>. Toolbar is floatable in main window.</p>
 <img alt="../_images/fig_5-mainwindow.png" src="../_images/fig_5-mainwindow.png" />
 <ul class="simple">
@@ -151,7 +152,7 @@ tool bar will be added to appropriate spaces according to the container type.</p
 </ul>
 </section>
 <section id="buttoncontainer">
-<h3>ButtonContainer<a class="headerlink" href="#buttoncontainer" title="Permalink to this headline">¶</a></h3>
+<h3>ButtonContainer<a class="headerlink" href="#buttoncontainer" title="Permalink to this heading">¶</a></h3>
 <p>A push button widget is created. Contents of the container show up when the button is clicked.</p>
 <img alt="../_images/fig_5-button.png" src="../_images/fig_5-button.png" />
 <ul class="simple">
@@ -165,7 +166,7 @@ tool bar will be added to appropriate spaces according to the container type.</p
 </ul>
 </section>
 <section id="collapsiblecontainer">
-<h3>CollapsibleContainer<a class="headerlink" href="#collapsiblecontainer" title="Permalink to this headline">¶</a></h3>
+<h3>CollapsibleContainer<a class="headerlink" href="#collapsiblecontainer" title="Permalink to this heading">¶</a></h3>
 <p>Collapsible/expandable widget is created.</p>
 <img alt="../_images/fig_5-collapsible.png" src="../_images/fig_5-collapsible.png" />
 <ul class="simple">
@@ -180,7 +181,7 @@ tool bar will be added to appropriate spaces according to the container type.</p
 </ul>
 </section>
 <section id="draggablecontainer">
-<h3>DraggableContainer<a class="headerlink" href="#draggablecontainer" title="Permalink to this headline">¶</a></h3>
+<h3>DraggableContainer<a class="headerlink" href="#draggablecontainer" title="Permalink to this heading">¶</a></h3>
 <p>Container is packed in a scroll area. It can be scrolled by mouse drag.</p>
 <img alt="../_images/fig_5-draggable.png" src="../_images/fig_5-draggable.png" />
 <ul class="simple">
@@ -194,7 +195,7 @@ tool bar will be added to appropriate spaces according to the container type.</p
 </ul>
 </section>
 <section id="framecontainer">
-<h3>FrameContainer<a class="headerlink" href="#framecontainer" title="Permalink to this headline">¶</a></h3>
+<h3>FrameContainer<a class="headerlink" href="#framecontainer" title="Permalink to this heading">¶</a></h3>
 <p>Container is enclosed by a line. It does not have its title unlike <code class="docutils literal notranslate"><span class="pre">GroupBoxContainer</span></code></p>
 <img alt="../_images/fig_5-frame.png" src="../_images/fig_5-frame.png" />
 <ul class="simple">
@@ -208,7 +209,7 @@ tool bar will be added to appropriate spaces according to the container type.</p
 </ul>
 </section>
 <section id="groupboxcontainer">
-<h3>GroupBoxContainer<a class="headerlink" href="#groupboxcontainer" title="Permalink to this headline">¶</a></h3>
+<h3>GroupBoxContainer<a class="headerlink" href="#groupboxcontainer" title="Permalink to this heading">¶</a></h3>
 <p>Container is enclosed by a line. Widget name will be the title of the group box.</p>
 <img alt="../_images/fig_5-groupbox.png" src="../_images/fig_5-groupbox.png" />
 <ul class="simple">
@@ -222,7 +223,7 @@ tool bar will be added to appropriate spaces according to the container type.</p
 </ul>
 </section>
 <section id="hcollapsiblecontainer">
-<h3>HCollapsibleContainer<a class="headerlink" href="#hcollapsiblecontainer" title="Permalink to this headline">¶</a></h3>
+<h3>HCollapsibleContainer<a class="headerlink" href="#hcollapsiblecontainer" title="Permalink to this heading">¶</a></h3>
 <p>An horizontal collapsible/expandable widget is created.</p>
 <ul class="simple">
 <li><p><em>option</em>: <code class="docutils literal notranslate"><span class="pre">widget_type=&quot;hcollapsible&quot;</span></code></p></li>
@@ -235,7 +236,7 @@ tool bar will be added to appropriate spaces according to the container type.</p
 </ul>
 </section>
 <section id="listcontainer">
-<h3>ListContainer<a class="headerlink" href="#listcontainer" title="Permalink to this headline">¶</a></h3>
+<h3>ListContainer<a class="headerlink" href="#listcontainer" title="Permalink to this heading">¶</a></h3>
 <p>Drag-and-drop is enabled for each contents of the container.</p>
 <img alt="../_images/fig_5-list.png" src="../_images/fig_5-list.png" />
 <ul class="simple">
@@ -249,7 +250,7 @@ tool bar will be added to appropriate spaces according to the container type.</p
 </ul>
 </section>
 <section id="subwindowscontainer">
-<h3>SubWindowsContainer<a class="headerlink" href="#subwindowscontainer" title="Permalink to this headline">¶</a></h3>
+<h3>SubWindowsContainer<a class="headerlink" href="#subwindowscontainer" title="Permalink to this heading">¶</a></h3>
 <p>All the child widgets are displayed as subwindows in this container.</p>
 <img alt="../_images/fig_5-subwindows.png" src="../_images/fig_5-subwindows.png" />
 <ul class="simple">
@@ -263,7 +264,7 @@ tool bar will be added to appropriate spaces according to the container type.</p
 </ul>
 </section>
 <section id="scrollablecontainer">
-<h3>ScrollableContainer<a class="headerlink" href="#scrollablecontainer" title="Permalink to this headline">¶</a></h3>
+<h3>ScrollableContainer<a class="headerlink" href="#scrollablecontainer" title="Permalink to this heading">¶</a></h3>
 <p>Container is packed in a scroll area. It can be scrolled by scroll bars.</p>
 <img alt="../_images/fig_5-scrollable.png" src="../_images/fig_5-scrollable.png" />
 <ul class="simple">
@@ -277,7 +278,7 @@ tool bar will be added to appropriate spaces according to the container type.</p
 </ul>
 </section>
 <section id="splittercontainer">
-<h3>SplitterContainer<a class="headerlink" href="#splittercontainer" title="Permalink to this headline">¶</a></h3>
+<h3>SplitterContainer<a class="headerlink" href="#splittercontainer" title="Permalink to this heading">¶</a></h3>
 <p>The borders between adjacent widgets are adjustable (every child widget is resizable).
 In the following image, splitter exists between the radio buttons and two push buttons.</p>
 <img alt="../_images/fig_5-split.png" src="../_images/fig_5-split.png" />
@@ -292,7 +293,7 @@ In the following image, splitter exists between the radio buttons and two push b
 </ul>
 </section>
 <section id="stackedcontainer">
-<h3>StackedContainer<a class="headerlink" href="#stackedcontainer" title="Permalink to this headline">¶</a></h3>
+<h3>StackedContainer<a class="headerlink" href="#stackedcontainer" title="Permalink to this heading">¶</a></h3>
 <p>One child widget is visible at a time. Current index must be set programmatically or using other widgets.</p>
 <img alt="../_images/fig_5-stacked.png" src="../_images/fig_5-stacked.png" />
 <ul class="simple">
@@ -306,7 +307,7 @@ In the following image, splitter exists between the radio buttons and two push b
 </ul>
 </section>
 <section id="tabbedcontainer">
-<h3>TabbedContainer<a class="headerlink" href="#tabbedcontainer" title="Permalink to this headline">¶</a></h3>
+<h3>TabbedContainer<a class="headerlink" href="#tabbedcontainer" title="Permalink to this heading">¶</a></h3>
 <p>Container widget composed of tabs and each widget is assigned to a tab. The name of each tab is
 determined according to the widget name of each child widget.</p>
 <img alt="../_images/fig_5-tabbed.png" src="../_images/fig_5-tabbed.png" />
@@ -321,7 +322,7 @@ determined according to the widget name of each child widget.</p>
 </ul>
 </section>
 <section id="toolboxcontainer">
-<h3>ToolBoxContainer<a class="headerlink" href="#toolboxcontainer" title="Permalink to this headline">¶</a></h3>
+<h3>ToolBoxContainer<a class="headerlink" href="#toolboxcontainer" title="Permalink to this heading">¶</a></h3>
 <p>Container widget composed of collapsible tool boxes and one box is expanded at a time. Each box has
 its own scroll area.</p>
 <img alt="../_images/fig_5-toolbox.png" src="../_images/fig_5-toolbox.png" />
@@ -337,7 +338,7 @@ its own scroll area.</p>
 </section>
 </section>
 <section id="type-map-of-containers">
-<h2>Type Map of Containers<a class="headerlink" href="#type-map-of-containers" title="Permalink to this headline">¶</a></h2>
+<h2>Type Map of Containers<a class="headerlink" href="#type-map-of-containers" title="Permalink to this heading">¶</a></h2>
 <table class="docutils align-default">
 <colgroup>
 <col style="width: 35%" />

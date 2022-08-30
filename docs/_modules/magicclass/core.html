@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.core &mdash; magic-class 0.6.8.dev0 documentation</title>
+  <title>magicclass.core &mdash; magic-class 0.6.9 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/columns.css" type="text/css" />
@@ -14,6 +14,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -28,7 +29,7 @@
             <a href="../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.8.dev0
+                0.6.9
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -79,7 +80,6 @@
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span> <span class="k">as</span> <span class="n">functools_wraps</span>
 <span class="kn">import</span> <span class="nn">inspect</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">weakref</span> <span class="kn">import</span> <span class="n">WeakValueDictionary</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Callable</span>
 
@@ -156,7 +156,6 @@
     <span class="n">widget_type</span><span class="p">:</span> <span class="n">WidgetTypeStr</span> <span class="o">|</span> <span class="n">WidgetType</span> <span class="o">=</span> <span class="n">WidgetType</span><span class="o">.</span><span class="n">none</span><span class="p">,</span>
     <span class="n">icon</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">stylesheet</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">StyleSheet</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">icon_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Decorator that can convert a Python class into a widget.</span>
@@ -207,11 +206,6 @@
         <span class="n">close_on_run</span> <span class="o">=</span> <span class="n">defaults</span><span class="p">[</span><span class="s2">&quot;close_on_run&quot;</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">error_mode</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">error_mode</span> <span class="o">=</span> <span class="n">defaults</span><span class="p">[</span><span class="s2">&quot;error_mode&quot;</span><span class="p">]</span>
-    <span class="k">if</span> <span class="n">icon_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">icon</span> <span class="o">=</span> <span class="n">icon_path</span>
-        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-            <span class="s2">&quot;`icon_path` is deprecated. Use `icon` instead.&quot;</span><span class="p">,</span> <span class="ne">DeprecationWarning</span>
-        <span class="p">)</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">widget_type</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">widget_type</span> <span class="o">=</span> <span class="n">widget_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
@@ -313,7 +307,6 @@
     <span class="n">labels</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">icon</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">icon_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Decorator that converts a Python class into a menu bar.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">_call_magicmenu</span><span class="p">(</span><span class="o">**</span><span class="nb">locals</span><span class="p">(),</span> <span class="n">menugui_class</span><span class="o">=</span><span class="n">MenuGui</span><span class="p">)</span></div>
@@ -329,7 +322,6 @@
     <span class="n">labels</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">icon</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">icon_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Decorator that converts a Python class into a context menu.&quot;&quot;&quot;</span>
 
@@ -339,11 +331,6 @@
         <span class="n">close_on_run</span> <span class="o">=</span> <span class="n">defaults</span><span class="p">[</span><span class="s2">&quot;close_on_run&quot;</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">error_mode</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">error_mode</span> <span class="o">=</span> <span class="n">defaults</span><span class="p">[</span><span class="s2">&quot;error_mode&quot;</span><span class="p">]</span>
-    <span class="k">if</span> <span class="n">icon_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">icon</span> <span class="o">=</span> <span class="n">icon_path</span>
-        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-            <span class="s2">&quot;`icon_path` is deprecated. Use `icon` instead.&quot;</span><span class="p">,</span> <span class="ne">DeprecationWarning</span>
-        <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">popup_mode</span> <span class="ow">in</span> <span class="p">(</span>
         <span class="n">PopUpMode</span><span class="o">.</span><span class="n">above</span><span class="p">,</span>
@@ -435,7 +422,6 @@
     <span class="n">labels</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">icon</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">icon_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Decorator that converts a Python class into a menu bar.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">_call_magicmenu</span><span class="p">(</span><span class="o">**</span><span class="nb">locals</span><span class="p">(),</span> <span class="n">menugui_class</span><span class="o">=</span><span class="n">ToolBarGui</span><span class="p">)</span></div>
@@ -449,7 +435,6 @@
     <span class="n">labels</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">icon</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">icon_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">menugui_class</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">MenuGuiBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -475,11 +460,6 @@
         <span class="n">close_on_run</span> <span class="o">=</span> <span class="n">defaults</span><span class="p">[</span><span class="s2">&quot;close_on_run&quot;</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">error_mode</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">error_mode</span> <span class="o">=</span> <span class="n">defaults</span><span class="p">[</span><span class="s2">&quot;error_mode&quot;</span><span class="p">]</span>
-    <span class="k">if</span> <span class="n">icon_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">icon</span> <span class="o">=</span> <span class="n">icon_path</span>
-        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-            <span class="s2">&quot;`icon_path` is deprecated. Use `icon` instead.&quot;</span><span class="p">,</span> <span class="ne">DeprecationWarning</span>
-        <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">popup_mode</span> <span class="ow">in</span> <span class="p">(</span>
         <span class="n">PopUpMode</span><span class="o">.</span><span class="n">above</span><span class="p">,</span>

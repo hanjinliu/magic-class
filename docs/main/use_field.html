@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Use Fields in magic-class &mdash; magic-class 0.6.8.dev0 documentation</title>
+  <title>Use Fields in magic-class &mdash; magic-class 0.6.9 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/columns.css" type="text/css" />
@@ -15,6 +15,7 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -31,7 +32,7 @@
             <a href="../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.8.dev0
+                0.6.9
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -104,7 +105,7 @@
            <div itemprop="articleBody">
 
   <section id="use-fields-in-magic-class">
-<h1>Use Fields in magic-class<a class="headerlink" href="#use-fields-in-magic-class" title="Permalink to this headline">¶</a></h1>
+<h1>Use Fields in magic-class<a class="headerlink" href="#use-fields-in-magic-class" title="Permalink to this heading">¶</a></h1>
 <div class="contents local topic" id="contents">
 <p class="topic-title">Contents</p>
 <ul class="simple">
@@ -130,9 +131,9 @@
 </ul>
 </div>
 <section id="magicfields">
-<h2><a class="toc-backref" href="#id1">MagicFields</a><a class="headerlink" href="#magicfields" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id1">MagicFields</a><a class="headerlink" href="#magicfields" title="Permalink to this heading">¶</a></h2>
 <section id="basics">
-<h3><a class="toc-backref" href="#id2">Basics</a><a class="headerlink" href="#basics" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id2">Basics</a><a class="headerlink" href="#basics" title="Permalink to this heading">¶</a></h3>
 <p>When widgets are directly provided in a magic class as class variables, they should
 be considered as &quot;fields&quot;. The concept of fields was actually introduced in Python
 as an standard library <code class="docutils literal notranslate"><span class="pre">dataclasses</span></code> as a <code class="docutils literal notranslate"><span class="pre">Field</span></code> object. A field is in a state
@@ -190,7 +191,7 @@ defaults as an object that is ready to be converted into a widget.</p>
 <img alt="../_images/fig_3-2.png" src="../_images/fig_3-2.png" />
 </section>
 <section id="define-callbacks">
-<h3><a class="toc-backref" href="#id3">Define Callbacks</a><a class="headerlink" href="#define-callbacks" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id3">Define Callbacks</a><a class="headerlink" href="#define-callbacks" title="Permalink to this heading">¶</a></h3>
 <p>Another feature of widgets are their ability to emit signals upon state changes. In <code class="docutils literal notranslate"><span class="pre">magicgui</span></code>, most of
 them have the same API <code class="docutils literal notranslate"><span class="pre">widget.changed.connect(callback)</span></code>. Owing to the simplicity, callback functions
 can be safely bound to <code class="docutils literal notranslate"><span class="pre">MagicField</span></code> with <code class="docutils literal notranslate"><span class="pre">connect</span></code> method.</p>
@@ -207,7 +208,7 @@ can be safely bound to <code class="docutils literal notranslate"><span class="p
 </div>
 </section>
 <section id="make-fields-more-property-like">
-<h3><a class="toc-backref" href="#id4">Make Fields More Property-like</a><a class="headerlink" href="#make-fields-more-property-like" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id4">Make Fields More Property-like</a><a class="headerlink" href="#make-fields-more-property-like" title="Permalink to this heading">¶</a></h3>
 <p>In many cases, you don't need all the controls of a widget. If you only need the value
 of a field, you might not want to get the value via <code class="docutils literal notranslate"><span class="pre">self.widget.value</span></code> all the way.</p>
 <p>Magic-class provides another field class called <code class="docutils literal notranslate"><span class="pre">MagicValueField</span></code>, which returns the
@@ -230,7 +231,7 @@ using <code class="docutils literal notranslate"><span class="pre">vfield</span>
 </section>
 </section>
 <section id="advanced-fieldgroup">
-<h2><a class="toc-backref" href="#id5">(Advanced) FieldGroup</a><a class="headerlink" href="#advanced-fieldgroup" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id5">(Advanced) FieldGroup</a><a class="headerlink" href="#advanced-fieldgroup" title="Permalink to this heading">¶</a></h2>
 <p>A <code class="docutils literal notranslate"><span class="pre">FieldGroup</span></code> is a class that is used as a container of field objects and behave
 like a <code class="docutils literal notranslate"><span class="pre">field</span></code> or <code class="docutils literal notranslate"><span class="pre">vfield</span></code> function itself.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">FieldGroup</span><span class="p">,</span> <span class="n">vfield</span>
@@ -255,7 +256,7 @@ like a <code class="docutils literal notranslate"><span class="pre">field</span>
 <p>Here, a <code class="docutils literal notranslate"><span class="pre">Points</span></code> class has two child fields <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code>. Since they are created
 by <code class="docutils literal notranslate"><span class="pre">vfield</span></code>, their values can be simply obtained by <code class="docutils literal notranslate"><span class="pre">self.points.x</span></code>.</p>
 <section id="deal-with-widgets-and-values">
-<h3><a class="toc-backref" href="#id6">Deal with Widgets and Values</a><a class="headerlink" href="#deal-with-widgets-and-values" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id6">Deal with Widgets and Values</a><a class="headerlink" href="#deal-with-widgets-and-values" title="Permalink to this heading">¶</a></h3>
 <p>Basically, a <code class="docutils literal notranslate"><span class="pre">FieldGroup</span></code> can always be substituted with a <code class="docutils literal notranslate"><span class="pre">magicclass</span></code>. However,
 there are some benefits to use <code class="docutils literal notranslate"><span class="pre">FieldGroup</span></code> over creating <code class="docutils literal notranslate"><span class="pre">magicclass</span></code>.</p>
 <p>A <code class="docutils literal notranslate"><span class="pre">FieldGroup</span></code> is aware of its child fields. Even if you defined all the fields
@@ -284,7 +285,7 @@ following code works.</p>
 </div>
 </section>
 <section id="create-many-similar-containers">
-<h3><a class="toc-backref" href="#id7">Create Many Similar Containers</a><a class="headerlink" href="#create-many-similar-containers" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id7">Create Many Similar Containers</a><a class="headerlink" href="#create-many-similar-containers" title="Permalink to this heading">¶</a></h3>
 <p>Since a <code class="docutils literal notranslate"><span class="pre">FieldGroup</span></code> can be considered as a &quot;widget creator&quot;, you can easily define a
 widget template by subclassing it.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">LabeledLineEdit</span><span class="p">(</span><span class="n">FieldGroup</span><span class="p">):</span>
@@ -307,9 +308,9 @@ widget template by subclassing it.</p>
 </section>
 </section>
 <section id="use-fields-in-non-gui-classes">
-<h2><a class="toc-backref" href="#id8">Use Fields in Non-GUI Classes</a><a class="headerlink" href="#use-fields-in-non-gui-classes" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id8">Use Fields in Non-GUI Classes</a><a class="headerlink" href="#use-fields-in-non-gui-classes" title="Permalink to this heading">¶</a></h2>
 <section id="hasfields-trait">
-<h3><a class="toc-backref" href="#id9">HasFields trait</a><a class="headerlink" href="#hasfields-trait" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id9">HasFields trait</a><a class="headerlink" href="#hasfields-trait" title="Permalink to this heading">¶</a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">MagicField</span></code> and <code class="docutils literal notranslate"><span class="pre">FieldGroup</span></code> are also designed for general usage of widgets.
 This means that essentially you can use <code class="docutils literal notranslate"><span class="pre">vfield</span></code> instead of <code class="docutils literal notranslate"><span class="pre">property</span></code> for
 getting or setting parameters.</p>
@@ -344,7 +345,7 @@ Therefore, the inaccessibility of widgets can generally be solved in a similar w
 </div>
 </section>
 <section id="dataclass-like-usage">
-<h3><a class="toc-backref" href="#id10">Dataclass-like Usage</a><a class="headerlink" href="#dataclass-like-usage" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id10">Dataclass-like Usage</a><a class="headerlink" href="#dataclass-like-usage" title="Permalink to this heading">¶</a></h3>
 <p>A typical way to use <code class="docutils literal notranslate"><span class="pre">HasFields</span></code> is to combine it with <code class="docutils literal notranslate"><span class="pre">&#64;dataclass</span></code>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">HasFields</span><span class="p">,</span> <span class="n">vfield</span>
