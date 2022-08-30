@@ -1,5 +1,6 @@
 from __future__ import annotations
-from qtpy.QtWidgets import QApplication, QMessageBox, QWidget
+from qtpy.QtWidgets import QMessageBox, QWidget
+from qtpy import QtGui
 from enum import Enum
 
 
@@ -67,7 +68,8 @@ def open_url(link: str) -> None:
 
 def screen_center():
     """Get the center coordinate of the screen."""
-    return QApplication.desktop().screen().rect().center()
+    _screen_rect = QtGui.QGuiApplication.primaryScreen().geometry()
+    return _screen_rect.center()
 
 
 def move_to_screen_center(qwidget: QWidget) -> None:

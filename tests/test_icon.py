@@ -1,8 +1,10 @@
 from pathlib import Path
 from magicclass import magicclass, magictoolbar, magicmenu, field, set_design, Icon
+from qtpy.QtGui import QIcon
 
 def _icon_byte(a):
-    return a.native.icon().pixmap(10,10).toImage().byteCount()
+    icon: QIcon = a.native.icon()
+    return icon.pixmap(10,10).toImage().sizeInBytes()
 
 def test_icon():
 
@@ -72,5 +74,5 @@ def test_icon_in_class_construction():
                 pass
 
     ui = A()
-    assert ui.native.windowIcon().pixmap(10,10).toImage().byteCount() > 0
+    assert ui.native.windowIcon().pixmap(10,10).toImage().sizeInBytes() > 0
     assert _icon_byte(ui.Menu.X) > 0

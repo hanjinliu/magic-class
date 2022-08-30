@@ -1,10 +1,17 @@
 from __future__ import annotations
-from qtpy.QtCore import Qt
-from qtpy.QtGui import QKeySequence
-from qtpy.QtWidgets import QShortcut
 from enum import Enum
 from typing import Callable, NewType, Union, Tuple, TYPE_CHECKING
 import re
+from functools import reduce
+from operator import or_
+from qtpy import QT6
+from qtpy.QtCore import Qt
+from qtpy.QtGui import QKeySequence
+
+if QT6:
+    from qtpy.QtGui import QShortcut
+else:
+    from qtpy.QtWidgets import QShortcut
 
 if TYPE_CHECKING:
     from qtpy.QtWidgets import QWidget
@@ -14,6 +21,11 @@ QtModifier = NewType("QtModifier", int)
 KeyCombo = Union[
     Tuple[QtKey], Tuple[QtModifier, QtKey], Tuple[QtModifier, QtModifier, QtKey]
 ]
+
+
+def _bit_sum(args):
+    """Equivalent to a | b | c | d | ... operation."""
+    return reduce(or_, args)
 
 
 class Key(Enum):
@@ -185,7 +197,7 @@ def as_shortcut(key_combo: tuple) -> QKeySequence:
         qtkeycombo = parse_key_combo(*key_combo)
     else:
         qtkeycombo = strs2keycombo(*key_combo)
-    return QKeySequence(sum(qtkeycombo))
+    return QKeySequence(_bit_sum(qtkeycombo))
 
 
 def register_shortcut(keys, parent: QWidget, target: Callable):

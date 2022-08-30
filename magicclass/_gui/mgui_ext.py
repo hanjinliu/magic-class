@@ -216,11 +216,16 @@ class AbstractAction(mguiLike):
 
     changed = Signal(object)
     support_value: bool
-    native: QAction | QWidgetAction
+    _native: QAction | QWidgetAction
 
     @property
     def value(self):
         raise NotImplementedError()
+
+    @property
+    def native(self) -> QAction | QWidgetAction:
+        """The native Qt object."""
+        return self._native
 
     def from_options(self, options):
         raise NotImplementedError()
@@ -232,7 +237,7 @@ class Action(AbstractAction):
     def __init__(
         self, *args, name: str = None, text: str = None, gui_only: bool = True, **kwargs
     ):
-        self.native = QAction(*args, **kwargs)
+        self._native = QAction(*args, **kwargs)
         self.mgui: FunctionGuiPlus = None
         self._doc = ""
         self._unwrapped = False
@@ -252,6 +257,7 @@ class Action(AbstractAction):
 
     def set_shortcut(self, key):
         self.native.setShortcut(key)
+        return None
 
     def reset_choices(self, *_: Any):
         """Reset child Categorical widgets."""
@@ -308,7 +314,7 @@ class WidgetAction(AbstractAction, Generic[_W]):
                 f"The first argument must be a magicgui-like widget, got {type(widget)}"
             )
 
-        self.native = QWidgetAction(parent)
+        self._native = QWidgetAction(parent)
         self.widget = widget
         name = widget.name
         self.native.setObjectName(name)
