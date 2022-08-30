@@ -97,7 +97,6 @@ def set_design(
     max_height: int | None = None,
     text: str | None = None,
     icon: str | None = None,
-    icon_path: str | None = None,
     font_size: int | None = None,
     font_family: int | None = None,
     font_color: Color | None = None,
@@ -133,12 +132,6 @@ def set_design(
     """
     caller_options = locals()
     caller_options = {k: v for k, v in caller_options.items() if v is not None}
-
-    if "icon_path" in caller_options.keys():
-        warnings.warn(
-            "`icon_path` is deprecated. Use `icon` instead.", DeprecationWarning
-        )
-        caller_options["icon"] = caller_options.pop("icon_path")
 
     def wrapper(obj):
         if isinstance(obj, type):

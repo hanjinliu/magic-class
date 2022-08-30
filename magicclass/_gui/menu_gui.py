@@ -191,8 +191,9 @@ class MenuGuiBase(ContainerLikeGui):
             elif isinstance(_obj.widget, ToolBarGui):
                 qmenu = QMenu(_obj.widget.name, self.native)
                 qmenu.addAction(_obj.native)
-                if _obj.widget._icon_path is not None:
-                    qmenu.setIcon(_obj.widget.native.windowIcon())
+                if _obj.widget.icon is not None:
+                    qicon = _obj.widget.icon.get_qicon(qmenu)
+                    qmenu.setIcon(qicon)
                 insert_action_like(self.native, key, qmenu)
 
             else:

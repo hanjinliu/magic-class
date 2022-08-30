@@ -69,8 +69,6 @@ class PushButtonPlus(PushButton):
         self._icon = icon
         self.native.setIconSize(self.native.size())
 
-    icon_path = icon
-
     @property
     def font_size(self):
         """Font size of the button."""
@@ -285,8 +283,6 @@ class Action(AbstractAction):
         icon = get_icon(val)
         icon.install(self)
         self._icon = icon
-
-    icon_path = icon
 
     def from_options(self, options: dict[str] | Callable):
         if callable(options):

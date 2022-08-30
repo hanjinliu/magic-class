@@ -772,8 +772,6 @@ class BaseGui(MagicTemplate):
         if hasattr(self.native, "setIconSize"):
             self.native.setIconSize(self.native.size())
 
-    icon_path = icon
-
 
 class ContainerLikeGui(BaseGui, mguiLike, MutableSequence):
     # This class enables similar API between magicgui widgets and additional widgets

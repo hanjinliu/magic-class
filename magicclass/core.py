@@ -1,7 +1,6 @@
 from __future__ import annotations
 from functools import wraps as functools_wraps
 import inspect
-import warnings
 from weakref import WeakValueDictionary
 from typing import Any, TYPE_CHECKING, Callable
 
@@ -78,7 +77,6 @@ def magicclass(
     widget_type: WidgetTypeStr | WidgetType = WidgetType.none,
     icon: Any | None = None,
     stylesheet: str | StyleSheet = None,
-    icon_path: str = None,
 ):
     """
     Decorator that can convert a Python class into a widget.
@@ -129,11 +127,6 @@ def magicclass(
         close_on_run = defaults["close_on_run"]
     if error_mode is None:
         error_mode = defaults["error_mode"]
-    if icon_path is not None:
-        icon = icon_path
-        warnings.warn(
-            "`icon_path` is deprecated. Use `icon` instead.", DeprecationWarning
-        )
 
     if isinstance(widget_type, str):
         widget_type = widget_type.lower()
@@ -235,7 +228,6 @@ def magicmenu(
     labels: bool = True,
     name: str | None = None,
     icon: Any | None = None,
-    icon_path: str = None,
 ):
     """Decorator that converts a Python class into a menu bar."""
     return _call_magicmenu(**locals(), menugui_class=MenuGui)
@@ -251,7 +243,6 @@ def magiccontext(
     labels: bool = True,
     name: str | None = None,
     icon: Any | None = None,
-    icon_path: str = None,
 ):
     """Decorator that converts a Python class into a context menu."""
 
@@ -261,11 +252,6 @@ def magiccontext(
         close_on_run = defaults["close_on_run"]
     if error_mode is None:
         error_mode = defaults["error_mode"]
-    if icon_path is not None:
-        icon = icon_path
-        warnings.warn(
-            "`icon_path` is deprecated. Use `icon` instead.", DeprecationWarning
-        )
 
     if popup_mode in (
         PopUpMode.above,
@@ -357,7 +343,6 @@ def magictoolbar(
     labels: bool = True,
     name: str | None = None,
     icon: Any | None = None,
-    icon_path: str = None,
 ):
     """Decorator that converts a Python class into a menu bar."""
     return _call_magicmenu(**locals(), menugui_class=ToolBarGui)
@@ -371,7 +356,6 @@ def _call_magicmenu(
     labels: bool = True,
     name: str = None,
     icon: Any | None = None,
-    icon_path: str = None,
     menugui_class: type[MenuGuiBase] = None,
 ):
     """
@@ -397,11 +381,6 @@ def _call_magicmenu(
         close_on_run = defaults["close_on_run"]
     if error_mode is None:
         error_mode = defaults["error_mode"]
-    if icon_path is not None:
-        icon = icon_path
-        warnings.warn(
-            "`icon_path` is deprecated. Use `icon` instead.", DeprecationWarning
-        )
 
     if popup_mode in (
         PopUpMode.above,
