@@ -41,7 +41,10 @@ class QtErrorMessageBox(QMessageBox):
             text = text_or_exception
             exc = None
         else:
-            text = text_or_exception.args[0]
+            if len(text_or_exception.args) > 0:
+                text = text_or_exception.args[0]
+            else:
+                text = ""
             exc = text_or_exception
         super().__init__(
             QMessageBox.Icon.Critical,

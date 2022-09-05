@@ -16,13 +16,30 @@ if TYPE_CHECKING:
     from .help import HelpWidget
     from macrokit import Macro
 
-Layout = Union[Literal["vertical"], Literal["horizontal"]]
+Layout = Literal["vertical", "horizontal"]
 
 _C = TypeVar("_C", bound=type)
+_M = TypeVar("_M", bound=MagicTemplate)
 _V = TypeVar("_V")
 
 def build_help(ui: MagicTemplate, parent: QWidget | None = None) -> "HelpWidget": ...
 def get_function_gui(ui: MagicTemplate, name: str) -> FunctionGuiPlus: ...
+@overload
+def magicclass(
+    class_: type[_M],
+    *,
+    layout: Layout = "vertical",
+    labels: bool = True,
+    name: str | None = None,
+    visible: bool | None = None,
+    close_on_run: bool | None = None,
+    popup_mode: PopUpModeStr | PopUpMode | None = None,
+    error_mode: ErrorModeStr | ErrorMode | None = None,
+    widget_type: WidgetTypeStr | WidgetType = WidgetType.none,
+    icon: Any | None = None,
+    stylesheet: str | StyleSheet | None = None,
+    parent=None,
+) -> type[_M]: ...
 @overload
 def magicclass(
     class_: _C,
@@ -53,7 +70,19 @@ def magicclass(
     icon: Any | None = None,
     stylesheet: str | StyleSheet | None = None,
     parent=None,
-) -> Callable[[_C], type[ClassGuiBase] | _C]: ...
+) -> Callable[[type[_M]], type[_M]] | Callable[[_C], type[ClassGuiBase] | _C]: ...
+@overload
+def magicmenu(
+    class_: type[_M],
+    *,
+    close_on_run: bool | None = None,
+    popup_mode: str | PopUpMode | None = None,
+    error_mode: str | ErrorMode | None = None,
+    labels: bool = True,
+    name: str | None = None,
+    icon: Any | None = None,
+    parent=None,
+) -> type[_M]: ...
 @overload
 def magicmenu(
     class_: _C,
@@ -76,7 +105,20 @@ def magicmenu(
     name: str | None = None,
     icon: Any | None = None,
     parent=None,
-) -> Callable[[_C], type[MenuGui] | _C]: ...
+) -> Callable[[type[_M]], type[_M]] | Callable[[_C], type[MenuGui] | _C]: ...
+@overload
+def magiccontext(
+    class_: type[_M],
+    *,
+    into: Callable | None = None,
+    close_on_run: bool | None = None,
+    popup_mode: str | PopUpMode | None = None,
+    error_mode: str | ErrorMode | None = None,
+    labels: bool = True,
+    name: str | None = None,
+    icon: Any | None = None,
+    parent=None,
+) -> type[_M]: ...
 @overload
 def magiccontext(
     class_: _C,
@@ -101,7 +143,19 @@ def magiccontext(
     name: str | None = None,
     icon: Any | None = None,
     parent=None,
-) -> Callable[[_C], type[ContextMenuGui] | _C]: ...
+) -> Callable[[type[_M]], type[_M]] | Callable[[_C], type[ContextMenuGui] | _C]: ...
+@overload
+def magictoolbar(
+    class_: type[_M],
+    *,
+    close_on_run: bool | None = None,
+    popup_mode: str | PopUpMode | None = None,
+    error_mode: str | ErrorMode | None = None,
+    labels: bool = True,
+    name: str | None = None,
+    icon: Any | None = None,
+    parent=None,
+) -> type[_M]: ...
 @overload
 def magictoolbar(
     class_: _C,
@@ -124,7 +178,7 @@ def magictoolbar(
     name: str | None = None,
     icon: Any | None = None,
     parent=None,
-) -> Callable[[_C], type[ToolBarGui] | _C]: ...
+) -> Callable[[type[_M]], type[_M]] | Callable[[_C], type[ToolBarGui] | _C]: ...
 def repeat(ui: MagicTemplate, index: int = -1) -> None: ...
 def update_widget_state(
     ui: MagicTemplate, macro: Macro | str | None = None

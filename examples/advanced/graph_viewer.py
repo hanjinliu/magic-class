@@ -1,11 +1,11 @@
-from magicclass import magicclass, field, click, magiccontext
+from magicclass import magicclass, field, magiccontext, MagicTemplate, nogui
 from magicclass.ext.pyqtgraph import QtPlotCanvas
 from magicclass.ext.qtconsole import QtConsole
 
 @magicclass(labels=False, layout="horizontal")
-class Layer:
+class Layer(MagicTemplate):
     @magiccontext
-    class ContextMenu:
+    class ContextMenu(MagicTemplate):
         def Delete_item(self): ...
 
     def __init__(self, linked_item=None, viewer=None):
@@ -21,11 +21,11 @@ class Layer:
     layer_name = field(str)
 
 @magicclass(widget_type="list")
-class LayerList:
+class LayerList(MagicTemplate):
     """List of plot items"""
 
 @magicclass(layout="horizontal")
-class Viewer:
+class Viewer(MagicTemplate):
     layerlist = LayerList()
     canvas = QtPlotCanvas()
     console = QtConsole()
@@ -34,11 +34,11 @@ class Viewer:
         self.layerlist.max_width = 250
         self.layerlist.width = 250
 
-    @click(visible=False)
+    @nogui
     def add_curve(self, x, y=None, name=None, **kwargs):
         self._add_plot_item(self.canvas.add_curve, x, y, name, **kwargs)
 
-    @click(visible=False)
+    @nogui
     def add_scatter(self, x, y=None, name=None, **kwargs):
         self._add_plot_item(self.canvas.add_scatter, x, y, name, **kwargs)
 
