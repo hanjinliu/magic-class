@@ -19,7 +19,6 @@ from enum import Enum
 import warnings
 from docstring_parser import parse, compose
 from qtpy.QtWidgets import QWidget, QDockWidget
-from qtpy.QtGui import QIcon
 
 from psygnal import Signal
 from magicgui.signature import MagicParameter, split_annotated_type
@@ -88,24 +87,24 @@ class PopUpMode(Enum):
     parentsub = "parentsub"
 
 
-def _msgbox_raising(e, parent):
+def _msgbox_raising(e: Exception, parent: Widget):
     from ._message_box import QtErrorMessageBox
 
     return QtErrorMessageBox.raise_(e, parent=parent.native)
 
 
-def _stderr_raising(e, parent):
+def _stderr_raising(e: Exception, parent: Widget):
     pass
 
 
-def _stdout_raising(e, parent):
+def _stdout_raising(e: Exception, parent: Widget):
     print(f"{e.__class__.__name__}: {e}")
 
 
-def _napari_notification_raising(e, parent):
+def _napari_notification_raising(e: Exception, parent: Widget):
     from napari.utils.notifications import show_error
 
-    show_error(str(e))
+    return show_error(str(e))
 
 
 class ErrorMode(Enum):
@@ -660,7 +659,6 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
                         title = Separator(
                             orientation="horizontal", title=text, button=True
                         )
-                        title.btn_text = "-"
                         # TODO: should remove mgui from self?
                         title.btn_clicked.connect(mgui.hide)
                         mgui.insert(0, title)

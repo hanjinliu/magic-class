@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable, TypeVar, Union, overload, Any
+from typing import TYPE_CHECKING, Callable, TypeVar, overload, Any
 from typing_extensions import Literal
 
 from ._gui.menu_gui import ContextMenuGui, MenuGui

@@ -1,6 +1,7 @@
 from __future__ import annotations
 from psygnal import Signal
-from qtpy.QtWidgets import QFrame, QLabel, QPushButton, QSizePolicy, QHBoxLayout
+from qtpy import QtWidgets as QtW, QtCore
+from qtpy.QtCore import Qt
 from .utils import FreeWidget
 
 
@@ -20,74 +21,84 @@ class Separator(FreeWidget):
         button: bool = False,
     ):
         super().__init__(name=name)
-        self._qtitlebar = _QTitleBar(self.native, title, button)
+        self._qtitlebar = _QTitleBar(title, parent=self.native)
         self.set_widget(self._qtitlebar)
         if button:
-            self._qtitlebar.button.clicked.connect(
-                lambda e: self.btn_clicked.emit(self._qtitlebar.button.isDown())
+            self._qtitlebar.closeSignal.connect(
+                lambda: self.btn_clicked.emit(self._qtitlebar.button().isDown())
             )
+        else:
+            self._qtitlebar.button().hide()
         self._title = title
 
     @property
     def btn_text(self):
-        return self._qtitlebar.button.text()
+        """The button text."""
+        return self._qtitlebar.button().text()
 
     @btn_text.setter
     def btn_text(self, value: str):
-        self._qtitlebar.button.setText(value)
+        """Set the button text."""
+        return self._qtitlebar.button().setText(value)
 
     @property
     def title(self) -> str:
-        return self._title
+        """The title string."""
+        return self._qtitlebar.title()
+
+    @title.setter
+    def title(self, text: str):
+        """Set the title string"""
+        return self._qtitlebar.setTitle(text)
 
 
-class _QTitleBar(QLabel):
-    """See also: napari/_qt/qt_main_window.py."""
+class _QTitleBar(QtW.QWidget):
+    """A custom title bar"""
 
-    def __init__(self, parent, text: str = "", button: bool = False):
+    closeSignal = Signal()
+
+    def __init__(self, title: str = "", parent: QtW.QWidget | None = None) -> None:
         super().__init__(parent)
+        _layout = QtW.QHBoxLayout()
+        _layout.setContentsMargins(1, 0, 1, 0)
+        _layout.setSpacing(0)
 
-        line = QFrame(parent=self)
-        line.setFrameShape(QFrame.HLine)
-        line.setFrameShadow(QFrame.Sunken)
-        line.setObjectName("Separator")
-        line.setStyleSheet(
-            """
-            QFrame#Separator {
-                background-color: gray;
-            }
-        """
+        self._title_label = QtW.QLabel()
+        self._title_label.setContentsMargins(0, 0, 0, 0)
+
+        _frame = QtW.QFrame()
+        _frame.setFrameShape(QtW.QFrame.Shape.HLine)
+        _frame.setFrameShadow(QtW.QFrame.Shadow.Sunken)
+        _frame.setSizePolicy(
+            QtW.QSizePolicy.Policy.Expanding, QtW.QSizePolicy.Policy.Fixed
         )
+        self._close_button = QtW.QToolButton()
+        self._close_button.setText("✕")
+        self._close_button.setToolTip("Close the widget.")
+        self._close_button.setFixedSize(QtCore.QSize(28, 28))
+        self._close_button.setCursor(Qt.CursorShape.ArrowCursor)
 
-        layout = QHBoxLayout()
-        layout.setSpacing(4)
-        layout.setContentsMargins(8, 1, 8, 0)
+        _layout.addWidget(self._title_label)
+        _layout.addWidget(_frame)
+        _layout.addWidget(self._close_button)
+        _layout.setAlignment(self._close_button, Qt.AlignmentFlag.AlignRight)
+        self.setLayout(_layout)
 
-        if button:
-            self.button = QPushButton(self)
-            self.button.setFixedWidth(20)
-            self.button.setStyleSheet(
-                "QPushButton {"
-                "border: 1px solid #555;"
-                "border-radius: 10px;"
-                "border-style: outset;"
-                "padding: 5px"
-                "}"
-            )
-            layout.addWidget(self.button)
+        self._close_button.clicked.connect(self.closeSignal.emit)
 
-        layout.addWidget(line)
+        self.setTitle(title)
 
-        if text:
-            text = QLabel(text, self)
-            text.setSizePolicy(
-                QSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Maximum)
-            )
-            layout.addWidget(text)
+    def button(self) -> QtW.QToolButton:
+        return self._close_button
 
-        self.setLayout(layout)
+    def title(self) -> str:
+        """The title text."""
+        return self._title_label.text()
 
-    def sizeHint(self):
-        szh = super().sizeHint()
-        szh.setHeight(20)
-        return szh
+    def setTitle(self, text: str):
+        """Set the title text."""
+        if text == "":
+            self._title_label.setVisible(False)
+        else:
+            self._title_label.setVisible(True)
+            self._title_label.setText(f"{text}  ")
