@@ -159,10 +159,10 @@ class _ScrollableContainer(ContainerBase):
         self._scroll_area = QtW.QScrollArea(self._qwidget)
         if layout == "horizontal":
             self._layout: QtW.QLayout = QtW.QHBoxLayout()
-            self._layout.setAlignment(Qt.AlignCenter)
+            self._layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
         else:
             self._layout = QtW.QVBoxLayout()
-            self._layout.setAlignment(Qt.AlignTop)
+            self._layout.setAlignment(Qt.AlignmentFlag.AlignTop)
 
         self._scroll_area.setWidgetResizable(True)
         self._scroll_area.setContentsMargins(0, 0, 0, 0)
@@ -177,7 +177,7 @@ class _ScrollableContainer(ContainerBase):
 
 class _WheelDisabledScrollArea(QtW.QScrollArea):
     def eventFilter(self, source, event: QEvent):
-        if event.type() == QEvent.Wheel:
+        if event.type() == QEvent.Type.Wheel:
             return True
         return super().eventFilter(source, event)
 
@@ -188,10 +188,10 @@ class _DraggableContainer(ContainerBase):
         self._scroll_area = _WheelDisabledScrollArea(self._qwidget)
         if layout == "horizontal":
             self._layout: QtW.QLayout = QtW.QHBoxLayout()
-            self._layout.setAlignment(Qt.AlignCenter)
+            self._layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
         else:
             self._layout = QtW.QVBoxLayout()
-            self._layout.setAlignment(Qt.AlignTop)
+            self._layout.setAlignment(Qt.AlignmentFlag.AlignTop)
 
         self._scroll_area.setWidgetResizable(True)
         self._scroll_area.setContentsMargins(0, 0, 0, 0)
@@ -203,11 +203,15 @@ class _DraggableContainer(ContainerBase):
         self._qwidget.layout().addWidget(self._scroll_area)
         self._qwidget.layout().setContentsMargins(0, 0, 0, 0)
         QtW.QScroller.grabGesture(
-            self._scroll_area, QtW.QScroller.LeftMouseButtonGesture
+            self._scroll_area, QtW.QScroller.ScrollerGestureType.LeftMouseButtonGesture
         )
 
-        self._scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self._scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self._scroll_area.setVerticalScrollBarPolicy(
+            Qt.ScrollBarPolicy.ScrollBarAlwaysOff
+        )
+        self._scroll_area.setHorizontalScrollBarPolicy(
+            Qt.ScrollBarPolicy.ScrollBarAlwaysOff
+        )
 
 
 class _ButtonContainer(ContainerBase):
@@ -230,14 +234,14 @@ class _ButtonContainer(ContainerBase):
 _VERTICAL_SETTING = {
     "expanded-arrow": Qt.ArrowType.DownArrow,
     "collapsed-arrow": Qt.ArrowType.RightArrow,
-    "align": Qt.AlignTop,
+    "align": Qt.AlignmentFlag.AlignTop,
     "text-align": "left",
     "layout": QtW.QVBoxLayout,
 }
 _HORIZONTAL_SETTING = {
     "expanded-arrow": Qt.ArrowType.RightArrow,
     "collapsed-arrow": Qt.ArrowType.LeftArrow,
-    "align": Qt.AlignLeft,
+    "align": Qt.AlignmentFlag.AlignLeft,
     "text-align": "center",
     "layout": QtW.QHBoxLayout,
 }

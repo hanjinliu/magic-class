@@ -26,6 +26,8 @@ from magicgui.application import use_app
 from . import get_signature, move_to_screen_center
 from .qtsignal import QtSignal
 
+from ..widgets.containers import GroupBoxContainer, ScrollableContainer
+
 if TYPE_CHECKING:
     from .._gui import BaseGui
     from .._gui.mgui_ext import PushButtonPlus, Action
@@ -237,8 +239,13 @@ class Timer:
         return fmt.format(hour=int(hour), min=int(min), sec=int(sec))
 
 
-class DefaultProgressBar(Container, _SupportProgress):
+class DefaultProgressBar(GroupBoxContainer, _SupportProgress):
     """The default progressbar widget."""
+
+    # The outer container
+    _CONTAINER = ScrollableContainer(labels=False)
+    _CONTAINER.native.setWindowTitle("Progress")
+    _CONTAINER.margins = (0, 0, 0, 0)
 
     def __init__(self, max: int = 1):
         self.progress_label = Label(value="Progress")
@@ -259,8 +266,6 @@ class DefaultProgressBar(Container, _SupportProgress):
         self._time_signal.connect(self._on_timer_updated)
 
         super().__init__(widgets=[self.progress_label, self.pbar, cnt], labels=False)
-
-        self.native.setWindowTitle("Progress")
 
     def _on_timer_updated(self, _=None):
         if self._timer.sec < 3600:
@@ -314,9 +319,33 @@ class DefaultProgressBar(Container, _SupportProgress):
     def max(self, v):
         self.pbar.max = v
 
+    def show(self):
+        parent = self.native.parent()
+        self._CONTAINER.append(self)
+        self._CONTAINER.native.setParent(
+            parent,
+            self._CONTAINER.native.windowFlags(),
+        )
+        self._CONTAINER.show()
+        return None
+
+    def close(self):
+        for i, wdt in enumerate(self._CONTAINER):
+            if wdt is self:
+                break
+        self._CONTAINER.pop(i)
+        if len(self._CONTAINER) == 0:
+            self._CONTAINER.close()
+        return None
+
     def set_description(self, desc: str):
         """Set description as the label of the progressbar."""
         self.progress_label.value = desc
+        return None
+
+    def set_title(self, title: str):
+        """Set the groupbox title."""
+        self.name = title
         return None
 
     def set_worker(self, worker: GeneratorWorker | FunctionWorker):
@@ -583,6 +612,8 @@ class thread_worker:
                 if hasattr(pbar, "set_worker"):
                     # if _SupportProgress object support set_worker
                     pbar.set_worker(worker)
+                if hasattr(pbar, "set_title"):
+                    pbar.set_title(self._func.__name__.replace("_", " "))
 
             _obj: PushButtonPlus | Action = gui[self._func.__name__]
             if _obj.running:
