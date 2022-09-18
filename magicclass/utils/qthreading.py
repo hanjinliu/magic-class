@@ -327,6 +327,7 @@ class DefaultProgressBar(GroupBoxContainer, _SupportProgress):
             self._CONTAINER.native.windowFlags(),
         )
         self._CONTAINER.show()
+        move_to_screen_center(self._CONTAINER)
         return None
 
     def close(self):
@@ -704,7 +705,7 @@ class thread_worker:
             if isinstance(_pbar, Widget) and _pbar.parent is None:
                 # Popup progressbar as a splashscreen if it is not a child widget.
                 _pbar.native.setParent(gui.native, self.__class__._WINDOW_FLAG)
-                move_to_screen_center(_pbar.native)
+
         else:
             _pbar.max = total
 
