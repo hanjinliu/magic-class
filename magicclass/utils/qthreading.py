@@ -260,6 +260,8 @@ class DefaultProgressBar(Container, _SupportProgress):
 
         super().__init__(widgets=[self.progress_label, self.pbar, cnt], labels=False)
 
+        self.native.setWindowTitle("Progress")
+
     def _on_timer_updated(self, _=None):
         if self._timer.sec < 3600:
             self.time_label.value = self._timer.format_time("{min:0>2}:{sec:0>2}")
