@@ -11,18 +11,6 @@ import logging
 from typing import TYPE_CHECKING, Any, Union, overload
 from ..utils import rst_to_html
 
-try:
-    import numpy as np
-    import matplotlib as mpl
-    import matplotlib.pyplot as plt
-    from matplotlib.backends.backend_agg import FigureCanvasAgg
-
-    FigureCanvas = FigureCanvasAgg
-    MATPLOTLIB_AVAILABLE = True
-
-except ImportError:
-    MATPLOTLIB_AVAILABLE = False
-
 if TYPE_CHECKING:
     import numpy as np
     from matplotlib.figure import Figure
@@ -309,15 +297,21 @@ class Logger(Widget, logging.Handler):
                 height = 240
 
         if width is None:
-            image = image.scaledToHeight(height, QtCore.Qt.SmoothTransformation)
+            image = image.scaledToHeight(
+                height, Qt.TransformationMode.SmoothTransformation
+            )
         else:
-            image = image.scaledToWidth(width, QtCore.Qt.SmoothTransformation)
+            image = image.scaledToWidth(
+                width, Qt.TransformationMode.SmoothTransformation
+            )
 
         self.native.appendImage(image)
         return None
 
     def print_figure(self, fig: Figure) -> None:
         """Print matplotlib Figure object like inline plot."""
+        import numpy as np
+
         fig.canvas.draw()
         data = np.asarray(fig.canvas.renderer.buffer_rgba(), dtype=np.uint8)
         self.print_image(data)
@@ -365,7 +359,10 @@ class Logger(Widget, logging.Handler):
     @contextmanager
     def set_plt(self, style: str = None, rc_context: dict[str, Any] = {}):
         """A context manager for inline plot in the logger widget."""
-        if not MATPLOTLIB_AVAILABLE:
+        try:
+            import matplotlib as mpl
+            import matplotlib.pyplot as plt
+        except ImportError:
             yield self
             return None
         self.__class__.current_logger = self
@@ -393,6 +390,8 @@ class Logger(Widget, logging.Handler):
         return None
 
     def _get_proper_plt_style(self) -> dict[str, Any]:
+        import matplotlib.pyplot as plt
+
         color = self._widget._qwidget._get_background_color()[:3]
         is_dark = sum(color) < 382.5  # 255*3/2
         if is_dark:
@@ -415,6 +414,7 @@ class Logger(Widget, logging.Handler):
 # https://github.com/ipython/matplotlib-inline
 def show(close=True, block=None):
     logger = Logger.current_logger
+    import matplotlib.pyplot as plt
     from matplotlib._pylab_helpers import Gcf
 
     try:
