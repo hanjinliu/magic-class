@@ -3,10 +3,11 @@ from typing import Any, Iterable, TypeVar, overload, Iterator, Tuple, Sequence
 from typing_extensions import get_args, get_origin, _AnnotatedAlias
 import inspect
 from magicgui.types import WidgetOptions
-from magicgui.signature import split_annotated_type
 from magicgui.widgets import create_widget, Container, PushButton, EmptyWidget
 from magicgui.widgets._bases.value_widget import UNSET, ValueWidget, _Unset
 from magicgui.widgets._concrete import merge_super_sigs
+
+from ..signature import split_annotated_type
 
 _V = TypeVar("_V")
 

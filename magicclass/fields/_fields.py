@@ -826,7 +826,7 @@ def _get_field(
     )
     if isinstance(obj, (type, _BaseGenericAlias)):
         if isinstance(obj, _AnnotatedAlias):
-            from magicgui.signature import split_annotated_type
+            from ..signature import split_annotated_type
 
             tp, widget_option = split_annotated_type(obj)
             kwargs.update(annotation=tp)

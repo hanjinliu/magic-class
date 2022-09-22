@@ -5,9 +5,11 @@ from types import FunctionType
 from magicgui.widgets import FunctionGui, Widget
 from magicgui.widgets._bases.value_widget import UNSET
 from magicgui.type_map import get_widget_class
-from magicgui.signature import magic_signature, MagicParameter, split_annotated_type
+from magicgui.signature import magic_signature, MagicParameter
 
 from macrokit import Symbol
+
+from ..signature import split_annotated_type
 
 if TYPE_CHECKING:
     from ._base import BaseGui

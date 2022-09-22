@@ -21,7 +21,7 @@ from docstring_parser import parse, compose
 from qtpy.QtWidgets import QWidget, QDockWidget
 
 from psygnal import Signal
-from magicgui.signature import MagicParameter, split_annotated_type
+from magicgui.signature import MagicParameter
 from magicgui.widgets import (
     FunctionGui,
     FileEdit,
@@ -64,7 +64,11 @@ from ..utils import (
 )
 from ..widgets import Separator, FreeWidget
 from ..fields import MagicField
-from ..signature import MagicMethodSignature, get_additional_option
+from ..signature import (
+    MagicMethodSignature,
+    get_additional_option,
+    split_annotated_type,
+)
 from ..wrappers import upgrade_signature
 
 if TYPE_CHECKING:
@@ -917,7 +921,8 @@ def _create_gui_method(self: BaseGui, obj: MethodType):
     all_params: list[inspect.Parameter] = []
     for param in func.__signature__.parameters.values():
         if isinstance(param.annotation, _AnnotatedAlias):
-            param = MagicParameter.from_parameter(param)
+            annot, opt = split_annotated_type(param.annotation)
+            param = MagicParameter.from_parameter(param, gui_options=opt)
 
         if isinstance(param, MagicParameter):
             _param = MagicParameter(

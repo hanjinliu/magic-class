@@ -13,7 +13,6 @@ from psygnal import Signal
 from qtpy import QtWidgets as QtW
 from qtpy.QtGui import QTextCursor
 from qtpy.QtCore import Qt
-from magicgui.signature import split_annotated_type
 from magicgui.widgets import (
     PushButton,
     TextEdit,
@@ -24,12 +23,14 @@ from magicgui.widgets import (
 )
 from magicgui.application import use_app
 from magicgui.widgets import LineEdit
+from magicgui.types import WidgetOptions
 from magicgui.widgets._bases.value_widget import ValueWidget, UNSET
 from magicgui.backends._qtpy.widgets import (
     QBaseWidget,
     LineEdit as BaseLineEdit,
 )
 from .utils import FreeWidget, merge_super_sigs
+from ..signature import split_annotated_type
 
 if TYPE_CHECKING:
     from qtpy.QtWidgets import QTextEdit
@@ -62,11 +63,11 @@ class OptionalWidget(Container):
     def __init__(
         self,
         inner_widget: type[ValueWidget] | None = None,
-        text: str = None,
-        layout="vertical",
-        nullable=True,
+        text: str | None = None,
+        layout: str = "vertical",
+        nullable: bool = True,
         value=UNSET,
-        options=None,
+        options: WidgetOptions | None = None,
         **kwargs,
     ):
         if text is None:
@@ -146,10 +147,10 @@ class ConsoleTextEdit(TextEdit):
 
         self.native: QTextEdit
         font = QFont(_FONT)
-        font.setStyleHint(QFont.Monospace)
+        font.setStyleHint(QFont.StyleHint.Monospace)
         font.setFixedPitch(True)
         self.native.setFont(font)
-        self.native.setWordWrapMode(QTextOption.NoWrap)
+        self.native.setWordWrapMode(QTextOption.WrapMode.NoWrap)
 
         # set tab width
         self.tab_size = 4
@@ -171,8 +172,8 @@ class ConsoleTextEdit(TextEdit):
     def erase_last(self):
         """Erase the last line."""
         cursor = self.native.textCursor()
-        cursor.movePosition(QTextCursor.End)
-        cursor.select(QTextCursor.LineUnderCursor)
+        cursor.movePosition(QTextCursor.MoveOperation.End)
+        cursor.select(QTextCursor.SelectionType.LineUnderCursor)
         cursor.removeSelectedText()
         cursor.deletePreviousChar()
         self.native.setTextCursor(cursor)
@@ -180,12 +181,12 @@ class ConsoleTextEdit(TextEdit):
     def erase_first(self):
         """Erase the first line."""
         cursor = self.native.textCursor()
-        cursor.movePosition(QTextCursor.Start)
-        cursor.select(QTextCursor.LineUnderCursor)
+        cursor.movePosition(QTextCursor.MoveOperation.Start)
+        cursor.select(QTextCursor.SelectionType.LineUnderCursor)
         cursor.removeSelectedText()
-        cursor.movePosition(QTextCursor.Down)
+        cursor.movePosition(QTextCursor.MoveOperation.Down)
         cursor.deletePreviousChar()
-        cursor.movePosition(QTextCursor.End)
+        cursor.movePosition(QTextCursor.MoveOperation.End)
         self.native.setTextCursor(cursor)
 
     @property
@@ -291,9 +292,9 @@ class AbstractRangeSlider(ValueWidget, Generic[_V]):
         sl.setMaximum(max)
         sl.valueChanged.connect(self.changed)
         if orientation == "horizontal":
-            sl.setOrientation(Qt.Horizontal)
+            sl.setOrientation(Qt.Orientation.Horizontal)
         elif orientation == "vertical":
-            sl.setOrientation(Qt.Vertical)
+            sl.setOrientation(Qt.Orientation.Vertical)
         else:
             raise ValueError(
                 "Only horizontal and vertical orientation are currently supported"

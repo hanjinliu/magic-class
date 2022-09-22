@@ -12,10 +12,10 @@ from typing import (
     Literal,
 )
 from typing_extensions import Annotated, _AnnotatedAlias
-from magicgui.signature import split_annotated_type
 from magicgui.widgets import Widget, EmptyWidget
 
 from .fields import MagicField
+from .signature import split_annotated_type
 
 try:
     from typing import _tp_cache
