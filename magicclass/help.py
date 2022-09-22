@@ -6,7 +6,7 @@ from magicgui.widgets._bases.widget import Widget
 from magicgui.widgets._function_gui import _docstring_to_html
 
 import qtpy
-from qtpy.QtWidgets import QWidget, QTreeWidget, QTreeWidgetItem, QSplitter
+from qtpy import QtWidgets as QtW, QtGui
 from qtpy.QtCore import Qt
 from typing import Any, Callable, Iterator, TYPE_CHECKING
 
@@ -30,7 +30,7 @@ if TYPE_CHECKING:
 # TODO: find, key-binding
 
 
-class _HelpWidget(QSplitter):
+class _HelpWidget(QtW.QSplitter):
     """
     A Qt widget that will show information of a magic-class widget, built from its
     class structure, function docstrings and type annotations.
@@ -39,16 +39,16 @@ class _HelpWidget(QSplitter):
     _initial_image_size = 250
 
     def __init__(self, ui=None, parent=None) -> None:
-        super().__init__(orientation=Qt.Horizontal, parent=parent)
-        self.setWindowFlag(Qt.Window)
-        self._tree = QTreeWidget(self)
+        super().__init__(orientation=Qt.Orientation.Horizontal, parent=parent)
+        self.setWindowFlag(Qt.WindowType.Window)
+        self._tree = QtW.QTreeWidget(self)
         self._tree.itemClicked.connect(self._on_treeitem_clicked)
         self._text = ConsoleTextEdit()
         self._text.read_only = True
         self._mgui_image = Image()
         c = DraggableContainer(widgets=[self._mgui_image])
 
-        def wheelEvent(event):
+        def wheelEvent(event: QtGui.QWheelEvent):
             ang = event.angleDelta().y()
             v0 = self._mgui_image.min_height
             if ang > 0:
@@ -140,7 +140,7 @@ class _HelpWidget(QSplitter):
         self._resize_image(self._initial_image_size)
 
 
-class UiBoundTreeItem(QTreeWidgetItem):
+class UiBoundTreeItem(QtW.QTreeWidgetItem):
     def __init__(self, parent, ui=None):
         super().__init__(parent)
         if ui is not None:
@@ -258,7 +258,7 @@ def _get_doc(widget) -> str:
     return doc
 
 
-def _render(qwidget: QWidget) -> np.ndarray:
+def _render(qwidget: QtW.QWidget) -> np.ndarray:
     """Render Qt widgets. Used in certain type of containers."""
     import numpy as np
 
