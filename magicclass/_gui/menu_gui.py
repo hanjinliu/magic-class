@@ -246,9 +246,7 @@ def insert_action_like(qmenu: QMenu, key: int, obj):
     """
     actions = qmenu.actions()
     l = len(actions)
-    if key < 0:
-        key = key + l
-    if key == l:
+    if key in (l, -1):
         if isinstance(obj, QMenu):
             qmenu.addMenu(obj).setText(obj.objectName().replace("_", " "))
         elif isinstance(obj, str):
@@ -259,8 +257,7 @@ def insert_action_like(qmenu: QMenu, key: int, obj):
         else:
             qmenu.addAction(obj)
     else:
-        new_action = actions[key]
-        before = new_action
+        before = actions[key]
         if isinstance(obj, QMenu):
             qmenu.insertMenu(before, obj).setText(obj.objectName().replace("_", " "))
         elif isinstance(obj, str):

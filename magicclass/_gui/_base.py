@@ -520,42 +520,41 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
 
         _found = 0
         _n_match = len(matcher)
-
         for child_instance in self._iter_child_magicclasses():
             _name = child_instance.__class__.__name__
             if _name in matcher:
+                n_children = len(child_instance)
+
                 # get the position of predefined child widget
                 try:
                     index = _get_index(child_instance, method_name)
                     new = False
                 except ValueError:
-                    index = -1
+                    index = n_children
                     new = True
 
-                self._fast_insert(-1, widget)
+                self._fast_insert(len(self), widget)
                 copy = _name in copyto
 
                 if isinstance(widget, FunctionGui):
                     if copy:
                         widget = widget.copy()
                     if new:
-                        child_instance._fast_insert(-1, widget)
+                        child_instance._fast_insert(n_children, widget)
                     else:
-                        del child_instance[index]
+                        del child_instance[index - 1]
                         child_instance._fast_insert(index, widget)
 
                 else:
                     widget.visible = copy
                     if new:
                         child_widget = child_instance._create_widget_from_method(
-                            lambda x: None
+                            _empty_func(method_name)
                         )
                         child_widget.text = widget.text
-                        child_instance._fast_insert(-1, child_widget)
+                        child_instance._fast_insert(n_children, child_widget)
                     else:
-                        child_widget: PushButtonPlus | AbstractAction = child_instance[
-                            index
-                        ]
+                        child_widget = child_instance[index]
 
                     child_widget.changed.disconnect()
                     child_widget.changed.connect(widget.changed)
@@ -1477,3 +1476,10 @@ def _cleanup_tb(tb: TracebackType):
             break
         current_tb = current_tb.tb_next
     return tb
+
+
+def _empty_func(name: str) -> Callable[[Any], None]:
+    """Create a named function that does nothing."""
+    f = lambda x: None
+    f.__name__ = name
+    return f

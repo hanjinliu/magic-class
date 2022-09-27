@@ -1,4 +1,4 @@
-from magicclass import magicclass, magicmenu, field, vfield, set_design
+from magicclass import magicclass, magicmenu, magictoolbar, field, vfield, set_design
 from magicclass.types import Bound
 from unittest.mock import MagicMock
 
@@ -101,3 +101,60 @@ def test_field_wraps():
     assert not ui["f"].visible
     ui.b["f"].changed()
     assert ui.new_attr == 0
+
+def test_wraps_no_predefinition():
+    @magicclass
+    class A:
+        a = vfield(int)
+        @magicclass
+        class B:
+            @magicmenu
+            class C:
+                pass
+            @magicclass
+            class D:
+                pass
+            @magictoolbar
+            class E:
+                pass
+
+        @B.wraps
+        def fb2(self, a: Bound[a]):
+            pass
+
+        @B.wraps
+        def fb1(self, a: Bound[a]):
+            pass
+
+        @B.C.wraps
+        def fc2(self, a: Bound[a]):
+            pass
+
+        @B.C.wraps
+        def fc1(self, a: Bound[a]):
+            pass
+
+        @B.C.wraps
+        @B.D.wraps
+        @B.E.wraps
+        def any_func(self, a: Bound[a]):
+            pass
+
+    ui = A()
+
+    # assert the widget order is conserved
+    assert ui.B[1].name == "fb2"
+    assert ui.B[2].name == "fb1"
+    assert ui.B.C[0].name == "fc2"
+    assert ui.B.C[1].name == "fc1"
+    assert ui.B.C[2].name == "any_func"
+    assert ui.B.D[0].name == "any_func"
+    assert ui.B.E[0].name == "any_func"
+
+    ui.B["fb1"].changed()
+    ui.B["fb2"].changed()
+    ui.B.C["fc1"].changed()
+    ui.B.C["fc2"].changed()
+    ui.B.C["any_func"].changed()
+    ui.B.D["any_func"].changed()
+    ui.B.E["any_func"].changed()
