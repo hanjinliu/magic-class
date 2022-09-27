@@ -1,11 +1,11 @@
-from qtpy import QtCore
+from qtpy.QtCore import Signal, QObject
 from typing import Callable, Any
 
 
-class QtSignal(QtCore.QObject):
+class QtSignal(QObject):
     """Dummy qt object for pyqt signal operations."""
 
-    signal = QtCore.Signal(object)
+    signal = Signal(object)
 
     def connect(self, slot: Callable):
         return self.signal.connect(slot)

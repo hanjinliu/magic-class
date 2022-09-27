@@ -326,8 +326,9 @@ class DefaultProgressBar(GroupBoxContainer, _SupportProgress):
             parent,
             self._CONTAINER.native.windowFlags(),
         )
-        self._CONTAINER.show()
-        move_to_screen_center(self._CONTAINER.native)
+        if not self._CONTAINER.visible:
+            self._CONTAINER.show()
+            move_to_screen_center(self._CONTAINER.native)
         return None
 
     def close(self):

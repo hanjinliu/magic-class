@@ -20,6 +20,8 @@ if TYPE_CHECKING:
 
 
 class Output:
+    """Logger output types."""
+
     TEXT = 0
     HTML = 1
     IMAGE = 2
