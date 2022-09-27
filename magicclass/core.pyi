@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable, TypeVar, overload, Any
+from typing import TYPE_CHECKING, Callable, Generic, TypeVar, overload, Any, Protocol
 from typing_extensions import Literal
 
 from ._gui.menu_gui import ContextMenuGui, MenuGui
@@ -21,6 +21,13 @@ Layout = Literal["vertical", "horizontal"]
 _C = TypeVar("_C", bound=type)
 _M = TypeVar("_M", bound=MagicTemplate)
 _V = TypeVar("_V")
+_Base = TypeVar("_Base")
+
+class _MagicClassDecorator(Protocol, Generic[_Base]):
+    @overload
+    def __call__(self, cls: type[_M]) -> type[_M]: ...
+    @overload
+    def __call__(self, cls: _C) -> type[_Base] | _C: ...
 
 def build_help(ui: MagicTemplate, parent: QWidget | None = None) -> "HelpWidget": ...
 def get_function_gui(ui: MagicTemplate, name: str) -> FunctionGuiPlus: ...
@@ -70,7 +77,7 @@ def magicclass(
     icon: Any | None = None,
     stylesheet: str | StyleSheet | None = None,
     parent=None,
-) -> Callable[[type[_M]], type[_M]] | Callable[[_C], type[ClassGuiBase] | _C]: ...
+) -> _MagicClassDecorator[ClassGuiBase]: ...
 @overload
 def magicmenu(
     class_: type[_M],
@@ -105,7 +112,7 @@ def magicmenu(
     name: str | None = None,
     icon: Any | None = None,
     parent=None,
-) -> Callable[[type[_M]], type[_M]] | Callable[[_C], type[MenuGui] | _C]: ...
+) -> _MagicClassDecorator[MenuGui]: ...
 @overload
 def magiccontext(
     class_: type[_M],
@@ -143,7 +150,7 @@ def magiccontext(
     name: str | None = None,
     icon: Any | None = None,
     parent=None,
-) -> Callable[[type[_M]], type[_M]] | Callable[[_C], type[ContextMenuGui] | _C]: ...
+) -> _MagicClassDecorator[ContextMenuGui]: ...
 @overload
 def magictoolbar(
     class_: type[_M],
@@ -178,7 +185,7 @@ def magictoolbar(
     name: str | None = None,
     icon: Any | None = None,
     parent=None,
-) -> Callable[[type[_M]], type[_M]] | Callable[[_C], type[ToolBarGui] | _C]: ...
+) -> _MagicClassDecorator[ToolBarGui]: ...
 def repeat(ui: MagicTemplate, index: int = -1) -> None: ...
 def update_widget_state(
     ui: MagicTemplate, macro: Macro | str | None = None
