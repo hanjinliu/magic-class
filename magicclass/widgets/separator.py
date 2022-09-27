@@ -84,7 +84,7 @@ class _QTitleBar(QtW.QWidget):
         _layout.setAlignment(self._close_button, Qt.AlignmentFlag.AlignRight)
         self.setLayout(_layout)
 
-        self._close_button.clicked.connect(self.closeSignal.emit)
+        self._close_button.clicked.connect(lambda: self.closeSignal.emit)
 
         self.setTitle(title)
 
