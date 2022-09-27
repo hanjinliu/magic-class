@@ -18,6 +18,30 @@ if TYPE_CHECKING:
 
 # See https://stackoverflow.com/questions/28655198/best-way-to-display-logs-in-pyqt
 
+# Variable "FigureCanvas" should globally updated to plot figure inside the logger
+# However, importing FigureCanvasAgg should be done lazily. Here's how to hack
+# this procedure.
+class FigureCanvasType:
+    def __init__(self):
+        self._canvas_type = None
+
+    @property
+    def FigureCanvasAgg(self):
+        if self._canvas_type is None:
+            from matplotlib.backends.backend_agg import FigureCanvasAgg
+
+            self._canvas_type = FigureCanvasAgg
+        return self._canvas_type
+
+    def __getattr__(self, name):
+        return getattr(self.FigureCanvasAgg, name)
+
+    def __call__(self, *args: Any, **kwds: Any) -> Any:
+        return self.FigureCanvasAgg(*args, **kwds)
+
+
+FigureCanvas = FigureCanvasType()
+
 
 class Output:
     """Logger output types."""
