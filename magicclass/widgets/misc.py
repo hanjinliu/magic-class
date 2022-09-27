@@ -580,6 +580,7 @@ class HistoryFileEdit(FileEdit):
         self.line_edit.changed.connect(lambda: self.changed.emit(self.value))
 
     def _on_choose_clicked(self):
+        super()._on_choose_clicked()
         val = self.value
         if isinstance(val, (str, Path)):
             val = str(val)
@@ -587,4 +588,3 @@ class HistoryFileEdit(FileEdit):
                 self.line_edit.append_history(val)
         elif isinstance(val, tuple):
             self.line_edit.append_history("; ".join(map(str, val)))
-        return super()._on_choose_clicked()
