@@ -28,6 +28,8 @@ from .misc import (
     CheckButton,
     RangeSlider,
     FloatRangeSlider,
+    HistoryLineEdit,
+    HistoryFileEdit,
     SpreadSheet,
 )
 from .plot import Figure, SeabornFigure
@@ -51,6 +53,8 @@ __all__ = [
     "FreeWidget",
     "GroupBoxContainer",
     "HCollapsibleContainer",
+    "HistoryFileEdit",
+    "HistoryLineEdit",
     "ListEdit",
     "ListContainer",
     "ListWidget",

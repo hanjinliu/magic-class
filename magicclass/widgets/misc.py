@@ -1,4 +1,5 @@
 from __future__ import annotations
+from pathlib import Path
 import sys
 from typing import (
     TYPE_CHECKING,
@@ -10,8 +11,7 @@ from typing import (
 )
 from typing_extensions import _AnnotatedAlias, get_args
 from psygnal import Signal
-from qtpy import QtWidgets as QtW
-from qtpy.QtGui import QTextCursor
+from qtpy import QtWidgets as QtW, QtGui
 from qtpy.QtCore import Qt
 from magicgui.widgets import (
     PushButton,
@@ -19,14 +19,16 @@ from magicgui.widgets import (
     Table,
     Container,
     CheckBox,
+    FileEdit,
     create_widget,
 )
 from magicgui.application import use_app
 from magicgui.widgets import LineEdit
-from magicgui.types import WidgetOptions
+from magicgui.types import WidgetOptions, FileDialogMode
 from magicgui.widgets._bases.value_widget import ValueWidget, UNSET
 from magicgui.backends._qtpy.widgets import (
     QBaseWidget,
+    QBaseStringWidget,
     LineEdit as BaseLineEdit,
 )
 from .utils import FreeWidget, merge_super_sigs
@@ -172,8 +174,8 @@ class ConsoleTextEdit(TextEdit):
     def erase_last(self):
         """Erase the last line."""
         cursor = self.native.textCursor()
-        cursor.movePosition(QTextCursor.MoveOperation.End)
-        cursor.select(QTextCursor.SelectionType.LineUnderCursor)
+        cursor.movePosition(QtGui.QTextCursor.MoveOperation.End)
+        cursor.select(QtGui.QTextCursor.SelectionType.LineUnderCursor)
         cursor.removeSelectedText()
         cursor.deletePreviousChar()
         self.native.setTextCursor(cursor)
@@ -181,12 +183,12 @@ class ConsoleTextEdit(TextEdit):
     def erase_first(self):
         """Erase the first line."""
         cursor = self.native.textCursor()
-        cursor.movePosition(QTextCursor.MoveOperation.Start)
-        cursor.select(QTextCursor.SelectionType.LineUnderCursor)
+        cursor.movePosition(QtGui.QTextCursor.MoveOperation.Start)
+        cursor.select(QtGui.QTextCursor.SelectionType.LineUnderCursor)
         cursor.removeSelectedText()
-        cursor.movePosition(QTextCursor.MoveOperation.Down)
+        cursor.movePosition(QtGui.QTextCursor.MoveOperation.Down)
         cursor.deletePreviousChar()
-        cursor.movePosition(QTextCursor.MoveOperation.End)
+        cursor.movePosition(QtGui.QTextCursor.MoveOperation.End)
         self.native.setTextCursor(cursor)
 
     @property
@@ -503,3 +505,86 @@ class SpreadSheet(FreeWidget, MutableSequence[Table]):
         for table in self._tables:
             table.read_only = v
         self._read_only = v
+
+
+class _QEditableComboBox(QtW.QComboBox):
+    def __init__(self, parent: QtW.QWidget | None = None) -> None:
+        super().__init__(parent)
+        self.setEditable(True)
+        self.setSizePolicy(
+            QtW.QSizePolicy.Policy.Expanding, QtW.QSizePolicy.Policy.Fixed
+        )
+
+    def keyPressEvent(self, event: QtGui.QKeyEvent):
+        if event.key() in (Qt.Key.Key_Down, Qt.Key.Key_Up):
+            self.showPopup()
+        super().keyPressEvent(event)
+
+    def _append_history(self, text: str):
+        i = self.findText(text)
+        if i >= 0:
+            self.removeItem(i)
+        return self.addItem(text)
+
+
+class QHistoryLineEdit(QBaseStringWidget):
+    _qwidget: _QEditableComboBox
+
+    def __init__(self):
+        super().__init__(
+            _QEditableComboBox, "currentText", "setCurrentText", "currentTextChanged"
+        )
+
+
+class HistoryLineEdit(LineEdit):
+    def __init__(self, value=UNSET, **kwargs):
+        app = use_app()
+        assert app.native
+        ValueWidget.__init__(
+            self,
+            value=value,
+            widget_type=QHistoryLineEdit,
+            **kwargs,
+        )
+
+    def append_history(self, text: str):
+        """Append new history to the line edit"""
+        return self.native._append_history(text)
+
+
+class HistoryFileEdit(FileEdit):
+    def __init__(
+        self,
+        mode: FileDialogMode = FileDialogMode.EXISTING_FILE,
+        filter=None,
+        nullable=False,
+        **kwargs,
+    ):
+        value = kwargs.pop("value", None)
+        if value is None:
+            value = ""
+        self.line_edit = HistoryLineEdit(value=value)
+        self.choose_btn = PushButton()
+        self.mode = mode  # sets the button text too
+        self.filter = filter
+        self._nullable = nullable
+        kwargs["widgets"] = [self.line_edit, self.choose_btn]
+        kwargs["labels"] = False
+        kwargs["layout"] = "horizontal"
+        Container.__init__(self, **kwargs)
+        self.margins = (0, 0, 0, 0)
+        self._show_file_dialog = use_app().get_obj("show_file_dialog")
+        self.choose_btn.changed.disconnect()
+        self.line_edit.changed.disconnect()
+        self.choose_btn.changed.connect(self._on_choose_clicked)
+        self.line_edit.changed.connect(lambda: self.changed.emit(self.value))
+
+    def _on_choose_clicked(self):
+        val = self.value
+        if isinstance(val, (str, Path)):
+            val = str(val)
+            if val != ".":
+                self.line_edit.append_history(val)
+        elif isinstance(val, tuple):
+            self.line_edit.append_history("; ".join(map(str, val)))
+        return super()._on_choose_clicked()
