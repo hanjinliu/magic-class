@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Define Custom Keybindings &mdash; magic-class 0.6.9 documentation</title>
+  <title>Define Custom Keybindings &mdash; magic-class 0.6.10 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/columns.css" type="text/css" />
@@ -15,7 +15,6 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -32,7 +31,7 @@
             <a href="../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.9
+                0.6.10
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -93,17 +92,17 @@
            <div itemprop="articleBody">
 
   <section id="define-custom-keybindings">
-<h1>Define Custom Keybindings<a class="headerlink" href="#define-custom-keybindings" title="Permalink to this heading">¶</a></h1>
+<h1>Define Custom Keybindings<a class="headerlink" href="#define-custom-keybindings" title="Permalink to this headline">¶</a></h1>
 <p>Keybindings are very useful in many situations, especially when some functions will be called
 many times. In most cases, you will have to set shortcuts to a push button or an action in the
 menu so that bound function will be accessible via GUI.</p>
 <p>Magic class provides a wrapper function which makes it easy to implement custom Keybindings, and
 like other wrappers, you don't have to worry about reducing code readability.</p>
 <section id="how-to-define-keybindings">
-<h2>How to Define Keybindings<a class="headerlink" href="#how-to-define-keybindings" title="Permalink to this heading">¶</a></h2>
+<h2>How to Define Keybindings<a class="headerlink" href="#how-to-define-keybindings" title="Permalink to this headline">¶</a></h2>
 <p>All you have to do is to wrap methods with <code class="docutils literal notranslate"><span class="pre">bind_key</span></code> function. There are several ways to
 describe keybindings.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">Key</span><span class="p">,</span> <span class="n">bind_key</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">bind_key</span>
 
 <span class="nd">@magicclass</span>
 <span class="k">class</span> <span class="nc">Main</span><span class="p">:</span>
@@ -114,14 +113,6 @@ describe keybindings.</p>
     <span class="nd">@bind_key</span><span class="p">(</span><span class="s2">&quot;Ctrl&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">)</span>  <span class="c1"># strings separately</span>
     <span class="k">def</span> <span class="nf">function_2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-
-    <span class="nd">@bind_key</span><span class="p">(</span><span class="n">Key</span><span class="o">.</span><span class="n">Ctrl</span> <span class="o">+</span> <span class="n">Key</span><span class="o">.</span><span class="n">C</span><span class="p">)</span> <span class="c1"># use Key object</span>
-    <span class="k">def</span> <span class="nf">function_3</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
-
-    <span class="nd">@bind_key</span><span class="p">(</span><span class="n">Key</span><span class="o">.</span><span class="n">Ctrl</span><span class="p">,</span> <span class="n">Key</span><span class="o">.</span><span class="n">D</span><span class="p">)</span> <span class="c1"># Key object separately</span>
-    <span class="k">def</span> <span class="nf">function_4</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -131,7 +122,7 @@ collision between your keybindings and those in <code class="docutils literal no
 </div>
 </section>
 <section id="decorate-private-functions">
-<h2>Decorate Private Functions<a class="headerlink" href="#decorate-private-functions" title="Permalink to this heading">¶</a></h2>
+<h2>Decorate Private Functions<a class="headerlink" href="#decorate-private-functions" title="Permalink to this headline">¶</a></h2>
 <p>Although private functions (functions whose names start with &quot;_&quot;) will not be converted into
 widgets, it is very useful to define &quot;invisible&quot; shortcuts. A typical case is when you want
 to change widget values with shortcut.</p>
@@ -156,7 +147,7 @@ to change widget values with shortcut.</p>
 without clicking the spin box.</p>
 </section>
 <section id="compatibility-with-other-features">
-<h2>Compatibility with Other Features<a class="headerlink" href="#compatibility-with-other-features" title="Permalink to this heading">¶</a></h2>
+<h2>Compatibility with Other Features<a class="headerlink" href="#compatibility-with-other-features" title="Permalink to this headline">¶</a></h2>
 <p>Keybindings are compatible with other functions in magic class.</p>
 <p>You can call parent methods by combining with <code class="docutils literal notranslate"><span class="pre">wraps</span></code> method (see <a class="reference internal" href="use_wraps.html"><span class="doc">Call Parent Methods from its Child</span></a>).</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">magicmenu</span><span class="p">,</span> <span class="n">bind_key</span>

@@ -17,7 +17,7 @@ describe keybindings.
 
 .. code-block:: python
 
-    from magicclass import magicclass, Key, bind_key
+    from magicclass import magicclass, bind_key
 
     @magicclass
     class Main:
@@ -28,14 +28,6 @@ describe keybindings.
         @bind_key("Ctrl", "B")  # strings separately
         def function_2(self):
             print(2)
-
-        @bind_key(Key.Ctrl + Key.C) # use Key object
-        def function_3(self):
-            print(3)
-
-        @bind_key(Key.Ctrl, Key.D) # Key object separately
-        def function_4(self):
-            print(4)
 
 ..  note::
 

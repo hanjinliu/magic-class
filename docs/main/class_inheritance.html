@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Inherit Magic Class &mdash; magic-class 0.6.9 documentation</title>
+  <title>Inherit Magic Class &mdash; magic-class 0.6.10 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/columns.css" type="text/css" />
@@ -15,7 +15,6 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -32,7 +31,7 @@
             <a href="../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.9
+                0.6.10
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -98,7 +97,7 @@
            <div itemprop="articleBody">
 
   <section id="inherit-magic-class">
-<h1>Inherit Magic Class<a class="headerlink" href="#inherit-magic-class" title="Permalink to this heading">¶</a></h1>
+<h1>Inherit Magic Class<a class="headerlink" href="#inherit-magic-class" title="Permalink to this headline">¶</a></h1>
 <p>Class inheritance is fundamental in object-oriented languages. It makes class
 definition much clearer in many cases.</p>
 <p>Magic-class is designed to make GUI structures connected with the structure of
@@ -106,7 +105,7 @@ class itself, so how to deal with class inheritance is not a well-defined featur
 by default. Here are some points that you have to keep in mind before making
 abstract classes.</p>
 <section id="the-order-of-widget">
-<h2>The Order of Widget<a class="headerlink" href="#the-order-of-widget" title="Permalink to this heading">¶</a></h2>
+<h2>The Order of Widget<a class="headerlink" href="#the-order-of-widget" title="Permalink to this headline">¶</a></h2>
 <p>First, let's consider following example.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span>
 
@@ -138,7 +137,7 @@ subclasses. In the case of example, GUI will look like:</p>
 </div>
 </section>
 <section id="field-objects-in-the-base-class">
-<h2>Field Objects in the Base Class<a class="headerlink" href="#field-objects-in-the-base-class" title="Permalink to this heading">¶</a></h2>
+<h2>Field Objects in the Base Class<a class="headerlink" href="#field-objects-in-the-base-class" title="Permalink to this headline">¶</a></h2>
 <p>You may want to add widgets using <code class="docutils literal notranslate"><span class="pre">MagicField</span></code> (see <a class="reference internal" href="use_field.html"><span class="doc">Use Fields in magic-class</span></a>). <code class="docutils literal notranslate"><span class="pre">MagicField</span></code>
 behaves similarly as methods. In the following example,</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">field</span>
@@ -155,7 +154,7 @@ behaves similarly as methods. In the following example,</p>
 <p>However, if you want to use <code class="docutils literal notranslate"><span class="pre">Bound</span></code> to bind parameter to method or connect callback
 function to a field, you must re-define fields in the subclasses.</p>
 <section id="bind-methods">
-<h3>1. Bind methods<a class="headerlink" href="#bind-methods" title="Permalink to this heading">¶</a></h3>
+<h3>1. Bind methods<a class="headerlink" href="#bind-methods" title="Permalink to this headline">¶</a></h3>
 <div class="twocol docutils container">
 <div class="leftside docutils container">
 <p><em>This will not work</em></p>
@@ -192,7 +191,7 @@ function to a field, you must re-define fields in the subclasses.</p>
 </div>
 </section>
 <section id="define-callbacks">
-<h3>1. Define Callbacks<a class="headerlink" href="#define-callbacks" title="Permalink to this heading">¶</a></h3>
+<h3>1. Define Callbacks<a class="headerlink" href="#define-callbacks" title="Permalink to this headline">¶</a></h3>
 <div class="twocol docutils container">
 <div class="leftside docutils container">
 <p><em>This will not work</em></p>
@@ -246,7 +245,7 @@ until class definition finishes.</p>
 </section>
 </section>
 <section id="nesting-magic-classes">
-<h2>Nesting Magic Classes<a class="headerlink" href="#nesting-magic-classes" title="Permalink to this heading">¶</a></h2>
+<h2>Nesting Magic Classes<a class="headerlink" href="#nesting-magic-classes" title="Permalink to this headline">¶</a></h2>
 <p>Nesting magic classes (see <a class="reference internal" href="nest.html"><span class="doc">Nest magic-classes</span></a>) is useful for designing layout of widgets.
 You don't have to worry about inheriting base class with a nested magic class.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Base</span><span class="p">(</span><span class="n">MagicTemplate</span><span class="p">):</span>
@@ -268,7 +267,7 @@ You don't have to worry about inheriting base class with a nested magic class.</
 </div>
 </section>
 <section id="predefinition-of-methods-and-fields">
-<h2>Predefinition of Methods and Fields<a class="headerlink" href="#predefinition-of-methods-and-fields" title="Permalink to this heading">¶</a></h2>
+<h2>Predefinition of Methods and Fields<a class="headerlink" href="#predefinition-of-methods-and-fields" title="Permalink to this headline">¶</a></h2>
 <p>Most of the time you want to inherit a class is when you want to prepare a template
 of multipule GUIs. As mentioned above, methods and fields that are defined in the
 base class will packed <strong>before</strong> those in the subclasses. This is not desirable if

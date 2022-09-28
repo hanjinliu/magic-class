@@ -15,7 +15,6 @@ from ..utils import rst_to_html
 if TYPE_CHECKING:
     import numpy as np
     from matplotlib.figure import Figure
-    from PIL import Image
 
 # See https://stackoverflow.com/questions/28655198/best-way-to-display-logs-in-pyqt
 
@@ -236,8 +235,10 @@ class Logger(Widget, logging.Handler):
         )
 
     def emit(self, record):
+        """Handle the logging event."""
         msg = self.format(record)
         self.print(msg)
+        return None
 
     def clear(self):
         """Clear all the histories."""
@@ -349,11 +350,12 @@ class Logger(Widget, logging.Handler):
         return None
 
     def write(self, msg) -> None:
+        """Handle the print event."""
         self.print(msg, end="")
         return None
 
     def flush(self):
-        pass
+        """Do nothing."""
 
     def close(self) -> None:
         # This method collides between magicgui.widgets.Widget and logging.Handler.

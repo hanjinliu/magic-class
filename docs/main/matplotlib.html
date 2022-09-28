@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Use Matplotlib Figure &mdash; magic-class 0.6.9 documentation</title>
+  <title>Use Matplotlib Figure &mdash; magic-class 0.6.10 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/columns.css" type="text/css" />
@@ -15,7 +15,6 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -32,7 +31,7 @@
             <a href="../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.9
+                0.6.10
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -91,7 +90,7 @@
            <div itemprop="articleBody">
 
   <section id="use-matplotlib-figure">
-<h1>Use Matplotlib Figure<a class="headerlink" href="#use-matplotlib-figure" title="Permalink to this heading">¶</a></h1>
+<h1>Use Matplotlib Figure<a class="headerlink" href="#use-matplotlib-figure" title="Permalink to this headline">¶</a></h1>
 <p><code class="docutils literal notranslate"><span class="pre">matplotlib</span></code> is one of the most widely used data visualization libraries. I
 guess most of the Python users know the basics of the library.</p>
 <p>For data visualization of simple data set, your can use the <code class="docutils literal notranslate"><span class="pre">Figure</span></code> widget.</p>
@@ -102,7 +101,7 @@ guess most of the Python users know the basics of the library.</p>
 <code class="docutils literal notranslate"><span class="pre">plt.plot(x,</span> <span class="pre">y)</span></code> or <code class="docutils literal notranslate"><span class="pre">plt.xlim(0,</span> <span class="pre">100)</span></code>. It also support interactive plot
 since <code class="docutils literal notranslate"><span class="pre">v0.6.1</span></code>.</p>
 <section id="basic-usage">
-<h2>Basic Usage<a class="headerlink" href="#basic-usage" title="Permalink to this heading">¶</a></h2>
+<h2>Basic Usage<a class="headerlink" href="#basic-usage" title="Permalink to this headline">¶</a></h2>
 <p>If you are using <code class="docutils literal notranslate"><span class="pre">Figure</span></code> widget independent of <code class="docutils literal notranslate"><span class="pre">magic-class</span></code>, it's just
 like the usual <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code> way.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># run &quot;%gui qt&quot; if needed</span>
@@ -126,7 +125,7 @@ like the usual <code class="docutils literal notranslate"><span class="pre">matp
 </div>
 </section>
 <section id="use-figure-widget-in-magic-class">
-<h2>Use Figure Widget in Magic Class<a class="headerlink" href="#use-figure-widget-in-magic-class" title="Permalink to this heading">¶</a></h2>
+<h2>Use Figure Widget in Magic Class<a class="headerlink" href="#use-figure-widget-in-magic-class" title="Permalink to this headline">¶</a></h2>
 <p>In most cases, you'll use <code class="docutils literal notranslate"><span class="pre">field</span></code> to create a <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code> figure widget
 in your GUI.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">field</span>
@@ -141,7 +140,7 @@ in your GUI.</p>
 </div>
 </section>
 <section id="use-multiple-axes">
-<h2>Use Multiple Axes<a class="headerlink" href="#use-multiple-axes" title="Permalink to this heading">¶</a></h2>
+<h2>Use Multiple Axes<a class="headerlink" href="#use-multiple-axes" title="Permalink to this headline">¶</a></h2>
 <p>Sometimes we have to prepare multiple axes and plot different sets of data
 separately by using <code class="docutils literal notranslate"><span class="pre">fig,</span> <span class="pre">ax</span> <span class="pre">=</span> <span class="pre">plt.subplots(2,</span> <span class="pre">1)</span></code> or other similar methods.
 The <code class="docutils literal notranslate"><span class="pre">Figure</span></code> widget also support multi-axes plotting. You can create a

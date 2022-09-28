@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Call Parent Methods from its Child &mdash; magic-class 0.6.9 documentation</title>
+  <title>Call Parent Methods from its Child &mdash; magic-class 0.6.10 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/columns.css" type="text/css" />
@@ -15,7 +15,6 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -32,7 +31,7 @@
             <a href="../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.9
+                0.6.10
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -97,14 +96,14 @@
            <div itemprop="articleBody">
 
   <section id="call-parent-methods-from-its-child">
-<h1>Call Parent Methods from its Child<a class="headerlink" href="#call-parent-methods-from-its-child" title="Permalink to this heading">¶</a></h1>
+<h1>Call Parent Methods from its Child<a class="headerlink" href="#call-parent-methods-from-its-child" title="Permalink to this headline">¶</a></h1>
 <p>When you want to define a function under the parent class while put its push button or action in the child
 widget for better widget design, code will look very complicated and will be hard to maintain. This problem
 usually happens when you want a menu bar, since menu actions always execute something using the parameters
 of the parent and often update its parent.</p>
 <p>With class method <code class="docutils literal notranslate"><span class="pre">warps</span></code>, you can easily connect parent methods to its child while keeping code clean.</p>
 <section id="basic-syntax">
-<h2>Basic Syntax<a class="headerlink" href="#basic-syntax" title="Permalink to this heading">¶</a></h2>
+<h2>Basic Syntax<a class="headerlink" href="#basic-syntax" title="Permalink to this headline">¶</a></h2>
 <p>You have to do is:</p>
 <ol class="arabic simple">
 <li><p>Define child class</p></li>
@@ -162,7 +161,7 @@ methods. To access chind widgets, use <code class="docutils literal notranslate"
 </div>
 </section>
 <section id="use-template-functions">
-<h2>Use Template Functions<a class="headerlink" href="#use-template-functions" title="Permalink to this heading">¶</a></h2>
+<h2>Use Template Functions<a class="headerlink" href="#use-template-functions" title="Permalink to this headline">¶</a></h2>
 <p>Sometimes you may want to define many functions with same parameter names.</p>
 <p>A typical example is <code class="docutils literal notranslate"><span class="pre">seaborn</span></code>. It has meny plot functions with identical arguments such as <code class="docutils literal notranslate"><span class="pre">x</span></code>,
 <code class="docutils literal notranslate"><span class="pre">y</span></code> and <code class="docutils literal notranslate"><span class="pre">hue</span></code>. If you annotate all the arguments, your code will look very &quot;noisy&quot;.</p>
@@ -195,7 +194,7 @@ functions, and this function is integrated in <code class="docutils literal notr
 </div>
 </section>
 <section id="make-copies-of-a-method">
-<h2>Make Copies of a Method<a class="headerlink" href="#make-copies-of-a-method" title="Permalink to this heading">¶</a></h2>
+<h2>Make Copies of a Method<a class="headerlink" href="#make-copies-of-a-method" title="Permalink to this headline">¶</a></h2>
 <p>You can use <code class="docutils literal notranslate"><span class="pre">copy=True</span></code> option to make a copy of a same method. This option is useful when
 you want to call same method from different places, like in menu and toolbar.</p>
 <p>In following example, <code class="docutils literal notranslate"><span class="pre">func</span></code> method appears in menu <code class="docutils literal notranslate"><span class="pre">Menu</span></code>, toolbar  <code class="docutils literal notranslate"><span class="pre">Tools</span></code> and the
@@ -259,7 +258,7 @@ same method twice. Magic classes automatically make copies if a method is alread
 </div>
 </section>
 <section id="find-ancestor-widgets">
-<h2>Find Ancestor Widgets<a class="headerlink" href="#find-ancestor-widgets" title="Permalink to this heading">¶</a></h2>
+<h2>Find Ancestor Widgets<a class="headerlink" href="#find-ancestor-widgets" title="Permalink to this headline">¶</a></h2>
 <p>If your purpose is just to get the ancestor widget, you can call <code class="docutils literal notranslate"><span class="pre">find_ancestor</span></code> method instead.
 <code class="docutils literal notranslate"><span class="pre">self.find_ancestor(X)</span></code> will iteratively search for the widget parent until it reaches an instance
 of <code class="docutils literal notranslate"><span class="pre">X</span></code>.</p>

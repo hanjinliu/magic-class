@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.help &mdash; magic-class 0.6.8.dev0 documentation</title>
+  <title>magicclass.help &mdash; magic-class 0.6.10 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.8.dev0
+                0.6.10
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -84,7 +84,7 @@
 <span class="kn">from</span> <span class="nn">magicgui.widgets._function_gui</span> <span class="kn">import</span> <span class="n">_docstring_to_html</span>
 
 <span class="kn">import</span> <span class="nn">qtpy</span>
-<span class="kn">from</span> <span class="nn">qtpy.QtWidgets</span> <span class="kn">import</span> <span class="n">QWidget</span><span class="p">,</span> <span class="n">QTreeWidget</span><span class="p">,</span> <span class="n">QTreeWidgetItem</span><span class="p">,</span> <span class="n">QSplitter</span>
+<span class="kn">from</span> <span class="nn">qtpy</span> <span class="kn">import</span> <span class="n">QtWidgets</span> <span class="k">as</span> <span class="n">QtW</span><span class="p">,</span> <span class="n">QtGui</span>
 <span class="kn">from</span> <span class="nn">qtpy.QtCore</span> <span class="kn">import</span> <span class="n">Qt</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span>
 
@@ -108,7 +108,7 @@
 <span class="c1"># TODO: find, key-binding</span>
 
 
-<span class="k">class</span> <span class="nc">_HelpWidget</span><span class="p">(</span><span class="n">QSplitter</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">_HelpWidget</span><span class="p">(</span><span class="n">QtW</span><span class="o">.</span><span class="n">QSplitter</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A Qt widget that will show information of a magic-class widget, built from its</span>
 <span class="sd">    class structure, function docstrings and type annotations.</span>
@@ -117,16 +117,16 @@
     <span class="n">_initial_image_size</span> <span class="o">=</span> <span class="mi">250</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ui</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">orientation</span><span class="o">=</span><span class="n">Qt</span><span class="o">.</span><span class="n">Horizontal</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowFlag</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">Window</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_tree</span> <span class="o">=</span> <span class="n">QTreeWidget</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">orientation</span><span class="o">=</span><span class="n">Qt</span><span class="o">.</span><span class="n">Orientation</span><span class="o">.</span><span class="n">Horizontal</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowFlag</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">WindowType</span><span class="o">.</span><span class="n">Window</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tree</span> <span class="o">=</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QTreeWidget</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_tree</span><span class="o">.</span><span class="n">itemClicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_on_treeitem_clicked</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_text</span> <span class="o">=</span> <span class="n">ConsoleTextEdit</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_text</span><span class="o">.</span><span class="n">read_only</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_mgui_image</span> <span class="o">=</span> <span class="n">Image</span><span class="p">()</span>
         <span class="n">c</span> <span class="o">=</span> <span class="n">DraggableContainer</span><span class="p">(</span><span class="n">widgets</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_mgui_image</span><span class="p">])</span>
 
-        <span class="k">def</span> <span class="nf">wheelEvent</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">wheelEvent</span><span class="p">(</span><span class="n">event</span><span class="p">:</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QWheelEvent</span><span class="p">):</span>
             <span class="n">ang</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">angleDelta</span><span class="p">()</span><span class="o">.</span><span class="n">y</span><span class="p">()</span>
             <span class="n">v0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mgui_image</span><span class="o">.</span><span class="n">min_height</span>
             <span class="k">if</span> <span class="n">ang</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -218,7 +218,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_resize_image</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_initial_image_size</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="UiBoundTreeItem"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.help.UiBoundTreeItem">[docs]</a><span class="k">class</span> <span class="nc">UiBoundTreeItem</span><span class="p">(</span><span class="n">QTreeWidgetItem</span><span class="p">):</span>
+<div class="viewcode-block" id="UiBoundTreeItem"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.help.UiBoundTreeItem">[docs]</a><span class="k">class</span> <span class="nc">UiBoundTreeItem</span><span class="p">(</span><span class="n">QtW</span><span class="o">.</span><span class="n">QTreeWidgetItem</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">ui</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">ui</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -336,7 +336,7 @@
     <span class="k">return</span> <span class="n">doc</span>
 
 
-<span class="k">def</span> <span class="nf">_render</span><span class="p">(</span><span class="n">qwidget</span><span class="p">:</span> <span class="n">QWidget</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">_render</span><span class="p">(</span><span class="n">qwidget</span><span class="p">:</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QWidget</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Render Qt widgets. Used in certain type of containers.&quot;&quot;&quot;</span>
     <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 

@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Nest magic-classes &mdash; magic-class 0.6.9 documentation</title>
+  <title>Nest magic-classes &mdash; magic-class 0.6.10 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/columns.css" type="text/css" />
@@ -15,7 +15,6 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -32,7 +31,7 @@
             <a href="../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.9
+                0.6.10
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -92,9 +91,9 @@
            <div itemprop="articleBody">
 
   <section id="nest-magic-classes">
-<h1>Nest magic-classes<a class="headerlink" href="#nest-magic-classes" title="Permalink to this heading">¶</a></h1>
+<h1>Nest magic-classes<a class="headerlink" href="#nest-magic-classes" title="Permalink to this headline">¶</a></h1>
 <section id="basics">
-<h2>Basics<a class="headerlink" href="#basics" title="Permalink to this heading">¶</a></h2>
+<h2>Basics<a class="headerlink" href="#basics" title="Permalink to this headline">¶</a></h2>
 <p>Magic classes can be nested. During magic class construction, when a magic class encountered another
 magic class object, the child object is appended to the parent.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span>
@@ -142,7 +141,7 @@ magic class object, the child object is appended to the parent.</p>
 <img alt="../_images/fig_2-1.png" src="../_images/fig_2-1.png" />
 </section>
 <section id="make-menus-using-nesting-strategy">
-<h2>Make Menus Using Nesting Strategy<a class="headerlink" href="#make-menus-using-nesting-strategy" title="Permalink to this heading">¶</a></h2>
+<h2>Make Menus Using Nesting Strategy<a class="headerlink" href="#make-menus-using-nesting-strategy" title="Permalink to this headline">¶</a></h2>
 <p>To make multi-functional widgets, we usually want to use a menu bar to categorize functions.
 The <code class="docutils literal notranslate"><span class="pre">&#64;magicmenu</span></code> decorator provides a consistent API to implement a menu bar as a standard magic class.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">magicmenu</span>
@@ -190,7 +189,7 @@ The <code class="docutils literal notranslate"><span class="pre">&#64;magicmenu<
 <img alt="../_images/fig_2-3.png" src="../_images/fig_2-3.png" />
 </section>
 <section id="make-toolbar">
-<h2>Make Toolbar<a class="headerlink" href="#make-toolbar" title="Permalink to this heading">¶</a></h2>
+<h2>Make Toolbar<a class="headerlink" href="#make-toolbar" title="Permalink to this headline">¶</a></h2>
 <p>Similar to menus, magic class also provide a toolbar widget with same API. <code class="docutils literal notranslate"><span class="pre">&#64;magictoolbar</span></code> is the
 decorator for toolbar.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">magictoolbar</span>
