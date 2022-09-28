@@ -26,7 +26,7 @@ from magicgui.application import use_app
 from . import get_signature, move_to_screen_center
 from .qtsignal import QtSignal
 
-from ..widgets.containers import GroupBoxContainer
+from ..widgets.containers import FrameContainer
 
 if TYPE_CHECKING:
     from .._gui import BaseGui
@@ -239,13 +239,19 @@ class Timer:
         return fmt.format(hour=int(hour), min=int(min), sec=int(sec))
 
 
-class DefaultProgressBar(GroupBoxContainer, _SupportProgress):
+class _ProgressBarContainer(Container):
+    def __init__(self):
+        super().__init__(labels=False)
+        self.margins = (2, 2, 2, 2)
+        self.native.setWindowTitle("Progress")
+        self.native.layout().setAlignment(Qt.AlignmentFlag.AlignTop)
+
+
+class DefaultProgressBar(FrameContainer, _SupportProgress):
     """The default progressbar widget."""
 
     # The outer container
-    _CONTAINER = Container(labels=False)
-    _CONTAINER.native.setWindowTitle("Progress")
-    _CONTAINER.margins = (0, 0, 0, 0)
+    _CONTAINER = _ProgressBarContainer()
 
     def __init__(self, max: int = 1):
         self.progress_label = Label(value="Progress")
@@ -322,10 +328,11 @@ class DefaultProgressBar(GroupBoxContainer, _SupportProgress):
     def show(self):
         parent = self.native.parent()
         self._CONTAINER.append(self)
-        self._CONTAINER.native.setParent(
-            parent,
-            self._CONTAINER.native.windowFlags(),
-        )
+        if self._CONTAINER.parent is None:
+            self._CONTAINER.native.setParent(
+                parent,
+                self._CONTAINER.native.windowFlags(),
+            )
         if not self._CONTAINER.visible:
             self._CONTAINER.show()
             move_to_screen_center(self._CONTAINER.native)
@@ -336,6 +343,7 @@ class DefaultProgressBar(GroupBoxContainer, _SupportProgress):
             if wdt is self:
                 break
         self._CONTAINER.pop(i)
+        self._CONTAINER.height = 1  # minimize height
         if len(self._CONTAINER) == 0:
             self._CONTAINER.close()
         return None
