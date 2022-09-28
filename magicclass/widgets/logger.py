@@ -2,13 +2,14 @@ from __future__ import annotations
 import sys
 import logging
 from pathlib import Path
-from contextlib import contextmanager
+from contextlib import contextmanager, suppress
 from qtpy import QtWidgets as QtW, QtGui, QtCore
 from qtpy.QtCore import Qt, Signal
 from magicgui.backends._qtpy.widgets import QBaseWidget
 from magicgui.widgets import Widget
 import logging
 from typing import TYPE_CHECKING, Any, Union, overload
+
 from ..utils import rst_to_html
 
 if TYPE_CHECKING:
@@ -76,23 +77,25 @@ class QtLogger(QtW.QTextEdit):
         self._last_save_path = None
 
     def update(self, output: tuple[int, Printable]):
-        output_type, obj = output
-        if output_type == Output.TEXT:
-            self.moveCursor(QtGui.QTextCursor.MoveOperation.End)
-            self.insertPlainText(obj)
-            self.moveCursor(QtGui.QTextCursor.MoveOperation.End)
-        elif output_type == Output.HTML:
-            self.moveCursor(QtGui.QTextCursor.MoveOperation.End)
-            self.insertHtml(obj)
-            self.moveCursor(QtGui.QTextCursor.MoveOperation.End)
-        elif output_type == Output.IMAGE:
-            cursor = self.textCursor()
-            cursor.insertImage(obj)
-            self.insertPlainText("\n\n")
-            self.verticalScrollBar().setValue(self.verticalScrollBar().maximum())
-        else:
-            raise TypeError("Wrong type.")
-        self._post_append()
+        with suppress(RuntimeError):
+            output_type, obj = output
+            if output_type == Output.TEXT:
+                self.moveCursor(QtGui.QTextCursor.MoveOperation.End)
+                self.insertPlainText(obj)
+                self.moveCursor(QtGui.QTextCursor.MoveOperation.End)
+            elif output_type == Output.HTML:
+                self.moveCursor(QtGui.QTextCursor.MoveOperation.End)
+                self.insertHtml(obj)
+                self.moveCursor(QtGui.QTextCursor.MoveOperation.End)
+            elif output_type == Output.IMAGE:
+                cursor = self.textCursor()
+                cursor.insertImage(obj)
+                self.insertPlainText("\n\n")
+                self.verticalScrollBar().setValue(self.verticalScrollBar().maximum())
+            else:
+                raise TypeError("Wrong type.")
+            self._post_append()
+        return None
 
     def appendText(self, text: str):
         """Append text in the main thread."""
@@ -140,7 +143,7 @@ class QtLogger(QtW.QTextEdit):
 
     def _copy_image(self, name):
         image = self._get_image(name)
-        QtW.QApplication.clipboard().setImage(image)
+        return QtW.QApplication.clipboard().setImage(image)
 
     def _save_image(self, name, format="PNG"):
         """Shows a save dialog for the ImageResource with 'name'."""
@@ -156,6 +159,7 @@ class QtLogger(QtW.QTextEdit):
             image = self._get_image(name)
             image.save(filename, format)
             self._last_save_path = Path(filename).parent
+        return None
 
     def _get_image(self, name):
         """Returns the QImage stored as the ImageResource with 'name'."""

@@ -26,7 +26,7 @@ from magicgui.application import use_app
 from . import get_signature, move_to_screen_center
 from .qtsignal import QtSignal
 
-from ..widgets.containers import GroupBoxContainer, ScrollableContainer
+from ..widgets.containers import GroupBoxContainer
 
 if TYPE_CHECKING:
     from .._gui import BaseGui
@@ -243,7 +243,7 @@ class DefaultProgressBar(GroupBoxContainer, _SupportProgress):
     """The default progressbar widget."""
 
     # The outer container
-    _CONTAINER = ScrollableContainer(labels=False)
+    _CONTAINER = Container(labels=False)
     _CONTAINER.native.setWindowTitle("Progress")
     _CONTAINER.margins = (0, 0, 0, 0)
 
@@ -260,7 +260,7 @@ class DefaultProgressBar(GroupBoxContainer, _SupportProgress):
         )
         cnt.margins = (0, 0, 0, 0)
         self.footer = cnt
-        self.pbar.min_width = 360
+        self.pbar.min_width = 240
         self._timer = Timer()
         self._time_signal = QtSignal()
         self._time_signal.connect(self._on_timer_updated)
