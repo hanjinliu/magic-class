@@ -17,10 +17,9 @@ from ._base import (
     BaseGui,
     PopUpMode,
     ErrorMode,
-    value_widget_callback,
-    nested_function_gui_callback,
 )
 from .utils import format_error, connect_magicclasses
+from ._macro_utils import value_widget_callback, nested_function_gui_callback
 from ..widgets import (
     ButtonContainer,
     GroupBoxContainer,
@@ -273,16 +272,16 @@ class ClassGuiBase(BaseGui):
 
     def _fast_insert(self, key: int, obj: Widget | Callable) -> None:
         if isinstance(obj, Callable):
-            # Sometimes uses want to dynamically add new functions to GUI.
+            # Sometimes users want to dynamically add new functions to GUI.
             if isinstance(obj, FunctionGui):
                 if obj.parent is None:
                     f = nested_function_gui_callback(self, obj)
                     obj.called.connect(f)
                 widget = obj
             else:
-                from ._base import _inject_recorder
+                from ._base import inject_recorder
 
-                obj = _inject_recorder(obj, is_method=False).__get__(self)
+                obj = inject_recorder(obj, is_method=False).__get__(self)
                 widget = self._create_widget_from_method(obj)
 
             method_name = getattr(obj, "__name__", None)
