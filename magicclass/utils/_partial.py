@@ -9,7 +9,7 @@ from ..signature import get_signature, upgrade_signature
 def partial_gui(
     func: Callable,
     *args,
-    function_name: str | None = None,
+    function_text: str | None = None,
     **kwargs,
 ):
     options: dict[str, Any] = {}
@@ -26,8 +26,12 @@ def partial_gui(
     else:
         _func = func
     out = partial(_func)
-    out.__name__ = function_name or func.__name__
-    upgrade_signature(out, gui_options=options)
+    out.__name__ = _func.__name__
+    if function_text is not None:
+        caller_options = {"text": function_text}
+    else:
+        caller_options = {}
+    upgrade_signature(out, gui_options=options, caller_options=caller_options)
     return out
 
 

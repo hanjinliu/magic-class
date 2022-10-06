@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Callable
 import inspect
-from functools import partial, wraps as functools_wraps
+from functools import partial, partialmethod, wraps as functools_wraps
 from macrokit import Symbol, Expr, Head, symbol
 from magicgui.widgets import FunctionGui
 from magicgui.widgets._bases import ValueWidget
@@ -110,12 +110,15 @@ def inject_recorder(func: Callable, is_method: bool = True) -> Callable:
         def _func(self, *args, **kwargs):
             return func(*args, **kwargs)
 
+        if isinstance(func, partial):
+            _func = functools_wraps(_func)(partialmethod(_func))
+
         _func.__signature__ = sig.replace(
             parameters=[_SELF] + list(sig.parameters.values()),
             return_annotation=sig.return_annotation,
         )
 
-    if isinstance(func, partial):
+    if isinstance(_func, (partial, partialmethod)):
         _record_macro = _define_macro_recorder_for_partial(sig, _func)
     else:
         _record_macro = _define_macro_recorder(sig, _func)
@@ -197,7 +200,10 @@ def _define_macro_recorder(sig: inspect.Signature, func: Callable):
     return _record_macro
 
 
-def _define_macro_recorder_for_partial(sig: inspect.Signature, func: partial):
+def _define_macro_recorder_for_partial(
+    sig: inspect.Signature,
+    func: partial | partialmethod,
+):
     base_func = func.func
     if isinstance(sig, MagicMethodSignature):
         opt = sig.additional_options
