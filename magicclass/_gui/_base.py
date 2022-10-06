@@ -70,6 +70,7 @@ from ..signature import (
     split_annotated_type,
 )
 from ..wrappers import upgrade_signature
+from ..types import BoundLiteral
 
 if TYPE_CHECKING:
     import numpy as np
@@ -935,7 +936,21 @@ def _create_gui_method(self: BaseGui, obj: MethodType):
 
             # If bound method is a class method, use self.method(widget).
             if isinstance(_arg_bind, str):
-                _arg_bind = eval_attribute(type(self), _arg_bind)
+                try:
+                    _arg_bind = eval_attribute(type(self), _arg_bind)
+                except Exception:
+                    pass
+                else:
+                    import warnings
+
+                    warnings.warn(
+                        "Binding method name string is deprecated for the safety reason. "
+                        "Please use method itself.",
+                        DeprecationWarning,
+                    )
+
+            if isinstance(_arg_bind, BoundLiteral):
+                _arg_bind = _arg_bind.eval(type(self))
 
             if is_instance_method(_arg_bind):
                 _param.options["bind"] = method_as_getter(self, _arg_bind)

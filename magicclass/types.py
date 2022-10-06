@@ -129,7 +129,25 @@ def bound(obj):
         raise TypeError("'bound' can only convert callable, MagicField or type objects")
     while isinstance(outtype, _AnnotatedAlias):
         outtype, _ = split_annotated_type(outtype)
+    if isinstance(obj, str):
+        obj = BoundLiteral(obj)
     return Annotated[outtype, {"bind": obj, "widget_type": EmptyWidget}]
+
+
+class BoundLiteral:
+    """
+    A class used to represent a future evaluable expression.
+
+    This object will be created when a string is passed to the ``Bound[...]`` type.
+    """
+
+    def __init__(self, expr: str):
+        self._expr = expr
+
+    def eval(self, cls: type) -> Any:
+        from .utils import eval_attribute
+
+        return eval_attribute(cls, self._expr)
 
 
 class _BoundAlias(type):

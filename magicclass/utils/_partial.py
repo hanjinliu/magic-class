@@ -3,6 +3,7 @@ from functools import partial
 from typing import Any, Callable
 from types import MethodType
 import inspect
+from magicgui.widgets import EmptyWidget
 from ..signature import get_signature, upgrade_signature
 
 
@@ -12,17 +13,49 @@ def partial_gui(
     function_text: str | None = None,
     **kwargs,
 ):
+    """
+    Partialize a function and its signature.
+
+    This function is similar to ``functools.partial``, but it also update
+    widget options to build magicgui widget with subset of widgets. More
+    precisely, partializing ``x=0`` will add option ``x={"bind": 0}``.
+
+    Parameters
+    ----------
+    func : Callable
+        Callable object to be partialized.
+    function_text : str, optional
+        Text that will be used in the button or action in magic class.
+
+    Returns
+    -------
+    functools.partial
+        Partial object with updated signature.
+
+    Examples
+    --------
+    Suppose you have a magic class.
+
+    >>> @magicclass
+    >>> class A:
+    >>>     def f(self, i: int): ...
+
+    You can partialize method ``f``.
+
+    >>> ui = A()
+    >>> ui.append(partial_gui(ui.f, i=1))
+    """
     options: dict[str, Any] = {}
     if args:
         sig = inspect.signature(func)
         for k, arg in zip(sig.parameters, args):
-            options[k] = {"bind": arg}
+            options[k] = {"bind": arg, "widget_type": EmptyWidget}
     if kwargs:
         for k, v in kwargs.items():
-            options[k] = {"bind": v}
+            options[k] = {"bind": v, "widget_type": EmptyWidget}
     if isinstance(func, MethodType):
         _func = _unwrap_method(func)
-        options["self"] = {"bind": func.__self__}
+        options["self"] = {"bind": func.__self__, "widget_type": EmptyWidget}
     else:
         _func = func
     out = partial(_func)
