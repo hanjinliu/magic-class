@@ -16,7 +16,6 @@ from typing_extensions import _AnnotatedAlias, Literal
 import inspect
 import warnings
 from enum import Enum
-import warnings
 from docstring_parser import parse, compose
 from qtpy.QtWidgets import QWidget, QDockWidget
 
@@ -941,8 +940,6 @@ def _create_gui_method(self: BaseGui, obj: MethodType):
                 except Exception:
                     pass
                 else:
-                    import warnings
-
                     warnings.warn(
                         "Binding method name string is deprecated for the safety reason. "
                         "Please use method itself.",

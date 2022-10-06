@@ -1,24 +1,23 @@
 from __future__ import annotations
-from functools import partial
-from typing import Any, Callable
+import functools
+from typing import Any, TYPE_CHECKING
 from types import MethodType
 import inspect
 from magicgui.widgets import EmptyWidget
 from ..signature import get_signature, upgrade_signature
 
+if TYPE_CHECKING:
+    from ..signature import MagicMethodSignature
 
-def partial_gui(
-    func: Callable,
-    *args,
-    function_text: str | None = None,
-    **kwargs,
-):
+
+class partial(functools.partial):
     """
     Partialize a function and its signature.
 
-    This function is similar to ``functools.partial``, but it also update
+    This object is similar to ``functools.partial``, but it also update
     widget options to build magicgui widget with subset of widgets. More
-    precisely, partializing ``x=0`` will add option ``x={"bind": 0}``.
+    precisely, partializing ``x=0`` will add option
+    ``x={"bind": 0, "widget_type": EmptyWidget}``.
 
     Parameters
     ----------
@@ -26,11 +25,6 @@ def partial_gui(
         Callable object to be partialized.
     function_text : str, optional
         Text that will be used in the button or action in magic class.
-
-    Returns
-    -------
-    functools.partial
-        Partial object with updated signature.
 
     Examples
     --------
@@ -43,29 +37,75 @@ def partial_gui(
     You can partialize method ``f``.
 
     >>> ui = A()
-    >>> ui.append(partial_gui(ui.f, i=1))
+    >>> ui.append(partial(ui.f, i=1))
     """
-    options: dict[str, Any] = {}
-    if args:
-        sig = inspect.signature(func)
-        for k, arg in zip(sig.parameters, args):
-            options[k] = {"bind": arg, "widget_type": EmptyWidget}
-    if kwargs:
-        for k, v in kwargs.items():
-            options[k] = {"bind": v, "widget_type": EmptyWidget}
-    if isinstance(func, MethodType):
-        _func = _unwrap_method(func)
-        options["self"] = {"bind": func.__self__, "widget_type": EmptyWidget}
-    else:
-        _func = func
-    out = partial(_func)
-    out.__name__ = _func.__name__
-    if function_text is not None:
-        caller_options = {"text": function_text}
-    else:
-        caller_options = {}
-    upgrade_signature(out, gui_options=options, caller_options=caller_options)
-    return out
+
+    __signature__: MagicMethodSignature
+
+    def __new__(cls, func, /, *args, function_text: str | None = None, **kwargs):
+        # prepare widget options
+        options: dict[str, Any] = {}
+        if args:
+            sig = inspect.signature(func)
+            for k, arg in zip(sig.parameters, args):
+                options[k] = {"bind": arg, "widget_type": EmptyWidget}
+        if kwargs:
+            for k, v in kwargs.items():
+                options[k] = {"bind": v, "widget_type": EmptyWidget}
+
+        if isinstance(func, MethodType):
+            _func = _unwrap_method(func)
+            options["self"] = {"bind": func.__self__, "widget_type": EmptyWidget}
+        else:
+            _func = func
+
+        # construct partial object
+        self = functools.partial.__new__(cls, _func, *args, **kwargs)
+
+        self.__name__ = _func.__name__
+        if function_text is not None:
+            caller_options = {"text": function_text}
+        else:
+            caller_options = {}
+
+        upgrade_signature(self, gui_options=options, caller_options=caller_options)
+        return self
+
+
+class partialmethod(functools.partialmethod):
+    __signature__: MagicMethodSignature
+
+    def __init__(self, func, /, *args, function_text: str | None = None, **kwargs):
+        # prepare widget options
+        options: dict[str, Any] = {}
+        if args:
+            sig = inspect.signature(func)
+            for k, arg in zip(sig.parameters, args):
+                options[k] = {"bind": arg, "widget_type": EmptyWidget}
+        if kwargs:
+            for k, v in kwargs.items():
+                options[k] = {"bind": v, "widget_type": EmptyWidget}
+
+        if isinstance(func, MethodType):
+            _func = _unwrap_method(func)
+            options["self"] = {"bind": func.__self__, "widget_type": EmptyWidget}
+        else:
+            _func = func
+
+        # construct partial object
+        super().__init__(_func, *args, **kwargs)
+        self.__signature__ = get_signature(_func)
+
+        self.__name__ = _func.__name__
+        if function_text is not None:
+            caller_options = {"text": function_text}
+        else:
+            caller_options = {}
+
+        upgrade_signature(self, gui_options=options, caller_options=caller_options)
+
+    def __call__(self, *args: Any, **kwargs: Any):
+        raise TypeError("partialmethod object is not callable")
 
 
 def _unwrap_method(func: MethodType):
