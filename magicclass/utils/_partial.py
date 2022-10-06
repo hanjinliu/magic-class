@@ -62,6 +62,17 @@ class partial(functools.partial):
         # construct partial object
         self = functools.partial.__new__(cls, _func, *args, **kwargs)
 
+        # keyword only arguments have to be replaced because "sig.bind" receives
+        # all the values.
+        sig = get_signature(self)
+
+        self.__signature__ = sig.replace(
+            parameters=[
+                p.replace(kind=inspect.Parameter.POSITIONAL_OR_KEYWORD)
+                for p in sig.parameters.values()
+            ]
+        )
+
         self.__name__ = _func.__name__
         if function_text is not None:
             caller_options = {"text": function_text}
@@ -81,10 +92,10 @@ class partialmethod(functools.partialmethod):
         if args:
             sig = inspect.signature(func)
             for k, arg in zip(sig.parameters, args):
-                options[k] = {"bind": arg, "widget_type": EmptyWidget}
+                options[k] = {"widget_type": EmptyWidget}
         if kwargs:
             for k, v in kwargs.items():
-                options[k] = {"bind": v, "widget_type": EmptyWidget}
+                options[k] = {"widget_type": EmptyWidget}
 
         if isinstance(func, MethodType):
             _func = _unwrap_method(func)
@@ -94,7 +105,13 @@ class partialmethod(functools.partialmethod):
 
         # construct partial object
         super().__init__(_func, *args, **kwargs)
-        self.__signature__ = get_signature(_func)
+        sig = get_signature(partial(_func, *args, **kwargs))  # safely assign defaults
+        self.__signature__ = sig.replace(
+            parameters=[
+                p.replace(kind=inspect.Parameter.POSITIONAL_OR_KEYWORD)
+                for p in sig.parameters.values()
+            ]
+        )
 
         self.__name__ = _func.__name__
         if function_text is not None:
@@ -105,6 +122,7 @@ class partialmethod(functools.partialmethod):
         upgrade_signature(self, gui_options=options, caller_options=caller_options)
 
     def __call__(self, *args: Any, **kwargs: Any):
+        # needed to be defined because magicclass checks callable
         raise TypeError("partialmethod object is not callable")
 
 

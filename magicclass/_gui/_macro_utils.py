@@ -114,15 +114,6 @@ def inject_recorder(func: Callable, is_method: bool = True) -> Callable:
 
             _func.func.__name__ = func.__name__  # need update for macro recording
 
-            # keyword only arguments have to be replaced because "sig.bind" receives
-            # all the values.
-            sig = sig.replace(
-                parameters=[
-                    p.replace(kind=inspect.Parameter.POSITIONAL_OR_KEYWORD)
-                    for p in sig.parameters.values()
-                ]
-            )
-
         else:
 
             @functools_wraps(func)
