@@ -15,10 +15,9 @@ from ._base import (
     PopUpMode,
     ErrorMode,
     ContainerLikeGui,
-    nested_function_gui_callback,
-    _inject_recorder,
 )
 from .utils import format_error, connect_magicclasses
+from ._macro_utils import nested_function_gui_callback, inject_recorder
 
 from ..signature import get_additional_option
 from ..fields import MagicField
@@ -169,7 +168,7 @@ class MenuGuiBase(ContainerLikeGui):
                     obj.called.connect(f)
                 _obj = obj
             else:
-                obj = _inject_recorder(obj, is_method=False).__get__(self)
+                obj = inject_recorder(obj, is_method=False).__get__(self)
                 _obj = self._create_widget_from_method(obj)
 
             method_name = getattr(obj, "__name__", None)

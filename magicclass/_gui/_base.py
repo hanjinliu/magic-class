@@ -16,7 +16,6 @@ from typing_extensions import _AnnotatedAlias, Literal
 import inspect
 import warnings
 from enum import Enum
-import warnings
 from docstring_parser import parse, compose
 from qtpy.QtWidgets import QWidget, QDockWidget
 
@@ -35,8 +34,8 @@ from magicgui.widgets import (
 )
 from magicgui.application import use_app
 from magicgui.widgets._bases.widget import Widget
-from magicgui.widgets._bases import ButtonWidget, ValueWidget
-from macrokit import Expr, Head, Symbol, symbol
+from magicgui.widgets._bases import ButtonWidget
+from macrokit import Symbol
 
 from .keybinding import as_shortcut
 from .mgui_ext import (
@@ -47,8 +46,9 @@ from .mgui_ext import (
     _LabeledWidgetAction,
     mguiLike,
 )
-from .utils import copy_class, get_parameters, callable_to_classes
+from .utils import copy_class, callable_to_classes
 from ._macro import GuiMacro
+from ._macro_utils import inject_recorder, value_widget_callback
 from ._icon import get_icon
 
 from ..utils import (
@@ -60,7 +60,6 @@ from ..utils import (
     is_instance_method,
     method_as_getter,
     eval_attribute,
-    thread_worker,
 )
 from ..widgets import Separator, FreeWidget
 from ..fields import MagicField
@@ -70,6 +69,7 @@ from ..signature import (
     split_annotated_type,
 )
 from ..wrappers import upgrade_signature
+from ..types import BoundLiteral
 
 if TYPE_CHECKING:
     import numpy as np
@@ -926,6 +926,7 @@ def _create_gui_method(self: BaseGui, obj: MethodType):
         if isinstance(param, MagicParameter):
             _param = MagicParameter(
                 name=param.name,
+                kind=param.kind,
                 default=param.default,
                 annotation=split_annotated_type(param.annotation)[0],
                 gui_options=param.options.copy(),
@@ -935,7 +936,19 @@ def _create_gui_method(self: BaseGui, obj: MethodType):
 
             # If bound method is a class method, use self.method(widget).
             if isinstance(_arg_bind, str):
-                _arg_bind = eval_attribute(type(self), _arg_bind)
+                try:
+                    _arg_bind = eval_attribute(type(self), _arg_bind)
+                except Exception:
+                    pass
+                else:
+                    warnings.warn(
+                        "Binding method name string is deprecated for the safety reason. "
+                        "Please use method itself.",
+                        DeprecationWarning,
+                    )
+
+            if isinstance(_arg_bind, BoundLiteral):
+                _arg_bind = _arg_bind.eval(type(self))
 
             if is_instance_method(_arg_bind):
                 _param.options["bind"] = method_as_getter(self, _arg_bind)
@@ -1114,186 +1127,6 @@ def _child_that_has_widget(
     return child_instance
 
 
-def value_widget_callback(
-    gui: MagicTemplate,
-    widget: ValueWidget,
-    name: str | list[str],
-    getvalue: bool = True,
-):
-    """Define a ValueWidget callback, including macro recording."""
-    if isinstance(name, str):
-        sym_name = Symbol(name)
-    else:
-        sym_name = Symbol(name[0])
-        for n in name[1:]:
-            sym_name = Expr(head=Head.getattr, args=[sym_name, n])
-
-    if getvalue:
-        sub = Expr(head=Head.getattr, args=[sym_name, Symbol("value")])  # name.value
-    else:
-        sub = sym_name
-
-    def _set_value():
-        if not widget.enabled or not gui.macro.active:
-            # If widget is read only, it means that value is set in script (not manually).
-            # Thus this event should not be recorded as a macro.
-            return None
-
-        gui.changed.emit(gui)
-
-        # Make an expression of
-        # >>> x.name.value = value
-        # or
-        # >>> x.name = value
-        target = Expr(Head.getattr, [symbol(gui), sub])
-        expr = Expr(Head.assign, [target, widget.value])
-        if gui.macro._last_setval == target and len(gui.macro) > 0:
-            gui.macro.pop()
-            gui.macro._erase_last()
-        else:
-            gui.macro._last_setval = target
-        gui.macro.append(expr)
-        return None
-
-    return _set_value
-
-
-def nested_function_gui_callback(gui: MagicTemplate, fgui: FunctionGui):
-    """Define a FunctionGui callback, including macro recording."""
-    fgui_name = Symbol(fgui.name)
-
-    def _after_run():
-        if not fgui.enabled or not gui.macro.active:
-            # If widget is read only, it means that value is set in script (not manually).
-            # Thus this event should not be recorded as a macro.
-            return None
-        inputs = get_parameters(fgui)
-        args = [Expr(head=Head.kw, args=[Symbol(k), v]) for k, v in inputs.items()]
-        # args[0] is self
-        sub = Expr(head=Head.getattr, args=[symbol(gui), fgui_name])  # {x}.func
-        expr = Expr(head=Head.call, args=[sub] + args[1:])  # {x}.func(args...)
-
-        if fgui._auto_call:
-            # Auto-call will cause many redundant macros. To avoid this, only the last input
-            # will be recorded in magic-class.
-            last_expr = gui.macro[-1]
-            if (
-                last_expr.head == Head.call
-                and last_expr.args[0].head == Head.getattr
-                and last_expr.at(0, 1) == expr.at(0, 1)
-                and len(gui.macro) > 0
-            ):
-                gui.macro.pop()
-                gui.macro._erase_last()
-
-        gui.macro.append(expr)
-        gui.macro._last_setval = None
-
-    return _after_run
-
-
-_SELF = inspect.Parameter("self", inspect.Parameter.POSITIONAL_OR_KEYWORD)
-
-
-def _inject_recorder(func: Callable, is_method: bool = True) -> Callable:
-    """Inject macro recording functionality into a function."""
-    sig = get_signature(func)
-    if is_method:
-        sig = sig.replace(
-            parameters=list(sig.parameters.values())[1:],
-            return_annotation=sig.return_annotation,
-        )
-        _func = func
-    else:
-
-        @functools_wraps(func)
-        def _func(self, *args, **kwargs):
-            return func(*args, **kwargs)
-
-        _func.__signature__ = sig.replace(
-            parameters=[_SELF] + list(sig.parameters.values()),
-            return_annotation=sig.return_annotation,
-        )
-
-    _record_macro = _define_macro_recorder(sig, _func)
-
-    if not isinstance(_func, thread_worker):
-
-        @functools_wraps(_func)
-        def _recordable(bgui: MagicTemplate, *args, **kwargs):
-            with bgui.macro.blocked():
-                out = _func.__get__(bgui)(*args, **kwargs)
-            if bgui.macro.active:
-                _record_macro(bgui, *args, **kwargs)
-            return out
-
-        if hasattr(_func, "__signature__"):
-            _recordable.__signature__ = _func.__signature__
-        return _recordable
-
-    else:
-        _func._set_recorder(_record_macro)
-        return _func
-
-
-def _define_macro_recorder(sig: inspect.Signature, func: Callable):
-    if isinstance(sig, MagicMethodSignature):
-        opt = sig.additional_options
-        _auto_call = opt.get("auto_call", False)
-    else:
-        _auto_call = False
-
-    if sig.return_annotation is inspect.Parameter.empty:
-
-        def _record_macro(bgui: MagicTemplate, *args, **kwargs):
-            bound = sig.bind(*args, **kwargs)
-            kwargs = dict(bound.arguments.items())
-            expr = Expr.parse_method(bgui, func, (), kwargs)
-            if _auto_call:
-                # Auto-call will cause many redundant macros. To avoid this, only the last
-                # input will be recorded in magic-class.
-                last_expr = bgui.macro[-1]
-                if (
-                    last_expr.head == Head.call
-                    and last_expr.args[0].head == Head.getattr
-                    and last_expr.at(0, 1) == expr.at(0, 1)
-                    and len(bgui.macro) > 0
-                ):
-                    bgui.macro.pop()
-                    bgui.macro._erase_last()
-
-            bgui.macro.append(expr)
-            bgui.macro._last_setval = None
-            return None
-
-    else:
-        _cname_ = "_call_with_return_callback"
-
-        def _record_macro(bgui: MagicTemplate, *args, **kwargs):
-            bound = sig.bind(*args, **kwargs)
-            kwargs = dict(bound.arguments.items())
-            expr = Expr.parse_method(bgui, _cname_, (func.__name__,), kwargs)
-            if _auto_call:
-                # Auto-call will cause many redundant macros. To avoid this, only the last
-                # input will be recorded in magic-class.
-                last_expr = bgui.macro[-1]
-                if (
-                    last_expr.head == Head.call
-                    and last_expr.args[0].head == Head.getattr
-                    and last_expr.at(0, 1) == expr.at(0, 1)
-                    and last_expr.args[1] == expr.args[1]
-                    and len(bgui.macro) > 0
-                ):
-                    bgui.macro.pop()
-                    bgui.macro._erase_last()
-
-            bgui.macro.append(expr)
-            bgui.macro._last_setval = None
-            return None
-
-    return _record_macro
-
-
 def convert_attributes(cls: type[_T], hide: tuple[type, ...]) -> dict[str, Any]:
     """
     Convert class attributes into macro recordable ones.
@@ -1328,7 +1161,7 @@ def convert_attributes(cls: type[_T], hide: tuple[type, ...]) -> dict[str, Any]:
                 # private method, non-action-like object, not-callable object are passed.
                 new_attr = obj
             elif callable(obj) and get_additional_option(obj, "record", True):
-                new_attr = _inject_recorder(obj)
+                new_attr = inject_recorder(obj)
             else:
                 new_attr = obj
 
