@@ -110,7 +110,7 @@ def inject_recorder(func: Callable, is_method: bool = True) -> Callable:
             @functools_wraps(func)
             @partialmethod
             def _func(self, *args, **kwargs):
-                return func.func(*args, **kwargs)
+                return func(*args, **kwargs)
 
             _func.func.__name__ = func.__name__  # need update for macro recording
 
@@ -218,20 +218,12 @@ def _define_macro_recorder_for_partial(
     else:
         _auto_call = False
 
-    # clarify the signature of the partial positional arguments for macro recording.
-    if func.args:
-        base_sig = inspect.signature(base_func)
-        keys = list(base_sig.parameters.keys())[: len(func.args)]
-        preset_args = dict(zip(keys, func.args))
-    else:
-        preset_args = {}
-
     if sig.return_annotation is inspect.Parameter.empty:
 
         def _record_macro(bgui: MagicTemplate, *args, **kwargs):
             bound = sig.bind(*args, **kwargs)
-            kwargs = dict(**preset_args, **func.keywords)
-            kwargs.update(bound.arguments.items())
+            bound.apply_defaults()
+            kwargs = bound.arguments
             expr = Expr.parse_method(bgui, base_func, (), kwargs)
             if _auto_call:
                 # Auto-call will cause many redundant macros. To avoid this, only the last
@@ -255,8 +247,8 @@ def _define_macro_recorder_for_partial(
 
         def _record_macro(bgui: MagicTemplate, *args, **kwargs):
             bound = sig.bind(*args, **kwargs)
-            kwargs = dict(**preset_args, **func.keywords)
-            kwargs.update(bound.arguments.items())
+            bound.apply_defaults()
+            kwargs = bound.arguments
             expr = Expr.parse_method(bgui, _cname_, (base_func.__name__,), kwargs)
             if _auto_call:
                 # Auto-call will cause many redundant macros. To avoid this, only the last

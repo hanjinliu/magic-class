@@ -1,5 +1,5 @@
 from magicclass import magicclass
-from magicclass.utils import partial
+from magicclass.utils import partial, partialmethod
 from unittest.mock import MagicMock
 import pytest
 
@@ -25,7 +25,7 @@ def test_partial_call():
     with pytest.raises(TypeError):
         pf1()
 
-def test_partial_gui():
+def test_partial_into_gui():
     mock = MagicMock()
     @magicclass
     class A:
@@ -33,12 +33,29 @@ def test_partial_gui():
             mock(i)
 
     ui = A()
-    ui.append(partial(ui.f, i=1, function_text="f(1)"))
+    ui.append(partial(ui.f, i=1).set_options(text="f(1)"))
+    assert ui[-1].text == "f(1)"
     mock.assert_not_called()
     ui[-1].changed()
     mock.assert_called_once_with(1)
     assert str(ui.macro[-1]) == "ui.f(i=1)"
-    ui.append(partial(ui.f, i=2, function_text="f(2)"))
+    ui.append(partial(ui.f, i=2).set_options(text="f(2)"))
+    assert ui[-1].text == "f(2)"
     ui[-1].changed()
     mock.assert_called_with(2)
     assert str(ui.macro[-1]) == "ui.f(i=2)"
+
+def test_partialmethod():
+    mock = MagicMock()
+    @magicclass
+    class A:
+        def f(self, i: int, j: int):
+            mock(i, j)
+        g = partialmethod(f, i=1)
+
+    ui = A()
+    assert ui[-1].text == "g"
+    ui[-1].changed()
+    mock.assert_not_called()
+    ui[-1].mgui.call_button.clicked()
+    mock.assert_called_once_with(1, 0)
