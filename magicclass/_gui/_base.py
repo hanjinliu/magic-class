@@ -926,6 +926,7 @@ def _create_gui_method(self: BaseGui, obj: MethodType):
         if isinstance(param, MagicParameter):
             _param = MagicParameter(
                 name=param.name,
+                kind=param.kind,
                 default=param.default,
                 annotation=split_annotated_type(param.annotation)[0],
                 gui_options=param.options.copy(),

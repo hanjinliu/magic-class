@@ -12,12 +12,7 @@ the widget. It only affects the default value of the parameters.
     def f(i: int, j: int):
         return i + j
 
-    mgui = partial(f, j=2)  # mgui still has two widgets corresponding to i and j
-
-Yet, partializing ``magicgui`` widgets are very useful in magic classes. For instance,
-if you want to call ``ui.func(x=0, y=1, z=2)`` from a partialized method, like
-``ui.func_x_is_0(y=1, z=2)``, the macro should be recorded as ``ui.func(x=0, y=1, z=2)``
-for simplicity.
+    mgui = magicgui(partial(f, j=2))  # mgui still has two widgets corresponding to i and j
 
 Partializing widgets
 --------------------
@@ -28,20 +23,39 @@ widget options.
 
 .. code-block:: python
 
-    from magicclass import magicclass
+    from magicgui import magicgui
     from magicclass.utils import partial
 
-    @magicclass
-    class A:
-        def func(self, x: int, y: int, z: int):
-            print(x, y, z)
+    def func(self, x: int, y: int, z: int):
+        print(x, y, z)
 
-    ui = A()
-    func_x_is_0 = partial(ui.func, x=0)
+    pfunc = partial(func, x=0)
+    mgui = magicgui(pfunc)
+    mgui.show(True)  # mgui has only two widgets corresponding to y and z
 
+.. note::
+
+    To partialize method, you have to use ``partialmethod`` in ``magicclass.utils``,
+    just like when you have to use ``functools.partialmethod``.
+
+    .. code-block:: python
+
+        from magicclass import magicclass
+        from magicclass.utils import partialmethod
+
+        @magicclass
+        class A:
+            def func(self, x: int, y: int, z: int):
+                print(x, y, z)
+
+            func_0 = partialmethod(func, x=0)  # use partialmethod!
 
 Example: "open recent"
 ----------------------
+
+``partial`` is very useful when you want to dynamically create buttons or menu actions that
+call a function with some defined arguments. Following example shows how to make a "open
+recent" menu.
 
 .. code-block:: python
 
@@ -53,20 +67,23 @@ Example: "open recent"
     class A:
         @magicmenu
         class File:
-            def __init__(self):
-                self._history = []
-
             def open_file(self, path: Path):
-                path = Path(path)
-                print("Opening:", path)
+                text = str(path)
+                print("Opening:", text)  # do something
 
-                # To avoid appending the same history twice, check if the path
-                # is already in the history.
-                if path not in self._history:
-                    pfunc = partial(self.open_file, path=path)
-                    self.append(pfunc)
-                    self._history.append(path)
+                # create a partial function
+                pfunc = partial(self.open_file, path=path).set_options(text=text)
+
+                # to avoid adding duplicated menu actions, check if the same action
+                # already exists.
+                if text not in self.open_recent._text_list():
+                    self.open_recent.append(pfunc)
 
             @magicmenu
             class open_recent:
-                pass  # recently opened files will be appended here
+                # recently opened files will be appended here
+                def _text_list(self) -> "list[str]":
+                    return [a.text for a in self]
+
+    ui = A()
+    ui.show()
