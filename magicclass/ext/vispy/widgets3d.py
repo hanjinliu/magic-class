@@ -112,6 +112,7 @@ class Has3DViewBox(HasViewBox):
         return self.add_layer(curve)
 
     def add_layer(self, layer: LayerItem):
+        """Add a layer item to the canvas."""
         self.layers.append(layer)
         if len(self.layers) == 1:
             low, high = layer._get_bbox()

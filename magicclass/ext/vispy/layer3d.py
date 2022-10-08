@@ -8,7 +8,9 @@ from vispy.visuals import (
     IsosurfaceVisual,
     MeshVisual,
     LineVisual,
+    BoxVisual,
 )
+from vispy.visuals import transforms as tr
 from vispy.visuals.filters import WireframeFilter
 from ._base import LayerItem
 
@@ -433,7 +435,6 @@ class Curve3D(LayerItem, HasFields):
         self._visual: LineVisual = visuals.Line(
             pos=data, color=color, width=width, parent=self._viewbox.scene
         )
-        self._visual.unfreeze()
         self.data = data
 
     @property
