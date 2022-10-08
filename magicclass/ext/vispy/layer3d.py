@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Tuple
+from typing import Tuple, NamedTuple
 import numpy as np
 from vispy.scene import visuals, ViewBox
 from vispy.visuals import (
@@ -7,6 +7,7 @@ from vispy.visuals import (
     ImageVisual,
     IsosurfaceVisual,
     MeshVisual,
+    LineVisual,
 )
 from vispy.visuals.filters import WireframeFilter
 from ._base import LayerItem
@@ -140,6 +141,11 @@ class Image(LayerItem, HasFields):
         self.widgets.contrast_limits.max = self._lims[1]
         self.widgets.iso_threshold.min = self._lims[0]
         self.widgets.iso_threshold.max = self._lims[1]
+
+    def _get_bbox(self) -> Tuple[np.ndarray, np.ndarray]:
+        return np.zeros(3, dtype=np.float32), np.array(
+            self._data.shape, dtype=np.float32
+        )
 
     # fmt: off
     rendering = vfield(str, options={"choices": RENDERINGS, "value": "mip"})
@@ -286,6 +292,11 @@ class IsoSurface(_SurfaceBase, HasFields):
         )
         return None
 
+    def _get_bbox(self) -> Tuple[np.ndarray, np.ndarray]:
+        data = self._data
+        mins = np.min(data[0], axis=0)
+        maxs = np.max(data[0], axis=0)
+
     def _cache_lims(self):
         self._lims = np.min(self._data), np.max(self._data)
         self.widgets.contrast_limits.min = self._lims[0]
@@ -304,6 +315,11 @@ class IsoSurface(_SurfaceBase, HasFields):
         self._data = value
         self._visual.update()
         self._cache_lims()
+
+    def _get_bbox(self) -> Tuple[np.ndarray, np.ndarray]:
+        return np.zeros(3, dtype=np.float32), np.array(
+            self._data.shape, dtype=np.float32
+        )
 
     # fmt: off
     contrast_limits = vfield(Tuple[float, float], widget_type=FloatRangeSlider)
@@ -328,6 +344,14 @@ class IsoSurface(_SurfaceBase, HasFields):
     face_color.connect(_SurfaceBase._on_face_color_change)
     edge_color.connect(_SurfaceBase._on_edge_color_change)
     edge_width.connect(_SurfaceBase._on_edge_width_change)
+
+
+class SurfaceData(NamedTuple):
+    """Dataset that defines a surface data."""
+
+    verts: np.ndarray
+    faces: np.ndarray
+    values: np.ndarray
 
 
 class Surface(_SurfaceBase, HasFields):
@@ -369,8 +393,14 @@ class Surface(_SurfaceBase, HasFields):
         else:
             raise ValueError("Data must be vertices, faces (, values).")
         self._visual.set_data(vertices=verts, faces=faces, vertex_values=vals)
-        self._data = (verts, faces, vals)
+        self._data = SurfaceData(verts, faces, vals)
         self._visual.update()
+
+    def _get_bbox(self) -> Tuple[np.ndarray, np.ndarray]:
+        verts = self._data.verts
+        mins = np.min(verts, axis=0)
+        maxs = np.max(verts, axis=0)
+        return mins, maxs
 
     shading = vfield(
         str, options={"choices": ["none", "float", "smooth"], "value": "smooth"}
@@ -385,3 +415,55 @@ class Surface(_SurfaceBase, HasFields):
     face_color.connect(_SurfaceBase._on_face_color_change)
     edge_color.connect(_SurfaceBase._on_edge_color_change)
     edge_width.connect(_SurfaceBase._on_edge_width_change)
+
+
+class Curve3D(LayerItem, HasFields):
+    def __init__(
+        self,
+        data,
+        viewbox: ViewBox,
+        color=None,
+        width=1.0,
+        name: str | None = None,
+    ):
+        super().__init__()
+        self._name = name
+        self._viewbox = viewbox
+        data = data[:, ::-1]  # vispy uses xyz, not zyx
+        self._visual: LineVisual = visuals.Line(
+            pos=data, color=color, width=width, parent=self._viewbox.scene
+        )
+        self._visual.unfreeze()
+        self.data = data
+
+    @property
+    def data(self) -> np.ndarray:
+        return self._data
+
+    @data.setter
+    def data(self, value) -> None:
+        self._visual.set_data(pos=value)
+        self._data = value
+        self._visual.update()
+
+    def _get_bbox(self) -> Tuple[np.ndarray, np.ndarray]:
+        mins = np.min(self.data, axis=0)
+        maxs = np.max(self.data, axis=0)
+        return mins, maxs
+
+    @property
+    def name(self) -> str:
+        return self._name
+
+    color = vfield(Color)
+    width = vfield(
+        float, widget_type=FloatSlider, options={"min": 0.5, "max": 10.0, "value": 1.0}
+    )
+
+    @color.connect
+    def _on_color_change(self, value):
+        self._visual.set_data(color=value)
+
+    @width.connect
+    def _on_width_change(self, value):
+        self._visual.set_data(width=value)

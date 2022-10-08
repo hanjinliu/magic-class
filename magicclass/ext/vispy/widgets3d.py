@@ -2,10 +2,9 @@ from __future__ import annotations
 import numpy as np
 from numpy.typing import ArrayLike
 from vispy import scene
-
-from .layer3d import Image, IsoSurface, Surface
+from .layer3d import Image, IsoSurface, Surface, Curve3D
 from .layerlist import LayerList
-from ._base import SceneCanvas, HasViewBox, MultiPlot
+from ._base import SceneCanvas, HasViewBox, MultiPlot, LayerItem
 
 from ...widgets import FreeWidget
 from ...types import Color
@@ -29,7 +28,7 @@ class Has3DViewBox(HasViewBox):
         return self._layerlist
 
     @property
-    def camera(self):
+    def camera(self) -> scene.ArcballCamera:
         """Return the native camera."""
         return self._viewbox.camera
 
@@ -57,10 +56,7 @@ class Has3DViewBox(HasViewBox):
             interpolation=interpolation,
         )
 
-        self._layerlist.append(image)
-        self._viewbox.camera.scale_factor = max(data.shape)
-        self._viewbox.camera.center = [s / 2 - 0.5 for s in data.shape]
-        return image
+        return self.add_layer(image)
 
     def add_isosurface(
         self,
@@ -82,10 +78,7 @@ class Has3DViewBox(HasViewBox):
             shading=shading,
         )
 
-        self._layerlist.append(surface)
-        self._viewbox.camera.scale_factor = max(data.shape)
-        self._viewbox.camera.center = [s / 2 - 0.5 for s in data.shape]
-        return surface
+        return self.add_layer(surface)
 
     def add_surface(
         self,
@@ -102,12 +95,31 @@ class Has3DViewBox(HasViewBox):
             edge_color=edge_color,
             shading=shading,
         )
-        self._layerlist.append(surface)
-        mins = np.min(data[0], axis=0)
-        maxs = np.max(data[0], axis=0)
-        self._viewbox.camera.scale_factor = max(maxs - mins)
-        self._viewbox.camera.center = [(s1 + s0) / 2 for s0, s1 in zip(mins, maxs)]
-        return surface
+        return self.add_layer(surface)
+
+    def add_curve(
+        self,
+        data: ArrayLike,
+        color="white",
+        width=1,
+    ):
+        curve = Curve3D(
+            data=np.asarray(data, dtype=np.float32),
+            viewbox=self._viewbox,
+            color=color,
+            width=width,
+        )
+        return self.add_layer(curve)
+
+    def add_layer(self, layer: LayerItem):
+        self.layers.append(layer)
+        if len(self.layers) == 1:
+            low, high = layer._get_bbox()
+            self.camera.scale_factor = max(high - low)
+            self.camera.center = (high + low) / 2
+
+        self._viewbox.update()
+        return layer
 
 
 class Vispy3DCanvas(FreeWidget, Has3DViewBox):

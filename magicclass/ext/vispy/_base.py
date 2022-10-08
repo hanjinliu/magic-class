@@ -30,6 +30,7 @@ class LayerItem:
 
     @visible.setter
     def visible(self, v: bool) -> None:
+        """Set layer visibility."""
         self._visual.visible = v
 
     def _get_transform(self) -> transforms.MatrixTransform:
@@ -43,6 +44,9 @@ class LayerItem:
     def translate(self) -> np.ndarray:
         mtx = self._get_transform().matrix
         return mtx[:3, 4]
+
+    def _get_bbox(self) -> tuple[np.ndarray, np.ndarray]:
+        raise NotImplementedError
 
 
 class HasViewBox:
