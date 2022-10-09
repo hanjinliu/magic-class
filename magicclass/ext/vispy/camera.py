@@ -8,6 +8,8 @@ from ...fields import HasFields, vfield
 
 
 class VispyCamera(scene.ArcballCamera):
+    """The camera for the 3D view."""
+
     changed = Signal()
 
     def view_changed(self):
@@ -19,6 +21,8 @@ class VispyCamera(scene.ArcballCamera):
 
 
 class EulerAngleEdit(Container):
+    """The TupleEdit for Euler angles."""
+
     def __init__(
         self,
         value: tuple[float, float, float] = (0.0, 0.0, 0.0),
@@ -52,6 +56,21 @@ class EulerAngleEdit(Container):
 
 
 class Camera(HasFields):
+    """
+    The camera interface for vispy canvas.
+
+    Attributes
+    ----------
+    fov : float
+        The field of view of the camera in degree.
+    scale : float
+        The scale factor of the camera.
+    center : tuple of float
+        The rotation center of the camera, in x, y, z order.
+    angles : tuple of float
+        The Euler angles of the camera in degree, in x, y, z order.
+    """
+
     def __init__(self, viewbox: scene.ViewBox) -> None:
         camera = VispyCamera(fov=0)
         viewbox.camera = camera
