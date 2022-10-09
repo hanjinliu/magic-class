@@ -119,6 +119,7 @@ class Has3DViewBox(HasViewBox):
             low, high = layer._get_bbox()
             self.camera.scale = max(high - low)
             self.camera.center = (high + low) / 2
+            self.camera.angles = (0.0, 0.0, 90.0)
 
         self._viewbox.update()
         return layer
