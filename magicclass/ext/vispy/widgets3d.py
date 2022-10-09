@@ -5,6 +5,7 @@ from vispy import scene
 from .layer3d import Image, IsoSurface, Surface, Curve3D
 from .layerlist import LayerList
 from ._base import SceneCanvas, HasViewBox, MultiPlot, LayerItem
+from .camera import Camera
 
 from ...widgets import FreeWidget
 from ...types import Color
@@ -20,7 +21,7 @@ class Has3DViewBox(HasViewBox):
 
     def __init__(self, viewbox: scene.ViewBox):
         super().__init__(viewbox)
-        self._viewbox.camera = scene.ArcballCamera(fov=0)
+        self._camera = Camera(viewbox)
 
     @property
     def layers(self):
@@ -28,9 +29,9 @@ class Has3DViewBox(HasViewBox):
         return self._layerlist
 
     @property
-    def camera(self) -> scene.ArcballCamera:
+    def camera(self) -> Camera:
         """Return the native camera."""
-        return self._viewbox.camera
+        return self._camera
 
     def add_image(
         self,
@@ -116,8 +117,9 @@ class Has3DViewBox(HasViewBox):
         self.layers.append(layer)
         if len(self.layers) == 1:
             low, high = layer._get_bbox()
-            self.camera.scale_factor = max(high - low)
+            self.camera.scale = max(high - low)
             self.camera.center = (high + low) / 2
+            self.camera.angles = (0.0, 0.0, 90.0)
 
         self._viewbox.update()
         return layer

@@ -123,7 +123,7 @@ class Image(LayerItem, HasFields):
     @data.setter
     def data(self, value) -> None:
         value = np.asarray(value)
-        if self._visual is None or value.ndim != self._data.ndim:
+        if self._visual is None or value.ndim != self.data.ndim:
             self._visual.parent = None
             del self._visual
             self._create_visual(value, None)
@@ -404,14 +404,12 @@ class Surface(_SurfaceBase, HasFields):
         maxs = np.max(verts, axis=0)
         return mins, maxs
 
-    shading = vfield(
-        str, options={"choices": ["none", "float", "smooth"], "value": "smooth"}
-    )
+    # fmt: off
+    shading = vfield(str, options={"choices": ["none", "float", "smooth"], "value": "smooth"})
     face_color = vfield(Color)
     edge_color = vfield(Color)
-    edge_width = vfield(
-        float, widget_type=FloatSlider, options={"min": 0.5, "max": 10.0, "value": 1.0}
-    )
+    edge_width = vfield(float, widget_type=FloatSlider, options={"min": 0.5, "max": 10.0, "value": 1.0})
+    # fmt: on
 
     shading.connect(_SurfaceBase._on_shading_change)
     face_color.connect(_SurfaceBase._on_face_color_change)
@@ -456,10 +454,10 @@ class Curve3D(LayerItem, HasFields):
     def name(self) -> str:
         return self._name
 
+    # fmt: off
     color = vfield(Color)
-    width = vfield(
-        float, widget_type=FloatSlider, options={"min": 0.5, "max": 10.0, "value": 1.0}
-    )
+    width = vfield(float, widget_type=FloatSlider, options={"min": 0.5, "max": 10.0, "value": 1.0})
+    # fmt: on
 
     @color.connect
     def _on_color_change(self, value):
