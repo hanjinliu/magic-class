@@ -647,7 +647,7 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
 
             def run_function():
                 mgui = _build_mgui(widget, func, self)
-                if mgui.call_count == 0 and len(mgui.called._slots) == 0:
+                if mgui.call_count == 0:  # connect only once
                     _prep_func(mgui)
                     if self._popup_mode not in (
                         PopUpMode.popup,
@@ -1017,6 +1017,14 @@ def _build_mgui(widget_: Action | PushButtonPlus, func: Callable, parent: BaseGu
     widget_.mgui = mgui
     name = widget_.name or ""
     mgui.native.setWindowTitle(name.replace("_", " ").strip())
+
+    return _connect_called_event(mgui, func)
+
+
+def _connect_called_event(mgui: FunctionGui, func: Callable) -> FunctionGui:
+    _on_called = get_additional_option(func, "on_called", [])
+    for cb in _on_called:
+        mgui.called.connect(lambda: cb(mgui))
     return mgui
 
 
