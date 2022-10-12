@@ -93,6 +93,7 @@ def nested_function_gui_callback(gui: MagicTemplate, fgui: FunctionGui):
 
 
 _SELF = inspect.Parameter("self", inspect.Parameter.POSITIONAL_OR_KEYWORD)
+_IS_RECORDABLE = "__is_recordable__"
 
 
 def inject_recorder(func: Callable, is_method: bool = True) -> Callable:
@@ -112,7 +113,7 @@ def inject_recorder(func: Callable, is_method: bool = True) -> Callable:
             def _func(self, *args, **kwargs):
                 return func(*args, **kwargs)
 
-            _func.func.__name__ = func.__name__  # need update for macro recording
+            _already_recordable = getattr(func.func, _IS_RECORDABLE, False)
 
         else:
 
@@ -120,10 +121,17 @@ def inject_recorder(func: Callable, is_method: bool = True) -> Callable:
             def _func(self, *args, **kwargs):
                 return func(*args, **kwargs)
 
+            _already_recordable = getattr(func, _IS_RECORDABLE, False)
+
         _func.__signature__ = sig.replace(
             parameters=[_SELF] + list(sig.parameters.values()),
             return_annotation=sig.return_annotation,
         )
+
+        if _already_recordable:
+            # The wrapped function is already recordable so we don't have to
+            # inject macro recorder again.
+            return _func
 
     if isinstance(_func, (partial, partialmethod)):
         _record_macro = _define_macro_recorder_for_partial(sig, _func)
@@ -142,6 +150,7 @@ def inject_recorder(func: Callable, is_method: bool = True) -> Callable:
 
         if hasattr(_func, "__signature__"):
             _recordable.__signature__ = _func.__signature__
+        setattr(_recordable, _IS_RECORDABLE, True)
         return _recordable
 
     else:

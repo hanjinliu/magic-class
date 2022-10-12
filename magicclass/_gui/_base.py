@@ -594,8 +594,15 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
 
     def _create_widget_from_method(self, obj: MethodType):
         """Convert instance methods into GUI objects, such as push buttons or actions."""
-        text = obj.__name__.replace("_", " ")
-        widget = self._component_class(name=obj.__name__, text=text, gui_only=True)
+        if hasattr(obj, "__name__"):
+            obj_name = obj.__name__
+        else:
+            _inner_func = obj
+            while hasattr(_inner_func, "func"):
+                _inner_func = _inner_func.func
+            obj_name = getattr(_inner_func, "__name__", str(_inner_func))
+        text = obj_name.replace("_", " ")
+        widget = self._component_class(name=obj_name, text=text, gui_only=True)
 
         func = _create_gui_method(self, obj)
 
@@ -915,6 +922,7 @@ def _create_gui_method(self: BaseGui, obj: MethodType):
         return obj(*args, **kwargs)
 
     func.__signature__ = func_sig
+    func.__self__ = obj.__self__
 
     # This block enables instance methods in "bind" or "choices" of ValueWidget.
     all_params: list[inspect.Parameter] = []

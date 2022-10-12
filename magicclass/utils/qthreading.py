@@ -514,6 +514,10 @@ class thread_worker:
         return inspect.isgeneratorfunction(self._func)
 
     @property
+    def __is_recordable__(self) -> bool:
+        return self._recorder is not None
+
+    @property
     def __doc__(self) -> str:
         """Synchronize docstring with bound function."""
         return self.func.__doc__

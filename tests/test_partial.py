@@ -59,3 +59,18 @@ def test_partialmethod():
     mock.assert_not_called()
     ui[-1].mgui.call_button.clicked()
     mock.assert_called_once_with(1, 0)
+
+def test_partial_of_child_method():
+    @magicclass
+    class A:
+        def f(self, i: int):
+            self.B.append(partial(self.f, i))
+        @magicclass
+        class B:
+            pass
+    ui = A()
+    ui.f(0)
+    assert str(ui.macro[-1]) == "ui.f(i=0)"
+    ui.B.f()
+    assert str(ui.macro[-2]) == "ui.f(i=0)"
+    assert str(ui.macro[-1]) == "ui.f(i=0)"
