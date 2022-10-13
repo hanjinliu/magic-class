@@ -922,7 +922,6 @@ def _create_gui_method(self: BaseGui, obj: MethodType):
         return obj(*args, **kwargs)
 
     func.__signature__ = func_sig
-    func.__self__ = obj.__self__
 
     # This block enables instance methods in "bind" or "choices" of ValueWidget.
     all_params: list[inspect.Parameter] = []

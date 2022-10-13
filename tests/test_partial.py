@@ -68,9 +68,10 @@ def test_partial_of_child_method():
         @magicclass
         class B:
             pass
+
     ui = A()
     ui.f(0)
     assert str(ui.macro[-1]) == "ui.f(i=0)"
-    ui.B.f()
+    ui.B[0].changed()
     assert str(ui.macro[-2]) == "ui.f(i=0)"
     assert str(ui.macro[-1]) == "ui.f(i=0)"

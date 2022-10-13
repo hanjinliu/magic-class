@@ -1,7 +1,6 @@
 from __future__ import annotations
 import functools
 from typing import Any, TYPE_CHECKING
-from types import MethodType
 import inspect
 from magicgui.widgets import EmptyWidget
 from ..signature import get_signature, upgrade_signature
@@ -49,17 +48,10 @@ class partial(functools.partial):
         for name in bound.arguments.keys():
             options[name] = _PARTIALIZE
 
-        # unwrap function if it is a method
-        if isinstance(func, MethodType):
-            _func = _unwrap_method(func)
-            options["self"] = {"bind": func.__self__, "widget_type": EmptyWidget}
-        else:
-            _func = func
-
         # construct partial object
-        self = functools.partial.__new__(cls, _func, *args, **kwargs)
+        self = functools.partial.__new__(cls, func, *args, **kwargs)
         self.__signature__ = get_signature(self)
-        self.__name__ = _func.__name__
+        self.__name__ = func.__name__
 
         upgrade_signature(self, gui_options=options)
         return self
@@ -108,17 +100,10 @@ class partialmethod(functools.partialmethod):
         for name in bound.arguments.keys():
             options[name] = _PARTIALIZE
 
-        # unwrap function if it is a method
-        if isinstance(func, MethodType):
-            _func = _unwrap_method(func)
-            options["self"] = {"bind": func.__self__, "widget_type": EmptyWidget}
-        else:
-            _func = func
-
         # construct partial object
-        super().__init__(_func, *args, **kwargs)
-        self.__signature__ = get_signature(partial(_func, *args, **kwargs))
-        self.__name__ = _func.__name__
+        super().__init__(func, *args, **kwargs)
+        self.__signature__ = get_signature(partial(func, *args, **kwargs))
+        self.__name__ = func.__name__
 
         upgrade_signature(self, gui_options=options)
 
@@ -138,16 +123,3 @@ class partialmethod(functools.partialmethod):
         kwargs.update(text=text)
         upgrade_signature(self, caller_options=kwargs)
         return self
-
-
-def _unwrap_method(func: MethodType):
-    def _unwrapped(*args, **kwargs):
-        return func(*args, **kwargs)
-
-    _unwrapped.__name__ = func.__name__
-    _unwrapped.__qualname__ = func.__qualname__
-    _unwrapped.__annotations__ = func.__annotations__
-    _unwrapped.__module__ = func.__module__
-    _unwrapped.__doc__ = func.__doc__
-    _unwrapped.__signature__ = get_signature(func)
-    return _unwrapped
