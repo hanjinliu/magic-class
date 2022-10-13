@@ -16,10 +16,41 @@ def call_recent_menu(
     text: str | Callable[..., str] | None = None,
     max: int = 12,
 ) -> MenuGuiBase:
+    """
+    Create a "call recent" menu.
+
+    This function returns a magicmenu object that calls ``func`` with recent arguments.
+
+    >>> @magicclass
+    >>> class A:
+    >>>     @magicmenu
+    >>>     class File:
+    >>>         def open_file(self, path: Path): ...
+    >>>         menu = call_recent_menu(f, name="open recent")
+
+    Parameters
+    ----------
+    func : Callable
+        Target function.
+    name : str, optional
+        Name of the magicmenu object.
+    text : str or Callable[..., str], optional
+        Specify how to display recent arguments when ``func(**kwargs)`` is called. If
+        ``text`` is a string, ``text.format(**kwargs)`` will be used. If ``text`` is a
+        callable, ``text(**kwargs)`` will be used.
+    max : int, default is 12
+        Maximum number of history.
+
+    Returns
+    -------
+    MenuGuiBase
+        magicmenu object.
+    """
     from ..core import magicmenu
     from .._gui import MagicTemplate
     from ..signature import upgrade_signature
 
+    # dispatch text type
     if text is None:
         _make_text = _default_fmt
     elif isinstance(text, str):

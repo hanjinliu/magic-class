@@ -20,6 +20,8 @@ from .wrappers import (
     confirm,
     nogui,
     mark_preview,
+    mark_on_calling,
+    mark_on_called,
 )
 
 from .fields import field, vfield, widget_property, FieldGroup, HasFields, dataclass_gui
@@ -47,6 +49,8 @@ __all__ = [
     "confirm",
     "nogui",
     "mark_preview",
+    "mark_on_calling",
+    "mark_on_called",
     "field",
     "vfield",
     "widget_property",

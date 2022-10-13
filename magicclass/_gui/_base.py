@@ -75,6 +75,7 @@ if TYPE_CHECKING:
     import numpy as np
     import napari
     from types import TracebackType
+    from typing_extensions import Self
 
 
 class PopUpMode(Enum):
@@ -235,7 +236,10 @@ class _MagicTemplateMeta(ABCMeta):
         return self
 
 
-class MagicTemplate(metaclass=_MagicTemplateMeta):
+_W = TypeVar("_W")
+
+
+class MagicTemplate(MutableSequence[_W], metaclass=_MagicTemplateMeta):
     __doc__ = ""
     __magicclass_parent__: None | MagicTemplate
     __magicclass_children__: list[MagicTemplate]
@@ -284,11 +288,11 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
         raise NotImplementedError()
 
     @overload
-    def __getitem__(self, key: int | str) -> Widget:
+    def __getitem__(self, key: int | str) -> _W:
         ...
 
     @overload
-    def __getitem__(self, key: slice) -> MutableSequence[Widget]:
+    def __getitem__(self, key: slice) -> Self[_W]:
         ...
 
     def __getitem__(self, key):
@@ -300,13 +304,10 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
     def remove(self, value: Widget | str):
         raise NotImplementedError()
 
-    def append(self, widget: Widget) -> None:
-        return self.insert(len(self, widget))
-
-    def _fast_insert(self, key: int, widget: Widget) -> None:
+    def _fast_insert(self, key: int, widget: _W | Callable) -> None:
         raise NotImplementedError()
 
-    def insert(self, key: int, widget: Widget) -> None:
+    def insert(self, key: int, widget: _W | Callable) -> None:
         self._fast_insert(key, widget)
         self._unify_label_widths()
 
@@ -748,7 +749,7 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
         return None
 
 
-class BaseGui(MagicTemplate):
+class BaseGui(MagicTemplate[_W]):
     def __init__(self, close_on_run, popup_mode, error_mode):
         self._macro_instance = GuiMacro(
             max_lines=defaults["macro-max-history"],
@@ -781,7 +782,7 @@ class BaseGui(MagicTemplate):
             self.native.setIconSize(self.native.size())
 
 
-class ContainerLikeGui(BaseGui, mguiLike, MutableSequence):
+class ContainerLikeGui(BaseGui[Action], mguiLike):
     # This class enables similar API between magicgui widgets and additional widgets
     # in magicclass such as menu and toolbar.
     _component_class = Action
@@ -1025,11 +1026,17 @@ def _build_mgui(widget_: Action | PushButtonPlus, func: Callable, parent: BaseGu
     name = widget_.name or ""
     mgui.native.setWindowTitle(name.replace("_", " ").strip())
 
-    return _connect_called_event(mgui, func)
+    return _connect_functiongui_event(mgui, opt)
 
 
-def _connect_called_event(mgui: FunctionGui, func: Callable) -> FunctionGui:
-    _on_called = get_additional_option(func, "on_called", [])
+def _connect_functiongui_event(
+    mgui: FunctionGuiPlus, opt: dict[str, Any]
+) -> FunctionGui:
+    _on_calling = opt.get("on_calling", [])
+    for cb in _on_calling:
+        mgui.calling.connect(cb)
+
+    _on_called = opt.get("on_called", [])
     for cb in _on_called:
         mgui.called.connect(lambda: cb(mgui))
     return mgui

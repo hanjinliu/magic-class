@@ -1,12 +1,12 @@
 from __future__ import annotations
 import inspect
-from typing import Callable, Iterable, Union, TYPE_CHECKING, TypeVar, overload
+from typing import Any, Callable, Iterable, Union, TYPE_CHECKING, TypeVar, overload
 import warnings
 from magicgui.widgets import FunctionGui
 
 from .utils import show_messagebox
 from .types import Color
-from .signature import upgrade_signature
+from .signature import get_additional_option, upgrade_signature
 
 if TYPE_CHECKING:
     from ._gui import BaseGui
@@ -368,5 +368,30 @@ def mark_preview(function: Callable, text: str = "Preview") -> Callable[[F], F]:
 
             append_preview(function, _preview, text=text)
         return preview
+
+    return _wrapper
+
+
+_Fn = TypeVar("_Fn", bound=Callable[[FunctionGui], Any])
+
+
+def mark_on_calling(function: Callable) -> Callable[[_Fn], _Fn]:
+    def _wrapper(on_calling: _Fn) -> _Fn:
+        if opt := get_additional_option(function, "on_calling", None):
+            opt.append(on_calling)
+        else:
+            upgrade_signature(function, additional_options={"on_calling": [on_calling]})
+        return on_calling
+
+    return _wrapper
+
+
+def mark_on_called(function: Callable) -> Callable[[_Fn], _Fn]:
+    def _wrapper(on_called: _Fn) -> _Fn:
+        if opt := get_additional_option(function, "on_called", None):
+            opt.append(on_called)
+        else:
+            upgrade_signature(function, additional_options={"on_called": [on_called]})
+        return on_called
 
     return _wrapper

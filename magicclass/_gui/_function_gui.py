@@ -5,6 +5,7 @@ from magicgui.widgets import PushButton
 from magicgui.widgets._concrete import _LabeledWidget
 from magicgui.widgets._bases import ValueWidget, ButtonWidget, ContainerWidget
 from magicgui.widgets._function_gui import FunctionGui
+from psygnal import Signal
 
 from ..widgets import Separator
 
@@ -19,6 +20,7 @@ class FunctionGuiPlus(FunctionGui[_R]):
     """FunctionGui class with a parameter recording functionality etc."""
 
     _dialog_widget = None
+    calling = Signal(object)
 
     def __call__(self, *args: Any, update_widget: bool = False, **kwargs: Any) -> _R:
         sig = self.__signature__
@@ -61,6 +63,7 @@ class FunctionGuiPlus(FunctionGui[_R]):
         # We sometimes want to know if the function is called programmatically or
         # from GUI. The "running" argument is True only when it's called via GUI.
         self.running = True
+        self.calling.emit(self)  # 3. calling signal
         try:
             value = self._function(*bound.args, **bound.kwargs)
         finally:
