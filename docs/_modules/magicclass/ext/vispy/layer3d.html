@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.ext.vispy.layer3d &mdash; magic-class 0.6.8.dev0 documentation</title>
+  <title>magicclass.ext.vispy.layer3d &mdash; magic-class 0.6.11.dev0 documentation</title>
       <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.8.dev0
+                0.6.11.dev0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
@@ -77,7 +77,7 @@
 
   <h1>Source code for magicclass.ext.vispy.layer3d</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">NamedTuple</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">vispy.scene</span> <span class="kn">import</span> <span class="n">visuals</span><span class="p">,</span> <span class="n">ViewBox</span>
 <span class="kn">from</span> <span class="nn">vispy.visuals</span> <span class="kn">import</span> <span class="p">(</span>
@@ -85,7 +85,10 @@
     <span class="n">ImageVisual</span><span class="p">,</span>
     <span class="n">IsosurfaceVisual</span><span class="p">,</span>
     <span class="n">MeshVisual</span><span class="p">,</span>
+    <span class="n">LineVisual</span><span class="p">,</span>
+    <span class="n">BoxVisual</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="kn">from</span> <span class="nn">vispy.visuals</span> <span class="kn">import</span> <span class="n">transforms</span> <span class="k">as</span> <span class="n">tr</span>
 <span class="kn">from</span> <span class="nn">vispy.visuals.filters</span> <span class="kn">import</span> <span class="n">WireframeFilter</span>
 <span class="kn">from</span> <span class="nn">._base</span> <span class="kn">import</span> <span class="n">LayerItem</span>
 
@@ -198,7 +201,7 @@
     <span class="nd">@data</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">value</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">ndim</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">value</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">ndim</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_create_visual</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
@@ -218,6 +221,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">contrast_limits</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lims</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">iso_threshold</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lims</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">iso_threshold</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lims</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_get_bbox</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span>
+        <span class="p">)</span>
 
     <span class="c1"># fmt: off</span>
     <span class="n">rendering</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;choices&quot;</span><span class="p">:</span> <span class="n">RENDERINGS</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;mip&quot;</span><span class="p">})</span>
@@ -364,6 +372,11 @@
         <span class="p">)</span>
         <span class="k">return</span> <span class="kc">None</span>
 
+    <span class="k">def</span> <span class="nf">_get_bbox</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span>
+        <span class="n">mins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">maxs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
     <span class="k">def</span> <span class="nf">_cache_lims</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_lims</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">contrast_limits</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lims</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -382,6 +395,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">value</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cache_lims</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_get_bbox</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span>
+        <span class="p">)</span>
 
     <span class="c1"># fmt: off</span>
     <span class="n">contrast_limits</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">widget_type</span><span class="o">=</span><span class="n">FloatRangeSlider</span><span class="p">)</span>
@@ -406,6 +424,14 @@
     <span class="n">face_color</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">_SurfaceBase</span><span class="o">.</span><span class="n">_on_face_color_change</span><span class="p">)</span>
     <span class="n">edge_color</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">_SurfaceBase</span><span class="o">.</span><span class="n">_on_edge_color_change</span><span class="p">)</span>
     <span class="n">edge_width</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">_SurfaceBase</span><span class="o">.</span><span class="n">_on_edge_width_change</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SurfaceData"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.layer3d.SurfaceData">[docs]</a><span class="k">class</span> <span class="nc">SurfaceData</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Dataset that defines a surface data.&quot;&quot;&quot;</span>
+
+    <span class="n">verts</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">faces</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">values</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span></div>
 
 
 <div class="viewcode-block" id="Surface"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.layer3d.Surface">[docs]</a><span class="k">class</span> <span class="nc">Surface</span><span class="p">(</span><span class="n">_SurfaceBase</span><span class="p">,</span> <span class="n">HasFields</span><span class="p">):</span>
@@ -447,22 +473,77 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Data must be vertices, faces (, values).&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">vertices</span><span class="o">=</span><span class="n">verts</span><span class="p">,</span> <span class="n">faces</span><span class="o">=</span><span class="n">faces</span><span class="p">,</span> <span class="n">vertex_values</span><span class="o">=</span><span class="n">vals</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="p">(</span><span class="n">verts</span><span class="p">,</span> <span class="n">faces</span><span class="p">,</span> <span class="n">vals</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">SurfaceData</span><span class="p">(</span><span class="n">verts</span><span class="p">,</span> <span class="n">faces</span><span class="p">,</span> <span class="n">vals</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
 
-    <span class="n">shading</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span>
-        <span class="nb">str</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;choices&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="s2">&quot;float&quot;</span><span class="p">,</span> <span class="s2">&quot;smooth&quot;</span><span class="p">],</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;smooth&quot;</span><span class="p">}</span>
-    <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_get_bbox</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+        <span class="n">verts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">verts</span>
+        <span class="n">mins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">verts</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">maxs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">verts</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">mins</span><span class="p">,</span> <span class="n">maxs</span>
+
+    <span class="c1"># fmt: off</span>
+    <span class="n">shading</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;choices&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="s2">&quot;float&quot;</span><span class="p">,</span> <span class="s2">&quot;smooth&quot;</span><span class="p">],</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;smooth&quot;</span><span class="p">})</span>
     <span class="n">face_color</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="n">Color</span><span class="p">)</span>
     <span class="n">edge_color</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="n">Color</span><span class="p">)</span>
-    <span class="n">edge_width</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span>
-        <span class="nb">float</span><span class="p">,</span> <span class="n">widget_type</span><span class="o">=</span><span class="n">FloatSlider</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="mf">10.0</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">}</span>
-    <span class="p">)</span>
+    <span class="n">edge_width</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">widget_type</span><span class="o">=</span><span class="n">FloatSlider</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="mf">10.0</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">})</span>
+    <span class="c1"># fmt: on</span>
 
     <span class="n">shading</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">_SurfaceBase</span><span class="o">.</span><span class="n">_on_shading_change</span><span class="p">)</span>
     <span class="n">face_color</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">_SurfaceBase</span><span class="o">.</span><span class="n">_on_face_color_change</span><span class="p">)</span>
     <span class="n">edge_color</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">_SurfaceBase</span><span class="o">.</span><span class="n">_on_edge_color_change</span><span class="p">)</span>
     <span class="n">edge_width</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">_SurfaceBase</span><span class="o">.</span><span class="n">_on_edge_width_change</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Curve3D"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.layer3d.Curve3D">[docs]</a><span class="k">class</span> <span class="nc">Curve3D</span><span class="p">(</span><span class="n">LayerItem</span><span class="p">,</span> <span class="n">HasFields</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">data</span><span class="p">,</span>
+        <span class="n">viewbox</span><span class="p">:</span> <span class="n">ViewBox</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">width</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span> <span class="o">=</span> <span class="n">viewbox</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="p">::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># vispy uses xyz, not zyx</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span><span class="p">:</span> <span class="n">LineVisual</span> <span class="o">=</span> <span class="n">visuals</span><span class="o">.</span><span class="n">Line</span><span class="p">(</span>
+            <span class="n">pos</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">scene</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span>
+
+    <span class="nd">@data</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">pos</span><span class="o">=</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_get_bbox</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+        <span class="n">mins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">maxs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">mins</span><span class="p">,</span> <span class="n">maxs</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
+
+    <span class="c1"># fmt: off</span>
+    <span class="n">color</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="n">Color</span><span class="p">)</span>
+    <span class="n">width</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">widget_type</span><span class="o">=</span><span class="n">FloatSlider</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="mf">10.0</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">})</span>
+    <span class="c1"># fmt: on</span>
+
+    <span class="nd">@color</span><span class="o">.</span><span class="n">connect</span>
+    <span class="k">def</span> <span class="nf">_on_color_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="nd">@width</span><span class="o">.</span><span class="n">connect</span>
+    <span class="k">def</span> <span class="nf">_on_width_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visual</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="n">value</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

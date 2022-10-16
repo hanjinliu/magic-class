@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass package &mdash; magic-class 0.6.10 documentation</title>
+  <title>magicclass package &mdash; magic-class 0.6.11.dev0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/columns.css" type="text/css" />
@@ -31,7 +31,7 @@
             <a href="../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.10
+                0.6.11.dev0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -155,6 +155,7 @@
 <li class="toctree-l3"><a class="reference internal" href="magicclass.ext.vispy.html">magicclass.ext.vispy package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#subpackages">Subpackages</a></li>
 <li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#module-magicclass.ext.vispy.camera">magicclass.ext.vispy.camera module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#module-magicclass.ext.vispy.layer2d">magicclass.ext.vispy.layer2d module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#module-magicclass.ext.vispy.layer3d">magicclass.ext.vispy.layer3d module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="magicclass.ext.vispy.html#module-magicclass.ext.vispy.layerlist">magicclass.ext.vispy.layerlist module</a></li>
@@ -180,6 +181,10 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="magicclass.fields.html">magicclass.fields package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="magicclass.fields.html#module-magicclass.fields">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="magicclass.functools.html">magicclass.functools package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.functools.html#module-magicclass.functools">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="magicclass.stylesheets.html">magicclass.stylesheets package</a><ul>
@@ -470,6 +475,11 @@ before. Value changed signal will not be emitted within this operation.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="magicclass.signature.AdditionalOptions.moveto">
 <span class="sig-name descname"><span class="pre">moveto</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#magicclass.signature.AdditionalOptions.moveto" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.signature.AdditionalOptions.on_called">
+<span class="sig-name descname"><span class="pre">on_called</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#magicclass.signature.AdditionalOptions.on_called" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -806,6 +816,16 @@ for testing.</p></li>
 <span class="sig-prename descclassname"><span class="pre">magicclass.wrappers.</span></span><span class="sig-name descname"><span class="pre">do_not_record</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">magicclass.wrappers.F</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">magicclass.wrappers.F</span></span></span><a class="reference internal" href="../_modules/magicclass/wrappers.html#do_not_record"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.wrappers.do_not_record" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wrapped method will not be recorded in macro.</p>
 </dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="magicclass.wrappers.mark_on_called">
+<span class="sig-prename descclassname"><span class="pre">magicclass.wrappers.</span></span><span class="sig-name descname"><span class="pre">mark_on_called</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">magicclass.wrappers._Fn</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">magicclass.wrappers._Fn</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/magicclass/wrappers.html#mark_on_called"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.wrappers.mark_on_called" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="magicclass.wrappers.mark_on_calling">
+<span class="sig-prename descclassname"><span class="pre">magicclass.wrappers.</span></span><span class="sig-name descname"><span class="pre">mark_on_calling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">magicclass.wrappers._Fn</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">magicclass.wrappers._Fn</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/magicclass/wrappers.html#mark_on_calling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.wrappers.mark_on_calling" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="magicclass.wrappers.mark_preview">
@@ -1747,15 +1767,10 @@ the same attribute names.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.MagicTemplate">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">magicclass.</span></span><span class="sig-name descname"><span class="pre">MagicTemplate</span></span><a class="reference internal" href="../_modules/magicclass/_gui/_base.html#MagicTemplate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.MagicTemplate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">MutableSequence</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">magicclass._gui._base._W</span></code>]</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="magicclass.MagicTemplate.annotation">
 <span class="sig-name descname"><span class="pre">annotation</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Any</span></em><a class="headerlink" href="#magicclass.MagicTemplate.annotation" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="magicclass.MagicTemplate.append">
-<span class="sig-name descname"><span class="pre">append</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">widget</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">magicgui.widgets._bases.widget.Widget</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/magicclass/_gui/_base.html#MagicTemplate.append"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.MagicTemplate.append" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -1814,13 +1829,17 @@ class while it needs access to its parent.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="magicclass.MagicTemplate.index">
-<span class="sig-name descname"><span class="pre">index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../_modules/magicclass/_gui/_base.html#MagicTemplate.index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.MagicTemplate.index" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="optional">[</span>, <em class="sig-param"><span class="n"><span class="pre">start</span></span></em><span class="optional">[</span>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span></em><span class="optional">]</span><span class="optional">]</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">integer</span> <span class="pre">--</span> <span class="pre">return</span> <span class="pre">first</span> <span class="pre">index</span> <span class="pre">of</span> <span class="pre">value.</span></span></span><a class="reference internal" href="../_modules/magicclass/_gui/_base.html#MagicTemplate.index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.MagicTemplate.index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raises ValueError if the value is not present.</p>
+<p>Supporting start and stop arguments is optional, but
+recommended.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="magicclass.MagicTemplate.insert">
-<span class="sig-name descname"><span class="pre">insert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">widget</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">magicgui.widgets._bases.widget.Widget</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/magicclass/_gui/_base.html#MagicTemplate.insert"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.MagicTemplate.insert" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">insert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">widget</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_W</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Callable</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/magicclass/_gui/_base.html#MagicTemplate.insert"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.MagicTemplate.insert" title="Permalink to this definition">¶</a></dt>
+<dd><p>S.insert(index, value) -- insert value before index</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="magicclass.MagicTemplate.label">
@@ -1929,7 +1948,9 @@ window widget, such as a napari Viewer.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="magicclass.MagicTemplate.remove">
 <span class="sig-name descname"><span class="pre">remove</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Widget</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/_gui/_base.html#MagicTemplate.remove"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.MagicTemplate.remove" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>S.remove(value) -- remove first occurrence of value.
+Raise ValueError if the value is not present.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="magicclass.MagicTemplate.render">
@@ -2299,6 +2320,16 @@ part of the main widget.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="magicclass.mark_on_called">
+<span class="sig-prename descclassname"><span class="pre">magicclass.</span></span><span class="sig-name descname"><span class="pre">mark_on_called</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">magicclass.wrappers._Fn</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">magicclass.wrappers._Fn</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/magicclass/wrappers.html#mark_on_called"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.mark_on_called" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="magicclass.mark_on_calling">
+<span class="sig-prename descclassname"><span class="pre">magicclass.</span></span><span class="sig-name descname"><span class="pre">mark_on_calling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">magicclass.wrappers._Fn</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">magicclass.wrappers._Fn</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/magicclass/wrappers.html#mark_on_calling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.mark_on_calling" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="magicclass.mark_preview">
 <span class="sig-prename descclassname"><span class="pre">magicclass.</span></span><span class="sig-name descname"><span class="pre">mark_preview</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Preview'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">magicclass.wrappers.F</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">magicclass.wrappers.F</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/magicclass/wrappers.html#mark_preview"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.mark_preview" title="Permalink to this definition">¶</a></dt>
 <dd><p>Define a preview of a function.</p>
@@ -2495,7 +2526,7 @@ you can define a field using a method.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="magicclass.wraps">
-<span class="sig-prename descclassname"><span class="pre">magicclass.</span></span><span class="sig-name descname"><span class="pre">wraps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">inspect.Signature</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">_C</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">_C</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/magicclass/_gui/_base.html#wraps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.wraps" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">magicclass.</span></span><span class="sig-name descname"><span class="pre">wraps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">inspect.Signature</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">_C</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">_C</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/magicclass/functools/_wraps.html#wraps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.wraps" title="Permalink to this definition">¶</a></dt>
 <dd><p>Update signature using a template. If class is wrapped, then all the methods
 except for those start with &quot;__&quot; will be wrapped.</p>
 <dl class="field-list simple">

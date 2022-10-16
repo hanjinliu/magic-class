@@ -1,4 +1,11 @@
-================================
+======================
+Use functools-like API
+======================
+
+.. contents:: Contents
+    :local:
+    :depth: 2
+
 Partialize Functions and Widgets
 ================================
 
@@ -87,3 +94,9 @@ recent" menu.
 
     ui = A()
     ui.show()
+
+
+Single Dispatching
+==================
+
+TODO
