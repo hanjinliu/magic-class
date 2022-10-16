@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Any, TypedDict
+from typing import Any, TypedDict, Callable
 from typing_extensions import _AnnotatedAlias
 from magicgui.signature import MagicSignature
 from magicgui.widgets import FunctionGui
@@ -15,6 +15,7 @@ class AdditionalOptions(TypedDict):
     copyto: str
     moveto: str
     gui: bool
+    on_called: list[Callable]
 
 
 def upgrade_signature(

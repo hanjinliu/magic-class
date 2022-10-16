@@ -12,6 +12,14 @@ Subpackages
 Submodules
 ----------
 
+magicclass.ext.vispy.camera module
+----------------------------------
+
+.. automodule:: magicclass.ext.vispy.camera
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 magicclass.ext.vispy.layer2d module
 -----------------------------------
 

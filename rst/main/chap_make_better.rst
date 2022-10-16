@@ -12,9 +12,9 @@ and tidiness of the source code.
    use_wraps
    use_bind
    use_choices
-   use_partial
    use_preview
    use_worker
    use_icon
+   use_functools
    additional_types
    containers

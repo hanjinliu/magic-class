@@ -9,6 +9,7 @@ Subpackages
 
    magicclass.ext
    magicclass.fields
+   magicclass.functools
    magicclass.stylesheets
    magicclass.utils
    magicclass.widgets

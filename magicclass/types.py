@@ -3,7 +3,6 @@ from enum import Enum
 import typing
 from typing import (
     Any,
-    NamedTuple,
     Union,
     Iterable,
     overload,
@@ -81,24 +80,6 @@ ErrorModeStr = Union[
 ]
 
 Color = Union[Iterable[float], str]
-
-
-class ColorArray(NamedTuple):
-    r: float
-    g: float
-    b: float
-    a: float
-
-    # def __eq__(self, other) -> bool:
-    #     if isinstance(other, str):
-    #         ...
-    #     return super().__eq__(other)
-
-    # def __str__(self) -> str:
-    #     code = "#" + "".join(hex(int(c * 255))[2:].upper().zfill(2) for c in self)
-    #     if code.endswith("FF"):
-    #         code = code[:-2]
-    #     return code
 
 
 _W = TypeVar("_W", bound=Widget)

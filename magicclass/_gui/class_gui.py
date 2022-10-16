@@ -54,7 +54,7 @@ _USE_OUTER_LAYOUT = (
 _MCLS_PAREMT = "__magicclass_parent__"
 
 
-class ClassGuiBase(BaseGui):
+class ClassGuiBase(BaseGui[Widget]):
     # This class is always inherited by @magicclass decorator.
     _component_class = PushButtonPlus
     _container_widget: type

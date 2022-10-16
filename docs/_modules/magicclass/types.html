@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.types &mdash; magic-class 0.6.10 documentation</title>
+  <title>magicclass.types &mdash; magic-class 0.6.11.dev0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.10
+                0.6.11.dev0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -81,7 +81,6 @@
 <span class="kn">import</span> <span class="nn">typing</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">Any</span><span class="p">,</span>
-    <span class="n">NamedTuple</span><span class="p">,</span>
     <span class="n">Union</span><span class="p">,</span>
     <span class="n">Iterable</span><span class="p">,</span>
     <span class="n">overload</span><span class="p">,</span>
@@ -161,24 +160,6 @@
 <span class="n">Color</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span>
 
 
-<span class="k">class</span> <span class="nc">ColorArray</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
-    <span class="n">r</span><span class="p">:</span> <span class="nb">float</span>
-    <span class="n">g</span><span class="p">:</span> <span class="nb">float</span>
-    <span class="n">b</span><span class="p">:</span> <span class="nb">float</span>
-    <span class="n">a</span><span class="p">:</span> <span class="nb">float</span>
-
-    <span class="c1"># def __eq__(self, other) -&gt; bool:</span>
-    <span class="c1">#     if isinstance(other, str):</span>
-    <span class="c1">#         ...</span>
-    <span class="c1">#     return super().__eq__(other)</span>
-
-    <span class="c1"># def __str__(self) -&gt; str:</span>
-    <span class="c1">#     code = &quot;#&quot; + &quot;&quot;.join(hex(int(c * 255))[2:].upper().zfill(2) for c in self)</span>
-    <span class="c1">#     if code.endswith(&quot;FF&quot;):</span>
-    <span class="c1">#         code = code[:-2]</span>
-    <span class="c1">#     return code</span>
-
-
 <span class="n">_W</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;_W&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">Widget</span><span class="p">)</span>
 <span class="n">_V</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;_V&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
 
@@ -207,7 +188,25 @@
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;&#39;bound&#39; can only convert callable, MagicField or type objects&quot;</span><span class="p">)</span>
     <span class="k">while</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">outtype</span><span class="p">,</span> <span class="n">_AnnotatedAlias</span><span class="p">):</span>
         <span class="n">outtype</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">split_annotated_type</span><span class="p">(</span><span class="n">outtype</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="n">BoundLiteral</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">outtype</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;bind&quot;</span><span class="p">:</span> <span class="n">obj</span><span class="p">,</span> <span class="s2">&quot;widget_type&quot;</span><span class="p">:</span> <span class="n">EmptyWidget</span><span class="p">}]</span></div>
+
+
+<span class="k">class</span> <span class="nc">BoundLiteral</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class used to represent a future evaluable expression.</span>
+
+<span class="sd">    This object will be created when a string is passed to the ``Bound[...]`` type.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_expr</span> <span class="o">=</span> <span class="n">expr</span>
+
+    <span class="k">def</span> <span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">eval_attribute</span>
+
+        <span class="k">return</span> <span class="n">eval_attribute</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expr</span><span class="p">)</span>
 
 
 <span class="k">class</span> <span class="nc">_BoundAlias</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>

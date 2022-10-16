@@ -1,5 +1,5 @@
 from __future__ import annotations
-from functools import wraps as functools_wraps
+import functools
 from typing import (
     Any,
     Callable,
@@ -70,11 +70,13 @@ from ..signature import (
 )
 from ..wrappers import upgrade_signature
 from ..types import BoundLiteral
+from ..functools import wraps
 
 if TYPE_CHECKING:
     import numpy as np
     import napari
     from types import TracebackType
+    from typing_extensions import Self
 
 
 class PopUpMode(Enum):
@@ -125,7 +127,7 @@ class ErrorMode(Enum):
         """Wrap function with the error handler."""
         handler = self.get_handler()
 
-        @functools_wraps(func)
+        @functools.wraps(func)
         def wrapped_func(*args, **kwargs):
             try:
                 out = func(*args, **kwargs)
@@ -235,7 +237,10 @@ class _MagicTemplateMeta(ABCMeta):
         return self
 
 
-class MagicTemplate(metaclass=_MagicTemplateMeta):
+_W = TypeVar("_W")
+
+
+class MagicTemplate(MutableSequence[_W], metaclass=_MagicTemplateMeta):
     __doc__ = ""
     __magicclass_parent__: None | MagicTemplate
     __magicclass_children__: list[MagicTemplate]
@@ -284,11 +289,11 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
         raise NotImplementedError()
 
     @overload
-    def __getitem__(self, key: int | str) -> Widget:
+    def __getitem__(self, key: int | str) -> _W:
         ...
 
     @overload
-    def __getitem__(self, key: slice) -> MutableSequence[Widget]:
+    def __getitem__(self, key: slice) -> Self[_W]:
         ...
 
     def __getitem__(self, key):
@@ -300,13 +305,10 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
     def remove(self, value: Widget | str):
         raise NotImplementedError()
 
-    def append(self, widget: Widget) -> None:
-        return self.insert(len(self, widget))
-
-    def _fast_insert(self, key: int, widget: Widget) -> None:
+    def _fast_insert(self, key: int, widget: _W | Callable) -> None:
         raise NotImplementedError()
 
-    def insert(self, key: int, widget: Widget) -> None:
+    def insert(self, key: int, widget: _W | Callable) -> None:
         self._fast_insert(key, widget)
         self._unify_label_widths()
 
@@ -594,8 +596,15 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
 
     def _create_widget_from_method(self, obj: MethodType):
         """Convert instance methods into GUI objects, such as push buttons or actions."""
-        text = obj.__name__.replace("_", " ")
-        widget = self._component_class(name=obj.__name__, text=text, gui_only=True)
+        if hasattr(obj, "__name__"):
+            obj_name = obj.__name__
+        else:
+            _inner_func = obj
+            while hasattr(_inner_func, "func"):
+                _inner_func = _inner_func.func
+            obj_name = getattr(_inner_func, "__name__", str(_inner_func))
+        text = obj_name.replace("_", " ")
+        widget = self._component_class(name=obj_name, text=text, gui_only=True)
 
         func = _create_gui_method(self, obj)
 
@@ -647,7 +656,7 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
 
             def run_function():
                 mgui = _build_mgui(widget, func, self)
-                if mgui.call_count == 0 and len(mgui.called._slots) == 0:
+                if mgui.call_count == 0:  # connect only once
                     _prep_func(mgui)
                     if self._popup_mode not in (
                         PopUpMode.popup,
@@ -741,7 +750,7 @@ class MagicTemplate(metaclass=_MagicTemplateMeta):
         return None
 
 
-class BaseGui(MagicTemplate):
+class BaseGui(MagicTemplate[_W]):
     def __init__(self, close_on_run, popup_mode, error_mode):
         self._macro_instance = GuiMacro(
             max_lines=defaults["macro-max-history"],
@@ -774,7 +783,7 @@ class BaseGui(MagicTemplate):
             self.native.setIconSize(self.native.size())
 
 
-class ContainerLikeGui(BaseGui, mguiLike, MutableSequence):
+class ContainerLikeGui(BaseGui[Action], mguiLike):
     # This class enables similar API between magicgui widgets and additional widgets
     # in magicclass such as menu and toolbar.
     _component_class = Action
@@ -910,7 +919,7 @@ def _get_widget_name(widget: Widget):
 def _create_gui_method(self: BaseGui, obj: MethodType):
     func_sig = inspect.signature(obj)
     # Method type cannot set __signature__ attribute.
-    @functools_wraps(obj)
+    @functools.wraps(obj)
     def func(*args, **kwargs):
         return obj(*args, **kwargs)
 
@@ -1017,83 +1026,21 @@ def _build_mgui(widget_: Action | PushButtonPlus, func: Callable, parent: BaseGu
     widget_.mgui = mgui
     name = widget_.name or ""
     mgui.native.setWindowTitle(name.replace("_", " ").strip())
+
+    return _connect_functiongui_event(mgui, opt)
+
+
+def _connect_functiongui_event(
+    mgui: FunctionGuiPlus, opt: dict[str, Any]
+) -> FunctionGui:
+    _on_calling = opt.get("on_calling", [])
+    for cb in _on_calling:
+        mgui.calling.connect(cb)
+
+    _on_called = opt.get("on_called", [])
+    for cb in _on_called:
+        mgui.called.connect(lambda: cb(mgui))
     return mgui
-
-
-_C = TypeVar("_C", Callable, type)
-
-
-def wraps(template: Callable | inspect.Signature) -> Callable[[_C], _C]:
-    """
-    Update signature using a template. If class is wrapped, then all the methods
-    except for those start with "__" will be wrapped.
-
-    Parameters
-    ----------
-    template : Callable or inspect.Signature object
-        Template function or its signature.
-
-    Returns
-    -------
-    Callable
-        A wrapper which take a function or class as an input and returns same
-        function or class with updated signature(s).
-    """
-
-    def wrapper(f: _C) -> _C:
-        if isinstance(f, type):
-            for name, attr in iter_members(f):
-                if callable(attr) or isinstance(attr, type):
-                    wrapper(attr)
-            return f
-
-        Param = inspect.Parameter
-        old_signature = inspect.signature(f)
-
-        old_params = old_signature.parameters
-
-        if callable(template):
-            template_signature = inspect.signature(template)
-        elif isinstance(template, inspect.Signature):
-            template_signature = template
-        else:
-            raise TypeError(
-                "template must be a callable object or signature, "
-                f"but got {type(template)}."
-            )
-
-        # update empty signatures
-        template_params = template_signature.parameters
-        new_params: list[Param] = []
-
-        for k, v in old_params.items():
-            if v.annotation is Param.empty and v.default is Param.empty:
-                new_params.append(
-                    template_params.get(k, Param(k, Param.POSITIONAL_OR_KEYWORD))
-                )
-            else:
-                new_params.append(v)
-
-        # update empty return annotation
-        if old_signature.return_annotation is inspect.Parameter.empty:
-            return_annotation = template_signature.return_annotation
-        else:
-            return_annotation = old_signature.return_annotation
-
-        f.__signature__ = inspect.Signature(
-            parameters=new_params, return_annotation=return_annotation
-        )
-
-        fdoc = parse(f.__doc__)
-        tempdoc = parse(template.__doc__)
-        fdoc.short_description = fdoc.short_description or tempdoc.short_description
-        fdoc.long_description = fdoc.long_description or tempdoc.long_description
-        fdoc.meta = fdoc.meta or tempdoc.meta
-        f.__doc__ = compose(fdoc)
-
-        return f
-
-    return wrapper
 
 
 def _get_index(container: Container, widget_or_name: Widget | str) -> int:

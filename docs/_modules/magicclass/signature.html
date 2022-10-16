@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.signature &mdash; magic-class 0.6.10 documentation</title>
+  <title>magicclass.signature &mdash; magic-class 0.6.11.dev0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.10
+                0.6.11.dev0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -77,7 +77,7 @@
 
   <h1>Source code for magicclass.signature</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">TypedDict</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">TypedDict</span><span class="p">,</span> <span class="n">Callable</span>
 <span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">_AnnotatedAlias</span>
 <span class="kn">from</span> <span class="nn">magicgui.signature</span> <span class="kn">import</span> <span class="n">MagicSignature</span>
 <span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">FunctionGui</span>
@@ -92,7 +92,8 @@
     <span class="n">into</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">copyto</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">moveto</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="n">gui</span><span class="p">:</span> <span class="nb">bool</span></div>
+    <span class="n">gui</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="n">on_called</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span></div>
 
 
 <div class="viewcode-block" id="upgrade_signature"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.signature.upgrade_signature">[docs]</a><span class="k">def</span> <span class="nf">upgrade_signature</span><span class="p">(</span>
