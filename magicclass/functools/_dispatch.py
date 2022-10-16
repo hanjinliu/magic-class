@@ -185,7 +185,7 @@ class MultiValueWidget(TabbedContainer):
             if isinstance(ann, _AnnotatedAlias):
                 ann, _options = split_annotated_type(ann)
                 _kwargs.update(_options)
-            wdt = create_widget(annotation=ann, **_kwargs)
+            wdt = create_widget(annotation=ann, options=_kwargs)
             widgets.append(wdt)
 
         if nullable:
@@ -220,8 +220,13 @@ class MultiValueWidget(TabbedContainer):
 
 def _merge_parameters(params: Sequence[inspect.Parameter]) -> MagicParameter:
     annotations = []
-    for i, param in enumerate(params):
-        if i == 0:
+    name = None
+    for param in params:
+        if param.annotation is MagicParameter.empty:
+            # If the first dispatch is not annotated (i.e. the default behavior),
+            # do not add an empty widget.
+            continue
+        if name is None:
             name = param.name
             default = param.default
         annotations.append(param.annotation)

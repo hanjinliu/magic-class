@@ -1,5 +1,5 @@
-from magicclass import magicclass
-from magicclass.functools import partial, partialmethod
+from magicclass import magicclass, get_function_gui, set_options
+from magicclass.functools import partial, partialmethod, singledispatchmethod
 from unittest.mock import MagicMock
 import pytest
 
@@ -75,3 +75,73 @@ def test_partial_of_child_method():
     ui.B[0].changed()
     assert str(ui.macro[-2]) == "ui.f(i=0)"
     assert str(ui.macro[-1]) == "ui.f(i=0)"
+
+def test_singledispatchmethod():
+    mock = MagicMock()
+
+    @magicclass
+    class A:
+        @singledispatchmethod
+        def f(self, i: int):
+            mock(i, int)
+
+        @f.register
+        def _(self, i: str):
+            mock(i, str)
+
+        @f.register
+        def _(self, i: bool):
+            mock(i, bool)
+
+    ui = A()
+    mgui = get_function_gui(ui, "f")
+    wdt = mgui[0]
+    assert len(wdt) == 3
+
+    mgui.call_button.clicked()
+    mock.assert_called_with(0, int)
+
+    wdt.current_index = 1
+    mgui.call_button.clicked()
+    mock.assert_called_with("", str)
+
+    wdt.current_index = 2
+    mgui.call_button.clicked()
+    mock.assert_called_with(False, bool)
+
+    assert str(ui.macro[-3]) == "ui.f(i=0)"
+    assert str(ui.macro[-2]) == "ui.f(i='')"
+    assert str(ui.macro[-1]) == "ui.f(i=False)"
+
+def test_singledispatchmethod_with_options():
+    mock = MagicMock()
+
+    @magicclass
+    class A:
+        @singledispatchmethod
+        def f(self, i):
+            raise TypeError
+
+        @f.register
+        @set_options(i={"max": 10})
+        def _(self, i: int):
+            mock(i, int)
+
+        @f.register
+        @set_options(i={"value": "abc"})
+        def _(self, i: str):
+            mock(i, str)
+
+        @f.register
+        @set_options(i={"min": 1.0})
+        def _(self, i: float):
+            mock(i, float)
+
+    ui = A()
+    mgui = get_function_gui(ui, "f")
+    wdt = mgui[0]
+    assert len(wdt) == 3
+
+    assert wdt[0].max == 10
+    assert wdt[1].value == "abc"
+    assert wdt[2].min == 1.0
