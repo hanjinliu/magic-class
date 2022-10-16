@@ -25,7 +25,7 @@ from .wrappers import (
 )
 
 from .fields import field, vfield, widget_property, FieldGroup, HasFields, dataclass_gui
-from ._gui._base import wraps, defaults, MagicTemplate, PopUpMode
+from ._gui._base import defaults, MagicTemplate, PopUpMode
 from ._gui.keybinding import Key
 from ._gui._icon import Icon
 from . import widgets, utils, types, functools
@@ -79,6 +79,7 @@ def __getattr__(key: str):
         from .utils import click
 
         return click
+
     elif key == "redo":
         warnings.warn(
             "Function `redo` is deprecated because its name is confusing. Please "
@@ -89,5 +90,16 @@ def __getattr__(key: str):
         from .core import repeat
 
         return repeat
+
+    elif key == "wraps":
+        warnings.warn(
+            "Function `wraps` is moved to magicclass.functools. Please use "
+            "`from magicclass.functools import wraps` instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        from .functools import wraps
+
+        return wraps
 
     raise AttributeError(f"module {__name__!r} has no attribute {key!r}")
