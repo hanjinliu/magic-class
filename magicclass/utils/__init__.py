@@ -22,7 +22,6 @@ from .qt import (
 )
 
 from ._click import click
-from ._partial import partial, partialmethod
 from ._recent import call_recent_menu
 from .qtsignal import QtSignal
 from .qthreading import thread_worker, Timer, Callback

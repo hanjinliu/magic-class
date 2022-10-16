@@ -28,7 +28,7 @@ from .fields import field, vfield, widget_property, FieldGroup, HasFields, datac
 from ._gui._base import wraps, defaults, MagicTemplate, PopUpMode
 from ._gui.keybinding import Key
 from ._gui._icon import Icon
-from . import widgets, utils, types
+from . import widgets, utils, types, functools
 
 from magicgui import *
 

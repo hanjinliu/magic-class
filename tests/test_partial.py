@@ -1,5 +1,5 @@
 from magicclass import magicclass
-from magicclass.utils import partial, partialmethod
+from magicclass.functools import partial, partialmethod
 from unittest.mock import MagicMock
 import pytest
 

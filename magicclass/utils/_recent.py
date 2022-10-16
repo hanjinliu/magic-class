@@ -1,6 +1,5 @@
 from __future__ import annotations
 from typing import Callable, TYPE_CHECKING
-from ._partial import partial
 from macrokit import Expr
 from magicgui.widgets import PushButton
 
@@ -48,7 +47,8 @@ def call_recent_menu(
     """
     from ..core import magicmenu
     from .._gui import MagicTemplate
-    from ..signature import upgrade_signature
+    from ..wrappers import mark_on_called
+    from ..functools._partial import partial
 
     # dispatch text type
     if text is None:
@@ -82,7 +82,7 @@ def call_recent_menu(
             return None
 
     menu = _Menu()
-    upgrade_signature(func, additional_options={"on_called": [menu._append_history]})
+    mark_on_called(func)(menu._append_history)
     return menu
 
 

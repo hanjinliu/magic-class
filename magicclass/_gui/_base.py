@@ -1,5 +1,5 @@
 from __future__ import annotations
-from functools import wraps as functools_wraps
+import functools
 from typing import (
     Any,
     Callable,
@@ -70,6 +70,7 @@ from ..signature import (
 )
 from ..wrappers import upgrade_signature
 from ..types import BoundLiteral
+from ..functools import wraps
 
 if TYPE_CHECKING:
     import numpy as np
@@ -126,7 +127,7 @@ class ErrorMode(Enum):
         """Wrap function with the error handler."""
         handler = self.get_handler()
 
-        @functools_wraps(func)
+        @functools.wraps(func)
         def wrapped_func(*args, **kwargs):
             try:
                 out = func(*args, **kwargs)
@@ -918,7 +919,7 @@ def _get_widget_name(widget: Widget):
 def _create_gui_method(self: BaseGui, obj: MethodType):
     func_sig = inspect.signature(obj)
     # Method type cannot set __signature__ attribute.
-    @functools_wraps(obj)
+    @functools.wraps(obj)
     def func(*args, **kwargs):
         return obj(*args, **kwargs)
 
@@ -1040,82 +1041,6 @@ def _connect_functiongui_event(
     for cb in _on_called:
         mgui.called.connect(lambda: cb(mgui))
     return mgui
-
-
-_C = TypeVar("_C", Callable, type)
-
-
-def wraps(template: Callable | inspect.Signature) -> Callable[[_C], _C]:
-    """
-    Update signature using a template. If class is wrapped, then all the methods
-    except for those start with "__" will be wrapped.
-
-    Parameters
-    ----------
-    template : Callable or inspect.Signature object
-        Template function or its signature.
-
-    Returns
-    -------
-    Callable
-        A wrapper which take a function or class as an input and returns same
-        function or class with updated signature(s).
-    """
-
-    def wrapper(f: _C) -> _C:
-        if isinstance(f, type):
-            for name, attr in iter_members(f):
-                if callable(attr) or isinstance(attr, type):
-                    wrapper(attr)
-            return f
-
-        Param = inspect.Parameter
-        old_signature = inspect.signature(f)
-
-        old_params = old_signature.parameters
-
-        if callable(template):
-            template_signature = inspect.signature(template)
-        elif isinstance(template, inspect.Signature):
-            template_signature = template
-        else:
-            raise TypeError(
-                "template must be a callable object or signature, "
-                f"but got {type(template)}."
-            )
-
-        # update empty signatures
-        template_params = template_signature.parameters
-        new_params: list[Param] = []
-
-        for k, v in old_params.items():
-            if v.annotation is Param.empty and v.default is Param.empty:
-                new_params.append(
-                    template_params.get(k, Param(k, Param.POSITIONAL_OR_KEYWORD))
-                )
-            else:
-                new_params.append(v)
-
-        # update empty return annotation
-        if old_signature.return_annotation is inspect.Parameter.empty:
-            return_annotation = template_signature.return_annotation
-        else:
-            return_annotation = old_signature.return_annotation
-
-        f.__signature__ = inspect.Signature(
-            parameters=new_params, return_annotation=return_annotation
-        )
-
-        fdoc = parse(f.__doc__)
-        tempdoc = parse(template.__doc__)
-        fdoc.short_description = fdoc.short_description or tempdoc.short_description
-        fdoc.long_description = fdoc.long_description or tempdoc.long_description
-        fdoc.meta = fdoc.meta or tempdoc.meta
-        f.__doc__ = compose(fdoc)
-
-        return f
-
-    return wrapper
 
 
 def _get_index(container: Container, widget_or_name: Widget | str) -> int:
