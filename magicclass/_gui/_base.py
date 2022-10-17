@@ -916,7 +916,7 @@ def _get_widget_name(widget: Widget):
     return widget.name
 
 
-def _create_gui_method(self: BaseGui, obj: MethodType):
+def _create_gui_method(self: BaseGui, obj: MethodType) -> Callable:
     func_sig = inspect.signature(obj)
     # Method type cannot set __signature__ attribute.
     @functools.wraps(obj)

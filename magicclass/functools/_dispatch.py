@@ -104,6 +104,9 @@ def singledispatch(func):
     return wrapper
 
 
+# BUG: if "bind" or "choices" options are set with a class method in the dispatched
+# functions, they are not called correctly. _gui/_base.py::_create_gui_method
+# needs modification.
 class singledispatchmethod(functools.singledispatchmethod):
     """
     Single dispatch method aware of GUI options in magic-class.
@@ -159,6 +162,10 @@ class singledispatchmethod(functools.singledispatchmethod):
 
 
 class MultiValueWidget(TabbedContainer):
+    """
+    A special tabbed container that can be used to represent a dispatched argument.
+    """
+
     def __init__(
         self,
         annotations: list[type],
