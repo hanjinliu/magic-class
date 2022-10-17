@@ -3,6 +3,8 @@ from magicclass.functools import partial, partialmethod, singledispatchmethod
 from unittest.mock import MagicMock
 import pytest
 
+from magicclass.types import Bound
+
 def test_partial_call():
     def f(i: int, j: int):
         return i + j
@@ -83,6 +85,7 @@ def test_singledispatchmethod():
     class A:
         @singledispatchmethod
         def f(self, i: int):
+            """f-doc"""
             mock(i, int)
 
         @f.register
@@ -96,6 +99,7 @@ def test_singledispatchmethod():
     ui = A()
     mgui = get_function_gui(ui, "f")
     wdt = mgui[0]
+    assert ui["f"].tooltip == "f-doc"
     assert len(wdt) == 3
 
     mgui.call_button.clicked()
@@ -145,3 +149,32 @@ def test_singledispatchmethod_with_options():
     assert wdt[0].max == 10
     assert wdt[1].value == "abc"
     assert wdt[2].min == 1.0
+
+def test_singledispatchmethod_with_bind_and_choice():
+    mock = MagicMock()
+
+    @magicclass
+    class A:
+        _choices = [1, 2, 3]
+        _value = 1
+
+        def _get_choice(self, *_) -> "list[int]":
+            return self._choices
+
+        def _get_value(self, *_) -> int:
+            return self._value
+
+        @singledispatchmethod
+        def f(self, x: str, i: Bound[_get_value]):
+            mock(x, i)
+
+        @f.register
+        @set_options(x={"choices": _get_choice})
+        def _(self, x: int, i: Bound[_get_value]):
+            mock(x, i)
+
+    ui = A()
+    mgui = get_function_gui(ui, "f")
+    assert mgui[0][1].choices == (1, 2, 3)
+    mgui.call_button.clicked()
+    mock.assert_called_once_with("", 1)

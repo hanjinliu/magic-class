@@ -159,6 +159,10 @@ class singledispatchmethod(functools.singledispatchmethod):
 
 
 class MultiValueWidget(TabbedContainer):
+    """
+    A special tabbed container that can be used to represent a dispatched argument.
+    """
+
     def __init__(
         self,
         annotations: list[type],

@@ -35,7 +35,7 @@ Documentation is available [here](https://hanjinliu.github.io/magic-class/).
 - use pip
 
 ```
-pip install magic-class
+pip install magic-class -U
 ```
 
 - get latest version
