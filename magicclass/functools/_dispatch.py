@@ -158,7 +158,7 @@ class singledispatchmethod(functools.singledispatchmethod):
         raise TypeError("singledispatchmethod must be called on an instance")
 
 
-class MultiValueWidget(TabbedContainer):
+class UnionWidget(TabbedContainer):
     def __init__(
         self,
         annotations: list[type],
@@ -166,6 +166,7 @@ class MultiValueWidget(TabbedContainer):
         layout: str = "vertical",
         labels: bool = False,
         nullable: bool = False,
+        options: list[WidgetOptions] | None = None,
         value=UNSET,
         **kwargs,
     ):
@@ -179,9 +180,13 @@ class MultiValueWidget(TabbedContainer):
                     _name = _options.get("name", _type.__name__)
                     names.append(_name)
 
+        if options is None:
+            options = [{}] * len(annotations)
+
         widgets: list[Widget] = []
-        for ann, name in zip(annotations, names):
+        for ann, name, opt in zip(annotations, names, options):
             _kwargs = dict(name=name, label="")
+            _kwargs.update(opt)
             if isinstance(ann, _AnnotatedAlias):
                 ann, _options = split_annotated_type(ann)
                 _kwargs.update(_options)
@@ -189,7 +194,7 @@ class MultiValueWidget(TabbedContainer):
             widgets.append(wdt)
 
         if nullable:
-            widgets.append(Label("None", bind=None))
+            widgets.append(Label(value="None", bind=None))
 
         if "value" in kwargs:
             value = kwargs.pop("value")
@@ -213,6 +218,7 @@ class MultiValueWidget(TabbedContainer):
         for idx, ann in enumerate(self._annotations):
             if _type is ann:
                 self[idx].value = value  # type: ignore
+                self.current_index = idx
                 break
         else:
             raise TypeError(f"Cannot set value of type {_type!r}.")
@@ -234,5 +240,5 @@ def _merge_parameters(params: Sequence[inspect.Parameter]) -> MagicParameter:
         name=name,
         kind=MagicParameter.POSITIONAL_OR_KEYWORD,
         default=default,
-        gui_options={"widget_type": MultiValueWidget, "annotations": annotations},
+        gui_options={"widget_type": UnionWidget, "annotations": annotations},
     )
