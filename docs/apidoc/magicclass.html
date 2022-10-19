@@ -663,6 +663,28 @@ ui.show()</p>
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="magicclass.types.Union">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">magicclass.types.</span></span><span class="sig-name descname"><span class="pre">Union</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/types.html#Union"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.types.Union" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Make Annotated type similar to <code class="docutils literal notranslate"><span class="pre">typing.Union</span></code>.</p>
+<p>Arguments annotated with <code class="docutils literal notranslate"><span class="pre">Union[int,</span> <span class="pre">str]</span></code> will create a
+<code class="docutils literal notranslate"><span class="pre">UnionWidget</span></code> with a <code class="docutils literal notranslate"><span class="pre">SpinBox</span></code> and a <code class="docutils literal notranslate"><span class="pre">LineEdit</span></code> as inner widgets.</p>
+<p class="rubric">Examples</p>
+<p>from magicclass import magicclass
+from magicclass.types import Union</p>
+<p>&#64;magicclass
+class A:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>def f(self, a: Union[int, str]):</dt><dd><p>print(a)</p>
+</dd>
+</dl>
+</div></blockquote>
+<p>ui = A()
+ui.show()</p>
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="magicclass.types.WidgetType">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">magicclass.types.</span></span><span class="sig-name descname"><span class="pre">WidgetType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/types.html#WidgetType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.types.WidgetType" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
@@ -2520,25 +2542,6 @@ you can define a field using a method.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>MagicValueField</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="magicclass.wraps">
-<span class="sig-prename descclassname"><span class="pre">magicclass.</span></span><span class="sig-name descname"><span class="pre">wraps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">inspect.Signature</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">_C</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">_C</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/magicclass/functools/_wraps.html#wraps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.wraps" title="Permalink to this definition">¶</a></dt>
-<dd><p>Update signature using a template. If class is wrapped, then all the methods
-except for those start with &quot;__&quot; will be wrapped.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>template</strong> (<em>Callable</em><em> or </em><em>inspect.Signature object</em>) -- Template function or its signature.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>A wrapper which take a function or class as an input and returns same
-function or class with updated signature(s).</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Callable</p>
 </dd>
 </dl>
 </dd></dl>

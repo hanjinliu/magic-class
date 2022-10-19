@@ -2,7 +2,7 @@
 Vispy Canvas
 ============
 
-`vispy <https://github.com/vispy/vispy>`_. is a 2D/3D visualization library that has Qt
+`vispy <https://github.com/vispy/vispy>`_ is a 2D/3D visualization library that has Qt
 backend.
 
 .. warning::

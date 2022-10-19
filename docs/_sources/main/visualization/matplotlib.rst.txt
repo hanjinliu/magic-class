@@ -1,6 +1,6 @@
-=====================
-Use Matplotlib Figure
-=====================
+=================
+Matplotlib Figure
+=================
 
 ``matplotlib`` is one of the most widely used data visualization libraries. I
 guess most of the Python users know the basics of the library.

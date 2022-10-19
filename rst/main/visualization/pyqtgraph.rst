@@ -1,6 +1,6 @@
-====================
-Use PyQtGraph Canvas
-====================
+================
+PyQtGraph Canvas
+================
 
 PyQtGraph is a data visualization library based on Qt. It provides variety of plot
 canvases and plot items that can be operated in a interactive way. The

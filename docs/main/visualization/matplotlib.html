@@ -4,23 +4,23 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Use Matplotlib Figure &mdash; magic-class 0.6.11.dev0 documentation</title>
-      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/columns.css" type="text/css" />
+  <title>Matplotlib Figure &mdash; magic-class 0.6.11.dev0 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/columns.css" type="text/css" />
   <!--[if lt IE 9]>
-    <script src="../_static/js/html5shiv.min.js"></script>
+    <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
 
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
-        <script src="../_static/doctools.js"></script>
-    <script src="../_static/js/theme.js"></script>
-    <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Use PyQtGraph Canvas" href="pyqtgraph.html" />
-    <link rel="prev" title="Data Visualization" href="chap_data_vis.html" />
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="PyQtGraph Canvas" href="pyqtgraph.html" />
+    <link rel="prev" title="Data Visualization" href="../chap_data_vis.html" />
 </head>
 
 <body class="wy-body-for-nav">
@@ -28,13 +28,13 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../index.html" class="icon icon-home"> magic-class
+            <a href="../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
                 0.6.11.dev0
               </div>
 <div role="search">
-  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
@@ -42,26 +42,27 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="quick_start.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../quick_start.html">Quick Start</a></li>
 </ul>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="chap_basics.html">Basics</a></li>
-<li class="toctree-l1"><a class="reference internal" href="chap_make_better.html">Make Your GUI Better</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="chap_data_vis.html">Data Visualization</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Use Matplotlib Figure</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="../chap_basics.html">Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chap_make_better.html">Make Your GUI Better</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../chap_data_vis.html">Data Visualization</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Matplotlib Figure</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#basic-usage">Basic Usage</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#use-figure-widget-in-magic-class">Use Figure Widget in Magic Class</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#use-multiple-axes">Use Multiple Axes</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="pyqtgraph.html">Use PyQtGraph Canvas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyqtgraph.html">PyQtGraph Canvas</a></li>
 <li class="toctree-l2"><a class="reference internal" href="vispy.html">Vispy Canvas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vtk.html">VTK (Visualization Toolkit)</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="chap_advanced.html">Advanced Topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chap_advanced.html">Advanced Topics</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="best_practice.html">Best Practice</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../best_practice.html">Best Practice</a></li>
 </ul>
 
         </div>
@@ -70,18 +71,18 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../index.html">magic-class</a>
+          <a href="../../index.html">magic-class</a>
       </nav>
 
       <div class="wy-nav-content">
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="chap_data_vis.html">Data Visualization</a> &raquo;</li>
-      <li>Use Matplotlib Figure</li>
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../chap_data_vis.html">Data Visualization</a> &raquo;</li>
+      <li>Matplotlib Figure</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../_sources/main/matplotlib.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../../_sources/main/visualization/matplotlib.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -89,8 +90,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
 
-  <section id="use-matplotlib-figure">
-<h1>Use Matplotlib Figure<a class="headerlink" href="#use-matplotlib-figure" title="Permalink to this headline">¶</a></h1>
+  <section id="matplotlib-figure">
+<h1>Matplotlib Figure<a class="headerlink" href="#matplotlib-figure" title="Permalink to this headline">¶</a></h1>
 <p><code class="docutils literal notranslate"><span class="pre">matplotlib</span></code> is one of the most widely used data visualization libraries. I
 guess most of the Python users know the basics of the library.</p>
 <p>For data visualization of simple data set, your can use the <code class="docutils literal notranslate"><span class="pre">Figure</span></code> widget.</p>
@@ -166,8 +167,8 @@ you'll have to call <code class="docutils literal notranslate"><span class="pre"
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="chap_data_vis.html" class="btn btn-neutral float-left" title="Data Visualization" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="pyqtgraph.html" class="btn btn-neutral float-right" title="Use PyQtGraph Canvas" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="../chap_data_vis.html" class="btn btn-neutral float-left" title="Data Visualization" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="pyqtgraph.html" class="btn btn-neutral float-right" title="PyQtGraph Canvas" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

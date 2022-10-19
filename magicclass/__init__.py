@@ -57,7 +57,6 @@ __all__ = [
     "FieldGroup",
     "HasFields",
     "dataclass_gui",
-    "wraps",
     "defaults",
     "MagicTemplate",
     "PopUpMode",

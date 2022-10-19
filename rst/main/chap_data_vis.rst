@@ -9,6 +9,7 @@ can directly used as components of your GUI.
 .. toctree::
    :maxdepth: 1
 
-   matplotlib
-   pyqtgraph
-   vispy
+   ./visualization/matplotlib
+   ./visualization/pyqtgraph
+   ./visualization/vispy
+   ./visualization/vtk

@@ -99,7 +99,16 @@
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="n">_tp_cache</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;WidgetType&quot;</span><span class="p">,</span> <span class="s2">&quot;bound&quot;</span><span class="p">,</span> <span class="s2">&quot;Bound&quot;</span><span class="p">,</span> <span class="s2">&quot;Choices&quot;</span><span class="p">,</span> <span class="s2">&quot;OneOf&quot;</span><span class="p">,</span> <span class="s2">&quot;SomeOf&quot;</span><span class="p">,</span> <span class="s2">&quot;Optional&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;WidgetType&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;bound&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Bound&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Choices&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;OneOf&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;SomeOf&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Optional&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Union&quot;</span><span class="p">,</span>
+<span class="p">]</span>
 
 
 <div class="viewcode-block" id="WidgetType"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.types.WidgetType">[docs]</a><span class="k">class</span> <span class="nc">WidgetType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
@@ -120,42 +129,38 @@
     <span class="n">mainwindow</span> <span class="o">=</span> <span class="s2">&quot;mainwindow&quot;</span></div>
 
 
-<span class="n">WidgetTypeStr</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span>
-    <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;none&quot;</span><span class="p">],</span>
-    <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;scrollable&quot;</span><span class="p">],</span>
-    <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;draggable&quot;</span><span class="p">],</span>
-    <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;split&quot;</span><span class="p">],</span>
-    <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;collapsible&quot;</span><span class="p">],</span>
-    <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;button&quot;</span><span class="p">],</span>
-    <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;toolbox&quot;</span><span class="p">],</span>
-    <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;tabbed&quot;</span><span class="p">],</span>
-    <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;stacked&quot;</span><span class="p">],</span>
-    <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;list&quot;</span><span class="p">],</span>
-    <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;subwindows&quot;</span><span class="p">],</span>
-    <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;groupbox&quot;</span><span class="p">],</span>
-    <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;frame&quot;</span><span class="p">],</span>
-    <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;mainwindow&quot;</span><span class="p">],</span>
-    <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;hcollapsible&quot;</span><span class="p">],</span>
+<span class="n">WidgetTypeStr</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span>
+    <span class="s2">&quot;none&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;scrollable&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;draggable&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;split&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;collapsible&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;button&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;toolbox&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;tabbed&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;stacked&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;list&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;subwindows&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;groupbox&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;frame&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;mainwindow&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;hcollapsible&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 
 
-<span class="n">PopUpModeStr</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span>
-    <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;popup&quot;</span><span class="p">],</span>
-    <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;first&quot;</span><span class="p">],</span>
-    <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;last&quot;</span><span class="p">],</span>
-    <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;above&quot;</span><span class="p">],</span>
-    <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;below&quot;</span><span class="p">],</span>
-    <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;dock&quot;</span><span class="p">],</span>
-    <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;dialog&quot;</span><span class="p">],</span>
-    <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;parentlast&quot;</span><span class="p">],</span>
+<span class="n">PopUpModeStr</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span>
+    <span class="s2">&quot;popup&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;first&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;last&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;above&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;below&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;dock&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;dialog&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;parentlast&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 
 
-<span class="n">ErrorModeStr</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span>
-    <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;msgbox&quot;</span><span class="p">],</span>
-    <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;stderr&quot;</span><span class="p">],</span>
-    <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;stdout&quot;</span><span class="p">],</span>
-<span class="p">]</span>
+<span class="n">ErrorModeStr</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;msgbox&quot;</span><span class="p">,</span> <span class="s2">&quot;stderr&quot;</span><span class="p">,</span> <span class="s2">&quot;stdout&quot;</span><span class="p">]</span>
 
 <span class="n">Color</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span>
 
@@ -494,6 +499,50 @@
 
     <span class="k">def</span> <span class="nf">__init_subclass__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot subclass </span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__module__</span><span class="si">}</span><span class="s2">.Optional.&quot;</span><span class="p">)</span></div>
+
+
+<span class="k">class</span> <span class="nc">_UnionAlias</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">.functools._dispatch</span> <span class="kn">import</span> <span class="n">UnionWidget</span>
+
+        <span class="n">annotations</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">opt</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">widget_type</span><span class="o">=</span><span class="n">UnionWidget</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">annotations</span><span class="o">=</span><span class="n">annotations</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">val</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">annotations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">opt</span><span class="p">[</span><span class="s2">&quot;nullable&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="c1"># union = Union[tuple(annotations)]  # type: ignore</span>
+        <span class="k">return</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">opt</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="Union"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.types.Union">[docs]</a><span class="k">class</span> <span class="nc">Union</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">_UnionAlias</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Make Annotated type similar to ``typing.Union``.</span>
+
+<span class="sd">    Arguments annotated with ``Union[int, str]`` will create a</span>
+<span class="sd">    ``UnionWidget`` with a ``SpinBox`` and a ``LineEdit`` as inner widgets.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+
+<span class="sd">    from magicclass import magicclass</span>
+<span class="sd">    from magicclass.types import Union</span>
+
+<span class="sd">    @magicclass</span>
+<span class="sd">    class A:</span>
+<span class="sd">        def f(self, a: Union[int, str]):</span>
+<span class="sd">            print(a)</span>
+
+<span class="sd">    ui = A()</span>
+<span class="sd">    ui.show()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Type Union cannot be instantiated.&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__init_subclass__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot subclass </span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__module__</span><span class="si">}</span><span class="s2">.Union.&quot;</span><span class="p">)</span></div>
 
 
 <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
