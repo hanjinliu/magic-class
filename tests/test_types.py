@@ -1,6 +1,6 @@
 from typing_extensions import Annotated
 from magicclass import magicclass, set_options, get_function_gui
-from magicclass.types import Optional
+from magicclass.types import Optional, Union
 from magicclass import widgets
 
 def test_basics():
@@ -47,3 +47,44 @@ def test_optional_with_annotated():
     assert opt.text == "x-text"
     assert not opt[1].visible
     assert opt[1].min == -1
+
+def test_union():
+    @magicclass
+    class A:
+        def f(self, x: Union[int, str]):
+            pass
+
+    ui = A()
+    wdt = get_function_gui(ui, "f")[0]
+    assert wdt.widget_type == "UnionWidget"
+    assert wdt[0].widget_type == "SpinBox"
+    assert wdt[1].widget_type == "LineEdit"
+
+def test_union_with_default():
+    @magicclass
+    class A:
+        def f(self, x: Union[int, str] = "a"):
+            pass
+
+    ui = A()
+    wdt = get_function_gui(ui, "f")[0]
+    assert wdt.widget_type == "UnionWidget"
+    assert wdt[0].widget_type == "SpinBox"
+    assert wdt[1].widget_type == "LineEdit"
+    assert wdt.value == "a"
+    assert wdt.current_index == 1
+
+def test_union_with_set_option():
+    @magicclass
+    class A:
+        @set_options(x={"options": [{"max": 4}, {"max": 5.0}]})
+        def f(self, x: Union[int, float]):
+            pass
+
+    ui = A()
+    wdt = get_function_gui(ui, "f")[0]
+    assert wdt.widget_type == "UnionWidget"
+    assert wdt[0].widget_type == "SpinBox"
+    assert wdt[1].widget_type == "FloatSpinBox"
+    assert wdt[0].max == 4
+    assert wdt[1].max == 5.0

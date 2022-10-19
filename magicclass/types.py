@@ -21,7 +21,16 @@ try:
 except ImportError:
     _tp_cache = lambda x: x
 
-__all__ = ["WidgetType", "bound", "Bound", "Choices", "OneOf", "SomeOf", "Optional"]
+__all__ = [
+    "WidgetType",
+    "bound",
+    "Bound",
+    "Choices",
+    "OneOf",
+    "SomeOf",
+    "Optional",
+    "Union",
+]
 
 
 class WidgetType(Enum):
@@ -42,42 +51,38 @@ class WidgetType(Enum):
     mainwindow = "mainwindow"
 
 
-WidgetTypeStr = Union[
-    Literal["none"],
-    Literal["scrollable"],
-    Literal["draggable"],
-    Literal["split"],
-    Literal["collapsible"],
-    Literal["button"],
-    Literal["toolbox"],
-    Literal["tabbed"],
-    Literal["stacked"],
-    Literal["list"],
-    Literal["subwindows"],
-    Literal["groupbox"],
-    Literal["frame"],
-    Literal["mainwindow"],
-    Literal["hcollapsible"],
+WidgetTypeStr = Literal[
+    "none",
+    "scrollable",
+    "draggable",
+    "split",
+    "collapsible",
+    "button",
+    "toolbox",
+    "tabbed",
+    "stacked",
+    "list",
+    "subwindows",
+    "groupbox",
+    "frame",
+    "mainwindow",
+    "hcollapsible",
 ]
 
 
-PopUpModeStr = Union[
-    Literal["popup"],
-    Literal["first"],
-    Literal["last"],
-    Literal["above"],
-    Literal["below"],
-    Literal["dock"],
-    Literal["dialog"],
-    Literal["parentlast"],
+PopUpModeStr = Literal[
+    "popup",
+    "first",
+    "last",
+    "above",
+    "below",
+    "dock",
+    "dialog",
+    "parentlast",
 ]
 
 
-ErrorModeStr = Union[
-    Literal["msgbox"],
-    Literal["stderr"],
-    Literal["stdout"],
-]
+ErrorModeStr = Literal["msgbox", "stderr", "stdout"]
 
 Color = Union[Iterable[float], str]
 
@@ -416,6 +421,50 @@ class Optional(metaclass=_OptionalAlias):
 
     def __init_subclass__(cls, *args, **kwargs):
         raise TypeError(f"Cannot subclass {cls.__module__}.Optional.")
+
+
+class _UnionAlias(type):
+    def __getitem__(cls, value):
+        from .functools._dispatch import UnionWidget
+
+        annotations = []
+        opt = dict(widget_type=UnionWidget, nullable=False, annotations=annotations)
+        for val in value:
+            if val is not None:
+                annotations.append(val)
+            else:
+                opt["nullable"] = True
+        # union = Union[tuple(annotations)]  # type: ignore
+        return Annotated[Any, opt]
+
+
+class Union(metaclass=_UnionAlias):
+    """
+    Make Annotated type similar to ``typing.Union``.
+
+    Arguments annotated with ``Union[int, str]`` will create a
+    ``UnionWidget`` with a ``SpinBox`` and a ``LineEdit`` as inner widgets.
+
+    Examples
+    --------
+
+    from magicclass import magicclass
+    from magicclass.types import Union
+
+    @magicclass
+    class A:
+        def f(self, a: Union[int, str]):
+            print(a)
+
+    ui = A()
+    ui.show()
+    """
+
+    def __new__(cls, *args, **kwargs):
+        raise TypeError("Type Union cannot be instantiated.")
+
+    def __init_subclass__(cls, *args, **kwargs):
+        raise TypeError(f"Cannot subclass {cls.__module__}.Union.")
 
 
 def __getattr__(key: str):
