@@ -378,6 +378,13 @@ class FloatRangeSlider(AbstractRangeSlider[float]):
         return sl
 
 
+# magicgui>=0.6.0 has its own range sliders.
+try:
+    from magicgui.widgets import RangeSlider, FloatRangeSlider
+except ImportError:
+    pass
+
+
 class _QtSpreadSheet(QtW.QTabWidget):
     def __init__(self):
         super().__init__()
