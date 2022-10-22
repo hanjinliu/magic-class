@@ -119,8 +119,8 @@ class PushButtonPlus(PushButton):
 
 
 class _QToolButton(QBaseButtonWidget):
-    def __init__(self):
-        super().__init__(QToolButton)
+    def __init__(self, **kwargs):
+        super().__init__(QToolButton, **kwargs)
 
 
 class ToolButtonPlus(PushButtonPlus):
