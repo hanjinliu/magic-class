@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.widgets.misc &mdash; magic-class 0.6.11.dev0 documentation</title>
+  <title>magicclass.widgets.misc &mdash; magic-class 0.6.11 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.11.dev0
+                0.6.11
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -434,7 +434,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_slider</span><span class="o">.</span><span class="n">setMaximum</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="RangeSlider"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.misc.RangeSlider">[docs]</a><span class="k">class</span> <span class="nc">RangeSlider</span><span class="p">(</span><span class="n">AbstractRangeSlider</span><span class="p">[</span><span class="nb">int</span><span class="p">]):</span>
+<span class="k">class</span> <span class="nc">RangeSlider</span><span class="p">(</span><span class="n">AbstractRangeSlider</span><span class="p">[</span><span class="nb">int</span><span class="p">]):</span>
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">_construct_qt</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="kn">from</span> <span class="nn">superqt</span> <span class="kn">import</span> <span class="n">QLabeledRangeSlider</span>
@@ -442,10 +442,10 @@
         <span class="n">sl</span> <span class="o">=</span> <span class="n">QLabeledRangeSlider</span><span class="p">()</span>
         <span class="n">sl</span><span class="o">.</span><span class="n">setHandleLabelPosition</span><span class="p">(</span><span class="n">QLabeledRangeSlider</span><span class="o">.</span><span class="n">LabelPosition</span><span class="o">.</span><span class="n">LabelsAbove</span><span class="p">)</span>
         <span class="n">sl</span><span class="o">.</span><span class="n">setEdgeLabelMode</span><span class="p">(</span><span class="n">QLabeledRangeSlider</span><span class="o">.</span><span class="n">EdgeLabelMode</span><span class="o">.</span><span class="n">NoLabel</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">sl</span></div>
+        <span class="k">return</span> <span class="n">sl</span>
 
 
-<div class="viewcode-block" id="FloatRangeSlider"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.misc.FloatRangeSlider">[docs]</a><span class="k">class</span> <span class="nc">FloatRangeSlider</span><span class="p">(</span><span class="n">AbstractRangeSlider</span><span class="p">[</span><span class="nb">float</span><span class="p">]):</span>
+<span class="k">class</span> <span class="nc">FloatRangeSlider</span><span class="p">(</span><span class="n">AbstractRangeSlider</span><span class="p">[</span><span class="nb">float</span><span class="p">]):</span>
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">_construct_qt</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="kn">from</span> <span class="nn">superqt</span> <span class="kn">import</span> <span class="n">QLabeledDoubleRangeSlider</span>
@@ -453,7 +453,14 @@
         <span class="n">sl</span> <span class="o">=</span> <span class="n">QLabeledDoubleRangeSlider</span><span class="p">()</span>
         <span class="n">sl</span><span class="o">.</span><span class="n">setHandleLabelPosition</span><span class="p">(</span><span class="n">QLabeledDoubleRangeSlider</span><span class="o">.</span><span class="n">LabelPosition</span><span class="o">.</span><span class="n">LabelsAbove</span><span class="p">)</span>
         <span class="n">sl</span><span class="o">.</span><span class="n">setEdgeLabelMode</span><span class="p">(</span><span class="n">QLabeledDoubleRangeSlider</span><span class="o">.</span><span class="n">EdgeLabelMode</span><span class="o">.</span><span class="n">NoLabel</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">sl</span></div>
+        <span class="k">return</span> <span class="n">sl</span>
+
+
+<span class="c1"># magicgui&gt;=0.6.0 has its own range sliders.</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">RangeSlider</span><span class="p">,</span> <span class="n">FloatRangeSlider</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">pass</span>
 
 
 <span class="k">class</span> <span class="nc">_QtSpreadSheet</span><span class="p">(</span><span class="n">QtW</span><span class="o">.</span><span class="n">QTabWidget</span><span class="p">):</span>
@@ -608,9 +615,13 @@
 <div class="viewcode-block" id="QHistoryLineEdit"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.misc.QHistoryLineEdit">[docs]</a><span class="k">class</span> <span class="nc">QHistoryLineEdit</span><span class="p">(</span><span class="n">QBaseStringWidget</span><span class="p">):</span>
     <span class="n">_qwidget</span><span class="p">:</span> <span class="n">_QEditableComboBox</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="n">_QEditableComboBox</span><span class="p">,</span> <span class="s2">&quot;currentText&quot;</span><span class="p">,</span> <span class="s2">&quot;setCurrentText&quot;</span><span class="p">,</span> <span class="s2">&quot;currentTextChanged&quot;</span>
+            <span class="n">_QEditableComboBox</span><span class="p">,</span>
+            <span class="s2">&quot;currentText&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;setCurrentText&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;currentTextChanged&quot;</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
         <span class="p">)</span></div>
 
 
