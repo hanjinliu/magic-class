@@ -169,7 +169,7 @@ class QDoubleSlider(QSlider):
 
     def __init__(self, parent=None, decimals: int = 3):
         super().__init__(parent=parent)
-        self.scale = 10 ** decimals
+        self.scale = 10**decimals
         self.setOrientation(Qt.Horizontal)
         self.valueChanged.connect(self.doubleValueChanged)
 
@@ -278,15 +278,15 @@ class QColorSlider(QWidget):
 class _ColorEdit(QBaseValueWidget):
     _qwidget: QColorEdit
 
-    def __init__(self):
-        super().__init__(QColorEdit, "color", "setColor", "colorChanged")
+    def __init__(self, **kwargs):
+        super().__init__(QColorEdit, "color", "setColor", "colorChanged", **kwargs)
 
 
 class _ColorSlider(QBaseValueWidget):
     _qwidget: QColorSlider
 
-    def __init__(self):
-        super().__init__(QColorSlider, "color", "setColor", "colorChanged")
+    def __init__(self, **kwargs):
+        super().__init__(QColorSlider, "color", "setColor", "colorChanged", **kwargs)
 
 
 @merge_super_sigs
