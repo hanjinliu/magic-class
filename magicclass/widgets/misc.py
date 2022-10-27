@@ -537,9 +537,13 @@ class _QEditableComboBox(QtW.QComboBox):
 class QHistoryLineEdit(QBaseStringWidget):
     _qwidget: _QEditableComboBox
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         super().__init__(
-            _QEditableComboBox, "currentText", "setCurrentText", "currentTextChanged"
+            _QEditableComboBox,
+            "currentText",
+            "setCurrentText",
+            "currentTextChanged",
+            **kwargs,
         )
 
 
