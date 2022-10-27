@@ -2,10 +2,16 @@ from __future__ import annotations
 from typing import Any, TYPE_CHECKING, Callable, TypeVar
 from types import FunctionType
 
+from magicgui import __version__ as _magicgui_version
 from magicgui.widgets import FunctionGui, Widget
 from magicgui.widgets._bases.value_widget import UNSET
 from magicgui.type_map import get_widget_class
 from magicgui.signature import magic_signature, MagicParameter
+
+if _magicgui_version >= "0.6.0":
+    from functools import partial
+
+    get_widget_class = partial(get_widget_class, raise_on_unknown=False)
 
 from macrokit import Symbol
 
