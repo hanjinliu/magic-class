@@ -79,7 +79,7 @@ class Camera(HasFields):
 
     # fmt: off
     fov = vfield(0.0, widget_type=FloatSlider, label="FoV (deg)", options={"max": 45})
-    scale = vfield(1.0, widget_type=FloatSlider, label="Scale")
+    scale = vfield(1.0, label="Scale", options={"min": 0.01, "max": 10000})
     center = vfield((0.0, 0.0, 0.0), label="Center")
     angles = vfield((0.0, 0.0, 90.0), widget_type=EulerAngleEdit, label="Angles (deg)")
     # fmt: on
