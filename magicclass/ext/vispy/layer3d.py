@@ -472,8 +472,9 @@ class Points3D(LayerItem, HasFields):
         super().__init__()
         self._name = name
         self._viewbox = viewbox
-        data = data[:, ::-1]  # vispy uses xyz, not zyx
-        self._visual: MarkersVisual = visuals.Markers(parent=self._viewbox.scene)
+        self._visual: MarkersVisual = visuals.Markers(
+            scaling=True, parent=self._viewbox.scene, spherical=True
+        )
         self.data = data
         self.face_color = face_color
         self.edge_color = edge_color
@@ -487,38 +488,79 @@ class Points3D(LayerItem, HasFields):
 
     @data.setter
     def data(self, value) -> None:
-        self._visual.set_data(pos=value)
+        self._visual.set_data(
+            pos=value,
+            face_color=self.face_color,
+            edge_color=self.edge_color,
+            edge_width=self.edge_width,
+            size=self.size,
+            scaling=True,
+            symbol=self._visual.symbol,
+        )
         self._data = value
         self._visual.update()
 
     # fmt: off
     face_color = vfield(Color)
     edge_color = vfield(Color)
-    edge_width = vfield(0.0, widget_type=FloatSlider, options={"min": 0.0, "max": 5.0})
-    size = vfield(1.0, widget_type=FloatSlider, options={"min": 1.0, "max": 50.0})
-    spherical = vfield(False)
+    edge_width = vfield(0.0, options={"min": 0.0, "max": 5.0, "step": 0.5})
+    size = vfield(5.0, options={"min": 1.0, "max": 50.0, "step": 0.5})
+    spherical = vfield(True)
     # fmt: on
 
     @face_color.connect
     def _on_face_color_change(self, value):
-        return self._visual.set_data(face_color=value, edge_width=self.edge_width)
+        return self._visual.set_data(
+            pos=self.data,
+            face_color=value,
+            edge_color=self.edge_color,
+            edge_width=self.edge_width,
+            size=self.size,
+            scaling=True,
+            symbol=self._visual.symbol,
+        )
 
-    @face_color.connect
+    @edge_color.connect
     def _on_edge_color_change(self, value):
-        return self._visual.set_data(edge_color=value, edge_width=self.edge_width)
+        return self._visual.set_data(
+            pos=self.data,
+            face_color=self.face_color,
+            edge_color=value,
+            edge_width=self.edge_width,
+            size=self.size,
+            scaling=True,
+            symbol=self._visual.symbol,
+        )
 
     @edge_width.connect
     def _on_edge_width_change(self, value):
-        return self._visual.set_data(edge_width=value)
-
-    @size.connect
-    def _on_size_change(self, value):
-        self._visual.spherical = value
-        self._visual.update()
+        return self._visual.set_data(
+            pos=self.data,
+            face_color=self.face_color,
+            edge_color=self.edge_color,
+            edge_width=value,
+            size=self.size,
+            scaling=True,
+            symbol=self._visual.symbol,
+        )
 
     @spherical.connect
     def _on_spherical_change(self, value):
-        return self._visual
+        self._visual.spherical = value
+        self._visual.update()
+
+    @size.connect
+    def _on_size_change(self, value):
+        return self._visual.set_data(
+            pos=self.data,
+            face_color=self.face_color,
+            edge_color=self.edge_color,
+            edge_width=self.edge_width,
+            size=value,
+            scaling=True,
+            symbol=self._visual.symbol,
+        )
+
 
     def _get_bbox(self) -> Tuple[np.ndarray, np.ndarray]:
         mins = np.min(self.data, axis=0)
@@ -577,6 +619,7 @@ class Arrows3D(LayerItem, HasFields):
     def data(self, value: np.ndarray) -> None:
         # value.shape == (N, P, 3)
         arrows = value[:, -2:].reshape(-1, 6)
+        arrows = np.concatenate([arrows[:, 3:], arrows[:, :3]], axis=1)
         self._visual.set_data(pos=value, arrows=arrows)
         self._data = value
         self._visual.update()

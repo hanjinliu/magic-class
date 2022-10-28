@@ -209,7 +209,7 @@ class Has3DViewBox(HasViewBox):
         data: ArrayLike,
         face_color: Color = "white",
         edge_color: Color = "white",
-        size: float = 1.0,
+        size: float = 5.0,
         spherical: bool = True,
     ):
         """
