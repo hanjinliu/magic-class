@@ -136,10 +136,10 @@ class Has3DViewBox(HasViewBox):
     def add_arrows(
         self,
         data: ArrayLike,
-        arrow_type="stealth",
-        arrow_size=1.0,
+        arrow_type: str = "stealth",
+        arrow_size: float = 5.0,
         color="white",
-        width=1,
+        width: float = 1.0,
     ):
         arrows = layer3d.Arrows3D(
             data=np.asarray(data, dtype=np.float32),
