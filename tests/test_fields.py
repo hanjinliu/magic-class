@@ -395,6 +395,36 @@ def test_field_group():
     ui = Main()
     assert ui.params is ui[0]
 
+def test_field_group_signal():
+    mock1 = MagicMock()
+    mock2 = MagicMock()
+
+    class Params(FieldGroup):
+        x = field(int)
+        y = vfield(str)
+
+    class A:
+        params1 = Params(layout="horizontal")
+        params2 = Params(layout="horizontal")
+
+        @params1.connect
+        def _f1(self, w):
+            mock1()
+
+        @params2.connect
+        def _f2(self, w):
+            mock2()
+
+    ui = A()
+    mock1.assert_not_called()
+    mock2.assert_not_called()
+    ui.params1.x.value = 2
+    mock1.assert_called_once()
+    mock2.assert_not_called()
+    ui.params2.y = "x"
+    mock1.assert_called_once()
+    mock2.assert_called_once()
+
 
 def test_nesting_field_group():
     class Params(FieldGroup):

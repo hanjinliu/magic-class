@@ -17,8 +17,9 @@ from magicgui.widgets import create_widget
 from magicgui.widgets._bases import Widget, ValueWidget, ContainerWidget
 from magicgui.widgets._bases.value_widget import UNSET
 
+from ._define import define_callback, define_callback_gui
+
 from ..utils import (
-    argcount,
     is_instance_method,
     method_as_getter,
     eval_attribute,
@@ -191,9 +192,9 @@ class MagicField(_FieldObject, Generic[_W, _V]):
 
             if isinstance(widget, (ValueWidget, ContainerWidget)):
                 if isinstance(obj, MagicTemplate):
-                    _def = _define_callback_gui
+                    _def = define_callback_gui
                 else:
-                    _def = _define_callback
+                    _def = define_callback
                 for callback in self._callbacks:
                     # funcname = callback.__name__
                     widget.changed.connect(_def(obj, callback))
@@ -232,9 +233,9 @@ class MagicField(_FieldObject, Generic[_W, _V]):
 
             if action.support_value:
                 if isinstance(obj, MagicTemplate):
-                    _def = _define_callback_gui
+                    _def = define_callback_gui
                 else:
-                    _def = _define_callback
+                    _def = define_callback
                 for callback in self._callbacks:
                     # funcname = callback.__name__
                     action.changed.connect(_def(obj, callback))
@@ -852,49 +853,3 @@ def _is_subclass(obj: Any, class_or_tuple):
         return issubclass(obj, class_or_tuple)
     except Exception:
         return False
-
-
-def _define_callback(self: Any, callback: Callable):
-    """Define a callback function from a method."""
-    return callback.__get__(self)
-
-
-def _define_callback_gui(self: MagicTemplate, callback: Callable):
-    """Define a callback function from a method of a magic-class."""
-
-    *_, clsname, funcname = callback.__qualname__.split(".")
-    mro = self.__class__.__mro__
-    for base in mro:
-        if base.__name__ == clsname:
-            _func: Callable = getattr(base, funcname).__get__(self)
-            _func = _normalize_argcount(_func)
-
-            def _callback(v):
-                with self.macro.blocked():
-                    _func(v)
-                return None
-
-            break
-    else:
-
-        def _callback(v):
-            # search for parent instances that have the same name.
-            current_self = self
-            while not (
-                hasattr(current_self, funcname)
-                and current_self.__class__.__qualname__.split(".")[-1] == clsname
-            ):
-                current_self = current_self.__magicclass_parent__
-            _func = _normalize_argcount(getattr(current_self, funcname))
-
-            with self.macro.blocked():
-                _func(v)
-            return None
-
-    return _callback
-
-
-def _normalize_argcount(func: Callable) -> Callable[[Any], Any]:
-    if argcount(func) == 0:
-        return lambda v: func()
-    return func
