@@ -8,6 +8,7 @@ from vispy.visuals import (
     IsosurfaceVisual,
     MeshVisual,
     LineVisual,
+    MarkersVisual,
     BoxVisual,
 )
 from vispy.visuals import transforms as tr
@@ -456,13 +457,85 @@ class Curve3D(LayerItem, HasFields):
 
     # fmt: off
     color = vfield(Color)
-    width = vfield(float, widget_type=FloatSlider, options={"min": 0.5, "max": 10.0, "value": 1.0})
+    width = vfield(1.0, widget_type=FloatSlider, options={"min": 0.5, "max": 10.0})
     # fmt: on
 
     @color.connect
     def _on_color_change(self, value):
-        self._visual.set_data(color=value)
+        return self._visual.set_data(color=value)
 
     @width.connect
     def _on_width_change(self, value):
-        self._visual.set_data(width=value)
+        return self._visual.set_data(width=value)
+
+
+class Points3D(LayerItem, HasFields):
+    def __init__(
+        self,
+        data,
+        viewbox: ViewBox,
+        face_color: Color | None = None,
+        edge_color: Color | None = None,
+        edge_width: float = 0.0,
+        size: float = 1.0,
+        spherical: bool = True,
+        name: str | None = None,
+    ):
+        super().__init__()
+        self._name = name
+        self._viewbox = viewbox
+        data = data[:, ::-1]  # vispy uses xyz, not zyx
+        self._visual: MarkersVisual = visuals.Markers(parent=self._viewbox.scene)
+        self.data = data
+        self.face_color = face_color
+        self.edge_color = edge_color
+        self.edge_width = edge_width
+        self.size = size
+        self.spherical = spherical
+
+    @property
+    def data(self) -> np.ndarray:
+        return self._data
+
+    @data.setter
+    def data(self, value) -> None:
+        self._visual.set_data(pos=value)
+        self._data = value
+        self._visual.update()
+
+    @property
+    def name(self) -> str:
+        return self._name
+
+    # fmt: off
+    face_color = vfield(Color)
+    edge_color = vfield(Color)
+    edge_width = vfield(0.0, widget_type=FloatSlider, options={"min": 0.0, "max": 5.0})
+    size = vfield(1.0, widget_type=FloatSlider, options={"min": 1.0, "max": 50.0})
+    spherical = vfield(False)
+    # fmt: on
+
+    @face_color.connect
+    def _on_face_color_change(self, value):
+        return self._visual.set_data(face_color=value, edge_width=self.edge_width)
+
+    @face_color.connect
+    def _on_edge_color_change(self, value):
+        return self._visual.set_data(edge_color=value, edge_width=self.edge_width)
+
+    @edge_width.connect
+    def _on_edge_width_change(self, value):
+        return self._visual.set_data(edge_width=value)
+
+    @size.connect
+    def _on_size_change(self, value):
+        self._visual.spherical = value
+
+    @spherical.connect
+    def _on_spherical_change(self, value):
+        return self._visual
+
+    def _get_bbox(self) -> Tuple[np.ndarray, np.ndarray]:
+        mins = np.min(self.data, axis=0)
+        maxs = np.max(self.data, axis=0)
+        return mins, maxs

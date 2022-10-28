@@ -2,7 +2,7 @@ from __future__ import annotations
 import numpy as np
 from numpy.typing import ArrayLike
 from vispy import scene
-from .layer3d import Image, IsoSurface, Surface, Curve3D
+from .layer3d import Image, IsoSurface, Points3D, Surface, Curve3D
 from .layerlist import LayerList
 from ._base import SceneCanvas, HasViewBox, MultiPlot, LayerItem
 from .camera import Camera
@@ -45,6 +45,9 @@ class Has3DViewBox(HasViewBox):
         gamma: float = 1.0,
         interpolation: str = "linear",
     ):
+        data = np.asarray(data)
+        if data.dtype.kind == "f":
+            data = data.astype(np.float32)
         image = Image(
             data,
             self._viewbox,
@@ -111,6 +114,24 @@ class Has3DViewBox(HasViewBox):
             width=width,
         )
         return self.add_layer(curve)
+
+    def add_points(
+        self,
+        data: ArrayLike,
+        face_color: Color = "white",
+        edge_color: Color = "white",
+        size: float = 1.0,
+        spherical: bool = True,
+    ):
+        points = Points3D(
+            data=np.asarray(data, dtype=np.float32),
+            viewbox=self._viewbox,
+            face_color=face_color,
+            edge_color=edge_color,
+            size=size,
+            spherical=spherical,
+        )
+        return self.add_layer(points)
 
     def add_layer(self, layer: LayerItem):
         """Add a layer item to the canvas."""
