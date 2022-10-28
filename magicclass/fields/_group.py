@@ -17,6 +17,7 @@ from magicgui.widgets._bases import Widget
 from psygnal import SignalInstance
 
 from ._fields import MagicField, MagicValueField, _FieldObject
+from ._define import define_callback, define_callback_gui
 from ..utils import Tooltips
 
 if TYPE_CHECKING:
@@ -313,8 +314,16 @@ class FieldGroup(Container, HasFields, _FieldObject):
         _id = id(obj)
         wdt = self._containers.get(_id, None)
         if wdt is None:
+            from .._gui import MagicTemplate
+
             wdt = self.copy()
             self._containers[_id] = wdt
+            if isinstance(obj, MagicTemplate):
+                _def = define_callback_gui
+            else:
+                _def = define_callback
+            for callback in self._callbacks:
+                wdt.changed.connect(_def(obj, callback))
         return wdt
 
     def connect(self, callback: Callable):
