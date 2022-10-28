@@ -472,7 +472,6 @@ class Points3D(LayerItem, HasFields):
         super().__init__()
         self._name = name
         self._viewbox = viewbox
-        # data = data[:, ::-1]  # vispy uses xyz, not zyx
         self._visual: MarkersVisual = visuals.Markers(
             scaling=True, parent=self._viewbox.scene, spherical=True
         )
@@ -489,15 +488,23 @@ class Points3D(LayerItem, HasFields):
 
     @data.setter
     def data(self, value) -> None:
-        self._visual.set_data(pos=value)
+        self._visual.set_data(
+            pos=value,
+            face_color=self.face_color,
+            edge_color=self.edge_color,
+            edge_width=self.edge_width,
+            size=self.size,
+            scaling=True,
+            symbol=self._visual.symbol,
+        )
         self._data = value
         self._visual.update()
 
     # fmt: off
     face_color = vfield(Color)
     edge_color = vfield(Color)
-    edge_width = vfield(0.0, widget_type=FloatSlider, options={"min": 0.0, "max": 5.0})
-    size = vfield(1.0, widget_type=FloatSlider, options={"min": 1.0, "max": 50.0})
+    edge_width = vfield(0.0, options={"min": 0.0, "max": 5.0, "step": 0.5})
+    size = vfield(5.0, options={"min": 1.0, "max": 50.0, "step": 0.5})
     spherical = vfield(True)
     # fmt: on
 
@@ -513,7 +520,7 @@ class Points3D(LayerItem, HasFields):
             symbol=self._visual.symbol,
         )
 
-    @face_color.connect
+    @edge_color.connect
     def _on_edge_color_change(self, value):
         return self._visual.set_data(
             pos=self.data,
