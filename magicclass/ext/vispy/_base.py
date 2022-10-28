@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 
 class LayerItem:
     _visual: Visual
-    name: str
+    _name: str
 
     def __repr__(self) -> str:
         return f"<{type(self).__name__} {self.name}>"
@@ -47,6 +47,10 @@ class LayerItem:
 
     def _get_bbox(self) -> tuple[np.ndarray, np.ndarray]:
         raise NotImplementedError
+
+    @property
+    def name(self) -> str:
+        return self._name
 
 
 class HasViewBox:
