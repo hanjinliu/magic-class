@@ -9,7 +9,7 @@ from vispy.visuals import (
     MeshVisual,
     LineVisual,
     MarkersVisual,
-    BoxVisual,
+    ArrowVisual,
 )
 from vispy.visuals import transforms as tr
 from vispy.visuals.filters import WireframeFilter
@@ -134,10 +134,6 @@ class Image(LayerItem, HasFields):
         self._cache_lims()
         self._visual.update()
 
-    @property
-    def name(self) -> str:
-        return self._name
-
     def _cache_lims(self):
         self._lims = np.min(self._data), np.max(self._data)
         self.widgets.contrast_limits.min = self._lims[0]
@@ -222,10 +218,6 @@ class _SurfaceBase(LayerItem):
 
         self.shading = shading
         self._name = name
-
-    @property
-    def name(self) -> str:
-        return self._name
 
     def _create_visual(self, data):
         raise NotImplementedError()
@@ -451,10 +443,6 @@ class Curve3D(LayerItem, HasFields):
         maxs = np.max(self.data, axis=0)
         return mins, maxs
 
-    @property
-    def name(self) -> str:
-        return self._name
-
     # fmt: off
     color = vfield(Color)
     width = vfield(1.0, widget_type=FloatSlider, options={"min": 0.5, "max": 10.0})
@@ -503,10 +491,6 @@ class Points3D(LayerItem, HasFields):
         self._data = value
         self._visual.update()
 
-    @property
-    def name(self) -> str:
-        return self._name
-
     # fmt: off
     face_color = vfield(Color)
     edge_color = vfield(Color)
@@ -530,6 +514,7 @@ class Points3D(LayerItem, HasFields):
     @size.connect
     def _on_size_change(self, value):
         self._visual.spherical = value
+        self._visual.update()
 
     @spherical.connect
     def _on_spherical_change(self, value):
@@ -538,4 +523,84 @@ class Points3D(LayerItem, HasFields):
     def _get_bbox(self) -> Tuple[np.ndarray, np.ndarray]:
         mins = np.min(self.data, axis=0)
         maxs = np.max(self.data, axis=0)
+        return mins, maxs
+
+
+class Arrows3D(LayerItem, HasFields):
+    _ARROW_TYPES = (
+        "stealth",
+        "curved",
+        "triangle_30",
+        "triangle_60",
+        "triangle_90",
+        "angle_30",
+        "angle_60",
+        "angle_90",
+        "inhibitor_round",
+    )
+
+    def __init__(
+        self,
+        data: np.ndarray,
+        viewbox: ViewBox,
+        color: Color | None = None,
+        width: float = 0.0,
+        arrow_type: str = "stealth",
+        arrow_size: float = 1.0,
+        name: str | None = None,
+    ):
+        super().__init__()
+        self._name = name
+        self._viewbox = viewbox
+        data = data[:, ::-1]  # vispy uses xyz, not zyx
+        self._visual: ArrowVisual = visuals.Arrow(
+            parent=self._viewbox.scene, connect="segments"
+        )
+        self.data = data
+        self.color = color
+        self.width = width
+        self.arrow_type = arrow_type
+        self.arrow_size = arrow_size
+
+    # fmt: off
+    color = vfield(Color)
+    width = vfield(0.0, widget_type=FloatSlider, options={"min": 0.0, "max": 5.0})
+    arrow_type = vfield("stealth", options={"choices": _ARROW_TYPES})
+    arrow_size = vfield(1.0, options={"min": 0.5, "max": 100})
+    # fmt: on
+
+    @property
+    def data(self) -> np.ndarray:
+        return self._data
+
+    @data.setter
+    def data(self, value: np.ndarray) -> None:
+        # value.shape == (N, P, 3)
+        arrows = value[:, -2:].reshape(-1, 6)
+        self._visual.set_data(pos=value, arrows=arrows)
+        self._data = value
+        self._visual.update()
+
+    @color.connect
+    def _on_color_change(self, value):
+        self._visual.arrow_color = value
+        return self._visual.set_data(color=value)
+
+    @width.connect
+    def _on_width_change(self, value):
+        return self._visual.set_data(width=value)
+
+    @arrow_type.connect
+    def _on_arrow_type_change(self, value):
+        self._visual.arrow_type = value
+        self._visual.update()
+
+    @arrow_size.connect
+    def _on_arrow_size_change(self, value):
+        self._visual.arrow_size = value
+        self._visual.update()
+
+    def _get_bbox(self) -> Tuple[np.ndarray, np.ndarray]:
+        mins = np.min(self.data, axis=(0, 1))
+        maxs = np.max(self.data, axis=(0, 1))
         return mins, maxs

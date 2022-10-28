@@ -2,7 +2,7 @@ from __future__ import annotations
 import numpy as np
 from numpy.typing import ArrayLike
 from vispy import scene
-from .layer3d import Image, IsoSurface, Points3D, Surface, Curve3D
+from . import layer3d
 from .layerlist import LayerList
 from ._base import SceneCanvas, HasViewBox, MultiPlot, LayerItem
 from .camera import Camera
@@ -48,7 +48,7 @@ class Has3DViewBox(HasViewBox):
         data = np.asarray(data)
         if data.dtype.kind == "f":
             data = data.astype(np.float32)
-        image = Image(
+        image = layer3d.Image(
             data,
             self._viewbox,
             contrast_limits=contrast_limits,
@@ -72,7 +72,7 @@ class Has3DViewBox(HasViewBox):
         edge_color: Color | None = None,
         shading: str = "smooth",
     ):
-        surface = IsoSurface(
+        surface = layer3d.IsoSurface(
             data,
             self._viewbox,
             contrast_limits=contrast_limits,
@@ -92,7 +92,7 @@ class Has3DViewBox(HasViewBox):
         edge_color: Color | None = None,
         shading: str = "smooth",
     ):
-        surface = Surface(
+        surface = layer3d.Surface(
             data,
             self._viewbox,
             face_color=face_color,
@@ -107,7 +107,7 @@ class Has3DViewBox(HasViewBox):
         color="white",
         width=1,
     ):
-        curve = Curve3D(
+        curve = layer3d.Curve3D(
             data=np.asarray(data, dtype=np.float32),
             viewbox=self._viewbox,
             color=color,
@@ -123,7 +123,7 @@ class Has3DViewBox(HasViewBox):
         size: float = 1.0,
         spherical: bool = True,
     ):
-        points = Points3D(
+        points = layer3d.Points3D(
             data=np.asarray(data, dtype=np.float32),
             viewbox=self._viewbox,
             face_color=face_color,
@@ -132,6 +132,24 @@ class Has3DViewBox(HasViewBox):
             spherical=spherical,
         )
         return self.add_layer(points)
+
+    def add_arrows(
+        self,
+        data: ArrayLike,
+        arrow_type="stealth",
+        arrow_size=1.0,
+        color="white",
+        width=1,
+    ):
+        arrows = layer3d.Arrows3D(
+            data=np.asarray(data, dtype=np.float32),
+            viewbox=self._viewbox,
+            arrow_type=arrow_type,
+            arrow_size=arrow_size,
+            color=color,
+            width=width,
+        )
+        return self.add_layer(arrows)
 
     def add_layer(self, layer: LayerItem):
         """Add a layer item to the canvas."""
