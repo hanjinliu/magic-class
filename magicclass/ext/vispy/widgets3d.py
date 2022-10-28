@@ -45,6 +45,33 @@ class Has3DViewBox(HasViewBox):
         gamma: float = 1.0,
         interpolation: str = "linear",
     ):
+        """
+        Add a 3D array as a volumic image.
+
+        Parameters
+        ----------
+        data : ArrayLike
+            Image data.
+        contrast_limits : tuple[float, float], optional
+            Contrast limits of the image.
+        rendering : str, optional
+            Rendering method.
+        iso_threshold : float, optional
+            Threshold of iso-surface rendering.
+        attenuation : float, optional
+            Attenuation of attenuated rendering method.
+        cmap : str, optional
+            Colormap of image.
+        gamma : float, optional
+            Gamma value of contrast.
+        interpolation : str, optional
+            Interpolation method.
+
+        Returns
+        -------
+        Image
+            A new Image layer.
+        """
         data = np.asarray(data)
         if data.dtype.kind == "f":
             data = data.astype(np.float32)
@@ -72,6 +99,32 @@ class Has3DViewBox(HasViewBox):
         edge_color: Color | None = None,
         shading: str = "smooth",
     ):
+        """
+        Add a 3D array as a iso-surface.
+
+        The difference between this method and the iso-surface rendering of
+        ``add_image`` is that the layer created by this method can be a mesh.
+
+        Parameters
+        ----------
+        data : ArrayLike
+            Image data.
+        contrast_limits : tuple[float, float], optional
+            Contrast limits of the image.
+        iso_threshold : float, optional
+            Threshold of iso-surface.
+        face_color : Color, optional
+            Face color of the surface.
+        edge_color : Color, optional
+            Edge color of the surface.
+        shading : str, optional
+            Shading mode of the surface.
+
+        Returns
+        -------
+        Isosurface
+            A new Isosurface layer.
+        """
         surface = layer3d.IsoSurface(
             data,
             self._viewbox,
@@ -92,6 +145,25 @@ class Has3DViewBox(HasViewBox):
         edge_color: Color | None = None,
         shading: str = "smooth",
     ):
+        """
+        Add vertices, faces and optional values as a surface.
+
+        Parameters
+        ----------
+        data : two or three arrays
+            Data that defines a surface.
+        face_color : Color | None, optional
+            Face color of the surface.
+        edge_color : Color | None, optional
+            Edge color of the surface.
+        shading : str, optional
+            Shading mode of the surface.
+
+        Returns
+        -------
+        Surface
+            A new Surface layer.
+        """
         surface = layer3d.Surface(
             data,
             self._viewbox,
@@ -104,9 +176,26 @@ class Has3DViewBox(HasViewBox):
     def add_curve(
         self,
         data: ArrayLike,
-        color="white",
-        width=1,
+        color: Color = "white",
+        width: float = 1,
     ):
+        """
+        Add a (N, 3) array as a curve.
+
+        Parameters
+        ----------
+        data : ArrayLike
+            Coordinates of the curve.
+        color : Color, default is "white"
+            Color of the curve.
+        width : float, default is 1.
+            Width of the curve line.
+
+        Returns
+        -------
+        _type_
+            _description_
+        """
         curve = layer3d.Curve3D(
             data=np.asarray(data, dtype=np.float32),
             viewbox=self._viewbox,
@@ -123,6 +212,27 @@ class Has3DViewBox(HasViewBox):
         size: float = 1.0,
         spherical: bool = True,
     ):
+        """
+        Add a (N, 3) array as a point cloud.
+
+        Parameters
+        ----------
+        data : ArrayLike
+            Z, Y, X coordinates of the points.
+        face_color : Color, optional
+            Face color of the points.
+        edge_color : Color, optional
+            Edge color of the points.
+        size : float, default is 1.0
+            Size of the points.
+        spherical : bool, default is True
+            Whether the points are rendered as spherical objects.
+
+        Returns
+        -------
+        Points3D
+            A new Points3D layer.
+        """
         points = layer3d.Points3D(
             data=np.asarray(data, dtype=np.float32),
             viewbox=self._viewbox,
@@ -141,6 +251,31 @@ class Has3DViewBox(HasViewBox):
         color="white",
         width: float = 1.0,
     ):
+        """
+        Add a (N, P, 3) array as a set of arrows.
+
+        ``P`` is the number of points in each arrow. If you want to draw simple
+        arrows with lines, the shape of the input array will be (N, 2, 3) and
+        ``data[:, 0]`` is the start points and ``data[:, 1]`` is the end points.
+
+        Parameters
+        ----------
+        data : ArrayLike
+            Arrow coordinates.
+        arrow_type : str, default is "stealth"
+            Shape of the arrow.
+        arrow_size : float, default is 5.0
+            Size of the arrows.
+        color : str, default is "white"
+            Color of the arrow and the bodies.
+        width : float, default is 1.0
+            Width of the arrow bodies.
+
+        Returns
+        -------
+        Arrow3D
+            A new Arrow3D layer.
+        """
         arrows = layer3d.Arrows3D(
             data=np.asarray(data, dtype=np.float32),
             viewbox=self._viewbox,
