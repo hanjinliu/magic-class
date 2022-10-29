@@ -546,6 +546,7 @@ class MagicTemplate(MutableSequence[_W], metaclass=_MagicTemplateMeta):
                     else:
                         del child_instance[index - 1]
                         child_instance._fast_insert(index, widget)
+                    widget.visible = True
 
                 else:
                     widget.visible = copy

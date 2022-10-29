@@ -262,6 +262,10 @@ class ClassGuiBase(BaseGui[Widget]):
                         self._fast_insert(n_insert, widget)
                         n_insert += 1
 
+                        # NOTE: Function GUI is invisible by some reason...
+                        # See https://github.com/hanjinliu/magic-class/issues/53
+                        widget.visible = True
+
                     _hist.append((name, str(type(attr)), type(widget).__name__))
 
             except Exception as e:
@@ -334,7 +338,6 @@ class ClassGuiBase(BaseGui[Widget]):
             key += len(self)
         self._list.insert(key, widget)
         self._widget._mgui_insert_widget(key, _widget)
-        _widget.visible = True
         return None
 
 
