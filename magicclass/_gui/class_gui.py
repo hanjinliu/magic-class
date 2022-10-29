@@ -334,10 +334,16 @@ class ClassGuiBase(BaseGui[Widget]):
             key += len(self)
         self._list.insert(key, widget)
         self._widget._mgui_insert_widget(key, _widget)
+        _widget.visible = True
         return None
 
 
 def find_window_ancestor(widget: Widget) -> SubWindowsClassGui:
+    """
+    Try to find a window ancestor of the given widget.
+
+    This function is used only for subwindows.
+    """
     parent_self = widget
     while (parent := getattr(parent_self, "__magicclass_parent__", None)) is not None:
         parent_self = parent
