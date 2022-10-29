@@ -12,6 +12,7 @@ def test_magicgui():
     assert type(ui[0]) is widgets.FunctionGui
     assert ui[0].a.value == 0
     assert ui[0].b.value == "x"
+    assert ui[0].visible
 
     # macro should be recorded after called
     ui[0].a.value = 10
@@ -60,6 +61,7 @@ def test_wraps():
     assert type(ui.B[1]) is widgets.FunctionGui
     assert ui.B[1].a.value == 0
     assert ui.B[1].b.value == "x"
+    assert ui.B[1].visible
 
     # macro should be recorded after called
     ui.B[1].a.value = 10
@@ -74,22 +76,26 @@ def test_wraps():
     assert str(ui.macro[-1]) == "ui.f2(a=20, b='x')"
     assert str(ui.macro[-2]) == "ui.f2(a=10, b='x')"
 
-# NOTE: need fix on magicgui side
-# def test_multi_gui():
-#     @magicclass
-#     class A:
-#         @magicgui
-#         def f(self, x: int):
-#             return id(self)
 
-#         @magicgui
-#         def g(self, x: float):
-#             return -id(self)
+def test_multi_gui():
+    @magicclass
+    class A:
+        @magicgui
+        def f(self, x: int):
+            return id(self)
 
-#     ui0 = A()
-#     ui1 = A()
-#     assert ui0["f"] is not ui1["f"]
-#     assert ui0["g"] is not ui1["g"]
-#     assert ui0["f"](0) == -ui0["g"](0)
-#     assert ui1["f"](0) == -ui1["g"](0)
-#     assert ui0["f"](0) != ui1["f"](0)
+        @magicgui
+        def g(self, x: float):
+            return -id(self)
+
+    ui0 = A()
+    ui1 = A()
+    assert ui0["f"] is not ui1["f"]
+    assert ui0["g"] is not ui1["g"]
+    assert ui0["f"](0) == -ui0["g"](0)
+    assert ui1["f"](0) == -ui1["g"](0)
+    assert ui0["f"](0) != ui1["f"](0)
+    assert ui0["f"].visible
+    assert ui0["g"].visible
+    assert ui1["f"].visible
+    assert ui1["g"].visible
