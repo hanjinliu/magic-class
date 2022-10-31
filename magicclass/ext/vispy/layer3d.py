@@ -119,6 +119,7 @@ class Image(LayerItem, HasFields):
 
     @property
     def data(self) -> np.ndarray:
+        """Image data."""
         return self._data
 
     @data.setter
@@ -475,7 +476,7 @@ class Points3D(LayerItem, HasFields):
         self._visual: MarkersVisual = visuals.Markers(
             scaling=True, parent=self._viewbox.scene, spherical=True
         )
-        self.data = data
+        self.data = data[:, ::-1]
         self.face_color = face_color
         self.edge_color = edge_color
         self.edge_width = edge_width
@@ -594,11 +595,11 @@ class Arrows3D(LayerItem, HasFields):
         super().__init__()
         self._name = name
         self._viewbox = viewbox
-        data = data[:, ::-1]  # vispy uses xyz, not zyx
+        data = data
         self._visual: ArrowVisual = visuals.Arrow(
             parent=self._viewbox.scene, connect="segments"
         )
-        self.data = data
+        self.data = data[:, :, ::-1]
         self.color = color
         self.width = width
         self.arrow_type = arrow_type
@@ -619,7 +620,6 @@ class Arrows3D(LayerItem, HasFields):
     def data(self, value: np.ndarray) -> None:
         # value.shape == (N, P, 3)
         arrows = value[:, -2:].reshape(-1, 6)
-        arrows = np.concatenate([arrows[:, 3:], arrows[:, :3]], axis=1)
         self._visual.set_data(pos=value, arrows=arrows)
         self._data = value
         self._visual.update()
