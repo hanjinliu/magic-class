@@ -417,6 +417,10 @@ class WidgetView(_View):
             widgets = [getattr(self, name) for name in keys]
         return Container(layout=layout, widgets=widgets, labels=labels, **kwargs)
 
+    def show(self, run=False):
+        """Create a container and show it."""
+        return self.as_container().show(run=run)
+        
     def emit_all(self) -> None:
         """Emit all the signals with current value."""
         for wdt, sig in zip(self.iterwidgets(), self.itersignals()):
