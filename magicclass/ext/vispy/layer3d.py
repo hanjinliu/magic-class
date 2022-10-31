@@ -428,8 +428,9 @@ class Curve3D(LayerItem, HasFields):
         self,
         data,
         viewbox: ViewBox,
-        color=None,
-        width=1.0,
+        color: Color = None,
+        width: float = 1.0,
+        blending: str = "translucent",
         name: str | None = None,
     ):
         super().__init__()
@@ -440,6 +441,7 @@ class Curve3D(LayerItem, HasFields):
             pos=data, color=color, width=width, parent=self._viewbox.scene
         )
         self.data = data
+        self.blending = blending
 
     @property
     def data(self) -> np.ndarray:
@@ -473,7 +475,9 @@ class Curve3D(LayerItem, HasFields):
     @blending.connect
     def _on_blending_change(self, value):
         blending_kwargs = BLENDING_MODES[value]
-        return self._visual.set_gl_state(**blending_kwargs)
+        self._visual.set_gl_state(**blending_kwargs)
+        self._visual.update()
+        return None
 
 
 class Points3D(LayerItem, HasFields):
@@ -485,6 +489,7 @@ class Points3D(LayerItem, HasFields):
         edge_color: Color | None = None,
         edge_width: float = 0.0,
         size: float = 1.0,
+        blending: str = "translucent",
         spherical: bool = True,
         name: str | None = None,
     ):
@@ -499,6 +504,7 @@ class Points3D(LayerItem, HasFields):
         self.edge_color = edge_color
         self.edge_width = edge_width
         self.size = size
+        self.blending = blending
         self.spherical = spherical
 
     @property
@@ -584,7 +590,9 @@ class Points3D(LayerItem, HasFields):
     @blending.connect
     def _on_blending_change(self, value):
         blending_kwargs = BLENDING_MODES[value]
-        return self._visual.set_gl_state(**blending_kwargs)
+        self._visual.set_gl_state(**blending_kwargs)
+        self._visual.update()
+        return None
 
     def _get_bbox(self) -> Tuple[np.ndarray, np.ndarray]:
         mins = np.min(self.data, axis=0)
@@ -613,6 +621,7 @@ class Arrows3D(LayerItem, HasFields):
         width: float = 0.0,
         arrow_type: str = "stealth",
         arrow_size: float = 1.0,
+        blending: str = "translucent",
         name: str | None = None,
     ):
         super().__init__()
@@ -627,6 +636,7 @@ class Arrows3D(LayerItem, HasFields):
         self.width = width
         self.arrow_type = arrow_type
         self.arrow_size = arrow_size
+        self.blending = blending
 
     # fmt: off
     color = vfield(Color)
@@ -670,7 +680,9 @@ class Arrows3D(LayerItem, HasFields):
     @blending.connect
     def _on_blending_change(self, value):
         blending_kwargs = BLENDING_MODES[value]
-        return self._visual.set_gl_state(**blending_kwargs)
+        self._visual.set_gl_state(**blending_kwargs)
+        self._visual.update()
+        return None
 
     def _get_bbox(self) -> Tuple[np.ndarray, np.ndarray]:
         mins = np.min(self.data, axis=(0, 1))

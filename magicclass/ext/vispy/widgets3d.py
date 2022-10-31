@@ -178,6 +178,7 @@ class Has3DViewBox(HasViewBox):
         data: ArrayLike,
         color: Color = "white",
         width: float = 1,
+        blending: str = "translucent",
     ):
         """
         Add a (N, 3) array as a curve.
@@ -190,6 +191,8 @@ class Has3DViewBox(HasViewBox):
             Color of the curve.
         width : float, default is 1.
             Width of the curve line.
+        blending : str, default is "translucent"
+            Blending mode of the layer.
 
         Returns
         -------
@@ -201,6 +204,7 @@ class Has3DViewBox(HasViewBox):
             viewbox=self._viewbox,
             color=color,
             width=width,
+            blending=blending,
         )
         return self.add_layer(curve)
 
@@ -210,6 +214,7 @@ class Has3DViewBox(HasViewBox):
         face_color: Color = "white",
         edge_color: Color = "white",
         size: float = 5.0,
+        blending: str = "translucent",
         spherical: bool = True,
     ):
         """
@@ -225,6 +230,8 @@ class Has3DViewBox(HasViewBox):
             Edge color of the points.
         size : float, default is 1.0
             Size of the points.
+        blending : str, default is "translucent"
+            Blending mode of the layer.
         spherical : bool, default is True
             Whether the points are rendered as spherical objects.
 
@@ -239,6 +246,7 @@ class Has3DViewBox(HasViewBox):
             face_color=face_color,
             edge_color=edge_color,
             size=size,
+            blending=blending,
             spherical=spherical,
         )
         return self.add_layer(points)
@@ -248,8 +256,9 @@ class Has3DViewBox(HasViewBox):
         data: ArrayLike,
         arrow_type: str = "stealth",
         arrow_size: float = 5.0,
-        color="white",
+        color: Color ="white",
         width: float = 1.0,
+        blending: str = "translucent",
     ):
         """
         Add a (N, P, 3) array as a set of arrows.
@@ -270,6 +279,8 @@ class Has3DViewBox(HasViewBox):
             Color of the arrow and the bodies.
         width : float, default is 1.0
             Width of the arrow bodies.
+        blending : str, default is "translucent"
+            Blending mode of the layer.
 
         Returns
         -------
@@ -283,6 +294,7 @@ class Has3DViewBox(HasViewBox):
             arrow_size=arrow_size,
             color=color,
             width=width,
+            blending=blending,
         )
         return self.add_layer(arrows)
 
