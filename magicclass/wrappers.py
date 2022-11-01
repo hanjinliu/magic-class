@@ -288,7 +288,22 @@ def nogui(method: F) -> F:
     return method
 
 
-def mark_preview(function: Callable, text: str = "Preview") -> Callable[[F], F]:
+if TYPE_CHECKING:
+    from typing import Protocol
+
+    class PreviewFunction(Protocol):
+        def __call__(self, *args, **kwargs):
+            ...
+
+        def during_preview(self, f: F) -> F:
+            ...
+
+
+def mark_preview(
+    function: Callable | None = None,
+    text: str = "Preview",
+    auto_call: bool = False,
+) -> Callable[[Callable], PreviewFunction]:
     """
     Define a preview of a function.
 
@@ -310,66 +325,91 @@ def mark_preview(function: Callable, text: str = "Preview") -> Callable[[F], F]:
 
     Parameters
     ----------
-    function : callable
-        To which function previewer will be defined.
+    function : callable, optional
+        To which function previewer will be defined. If not provided, the to-be-
+        decorated function itself will be used as the preview function.
     text : str, optional
-        Text of preview button.
+        Text of the preview button or checkbox.
+    auto_call : bool, default is False
+        Whether the preview function will be auto-called. If true, a check box will
+        appear above the call button, and the preview function is auto-called during
+        it is checked.
     """
+    mark_self = False
 
-    def _wrapper(preview: F) -> F:
-        sig_preview = inspect.signature(preview)
-        sig_func = inspect.signature(function)
-        params_preview = sig_preview.parameters
-        params_func = sig_func.parameters
+    def _outer_wrapper(target_func):
+        def _wrapper(preview: F) -> F:
+            sig_preview = inspect.signature(preview)
+            sig_func = inspect.signature(target_func)
+            params_preview = sig_preview.parameters
+            params_func = sig_func.parameters
 
-        less = len(params_func) - len(params_preview)
-        if less == 0:
-            if params_preview.keys() != params_func.keys():
+            less = len(params_func) - len(params_preview)
+            if less == 0:
+                if params_preview.keys() != params_func.keys():
+                    raise TypeError(
+                        f"Arguments mismatch between {sig_preview!r} and {sig_func!r}."
+                    )
+                # If argument names are identical, input arguments don't have to be filtered.
+                _filter = lambda a: a
+
+            elif less > 0:
+                idx: list[int] = []
+                for i, param in enumerate(params_func.keys()):
+                    if param in params_preview:
+                        idx.append(i)
+                # If argument names are not identical, input arguments have to be filtered so
+                # that arguments match the inputs.
+                _filter = lambda _args: (a for i, a in enumerate(_args) if i in idx)
+
+            else:
                 raise TypeError(
-                    f"Arguments mismatch between {sig_preview!r} and {sig_func!r}."
+                    f"Number of arguments of preview function {preview!r} must be equal"
+                    f"or smaller than that of running function {target_func!r}."
                 )
-            # If argument names are identical, input arguments don't have to be filtered.
-            _filter = lambda a: a
 
-        elif less > 0:
-            idx: list[int] = []
-            for i, param in enumerate(params_func.keys()):
-                if param in params_preview:
-                    idx.append(i)
-            # If argument names are not identical, input arguments have to be filtered so
-            # that arguments match the inputs.
-            _filter = lambda _args: (a for i, a in enumerate(_args) if i in idx)
+            def _preview(*args):
+                # find proper parent instance in the case of classes being nested
+                from ._gui import BaseGui
 
-        else:
-            raise TypeError(
-                f"Number of arguments of preview function {preview!r} must be equal"
-                f"or smaller than that of running function {function!r}."
+                if len(args) > 0 and isinstance(args[0], BaseGui):
+                    ins = args[0]
+                    prev_ns = preview.__qualname__.split(".")[-2]
+                    while ins.__class__.__name__ != prev_ns:
+                        ins = ins.__magicclass_parent__
+                    args = (ins,) + args[1:]
+                # filter input arguments
+                return preview(*_filter(args))
+
+            _preview.__wrapped__ = preview
+            _preview.__name__ = getattr(preview, "__name__", "_preview")
+            _preview.__qualname__ = getattr(preview, "__qualname__", "")
+
+            if not isinstance(target_func, FunctionGui):
+                upgrade_signature(
+                    target_func,
+                    additional_options={"preview": (text, auto_call, _preview)},
+                )
+            else:
+                from ._gui._function_gui import append_preview
+
+                append_preview(target_func, _preview, text=text, auto_call=auto_call)
+
+            # add method
+            preview.during_preview = lambda fc: setattr(
+                _preview, "_preview_context", fc
             )
+            return preview
 
-        def _preview(*args):
-            # find proper parent instance in the case of classes being nested
-            from ._gui import BaseGui
+        if mark_self:
+            return _wrapper(target_func)
+        return _wrapper
 
-            if len(args) > 0 and isinstance(args[0], BaseGui):
-                ins = args[0]
-                prev_ns = preview.__qualname__.split(".")[-2]
-                while ins.__class__.__name__ != prev_ns:
-                    ins = ins.__magicclass_parent__
-                args = (ins,) + args[1:]
-            # filter input arguments
-            return preview(*_filter(args))
-
-        if not isinstance(function, FunctionGui):
-            upgrade_signature(
-                function, additional_options={"preview": (text, _preview)}
-            )
-        else:
-            from ._gui._function_gui import append_preview
-
-            append_preview(function, _preview, text=text)
-        return preview
-
-    return _wrapper
+    if function is not None:
+        return _outer_wrapper(function)
+    else:
+        mark_self = True
+        return _outer_wrapper
 
 
 _Fn = TypeVar("_Fn", bound=Callable[[FunctionGui], Any])

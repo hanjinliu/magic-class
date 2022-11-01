@@ -1013,8 +1013,10 @@ def _build_mgui(widget_: Action | PushButtonPlus, func: Callable, parent: BaseGu
         )
         preview = opt.get("preview", None)
         if preview is not None:
-            btn_text, previewer = preview
-            mgui.append_preview(previewer.__get__(parent), btn_text)
+            btn_text, is_auto_call, previewer = preview
+            mgui.append_preview(
+                previewer.__get__(parent), btn_text, auto_call=is_auto_call
+            )
 
     except Exception as e:
         msg = (

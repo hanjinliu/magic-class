@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import Any, TYPE_CHECKING, Callable, TypeVar
 import re
-from magicgui.widgets import PushButton
+from magicgui.widgets import PushButton, CheckBox
 from magicgui.widgets._concrete import _LabeledWidget
 from magicgui.widgets._bases import ValueWidget, ButtonWidget, ContainerWidget
 from magicgui.widgets._function_gui import FunctionGui
@@ -103,9 +103,11 @@ class FunctionGuiPlus(FunctionGui[_R]):
         self._widget._mgui_insert_widget(key, _widget)
         self._unify_label_widths()
 
-    def append_preview(self, f: Callable, text: str = "Preview"):
+    def append_preview(
+        self, f: Callable, text: str = "Preview", auto_call: bool = False
+    ):
         """Append a preview button to the widget."""
-        return append_preview(self, f, text)
+        return append_preview(self, f, text, auto_call=auto_call)
 
     def exec_as_dialog(self, parent=None):
         """Show container as a dialog."""
@@ -131,7 +133,19 @@ class FunctionGuiPlus(FunctionGui[_R]):
         return None
 
 
-def append_preview(self: FunctionGui, f: Callable, text: str = "Preview"):
+def append_preview(
+    self: FunctionGui,
+    f: Callable,
+    text: str = "Preview",
+    auto_call: bool = False,
+):
+    if auto_call:
+        return _append_auto_call_preview(self, f, text)
+    else:
+        return _append_preview(self, f, text)
+
+
+def _append_preview(self: FunctionGui, f: Callable, text: str = "Preview"):
     """Append a preview button to a FunctionGui widget."""
 
     btn = PushButton(text=text)
@@ -146,5 +160,72 @@ def append_preview(self: FunctionGui, f: Callable, text: str = "Preview"):
         bound = sig.bind()
         bound.apply_defaults()
         return f(*bound.args, **bound.kwargs)
+
+    return f
+
+
+def _append_auto_call_preview(self: FunctionGui, f: Callable, text: str = "Preview"):
+    """Append a preview check box to a FunctionGui widget."""
+    import warnings
+
+    cbox = CheckBox(value=False, text=text, gui_only=True)
+
+    generator = None
+
+    if _prev_context := getattr(f, "_preview_context", None):
+        _prev_context_method = _prev_context.__get__(f.__self__)
+
+        @cbox.changed.connect
+        def _try_context(checked: bool):
+            nonlocal generator
+
+            if checked:
+                sig = self.__signature__
+                bound = sig.bind()
+                bound.apply_defaults()
+                generator = _prev_context_method(*bound.args, **bound.kwargs)
+                next(generator)
+            else:
+                try:
+                    next(generator)
+                except StopIteration:
+                    pass
+                else:
+                    warnings.warn(
+                        f"{_prev_context} did not exit in the proper timing. Please "
+                        "make sure it yields only once, like functions decorated with "
+                        "@contextmanager."
+                    )
+                generator = None
+            return
+
+        @self.called.connect
+        def _close_context():
+            nonlocal generator
+            if generator is not None:
+                try:
+                    next(generator)
+                except StopIteration:
+                    pass
+                else:
+                    warnings.warn(
+                        f"{_prev_context} did not exit on function call. Please "
+                        "make sure it yields only once, like functions decorated with "
+                        "@contextmanager."
+                    )
+                generator = None
+
+    if isinstance(self[-1], PushButton):
+        self.insert(len(self) - 1, cbox)
+    else:
+        self.append(cbox)
+
+    @self.changed.connect
+    def _call_preview():
+        sig = self.__signature__
+        if cbox.value:
+            bound = sig.bind()
+            bound.apply_defaults()
+            return f(*bound.args, **bound.kwargs)
 
     return f
