@@ -19,7 +19,7 @@ from .wrappers import (
     bind_key,
     confirm,
     nogui,
-    mark_preview,
+    impl_preview,
     mark_on_calling,
     mark_on_called,
 )
@@ -48,7 +48,7 @@ __all__ = [
     "bind_key",
     "confirm",
     "nogui",
-    "mark_preview",
+    "impl_preview",
     "mark_on_calling",
     "mark_on_called",
     "field",
@@ -100,5 +100,16 @@ def __getattr__(key: str):
         from .functools import wraps
 
         return wraps
+
+    elif key == "mark_preview":
+        warnings.warn(
+            "Function `mark_preview` is deprecated in favor of `impl_preview`. ",
+            "`impl_preview` has slightly different API but is more flexible.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        from .wrappers import mark_preview
+
+        return mark_preview
 
     raise AttributeError(f"module {__name__!r} has no attribute {key!r}")
