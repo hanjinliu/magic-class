@@ -1,4 +1,5 @@
 from __future__ import annotations
+from types import GeneratorType
 from typing import Any, TYPE_CHECKING, Callable, TypeVar
 import re
 from magicgui.widgets import PushButton, CheckBox
@@ -145,10 +146,48 @@ def append_preview(
         return _append_preview(self, f, text)
 
 
+class PreviewContext:
+    def __init__(self):
+        self._generator = None
+
+    def enter(self, gen: GeneratorType):
+        if not isinstance(gen, GeneratorType):
+            raise TypeError("Must be a generator.")
+
+        self._generator = gen
+        next(self._generator)
+        return None
+
+    def exit(self):
+        if self._generator is None:
+            return None
+        try:
+            next(self._generator)
+        except StopIteration:
+            pass
+        else:
+            import warnings
+
+            warnings.warn(
+                "Contextmanager did not exit on function call. Please "
+                "make sure it yields only once, like functions decorated with "
+                "@contextmanager."
+            )
+        self._generator = None
+        return None
+
+
 def _append_preview(self: FunctionGui, f: Callable, text: str = "Preview"):
     """Append a preview button to a FunctionGui widget."""
-
     btn = PushButton(text=text)
+
+    context = PreviewContext()
+
+    if _prev_context := getattr(f, "_preview_context", None):
+        _prev_context_method = _prev_context.__get__(f.__self__)
+    else:
+        _prev_context_method = _dummy_context_manager
+
     if isinstance(self[-1], PushButton):
         self.insert(len(self) - 1, btn)
     else:
@@ -159,61 +198,36 @@ def _append_preview(self: FunctionGui, f: Callable, text: str = "Preview"):
         sig = self.__signature__
         bound = sig.bind()
         bound.apply_defaults()
-        return f(*bound.args, **bound.kwargs)
+        _args = bound.args
+        _kwargs = bound.kwargs
+        context.exit()
+        generator = _prev_context_method(*_args, **_kwargs)
+        context.enter(generator)
+        return f(*_args, **_kwargs)
+
+    if _prev_context_method is not _dummy_context_manager:
+        if not isinstance(self, FunctionGuiPlus):
+            raise NotImplementedError(
+                "during_preview context is not implemented for FunctionGui."
+            )
+
+        self.calling.connect(context.exit)
 
     return f
 
 
 def _append_auto_call_preview(self: FunctionGui, f: Callable, text: str = "Preview"):
     """Append a preview check box to a FunctionGui widget."""
-    import warnings
 
     cbox = CheckBox(value=False, text=text, gui_only=True)
 
     generator = None
+    context = PreviewContext()
 
     if _prev_context := getattr(f, "_preview_context", None):
         _prev_context_method = _prev_context.__get__(f.__self__)
-
-        @cbox.changed.connect
-        def _try_context(checked: bool):
-            nonlocal generator
-
-            if checked:
-                sig = self.__signature__
-                bound = sig.bind()
-                bound.apply_defaults()
-                generator = _prev_context_method(*bound.args, **bound.kwargs)
-                next(generator)
-            else:
-                try:
-                    next(generator)
-                except StopIteration:
-                    pass
-                else:
-                    warnings.warn(
-                        f"{_prev_context} did not exit in the proper timing. Please "
-                        "make sure it yields only once, like functions decorated with "
-                        "@contextmanager."
-                    )
-                generator = None
-            return
-
-        @self.called.connect
-        def _close_context():
-            nonlocal generator
-            if generator is not None:
-                try:
-                    next(generator)
-                except StopIteration:
-                    pass
-                else:
-                    warnings.warn(
-                        f"{_prev_context} did not exit on function call. Please "
-                        "make sure it yields only once, like functions decorated with "
-                        "@contextmanager."
-                    )
-                generator = None
+    else:
+        _prev_context_method = _dummy_context_manager
 
     if isinstance(self[-1], PushButton):
         self.insert(len(self) - 1, cbox)
@@ -222,10 +236,32 @@ def _append_auto_call_preview(self: FunctionGui, f: Callable, text: str = "Previ
 
     @self.changed.connect
     def _call_preview():
+        nonlocal generator
         sig = self.__signature__
         if cbox.value:
             bound = sig.bind()
             bound.apply_defaults()
-            return f(*bound.args, **bound.kwargs)
+            _args = bound.args
+            _kwargs = bound.kwargs
+            context.exit()
+            generator = _prev_context_method(*_args, **_kwargs)
+            context.enter(generator)
+            return f(*_args, **_kwargs)
+        else:
+            context.exit()  # reset the original state
+
+    if _prev_context_method is not _dummy_context_manager:
+        if not isinstance(self, FunctionGuiPlus):
+            raise NotImplementedError(
+                "during_preview context is not implemented for FunctionGui."
+            )
+
+        self.calling.connect(context.exit)
+        self.called.connect_setattr(cbox, "value", False)  # must disable auto-call!
 
     return f
+
+
+def _dummy_context_manager(*args, **kwargs):
+    """An empty context manager."""
+    yield
