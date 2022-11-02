@@ -1011,9 +1011,9 @@ def _build_mgui(widget_: Action | PushButtonPlus, func: Callable, parent: BaseGu
         mgui = FunctionGuiPlus(
             func, call_button, layout=layout, labels=labels, auto_call=auto_call
         )
-        preview = opt.get("preview", None)
-        if preview is not None:
-            btn_text, is_auto_call, previewer = preview
+        preview_setting = opt.get("preview", None)
+        if preview_setting is not None:
+            btn_text, is_auto_call, previewer = preview_setting
             mgui.append_preview(
                 previewer.__get__(parent), btn_text, auto_call=is_auto_call
             )

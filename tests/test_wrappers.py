@@ -109,9 +109,11 @@ def test_impl_preview():
     mock = MagicMock()
     @magicclass
     class A:
+        @impl_preview(text="preview 0")
         def f0(self, x: int, y: str = "v"):
             mock(x=x, y=y)
 
+        @impl_preview(text="preview 1")
         def f1(self, x: int = 10):
             mock(x=x)
 
@@ -156,9 +158,11 @@ def test_impl_preview_nested():
     class A:
         @magicclass
         class B:
+            @impl_preview(text="preview 0")
             def f0(self, x: int, y: str = "v"):
                 mock(type=type(self), x=x, y=y)
 
+            @impl_preview(text="preview 1")
             def f1(self, x: int = 10):
                 mock(type=type(self), x=x)
 
@@ -193,7 +197,6 @@ def test_impl_preview_nested():
     f1_gui[-1].changed()
     mock.assert_called_with(type=type(ui.B), x=10)
     assert str(ui.macro[-1]) == "ui.B.f1(x=10)"
-
 
 def test_impl_preview_using_itself():
     from magicclass import impl_preview

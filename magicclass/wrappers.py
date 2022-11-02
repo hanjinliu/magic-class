@@ -298,33 +298,43 @@ if TYPE_CHECKING:
         def __call__(self, *args, **kwargs):
             ...
 
+        def set_preview(self, f: F) -> F:
+            """Set `f` as preview function."""
+
         def during_preview(self, f: F) -> F:
-            """Wrapped function will be used as a context manager during preview."""
+            """Set `f` as the context manager during preview."""
 
 
 def impl_preview(
     function: Callable | None = None,
     text: str = "Preview",
     auto_call: bool = False,
-) -> Callable[[Callable], PreviewFunction]:
+):
     """
-    Define a preview of a function.
+    Implement a preview to a function.
 
     This decorator is useful for advanced magicgui creation. A "Preview" button
-    appears in the bottom of the widget built from the input function and the
-    decorated function will be called with the same arguments.
-    Following example shows how to define a previewer that prints the content of
-    the selected file.
+    (if `auto_call=False`) or checkbox (if `auto_call=True`) will be added to
+    the widget. It also adds `set_preview` and `during_preview` attributes to
+    the function.
 
     .. code-block:: python
 
+        @impl_preview
         def func(self, path: Path):
             ...
 
         @impl_preview(func)
         def _func_prev(self, path: Path):
-            with open(path, mode="r") as f:
-                print(f.read())
+            # do something as a preview. If `set_preview` is not set, the original
+            # function `func` itself will be used as a preview function.
+
+        @func.during_preview
+        def _func_during_prev(self, path: Path):
+            # do something before preview
+            yield
+            # do something after preview
+
 
     Parameters
     ----------
@@ -338,40 +348,10 @@ def impl_preview(
         appear above the call button, and the preview function is auto-called during
         it is checked.
     """
-    mark_self = False
 
-    def _outer_wrapper(target_func):
-        def _wrapper(preview: F) -> F:
-            sig_preview = inspect.signature(preview)
-            sig_func = inspect.signature(target_func)
-            params_preview = sig_preview.parameters
-            params_func = sig_func.parameters
-
-            less = len(params_func) - len(params_preview)
-            if less == 0:
-                if params_preview.keys() != params_func.keys():
-                    raise TypeError(
-                        f"Arguments mismatch between {sig_preview!r} and {sig_func!r}."
-                    )
-                # If argument names are identical, input arguments don't have to be filtered.
-                _filter = lambda a: a
-
-            elif less > 0:
-                idx: list[int] = []
-                for i, param in enumerate(params_func.keys()):
-                    if param in params_preview:
-                        idx.append(i)
-                # If argument names are not identical, input arguments have to be filtered so
-                # that arguments match the inputs.
-                _filter = lambda _args: (a for i, a in enumerate(_args) if i in idx)
-
-            else:
-                raise TypeError(
-                    f"Number of arguments of preview function {preview!r} must be equal"
-                    f"or smaller than that of running function {target_func!r}."
-                )
-
-            def _preview(*args):
+    def _outer_wrapper(target_func: Callable) -> PreviewFunction:
+        def _impl_arg_filter(preview: F, _filter=lambda x: x) -> F:
+            def func(*args):
                 # find proper parent instance in the case of classes being nested
                 from ._gui import BaseGui
 
@@ -384,35 +364,86 @@ def impl_preview(
                 # filter input arguments
                 return preview(*_filter(args))
 
-            _preview.__wrapped__ = preview
-            _preview.__name__ = getattr(preview, "__name__", "_preview")
-            _preview.__qualname__ = getattr(preview, "__qualname__", "")
+            func.__name__ = getattr(preview, "__name__", "")
+            func.__qualname__ = getattr(preview, "__qualname__", "")
+
+            return func
+
+        # Create a argument filter for preview or context manager function in the case of
+        # arguments not being the same as the original function.
+        sig_tgt = inspect.signature(target_func)
+        params_tgt = sig_tgt.parameters
+
+        def _get_arg_filter(fn: Callable) -> Callable:
+            sig_fn = inspect.signature(fn)
+            params_fn = sig_fn.parameters
+
+            less = len(params_tgt) - len(params_fn)
+            if less == 0:
+                if params_fn.keys() != params_tgt.keys():
+                    raise TypeError(
+                        f"Arguments mismatch between {sig_fn!r} and {sig_tgt!r}."
+                    )
+                # If argument names are identical, input arguments don't have to be filtered.
+                _filter = lambda a: a
+
+            elif less > 0:
+                idx: list[int] = []
+                for i, param in enumerate(params_tgt.keys()):
+                    if param in params_fn:
+                        idx.append(i)
+                # If argument names are not identical, input arguments have to be filtered so
+                # that arguments match the inputs.
+                _filter = lambda _args: (a for i, a in enumerate(_args) if i in idx)
+
+            else:
+                raise TypeError(
+                    f"Number of arguments of function {fn!r} must be equal"
+                    f"or smaller than that of running function {target_func!r}."
+                )
+            return _filter
+
+        def _set_preview(preview: F) -> F:
+            _filter = _get_arg_filter(preview)
+            _preview = _impl_arg_filter(preview, _filter)
 
             if not isinstance(target_func, FunctionGui):
+                if old_setting := get_additional_option(target_func, "preview", None):
+                    prev_func = old_setting[2]
+                    if cnt := getattr(prev_func, "_preview_context", None):
+                        _preview._preview_context = cnt
                 upgrade_signature(
                     target_func,
                     additional_options={"preview": (text, auto_call, _preview)},
                 )
             else:
-                from ._gui._function_gui import append_preview
-
-                append_preview(target_func, _preview, text=text, auto_call=auto_call)
-
-            # add method
-            preview.during_preview = lambda fc: setattr(
-                _preview, "_preview_context", fc
-            )
+                raise NotImplementedError
             return preview
 
-        if mark_self:
-            return _wrapper(target_func)
-        return _wrapper
+        def _during_preview(during: F) -> F:
+            _filter = _get_arg_filter(during)
+            _during = _impl_arg_filter(during, _filter)
 
-    if function is not None:
-        return _outer_wrapper(function)
-    else:
-        mark_self = True
-        return _outer_wrapper
+            if not isinstance(target_func, FunctionGui):
+                _prev_func = get_additional_option(target_func, "preview")[2]
+                _prev_func._preview_context = _during
+            else:
+                raise NotImplementedError
+            return during
+
+        _target_func: PreviewFunction = target_func  # type: ignore
+
+        # add method
+        _target_func.set_preview = _set_preview
+        _target_func.during_preview = _during_preview
+
+        # Set the original function as the preview by default (imagine previewing the
+        # result of Gaussian filter before actually running it).
+        _set_preview(_target_func)
+
+        return target_func
+
+    return _outer_wrapper if function is None else _outer_wrapper(function)
 
 
 mark_preview = impl_preview
