@@ -306,7 +306,7 @@ def impl_preview(
     function: Callable | None = None,
     text: str = "Preview",
     auto_call: bool = False,
-) -> Callable[[Callable], PreviewFunction]:
+):
     """
     Define a preview of a function.
 
@@ -340,12 +340,13 @@ def impl_preview(
     """
     mark_self = False
 
-    def _outer_wrapper(target_func):
-        def _wrapper(preview: F) -> F:
-            sig_preview = inspect.signature(preview)
-            sig_func = inspect.signature(target_func)
+    def _outer_wrapper(target_func: Callable) -> PreviewFunction:
+        sig_func = inspect.signature(target_func)
+        params_func = sig_func.parameters
+
+        def _get_arg_filter(fn) -> Callable:
+            sig_preview = inspect.signature(fn)
             params_preview = sig_preview.parameters
-            params_func = sig_func.parameters
 
             less = len(params_func) - len(params_preview)
             if less == 0:
@@ -367,29 +368,42 @@ def impl_preview(
 
             else:
                 raise TypeError(
-                    f"Number of arguments of preview function {preview!r} must be equal"
-                    f"or smaller than that of running function {target_func!r}."
+                    f"Number of arguments of function {fn!r} must be subset of "
+                    f"that of running function {target_func!r}."
                 )
+            return _filter
 
-            def _preview(*args):
-                # find proper parent instance in the case of classes being nested
+        def _impl_arg_filter(f: F, _filter: Callable) -> F:
+            def _func(*args):
                 from ._gui import BaseGui
 
+                # find proper parent instance in the case of classes being nested
                 if len(args) > 0 and isinstance(args[0], BaseGui):
                     ins = args[0]
-                    prev_ns = preview.__qualname__.split(".")[-2]
+                    prev_ns = f.__qualname__.split(".")[-2]
                     while ins.__class__.__name__ != prev_ns:
                         ins = ins.__magicclass_parent__
                     args = (ins,) + args[1:]
 
                 with ins.macro.blocked():
                     # filter input arguments
-                    out = preview(*_filter(args))
+                    out = f(*_filter(args))
                 return out
 
+            return _func
+
+        def _wrapper(preview: F) -> F:
+            _filter = _get_arg_filter(preview)
+            _preview = _impl_arg_filter(preview, _filter)
             _preview.__wrapped__ = preview
             _preview.__name__ = getattr(preview, "__name__", "_preview")
             _preview.__qualname__ = getattr(preview, "__qualname__", "")
+
+            def _set_during_preview(during: F) -> F:
+                _filter = _get_arg_filter(during)
+                _during = _impl_arg_filter(during, _filter)
+                _preview._preview_context = _during
+                return during
 
             if not isinstance(target_func, FunctionGui):
                 upgrade_signature(
@@ -402,9 +416,7 @@ def impl_preview(
                 append_preview(target_func, _preview, text=text, auto_call=auto_call)
 
             # add method
-            preview.during_preview = lambda fc: setattr(
-                _preview, "_preview_context", fc
-            )
+            preview.during_preview = _set_during_preview
             return preview
 
         if mark_self:
