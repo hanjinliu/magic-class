@@ -81,13 +81,11 @@ def magicclass(
     """
     Decorator that can convert a Python class into a widget.
 
-    .. code-block:: python
-
-        @magicclass
-        class C:
-            ...
-        ui = C()
-        ui.show()  # open GUI
+    >>> @magicclass
+    >>> class C:
+    >>>     ...
+    >>> ui = C()
+    >>> ui.show()  # open GUI
 
     Parameters
     ----------
@@ -661,15 +659,12 @@ class Parameters:
         """
         Convert parameter fields into a dictionary.
 
-        .. code-block:: python
+        >>> class params(Parameters):
+        >>>     i = 1
+        >>>     j = 2
 
-            class params(Parameters):
-                i = 1
-                j = 2
-
-            p = params()
-            p.as_dict() # {"i": 1, "j": 2}
-
+        >>> p = params()
+        >>> p.as_dict() # {"i": 1, "j": 2}
         """
         params = list(self.__signature__.parameters.keys())[1:]
         return {param: getattr(self, param) for param in params}

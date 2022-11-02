@@ -103,7 +103,7 @@ def bound(obj: type[_W]) -> type: ...
 
 
 def bound(obj):
-    """Function version of Bound[...]."""
+    """Function version of ``Bound[...]``."""
     # NOTE: This could be more useful than Bound??
     if callable(obj):
         outtype = obj.__annotations__.get("return", Any)
@@ -142,13 +142,11 @@ class _BoundAlias(type):
 
     For instance, if type annotation is added like this
 
-    .. code-block:: python
+    >>> def _get_int(self, _=None) -> int:
+    >>>     return 0
 
-        def _get_int(self, _=None) -> int:
-            return 0
-
-        def func(self, x: Bound[_get_int]):
-            # do something
+    >>> def func(self, x: Bound[_get_int]):
+    >>>     # do something
 
     ``x`` will be considered to be ``Bound`` type otherwise.
     """
@@ -179,15 +177,12 @@ class Bound(metaclass=_BoundAlias):
     """
     Make Annotated type from a MagicField or a method, such as:
 
-    .. code-block:: python
-
-        from magicclass import magicclass, field
-
-        @magicclass
-        class MyClass:
-            i = field(int)
-            def func(self, v: Bound[i]):
-                ...
+    >>> from magicclass import magicclass, field
+    >>> @magicclass
+    >>> class MyClass:
+    >>>     i = field(int)
+    >>>     def func(self, v: Bound[i]):
+    >>>         ...
 
     ``Bound[value]`` is identical to ``Annotated[Any, {"bind": value}]``.
     """
@@ -267,14 +262,11 @@ class OneOf(metaclass=_OneOfAlias):
     """
     Make Annotated type from a method, such as:
 
-    .. code-block:: python
-
-        from magicclass import magicclass
-
-        @magicclass
-        class MyClass:
-            def func(self, v: OneOf[(1, 2, 3)]):
-                ...
+    >>> from magicclass import magicclass
+    >>> @magicclass
+    >>> class MyClass:
+    >>>     def func(self, v: OneOf[(1, 2, 3)]):
+    >>>         ...
 
     ``OneOf[value]`` is identical to ``Annotated[Any, {"choices": value}]``.
     """
@@ -293,9 +285,7 @@ Choices = OneOf  # alias
 
 
 class _SomeOfAlias(type):
-    """
-    This metaclass is necessary for ``mypy`` to reveal type.
-    """
+    """This metaclass is necessary for ``mypy`` to reveal type."""
 
     @overload
     def __getitem__(
@@ -338,14 +328,12 @@ class SomeOf(metaclass=_SomeOfAlias):
     """
     Make Annotated type from a method, such as:
 
-    .. code-block:: python
+    >>> from magicclass import magicclass
 
-        from magicclass import magicclass
-
-        @magicclass
-        class MyClass:
-            def func(self, v: Choices[(1, 2, 3)]):
-                ...
+    >>> @magicclass
+    >>> class MyClass:
+    >>>     def func(self, v: Choices[(1, 2, 3)]):
+    >>>         ...
 
     ``Choices[value]`` is identical to ``Annotated[Any, {"choices": value}]``.
     """
@@ -400,20 +388,17 @@ class Optional(metaclass=_OptionalAlias):
     Arguments annotated with ``Optional[int]`` will create a
     ``OptionalWidget`` with a ``SpinBox`` as an inner widget.
 
-    Examples
-    --------
+    >>> from magicclass import magicclass, set_options
+    >>> from magicclass.types import Optional
 
-    from magicclass import magicclass, set_options
-    from magicclass.types import Optional
+    >>> @magicclass
+    >>> class A:
+    >>>     @set_options(a={"options": {"min": -1}})
+    >>>     def f(self, a: Optional[int]):
+    >>>         print(a)
 
-    @magicclass
-    class A:
-        @set_options(a={"options": {"min": -1}})
-        def f(self, a: Optional[int]):
-            print(a)
-
-    ui = A()
-    ui.show()
+    >>> ui = A()
+    >>> ui.show()
     """
 
     def __new__(cls, *args, **kwargs):
@@ -445,19 +430,16 @@ class Union(metaclass=_UnionAlias):
     Arguments annotated with ``Union[int, str]`` will create a
     ``UnionWidget`` with a ``SpinBox`` and a ``LineEdit`` as inner widgets.
 
-    Examples
-    --------
+    >>> from magicclass import magicclass
+    >>> from magicclass.types import Union
 
-    from magicclass import magicclass
-    from magicclass.types import Union
+    >>> @magicclass
+    >>> class A:
+    >>>     def f(self, a: Union[int, str]):
+    >>>         print(a)
 
-    @magicclass
-    class A:
-        def f(self, a: Union[int, str]):
-            print(a)
-
-    ui = A()
-    ui.show()
+    >>> ui = A()
+    >>> ui.show()
     """
 
     def __new__(cls, *args, **kwargs):

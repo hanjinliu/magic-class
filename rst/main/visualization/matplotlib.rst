@@ -85,3 +85,30 @@ you'll have to call ``draw`` method to update the figure.
     @magicclass
     class Main:
         plt = field(Figure, options={"nrows": 1, "ncols": 2})
+
+Plot API
+--------
+
+For the simplest usage, you can use ``plot_api`` submodule. Its API is almost
+identical to those in ``matplotlib.pyplot``.
+
+.. code-block:: python
+
+    # instead of import matplotlib.pyplot as plt
+    import magicclass.plot_api as plt
+
+    plt.figure()
+    plt.plot([0, 1, 2, 3], [4, 2, 3, 1], color="red")
+    plt.show()
+
+The current figure widget is available with ``gcw()`` function. It returns the
+``Figure`` widget, which is a ``magicgui`` widget.
+
+.. code-block:: python
+
+    # add figure to a widget.
+    from magicgui.widgets import Container
+
+    fig = plt.gcw()
+    cnt = Container(widgets=[fig])
+    cnt.show()
