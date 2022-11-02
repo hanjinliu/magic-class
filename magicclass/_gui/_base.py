@@ -218,6 +218,8 @@ def check_override(cls: type):
         )
 
 
+_ANCESTORS: "dict[tuple[int, int], MagicTemplate]" = {}
+
 _T = TypeVar("_T", bound="MagicTemplate")
 _F = TypeVar("_F", bound=Callable)
 
@@ -358,9 +360,10 @@ class MagicTemplate(MutableSequence[_W], metaclass=_MagicTemplateMeta):
 
         return dock
 
-    def find_ancestor(self, ancestor: type[_T]) -> _T:
+    def find_ancestor(self, ancestor: type[_T], cache: bool = False) -> _T:
         """
         Find magic class ancestor whose type matches the input.
+        
         This method is useful when a child widget class is defined outside a magic
         class while it needs access to its parent.
 
@@ -368,12 +371,18 @@ class MagicTemplate(MutableSequence[_W], metaclass=_MagicTemplateMeta):
         ----------
         ancestor : type of MagicTemplate
             Type of ancestor to search for.
+        cache : bool, default is False
+            If true, the result will be cached. Caching is not safe if the widget is
+            going to be used as a child of other widgets.
 
         Returns
         -------
         MagicTemplate
             Magic class object if found.
         """
+        if cache and (anc := _ANCESTORS.get((id(self), id(ancestor)), None)):
+            return anc
+
         if not isinstance(ancestor, type):
             raise TypeError(
                 "The first argument of 'find_ancestor' must be a type but got "
@@ -388,6 +397,8 @@ class MagicTemplate(MutableSequence[_W], metaclass=_MagicTemplateMeta):
                     f"Magic class {ancestor.__name__} not found. {ancestor.__name__} "
                     f"is not an ancestor of {self.__class__.__name__}"
                 )
+        if cache:
+            _ANCESTORS[(id(self), id(ancestor))] = current_self
         return current_self
 
     def objectName(self) -> str:
@@ -546,6 +557,7 @@ class MagicTemplate(MutableSequence[_W], metaclass=_MagicTemplateMeta):
                     else:
                         del child_instance[index - 1]
                         child_instance._fast_insert(index, widget)
+                    widget.visible = True
 
                 else:
                     widget.visible = copy

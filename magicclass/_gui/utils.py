@@ -8,9 +8,13 @@ from magicgui.widgets._bases.value_widget import UNSET
 from magicgui.type_map import get_widget_class
 from magicgui.signature import magic_signature, MagicParameter
 
-if _magicgui_version >= "0.6.0":
+MAGICGUI_BEFORE_0_6 = _magicgui_version < "0.6"
+
+if not MAGICGUI_BEFORE_0_6:
     from functools import partial
 
+    # since magicgui 0.6, raise_on_unknown is newly implemented, which caused
+    # inconsistency. See https://github.com/napari/magicgui/pull/476
     get_widget_class = partial(get_widget_class, raise_on_unknown=False)
 
 from macrokit import Symbol

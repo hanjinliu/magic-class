@@ -262,6 +262,10 @@ class ClassGuiBase(BaseGui[Widget]):
                         self._fast_insert(n_insert, widget)
                         n_insert += 1
 
+                        # NOTE: Function GUI is invisible by some reason...
+                        # See https://github.com/hanjinliu/magic-class/issues/53
+                        widget.visible = True
+
                     _hist.append((name, str(type(attr)), type(widget).__name__))
 
             except Exception as e:
@@ -338,6 +342,11 @@ class ClassGuiBase(BaseGui[Widget]):
 
 
 def find_window_ancestor(widget: Widget) -> SubWindowsClassGui:
+    """
+    Try to find a window ancestor of the given widget.
+
+    This function is used only for subwindows.
+    """
     parent_self = widget
     while (parent := getattr(parent_self, "__magicclass_parent__", None)) is not None:
         parent_self = parent
