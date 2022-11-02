@@ -257,10 +257,7 @@ def _append_auto_call_preview(self: FunctionGui, f: Callable, text: str = "Previ
             )
 
         self.calling.connect(context.exit)
-
-        @self.called.connect
-        def _disable_auto_call():
-            cbox.value = False
+        self.called.connect_setattr(cbox, "value", False)  # must disable auto-call!
 
     return f
 
