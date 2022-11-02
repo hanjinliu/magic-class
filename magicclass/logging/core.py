@@ -1,3 +1,4 @@
+from __future__ import annotations
 import logging
 from functools import wraps
 from ..widgets import Logger

@@ -381,8 +381,11 @@ def impl_preview(
                     while ins.__class__.__name__ != prev_ns:
                         ins = ins.__magicclass_parent__
                     args = (ins,) + args[1:]
-                # filter input arguments
-                return preview(*_filter(args))
+
+                with ins.macro.blocked():
+                    # filter input arguments
+                    out = preview(*_filter(args))
+                return out
 
             _preview.__wrapped__ = preview
             _preview.__name__ = getattr(preview, "__name__", "_preview")
