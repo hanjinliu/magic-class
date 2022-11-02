@@ -218,7 +218,7 @@ def check_override(cls: type):
         )
 
 
-_ANCESTORS: "dict[tuple[int, int], MagicTemplate]" = {}
+_ANCESTORS: dict[tuple[int, int], MagicTemplate] = {}
 
 _T = TypeVar("_T", bound="MagicTemplate")
 _F = TypeVar("_F", bound=Callable)
@@ -363,7 +363,7 @@ class MagicTemplate(MutableSequence[_W], metaclass=_MagicTemplateMeta):
     def find_ancestor(self, ancestor: type[_T], cache: bool = False) -> _T:
         """
         Find magic class ancestor whose type matches the input.
-        
+
         This method is useful when a child widget class is defined outside a magic
         class while it needs access to its parent.
 
@@ -1110,7 +1110,7 @@ def convert_attributes(cls: type[_T], hide: tuple[type, ...]) -> dict[str, Any]:
         New namespace.
     """
     _dict: dict[str, Callable] = {}
-    _pass_type = (property, classmethod, staticmethod, type, Widget)
+    _pass_type = (property, classmethod, staticmethod, type, Widget, MagicField)
     mro = [c for c in cls.__mro__ if c not in hide]
     for subcls in reversed(mro):
         for name, obj in subcls.__dict__.items():

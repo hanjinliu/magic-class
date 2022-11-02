@@ -25,7 +25,15 @@ from .wrappers import (
     mark_on_called,
 )
 
-from .fields import field, vfield, widget_property, FieldGroup, HasFields, dataclass_gui
+from .fields import (
+    field,
+    vfield,
+    widget_property,
+    magicproperty,
+    FieldGroup,
+    HasFields,
+    dataclass_gui,
+)
 from ._gui._base import defaults, MagicTemplate, PopUpMode
 from ._gui.keybinding import Key
 from ._gui._icon import Icon
@@ -56,6 +64,7 @@ __all__ = [
     "field",
     "vfield",
     "widget_property",
+    "magicproperty",
     "FieldGroup",
     "HasFields",
     "dataclass_gui",

@@ -5,5 +5,6 @@ from ._fields import (
     MagicField,
     MagicValueField,
     method_as_getter,
+    magicproperty,
 )
 from ._group import HasFields, FieldGroup, dataclass_gui

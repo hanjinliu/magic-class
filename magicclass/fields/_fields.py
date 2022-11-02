@@ -13,7 +13,7 @@ from pathlib import Path
 import datetime
 import sys
 from enum import Enum
-from magicgui.widgets import create_widget
+from magicgui.widgets import create_widget, FunctionGui
 from magicgui.widgets._bases import Widget, ValueWidget, ContainerWidget
 from magicgui.widgets._bases.value_widget import UNSET
 
@@ -523,6 +523,114 @@ class MagicValueField(MagicField[_W, _V]):
 
     def _presethook(self, obj, value):
         return value
+
+
+class magicproperty(MagicField[FunctionGui, _V]):
+    """
+    A property-like descriptor that returns a field for magicgui widgets.
+
+    For instance, the following code
+
+    >>> @magicproperty
+    >>> def x(self):
+    >>>     return self._x
+
+    >>> @x.setter
+    >>> def x(self, val: int):
+    >>>     self._x = val
+
+    will create a magicgui widget with a button "Set value".
+    """
+
+    def __init__(
+        self,
+        getter: Callable[[Any], _V] | None = None,
+        /,
+        name: str | None = None,
+        label: str | None = None,
+        annotation: Any = None,
+        widget_type: type | str | None = None,
+        auto_call: bool = False,
+        layout: str = "horizontal",
+        call_button: bool | str | None = None,
+        options: dict[str, Any] | None = None,
+        record: bool = True,
+    ) -> None:
+        self._fget = getter
+        self._fset = None
+        self._fdel = None
+
+        if call_button is None:
+            call_button = "Set value"
+
+        def _create_function_gui(obj):
+            fgui = FunctionGui(
+                self._fset,
+                call_button=call_button,
+                layout=layout,
+                auto_call=auto_call,
+                name=self.name,
+            )
+            fgui[0].bind(obj)
+            fgui.margins = (0, 0, 0, 0)
+            return fgui
+
+        super().__init__(
+            name=name,
+            label=label,
+            annotation=annotation,
+            widget_type=widget_type,
+            options=options,
+            record=record,
+            constructor=_create_function_gui,
+        )
+
+    def copy(self) -> Self[_V]:
+        raise NotImplementedError
+
+    def getter(self, fget: Callable[[Any], _V]) -> magicproperty[_V]:
+        self._fget = fget
+        if return_annotation := fget.__annotations__.get("return", None):
+            self.annotation = return_annotation
+        return self
+
+    __call__ = getter
+
+    def setter(self, fset: Callable[[Any, _V], None]) -> magicproperty[_V]:
+        self._fset = fset
+        import inspect
+        from typing_extensions import Annotated
+
+        _self, _val = inspect.signature(fset).parameters.values()
+        options = self.options
+        if wtype := self.widget_type:
+            options.update(widget_type=wtype)
+        if label := self.label:
+            options.update(label=label)
+        if annotation := self.annotation:
+            options.update(annotation=annotation)
+
+        fset.__annotations__.update({_val.name: Annotated[_val.annotation, options]})
+
+        return self
+
+    def deleter(self, fdel: Callable[[Any], None]) -> magicproperty[_V]:
+        self._fdel = fdel
+        return self
+
+    def __get__(self, obj: Any, objtype: Any = None) -> _V:
+        if obj is None:
+            return self
+        return self._fget(obj)
+
+    def __set__(self, obj: Any, value: _V) -> None:
+        self._fset(obj, value)
+
+    def __delete__(self, obj: Any) -> None:
+        self._fdel(obj)
+
+    def not_ready(self) -> bool:
+        return self._fset is None
 
 
 # magicgui symple types
