@@ -557,6 +557,7 @@ class MagicTemplate(MutableSequence[_W], metaclass=_MagicTemplateMeta):
                     else:
                         del child_instance[index - 1]
                         child_instance._fast_insert(index, widget)
+                    widget.visible = True
 
                 else:
                     widget.visible = copy
@@ -1022,10 +1023,12 @@ def _build_mgui(widget_: Action | PushButtonPlus, func: Callable, parent: BaseGu
         mgui = FunctionGuiPlus(
             func, call_button, layout=layout, labels=labels, auto_call=auto_call
         )
-        preview = opt.get("preview", None)
-        if preview is not None:
-            btn_text, previewer = preview
-            mgui.append_preview(previewer.__get__(parent), btn_text)
+        preview_setting = opt.get("preview", None)
+        if preview_setting is not None:
+            btn_text, is_auto_call, previewer = preview_setting
+            mgui.append_preview(
+                previewer.__get__(parent), btn_text, auto_call=is_auto_call
+            )
 
     except Exception as e:
         msg = (

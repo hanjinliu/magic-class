@@ -98,7 +98,8 @@ class MenuGuiBase(ContainerLikeGui):
                     widget = getattr(self, name, None)
 
                 if isinstance(widget, FunctionGui):
-                    widget[0].bind(self)  # set self to the first argument
+                    widget = attr.copy()
+                    widget[0].bind(self)  # bind self to the first argument
 
                 elif isinstance(widget, BaseGui):
                     connect_magicclasses(self, widget, name)
