@@ -17,6 +17,31 @@ def test_find_ancestor():
     ui.b.f()
     assert ui.i.value == 10
 
+def test_find_ancestor_cahce():
+    @magicclass
+    class B(MagicTemplate):
+        def f(self, n: int):
+            parent = self.find_ancestor(A, cache=True)
+            parent.i.value = n
+
+    @magicclass
+    class A(MagicTemplate):
+        i = field(int)
+        b = field(B)
+
+    ui = A()
+    ui2 = A()
+    assert ui.i.value == 0
+    ui.b.f(n=10)
+    assert ui.i.value == 10
+    assert ui2.i.value == 0
+    ui.b.f(n=20)
+    assert ui.i.value == 20
+    assert ui2.i.value == 0
+    ui.b.f(n=30)
+    assert ui.i.value == 30
+    assert ui2.i.value == 0
+
 def test_add_dock_widget():
     @magicclass(widget_type="mainwindow")
     class Main(MagicTemplate):
