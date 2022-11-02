@@ -33,6 +33,32 @@ def subplot(*args):
     return figure().subplot(*args)
 
 
+@wraps(plt.subplots)
+def subplots(
+    nrows=1,
+    ncols=1,
+    *,
+    sharex=False,
+    sharey=False,
+    squeeze=True,
+    subplot_kw=None,
+    gridspec_kw=None,
+    **fig_kw,
+):
+    fig = figure(**fig_kw)
+    fig.clf()
+    axs = fig.subplots(
+        nrows=nrows,
+        ncols=ncols,
+        sharex=sharex,
+        sharey=sharey,
+        squeeze=squeeze,
+        subplot_kw=subplot_kw,
+        gridspec_kw=gridspec_kw,
+    )
+    return fig, axs
+
+
 @wraps(plt.gcf)
 def gcf():
     """Get current figure."""
@@ -191,3 +217,8 @@ def autoscale(*args, **kwargs):
 @wraps(plt.grid)
 def grid(*args, **kwargs):
     return gcw().grid(*args, **kwargs)
+
+
+def draw():
+    """Draw current figure widget."""
+    return gcw().draw()
