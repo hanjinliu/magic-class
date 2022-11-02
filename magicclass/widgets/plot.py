@@ -227,6 +227,12 @@ class Figure(FreeWidget):
         return out
 
     @_inject_mpl_docs
+    def bar(self, *args, **kwargs) -> None:
+        bars = self.ax.bar(*args, **kwargs)
+        self.draw()
+        return bars
+
+    @_inject_mpl_docs
     def text(self, *args, **kwargs) -> Text:
         text = self.ax.text(*args, **kwargs)
         self.draw()
@@ -353,6 +359,12 @@ class Figure(FreeWidget):
     @_inject_mpl_docs
     def twiny(self) -> Axes:
         return self.ax.twiny()
+
+    @_inject_mpl_docs
+    def grid(self, *args, **kwargs) -> None:
+        self.ax.grid(*args, **kwargs)
+        self.draw()
+        return None
 
     @_inject_mpl_docs
     def box(self, on=None) -> None:
