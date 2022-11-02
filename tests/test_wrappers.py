@@ -103,20 +103,22 @@ def test_nogui():
     assert isinstance(ui["f"], MethodType)
     assert isinstance(ui["g"], PushButton)
 
-def test_mark_preview():
-    from magicclass import mark_preview
+def test_impl_preview():
+    from magicclass import impl_preview
 
     mock = MagicMock()
     @magicclass
     class A:
+        @impl_preview(text="preview 0")
         def f0(self, x: int, y: str = "v"):
             mock(x=x, y=y)
 
+        @impl_preview(text="preview 1")
         def f1(self, x: int = 10):
             mock(x=x)
 
-        @mark_preview(f0, text="preview 0")
-        @mark_preview(f1, text="preview 1")
+        @impl_preview(f0, text="preview 0")
+        @impl_preview(f1, text="preview 1")
         def _preview(self, x):
             mock(x=x, preview=True)
 
@@ -147,20 +149,25 @@ def test_mark_preview():
     mock.assert_called_with(x=10)
     assert str(ui.macro[-1]) == "ui.f1(x=10)"
 
+
+def test_impl_preview_nested():
+    from magicclass import impl_preview
     mock = MagicMock()
 
     @magicclass
     class A:
         @magicclass
         class B:
+            @impl_preview(text="preview 0")
             def f0(self, x: int, y: str = "v"):
                 mock(type=type(self), x=x, y=y)
 
+            @impl_preview(text="preview 1")
             def f1(self, x: int = 10):
                 mock(type=type(self), x=x)
 
-        @mark_preview(B.f0, text="preview 0")
-        @mark_preview(B.f1, text="preview 1")
+        @impl_preview(B.f0, text="preview 0")
+        @impl_preview(B.f1, text="preview 1")
         def _preview(self, x):
             mock(type=type(self), x=x, preview=True)
 
@@ -190,6 +197,79 @@ def test_mark_preview():
     f1_gui[-1].changed()
     mock.assert_called_with(type=type(ui.B), x=10)
     assert str(ui.macro[-1]) == "ui.B.f1(x=10)"
+
+def test_impl_preview_using_itself():
+    from magicclass import impl_preview
+
+    mock = MagicMock()
+
+    @magicclass
+    class A:
+        @impl_preview()
+        def f(self, i: int):
+            mock(i)
+
+    ui = A()
+    f_gui = get_function_gui(ui, "f")
+    assert f_gui[-2].widget_type == "PushButton"
+
+    mock.assert_not_called()
+
+    f_gui[-2].changed()
+    mock.assert_called_with(0)
+    assert str(ui.macro[-1]).startswith("#")
+    mock.reset_mock()
+
+    f_gui[-1].changed()
+    mock.assert_called_with(0)
+    assert str(ui.macro[-1]) == "ui.f(i=0)"
+
+
+def test_impl_preview_auto_call_and_context():
+    from magicclass import impl_preview
+
+    @magicclass
+    class A:
+        def __init__(self):
+            self._result = 0
+
+        @impl_preview(auto_call=True)
+        def f(self, dx: int):
+            self._result += dx
+
+        @f.during_preview
+        def _preview(self):
+            old = self._result
+            yield
+            self._result = old
+
+    ui = A()
+    f_gui = get_function_gui(ui, "f")
+    check_box = f_gui[-2]
+    call_button = f_gui[-1]
+    spinbox = f_gui[0]
+
+    # changing parameters without preview
+    spinbox.value = 1
+    assert ui._result == 0
+
+    # turn on preview
+    check_box.value = True
+    assert ui._result == 1
+
+    spinbox.value = 2
+    assert ui._result == 2
+
+    # turn off
+    check_box.value = False
+    assert ui._result == 0
+
+    spinbox.value = 1
+    assert ui._result == 0
+
+    call_button.changed()
+    assert ui._result == 1
+
 
 def test_confirm():
     from magicclass import confirm
