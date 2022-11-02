@@ -292,14 +292,17 @@ if TYPE_CHECKING:
     from typing import Protocol
 
     class PreviewFunction(Protocol):
+        __name__: str
+        __qualname__: str
+
         def __call__(self, *args, **kwargs):
             ...
 
         def during_preview(self, f: F) -> F:
-            ...
+            """Wrapped function will be used as a context manager during preview."""
 
 
-def mark_preview(
+def impl_preview(
     function: Callable | None = None,
     text: str = "Preview",
     auto_call: bool = False,
@@ -318,7 +321,7 @@ def mark_preview(
         def func(self, path: Path):
             ...
 
-        @mark_preview(func)
+        @impl_preview(func)
         def _func_prev(self, path: Path):
             with open(path, mode="r") as f:
                 print(f.read())
@@ -411,6 +414,8 @@ def mark_preview(
         mark_self = True
         return _outer_wrapper
 
+
+mark_preview = impl_preview
 
 _Fn = TypeVar("_Fn", bound=Callable[[FunctionGui], Any])
 
