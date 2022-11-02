@@ -238,7 +238,7 @@ def test_impl_preview_auto_call_and_context():
             self._result += dx
 
         @f.during_preview
-        def _preview(self, x):
+        def _preview(self, dx):
             old = self._result
             yield
             self._result = old
