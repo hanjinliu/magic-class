@@ -131,7 +131,7 @@ class MagicField(_FieldObject, Generic[_W, _V]):
     def record(self) -> bool:
         return self._record
 
-    def construct(self, obj) -> Widget:
+    def construct(self, obj) -> _W:
         """Construct a widget."""
         constructor = self.constructor
         _arg_choices = self.options.get("choices", None)
@@ -183,12 +183,9 @@ class MagicField(_FieldObject, Generic[_W, _V]):
         from .._gui import MagicTemplate
 
         obj_id = id(obj)
-        if obj_id in self._guis.keys():
-            widget = self._guis[obj_id]
-        else:
-            widget = self.construct(obj)
+        if (widget := self._guis.get(obj_id, None)) is None:
+            self._guis[obj_id] = widget = self.construct(obj)
             widget.name = self.name
-            self._guis[obj_id] = widget
 
             if isinstance(widget, (ValueWidget, ContainerWidget)):
                 if isinstance(obj, MagicTemplate):
@@ -539,7 +536,7 @@ class magicproperty(MagicField[FunctionGui, _V]):
     >>> def x(self, val: int):
     >>>     self._x = val
 
-    will create a magicgui widget with a button "Set value".
+    will create a magicgui widget with a button "Set".
     """
 
     def __init__(
@@ -561,7 +558,7 @@ class magicproperty(MagicField[FunctionGui, _V]):
         self._fdel = None
 
         if call_button is None:
-            call_button = "Set value"
+            call_button = "Set"
 
         def _create_function_gui(obj):
             fgui = FunctionGui(
@@ -590,6 +587,8 @@ class magicproperty(MagicField[FunctionGui, _V]):
 
     def getter(self, fget: Callable[[Any], _V]) -> magicproperty[_V]:
         self._fget = fget
+        if self.label is None:
+            self.label = fget.__name__.replace("_", " ")
         if return_annotation := fget.__annotations__.get("return", None):
             self.annotation = return_annotation
         return self
@@ -598,15 +597,16 @@ class magicproperty(MagicField[FunctionGui, _V]):
 
     def setter(self, fset: Callable[[Any, _V], None]) -> magicproperty[_V]:
         self._fset = fset
+        if self.label is None:
+            self.label = fset.__name__.replace("_", " ")
         import inspect
         from typing_extensions import Annotated
 
         _self, _val = inspect.signature(fset).parameters.values()
-        options = self.options
+        options = self.options.copy()
         if wtype := self.widget_type:
             options.update(widget_type=wtype)
-        if label := self.label:
-            options.update(label=label)
+        options.update(label=self.label)
         if annotation := self.annotation:
             options.update(annotation=annotation)
 
@@ -621,16 +621,44 @@ class magicproperty(MagicField[FunctionGui, _V]):
     def __get__(self, obj: Any, objtype: Any = None) -> _V:
         if obj is None:
             return self
-        return self._fget(obj)
+        if self._fget is not None:
+            return self._fget(obj)
+        raise AttributeError("unreadable attribute")
 
     def __set__(self, obj: Any, value: _V) -> None:
-        self._fset(obj, value)
+        if obj is None:
+            raise AttributeError(f"Cannot set {self.__class__.__name__}.")
+        # first set the value on the widget to check if it's valid
+        fgui = self.get_widget(obj)
+        with fgui.changed.blocked():
+            param_widget: ValueWidget = fgui[1]
+            old_value = param_widget.value
+            param_widget.value = value
+            try:
+                self._fset(obj, value)
+            except Exception:
+                param_widget.value = old_value
+                raise
+        fgui.called.emit(value)
+        return None
 
     def __delete__(self, obj: Any) -> None:
-        self._fdel(obj)
+        if self._fdel is not None:
+            return self._fdel(obj)
+        raise AttributeError("can't delete attribute")
 
     def not_ready(self) -> bool:
         return self._fset is None
+
+    def get_widget(self, obj: Any) -> _W:
+        """A light-weight version."""
+        obj_id = id(obj)
+        if (widget := self._guis.get(obj_id, None)) is None:
+            self._guis[obj_id] = widget = self.construct(obj)
+            widget.name = self.name
+            for callback in self._callbacks:
+                widget.called.connect(define_callback(obj, callback))
+        return widget
 
 
 # magicgui symple types
