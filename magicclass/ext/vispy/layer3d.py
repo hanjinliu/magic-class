@@ -20,6 +20,18 @@ from ...widgets import FloatRangeSlider
 from ...fields import HasFields, vfield
 from ...types import Color
 
+# Copied from napari/_vispy/utils/gl.py
+BLENDING_MODES = {
+    'opaque': dict(preset='opaque'),
+    'translucent': dict(preset='translucent'),
+    'translucent_no_depth': dict(
+        depth_test=False,
+        cull_face=False,
+        blend=True,
+        blend_func=('src_alpha', 'one_minus_src_alpha', 'zero', 'one'),
+    ),
+    'additive': dict(preset='additive'),
+}
 
 class Image(LayerItem, HasFields):
     RENDERINGS = [
@@ -119,6 +131,7 @@ class Image(LayerItem, HasFields):
 
     @property
     def data(self) -> np.ndarray:
+        """Image data."""
         return self._data
 
     @data.setter
@@ -415,8 +428,9 @@ class Curve3D(LayerItem, HasFields):
         self,
         data,
         viewbox: ViewBox,
-        color=None,
-        width=1.0,
+        color: Color = None,
+        width: float = 1.0,
+        blending: str = "translucent",
         name: str | None = None,
     ):
         super().__init__()
@@ -427,6 +441,7 @@ class Curve3D(LayerItem, HasFields):
             pos=data, color=color, width=width, parent=self._viewbox.scene
         )
         self.data = data
+        self.blending = blending
 
     @property
     def data(self) -> np.ndarray:
@@ -446,6 +461,7 @@ class Curve3D(LayerItem, HasFields):
     # fmt: off
     color = vfield(Color)
     width = vfield(1.0, widget_type=FloatSlider, options={"min": 0.5, "max": 10.0})
+    blending = vfield("translucent", options={"choices": BLENDING_MODES.keys()})
     # fmt: on
 
     @color.connect
@@ -455,6 +471,13 @@ class Curve3D(LayerItem, HasFields):
     @width.connect
     def _on_width_change(self, value):
         return self._visual.set_data(width=value)
+    
+    @blending.connect
+    def _on_blending_change(self, value):
+        blending_kwargs = BLENDING_MODES[value]
+        self._visual.set_gl_state(**blending_kwargs)
+        self._visual.update()
+        return None
 
 
 class Points3D(LayerItem, HasFields):
@@ -466,6 +489,7 @@ class Points3D(LayerItem, HasFields):
         edge_color: Color | None = None,
         edge_width: float = 0.0,
         size: float = 1.0,
+        blending: str = "translucent",
         spherical: bool = True,
         name: str | None = None,
     ):
@@ -475,11 +499,12 @@ class Points3D(LayerItem, HasFields):
         self._visual: MarkersVisual = visuals.Markers(
             scaling=True, parent=self._viewbox.scene, spherical=True
         )
-        self.data = data
+        self.data = data[:, ::-1]
         self.face_color = face_color
         self.edge_color = edge_color
         self.edge_width = edge_width
         self.size = size
+        self.blending = blending
         self.spherical = spherical
 
     @property
@@ -505,6 +530,7 @@ class Points3D(LayerItem, HasFields):
     edge_color = vfield(Color)
     edge_width = vfield(0.0, options={"min": 0.0, "max": 5.0, "step": 0.5})
     size = vfield(5.0, options={"min": 1.0, "max": 50.0, "step": 0.5})
+    blending = vfield("translucent", options={"choices": BLENDING_MODES.keys()})
     spherical = vfield(True)
     # fmt: on
 
@@ -560,7 +586,13 @@ class Points3D(LayerItem, HasFields):
             scaling=True,
             symbol=self._visual.symbol,
         )
-
+    
+    @blending.connect
+    def _on_blending_change(self, value):
+        blending_kwargs = BLENDING_MODES[value]
+        self._visual.set_gl_state(**blending_kwargs)
+        self._visual.update()
+        return None
 
     def _get_bbox(self) -> Tuple[np.ndarray, np.ndarray]:
         mins = np.min(self.data, axis=0)
@@ -589,26 +621,29 @@ class Arrows3D(LayerItem, HasFields):
         width: float = 0.0,
         arrow_type: str = "stealth",
         arrow_size: float = 1.0,
+        blending: str = "translucent",
         name: str | None = None,
     ):
         super().__init__()
         self._name = name
         self._viewbox = viewbox
-        data = data[:, ::-1]  # vispy uses xyz, not zyx
+        data = data
         self._visual: ArrowVisual = visuals.Arrow(
             parent=self._viewbox.scene, connect="segments"
         )
-        self.data = data
+        self.data = data[:, :, ::-1]
         self.color = color
         self.width = width
         self.arrow_type = arrow_type
         self.arrow_size = arrow_size
+        self.blending = blending
 
     # fmt: off
     color = vfield(Color)
     width = vfield(0.0, widget_type=FloatSlider, options={"min": 0.0, "max": 5.0})
     arrow_type = vfield("stealth", options={"choices": _ARROW_TYPES})
     arrow_size = vfield(1.0, options={"min": 0.5, "max": 100})
+    blending = vfield("translucent", options={"choices": BLENDING_MODES.keys()})
     # fmt: on
 
     @property
@@ -619,7 +654,6 @@ class Arrows3D(LayerItem, HasFields):
     def data(self, value: np.ndarray) -> None:
         # value.shape == (N, P, 3)
         arrows = value[:, -2:].reshape(-1, 6)
-        arrows = np.concatenate([arrows[:, 3:], arrows[:, :3]], axis=1)
         self._visual.set_data(pos=value, arrows=arrows)
         self._data = value
         self._visual.update()
@@ -642,6 +676,13 @@ class Arrows3D(LayerItem, HasFields):
     def _on_arrow_size_change(self, value):
         self._visual.arrow_size = value
         self._visual.update()
+
+    @blending.connect
+    def _on_blending_change(self, value):
+        blending_kwargs = BLENDING_MODES[value]
+        self._visual.set_gl_state(**blending_kwargs)
+        self._visual.update()
+        return None
 
     def _get_bbox(self) -> Tuple[np.ndarray, np.ndarray]:
         mins = np.min(self.data, axis=(0, 1))

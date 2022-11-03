@@ -44,7 +44,7 @@ class Has3DViewBox(HasViewBox):
         cmap: str = "grays",
         gamma: float = 1.0,
         interpolation: str = "linear",
-    ):
+    ) -> layer3d.Image:
         """
         Add a 3D array as a volumic image.
 
@@ -98,7 +98,7 @@ class Has3DViewBox(HasViewBox):
         face_color: Color | None = None,
         edge_color: Color | None = None,
         shading: str = "smooth",
-    ):
+    ) -> layer3d.IsoSurface:
         """
         Add a 3D array as a iso-surface.
 
@@ -144,7 +144,7 @@ class Has3DViewBox(HasViewBox):
         face_color: Color | None = None,
         edge_color: Color | None = None,
         shading: str = "smooth",
-    ):
+    ) -> layer3d.Surface:
         """
         Add vertices, faces and optional values as a surface.
 
@@ -178,7 +178,8 @@ class Has3DViewBox(HasViewBox):
         data: ArrayLike,
         color: Color = "white",
         width: float = 1,
-    ):
+        blending: str = "translucent",
+    ) -> layer3d.Curve3D:
         """
         Add a (N, 3) array as a curve.
 
@@ -190,6 +191,8 @@ class Has3DViewBox(HasViewBox):
             Color of the curve.
         width : float, default is 1.
             Width of the curve line.
+        blending : str, default is "translucent"
+            Blending mode of the layer.
 
         Returns
         -------
@@ -201,6 +204,7 @@ class Has3DViewBox(HasViewBox):
             viewbox=self._viewbox,
             color=color,
             width=width,
+            blending=blending,
         )
         return self.add_layer(curve)
 
@@ -209,9 +213,11 @@ class Has3DViewBox(HasViewBox):
         data: ArrayLike,
         face_color: Color = "white",
         edge_color: Color = "white",
+        edge_width: float = 0.0,
         size: float = 5.0,
+        blending: str = "translucent",
         spherical: bool = True,
-    ):
+    ) -> layer3d.Points3D:
         """
         Add a (N, 3) array as a point cloud.
 
@@ -223,8 +229,12 @@ class Has3DViewBox(HasViewBox):
             Face color of the points.
         edge_color : Color, optional
             Edge color of the points.
+        edge_width : float, default is 0.0
+            Edge width of the points.
         size : float, default is 1.0
             Size of the points.
+        blending : str, default is "translucent"
+            Blending mode of the layer.
         spherical : bool, default is True
             Whether the points are rendered as spherical objects.
 
@@ -238,7 +248,9 @@ class Has3DViewBox(HasViewBox):
             viewbox=self._viewbox,
             face_color=face_color,
             edge_color=edge_color,
+            edge_width=edge_width,
             size=size,
+            blending=blending,
             spherical=spherical,
         )
         return self.add_layer(points)
@@ -248,9 +260,10 @@ class Has3DViewBox(HasViewBox):
         data: ArrayLike,
         arrow_type: str = "stealth",
         arrow_size: float = 5.0,
-        color="white",
+        color: Color ="white",
         width: float = 1.0,
-    ):
+        blending: str = "translucent",
+    ) -> layer3d.Arrows3D:
         """
         Add a (N, P, 3) array as a set of arrows.
 
@@ -270,6 +283,8 @@ class Has3DViewBox(HasViewBox):
             Color of the arrow and the bodies.
         width : float, default is 1.0
             Width of the arrow bodies.
+        blending : str, default is "translucent"
+            Blending mode of the layer.
 
         Returns
         -------
@@ -283,6 +298,7 @@ class Has3DViewBox(HasViewBox):
             arrow_size=arrow_size,
             color=color,
             width=width,
+            blending=blending,
         )
         return self.add_layer(arrows)
 
