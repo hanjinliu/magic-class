@@ -1,5 +1,0 @@
-=================
-Use magicproperty
-=================
-
-In :mod:`magicclass`, properties will not be conveted into widgets.

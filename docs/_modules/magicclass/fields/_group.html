@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.fields._group &mdash; magic-class 0.6.12.dev0 documentation</title>
+  <title>magicclass.fields._group &mdash; magic-class 0.6.12 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.12.dev0
+                0.6.12
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -42,10 +42,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../main/quick_start.html">Quick Start</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../main/chap_basics.html">Basics</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../main/chap_make_better.html">Make Your GUI Better</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../main/chap_data_vis.html">Data Visualization</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../main/chap_advanced.html">Advanced Topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../main/basics/index.html">Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../main/make_better/index.html">Make Your GUI Better</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../main/visualization/index.html">Data Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../main/advanced/index.html">Advanced Topics</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../main/best_practice.html">Best Practice</a></li>
@@ -494,6 +494,10 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">widgets</span> <span class="o">=</span> <span class="p">[</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">Container</span><span class="p">(</span><span class="n">layout</span><span class="o">=</span><span class="n">layout</span><span class="p">,</span> <span class="n">widgets</span><span class="o">=</span><span class="n">widgets</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create a container and show it.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">as_container</span><span class="p">()</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">run</span><span class="o">=</span><span class="n">run</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">emit_all</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Emit all the signals with current value.&quot;&quot;&quot;</span>

@@ -64,7 +64,7 @@ creation.
     ui = A()
     ui.show()
 
-.. image:: ../image/fig_9-1.png
+.. image:: ../images/fig_9-1.png
 
 Values are updated after the "Set" button is clicked, or set programmatically.
 
