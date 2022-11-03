@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.ext.vispy package &mdash; magic-class 0.6.11 documentation</title>
+  <title>magicclass.ext.vispy package &mdash; magic-class 0.6.12.dev0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/columns.css" type="text/css" />
@@ -19,8 +19,6 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="magicclass.ext.vispy.tests package" href="magicclass.ext.vispy.tests.html" />
-    <link rel="prev" title="magicclass.ext.qtconsole package" href="magicclass.ext.qtconsole.html" />
 </head>
 
 <body class="wy-body-for-nav">
@@ -31,7 +29,7 @@
             <a href="../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.11
+                0.6.12.dev0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -44,29 +42,11 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../main/quick_start.html">Quick Start</a></li>
 </ul>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../main/chap_basics.html">Basics</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../main/chap_make_better.html">Make Your GUI Better</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../main/chap_data_vis.html">Data Visualization</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../main/chap_advanced.html">Advanced Topics</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../main/freewidget.html">Convert QtWidgets into a Magic Widget</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../main/keybinding.html">Define Custom Keybindings</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../main/customize_macro.html">Customize Macro Recording</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../main/class_inheritance.html">Inherit Magic Class</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="../main/api.html">API References</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="magicclass.html">magicclass package</a></li>
-<li class="toctree-l3 current"><a class="reference internal" href="magicclass.ext.html">magicclass.ext package</a><ul class="current">
-<li class="toctree-l4 current"><a class="reference internal" href="magicclass.ext.html#subpackages">Subpackages</a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.html#module-magicclass.ext">Module contents</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.utils.html">magicclass.utils package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.widgets.html">magicclass.widgets package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.widgets.pywidgets.html">magicclass.widgets.pywidgets package</a></li>
-</ul>
-</li>
-</ul>
-</li>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../main/basics/index.html">Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/make_better/index.html">Make Your GUI Better</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/visualization/index.html">Data Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/advanced/index.html">Advanced Topics</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../main/best_practice.html">Best Practice</a></li>
@@ -86,10 +66,6 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../main/chap_advanced.html">Advanced Topics</a> &raquo;</li>
-          <li><a href="../main/api.html">API References</a> &raquo;</li>
-          <li><a href="magicclass.html">magicclass package</a> &raquo;</li>
-          <li><a href="magicclass.ext.html">magicclass.ext package</a> &raquo;</li>
       <li>magicclass.ext.vispy package</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/apidoc/magicclass.ext.vispy.rst.txt" rel="nofollow"> View page source</a>
@@ -393,6 +369,45 @@ that are closer than the chosen epsilon from it.</p>
 <section id="module-magicclass.ext.vispy.layer3d">
 <span id="magicclass-ext-vispy-layer3d-module"></span><h2>magicclass.ext.vispy.layer3d module<a class="headerlink" href="#module-magicclass.ext.vispy.layer3d" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
+<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.Arrows3D">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vispy.layer3d.</span></span><span class="sig-name descname"><span class="pre">Arrows3D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">np.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">viewbox</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ViewBox</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Color</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arrow_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'stealth'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arrow_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vispy/layer3d.html#Arrows3D"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Arrows3D" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.vispy._base.LayerItem</span></code>, <a class="reference internal" href="magicclass.html#magicclass.HasFields" title="magicclass.fields._group.HasFields"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.fields._group.HasFields</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.Arrows3D.arrow_size">
+<span class="sig-name descname"><span class="pre">arrow_size</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Arrows3D.arrow_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.Arrows3D.arrow_type">
+<span class="sig-name descname"><span class="pre">arrow_type</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Arrows3D.arrow_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.Arrows3D.color">
+<span class="sig-name descname"><span class="pre">color</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Arrows3D.color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.Arrows3D.data">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">data</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Arrows3D.data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.Arrows3D.width">
+<span class="sig-name descname"><span class="pre">width</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Arrows3D.width" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.Curve3D">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vispy.layer3d.</span></span><span class="sig-name descname"><span class="pre">Curve3D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">viewbox</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ViewBox</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vispy/layer3d.html#Curve3D"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Curve3D" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.vispy._base.LayerItem</span></code>, <a class="reference internal" href="magicclass.html#magicclass.HasFields" title="magicclass.fields._group.HasFields"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.fields._group.HasFields</span></code></a></p>
@@ -406,11 +421,6 @@ always returns value itself.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.Curve3D.data">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">data</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Curve3D.data" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.Curve3D.name">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Curve3D.name" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -476,11 +486,6 @@ always returns value itself.</p>
 always returns value itself.</p>
 </dd></dl>
 
-<dl class="py property">
-<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.Image.name">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Image.name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 <dl class="py attribute">
 <dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.Image.rendering">
 <span class="sig-name descname"><span class="pre">rendering</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Image.rendering" title="Permalink to this definition">¶</a></dt>
@@ -537,6 +542,52 @@ always returns value itself.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.IsoSurface.shading">
 <span class="sig-name descname"><span class="pre">shading</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.IsoSurface.shading" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.Points3D">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vispy.layer3d.</span></span><span class="sig-name descname"><span class="pre">Points3D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">viewbox</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ViewBox</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">face_color</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Color</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_color</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Color</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_width</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spherical</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vispy/layer3d.html#Points3D"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Points3D" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.vispy._base.LayerItem</span></code>, <a class="reference internal" href="magicclass.html#magicclass.HasFields" title="magicclass.fields._group.HasFields"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.fields._group.HasFields</span></code></a></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.Points3D.data">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">data</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Points3D.data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.Points3D.edge_color">
+<span class="sig-name descname"><span class="pre">edge_color</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Points3D.edge_color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.Points3D.edge_width">
+<span class="sig-name descname"><span class="pre">edge_width</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Points3D.edge_width" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.Points3D.face_color">
+<span class="sig-name descname"><span class="pre">face_color</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Points3D.face_color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.Points3D.size">
+<span class="sig-name descname"><span class="pre">size</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Points3D.size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
+always returns value itself.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.ext.vispy.layer3d.Points3D.spherical">
+<span class="sig-name descname"><span class="pre">spherical</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer3d.Points3D.spherical" title="Permalink to this definition">¶</a></dt>
 <dd><p>Field class for magicgui construction. Unlike MagicField, object of this class
 always returns value itself.</p>
 </dd></dl>
@@ -877,19 +928,103 @@ supports.</p>
 <p>Very similar to napari. This widget can be used independent of napari, or
 as a mini-viewer of napari.</p>
 <dl class="py method">
+<dt class="sig sig-object py" id="magicclass.ext.vispy.widgets3d.Has3DViewBox.add_arrows">
+<span class="sig-name descname"><span class="pre">add_arrows</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy._typing._array_like._SupportsArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.dtype</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy._typing._nested_sequence._NestedSequence</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy._typing._array_like._SupportsArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.dtype</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">complex</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bytes</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy._typing._nested_sequence._NestedSequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">complex</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bytes</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arrow_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'stealth'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arrow_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'white'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vispy/widgets3d.html#Has3DViewBox.add_arrows"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.widgets3d.Has3DViewBox.add_arrows" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a (N, P, 3) array as a set of arrows.</p>
+<p><code class="docutils literal notranslate"><span class="pre">P</span></code> is the number of points in each arrow. If you want to draw simple
+arrows with lines, the shape of the input array will be (N, 2, 3) and
+<code class="docutils literal notranslate"><span class="pre">data[:,</span> <span class="pre">0]</span></code> is the start points and <code class="docutils literal notranslate"><span class="pre">data[:,</span> <span class="pre">1]</span></code> is the end points.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>ArrayLike</em>) -- Arrow coordinates.</p></li>
+<li><p><strong>arrow_type</strong> (<em>str</em><em>, </em><em>default is &quot;stealth&quot;</em>) -- Shape of the arrow.</p></li>
+<li><p><strong>arrow_size</strong> (<em>float</em><em>, </em><em>default is 5.0</em>) -- Size of the arrows.</p></li>
+<li><p><strong>color</strong> (<em>str</em><em>, </em><em>default is &quot;white&quot;</em>) -- Color of the arrow and the bodies.</p></li>
+<li><p><strong>width</strong> (<em>float</em><em>, </em><em>default is 1.0</em>) -- Width of the arrow bodies.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A new Arrow3D layer.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Arrow3D</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="magicclass.ext.vispy.widgets3d.Has3DViewBox.add_curve">
-<span class="sig-name descname"><span class="pre">add_curve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy._typing._array_like._SupportsArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.dtype</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy._typing._nested_sequence._NestedSequence</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy._typing._array_like._SupportsArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.dtype</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">complex</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bytes</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy._typing._nested_sequence._NestedSequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">complex</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bytes</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'white'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vispy/widgets3d.html#Has3DViewBox.add_curve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.widgets3d.Has3DViewBox.add_curve" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">add_curve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy._typing._array_like._SupportsArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.dtype</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy._typing._nested_sequence._NestedSequence</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy._typing._array_like._SupportsArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.dtype</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">complex</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bytes</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy._typing._nested_sequence._NestedSequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">complex</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bytes</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'white'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vispy/widgets3d.html#Has3DViewBox.add_curve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.widgets3d.Has3DViewBox.add_curve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a (N, 3) array as a curve.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>ArrayLike</em>) -- Coordinates of the curve.</p></li>
+<li><p><strong>color</strong> (<em>Color</em><em>, </em><em>default is &quot;white&quot;</em>) -- Color of the curve.</p></li>
+<li><p><strong>width</strong> (<em>float</em><em>, </em><em>default is 1.</em>) -- Width of the curve line.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>_description_</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>_type_</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="magicclass.ext.vispy.widgets3d.Has3DViewBox.add_image">
 <span class="sig-name descname"><span class="pre">add_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ArrayLike</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contrast_limits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rendering</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'mip'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iso_threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attenuation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'grays'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interpolation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'linear'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vispy/widgets3d.html#Has3DViewBox.add_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.widgets3d.Has3DViewBox.add_image" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Add a 3D array as a volumic image.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>ArrayLike</em>) -- Image data.</p></li>
+<li><p><strong>contrast_limits</strong> (<em>tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>]</em><em>, </em><em>optional</em>) -- Contrast limits of the image.</p></li>
+<li><p><strong>rendering</strong> (<em>str</em><em>, </em><em>optional</em>) -- Rendering method.</p></li>
+<li><p><strong>iso_threshold</strong> (<em>float</em><em>, </em><em>optional</em>) -- Threshold of iso-surface rendering.</p></li>
+<li><p><strong>attenuation</strong> (<em>float</em><em>, </em><em>optional</em>) -- Attenuation of attenuated rendering method.</p></li>
+<li><p><strong>cmap</strong> (<em>str</em><em>, </em><em>optional</em>) -- Colormap of image.</p></li>
+<li><p><strong>gamma</strong> (<em>float</em><em>, </em><em>optional</em>) -- Gamma value of contrast.</p></li>
+<li><p><strong>interpolation</strong> (<em>str</em><em>, </em><em>optional</em>) -- Interpolation method.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A new Image layer.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#magicclass.ext.vispy.layer3d.Image" title="magicclass.ext.vispy.layer3d.Image">Image</a></p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="magicclass.ext.vispy.widgets3d.Has3DViewBox.add_isosurface">
 <span class="sig-name descname"><span class="pre">add_isosurface</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ArrayLike</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contrast_limits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iso_threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">face_color</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Color</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_color</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Color</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shading</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'smooth'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vispy/widgets3d.html#Has3DViewBox.add_isosurface"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.widgets3d.Has3DViewBox.add_isosurface" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Add a 3D array as a iso-surface.</p>
+<p>The difference between this method and the iso-surface rendering of
+<code class="docutils literal notranslate"><span class="pre">add_image</span></code> is that the layer created by this method can be a mesh.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>ArrayLike</em>) -- Image data.</p></li>
+<li><p><strong>contrast_limits</strong> (<em>tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>]</em><em>, </em><em>optional</em>) -- Contrast limits of the image.</p></li>
+<li><p><strong>iso_threshold</strong> (<em>float</em><em>, </em><em>optional</em>) -- Threshold of iso-surface.</p></li>
+<li><p><strong>face_color</strong> (<em>Color</em><em>, </em><em>optional</em>) -- Face color of the surface.</p></li>
+<li><p><strong>edge_color</strong> (<em>Color</em><em>, </em><em>optional</em>) -- Edge color of the surface.</p></li>
+<li><p><strong>shading</strong> (<em>str</em><em>, </em><em>optional</em>) -- Shading mode of the surface.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A new Isosurface layer.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Isosurface</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="magicclass.ext.vispy.widgets3d.Has3DViewBox.add_layer">
@@ -898,9 +1033,49 @@ as a mini-viewer of napari.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="magicclass.ext.vispy.widgets3d.Has3DViewBox.add_points">
+<span class="sig-name descname"><span class="pre">add_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy._typing._array_like._SupportsArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.dtype</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy._typing._nested_sequence._NestedSequence</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy._typing._array_like._SupportsArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.dtype</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">complex</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bytes</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy._typing._nested_sequence._NestedSequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">complex</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bytes</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">face_color</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'white'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_color</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'white'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spherical</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vispy/widgets3d.html#Has3DViewBox.add_points"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.widgets3d.Has3DViewBox.add_points" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a (N, 3) array as a point cloud.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>ArrayLike</em>) -- Z, Y, X coordinates of the points.</p></li>
+<li><p><strong>face_color</strong> (<em>Color</em><em>, </em><em>optional</em>) -- Face color of the points.</p></li>
+<li><p><strong>edge_color</strong> (<em>Color</em><em>, </em><em>optional</em>) -- Edge color of the points.</p></li>
+<li><p><strong>size</strong> (<em>float</em><em>, </em><em>default is 1.0</em>) -- Size of the points.</p></li>
+<li><p><strong>spherical</strong> (<em>bool</em><em>, </em><em>default is True</em>) -- Whether the points are rendered as spherical objects.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A new Points3D layer.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#magicclass.ext.vispy.layer3d.Points3D" title="magicclass.ext.vispy.layer3d.Points3D">Points3D</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="magicclass.ext.vispy.widgets3d.Has3DViewBox.add_surface">
 <span class="sig-name descname"><span class="pre">add_surface</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ArrayLike</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ArrayLike</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ArrayLike</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ArrayLike</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ArrayLike</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">face_color</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Color</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_color</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Color</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shading</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'smooth'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vispy/widgets3d.html#Has3DViewBox.add_surface"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.widgets3d.Has3DViewBox.add_surface" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Add vertices, faces and optional values as a surface.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>two</em><em> or </em><em>three arrays</em>) -- Data that defines a surface.</p></li>
+<li><p><strong>face_color</strong> (<em>Color</em><em> | </em><em>None</em><em>, </em><em>optional</em>) -- Face color of the surface.</p></li>
+<li><p><strong>edge_color</strong> (<em>Color</em><em> | </em><em>None</em><em>, </em><em>optional</em>) -- Edge color of the surface.</p></li>
+<li><p><strong>shading</strong> (<em>str</em><em>, </em><em>optional</em>) -- Shading mode of the surface.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A new Surface layer.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#magicclass.ext.vispy.layer3d.Surface" title="magicclass.ext.vispy.layer3d.Surface">Surface</a></p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="magicclass.ext.vispy.widgets3d.Has3DViewBox.camera">
@@ -981,10 +1156,7 @@ as a mini-viewer of napari.</p>
 
            </div>
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="magicclass.ext.qtconsole.html" class="btn btn-neutral float-left" title="magicclass.ext.qtconsole package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="magicclass.ext.vispy.tests.html" class="btn btn-neutral float-right" title="magicclass.ext.vispy.tests package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-    </div>
+          <footer>
 
   <hr/>
 

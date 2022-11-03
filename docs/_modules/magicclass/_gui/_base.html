@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass._gui._base &mdash; magic-class 0.6.11.dev0 documentation</title>
+  <title>magicclass._gui._base &mdash; magic-class 0.6.12.dev0 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.11.dev0
+                0.6.12.dev0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -296,6 +296,8 @@
         <span class="p">)</span>
 
 
+<span class="n">_ANCESTORS</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="n">MagicTemplate</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
 <span class="n">_T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;_T&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="s2">&quot;MagicTemplate&quot;</span><span class="p">)</span>
 <span class="n">_F</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;_F&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">Callable</span><span class="p">)</span>
 
@@ -436,9 +438,10 @@
 
         <span class="k">return</span> <span class="n">dock</span>
 
-<div class="viewcode-block" id="MagicTemplate.find_ancestor"><a class="viewcode-back" href="../../../apidoc/magicclass.html#magicclass.MagicTemplate.find_ancestor">[docs]</a>    <span class="k">def</span> <span class="nf">find_ancestor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ancestor</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">_T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">_T</span><span class="p">:</span>
+<div class="viewcode-block" id="MagicTemplate.find_ancestor"><a class="viewcode-back" href="../../../apidoc/magicclass.html#magicclass.MagicTemplate.find_ancestor">[docs]</a>    <span class="k">def</span> <span class="nf">find_ancestor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ancestor</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">_T</span><span class="p">],</span> <span class="n">cache</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_T</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Find magic class ancestor whose type matches the input.</span>
+
 <span class="sd">        This method is useful when a child widget class is defined outside a magic</span>
 <span class="sd">        class while it needs access to its parent.</span>
 
@@ -446,12 +449,18 @@
 <span class="sd">        ----------</span>
 <span class="sd">        ancestor : type of MagicTemplate</span>
 <span class="sd">            Type of ancestor to search for.</span>
+<span class="sd">        cache : bool, default is False</span>
+<span class="sd">            If true, the result will be cached. Caching is not safe if the widget is</span>
+<span class="sd">            going to be used as a child of other widgets.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        MagicTemplate</span>
 <span class="sd">            Magic class object if found.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">cache</span> <span class="ow">and</span> <span class="p">(</span><span class="n">anc</span> <span class="o">:=</span> <span class="n">_ANCESTORS</span><span class="o">.</span><span class="n">get</span><span class="p">((</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="nb">id</span><span class="p">(</span><span class="n">ancestor</span><span class="p">)),</span> <span class="kc">None</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="n">anc</span>
+
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ancestor</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
                 <span class="s2">&quot;The first argument of &#39;find_ancestor&#39; must be a type but got &quot;</span>
@@ -466,6 +475,8 @@
                     <span class="sa">f</span><span class="s2">&quot;Magic class </span><span class="si">{</span><span class="n">ancestor</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> not found. </span><span class="si">{</span><span class="n">ancestor</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> &quot;</span>
                     <span class="sa">f</span><span class="s2">&quot;is not an ancestor of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span>
                 <span class="p">)</span>
+        <span class="k">if</span> <span class="n">cache</span><span class="p">:</span>
+            <span class="n">_ANCESTORS</span><span class="p">[(</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="nb">id</span><span class="p">(</span><span class="n">ancestor</span><span class="p">))]</span> <span class="o">=</span> <span class="n">current_self</span>
         <span class="k">return</span> <span class="n">current_self</span></div>
 
 <div class="viewcode-block" id="MagicTemplate.objectName"><a class="viewcode-back" href="../../../apidoc/magicclass.html#magicclass.MagicTemplate.objectName">[docs]</a>    <span class="k">def</span> <span class="nf">objectName</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -624,6 +635,7 @@
                     <span class="k">else</span><span class="p">:</span>
                         <span class="k">del</span> <span class="n">child_instance</span><span class="p">[</span><span class="n">index</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
                         <span class="n">child_instance</span><span class="o">.</span><span class="n">_fast_insert</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">widget</span><span class="p">)</span>
+                    <span class="n">widget</span><span class="o">.</span><span class="n">visible</span> <span class="o">=</span> <span class="kc">True</span>
 
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">widget</span><span class="o">.</span><span class="n">visible</span> <span class="o">=</span> <span class="n">copy</span>
@@ -1089,10 +1101,12 @@
         <span class="n">mgui</span> <span class="o">=</span> <span class="n">FunctionGuiPlus</span><span class="p">(</span>
             <span class="n">func</span><span class="p">,</span> <span class="n">call_button</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="n">layout</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span> <span class="n">auto_call</span><span class="o">=</span><span class="n">auto_call</span>
         <span class="p">)</span>
-        <span class="n">preview</span> <span class="o">=</span> <span class="n">opt</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;preview&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">preview</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">btn_text</span><span class="p">,</span> <span class="n">previewer</span> <span class="o">=</span> <span class="n">preview</span>
-            <span class="n">mgui</span><span class="o">.</span><span class="n">append_preview</span><span class="p">(</span><span class="n">previewer</span><span class="o">.</span><span class="fm">__get__</span><span class="p">(</span><span class="n">parent</span><span class="p">),</span> <span class="n">btn_text</span><span class="p">)</span>
+        <span class="n">preview_setting</span> <span class="o">=</span> <span class="n">opt</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;preview&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">preview_setting</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">btn_text</span><span class="p">,</span> <span class="n">is_auto_call</span><span class="p">,</span> <span class="n">previewer</span> <span class="o">=</span> <span class="n">preview_setting</span>
+            <span class="n">mgui</span><span class="o">.</span><span class="n">append_preview</span><span class="p">(</span>
+                <span class="n">previewer</span><span class="o">.</span><span class="fm">__get__</span><span class="p">(</span><span class="n">parent</span><span class="p">),</span> <span class="n">btn_text</span><span class="p">,</span> <span class="n">auto_call</span><span class="o">=</span><span class="n">is_auto_call</span>
+            <span class="p">)</span>
 
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
@@ -1174,7 +1188,7 @@
 <span class="sd">        New namespace.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">_pass_type</span> <span class="o">=</span> <span class="p">(</span><span class="nb">property</span><span class="p">,</span> <span class="nb">classmethod</span><span class="p">,</span> <span class="nb">staticmethod</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="n">Widget</span><span class="p">)</span>
+    <span class="n">_pass_type</span> <span class="o">=</span> <span class="p">(</span><span class="nb">property</span><span class="p">,</span> <span class="nb">classmethod</span><span class="p">,</span> <span class="nb">staticmethod</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="n">Widget</span><span class="p">,</span> <span class="n">MagicField</span><span class="p">)</span>
     <span class="n">mro</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__mro__</span> <span class="k">if</span> <span class="n">c</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">hide</span><span class="p">]</span>
     <span class="k">for</span> <span class="n">subcls</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">mro</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">subcls</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>

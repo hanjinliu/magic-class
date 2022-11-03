@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.ext.vispy.widgets3d &mdash; magic-class 0.6.11.dev0 documentation</title>
+  <title>magicclass.ext.vispy.widgets3d &mdash; magic-class 0.6.12.dev0 documentation</title>
       <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.11.dev0
+                0.6.12.dev0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
@@ -80,7 +80,7 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">numpy.typing</span> <span class="kn">import</span> <span class="n">ArrayLike</span>
 <span class="kn">from</span> <span class="nn">vispy</span> <span class="kn">import</span> <span class="n">scene</span>
-<span class="kn">from</span> <span class="nn">.layer3d</span> <span class="kn">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">IsoSurface</span><span class="p">,</span> <span class="n">Surface</span><span class="p">,</span> <span class="n">Curve3D</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">layer3d</span>
 <span class="kn">from</span> <span class="nn">.layerlist</span> <span class="kn">import</span> <span class="n">LayerList</span>
 <span class="kn">from</span> <span class="nn">._base</span> <span class="kn">import</span> <span class="n">SceneCanvas</span><span class="p">,</span> <span class="n">HasViewBox</span><span class="p">,</span> <span class="n">MultiPlot</span><span class="p">,</span> <span class="n">LayerItem</span>
 <span class="kn">from</span> <span class="nn">.camera</span> <span class="kn">import</span> <span class="n">Camera</span>
@@ -123,7 +123,37 @@
         <span class="n">gamma</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
         <span class="n">interpolation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;linear&quot;</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="n">image</span> <span class="o">=</span> <span class="n">Image</span><span class="p">(</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add a 3D array as a volumic image.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data : ArrayLike</span>
+<span class="sd">            Image data.</span>
+<span class="sd">        contrast_limits : tuple[float, float], optional</span>
+<span class="sd">            Contrast limits of the image.</span>
+<span class="sd">        rendering : str, optional</span>
+<span class="sd">            Rendering method.</span>
+<span class="sd">        iso_threshold : float, optional</span>
+<span class="sd">            Threshold of iso-surface rendering.</span>
+<span class="sd">        attenuation : float, optional</span>
+<span class="sd">            Attenuation of attenuated rendering method.</span>
+<span class="sd">        cmap : str, optional</span>
+<span class="sd">            Colormap of image.</span>
+<span class="sd">        gamma : float, optional</span>
+<span class="sd">            Gamma value of contrast.</span>
+<span class="sd">        interpolation : str, optional</span>
+<span class="sd">            Interpolation method.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Image</span>
+<span class="sd">            A new Image layer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;f&quot;</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">layer3d</span><span class="o">.</span><span class="n">Image</span><span class="p">(</span>
             <span class="n">data</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="p">,</span>
             <span class="n">contrast_limits</span><span class="o">=</span><span class="n">contrast_limits</span><span class="p">,</span>
@@ -147,7 +177,33 @@
         <span class="n">edge_color</span><span class="p">:</span> <span class="n">Color</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">shading</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;smooth&quot;</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="n">surface</span> <span class="o">=</span> <span class="n">IsoSurface</span><span class="p">(</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add a 3D array as a iso-surface.</span>
+
+<span class="sd">        The difference between this method and the iso-surface rendering of</span>
+<span class="sd">        ``add_image`` is that the layer created by this method can be a mesh.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data : ArrayLike</span>
+<span class="sd">            Image data.</span>
+<span class="sd">        contrast_limits : tuple[float, float], optional</span>
+<span class="sd">            Contrast limits of the image.</span>
+<span class="sd">        iso_threshold : float, optional</span>
+<span class="sd">            Threshold of iso-surface.</span>
+<span class="sd">        face_color : Color, optional</span>
+<span class="sd">            Face color of the surface.</span>
+<span class="sd">        edge_color : Color, optional</span>
+<span class="sd">            Edge color of the surface.</span>
+<span class="sd">        shading : str, optional</span>
+<span class="sd">            Shading mode of the surface.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Isosurface</span>
+<span class="sd">            A new Isosurface layer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">surface</span> <span class="o">=</span> <span class="n">layer3d</span><span class="o">.</span><span class="n">IsoSurface</span><span class="p">(</span>
             <span class="n">data</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="p">,</span>
             <span class="n">contrast_limits</span><span class="o">=</span><span class="n">contrast_limits</span><span class="p">,</span>
@@ -167,7 +223,26 @@
         <span class="n">edge_color</span><span class="p">:</span> <span class="n">Color</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">shading</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;smooth&quot;</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="n">surface</span> <span class="o">=</span> <span class="n">Surface</span><span class="p">(</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add vertices, faces and optional values as a surface.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data : two or three arrays</span>
+<span class="sd">            Data that defines a surface.</span>
+<span class="sd">        face_color : Color | None, optional</span>
+<span class="sd">            Face color of the surface.</span>
+<span class="sd">        edge_color : Color | None, optional</span>
+<span class="sd">            Edge color of the surface.</span>
+<span class="sd">        shading : str, optional</span>
+<span class="sd">            Shading mode of the surface.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Surface</span>
+<span class="sd">            A new Surface layer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">surface</span> <span class="o">=</span> <span class="n">layer3d</span><span class="o">.</span><span class="n">Surface</span><span class="p">(</span>
             <span class="n">data</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="p">,</span>
             <span class="n">face_color</span><span class="o">=</span><span class="n">face_color</span><span class="p">,</span>
@@ -179,16 +254,115 @@
 <div class="viewcode-block" id="Has3DViewBox.add_curve"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.widgets3d.Has3DViewBox.add_curve">[docs]</a>    <span class="k">def</span> <span class="nf">add_curve</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">data</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
-        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span>
-        <span class="n">width</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">color</span><span class="p">:</span> <span class="n">Color</span> <span class="o">=</span> <span class="s2">&quot;white&quot;</span><span class="p">,</span>
+        <span class="n">width</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="n">curve</span> <span class="o">=</span> <span class="n">Curve3D</span><span class="p">(</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add a (N, 3) array as a curve.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data : ArrayLike</span>
+<span class="sd">            Coordinates of the curve.</span>
+<span class="sd">        color : Color, default is &quot;white&quot;</span>
+<span class="sd">            Color of the curve.</span>
+<span class="sd">        width : float, default is 1.</span>
+<span class="sd">            Width of the curve line.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        _type_</span>
+<span class="sd">            _description_</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">curve</span> <span class="o">=</span> <span class="n">layer3d</span><span class="o">.</span><span class="n">Curve3D</span><span class="p">(</span>
             <span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span>
             <span class="n">viewbox</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="p">,</span>
             <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span>
             <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_layer</span><span class="p">(</span><span class="n">curve</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Has3DViewBox.add_points"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.widgets3d.Has3DViewBox.add_points">[docs]</a>    <span class="k">def</span> <span class="nf">add_points</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">data</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
+        <span class="n">face_color</span><span class="p">:</span> <span class="n">Color</span> <span class="o">=</span> <span class="s2">&quot;white&quot;</span><span class="p">,</span>
+        <span class="n">edge_color</span><span class="p">:</span> <span class="n">Color</span> <span class="o">=</span> <span class="s2">&quot;white&quot;</span><span class="p">,</span>
+        <span class="n">size</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5.0</span><span class="p">,</span>
+        <span class="n">spherical</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add a (N, 3) array as a point cloud.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data : ArrayLike</span>
+<span class="sd">            Z, Y, X coordinates of the points.</span>
+<span class="sd">        face_color : Color, optional</span>
+<span class="sd">            Face color of the points.</span>
+<span class="sd">        edge_color : Color, optional</span>
+<span class="sd">            Edge color of the points.</span>
+<span class="sd">        size : float, default is 1.0</span>
+<span class="sd">            Size of the points.</span>
+<span class="sd">        spherical : bool, default is True</span>
+<span class="sd">            Whether the points are rendered as spherical objects.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Points3D</span>
+<span class="sd">            A new Points3D layer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="n">layer3d</span><span class="o">.</span><span class="n">Points3D</span><span class="p">(</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span>
+            <span class="n">viewbox</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="p">,</span>
+            <span class="n">face_color</span><span class="o">=</span><span class="n">face_color</span><span class="p">,</span>
+            <span class="n">edge_color</span><span class="o">=</span><span class="n">edge_color</span><span class="p">,</span>
+            <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">,</span>
+            <span class="n">spherical</span><span class="o">=</span><span class="n">spherical</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_layer</span><span class="p">(</span><span class="n">points</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Has3DViewBox.add_arrows"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.widgets3d.Has3DViewBox.add_arrows">[docs]</a>    <span class="k">def</span> <span class="nf">add_arrows</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">data</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
+        <span class="n">arrow_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;stealth&quot;</span><span class="p">,</span>
+        <span class="n">arrow_size</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5.0</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span>
+        <span class="n">width</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add a (N, P, 3) array as a set of arrows.</span>
+
+<span class="sd">        ``P`` is the number of points in each arrow. If you want to draw simple</span>
+<span class="sd">        arrows with lines, the shape of the input array will be (N, 2, 3) and</span>
+<span class="sd">        ``data[:, 0]`` is the start points and ``data[:, 1]`` is the end points.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data : ArrayLike</span>
+<span class="sd">            Arrow coordinates.</span>
+<span class="sd">        arrow_type : str, default is &quot;stealth&quot;</span>
+<span class="sd">            Shape of the arrow.</span>
+<span class="sd">        arrow_size : float, default is 5.0</span>
+<span class="sd">            Size of the arrows.</span>
+<span class="sd">        color : str, default is &quot;white&quot;</span>
+<span class="sd">            Color of the arrow and the bodies.</span>
+<span class="sd">        width : float, default is 1.0</span>
+<span class="sd">            Width of the arrow bodies.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Arrow3D</span>
+<span class="sd">            A new Arrow3D layer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">arrows</span> <span class="o">=</span> <span class="n">layer3d</span><span class="o">.</span><span class="n">Arrows3D</span><span class="p">(</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span>
+            <span class="n">viewbox</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="p">,</span>
+            <span class="n">arrow_type</span><span class="o">=</span><span class="n">arrow_type</span><span class="p">,</span>
+            <span class="n">arrow_size</span><span class="o">=</span><span class="n">arrow_size</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span>
+            <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_layer</span><span class="p">(</span><span class="n">arrows</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Has3DViewBox.add_layer"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.widgets3d.Has3DViewBox.add_layer">[docs]</a>    <span class="k">def</span> <span class="nf">add_layer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layer</span><span class="p">:</span> <span class="n">LayerItem</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Add a layer item to the canvas.&quot;&quot;&quot;</span>

@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Quick Start &mdash; magic-class 0.6.11 documentation</title>
+  <title>Quick Start &mdash; magic-class 0.6.12.dev0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/columns.css" type="text/css" />
@@ -19,7 +19,7 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Basics" href="chap_basics.html" />
+    <link rel="next" title="Basics" href="basics/index.html" />
     <link rel="prev" title="magic-class" href="../index.html" />
 </head>
 
@@ -31,7 +31,7 @@
             <a href="../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.11
+                0.6.12.dev0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -56,10 +56,10 @@
 </li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="chap_basics.html">Basics</a></li>
-<li class="toctree-l1"><a class="reference internal" href="chap_make_better.html">Make Your GUI Better</a></li>
-<li class="toctree-l1"><a class="reference internal" href="chap_data_vis.html">Data Visualization</a></li>
-<li class="toctree-l1"><a class="reference internal" href="chap_advanced.html">Advanced Topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="basics/index.html">Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="make_better/index.html">Make Your GUI Better</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visualization/index.html">Data Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced/index.html">Advanced Topics</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="best_practice.html">Best Practice</a></li>
@@ -144,7 +144,7 @@ will not be converted into widgets.</p>
 </div>
 <p>With exactly the same class design, you can also create a menu bar, a context menu or
 a tool bar, using <code class="docutils literal notranslate"><span class="pre">&#64;magicmenu</span></code>, <code class="docutils literal notranslate"><span class="pre">&#64;magiccontext</span></code> and <code class="docutils literal notranslate"><span class="pre">&#64;magictoolbar</span></code> respectively.
-Go to <a class="reference internal" href="nest.html"><span class="doc">Nest magic-classes</span></a> for more details.</p>
+Go to <span class="xref std std-doc">nest</span> for more details.</p>
 </section>
 <section id="use-other-widgets-in-magic-class">
 <h2><a class="toc-backref" href="#id2">Use Other Widgets in magic-class</a><a class="headerlink" href="#use-other-widgets-in-magic-class" title="Permalink to this headline">¶</a></h2>
@@ -167,7 +167,7 @@ Go to <a class="reference internal" href="nest.html"><span class="doc">Nest magi
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>I highly recommend using <code class="docutils literal notranslate"><span class="pre">field</span></code> function to create widgets in magic classes.
-See <a class="reference internal" href="use_field.html"><span class="doc">Use Fields in magic-class</span></a>.</p>
+See <span class="xref std std-doc">use_field</span>.</p>
 </div>
 <p>If a method is decorated with <code class="docutils literal notranslate"><span class="pre">&#64;magicgui</span></code>, it will directly added in the container widget,
 in place of a push button. This is natural because decorated methods are no longer functions,
@@ -213,7 +213,7 @@ updated whenever macro itself is updated.</p>
 <p>Occasionally, you may want some functions not to record macro (such as a function that
 only shows a help window). It could also be redundant to record value changes of some
 widgets. You can prevent macro recording with <code class="docutils literal notranslate"><span class="pre">do_not_record</span></code> decorator for methods
-(or <code class="docutils literal notranslate"><span class="pre">record=False</span></code> option for fields; see <a class="reference internal" href="use_field.html"><span class="doc">Use Fields in magic-class</span></a>).</p>
+(or <code class="docutils literal notranslate"><span class="pre">record=False</span></code> option for fields; see <span class="xref std std-doc">use_field</span>).</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">do_not_record</span>
 
 <span class="nd">@magicclass</span>
@@ -272,7 +272,7 @@ functions to magic class object.</p>
 <span class="n">ui</span><span class="o">.</span><span class="n">Menu</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_function</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>For details of menu bar, see <a class="reference internal" href="nest.html"><span class="doc">Nest magic-classes</span></a>.</p>
+<p>For details of menu bar, see <span class="xref std std-doc">nest</span>.</p>
 </div>
 </section>
 <section id="parameter-options">
@@ -357,7 +357,7 @@ information of typings and annotations.</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="../index.html" class="btn btn-neutral float-left" title="magic-class" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="chap_basics.html" class="btn btn-neutral float-right" title="Basics" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="basics/index.html" class="btn btn-neutral float-right" title="Basics" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

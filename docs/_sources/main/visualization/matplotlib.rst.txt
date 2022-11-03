@@ -2,6 +2,10 @@
 Matplotlib Figure
 =================
 
+.. contents:: Contents
+    :local:
+    :depth: 3
+
 ``matplotlib`` is one of the most widely used data visualization libraries. I
 guess most of the Python users know the basics of the library.
 
@@ -12,8 +16,7 @@ For data visualization of simple data set, your can use the ``Figure`` widget.
     from magicclass.widgets import Figure
 
 It has very simple API inherited from the original functions, such as
-``plt.plot(x, y)`` or ``plt.xlim(0, 100)``. It also support interactive plot
-since ``v0.6.1``.
+``plt.plot(x, y)`` or ``plt.xlim(0, 100)``. It also support interactive plot.
 
 Basic Usage
 -----------
@@ -85,3 +88,30 @@ you'll have to call ``draw`` method to update the figure.
     @magicclass
     class Main:
         plt = field(Figure, options={"nrows": 1, "ncols": 2})
+
+Plot API
+--------
+
+For the simplest usage, you can use ``plot_api`` submodule. Its API is almost
+identical to those in ``matplotlib.pyplot``.
+
+.. code-block:: python
+
+    # instead of import matplotlib.pyplot as plt
+    import magicclass.plot_api as plt
+
+    plt.figure()
+    plt.plot([0, 1, 2, 3], [4, 2, 3, 1], color="red")
+    plt.show()
+
+The current figure widget is available with ``gcw()`` function. It returns the
+``magicclass.widgets.Figure`` widget.
+
+.. code-block:: python
+
+    # add figure to a widget.
+    from magicgui.widgets import Container
+
+    fig = plt.gcw()
+    cnt = Container(widgets=[fig])
+    cnt.show()

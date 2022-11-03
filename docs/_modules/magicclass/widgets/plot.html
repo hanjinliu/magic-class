@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.widgets.plot &mdash; magic-class 0.6.11.dev0 documentation</title>
+  <title>magicclass.widgets.plot &mdash; magic-class 0.6.12.dev0 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.11.dev0
+                0.6.12.dev0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -304,6 +304,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">out</span></div>
 
+<div class="viewcode-block" id="Figure.bar"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.plot.Figure.bar">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
+    <span class="k">def</span> <span class="nf">bar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">bars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">bars</span></div>
+
 <div class="viewcode-block" id="Figure.text"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.plot.Figure.text">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
     <span class="k">def</span> <span class="nf">text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Text</span><span class="p">:</span>
         <span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -431,6 +437,12 @@
 <div class="viewcode-block" id="Figure.twiny"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.plot.Figure.twiny">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
     <span class="k">def</span> <span class="nf">twiny</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Axes</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">twiny</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Figure.grid"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.plot.Figure.grid">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
+    <span class="k">def</span> <span class="nf">grid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
 
 <div class="viewcode-block" id="Figure.box"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.plot.Figure.box">[docs]</a>    <span class="nd">@_inject_mpl_docs</span>
     <span class="k">def</span> <span class="nf">box</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>

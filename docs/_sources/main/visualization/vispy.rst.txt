@@ -46,17 +46,24 @@ For 3D visualization, use ``Vispy3DCanvas``.
     ui.canvas.add_image(np.random.random((60, 60, 60)))
     ui.show()
 
-You have to programatically adjust parameters.
+You can programatically adjust parameters
 
 .. code-block:: python
 
     ui.canvas.layers[0].contrast_limits = (0.2, 0.7)
 
-This widget is useful in providing a mini-viewer as a ``napari`` dock widget.
+or create a ``Container`` widget of parameters.
+
+.. code-block:: python
+
+    params = ui.canvas.layers[0].as_container()  # create a Container
+    params.show()  # show the widget
 
 Supported Methods
 -----------------
 
-- ``add_image``
-- ``add_isosurface``
-- ``add_surface``
+- :meth:`add_image` ... Add a 3D array as a volume.
+- :meth:`add_isosurface` ... Add a 3D array as a isosurface.
+- :meth:`add_surface` ... Add a list of 2D arrays as a surface.
+- :meth:`add_points` ... Add a (N, 3) array as a point cloud.
+- :meth:`add_arrows` ... Add a (N, P, 3) array as arrows. P is the number of points per arrow.

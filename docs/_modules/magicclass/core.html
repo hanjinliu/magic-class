@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.core &mdash; magic-class 0.6.11.dev0 documentation</title>
+  <title>magicclass.core &mdash; magic-class 0.6.12.dev0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.11.dev0
+                0.6.12.dev0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -159,13 +159,11 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Decorator that can convert a Python class into a widget.</span>
 
-<span class="sd">    .. code-block:: python</span>
-
-<span class="sd">        @magicclass</span>
-<span class="sd">        class C:</span>
-<span class="sd">            ...</span>
-<span class="sd">        ui = C()</span>
-<span class="sd">        ui.show()  # open GUI</span>
+<span class="sd">    &gt;&gt;&gt; @magicclass</span>
+<span class="sd">    &gt;&gt;&gt; class C:</span>
+<span class="sd">    &gt;&gt;&gt;     ...</span>
+<span class="sd">    &gt;&gt;&gt; ui = C()</span>
+<span class="sd">    &gt;&gt;&gt; ui.show()  # open GUI</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -739,15 +737,12 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Convert parameter fields into a dictionary.</span>
 
-<span class="sd">        .. code-block:: python</span>
+<span class="sd">        &gt;&gt;&gt; class params(Parameters):</span>
+<span class="sd">        &gt;&gt;&gt;     i = 1</span>
+<span class="sd">        &gt;&gt;&gt;     j = 2</span>
 
-<span class="sd">            class params(Parameters):</span>
-<span class="sd">                i = 1</span>
-<span class="sd">                j = 2</span>
-
-<span class="sd">            p = params()</span>
-<span class="sd">            p.as_dict() # {&quot;i&quot;: 1, &quot;j&quot;: 2}</span>
-
+<span class="sd">        &gt;&gt;&gt; p = params()</span>
+<span class="sd">        &gt;&gt;&gt; p.as_dict() # {&quot;i&quot;: 1, &quot;j&quot;: 2}</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__signature__</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">1</span><span class="p">:]</span>
         <span class="k">return</span> <span class="p">{</span><span class="n">param</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">)</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">params</span><span class="p">}</span></div></div>

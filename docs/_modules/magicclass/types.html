@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.types &mdash; magic-class 0.6.11.dev0 documentation</title>
+  <title>magicclass.types &mdash; magic-class 0.6.12.dev0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.11.dev0
+                0.6.12.dev0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -181,7 +181,7 @@
 
 
 <div class="viewcode-block" id="bound"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.types.bound">[docs]</a><span class="k">def</span> <span class="nf">bound</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Function version of Bound[...].&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Function version of ``Bound[...]``.&quot;&quot;&quot;</span>
     <span class="c1"># NOTE: This could be more useful than Bound??</span>
     <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
         <span class="n">outtype</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="vm">__annotations__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;return&quot;</span><span class="p">,</span> <span class="n">Any</span><span class="p">)</span>
@@ -220,13 +220,11 @@
 
 <span class="sd">    For instance, if type annotation is added like this</span>
 
-<span class="sd">    .. code-block:: python</span>
+<span class="sd">    &gt;&gt;&gt; def _get_int(self, _=None) -&gt; int:</span>
+<span class="sd">    &gt;&gt;&gt;     return 0</span>
 
-<span class="sd">        def _get_int(self, _=None) -&gt; int:</span>
-<span class="sd">            return 0</span>
-
-<span class="sd">        def func(self, x: Bound[_get_int]):</span>
-<span class="sd">            # do something</span>
+<span class="sd">    &gt;&gt;&gt; def func(self, x: Bound[_get_int]):</span>
+<span class="sd">    &gt;&gt;&gt;     # do something</span>
 
 <span class="sd">    ``x`` will be considered to be ``Bound`` type otherwise.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -257,15 +255,12 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Make Annotated type from a MagicField or a method, such as:</span>
 
-<span class="sd">    .. code-block:: python</span>
-
-<span class="sd">        from magicclass import magicclass, field</span>
-
-<span class="sd">        @magicclass</span>
-<span class="sd">        class MyClass:</span>
-<span class="sd">            i = field(int)</span>
-<span class="sd">            def func(self, v: Bound[i]):</span>
-<span class="sd">                ...</span>
+<span class="sd">    &gt;&gt;&gt; from magicclass import magicclass, field</span>
+<span class="sd">    &gt;&gt;&gt; @magicclass</span>
+<span class="sd">    &gt;&gt;&gt; class MyClass:</span>
+<span class="sd">    &gt;&gt;&gt;     i = field(int)</span>
+<span class="sd">    &gt;&gt;&gt;     def func(self, v: Bound[i]):</span>
+<span class="sd">    &gt;&gt;&gt;         ...</span>
 
 <span class="sd">    ``Bound[value]`` is identical to ``Annotated[Any, {&quot;bind&quot;: value}]``.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -345,14 +340,11 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Make Annotated type from a method, such as:</span>
 
-<span class="sd">    .. code-block:: python</span>
-
-<span class="sd">        from magicclass import magicclass</span>
-
-<span class="sd">        @magicclass</span>
-<span class="sd">        class MyClass:</span>
-<span class="sd">            def func(self, v: OneOf[(1, 2, 3)]):</span>
-<span class="sd">                ...</span>
+<span class="sd">    &gt;&gt;&gt; from magicclass import magicclass</span>
+<span class="sd">    &gt;&gt;&gt; @magicclass</span>
+<span class="sd">    &gt;&gt;&gt; class MyClass:</span>
+<span class="sd">    &gt;&gt;&gt;     def func(self, v: OneOf[(1, 2, 3)]):</span>
+<span class="sd">    &gt;&gt;&gt;         ...</span>
 
 <span class="sd">    ``OneOf[value]`` is identical to ``Annotated[Any, {&quot;choices&quot;: value}]``.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -371,9 +363,7 @@
 
 
 <span class="k">class</span> <span class="nc">_SomeOfAlias</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    This metaclass is necessary for ``mypy`` to reveal type.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;This metaclass is necessary for ``mypy`` to reveal type.&quot;&quot;&quot;</span>
 
     <span class="nd">@overload</span>
     <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span>
@@ -416,14 +406,12 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Make Annotated type from a method, such as:</span>
 
-<span class="sd">    .. code-block:: python</span>
+<span class="sd">    &gt;&gt;&gt; from magicclass import magicclass</span>
 
-<span class="sd">        from magicclass import magicclass</span>
-
-<span class="sd">        @magicclass</span>
-<span class="sd">        class MyClass:</span>
-<span class="sd">            def func(self, v: Choices[(1, 2, 3)]):</span>
-<span class="sd">                ...</span>
+<span class="sd">    &gt;&gt;&gt; @magicclass</span>
+<span class="sd">    &gt;&gt;&gt; class MyClass:</span>
+<span class="sd">    &gt;&gt;&gt;     def func(self, v: Choices[(1, 2, 3)]):</span>
+<span class="sd">    &gt;&gt;&gt;         ...</span>
 
 <span class="sd">    ``Choices[value]`` is identical to ``Annotated[Any, {&quot;choices&quot;: value}]``.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -478,20 +466,17 @@
 <span class="sd">    Arguments annotated with ``Optional[int]`` will create a</span>
 <span class="sd">    ``OptionalWidget`` with a ``SpinBox`` as an inner widget.</span>
 
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from magicclass import magicclass, set_options</span>
+<span class="sd">    &gt;&gt;&gt; from magicclass.types import Optional</span>
 
-<span class="sd">    from magicclass import magicclass, set_options</span>
-<span class="sd">    from magicclass.types import Optional</span>
+<span class="sd">    &gt;&gt;&gt; @magicclass</span>
+<span class="sd">    &gt;&gt;&gt; class A:</span>
+<span class="sd">    &gt;&gt;&gt;     @set_options(a={&quot;options&quot;: {&quot;min&quot;: -1}})</span>
+<span class="sd">    &gt;&gt;&gt;     def f(self, a: Optional[int]):</span>
+<span class="sd">    &gt;&gt;&gt;         print(a)</span>
 
-<span class="sd">    @magicclass</span>
-<span class="sd">    class A:</span>
-<span class="sd">        @set_options(a={&quot;options&quot;: {&quot;min&quot;: -1}})</span>
-<span class="sd">        def f(self, a: Optional[int]):</span>
-<span class="sd">            print(a)</span>
-
-<span class="sd">    ui = A()</span>
-<span class="sd">    ui.show()</span>
+<span class="sd">    &gt;&gt;&gt; ui = A()</span>
+<span class="sd">    &gt;&gt;&gt; ui.show()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -523,19 +508,16 @@
 <span class="sd">    Arguments annotated with ``Union[int, str]`` will create a</span>
 <span class="sd">    ``UnionWidget`` with a ``SpinBox`` and a ``LineEdit`` as inner widgets.</span>
 
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from magicclass import magicclass</span>
+<span class="sd">    &gt;&gt;&gt; from magicclass.types import Union</span>
 
-<span class="sd">    from magicclass import magicclass</span>
-<span class="sd">    from magicclass.types import Union</span>
+<span class="sd">    &gt;&gt;&gt; @magicclass</span>
+<span class="sd">    &gt;&gt;&gt; class A:</span>
+<span class="sd">    &gt;&gt;&gt;     def f(self, a: Union[int, str]):</span>
+<span class="sd">    &gt;&gt;&gt;         print(a)</span>
 
-<span class="sd">    @magicclass</span>
-<span class="sd">    class A:</span>
-<span class="sd">        def f(self, a: Union[int, str]):</span>
-<span class="sd">            print(a)</span>
-
-<span class="sd">    ui = A()</span>
-<span class="sd">    ui.show()</span>
+<span class="sd">    &gt;&gt;&gt; ui = A()</span>
+<span class="sd">    &gt;&gt;&gt; ui.show()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
