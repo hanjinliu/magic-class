@@ -2,6 +2,10 @@
 Matplotlib Figure
 =================
 
+.. contents:: Contents
+    :local:
+    :depth: 3
+
 ``matplotlib`` is one of the most widely used data visualization libraries. I
 guess most of the Python users know the basics of the library.
 
@@ -12,8 +16,7 @@ For data visualization of simple data set, your can use the ``Figure`` widget.
     from magicclass.widgets import Figure
 
 It has very simple API inherited from the original functions, such as
-``plt.plot(x, y)`` or ``plt.xlim(0, 100)``. It also support interactive plot
-since ``v0.6.1``.
+``plt.plot(x, y)`` or ``plt.xlim(0, 100)``. It also support interactive plot.
 
 Basic Usage
 -----------
@@ -102,7 +105,7 @@ identical to those in ``matplotlib.pyplot``.
     plt.show()
 
 The current figure widget is available with ``gcw()`` function. It returns the
-``Figure`` widget, which is a ``magicgui`` widget.
+``magicclass.widgets.Figure`` widget.
 
 .. code-block:: python
 
