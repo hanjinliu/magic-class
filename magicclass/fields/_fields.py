@@ -131,7 +131,7 @@ class MagicField(_FieldObject, Generic[_W, _V]):
     def record(self) -> bool:
         return self._record
 
-    def construct(self, obj) -> Widget:
+    def construct(self, obj) -> _W:
         """Construct a widget."""
         constructor = self.constructor
         _arg_choices = self.options.get("choices", None)
@@ -183,12 +183,9 @@ class MagicField(_FieldObject, Generic[_W, _V]):
         from .._gui import MagicTemplate
 
         obj_id = id(obj)
-        if obj_id in self._guis.keys():
-            widget = self._guis[obj_id]
-        else:
-            widget = self.construct(obj)
+        if (widget := self._guis.get(obj_id, None)) is None:
+            self._guis[obj_id] = widget = self.construct(obj)
             widget.name = self.name
-            self._guis[obj_id] = widget
 
             if isinstance(widget, (ValueWidget, ContainerWidget)):
                 if isinstance(obj, MagicTemplate):

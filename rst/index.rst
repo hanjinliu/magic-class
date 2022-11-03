@@ -34,10 +34,10 @@ Contents
 .. toctree::
    :maxdepth: 2
 
-   ./main/chap_basics
-   ./main/chap_make_better
-   ./main/chap_data_vis
-   ./main/chap_advanced
+   ./main/basics/index
+   ./main/make_better/index
+   ./main/visualization/index
+   ./main/advanced/index
 
 .. toctree::
    :maxdepth: 1

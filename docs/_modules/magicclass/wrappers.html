@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.wrappers &mdash; magic-class 0.6.11.dev0 documentation</title>
+  <title>magicclass.wrappers &mdash; magic-class 0.6.12.dev0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.11.dev0
+                0.6.12.dev0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -366,7 +366,25 @@
     <span class="k">return</span> <span class="n">method</span></div>
 
 
-<div class="viewcode-block" id="mark_preview"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.wrappers.mark_preview">[docs]</a><span class="k">def</span> <span class="nf">mark_preview</span><span class="p">(</span><span class="n">function</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Preview&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">F</span><span class="p">],</span> <span class="n">F</span><span class="p">]:</span>
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Protocol</span>
+
+    <span class="k">class</span> <span class="nc">PreviewFunction</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+        <span class="vm">__name__</span><span class="p">:</span> <span class="nb">str</span>
+        <span class="vm">__qualname__</span><span class="p">:</span> <span class="nb">str</span>
+
+        <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="o">...</span>
+
+        <span class="k">def</span> <span class="nf">during_preview</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">:</span> <span class="n">F</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">F</span><span class="p">:</span>
+            <span class="sd">&quot;&quot;&quot;Wrapped function will be used as a context manager during preview.&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="impl_preview"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.wrappers.impl_preview">[docs]</a><span class="k">def</span> <span class="nf">impl_preview</span><span class="p">(</span>
+    <span class="n">function</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Preview&quot;</span><span class="p">,</span>
+    <span class="n">auto_call</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Define a preview of a function.</span>
 
@@ -381,74 +399,116 @@
 <span class="sd">        def func(self, path: Path):</span>
 <span class="sd">            ...</span>
 
-<span class="sd">        @mark_preview(func)</span>
+<span class="sd">        @impl_preview(func)</span>
 <span class="sd">        def _func_prev(self, path: Path):</span>
 <span class="sd">            with open(path, mode=&quot;r&quot;) as f:</span>
 <span class="sd">                print(f.read())</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    function : callable</span>
-<span class="sd">        To which function previewer will be defined.</span>
+<span class="sd">    function : callable, optional</span>
+<span class="sd">        To which function previewer will be defined. If not provided, the to-be-</span>
+<span class="sd">        decorated function itself will be used as the preview function.</span>
 <span class="sd">    text : str, optional</span>
-<span class="sd">        Text of preview button.</span>
+<span class="sd">        Text of the preview button or checkbox.</span>
+<span class="sd">    auto_call : bool, default is False</span>
+<span class="sd">        Whether the preview function will be auto-called. If true, a check box will</span>
+<span class="sd">        appear above the call button, and the preview function is auto-called during</span>
+<span class="sd">        it is checked.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mark_self</span> <span class="o">=</span> <span class="kc">False</span>
 
-    <span class="k">def</span> <span class="nf">_wrapper</span><span class="p">(</span><span class="n">preview</span><span class="p">:</span> <span class="n">F</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">F</span><span class="p">:</span>
-        <span class="n">sig_preview</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">preview</span><span class="p">)</span>
-        <span class="n">sig_func</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">function</span><span class="p">)</span>
-        <span class="n">params_preview</span> <span class="o">=</span> <span class="n">sig_preview</span><span class="o">.</span><span class="n">parameters</span>
+    <span class="k">def</span> <span class="nf">_outer_wrapper</span><span class="p">(</span><span class="n">target_func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PreviewFunction</span><span class="p">:</span>
+        <span class="n">sig_func</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">target_func</span><span class="p">)</span>
         <span class="n">params_func</span> <span class="o">=</span> <span class="n">sig_func</span><span class="o">.</span><span class="n">parameters</span>
 
-        <span class="n">less</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">params_func</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">params_preview</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">less</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">params_preview</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">!=</span> <span class="n">params_func</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">def</span> <span class="nf">_get_arg_filter</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+            <span class="n">sig_preview</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+            <span class="n">params_preview</span> <span class="o">=</span> <span class="n">sig_preview</span><span class="o">.</span><span class="n">parameters</span>
+
+            <span class="n">less</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">params_func</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">params_preview</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">less</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">params_preview</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">!=</span> <span class="n">params_func</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Arguments mismatch between </span><span class="si">{</span><span class="n">sig_preview</span><span class="si">!r}</span><span class="s2"> and </span><span class="si">{</span><span class="n">sig_func</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+                    <span class="p">)</span>
+                <span class="c1"># If argument names are identical, input arguments don&#39;t have to be filtered.</span>
+                <span class="n">_filter</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">:</span> <span class="n">a</span>
+
+            <span class="k">elif</span> <span class="n">less</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">idx</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">params_func</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                    <span class="k">if</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">params_preview</span><span class="p">:</span>
+                        <span class="n">idx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                <span class="c1"># If argument names are not identical, input arguments have to be filtered so</span>
+                <span class="c1"># that arguments match the inputs.</span>
+                <span class="n">_filter</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">_args</span><span class="p">:</span> <span class="p">(</span><span class="n">a</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">_args</span><span class="p">)</span> <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">idx</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Arguments mismatch between </span><span class="si">{</span><span class="n">sig_preview</span><span class="si">!r}</span><span class="s2"> and </span><span class="si">{</span><span class="n">sig_func</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Number of arguments of function </span><span class="si">{</span><span class="n">fn</span><span class="si">!r}</span><span class="s2"> must be subset of &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;that of running function </span><span class="si">{</span><span class="n">target_func</span><span class="si">!r}</span><span class="s2">.&quot;</span>
                 <span class="p">)</span>
-            <span class="c1"># If argument names are identical, input arguments don&#39;t have to be filtered.</span>
-            <span class="n">_filter</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">:</span> <span class="n">a</span>
+            <span class="k">return</span> <span class="n">_filter</span>
 
-        <span class="k">elif</span> <span class="n">less</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">idx</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">params_func</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
-                <span class="k">if</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">params_preview</span><span class="p">:</span>
-                    <span class="n">idx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-            <span class="c1"># If argument names are not identical, input arguments have to be filtered so</span>
-            <span class="c1"># that arguments match the inputs.</span>
-            <span class="n">_filter</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">_args</span><span class="p">:</span> <span class="p">(</span><span class="n">a</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">_args</span><span class="p">)</span> <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">idx</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">_impl_arg_filter</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">F</span><span class="p">,</span> <span class="n">_filter</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">F</span><span class="p">:</span>
+            <span class="k">def</span> <span class="nf">_func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
+                <span class="kn">from</span> <span class="nn">._gui</span> <span class="kn">import</span> <span class="n">BaseGui</span>
 
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Number of arguments of preview function </span><span class="si">{</span><span class="n">preview</span><span class="si">!r}</span><span class="s2"> must be equal&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;or smaller than that of running function </span><span class="si">{</span><span class="n">function</span><span class="si">!r}</span><span class="s2">.&quot;</span>
-            <span class="p">)</span>
+                <span class="c1"># find proper parent instance in the case of classes being nested</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">BaseGui</span><span class="p">):</span>
+                    <span class="n">ins</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="n">prev_ns</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="vm">__qualname__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+                    <span class="k">while</span> <span class="n">ins</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">!=</span> <span class="n">prev_ns</span><span class="p">:</span>
+                        <span class="n">ins</span> <span class="o">=</span> <span class="n">ins</span><span class="o">.</span><span class="n">__magicclass_parent__</span>
+                    <span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="n">ins</span><span class="p">,)</span> <span class="o">+</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
 
-        <span class="k">def</span> <span class="nf">_preview</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
-            <span class="c1"># find proper parent instance in the case of classes being nested</span>
-            <span class="kn">from</span> <span class="nn">._gui</span> <span class="kn">import</span> <span class="n">BaseGui</span>
+                <span class="k">with</span> <span class="n">ins</span><span class="o">.</span><span class="n">macro</span><span class="o">.</span><span class="n">blocked</span><span class="p">():</span>
+                    <span class="c1"># filter input arguments</span>
+                    <span class="n">out</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">_filter</span><span class="p">(</span><span class="n">args</span><span class="p">))</span>
+                <span class="k">return</span> <span class="n">out</span>
 
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">BaseGui</span><span class="p">):</span>
-                <span class="n">ins</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="n">prev_ns</span> <span class="o">=</span> <span class="n">preview</span><span class="o">.</span><span class="vm">__qualname__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
-                <span class="k">while</span> <span class="n">ins</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">!=</span> <span class="n">prev_ns</span><span class="p">:</span>
-                    <span class="n">ins</span> <span class="o">=</span> <span class="n">ins</span><span class="o">.</span><span class="n">__magicclass_parent__</span>
-                <span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="n">ins</span><span class="p">,)</span> <span class="o">+</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
-            <span class="c1"># filter input arguments</span>
-            <span class="k">return</span> <span class="n">preview</span><span class="p">(</span><span class="o">*</span><span class="n">_filter</span><span class="p">(</span><span class="n">args</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">_func</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">FunctionGui</span><span class="p">):</span>
-            <span class="n">upgrade_signature</span><span class="p">(</span>
-                <span class="n">function</span><span class="p">,</span> <span class="n">additional_options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;preview&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">_preview</span><span class="p">)}</span>
-            <span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="kn">from</span> <span class="nn">._gui._function_gui</span> <span class="kn">import</span> <span class="n">append_preview</span>
+        <span class="k">def</span> <span class="nf">_wrapper</span><span class="p">(</span><span class="n">preview</span><span class="p">:</span> <span class="n">F</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">F</span><span class="p">:</span>
+            <span class="n">_filter</span> <span class="o">=</span> <span class="n">_get_arg_filter</span><span class="p">(</span><span class="n">preview</span><span class="p">)</span>
+            <span class="n">_preview</span> <span class="o">=</span> <span class="n">_impl_arg_filter</span><span class="p">(</span><span class="n">preview</span><span class="p">,</span> <span class="n">_filter</span><span class="p">)</span>
+            <span class="n">_preview</span><span class="o">.</span><span class="n">__wrapped__</span> <span class="o">=</span> <span class="n">preview</span>
+            <span class="n">_preview</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">preview</span><span class="p">,</span> <span class="s2">&quot;__name__&quot;</span><span class="p">,</span> <span class="s2">&quot;_preview&quot;</span><span class="p">)</span>
+            <span class="n">_preview</span><span class="o">.</span><span class="vm">__qualname__</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">preview</span><span class="p">,</span> <span class="s2">&quot;__qualname__&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
 
-            <span class="n">append_preview</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">_preview</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">preview</span>
+            <span class="k">def</span> <span class="nf">_set_during_preview</span><span class="p">(</span><span class="n">during</span><span class="p">:</span> <span class="n">F</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">F</span><span class="p">:</span>
+                <span class="n">_filter</span> <span class="o">=</span> <span class="n">_get_arg_filter</span><span class="p">(</span><span class="n">during</span><span class="p">)</span>
+                <span class="n">_during</span> <span class="o">=</span> <span class="n">_impl_arg_filter</span><span class="p">(</span><span class="n">during</span><span class="p">,</span> <span class="n">_filter</span><span class="p">)</span>
+                <span class="n">_preview</span><span class="o">.</span><span class="n">_preview_context</span> <span class="o">=</span> <span class="n">_during</span>
+                <span class="k">return</span> <span class="n">during</span>
 
-    <span class="k">return</span> <span class="n">_wrapper</span></div>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target_func</span><span class="p">,</span> <span class="n">FunctionGui</span><span class="p">):</span>
+                <span class="n">upgrade_signature</span><span class="p">(</span>
+                    <span class="n">target_func</span><span class="p">,</span>
+                    <span class="n">additional_options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;preview&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">auto_call</span><span class="p">,</span> <span class="n">_preview</span><span class="p">)},</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="kn">from</span> <span class="nn">._gui._function_gui</span> <span class="kn">import</span> <span class="n">append_preview</span>
 
+                <span class="n">append_preview</span><span class="p">(</span><span class="n">target_func</span><span class="p">,</span> <span class="n">_preview</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="n">auto_call</span><span class="o">=</span><span class="n">auto_call</span><span class="p">)</span>
+
+            <span class="c1"># add method</span>
+            <span class="n">preview</span><span class="o">.</span><span class="n">during_preview</span> <span class="o">=</span> <span class="n">_set_during_preview</span>
+            <span class="k">return</span> <span class="n">preview</span>
+
+        <span class="k">if</span> <span class="n">mark_self</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">_wrapper</span><span class="p">(</span><span class="n">target_func</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">_wrapper</span>
+
+    <span class="k">if</span> <span class="n">function</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_outer_wrapper</span><span class="p">(</span><span class="n">function</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">mark_self</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="n">_outer_wrapper</span></div>
+
+
+<span class="n">mark_preview</span> <span class="o">=</span> <span class="n">impl_preview</span>
 
 <span class="n">_Fn</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;_Fn&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">Callable</span><span class="p">[[</span><span class="n">FunctionGui</span><span class="p">],</span> <span class="n">Any</span><span class="p">])</span>
 

@@ -51,8 +51,8 @@ subclasses. In the case of example, GUI will look like:
 Field Objects in the Base Class
 ===============================
 
-You may want to add widgets using ``MagicField`` (see :doc:`use_field`). ``MagicField``
-behaves similarly as methods. In the following example,
+You may want to add widgets using ``MagicField`` (see :doc:`/main/basics/use_field`).
+``MagicField`` behaves similarly as methods. In the following example,
 
 .. code-block:: python
 
@@ -174,7 +174,7 @@ function to a field, you must re-define fields in the subclasses.
 Nesting Magic Classes
 =====================
 
-Nesting magic classes (see :doc:`nest`) is useful for designing layout of widgets.
+Nesting magic classes (see :doc:`/main/basics/nest`) is useful for designing layout of widgets.
 You don't have to worry about inheriting base class with a nested magic class.
 
 .. code-block:: python

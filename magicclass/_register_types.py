@@ -24,6 +24,19 @@ mk.register_type(
         _datetime, (e.year, e.month, e.day, e.hour, e.minute), {}
     ),
 )
+
+
+@mk.register_type(range)
+def _fmt_range(e: range) -> str:
+    if e.step == 1:
+        if e.start == 0:
+            return f"range({e.stop})"
+        else:
+            return f"range({e.start}, {e.stop})"
+    else:
+        return f"range({e.start}, {e.stop}, {e.step})"
+
+
 mk.register_type(
     datetime.date, lambda e: Expr.parse_call(_date, (e.year, e.month, e.day), {})
 )

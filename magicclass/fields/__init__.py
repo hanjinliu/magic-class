@@ -7,3 +7,4 @@ from ._fields import (
     method_as_getter,
 )
 from ._group import HasFields, FieldGroup, dataclass_gui
+from ._property import magicproperty

@@ -10,6 +10,7 @@ Subpackages
    magicclass.ext
    magicclass.fields
    magicclass.functools
+   magicclass.logging
    magicclass.stylesheets
    magicclass.utils
    magicclass.widgets
@@ -29,6 +30,14 @@ magicclass.help module
 ----------------------
 
 .. automodule:: magicclass.help
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+magicclass.plot\_api module
+---------------------------
+
+.. automodule:: magicclass.plot_api
    :members:
    :undoc-members:
    :show-inheritance:

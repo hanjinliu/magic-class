@@ -12,6 +12,7 @@ and tidiness of the source code.
    use_wraps
    use_bind
    use_choices
+   use_property
    use_preview
    use_worker
    use_icon

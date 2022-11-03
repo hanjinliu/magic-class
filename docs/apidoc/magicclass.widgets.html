@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.widgets package &mdash; magic-class 0.6.11 documentation</title>
+  <title>magicclass.widgets package &mdash; magic-class 0.6.12.dev0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/columns.css" type="text/css" />
@@ -19,8 +19,6 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="magicclass.widgets.pywidgets package" href="magicclass.widgets.pywidgets.html" />
-    <link rel="prev" title="magicclass.utils package" href="magicclass.utils.html" />
 </head>
 
 <body class="wy-body-for-nav">
@@ -31,7 +29,7 @@
             <a href="../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.11
+                0.6.12.dev0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -44,38 +42,11 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../main/quick_start.html">Quick Start</a></li>
 </ul>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../main/chap_basics.html">Basics</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../main/chap_make_better.html">Make Your GUI Better</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../main/chap_data_vis.html">Data Visualization</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../main/chap_advanced.html">Advanced Topics</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../main/freewidget.html">Convert QtWidgets into a Magic Widget</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../main/keybinding.html">Define Custom Keybindings</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../main/customize_macro.html">Customize Macro Recording</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../main/class_inheritance.html">Inherit Magic Class</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="../main/api.html">API References</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="magicclass.html">magicclass package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.html">magicclass.ext package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.utils.html">magicclass.utils package</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">magicclass.widgets package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#subpackages">Subpackages</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-magicclass.widgets.color">magicclass.widgets.color module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-magicclass.widgets.containers">magicclass.widgets.containers module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-magicclass.widgets.logger">magicclass.widgets.logger module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-magicclass.widgets.misc">magicclass.widgets.misc module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-magicclass.widgets.plot">magicclass.widgets.plot module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-magicclass.widgets.separator">magicclass.widgets.separator module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-magicclass.widgets.sequence">magicclass.widgets.sequence module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-magicclass.widgets.utils">magicclass.widgets.utils module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-magicclass.widgets">Module contents</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="magicclass.widgets.pywidgets.html">magicclass.widgets.pywidgets package</a></li>
-</ul>
-</li>
-</ul>
-</li>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../main/basics/index.html">Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/make_better/index.html">Make Your GUI Better</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/visualization/index.html">Data Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/advanced/index.html">Advanced Topics</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../main/best_practice.html">Best Practice</a></li>
@@ -95,9 +66,6 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../main/chap_advanced.html">Advanced Topics</a> &raquo;</li>
-          <li><a href="../main/api.html">API References</a> &raquo;</li>
-          <li><a href="magicclass.html">magicclass package</a> &raquo;</li>
       <li>magicclass.widgets package</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/apidoc/magicclass.widgets.rst.txt" rel="nofollow"> View page source</a>
@@ -415,7 +383,7 @@ utils.colormaps.standardize_color.transform_color function.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="magicclass.widgets.logger.Logger.print_figure">
-<span class="sig-name descname"><span class="pre">print_figure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#magicclass.widgets.plot.Figure" title="magicclass.widgets.plot.Figure"><span class="pre">Figure</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/magicclass/widgets/logger.html#Logger.print_figure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.logger.Logger.print_figure" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">print_figure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">mpl_Figure</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/magicclass/widgets/logger.html#Logger.print_figure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.logger.Logger.print_figure" title="Permalink to this definition">¶</a></dt>
 <dd><p>Print matplotlib Figure object like inline plot.</p>
 </dd></dl>
 
@@ -799,6 +767,11 @@ recommended.</p>
 <dd></dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.plot.Figure.bar">
+<span class="sig-name descname"><span class="pre">bar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/magicclass/widgets/plot.html#Figure.bar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.plot.Figure.bar" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="magicclass.widgets.plot.Figure.box">
 <span class="sig-name descname"><span class="pre">box</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">on</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/magicclass/widgets/plot.html#Figure.box"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.plot.Figure.box" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -823,6 +796,11 @@ recommended.</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">enabled</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#magicclass.widgets.plot.Figure.enabled" title="Permalink to this definition">¶</a></dt>
 <dd><p>toggle interactivity of the figure canvas.</p>
 </dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.plot.Figure.grid">
+<span class="sig-name descname"><span class="pre">grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/magicclass/widgets/plot.html#Figure.grid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.plot.Figure.grid" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="magicclass.widgets.plot.Figure.hist">
@@ -1480,6 +1458,11 @@ left, by default <code class="docutils literal notranslate"><span class="pre">Tr
 <dd></dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.Figure.bar">
+<span class="sig-name descname"><span class="pre">bar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/magicclass/widgets/plot.html#Figure.bar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.Figure.bar" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="magicclass.widgets.Figure.box">
 <span class="sig-name descname"><span class="pre">box</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">on</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/magicclass/widgets/plot.html#Figure.box"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.Figure.box" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -1504,6 +1487,11 @@ left, by default <code class="docutils literal notranslate"><span class="pre">Tr
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">enabled</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#magicclass.widgets.Figure.enabled" title="Permalink to this definition">¶</a></dt>
 <dd><p>toggle interactivity of the figure canvas.</p>
 </dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.widgets.Figure.grid">
+<span class="sig-name descname"><span class="pre">grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/magicclass/widgets/plot.html#Figure.grid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.Figure.grid" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="magicclass.widgets.Figure.hist">
@@ -2114,7 +2102,7 @@ annotation will be like 'list[str]'.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="magicclass.widgets.Logger.print_figure">
-<span class="sig-name descname"><span class="pre">print_figure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#magicclass.widgets.Figure" title="magicclass.widgets.Figure"><span class="pre">Figure</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/magicclass/widgets/logger.html#Logger.print_figure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.Logger.print_figure" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">print_figure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">mpl_Figure</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/magicclass/widgets/logger.html#Logger.print_figure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.widgets.Logger.print_figure" title="Permalink to this definition">¶</a></dt>
 <dd><p>Print matplotlib Figure object like inline plot.</p>
 </dd></dl>
 
@@ -2828,10 +2816,7 @@ annotation will be like 'tuple[str, int]'.</p>
 
            </div>
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="magicclass.utils.html" class="btn btn-neutral float-left" title="magicclass.utils package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="magicclass.widgets.pywidgets.html" class="btn btn-neutral float-right" title="magicclass.widgets.pywidgets package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-    </div>
+          <footer>
 
   <hr/>
 

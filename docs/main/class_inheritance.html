@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Inherit Magic Class &mdash; magic-class 0.6.11 documentation</title>
+  <title>Inherit Magic Class &mdash; magic-class 0.6.12.dev0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/columns.css" type="text/css" />
@@ -31,7 +31,7 @@
             <a href="../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.11
+                0.6.12.dev0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -45,7 +45,6 @@
 <li class="toctree-l1"><a class="reference internal" href="quick_start.html">Quick Start</a></li>
 </ul>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="chap_basics.html">Basics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="chap_make_better.html">Make Your GUI Better</a></li>
 <li class="toctree-l1"><a class="reference internal" href="chap_data_vis.html">Data Visualization</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="chap_advanced.html">Advanced Topics</a><ul class="current">
@@ -138,8 +137,8 @@ subclasses. In the case of example, GUI will look like:</p>
 </section>
 <section id="field-objects-in-the-base-class">
 <h2>Field Objects in the Base Class<a class="headerlink" href="#field-objects-in-the-base-class" title="Permalink to this headline">¶</a></h2>
-<p>You may want to add widgets using <code class="docutils literal notranslate"><span class="pre">MagicField</span></code> (see <a class="reference internal" href="use_field.html"><span class="doc">Use Fields in magic-class</span></a>). <code class="docutils literal notranslate"><span class="pre">MagicField</span></code>
-behaves similarly as methods. In the following example,</p>
+<p>You may want to add widgets using <code class="docutils literal notranslate"><span class="pre">MagicField</span></code> (see <a class="reference internal" href="basics/use_field.html"><span class="doc">Use Fields in magic-class</span></a>).
+<code class="docutils literal notranslate"><span class="pre">MagicField</span></code> behaves similarly as methods. In the following example,</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">field</span>
 
 <span class="k">class</span> <span class="nc">Base</span><span class="p">:</span>
@@ -246,7 +245,7 @@ until class definition finishes.</p>
 </section>
 <section id="nesting-magic-classes">
 <h2>Nesting Magic Classes<a class="headerlink" href="#nesting-magic-classes" title="Permalink to this headline">¶</a></h2>
-<p>Nesting magic classes (see <a class="reference internal" href="nest.html"><span class="doc">Nest magic-classes</span></a>) is useful for designing layout of widgets.
+<p>Nesting magic classes (see <a class="reference internal" href="basics/nest.html"><span class="doc">Nest magic-classes</span></a>) is useful for designing layout of widgets.
 You don't have to worry about inheriting base class with a nested magic class.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Base</span><span class="p">(</span><span class="n">MagicTemplate</span><span class="p">):</span>
     <span class="c1"># All of these widgets and their layout will be inherited to subclasses</span>

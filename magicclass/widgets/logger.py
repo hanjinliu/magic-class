@@ -14,7 +14,7 @@ from ..utils import rst_to_html
 
 if TYPE_CHECKING:
     import numpy as np
-    from matplotlib.figure import Figure
+    from matplotlib.figure import Figure as mpl_Figure
 
 # See https://stackoverflow.com/questions/28655198/best-way-to-display-logs-in-pyqt
 
@@ -339,7 +339,7 @@ class Logger(Widget, logging.Handler):
         self.native.appendImage(image)
         return None
 
-    def print_figure(self, fig: Figure) -> None:
+    def print_figure(self, fig: mpl_Figure) -> None:
         """Print matplotlib Figure object like inline plot."""
         import numpy as np
 

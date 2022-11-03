@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Matplotlib Figure &mdash; magic-class 0.6.11 documentation</title>
+  <title>Matplotlib Figure &mdash; magic-class 0.6.12.dev0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/columns.css" type="text/css" />
@@ -20,7 +20,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="PyQtGraph Canvas" href="pyqtgraph.html" />
-    <link rel="prev" title="Data Visualization" href="../chap_data_vis.html" />
+    <link rel="prev" title="Data Visualization" href="index.html" />
 </head>
 
 <body class="wy-body-for-nav">
@@ -31,7 +31,7 @@
             <a href="../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.11
+                0.6.12.dev0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -45,13 +45,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../quick_start.html">Quick Start</a></li>
 </ul>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../chap_basics.html">Basics</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../chap_make_better.html">Make Your GUI Better</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../chap_data_vis.html">Data Visualization</a><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../basics/index.html">Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../make_better/index.html">Make Your GUI Better</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Data Visualization</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Matplotlib Figure</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#basic-usage">Basic Usage</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#use-figure-widget-in-magic-class">Use Figure Widget in Magic Class</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#use-multiple-axes">Use Multiple Axes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#plot-api">Plot API</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="pyqtgraph.html">PyQtGraph Canvas</a></li>
@@ -59,7 +60,7 @@
 <li class="toctree-l2"><a class="reference internal" href="vtk.html">VTK (Visualization Toolkit)</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../chap_advanced.html">Advanced Topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced/index.html">Advanced Topics</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../best_practice.html">Best Practice</a></li>
@@ -79,7 +80,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../chap_data_vis.html">Data Visualization</a> &raquo;</li>
+          <li><a href="index.html">Data Visualization</a> &raquo;</li>
       <li>Matplotlib Figure</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/main/visualization/matplotlib.rst.txt" rel="nofollow"> View page source</a>
@@ -92,6 +93,15 @@
 
   <section id="matplotlib-figure">
 <h1>Matplotlib Figure<a class="headerlink" href="#matplotlib-figure" title="Permalink to this headline">¶</a></h1>
+<div class="contents local topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#basic-usage" id="id1">Basic Usage</a></p></li>
+<li><p><a class="reference internal" href="#use-figure-widget-in-magic-class" id="id2">Use Figure Widget in Magic Class</a></p></li>
+<li><p><a class="reference internal" href="#use-multiple-axes" id="id3">Use Multiple Axes</a></p></li>
+<li><p><a class="reference internal" href="#plot-api" id="id4">Plot API</a></p></li>
+</ul>
+</div>
 <p><code class="docutils literal notranslate"><span class="pre">matplotlib</span></code> is one of the most widely used data visualization libraries. I
 guess most of the Python users know the basics of the library.</p>
 <p>For data visualization of simple data set, your can use the <code class="docutils literal notranslate"><span class="pre">Figure</span></code> widget.</p>
@@ -99,10 +109,9 @@ guess most of the Python users know the basics of the library.</p>
 </pre></div>
 </div>
 <p>It has very simple API inherited from the original functions, such as
-<code class="docutils literal notranslate"><span class="pre">plt.plot(x,</span> <span class="pre">y)</span></code> or <code class="docutils literal notranslate"><span class="pre">plt.xlim(0,</span> <span class="pre">100)</span></code>. It also support interactive plot
-since <code class="docutils literal notranslate"><span class="pre">v0.6.1</span></code>.</p>
+<code class="docutils literal notranslate"><span class="pre">plt.plot(x,</span> <span class="pre">y)</span></code> or <code class="docutils literal notranslate"><span class="pre">plt.xlim(0,</span> <span class="pre">100)</span></code>. It also support interactive plot.</p>
 <section id="basic-usage">
-<h2>Basic Usage<a class="headerlink" href="#basic-usage" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id1">Basic Usage</a><a class="headerlink" href="#basic-usage" title="Permalink to this headline">¶</a></h2>
 <p>If you are using <code class="docutils literal notranslate"><span class="pre">Figure</span></code> widget independent of <code class="docutils literal notranslate"><span class="pre">magic-class</span></code>, it's just
 like the usual <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code> way.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># run &quot;%gui qt&quot; if needed</span>
@@ -126,7 +135,7 @@ like the usual <code class="docutils literal notranslate"><span class="pre">matp
 </div>
 </section>
 <section id="use-figure-widget-in-magic-class">
-<h2>Use Figure Widget in Magic Class<a class="headerlink" href="#use-figure-widget-in-magic-class" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id2">Use Figure Widget in Magic Class</a><a class="headerlink" href="#use-figure-widget-in-magic-class" title="Permalink to this headline">¶</a></h2>
 <p>In most cases, you'll use <code class="docutils literal notranslate"><span class="pre">field</span></code> to create a <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code> figure widget
 in your GUI.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">field</span>
@@ -141,7 +150,7 @@ in your GUI.</p>
 </div>
 </section>
 <section id="use-multiple-axes">
-<h2>Use Multiple Axes<a class="headerlink" href="#use-multiple-axes" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id3">Use Multiple Axes</a><a class="headerlink" href="#use-multiple-axes" title="Permalink to this headline">¶</a></h2>
 <p>Sometimes we have to prepare multiple axes and plot different sets of data
 separately by using <code class="docutils literal notranslate"><span class="pre">fig,</span> <span class="pre">ax</span> <span class="pre">=</span> <span class="pre">plt.subplots(2,</span> <span class="pre">1)</span></code> or other similar methods.
 The <code class="docutils literal notranslate"><span class="pre">Figure</span></code> widget also support multi-axes plotting. You can create a
@@ -161,13 +170,36 @@ you'll have to call <code class="docutils literal notranslate"><span class="pre"
 </pre></div>
 </div>
 </section>
+<section id="plot-api">
+<h2><a class="toc-backref" href="#id4">Plot API</a><a class="headerlink" href="#plot-api" title="Permalink to this headline">¶</a></h2>
+<p>For the simplest usage, you can use <code class="docutils literal notranslate"><span class="pre">plot_api</span></code> submodule. Its API is almost
+identical to those in <code class="docutils literal notranslate"><span class="pre">matplotlib.pyplot</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># instead of import matplotlib.pyplot as plt</span>
+<span class="kn">import</span> <span class="nn">magicclass.plot_api</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The current figure widget is available with <code class="docutils literal notranslate"><span class="pre">gcw()</span></code> function. It returns the
+<code class="docutils literal notranslate"><span class="pre">magicclass.widgets.Figure</span></code> widget.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># add figure to a widget.</span>
+<span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">Container</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcw</span><span class="p">()</span>
+<span class="n">cnt</span> <span class="o">=</span> <span class="n">Container</span><span class="p">(</span><span class="n">widgets</span><span class="o">=</span><span class="p">[</span><span class="n">fig</span><span class="p">])</span>
+<span class="n">cnt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="../chap_data_vis.html" class="btn btn-neutral float-left" title="Data Visualization" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="index.html" class="btn btn-neutral float-left" title="Data Visualization" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="pyqtgraph.html" class="btn btn-neutral float-right" title="PyQtGraph Canvas" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
