@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import TypeVar, Callable, Any, TYPE_CHECKING
+import inspect
 from magicgui.signature import magic_signature
 from magicgui.widgets import create_widget, Container, PushButton
 from magicgui.widgets._bases import ValueWidget
@@ -27,21 +28,23 @@ class _ButtonedWidget(Container):
             raise TypeError("widget must have a value attribute")
         self._child_widget = widget
 
+        widgets = [widget]
         if call_button is None:
             call_button = not auto_call
+
+        self._call_button: PushButton | None = None
         if call_button:
-            self._call_button: PushButton | None = None
             text = call_button if isinstance(call_button, str) else "Set"
             self._call_button = PushButton(gui_only=True, text=text, name="call_button")
+            widgets.append(self._call_button)
 
-        super().__init__(
-            layout=layout, widgets=[widget, self._call_button], labels=False, **kwargs
-        )
+        super().__init__(layout=layout, widgets=widgets, labels=False, **kwargs)
         self.margins = (0, 0, 0, 0)
         # disconnect the existing signals
         widget.changed.disconnect()
-        self._call_button.changed.disconnect()
-        self._call_button.changed.connect(self._button_clicked)
+        if self._call_button is not None:
+            self._call_button.changed.disconnect()
+            self._call_button.changed.connect(self._button_clicked)
         self._auto_call = auto_call
         self._inner_value = widget.value
 
@@ -49,7 +52,7 @@ class _ButtonedWidget(Container):
             widget.changed.connect(self.set_value)
 
     @classmethod
-    def from_anotation(
+    def from_options(
         cls: type[_ButtonedWidget],
         annotation: type,
         layout: str = "horizontal",
@@ -59,10 +62,16 @@ class _ButtonedWidget(Container):
         auto_call=False,
         **kwargs,
     ):
+        """Construct a ButtonedWidget in a ``create_widget`` format."""
         widget = create_widget(
-            annotation=annotation, widget_type=widget_type, options=options
+            annotation=annotation,
+            widget_type=widget_type,
+            options=options,
         )
         return cls(widget, layout, call_button, auto_call, **kwargs)
+
+    def __repr__(self) -> str:
+        return f"{type(self).__name__}({self.widget!r})"
 
     @property
     def value(self) -> Any:
@@ -75,8 +84,8 @@ class _ButtonedWidget(Container):
 
     def set_value(self, value: Any) -> None:
         """Method version of setting the value."""
-        self._child_widget.value = value
-        self._inner_value = self.value
+        self.widget.value = value
+        self._inner_value = self.widget.value
         self.changed.emit(self._inner_value)
         return None
 
@@ -87,10 +96,12 @@ class _ButtonedWidget(Container):
 
     @property
     def widget(self) -> ValueWidget:
+        """The central child widget."""
         return self._child_widget
 
     @property
-    def call_button(self) -> PushButton:
+    def call_button(self) -> PushButton | None:
+        """The call button widget."""
         return self._call_button
 
 
@@ -127,20 +138,14 @@ class magicproperty(MagicField[_ButtonedWidget, _V]):
         options: dict[str, Any] | None = None,
         record: bool = True,
     ) -> None:
-        self._fget = fget
-        self._fset = fset
-        self._fdel = fdel
-
-        if call_button is None:
-            call_button = "Set"
-
         def _create_buttoned_gui(obj):
-            return _ButtonedWidget.from_anotation(
-                self.annotation,
-                call_button=call_button,
+            return _ButtonedWidget.from_options(
+                annotation=self.annotation,
                 layout=layout,
-                auto_call=auto_call,
+                widget_type=self.widget_type,
                 options=self.options,
+                call_button=call_button,
+                auto_call=auto_call,
                 name=self.name,
             )
 
@@ -153,6 +158,13 @@ class magicproperty(MagicField[_ButtonedWidget, _V]):
             record=record,
             constructor=_create_buttoned_gui,
         )
+
+        if fget:
+            self.getter(fget)
+        if fset:
+            self.setter(fset)
+        if fdel:
+            self.deleter(fdel)
 
     def copy(self) -> Self[_V]:
         raise NotImplementedError
@@ -178,9 +190,9 @@ class magicproperty(MagicField[_ButtonedWidget, _V]):
         annot, opt = split_annotated_type(_val.annotation)
         if not self.options:
             self.options = opt
-            if "widget_type" in opt:
-                self.widget_type = opt.pop("widget_type")
-        if not self.annotation:
+        if "widget_type" in opt:
+            self.widget_type = opt.pop("widget_type")
+        if self.annotation in (None, inspect.Parameter.empty):
             self.annotation = annot
         return self
 
@@ -202,14 +214,17 @@ class magicproperty(MagicField[_ButtonedWidget, _V]):
             raise AttributeError(f"Cannot set {self.__class__.__name__}.")
         # first set the value on the widget to check if it's valid
         gui = self.get_widget(obj)
-        param_widget = gui.widget
-        old_value = param_widget.value
-        param_widget.value = value
-        try:
-            self._fset(obj, value)
-        except Exception:
-            param_widget.value = old_value
-            raise
+        old_value = gui.value
+        with gui.changed.blocked():
+            gui.value = value
+            try:
+                self._fset(obj, value)
+            except Exception:
+                gui.value = old_value
+                raise
+
+        gui.changed.emit(value)
+
         return None
 
     def __delete__(self, obj: Any) -> None:

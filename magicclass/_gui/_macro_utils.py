@@ -47,6 +47,7 @@ def value_widget_callback(
         # >>> x.name = value
         target = Expr(Head.getattr, [symbol(gui), sub])
         expr = Expr(Head.assign, [target, widget.value])
+
         if gui.macro._last_setval == target and len(gui.macro) > 0:
             gui.macro.pop()
             gui.macro._erase_last()
