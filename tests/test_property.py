@@ -75,9 +75,6 @@ def test_options():
     assert ui["x"].widget.widget_type == "ComboBox"
     ui.x = "b"
     assert ui.x == "b"
-    with pytest.raises(ValueError):
-        ui.x = "d"
-    assert ui.x == "b"
 
 
 def test_widget_type():
@@ -132,3 +129,25 @@ def test_auto_call():
     spinbox = ui["x"].widget
     spinbox.value = 10
     assert str(ui.macro[1]) == "ui.x = 10"
+
+def test_exception():
+    mock = MagicMock()
+
+    @magicclass
+    class A:
+        x = magicproperty(options={"choices": [1, 2, 3]})
+
+        @x.setter
+        def x(self, v: int):
+            mock(v)
+
+    ui = A()
+    mock.assert_not_called()
+    ui.x = 2
+    mock.assert_called_with(2)
+    mock.reset_mock()
+    assert ui.x == 2
+    with pytest.raises(ValueError):
+        ui.x = 4
+    mock.assert_not_called()
+    assert ui.x == 2

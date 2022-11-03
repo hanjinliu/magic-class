@@ -16,12 +16,14 @@ if TYPE_CHECKING:
 
 
 class _ButtonedWidget(Container):
+    """A widget wrapper that adds a button to set the value."""
+
     def __init__(
         self,
         widget: ValueWidget,
         layout: str = "horizontal",
         call_button: str | bool | None = None,
-        auto_call=False,
+        auto_call: bool = False,
         **kwargs,
     ):
         if not hasattr(widget, "value"):
@@ -236,10 +238,11 @@ class magicproperty(MagicField[_ButtonedWidget, _V]):
         return self
 
     def _default_fget(self, obj) -> _V:
+        """Return the widget value by default."""
         return self.get_widget(obj).value
 
     def _default_fset(self, obj, val) -> None:
-        pass
+        """Do nothing other than updating the value."""
 
     def __get__(self, obj: Any, objtype: Any = None) -> _V:
         if obj is None:
