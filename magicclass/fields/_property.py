@@ -159,12 +159,46 @@ class magicproperty(MagicField[_ButtonedWidget, _V]):
             constructor=_create_buttoned_gui,
         )
 
+        self._fget = self._default_fget
+        self._fset = self._default_fset
+
         if fget:
             self.getter(fget)
         if fset:
             self.setter(fset)
         if fdel:
             self.deleter(fdel)
+
+    @classmethod
+    def from_setter(
+        cls: type[magicproperty],
+        fset: Callable[[Any, _V], None] = None,
+        *,
+        name: str | None = None,
+        label: str | None = None,
+        annotation: Any = None,
+        widget_type: type | str | None = None,
+        auto_call: bool = False,
+        layout: str = "horizontal",
+        call_button: bool | str | None = None,
+        options: dict[str, Any] | None = None,
+        record: bool = True,
+    ) -> Self[_V]:
+        def _wrapper(fset):
+            return cls(
+                fset=fset,
+                name=name,
+                label=label,
+                annotation=annotation,
+                widget_type=widget_type,
+                auto_call=auto_call,
+                layout=layout,
+                call_button=call_button,
+                options=options,
+                record=record,
+            )
+
+        return _wrapper if fset is None else _wrapper(fset)
 
     def copy(self) -> Self[_V]:
         raise NotImplementedError
@@ -201,13 +235,16 @@ class magicproperty(MagicField[_ButtonedWidget, _V]):
         self._fdel = fdel
         return self
 
+    def _default_fget(self, obj) -> _V:
+        return self.get_widget(obj).value
+
+    def _default_fset(self, obj, val) -> None:
+        pass
+
     def __get__(self, obj: Any, objtype: Any = None) -> _V:
         if obj is None:
             return self
-        if self._fget is not None:
-            return self._fget(obj)
-        else:
-            return self.get_widget(obj).value
+        return self._fget(obj)
 
     def __set__(self, obj: Any, value: _V) -> None:
         if obj is None:
@@ -231,9 +268,6 @@ class magicproperty(MagicField[_ButtonedWidget, _V]):
         if self._fdel is not None:
             return self._fdel(obj)
         raise AttributeError("can't delete attribute")
-
-    def not_ready(self) -> bool:
-        return self._fset is None
 
     def get_widget(self, obj: Any) -> _ButtonedWidget:
         """A light-weight version."""
