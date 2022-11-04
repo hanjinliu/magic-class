@@ -499,7 +499,7 @@ class Points3D(LayerItem, HasFields):
         self._visual: MarkersVisual = visuals.Markers(
             scaling=True, parent=self._viewbox.scene, spherical=True
         )
-        self.data = data[:, ::-1]
+        self.data = data
         self.face_color = face_color
         self.edge_color = edge_color
         self.edge_width = edge_width
@@ -514,7 +514,7 @@ class Points3D(LayerItem, HasFields):
     @data.setter
     def data(self, value) -> None:
         self._visual.set_data(
-            pos=value,
+            pos=value[:, ::-1],
             face_color=self.face_color,
             edge_color=self.edge_color,
             edge_width=self.edge_width,
