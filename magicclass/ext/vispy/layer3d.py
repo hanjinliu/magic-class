@@ -509,12 +509,13 @@ class Points3D(LayerItem, HasFields):
 
     @property
     def data(self) -> np.ndarray:
-        return self._data
+        return self._data[:, ::-1]
 
     @data.setter
     def data(self, value) -> None:
+        _value = value[:, ::-1]
         self._visual.set_data(
-            pos=value[:, ::-1],
+            pos=_value,
             face_color=self.face_color,
             edge_color=self.edge_color,
             edge_width=self.edge_width,
@@ -522,7 +523,7 @@ class Points3D(LayerItem, HasFields):
             scaling=True,
             symbol=self._visual.symbol,
         )
-        self._data = value
+        self._data = _value
         self._visual.update()
 
     # fmt: off
@@ -537,7 +538,7 @@ class Points3D(LayerItem, HasFields):
     @face_color.connect
     def _on_face_color_change(self, value):
         return self._visual.set_data(
-            pos=self.data,
+            pos=self._data,
             face_color=value,
             edge_color=self.edge_color,
             edge_width=self.edge_width,
@@ -549,7 +550,7 @@ class Points3D(LayerItem, HasFields):
     @edge_color.connect
     def _on_edge_color_change(self, value):
         return self._visual.set_data(
-            pos=self.data,
+            pos=self._data,
             face_color=self.face_color,
             edge_color=value,
             edge_width=self.edge_width,
@@ -561,7 +562,7 @@ class Points3D(LayerItem, HasFields):
     @edge_width.connect
     def _on_edge_width_change(self, value):
         return self._visual.set_data(
-            pos=self.data,
+            pos=self._data,
             face_color=self.face_color,
             edge_color=self.edge_color,
             edge_width=value,
@@ -578,7 +579,7 @@ class Points3D(LayerItem, HasFields):
     @size.connect
     def _on_size_change(self, value):
         return self._visual.set_data(
-            pos=self.data,
+            pos=self._data,
             face_color=self.face_color,
             edge_color=self.edge_color,
             edge_width=self.edge_width,
@@ -595,8 +596,8 @@ class Points3D(LayerItem, HasFields):
         return None
 
     def _get_bbox(self) -> Tuple[np.ndarray, np.ndarray]:
-        mins = np.min(self.data, axis=0)
-        maxs = np.max(self.data, axis=0)
+        mins = np.min(self._data, axis=0)
+        maxs = np.max(self._data, axis=0)
         return mins, maxs
 
 
