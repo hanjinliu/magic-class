@@ -648,7 +648,7 @@ def field(
         Label of the widget.
     widget_type : str, optional
         Widget type. This argument will be sent to ``create_widget`` function.
-    options : WidgetOptions, optional
+    options : dict, optional
         Widget options. This parameter will be passed to the ``options`` keyword
         argument of ``create_widget``.
     record : bool, default is True
@@ -758,7 +758,7 @@ def vfield(
         Label of the widget.
     widget_type : str, optional
         Widget type. This argument will be sent to ``create_widget`` function.
-    options : WidgetOptions, optional
+    options : dict, optional
         Widget options. This parameter will be passed to the ``options`` keyword
         argument of ``create_widget``.
     record : bool, default is True

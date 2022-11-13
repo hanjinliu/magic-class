@@ -1,9 +1,8 @@
 from __future__ import annotations
-from typing import Any, TypedDict, Callable
+from typing import Any, Callable, TypedDict
 from typing_extensions import _AnnotatedAlias
 from magicgui.signature import MagicSignature
 from magicgui.widgets import FunctionGui
-from magicgui.types import WidgetOptions
 import inspect
 from .utils import get_signature
 
@@ -21,7 +20,7 @@ class AdditionalOptions(TypedDict):
 def upgrade_signature(
     func,
     gui_options: dict = None,
-    caller_options: WidgetOptions = None,
+    caller_options: dict = None,
     additional_options: AdditionalOptions = None,
 ):
     """
@@ -34,7 +33,7 @@ def upgrade_signature(
         Input function.
     gui_options : dict, optional
         Options of FunctionGui.
-    caller_options : WidgetOptions, optional
+    caller_options : dict, optional
         Options of PushButton.
     additional_options : AdditionalOptions, optional
         Additional options that will be used in magic class.
@@ -148,9 +147,9 @@ class MagicMethodSignature(MagicSignature):
         )
 
     @classmethod
-    def get_gui_options(cls, sig: inspect.Signature | MagicSignature) -> WidgetOptions:
+    def get_gui_options(cls, sig: inspect.Signature | MagicSignature) -> dict:
         if type(sig) is inspect.Signature:
-            out: WidgetOptions = {}
+            out: dict = {}
             for k, v in sig.parameters.items():
                 annot = v.annotation
                 if isinstance(annot, _AnnotatedAlias):
@@ -186,7 +185,7 @@ class MagicMethodSignature(MagicSignature):
         )
 
 
-def split_annotated_type(annotation: _AnnotatedAlias) -> tuple[Any, WidgetOptions]:
+def split_annotated_type(annotation: _AnnotatedAlias) -> tuple[Any, dict]:
     """Split an Annotated type into its base type and options dict."""
     if not isinstance(annotation, _AnnotatedAlias):
         raise TypeError("Type hint must be an 'Annotated' type.")
@@ -195,7 +194,7 @@ def split_annotated_type(annotation: _AnnotatedAlias) -> tuple[Any, WidgetOption
             "Invalid Annotated format for magicgui. First arg must be a dict"
         )
 
-    meta: WidgetOptions = {}
+    meta: dict = {}
     for _meta in annotation.__metadata__:
         meta.update(_meta)
 

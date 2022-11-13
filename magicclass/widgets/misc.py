@@ -24,7 +24,7 @@ from magicgui.widgets import (
 )
 from magicgui.application import use_app
 from magicgui.widgets import LineEdit
-from magicgui.types import WidgetOptions, FileDialogMode
+from magicgui.types import FileDialogMode
 from magicgui.widgets._bases.value_widget import ValueWidget, UNSET
 from magicgui.backends._qtpy.widgets import (
     QBaseWidget,
@@ -69,7 +69,7 @@ class OptionalWidget(Container):
         layout: str = "vertical",
         nullable: bool = True,
         value=UNSET,
-        options: WidgetOptions | None = None,
+        options: dict | None = None,
         **kwargs,
     ):
         if text is None:

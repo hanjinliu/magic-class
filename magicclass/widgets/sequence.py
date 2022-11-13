@@ -2,7 +2,6 @@ from __future__ import annotations
 from typing import Any, Iterable, TypeVar, overload, Iterator, Tuple, Sequence
 from typing_extensions import get_args, get_origin, _AnnotatedAlias
 import inspect
-from magicgui.types import WidgetOptions
 from magicgui.widgets import create_widget, Container, PushButton, EmptyWidget
 from magicgui.widgets._bases.value_widget import UNSET, ValueWidget, _Unset
 from magicgui.widgets._concrete import merge_super_sigs
@@ -22,7 +21,7 @@ class ListEdit(Container):
     buttons.
     Parameters
     ----------
-    options: WidgetOptions, optional
+    options: dict, optional
         Widget options of child widgets.
     """
 
@@ -32,7 +31,7 @@ class ListEdit(Container):
         layout: str = "horizontal",
         labels: bool = False,
         nullable: bool = False,
-        options: WidgetOptions = None,
+        options: dict = None,
         **kwargs,
     ):
         self._args_type: type | None = None
@@ -269,7 +268,7 @@ class TupleEdit(Container):
     contents is not editable.
     Parameters
     ----------
-    options: WidgetOptions, optional
+    options: dict, optional
         Widget options of child widgets.
     """
 
@@ -278,7 +277,7 @@ class TupleEdit(Container):
         value: Iterable[_V] | _Unset = UNSET,
         layout: str = "horizontal",
         nullable: bool = False,
-        options: WidgetOptions = None,
+        options: dict = None,
         **kwargs,
     ):
         self._nullable = nullable
