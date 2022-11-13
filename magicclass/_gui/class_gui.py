@@ -3,8 +3,16 @@ from typing import Any, Callable, Sequence, TypeVar
 import warnings
 from qtpy.QtWidgets import QMenuBar, QWidget, QMainWindow, QBoxLayout, QDockWidget
 from qtpy.QtCore import Qt
-from magicgui.widgets import Container, MainWindow, Label, FunctionGui, Image, Table
-from magicgui.widgets._bases import Widget, ButtonWidget, ValueWidget, ContainerWidget
+from magicgui.widgets import (
+    Container,
+    MainWindow,
+    Label,
+    FunctionGui,
+    Image,
+    Table,
+    Widget,
+)
+from magicgui.widgets._bases import ButtonWidget, ValueWidget, ContainerWidget
 from magicgui.widgets._concrete import _LabeledWidget, ContainerWidget
 from macrokit import Symbol
 

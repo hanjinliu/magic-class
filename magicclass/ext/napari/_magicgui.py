@@ -3,7 +3,6 @@ from __future__ import annotations
 from typing import Iterable, Callable, TYPE_CHECKING
 from magicgui import register_type, application as app
 from magicgui.widgets import Container, ComboBox, Label, Widget
-from magicgui.widgets._bases import CategoricalWidget
 
 from napari.utils._magicgui import find_viewer_ancestor
 
@@ -11,7 +10,7 @@ if TYPE_CHECKING:
     from .types import Features, FeatureColumn
 
 
-def get_features(widget: CategoricalWidget) -> list[tuple[str, Features]]:
+def get_features(widget: Widget) -> list[tuple[str, Features]]:
     """Get all the non-empty feature data from the viewer."""
     viewer = find_viewer_ancestor(widget)
     if viewer is None:

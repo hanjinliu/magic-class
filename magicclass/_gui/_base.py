@@ -33,7 +33,6 @@ from magicgui.widgets import (
     MainWindow,
 )
 from magicgui.application import use_app
-from magicgui.widgets._bases.widget import Widget
 from magicgui.widgets._bases import ButtonWidget
 from macrokit import Symbol
 

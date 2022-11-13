@@ -12,8 +12,7 @@ from typing import (
     overload,
 )
 from abc import ABCMeta
-from magicgui.widgets import Container
-from magicgui.widgets._bases import Widget
+from magicgui.widgets import Container, Widget
 from psygnal import SignalInstance
 
 from ._fields import MagicField, MagicValueField, _FieldObject
@@ -420,7 +419,7 @@ class WidgetView(_View):
     def show(self, run=False):
         """Create a container and show it."""
         return self.as_container().show(run=run)
-        
+
     def emit_all(self) -> None:
         """Emit all the signals with current value."""
         for wdt, sig in zip(self.iterwidgets(), self.itersignals()):

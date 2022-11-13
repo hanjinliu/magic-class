@@ -13,8 +13,8 @@ from pathlib import Path
 import datetime
 import sys
 from enum import Enum
-from magicgui.widgets import create_widget
-from magicgui.widgets._bases import Widget, ValueWidget, ContainerWidget
+from magicgui.widgets import create_widget, Widget
+from magicgui.widgets._bases import ValueWidget, ContainerWidget
 from magicgui.widgets._bases.value_widget import UNSET
 
 from ._define import define_callback, define_callback_gui
