@@ -4,9 +4,9 @@ from macrokit import Expr, Head, symbol
 from enum import Enum
 from pathlib import Path
 import datetime
+
 from .types import Color
 from .widgets import ColorEdit
-from .widgets.sequence import ListDataView
 from ._gui._base import MagicTemplate
 
 # classes
@@ -17,7 +17,14 @@ _time = Expr(Head.getattr, [datetime, datetime.time])
 # magicgui-style input
 mk.register_type(Enum, lambda e: symbol(e.value))
 mk.register_type(Path, lambda e: f"r'{e}'")
-mk.register_type(ListDataView, lambda e: list(e))
+
+try:
+    from magicgui.widgets._concrete import ListDataView
+except ImportError:
+    pass
+else:
+    mk.register_type(ListDataView, lambda e: list(e))
+
 mk.register_type(
     datetime.datetime,
     lambda e: Expr.parse_call(
