@@ -143,14 +143,25 @@ def inject_recorder(func: Callable, is_method: bool = True) -> Callable:
         _record_macro = _define_macro_recorder(sig, _func)
 
     if not isinstance(_func, thread_worker):
+        if inspect.iscoroutinefunction(_func):
+            from ._async import run_coroutine
 
-        @functools_wraps(_func)
-        def _recordable(bgui: MagicTemplate, *args, **kwargs):
-            with bgui.macro.blocked():
-                out = _func.__get__(bgui)(*args, **kwargs)
-            if bgui.macro.active:
-                _record_macro(bgui, *args, **kwargs)
-            return out
+            @thread_worker
+            @functools_wraps(_func)
+            def _worker(self, *args, **kwargs):
+                return run_coroutine(_func.__get__(self)(*args, **kwargs))
+
+            _worker._set_recorder(_record_macro)
+            return _worker
+        else:
+
+            @functools_wraps(_func)
+            def _recordable(bgui: MagicTemplate, *args, **kwargs):
+                with bgui.macro.blocked():
+                    out = _func.__get__(bgui)(*args, **kwargs)
+                if bgui.macro.active:
+                    _record_macro(bgui, *args, **kwargs)
+                return out
 
         if hasattr(_func, "__signature__"):
             _recordable.__signature__ = _func.__signature__

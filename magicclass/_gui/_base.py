@@ -16,7 +16,6 @@ from typing_extensions import _AnnotatedAlias, Literal
 import inspect
 import warnings
 from enum import Enum
-from docstring_parser import parse, compose
 from qtpy.QtWidgets import QWidget, QDockWidget
 
 from psygnal import Signal
@@ -53,7 +52,6 @@ from ._icon import get_icon
 
 from ..utils import (
     get_signature,
-    iter_members,
     Tooltips,
     move_to_screen_center,
     argcount,
