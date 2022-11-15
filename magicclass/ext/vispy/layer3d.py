@@ -22,16 +22,17 @@ from ...types import Color
 
 # Copied from napari/_vispy/utils/gl.py
 BLENDING_MODES = {
-    'opaque': dict(preset='opaque'),
-    'translucent': dict(preset='translucent'),
-    'translucent_no_depth': dict(
+    "opaque": dict(preset="opaque"),
+    "translucent": dict(preset="translucent"),
+    "translucent_no_depth": dict(
         depth_test=False,
         cull_face=False,
         blend=True,
-        blend_func=('src_alpha', 'one_minus_src_alpha', 'zero', 'one'),
+        blend_func=("src_alpha", "one_minus_src_alpha", "zero", "one"),
     ),
-    'additive': dict(preset='additive'),
+    "additive": dict(preset="additive"),
 }
+
 
 class Image(LayerItem, HasFields):
     RENDERINGS = [
@@ -471,7 +472,7 @@ class Curve3D(LayerItem, HasFields):
     @width.connect
     def _on_width_change(self, value):
         return self._visual.set_data(width=value)
-    
+
     @blending.connect
     def _on_blending_change(self, value):
         blending_kwargs = BLENDING_MODES[value]
@@ -520,7 +521,6 @@ class Points3D(LayerItem, HasFields):
             edge_color=self.edge_color,
             edge_width=self.edge_width,
             size=self.size,
-            scaling=True,
             symbol=self._visual.symbol,
         )
         self._data = _value
@@ -543,7 +543,6 @@ class Points3D(LayerItem, HasFields):
             edge_color=self.edge_color,
             edge_width=self.edge_width,
             size=self.size,
-            scaling=True,
             symbol=self._visual.symbol,
         )
 
@@ -555,7 +554,6 @@ class Points3D(LayerItem, HasFields):
             edge_color=value,
             edge_width=self.edge_width,
             size=self.size,
-            scaling=True,
             symbol=self._visual.symbol,
         )
 
@@ -567,7 +565,6 @@ class Points3D(LayerItem, HasFields):
             edge_color=self.edge_color,
             edge_width=value,
             size=self.size,
-            scaling=True,
             symbol=self._visual.symbol,
         )
 
@@ -584,10 +581,9 @@ class Points3D(LayerItem, HasFields):
             edge_color=self.edge_color,
             edge_width=self.edge_width,
             size=value,
-            scaling=True,
             symbol=self._visual.symbol,
         )
-    
+
     @blending.connect
     def _on_blending_change(self, value):
         blending_kwargs = BLENDING_MODES[value]
