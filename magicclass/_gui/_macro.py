@@ -331,7 +331,7 @@ class GuiMacro(Macro):
 
     def __getitem__(self, key):
         if isinstance(key, slice):
-            return Macro(self._args, flags=self.flags)
+            return Macro(self._args, flags=self.flags)[key]
         return super().__getitem__(key)
 
     def _update_widget(self, expr=None):

@@ -152,7 +152,7 @@ defaults = {
     "popup_mode": PopUpMode.popup,
     "error_mode": ErrorMode.msgbox,
     "close_on_run": True,
-    "macro-max-history": 1000,
+    "macro-max-history": 100000,
 }
 
 _RESERVED = frozenset(
