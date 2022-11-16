@@ -45,7 +45,7 @@ def magicclass(
     widget_type: WidgetTypeStr | WidgetType = WidgetType.none,
     icon: Any | None = None,
     stylesheet: str | StyleSheet | None = None,
-    parent=None,
+    properties: dict[str, Any] | None = None,
 ) -> type[_M]: ...
 @overload
 def magicclass(
@@ -61,7 +61,7 @@ def magicclass(
     widget_type: WidgetTypeStr | WidgetType = WidgetType.none,
     icon: Any | None = None,
     stylesheet: str | StyleSheet | None = None,
-    parent=None,
+    properties: dict[str, Any] | None = None,
 ) -> type[ClassGuiBase] | _C: ...
 @overload
 def magicclass(
@@ -76,7 +76,7 @@ def magicclass(
     widget_type: WidgetTypeStr | WidgetType = WidgetType.none,
     icon: Any | None = None,
     stylesheet: str | StyleSheet | None = None,
-    parent=None,
+    properties: dict[str, Any] | None = None,
 ) -> _MagicClassDecorator[ClassGuiBase]: ...
 @overload
 def magicmenu(

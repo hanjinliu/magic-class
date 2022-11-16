@@ -77,6 +77,7 @@ def magicclass(
     widget_type: WidgetTypeStr | WidgetType = WidgetType.none,
     icon: Any | None = None,
     stylesheet: str | StyleSheet = None,
+    properties: dict[str, Any] = None,
 ):
     """
     Decorator that can convert a Python class into a widget.
@@ -100,8 +101,8 @@ def magicclass(
     visible : bool, optional
         Initial visibility of GUI. Useful when magic class is nested.
     close_on_run : bool, default is True
-        If True, magicgui created by every method will be deleted after the method is completed without
-        exceptions, i.e. magicgui is more like a dialog.
+        If True, magicgui created by every method will be deleted after the method is
+        completed without exceptions, i.e. magicgui is more like a dialog.
     popup : bool, default is True
         Deprecated.
     popup_mode : str or PopUpMode, default is PopUpMode.popup
@@ -114,6 +115,9 @@ def magicclass(
         Path to the icon image or any object that can be converted into an icon.
     stylesheet : str or StyleSheet object, optional
         Set stylesheet to the widget if given.
+    properties : dict, optional
+        Set properties to the widget if given. This argument is useful when you want
+        to set width, height or margin without defining __post_init__.
 
     Returns
     -------
@@ -203,6 +207,9 @@ def magicclass(
             if hasattr(self, "__post_init__"):
                 with self.macro.blocked():
                     self.__post_init__()
+            if properties:
+                for k, v in properties.items():
+                    setattr(self, k, v)
 
         newclass.__init__ = __init__
 
