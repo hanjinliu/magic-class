@@ -153,6 +153,7 @@ defaults = {
     "error_mode": ErrorMode.msgbox,
     "close_on_run": True,
     "macro-max-history": 100000,
+    "macro-highlight": False,
 }
 
 _RESERVED = frozenset(

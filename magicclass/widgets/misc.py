@@ -156,6 +156,7 @@ class ConsoleTextEdit(TextEdit):
 
         # set tab width
         self.tab_size = 4
+        self._highlight = None
 
     @property
     def tab_size(self):
@@ -196,6 +197,14 @@ class ConsoleTextEdit(TextEdit):
         """Return selected string."""
         cursor = self.native.textCursor()
         return cursor.selectedText().replace("\u2029", "\n")
+
+    def syntax_highlight(self, lang: str = "python", theme: str = "default"):
+        """Highlight syntax."""
+        from superqt.utils import CodeSyntaxHighlight
+        
+        highlight = CodeSyntaxHighlight(self.native.document(), lang, theme=theme)
+        self._highlight = highlight
+        return None
 
 
 class CheckButton(PushButton):
