@@ -23,6 +23,9 @@ class MacroEdit(FreeWidget):
         super().__init__(*args, **kwargs)
         self.__magicclass_parent__ = None
         self.textedit = ConsoleTextEdit()
+        from magicclass import defaults
+        if defaults["macro-highlight"]:
+            self.textedit.syntax_highlight()
         self.set_widget(self.textedit.native)
         self.native.setWindowTitle("Macro")
 
