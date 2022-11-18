@@ -4,8 +4,8 @@ from typing import TYPE_CHECKING, Iterable, overload
 from qtpy.QtWidgets import QMenuBar, QMenu, QAction
 from magicgui.widgets import FileEdit
 
-from ..widgets.misc import FreeWidget, ConsoleTextEdit
-from ..utils import to_clipboard, show_messagebox
+from magicclass.widgets.misc import FreeWidget, ConsoleTextEdit
+from magicclass.utils import to_clipboard, show_messagebox
 
 if TYPE_CHECKING:
     from ._base import BaseGui
@@ -24,6 +24,7 @@ class MacroEdit(FreeWidget):
         self.__magicclass_parent__ = None
         self.textedit = ConsoleTextEdit()
         from magicclass import defaults
+
         if defaults["macro-highlight"]:
             self.textedit.syntax_highlight()
         self.set_widget(self.textedit.native)

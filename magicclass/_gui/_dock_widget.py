@@ -7,10 +7,10 @@ from qtpy.QtCore import Qt
 
 class QtDockWidget(_QDockWidget):
     areas = {
-        "left": Qt.LeftDockWidgetArea,
-        "right": Qt.RightDockWidgetArea,
-        "top": Qt.TopDockWidgetArea,
-        "bottom": Qt.BottomDockWidgetArea,
+        "left": Qt.DockWidgetArea.LeftDockWidgetArea,
+        "right": Qt.DockWidgetArea.RightDockWidgetArea,
+        "top": Qt.DockWidgetArea.TopDockWidgetArea,
+        "bottom": Qt.DockWidgetArea.BottomDockWidgetArea,
     }
 
     def __init__(
@@ -35,7 +35,7 @@ class QtDockWidget(_QDockWidget):
                 )
             allowed_areas = reduce(ior, [areas[a] for a in allowed_areas])
         else:
-            allowed_areas = Qt.AllDockWidgetAreas
+            allowed_areas = Qt.DockWidgetArea.AllDockWidgetAreas
         self.qt_area = areas[area]
         self.setAllowedAreas(allowed_areas)
         self.setWidget(widget)

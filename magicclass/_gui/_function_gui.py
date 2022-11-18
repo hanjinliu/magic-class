@@ -8,7 +8,7 @@ from magicgui.widgets._bases import ValueWidget, ButtonWidget, ContainerWidget
 from magicgui.widgets._function_gui import FunctionGui
 from psygnal import Signal
 
-from ..widgets import Separator
+from magicclass.widgets import Separator
 
 if TYPE_CHECKING:
     from magicgui.widgets import Widget

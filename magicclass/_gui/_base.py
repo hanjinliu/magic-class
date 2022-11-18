@@ -51,9 +51,8 @@ from ._macro import GuiMacro
 from ._macro_utils import inject_recorder, value_widget_callback
 from ._icon import get_icon
 
-from ..utils import (
+from magicclass.utils import (
     get_signature,
-    iter_members,
     Tooltips,
     move_to_screen_center,
     argcount,
@@ -61,16 +60,16 @@ from ..utils import (
     method_as_getter,
     eval_attribute,
 )
-from ..widgets import Separator, FreeWidget
-from ..fields import MagicField
-from ..signature import (
+from magicclass.widgets import Separator, FreeWidget
+from magicclass.fields import MagicField
+from magicclass.signature import (
     MagicMethodSignature,
     get_additional_option,
     split_annotated_type,
 )
-from ..wrappers import upgrade_signature
-from ..types import BoundLiteral
-from ..functools import wraps
+from magicclass.wrappers import upgrade_signature
+from magicclass.types import BoundLiteral
+from magicclass.functools import wraps
 
 if TYPE_CHECKING:
     import numpy as np

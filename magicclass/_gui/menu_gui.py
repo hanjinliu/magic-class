@@ -19,10 +19,10 @@ from ._base import (
 from .utils import format_error, connect_magicclasses
 from ._macro_utils import nested_function_gui_callback, inject_recorder
 
-from ..signature import get_additional_option
-from ..fields import MagicField
-from ..widgets import Separator, FreeWidget
-from ..utils import iter_members, Tooltips
+from magicclass.signature import get_additional_option
+from magicclass.fields import MagicField
+from magicclass.widgets import Separator, FreeWidget
+from magicclass.utils import iter_members, Tooltips
 
 
 def _check_popupmode(popup_mode: PopUpMode):
@@ -59,18 +59,23 @@ class MenuGuiBase(ContainerLikeGui):
             close_on_run=close_on_run, popup_mode=popup_mode, error_mode=error_mode
         )
         name = name or self.__class__.__name__
-        self.native = QMenu(name, parent)
+        self._native = QMenu(name, parent)
         self.native.setToolTipsVisible(True)
         self.name = name
         self._list: list[MenuGuiBase | AbstractAction] = []
         self.labels = labels
+
+    @property
+    def native(self):
+        """The native Qt widget."""
+        return self._native
 
     def _convert_attributes_into_widgets(self):
         cls = self.__class__
 
         # Add class docstring as tooltip.
         _tooltips = Tooltips(cls)
-        self.native.setToolTip(_tooltips.desc)
+        self.tooltip = _tooltips.desc
 
         # Bind all the methods and annotations
         base_members = {x[0] for x in iter_members(MenuGuiBase)}

@@ -20,7 +20,7 @@ from ._base import (
 )
 from .utils import format_error, connect_magicclasses
 from ._macro_utils import value_widget_callback, nested_function_gui_callback
-from ..widgets import (
+from magicclass.widgets import (
     ButtonContainer,
     GroupBoxContainer,
     FrameContainer,
@@ -37,10 +37,10 @@ from ..widgets import (
     FreeWidget,
 )
 
-from ..utils import iter_members, Tooltips
-from ..fields import MagicField
-from ..signature import get_additional_option
-from .._app import run_app
+from magicclass.utils import iter_members, Tooltips
+from magicclass.fields import MagicField
+from magicclass.signature import get_additional_option
+from magicclass._app import run_app
 
 # For Containers that belong to these classes, menubar must be set to _qwidget.layout().
 _USE_OUTER_LAYOUT = (
