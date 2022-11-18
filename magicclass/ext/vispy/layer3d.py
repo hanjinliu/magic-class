@@ -11,14 +11,13 @@ from vispy.visuals import (
     MarkersVisual,
     ArrowVisual,
 )
-from vispy.visuals import transforms as tr
 from vispy.visuals.filters import WireframeFilter
 from ._base import LayerItem
 
 from magicgui.widgets import FloatSlider
-from ...widgets import FloatRangeSlider
-from ...fields import HasFields, vfield
-from ...types import Color
+from magicclass.widgets import FloatRangeSlider
+from magicclass.fields import HasFields, vfield
+from magicclass.types import Color
 
 # Copied from napari/_vispy/utils/gl.py
 BLENDING_MODES = {
