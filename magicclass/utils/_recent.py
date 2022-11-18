@@ -4,8 +4,8 @@ from macrokit import Expr
 from magicgui.widgets import PushButton
 
 if TYPE_CHECKING:
-    from .._gui import MenuGuiBase
-    from .._gui._function_gui import FunctionGui
+    from magicclass._gui import MenuGuiBase
+    from magicclass._gui._function_gui import FunctionGui
 
 
 def call_recent_menu(
