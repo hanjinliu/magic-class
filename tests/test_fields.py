@@ -606,6 +606,16 @@ def test_tooltip_magictoolbar():
     assert ui["b"].tooltip == "Parameter-b."
 
 
+def test_visible_false():
+    @magicclass
+    class A:
+        x = vfield(int, options={"visible": False})
+
+    ui = A()
+    ui.show(run=False)
+    assert not ui["x"].visible
+    ui.close()
+
 def test_get_set_hooks():
     class A:
         offset = 1

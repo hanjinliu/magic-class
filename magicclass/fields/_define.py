@@ -1,10 +1,10 @@
 from __future__ import annotations
 from typing import Any, TYPE_CHECKING, Callable
 
-from ..utils import argcount
+from magicclass.utils import argcount
 
 if TYPE_CHECKING:
-    from .._gui._base import MagicTemplate
+    from magicclass._gui._base import MagicTemplate
 
 
 def define_callback(self: Any, callback: Callable):

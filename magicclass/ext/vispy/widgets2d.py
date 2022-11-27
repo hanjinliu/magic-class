@@ -8,8 +8,8 @@ from .layer2d import Curve, Scatter, Histogram
 from ._base import HasViewBox, SceneCanvas, MultiPlot
 
 from .._doc import write_docs
-from ...widgets import FreeWidget
-from ..._app import get_app
+from magicclass.widgets import FreeWidget
+from magicclass._app import get_app
 
 
 class Has2DViewBox(HasViewBox):

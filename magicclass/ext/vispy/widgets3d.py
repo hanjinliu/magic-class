@@ -7,8 +7,8 @@ from .layerlist import LayerList
 from ._base import SceneCanvas, HasViewBox, MultiPlot, LayerItem
 from .camera import Camera
 
-from ...widgets import FreeWidget
-from ...types import Color
+from magicclass.widgets import FreeWidget
+from magicclass.types import Color
 
 
 class Has3DViewBox(HasViewBox):
@@ -260,7 +260,7 @@ class Has3DViewBox(HasViewBox):
         data: ArrayLike,
         arrow_type: str = "stealth",
         arrow_size: float = 5.0,
-        color: Color ="white",
+        color: Color = "white",
         width: float = 1.0,
         blending: str = "translucent",
     ) -> layer3d.Arrows3D:

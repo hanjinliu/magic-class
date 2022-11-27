@@ -6,8 +6,8 @@ from macrokit import Symbol, Expr, Head, symbol
 from magicgui.widgets import FunctionGui
 from magicgui.widgets._bases import ValueWidget
 from .utils import get_parameters
-from ..utils import get_signature, thread_worker
-from ..signature import MagicMethodSignature
+from magicclass.utils import get_signature, thread_worker
+from magicclass.signature import MagicMethodSignature
 
 
 if TYPE_CHECKING:

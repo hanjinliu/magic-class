@@ -50,9 +50,8 @@ from ._macro import GuiMacro
 from ._macro_utils import inject_recorder, value_widget_callback
 from ._icon import get_icon
 
-from ..utils import (
+from magicclass.utils import (
     get_signature,
-    iter_members,
     Tooltips,
     move_to_screen_center,
     argcount,
@@ -60,16 +59,16 @@ from ..utils import (
     method_as_getter,
     eval_attribute,
 )
-from ..widgets import Separator, FreeWidget
-from ..fields import MagicField
-from ..signature import (
+from magicclass.widgets import Separator, FreeWidget
+from magicclass.fields import MagicField
+from magicclass.signature import (
     MagicMethodSignature,
     get_additional_option,
     split_annotated_type,
 )
-from ..wrappers import upgrade_signature
-from ..types import BoundLiteral
-from ..functools import wraps
+from magicclass.wrappers import upgrade_signature
+from magicclass.types import BoundLiteral
+from magicclass.functools import wraps
 
 if TYPE_CHECKING:
     import numpy as np
@@ -151,7 +150,8 @@ defaults = {
     "popup_mode": PopUpMode.popup,
     "error_mode": ErrorMode.msgbox,
     "close_on_run": True,
-    "macro-max-history": 1000,
+    "macro-max-history": 100000,
+    "macro-highlight": False,
 }
 
 _RESERVED = frozenset(
@@ -667,24 +667,26 @@ class MagicTemplate(MutableSequence[_W], metaclass=_MagicTemplateMeta):
 
             def run_function():
                 mgui = _build_mgui(widget, func, self)
+                _need_title_bar = self._popup_mode not in (
+                    PopUpMode.popup,
+                    PopUpMode.dock,
+                    PopUpMode.parentsub,
+                    PopUpMode.dialog,
+                )
                 if mgui.call_count == 0:  # connect only once
                     _prep_func(mgui)
-                    if self._popup_mode not in (
-                        PopUpMode.popup,
-                        PopUpMode.dock,
-                        PopUpMode.parentsub,
-                        PopUpMode.dialog,
-                    ):
+                    if _need_title_bar:
                         mgui.label = ""
                         # to avoid name collision
                         mgui.name = f"mgui-{id(mgui._function)}"
                         mgui.margins = (0, 0, 0, 0)
-                        title = Separator(
-                            orientation="horizontal", title=text, button=True
-                        )
-                        # TODO: should remove mgui from self?
-                        title.btn_clicked.connect(mgui.hide)
-                        mgui.insert(0, title)
+                        if not isinstance(mgui[0], Separator):
+                            title = Separator(
+                                orientation="horizontal", title=text, button=True
+                            )
+                            # TODO: should remove mgui from self?
+                            title.btn_clicked.connect(mgui.hide)
+                            mgui.insert(0, title)
 
                     if self._close_on_run and not mgui._auto_call:
                         if self._popup_mode not in (
@@ -699,7 +701,7 @@ class MagicTemplate(MutableSequence[_W], metaclass=_MagicTemplateMeta):
                             mgui.called.connect(lambda: mgui.parent.hide())
 
                 if nparams == 1 and issubclass(fgui_classes[0], FileEdit):
-                    fdialog: FileEdit = mgui[0]
+                    fdialog: FileEdit = mgui[int(_need_title_bar)]
                     if result := fdialog._show_file_dialog(
                         fdialog.mode,
                         caption=fdialog._btn_text,

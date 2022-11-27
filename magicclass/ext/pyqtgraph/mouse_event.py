@@ -7,22 +7,22 @@ from ._const import Modifier, Button
 
 def _factorize_modifiers(mod):
     out = []
-    if mod & Qt.ShiftModifier:
+    if mod & Qt.KeyboardModifier.ShiftModifier:
         out.append(Modifier.shift)
-    if mod & Qt.ControlModifier:
+    if mod & Qt.KeyboardModifier.ControlModifier:
         out.append(Modifier.control)
-    if mod & Qt.AltModifier:
+    if mod & Qt.KeyboardModifier.AltModifier:
         out.append(Modifier.alt)
     return tuple(out)
 
 
 def _factorize_buttons(mod):
     out = []
-    if mod & Qt.LeftButton:
+    if mod & Qt.MouseButton.LeftButton:
         out.append(Button.left)
-    if mod & Qt.RightButton:
+    if mod & Qt.MouseButton.RightButton:
         out.append(Button.right)
-    if mod & Qt.MiddleButton:
+    if mod & Qt.MouseButton.MiddleButton:
         out.append(Button.middle)
     return tuple(out)
 

@@ -2,26 +2,25 @@ from __future__ import annotations
 import weakref
 
 from magicgui.widgets import FunctionGui, Image, Widget
-from magicgui.widgets._function_gui import _docstring_to_html
 
 import qtpy
 from qtpy import QtWidgets as QtW, QtGui
 from qtpy.QtCore import Qt
 from typing import Any, Callable, Iterator, TYPE_CHECKING
 
-from .widgets.containers import SplitterContainer
-from .widgets.misc import ConsoleTextEdit
+from magicclass.widgets.containers import SplitterContainer
+from magicclass.widgets.misc import ConsoleTextEdit
 
-from ._gui.mgui_ext import Action, PushButtonPlus, WidgetAction
-from ._gui._base import MagicTemplate
-from .widgets import DraggableContainer, FreeWidget, Separator
-from ._gui.class_gui import (
+from magicclass._gui.mgui_ext import Action, PushButtonPlus, WidgetAction
+from magicclass._gui._base import MagicTemplate
+from magicclass.widgets import DraggableContainer, FreeWidget, Separator
+from magicclass._gui.class_gui import (
     CollapsibleClassGui,
     DraggableClassGui,
     ScrollableClassGui,
     ButtonClassGui,
 )
-from .utils import iter_members, Tooltips, get_signature
+from magicclass.utils import iter_members, Tooltips
 
 if TYPE_CHECKING:
     import numpy as np
@@ -327,3 +326,18 @@ def get_keymap(ui: MagicTemplate | type[MagicTemplate]):
                 keymap[keystr] = (name, Tooltips(attr).desc)
 
     return keymap
+
+
+def _docstring_to_html(docs: str) -> str:
+    """Convert docstring into rich text html."""
+    from docstring_parser import parse
+    import re
+
+    ds = parse(docs)
+
+    ptemp = "<li><p><strong>{}</strong> (<em>{}</em>) - {}</p></li>"
+    plist = [ptemp.format(p.arg_name, p.type_name, p.description) for p in ds.params]
+    params = "<h3>Parameters</h3><ul>{}</ul>".format("".join(plist))
+    short = f"<p>{ds.short_description}</p>" if ds.short_description else ""
+    long = f"<p>{ds.long_description}</p>" if ds.long_description else ""
+    return re.sub(r"``?([^`]+)``?", r"<code>\1</code>", f"{short}{long}{params}")

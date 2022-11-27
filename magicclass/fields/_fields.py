@@ -19,18 +19,18 @@ from magicgui.widgets._bases.value_widget import UNSET
 
 from ._define import define_callback, define_callback_gui
 
-from ..utils import (
+from magicclass.utils import (
     is_instance_method,
     method_as_getter,
     eval_attribute,
 )
-from .._gui.mgui_ext import Action, WidgetAction
+from magicclass._gui.mgui_ext import Action, WidgetAction
 
 if TYPE_CHECKING:
     from magicgui.widgets._protocols import WidgetProtocol
     from typing_extensions import Self
-    from .._gui._base import MagicTemplate
-    from .._gui.mgui_ext import AbstractAction
+    from magicclass._gui._base import MagicTemplate
+    from magicclass._gui.mgui_ext import AbstractAction
 
     _M = TypeVar("_M", bound=MagicTemplate)
 

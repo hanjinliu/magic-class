@@ -100,16 +100,22 @@ def test_blocked():
     assert str(ui.macro[4]) == "ui.g()"
 
 def test_max_history():
+    defaults["macro-max-history"] = 100
+
     @magicclass
     class A:
         def f(self): pass
     max_hist = defaults["macro-max-history"]
+
     ui = A()
     for i in range(max_hist + 10):
         ui.f()
-    assert len(ui.macro) == max_hist
-    ui.f()
-    assert len(ui.macro) == max_hist
+    try:
+        assert len(ui.macro) == max_hist
+        ui.f()
+        assert len(ui.macro) == max_hist
+    finally:
+        defaults["macro-max-history"] = 100
 
 def test_init():
     """test macro is blocked during __init__ and __post_init__"""

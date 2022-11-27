@@ -28,7 +28,7 @@ from ._base import (
 )
 from .utils import format_error, connect_magicclasses
 from ._macro_utils import value_widget_callback, nested_function_gui_callback
-from ..widgets import (
+from magicclass.widgets import (
     ButtonContainer,
     GroupBoxContainer,
     FrameContainer,
@@ -45,10 +45,10 @@ from ..widgets import (
     FreeWidget,
 )
 
-from ..utils import iter_members, Tooltips
-from ..fields import MagicField
-from ..signature import get_additional_option
-from .._app import run_app
+from magicclass.utils import iter_members, Tooltips
+from magicclass.fields import MagicField
+from magicclass.signature import get_additional_option
+from magicclass._app import run_app
 
 # For Containers that belong to these classes, menubar must be set to _qwidget.layout().
 _USE_OUTER_LAYOUT = (
@@ -270,10 +270,6 @@ class ClassGuiBase(BaseGui[Widget]):
                         self._fast_insert(n_insert, widget)
                         n_insert += 1
 
-                        # NOTE: Function GUI is invisible by some reason...
-                        # See https://github.com/hanjinliu/magic-class/issues/53
-                        widget.visible = True
-
                     _hist.append((name, str(type(attr)), type(widget).__name__))
 
             except Exception as e:
@@ -346,6 +342,11 @@ class ClassGuiBase(BaseGui[Widget]):
             key += len(self)
         self._list.insert(key, widget)
         self._widget._mgui_insert_widget(key, _widget)
+
+        # NOTE: Function GUI is invisible by some reason...
+        # See https://github.com/hanjinliu/magic-class/issues/53
+        if isinstance(widget, FunctionGui):
+            widget.visible = True
         return None
 
 

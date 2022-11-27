@@ -4,7 +4,7 @@ import numpy as np
 from psygnal import Signal
 from vispy import scene
 from magicgui.widgets import FloatSlider, Container
-from ...fields import HasFields, vfield
+from magicclass.fields import HasFields, vfield
 
 
 class VispyCamera(scene.ArcballCamera):

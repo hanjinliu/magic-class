@@ -328,7 +328,7 @@ class DefaultProgressBar(FrameContainer, _SupportProgress):
     def show(self):
         parent = self.native.parent()
         self._CONTAINER.append(self)
-        if self._CONTAINER.parent is None:
+        if self._CONTAINER.parent is not parent:
             self._CONTAINER.native.setParent(
                 parent,
                 self._CONTAINER.native.windowFlags(),

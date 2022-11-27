@@ -16,7 +16,7 @@ from __future__ import annotations
 
 from functools import wraps
 import matplotlib.pyplot as plt
-from .widgets import Figure
+from magicclass.widgets import Figure
 
 CURRENT_WIDGET: Figure = None
 

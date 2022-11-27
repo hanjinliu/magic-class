@@ -8,8 +8,8 @@ from vispy import scene
 from vispy.scene import ViewBox, transforms
 from vispy.app import MouseEvent
 
-from ...widgets import FreeWidget
-from ..._app import get_app
+from magicclass.widgets import FreeWidget
+from magicclass._app import get_app
 
 
 if TYPE_CHECKING:

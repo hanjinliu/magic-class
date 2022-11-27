@@ -19,10 +19,10 @@ from .utils import format_error, connect_magicclasses
 from .menu_gui import ContextMenuGui, MenuGui, MenuGuiBase, insert_action_like
 from ._macro_utils import inject_recorder, nested_function_gui_callback
 
-from ..signature import get_additional_option
-from ..fields import MagicField
-from ..widgets import FreeWidget, Separator
-from ..utils import iter_members, Tooltips
+from magicclass.signature import get_additional_option
+from magicclass.fields import MagicField
+from magicclass.widgets import FreeWidget, Separator
+from magicclass.utils import iter_members, Tooltips
 
 if TYPE_CHECKING:
     from napari.viewer import Viewer
@@ -84,10 +84,15 @@ class ToolBarGui(ContainerLikeGui):
             close_on_run=close_on_run, popup_mode=popup_mode, error_mode=error_mode
         )
         name = name or self.__class__.__name__
-        self.native = QToolBar(name, parent)
+        self._native = QToolBar(name, parent)
         self.name = name
         self._list: list[MenuGuiBase | AbstractAction] = []
         self.labels = labels
+
+    @property
+    def native(self):
+        """The native Qt widget."""
+        return self._native
 
     def reset_choices(self, *_: Any):
         """Reset child Categorical widgets"""

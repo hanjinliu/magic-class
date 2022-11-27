@@ -75,7 +75,7 @@ class _QTitleBar(QtW.QWidget):
         self._close_button = QtW.QToolButton()
         self._close_button.setText("✕")
         self._close_button.setToolTip("Close the widget.")
-        self._close_button.setFixedSize(QtCore.QSize(28, 28))
+        self._close_button.setFixedSize(QtCore.QSize(16, 16))
         self._close_button.setCursor(Qt.CursorShape.ArrowCursor)
 
         _layout.addWidget(self._title_label)
@@ -84,7 +84,7 @@ class _QTitleBar(QtW.QWidget):
         _layout.setAlignment(self._close_button, Qt.AlignmentFlag.AlignRight)
         self.setLayout(_layout)
 
-        self._close_button.clicked.connect(lambda: self.closeSignal.emit)
+        self._close_button.clicked.connect(self.closeSignal.emit)
 
         self.setTitle(title)
 
@@ -101,4 +101,4 @@ class _QTitleBar(QtW.QWidget):
             self._title_label.setVisible(False)
         else:
             self._title_label.setVisible(True)
-            self._title_label.setText(f"{text}  ")
+            self._title_label.setText(f"  {text}  ")

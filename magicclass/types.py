@@ -13,8 +13,8 @@ from typing import (
 from typing_extensions import Annotated, _AnnotatedAlias
 from magicgui.widgets import Widget, EmptyWidget
 
-from .fields import MagicField
-from .signature import split_annotated_type
+from magicclass.fields import MagicField
+from magicclass.signature import split_annotated_type
 
 try:
     from typing import _tp_cache
