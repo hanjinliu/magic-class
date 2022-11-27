@@ -4,7 +4,7 @@ from types import FunctionType
 
 from magicgui import __version__ as _magicgui_version
 from magicgui.widgets import FunctionGui, Widget
-from magicgui.widgets._bases.value_widget import UNSET
+from magicclass._magicgui_compat import Undefined
 from magicgui.type_map import get_widget_class
 from magicgui.signature import magic_signature, MagicParameter
 
@@ -117,7 +117,7 @@ TZ_EMPTY = "__no__default__"
 
 
 def _parameter_to_widget_class(param: MagicParameter):
-    value = UNSET if param.default in (param.empty, TZ_EMPTY) else param.default
+    value = Undefined if param.default in (param.empty, TZ_EMPTY) else param.default
     annotation, options = split_annotated_type(param.annotation)
     options = options.copy()
     wdg_class, _ = get_widget_class(value, annotation, options)

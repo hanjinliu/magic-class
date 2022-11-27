@@ -24,15 +24,15 @@ from magicgui.widgets import (
 )
 from magicgui.application import use_app
 from magicgui.widgets import LineEdit
-from magicgui.types import WidgetOptions, FileDialogMode
-from magicgui.widgets._bases.value_widget import ValueWidget, UNSET
+from magicgui.types import FileDialogMode
+from magicclass._magicgui_compat import ValueWidget, Undefined
 from magicgui.backends._qtpy.widgets import (
     QBaseWidget,
     QBaseStringWidget,
     LineEdit as BaseLineEdit,
 )
 from .utils import FreeWidget, merge_super_sigs
-from ..signature import split_annotated_type
+from magicclass.signature import split_annotated_type
 
 if TYPE_CHECKING:
     from qtpy.QtWidgets import QTextEdit
@@ -68,8 +68,8 @@ class OptionalWidget(Container):
         text: str | None = None,
         layout: str = "vertical",
         nullable: bool = True,
-        value=UNSET,
-        options: WidgetOptions | None = None,
+        value=Undefined,
+        options: dict | None = None,
         **kwargs,
     ):
         if text is None:
@@ -123,7 +123,7 @@ class OptionalWidget(Container):
 
     @value.setter
     def value(self, v: Any) -> None:
-        if v is None or v is UNSET:
+        if v is None or v is Undefined:
             self._checkbox.value = True
             self._inner_value_widget.visible = False
         else:
@@ -201,7 +201,7 @@ class ConsoleTextEdit(TextEdit):
     def syntax_highlight(self, lang: str = "python", theme: str = "default"):
         """Highlight syntax."""
         from superqt.utils import CodeSyntaxHighlight
-        
+
         highlight = CodeSyntaxHighlight(self.native.document(), lang, theme=theme)
         self._highlight = highlight
         return None
@@ -228,7 +228,7 @@ class QIntEdit(BaseLineEdit):
 
 
 class IntEdit(LineEdit):
-    def __init__(self, value=UNSET, **kwargs):
+    def __init__(self, value=Undefined, **kwargs):
         app = use_app()
         assert app.native
         ValueWidget.__init__(
@@ -252,7 +252,7 @@ class QFloatEdit(BaseLineEdit):
 
 
 class FloatEdit(LineEdit):
-    def __init__(self, value=UNSET, **kwargs):
+    def __init__(self, value=Undefined, **kwargs):
         app = use_app()
         assert app.native
         ValueWidget.__init__(
@@ -291,7 +291,7 @@ class AbstractRangeSlider(ValueWidget, Generic[_V]):
 
     def __init__(
         self,
-        value=UNSET,
+        value=Undefined,
         min=0,
         max=1000,
         orientation: str = "horizontal",
@@ -557,7 +557,7 @@ class QHistoryLineEdit(QBaseStringWidget):
 
 
 class HistoryLineEdit(LineEdit):
-    def __init__(self, value=UNSET, **kwargs):
+    def __init__(self, value=Undefined, **kwargs):
         app = use_app()
         assert app.native
         ValueWidget.__init__(

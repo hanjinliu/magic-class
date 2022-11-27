@@ -4,8 +4,8 @@ import warnings
 from qtpy import QtWidgets as QtW
 from qtpy.QtCore import Qt, QEvent, QSize
 from magicgui.application import use_app
-from magicgui.widgets._bases import Widget
-from magicgui.widgets._concrete import ContainerWidget
+from magicgui.widgets import Widget
+from magicclass._magicgui_compat import ContainerWidget
 from magicgui.backends._qtpy.widgets import (
     QBaseWidget,
     Container as ContainerBase,

@@ -1,9 +1,8 @@
 from __future__ import annotations
 from typing import Callable, TYPE_CHECKING, Any
 import warnings
-from magicgui.widgets import Image, Table, Label, FunctionGui
-from magicgui.widgets._bases import ButtonWidget
-from magicgui.widgets._bases.widget import Widget
+from magicgui.widgets import Image, Table, Label, FunctionGui, Widget
+from magicclass._magicgui_compat import ButtonWidget
 from macrokit import Symbol
 from qtpy.QtWidgets import QToolBar, QMenu, QWidgetAction, QTabWidget
 
@@ -26,7 +25,7 @@ from magicclass.widgets import FreeWidget, Separator
 from magicclass.utils import iter_members, Tooltips
 
 if TYPE_CHECKING:
-    from napari.viewer import Viewer
+    import napari
 
 
 def _check_popupmode(popup_mode: PopUpMode):
@@ -285,7 +284,7 @@ class ToolBarGui(ContainerLikeGui):
         self._unify_label_widths()
 
 
-def _create_stylesheet(viewer: Viewer):
+def _create_stylesheet(viewer: napari.Viewer):
     if viewer is None:
         return ""
     w = viewer.window._qt_window

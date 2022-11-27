@@ -1,9 +1,7 @@
 from __future__ import annotations
 import weakref
 
-from magicgui.widgets import FunctionGui, Image
-from magicgui.widgets._bases.widget import Widget
-from magicgui.widgets._function_gui import _docstring_to_html
+from magicgui.widgets import FunctionGui, Image, Widget
 
 import qtpy
 from qtpy import QtWidgets as QtW, QtGui
@@ -22,7 +20,7 @@ from magicclass._gui.class_gui import (
     ScrollableClassGui,
     ButtonClassGui,
 )
-from .utils import iter_members, Tooltips, get_signature
+from magicclass.utils import iter_members, Tooltips
 
 if TYPE_CHECKING:
     import numpy as np
@@ -328,3 +326,18 @@ def get_keymap(ui: MagicTemplate | type[MagicTemplate]):
                 keymap[keystr] = (name, Tooltips(attr).desc)
 
     return keymap
+
+
+def _docstring_to_html(docs: str) -> str:
+    """Convert docstring into rich text html."""
+    from docstring_parser import parse
+    import re
+
+    ds = parse(docs)
+
+    ptemp = "<li><p><strong>{}</strong> (<em>{}</em>) - {}</p></li>"
+    plist = [ptemp.format(p.arg_name, p.type_name, p.description) for p in ds.params]
+    params = "<h3>Parameters</h3><ul>{}</ul>".format("".join(plist))
+    short = f"<p>{ds.short_description}</p>" if ds.short_description else ""
+    long = f"<p>{ds.long_description}</p>" if ds.long_description else ""
+    return re.sub(r"``?([^`]+)``?", r"<code>\1</code>", f"{short}{long}{params}")

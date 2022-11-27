@@ -13,9 +13,8 @@ from pathlib import Path
 import datetime
 import sys
 from enum import Enum
-from magicgui.widgets import create_widget
-from magicgui.widgets._bases import Widget, ValueWidget, ContainerWidget
-from magicgui.widgets._bases.value_widget import UNSET
+from magicgui.widgets import create_widget, Widget
+from magicclass._magicgui_compat import ValueWidget, ContainerWidget, Undefined
 
 from ._define import define_callback, define_callback_gui
 
@@ -27,7 +26,7 @@ from magicclass.utils import (
 from magicclass._gui.mgui_ext import Action, WidgetAction
 
 if TYPE_CHECKING:
-    from magicgui.widgets._protocols import WidgetProtocol
+    from magicclass._magicgui_compat import WidgetProtocol
     from typing_extensions import Self
     from magicclass._gui._base import MagicTemplate
     from magicclass._gui.mgui_ext import AbstractAction
@@ -64,7 +63,7 @@ class MagicField(_FieldObject, Generic[_W, _V]):
 
     def __init__(
         self,
-        value: Any = UNSET,
+        value: Any = Undefined,
         name: str | None = None,
         label: str | None = None,
         annotation: Any = None,
@@ -75,8 +74,8 @@ class MagicField(_FieldObject, Generic[_W, _V]):
     ):
         if options is None:
             options = {}
-        if value is UNSET:
-            value = options.pop("value", UNSET)
+        if value is Undefined:
+            value = options.pop("value", Undefined)
 
         if constructor is None:
 
@@ -212,7 +211,7 @@ class MagicField(_FieldObject, Generic[_W, _V]):
             if type(self.value) is bool or self.annotation is bool:
                 # we should not use "isinstance" or "issubclass" because subclass
                 # may be mapped to different widget by users.
-                value = False if self.value is UNSET else self.value
+                value = False if self.value is Undefined else self.value
                 action = Action(
                     checkable=True,
                     checked=value,
@@ -299,7 +298,7 @@ class MagicField(_FieldObject, Generic[_W, _V]):
 
     def not_ready(self) -> bool:
         return (
-            self.value is UNSET
+            self.value is Undefined
             and self.annotation is None
             and self.widget_type is None
             and "choices" not in self.options
@@ -621,7 +620,7 @@ def field(
 
 
 def field(
-    obj: Any = UNSET,
+    obj: Any = Undefined,
     *,
     name: str | None = None,
     label: str | None = None,
@@ -637,7 +636,7 @@ def field(
 
     Parameters
     ----------
-    obj : Any, default is UNSET
+    obj : Any, default is Undefined
         Reference to determine what type of widget will be created. If Widget
         subclass is given, it will be used as is. If other type of class is given,
         it will used as type annotation. If an object (not type) is given, it will
@@ -648,7 +647,7 @@ def field(
         Label of the widget.
     widget_type : str, optional
         Widget type. This argument will be sent to ``create_widget`` function.
-    options : WidgetOptions, optional
+    options : dict, optional
         Widget options. This parameter will be passed to the ``options`` keyword
         argument of ``create_widget``.
     record : bool, default is True
@@ -726,7 +725,7 @@ def vfield(
 
 
 def vfield(
-    obj: Any = UNSET,
+    obj: Any = Undefined,
     *,
     name: str | None = None,
     label: str | None = None,
@@ -747,7 +746,7 @@ def vfield(
 
     Parameters
     ----------
-    obj : Any, default is UNSET
+    obj : Any, default is Undefined
         Reference to determine what type of widget will be created. If Widget
         subclass is given, it will be used as is. If other type of class is given,
         it will used as type annotation. If an object (not type) is given, it will
@@ -758,7 +757,7 @@ def vfield(
         Label of the widget.
     widget_type : str, optional
         Widget type. This argument will be sent to ``create_widget`` function.
-    options : WidgetOptions, optional
+    options : dict, optional
         Widget options. This parameter will be passed to the ``options`` keyword
         argument of ``create_widget``.
     record : bool, default is True
@@ -837,7 +836,7 @@ def _get_field(
             if kwargs["annotation"] is None:
                 kwargs.update(annotation=obj)
             f = field_class(widget_type=widget_type, **kwargs)
-    elif obj is UNSET:
+    elif obj is Undefined:
         f = field_class(widget_type=widget_type, **kwargs)
     else:
         f = field_class(value=obj, widget_type=widget_type, **kwargs)

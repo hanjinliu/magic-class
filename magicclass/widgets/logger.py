@@ -10,7 +10,7 @@ from magicgui.widgets import Widget
 import logging
 from typing import TYPE_CHECKING, Any, Union, overload
 
-from ..utils import rst_to_html
+from magicclass.utils import rst_to_html
 
 if TYPE_CHECKING:
     import numpy as np

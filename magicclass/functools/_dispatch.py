@@ -7,9 +7,8 @@ import inspect
 from typing_extensions import _AnnotatedAlias
 
 from magicgui.signature import MagicParameter
-from magicgui.types import WidgetOptions
 from magicgui.widgets import create_widget, Widget, Label
-from magicgui.widgets._bases.value_widget import UNSET
+from magicclass._magicgui_compat import Undefined
 
 from magicclass.widgets import TabbedContainer
 from magicclass.signature import get_signature, split_annotated_type, upgrade_signature
@@ -51,7 +50,7 @@ def singledispatch(func):
             dispatch_cache[cls] = impl
         return impl
 
-    def register(cls, func=None, *, gui_options: WidgetOptions = {}):
+    def register(cls, func=None, *, gui_options: dict = {}):
         """generic_func.register(cls, func) -> func
 
         Registers a new implementation for the given *cls* on a *generic_func*.
@@ -124,9 +123,9 @@ class singledispatchmethod(functools.singledispatchmethod):
 
     # fmt: off
     @overload
-    def register(self, cls: type | _AnnotatedAlias, func: Callable | None, *, options: WidgetOptions = {}): ...
+    def register(self, cls: type | _AnnotatedAlias, func: Callable | None, *, options: dict = {}): ...
     @overload
-    def register(self, cls: Callable, *, options: WidgetOptions = {}): ...
+    def register(self, cls: Callable, *, options: dict = {}): ...
     # fmt: on
 
     def register(self, cls=None, func=None, *, option={}) -> Any:
@@ -166,8 +165,8 @@ class UnionWidget(TabbedContainer):
         layout: str = "vertical",
         labels: bool = False,
         nullable: bool = False,
-        options: list[WidgetOptions] | None = None,
-        value=UNSET,
+        options: list[dict] | None = None,
+        value=Undefined,
         **kwargs,
     ):
         if names is None:
@@ -204,7 +203,7 @@ class UnionWidget(TabbedContainer):
         )
 
         self._annotations = annotations
-        if value is not UNSET:
+        if value is not Undefined:
             self.value = value
 
     @property

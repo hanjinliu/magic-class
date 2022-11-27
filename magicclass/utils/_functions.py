@@ -7,7 +7,7 @@ import warnings
 from docstring_parser import parse
 
 if TYPE_CHECKING:
-    from .._gui import BaseGui
+    from magicclass._gui import BaseGui
 
 
 def iter_members(cls: type, exclude_prefix: str = "__") -> Iterable[tuple[str, Any]]:

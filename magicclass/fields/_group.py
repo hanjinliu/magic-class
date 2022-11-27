@@ -12,8 +12,7 @@ from typing import (
     overload,
 )
 from abc import ABCMeta
-from magicgui.widgets import Container
-from magicgui.widgets._bases import Widget
+from magicgui.widgets import Container, Widget
 from psygnal import SignalInstance
 
 from ._fields import MagicField, MagicValueField, _FieldObject
