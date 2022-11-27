@@ -9,9 +9,11 @@ if MAGICGUI_VERSION < "0.7.0":
     from magicgui.widgets._bases import ValueWidget, ButtonWidget, ContainerWidget
     from magicgui.type_map import _type2callback as type2callback
     from magicgui.widgets._concrete import _LabeledWidget, merge_super_sigs
+    from magicgui.widgets._protocols import WidgetProtocol
 
 else:
     from magicgui.types import Undefined
     from magicgui.widgets.bases import ValueWidget, ButtonWidget, ContainerWidget
     from magicgui.type_map import type2callback
     from magicgui.widgets._concrete import _LabeledWidget, merge_super_sigs
+    from magicgui.widgets.protocols import WidgetProtocol

@@ -33,7 +33,7 @@ from magicgui.widgets import (
     MainWindow,
 )
 from magicgui.application import use_app
-from magicgui.widgets._bases import ButtonWidget
+from magicclass._magicgui_compat import ButtonWidget
 from macrokit import Symbol
 
 from .keybinding import as_shortcut

@@ -12,8 +12,13 @@ from magicgui.widgets import (
     Table,
     Widget,
 )
-from magicgui.widgets._bases import ButtonWidget, ValueWidget, ContainerWidget
-from magicgui.widgets._concrete import _LabeledWidget, ContainerWidget
+from magicclass._magicgui_compat import (
+    ButtonWidget,
+    ValueWidget,
+    ContainerWidget,
+    _LabeledWidget,
+    ContainerWidget,
+)
 from macrokit import Symbol
 
 

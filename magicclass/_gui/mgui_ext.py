@@ -10,8 +10,7 @@ from qtpy.QtWidgets import (
 )
 from psygnal import Signal
 from magicgui.widgets import PushButton, Widget
-from magicgui.widgets._concrete import _LabeledWidget
-from magicgui.widgets._bases import ValueWidget
+from magicclass._magicgui_compat import ValueWidget, _LabeledWidget
 from magicgui.backends._qtpy.widgets import QBaseButtonWidget
 from ._function_gui import FunctionGuiPlus
 from ._icon import get_icon

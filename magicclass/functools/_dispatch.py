@@ -8,7 +8,7 @@ from typing_extensions import _AnnotatedAlias
 
 from magicgui.signature import MagicParameter
 from magicgui.widgets import create_widget, Widget, Label
-from magicgui.widgets._bases.value_widget import UNSET
+from magicclass._magicgui_compat import Undefined
 
 from magicclass.widgets import TabbedContainer
 from magicclass.signature import get_signature, split_annotated_type, upgrade_signature
@@ -166,7 +166,7 @@ class UnionWidget(TabbedContainer):
         labels: bool = False,
         nullable: bool = False,
         options: list[dict] | None = None,
-        value=UNSET,
+        value=Undefined,
         **kwargs,
     ):
         if names is None:
@@ -203,7 +203,7 @@ class UnionWidget(TabbedContainer):
         )
 
         self._annotations = annotations
-        if value is not UNSET:
+        if value is not Undefined:
             self.value = value
 
     @property

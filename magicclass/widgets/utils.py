@@ -7,7 +7,7 @@ from magicclass._magicgui_compat import merge_super_sigs as _merge_super_sigs
 from magicgui.backends._qtpy.widgets import QBaseWidget
 
 if TYPE_CHECKING:
-    from .._gui import BaseGui, ContextMenuGui
+    from magicclass._gui import BaseGui, ContextMenuGui
 
 
 class _NotInitialized:
