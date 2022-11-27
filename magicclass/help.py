@@ -10,13 +10,13 @@ from qtpy import QtWidgets as QtW, QtGui
 from qtpy.QtCore import Qt
 from typing import Any, Callable, Iterator, TYPE_CHECKING
 
-from .widgets.containers import SplitterContainer
-from .widgets.misc import ConsoleTextEdit
+from magicclass.widgets.containers import SplitterContainer
+from magicclass.widgets.misc import ConsoleTextEdit
 
-from ._gui.mgui_ext import Action, PushButtonPlus, WidgetAction
-from ._gui._base import MagicTemplate
-from .widgets import DraggableContainer, FreeWidget, Separator
-from ._gui.class_gui import (
+from magicclass._gui.mgui_ext import Action, PushButtonPlus, WidgetAction
+from magicclass._gui._base import MagicTemplate
+from magicclass.widgets import DraggableContainer, FreeWidget, Separator
+from magicclass._gui.class_gui import (
     CollapsibleClassGui,
     DraggableClassGui,
     ScrollableClassGui,

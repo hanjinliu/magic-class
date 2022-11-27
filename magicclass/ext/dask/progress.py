@@ -5,8 +5,8 @@ from dask.diagnostics import Callback as DaskCallback
 from psygnal import Signal
 from superqt.utils import FunctionWorker, GeneratorWorker, create_worker
 
-from ...utils import move_to_screen_center, QtSignal
-from ...utils.qthreading import (
+from magicclass.utils import move_to_screen_center, QtSignal
+from magicclass.utils.qthreading import (
     CallbackList,
     DefaultProgressBar,
     thread_worker,

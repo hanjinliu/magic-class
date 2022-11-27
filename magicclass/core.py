@@ -4,7 +4,7 @@ import inspect
 from weakref import WeakValueDictionary
 from typing import Any, TYPE_CHECKING, Callable
 
-from ._gui.class_gui import (
+from magicclass._gui.class_gui import (
     ClassGuiBase,
     ClassGui,
     FrameClassGui,
@@ -22,7 +22,7 @@ from ._gui.class_gui import (
     ToolBoxClassGui,
     ListClassGui,
 )
-from ._gui._base import (
+from magicclass._gui._base import (
     PopUpMode,
     ErrorMode,
     defaults,
@@ -30,17 +30,17 @@ from ._gui._base import (
     check_override,
     convert_attributes,
 )
-from ._gui import ContextMenuGui, MenuGui, ToolBarGui
-from ._app import get_app
-from .types import WidgetType
-from . import _register_types  # activate type registration things.
+from magicclass._gui import ContextMenuGui, MenuGui, ToolBarGui
+from magicclass._app import get_app
+from magicclass.types import WidgetType
+from magicclass import _register_types  # activate type registration things.
 
 if TYPE_CHECKING:
-    from .stylesheets import StyleSheet
-    from ._gui import MenuGuiBase
-    from ._gui._function_gui import FunctionGuiPlus
-    from .types import WidgetTypeStr, PopUpModeStr, ErrorModeStr
-    from .help import HelpWidget
+    from magicclass.stylesheets import StyleSheet
+    from magicclass._gui import MenuGuiBase
+    from magicclass._gui._function_gui import FunctionGuiPlus
+    from magicclass.types import WidgetTypeStr, PopUpModeStr, ErrorModeStr
+    from magicclass.help import HelpWidget
     from macrokit import Macro
 
 _BASE_CLASS_SUFFIX = "_Base"

@@ -11,8 +11,8 @@ from magicgui.types import WidgetOptions
 from magicgui.widgets import create_widget, Widget, Label
 from magicgui.widgets._bases.value_widget import UNSET
 
-from ..widgets import TabbedContainer
-from ..signature import get_signature, split_annotated_type, upgrade_signature
+from magicclass.widgets import TabbedContainer
+from magicclass.signature import get_signature, split_annotated_type, upgrade_signature
 
 
 def singledispatch(func):

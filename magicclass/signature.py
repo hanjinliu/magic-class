@@ -5,7 +5,7 @@ from magicgui.signature import MagicSignature
 from magicgui.widgets import FunctionGui
 from magicgui.types import WidgetOptions
 import inspect
-from .utils import get_signature
+from magicclass.utils import get_signature
 
 
 class AdditionalOptions(TypedDict):

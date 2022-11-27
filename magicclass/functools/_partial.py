@@ -3,7 +3,7 @@ import functools
 from typing import Any, TYPE_CHECKING
 import inspect
 from magicgui.widgets import EmptyWidget
-from ..signature import get_signature, upgrade_signature
+from magicclass.signature import get_signature, upgrade_signature
 
 if TYPE_CHECKING:
     from ..signature import MagicMethodSignature

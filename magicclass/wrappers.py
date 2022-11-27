@@ -1,17 +1,15 @@
 from __future__ import annotations
 import inspect
-from typing import Any, Callable, Iterable, Union, TYPE_CHECKING, TypeVar, overload
+from typing import Any, Callable, TYPE_CHECKING, TypeVar, overload
 import warnings
 from magicgui.widgets import FunctionGui
 
-from .utils import show_messagebox
-from .types import Color
-from .signature import get_additional_option, upgrade_signature
+from magicclass.utils import show_messagebox
+from magicclass.types import Color
+from magicclass.signature import get_additional_option, upgrade_signature
 
 if TYPE_CHECKING:
-    from ._gui import BaseGui
-
-nStrings = Union[str, Iterable[str]]
+    from magicclass._gui import BaseGui
 
 R = TypeVar("R")
 T = TypeVar("T")

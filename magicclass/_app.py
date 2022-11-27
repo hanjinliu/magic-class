@@ -1,8 +1,6 @@
 from qtpy.QtWidgets import QApplication
-from qtpy import PYQT5
-from qtpy.QtCore import Qt
 
-APPLICATION = None
+APPLICATION: QApplication = None
 
 
 def gui_qt():

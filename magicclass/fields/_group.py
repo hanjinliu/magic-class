@@ -18,7 +18,7 @@ from psygnal import SignalInstance
 
 from ._fields import MagicField, MagicValueField, _FieldObject
 from ._define import define_callback, define_callback_gui
-from ..utils import Tooltips
+from magicclass.utils import Tooltips
 
 if TYPE_CHECKING:
     from typing_extensions import Self, Literal
@@ -420,7 +420,7 @@ class WidgetView(_View):
     def show(self, run=False):
         """Create a container and show it."""
         return self.as_container().show(run=run)
-        
+
     def emit_all(self) -> None:
         """Emit all the signals with current value."""
         for wdt, sig in zip(self.iterwidgets(), self.itersignals()):
