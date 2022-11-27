@@ -4,10 +4,10 @@ from macrokit import Expr, Head, symbol
 from enum import Enum
 from pathlib import Path
 import datetime
-from .types import Color
-from .widgets import ColorEdit
-from .widgets.sequence import ListDataView
-from ._gui._base import MagicTemplate
+from magicclass.types import Color
+from magicclass.widgets import ColorEdit
+from magicclass.widgets.sequence import ListDataView
+from magicclass._gui._base import MagicTemplate
 
 # classes
 _datetime = Expr(Head.getattr, [datetime, datetime.datetime])
