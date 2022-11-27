@@ -23,16 +23,17 @@ from qtpy.QtCore import Qt
 from magicgui.widgets import ProgressBar, Container, Widget, PushButton, Label
 from magicgui.application import use_app
 
-from . import get_signature, move_to_screen_center
+from .qt import move_to_screen_center
 from .qtsignal import QtSignal
+from ._functions import get_signature
 
-from ..widgets.containers import FrameContainer
+from magicclass.widgets.containers import FrameContainer
 
 if TYPE_CHECKING:
-    from .._gui import BaseGui
-    from .._gui.mgui_ext import PushButtonPlus, Action
-    from .._gui._macro import GuiMacro
-    from ..fields import MagicField
+    from magicclass._gui import BaseGui
+    from magicclass._gui.mgui_ext import PushButtonPlus, Action
+    from magicclass._gui._macro import GuiMacro
+    from magicclass.fields import MagicField
 
 __all__ = ["thread_worker", "Timer", "Callback"]
 

@@ -2,8 +2,6 @@
 
 from magicgui import __version__ as MAGICGUI_VERSION
 
-__all__ = []
-
 if MAGICGUI_VERSION < "0.7.0":
     from magicgui.widgets._bases.value_widget import UNSET as Undefined
     from magicgui.widgets._bases import ValueWidget, ButtonWidget, ContainerWidget
