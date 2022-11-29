@@ -9,6 +9,7 @@ from .camera import Camera
 
 from magicclass.widgets import FreeWidget
 from magicclass.types import Color
+from magicclass._app import get_app
 
 
 class Has3DViewBox(HasViewBox):
@@ -318,14 +319,15 @@ class Has3DViewBox(HasViewBox):
 class Vispy3DCanvas(FreeWidget, Has3DViewBox):
     """A Vispy based 3-D canvas."""
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, **kwargs):
+        app = get_app()
         self._scene = SceneCanvas()
+        self._scene.create_native()
         grid = self._scene.central_widget.add_grid()
         _viewbox = grid.add_view()
-        Has3DViewBox.__init__(self, _viewbox)
         self._layerlist = LayerList()
-        self._scene.create_native()
+        Has3DViewBox.__init__(self, _viewbox)
+        super().__init__(**kwargs)
         self.set_widget(self._scene.native)
 
 

@@ -71,9 +71,10 @@ class Camera(HasFields):
         The Euler angles of the camera in degree, in x, y, z order.
     """
 
-    def __init__(self, viewbox: scene.ViewBox) -> None:
+    def __init__(self, viewbox: scene.ViewBox | None = None) -> None:
         camera = VispyCamera(fov=0)
-        viewbox.camera = camera
+        if viewbox is not None:
+            viewbox.camera = camera
         self._camera = camera
         camera.changed.connect(self._on_vispy_camera_change)
 
@@ -96,7 +97,7 @@ class Camera(HasFields):
 
     @center.connect
     def _on_center_change(self):
-        self._camera.center = self.center  # TupleEdit signal is wrong now
+        self._camera.center = self.center
         self._camera.update()
 
     @angles.connect
@@ -112,11 +113,13 @@ class Camera(HasFields):
 
     def _on_vispy_camera_change(self):
         with self.signals.blocked():
-            self.fov = self._camera.fov
-            self.scale = self._camera.scale_factor
-            self.center = self._camera.center
-            angles = quaternion2euler(self._camera._quaternion, degrees=True)
-            self.angles = angles
+            with self._camera.changed.blocked():
+                self.fov = self._camera.fov
+                if scale := self._camera.scale_factor:
+                    self.scale = scale
+                self.center = self._camera.center
+                angles = quaternion2euler(self._camera._quaternion, degrees=True)
+                self.angles = angles
 
 
 # copied from napari/_vispy/utils/quaternion.py

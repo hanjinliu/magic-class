@@ -520,7 +520,6 @@ class Points3D(LayerItem, HasFields):
             edge_color=self.edge_color,
             edge_width=self.edge_width,
             size=self.size,
-            symbol=self._visual.symbol,
         )
         self._data = _value
         self._visual.update()
@@ -542,7 +541,6 @@ class Points3D(LayerItem, HasFields):
             edge_color=self.edge_color,
             edge_width=self.edge_width,
             size=self.size,
-            symbol=self._visual.symbol,
         )
 
     @edge_color.connect
@@ -553,7 +551,6 @@ class Points3D(LayerItem, HasFields):
             edge_color=value,
             edge_width=self.edge_width,
             size=self.size,
-            symbol=self._visual.symbol,
         )
 
     @edge_width.connect
@@ -564,7 +561,6 @@ class Points3D(LayerItem, HasFields):
             edge_color=self.edge_color,
             edge_width=value,
             size=self.size,
-            symbol=self._visual.symbol,
         )
 
     @spherical.connect
@@ -580,7 +576,6 @@ class Points3D(LayerItem, HasFields):
             edge_color=self.edge_color,
             edge_width=self.edge_width,
             size=value,
-            symbol=self._visual.symbol,
         )
 
     @blending.connect

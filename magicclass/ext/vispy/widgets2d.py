@@ -342,8 +342,8 @@ class VispyPlotCanvas(FreeWidget, PlotItem):
 
     def __init__(self, **kwargs):
         app = get_app()
-        # prepare widget
 
+        # prepare widget
         _scene = SceneCanvas(keys="interactive")
         _scene.create_native()
         viewbox = _scene.central_widget.add_view()
