@@ -61,7 +61,7 @@ class ArrayIcon(_IconBase):
 
         arr = np.asarray(source)
 
-        from magicgui import _mpl_image
+        from magicclass._magicgui_compat import _mpl_image
 
         img = _mpl_image.Image()
 

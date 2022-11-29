@@ -8,6 +8,7 @@ if MAGICGUI_VERSION < "0.7.0":
     from magicgui.type_map import _type2callback as type2callback
     from magicgui.widgets._concrete import _LabeledWidget, merge_super_sigs
     from magicgui.widgets._protocols import WidgetProtocol
+    from magicgui import _mpl_image
 
 else:
     from magicgui.types import Undefined
@@ -15,3 +16,4 @@ else:
     from magicgui.type_map import type2callback
     from magicgui.widgets._concrete import _LabeledWidget, merge_super_sigs
     from magicgui.widgets.protocols import WidgetProtocol
+    from magicgui.widgets._image import _mpl_image

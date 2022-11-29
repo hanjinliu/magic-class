@@ -307,7 +307,7 @@ class Logger(Widget, logging.Handler):
         height=None,
     ) -> None:
         """Print an array as an image in the logger widget. Can be a path."""
-        from magicgui import _mpl_image
+        from magicclass._magicgui_compat import _mpl_image
 
         img = _mpl_image.Image()
 

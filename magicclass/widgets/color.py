@@ -41,7 +41,7 @@ class QColorSwatch(QFrame):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setCursor(Qt.PointingHandCursor)
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
         self._color: tuple[float, float, float, float] = (0.0, 0.0, 0.0, 0.0)
         self.colorChanged.connect(self._update_swatch_style)
         self.setMinimumWidth(40)
@@ -55,10 +55,10 @@ class QColorSwatch(QFrame):
 
     def mouseReleaseEvent(self, event):
         """Show QColorPopup picker when the user clicks on the swatch."""
-        if event.button() == Qt.LeftButton:
+        if event.button() == Qt.MouseButton.LeftButton:
             initial = self.getQColor()
             dlg = QColorDialog(initial, self)
-            dlg.setOptions(QColorDialog.ShowAlphaChannel)
+            dlg.setOptions(QColorDialog.ColorDialogOption.ShowAlphaChannel)
             ok = dlg.exec_()
             if ok:
                 self.setColor(dlg.selectedColor())
@@ -170,7 +170,7 @@ class QDoubleSlider(QSlider):
     def __init__(self, parent=None, decimals: int = 3):
         super().__init__(parent=parent)
         self.scale = 10**decimals
-        self.setOrientation(Qt.Horizontal)
+        self.setOrientation(Qt.Orientation.Horizontal)
         self.valueChanged.connect(self.doubleValueChanged)
 
     def doubleValueChanged(self):
@@ -238,7 +238,7 @@ class QColorSlider(QWidget):
         qspinbox = QDoubleSpinBox()
         qspinbox.setMaximum(1.0)
         qspinbox.setSingleStep(0.001)
-        qspinbox.setAlignment(Qt.AlignRight)
+        qspinbox.setAlignment(Qt.AlignmentFlag.AlignRight)
 
         qspinbox.setButtonSymbols(QDoubleSpinBox.ButtonSymbols.NoButtons)
         qspinbox.setStyleSheet("background:transparent; border: 0;")

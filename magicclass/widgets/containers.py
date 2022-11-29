@@ -140,10 +140,10 @@ class _Stack(ContainerBase):
 
         self._stacked_widget = QtW.QStackedWidget(self._qwidget)
         self._stacked_widget.setContentsMargins(0, 0, 0, 0)
-        self._inner_widget = QtW.QWidget(self._qwidget)
+        self._inner_qwidget = QtW.QWidget(self._qwidget)
         self._qwidget.setLayout(self._layout)
         self._layout.addWidget(self._stacked_widget)
-        self._layout.addWidget(self._inner_widget)
+        self._layout.addWidget(self._inner_qwidget)
 
     def _mgui_insert_widget(self, position: int, widget: Widget):
         self._stacked_widget.insertWidget(position, widget.native)
@@ -166,9 +166,9 @@ class _ScrollableContainer(ContainerBase):
 
         self._scroll_area.setWidgetResizable(True)
         self._scroll_area.setContentsMargins(0, 0, 0, 0)
-        self._inner_widget = QtW.QWidget(self._scroll_area)
-        self._inner_widget.setLayout(self._layout)
-        self._scroll_area.setWidget(self._inner_widget)
+        self._inner_qwidget = QtW.QWidget(self._scroll_area)
+        self._inner_qwidget.setLayout(self._layout)
+        self._scroll_area.setWidget(self._inner_qwidget)
 
         self._qwidget.setLayout(QtW.QVBoxLayout())
         self._qwidget.layout().addWidget(self._scroll_area)
@@ -195,9 +195,9 @@ class _DraggableContainer(ContainerBase):
 
         self._scroll_area.setWidgetResizable(True)
         self._scroll_area.setContentsMargins(0, 0, 0, 0)
-        self._inner_widget = QtW.QWidget(self._scroll_area)
-        self._inner_widget.setLayout(self._layout)
-        self._scroll_area.setWidget(self._inner_widget)
+        self._inner_qwidget = QtW.QWidget(self._scroll_area)
+        self._inner_qwidget.setLayout(self._layout)
+        self._scroll_area.setWidget(self._inner_qwidget)
 
         self._qwidget.setLayout(QtW.QVBoxLayout())
         self._qwidget.layout().addWidget(self._scroll_area)
@@ -223,12 +223,12 @@ class _ButtonContainer(ContainerBase):
             self._layout = QtW.QVBoxLayout()
 
         self._qwidget = QtW.QPushButton()
-        self._inner_widget = QtW.QWidget()
-        self._inner_widget.setParent(self._qwidget, self._inner_widget.windowFlags())
-        self._inner_widget.setLayout(self._layout)
+        self._inner_qwidget = QtW.QWidget()
+        self._inner_qwidget.setParent(self._qwidget, self._inner_qwidget.windowFlags())
+        self._inner_qwidget.setLayout(self._layout)
 
         self._qwidget.setText(text)
-        self._qwidget.clicked.connect(lambda x: self._inner_widget.show())
+        self._qwidget.clicked.connect(lambda x: self._inner_qwidget.show())
 
 
 _VERTICAL_SETTING = {
@@ -268,8 +268,8 @@ class _Collapsibles(ContainerBase):
         self._get_setting()
         self._qwidget = QtW.QWidget()
         self._qwidget.setLayout(self._setting["layout"]())
-        self._inner_widget = _QCollapsible(self._qwidget)
-        self._inner_widget.setLayout(self._layout)
+        self._inner_qwidget = _QCollapsible(self._qwidget)
+        self._inner_qwidget.setLayout(self._layout)
 
         self._qwidget.layout().setSpacing(0)
         self._layout.setContentsMargins(0, 0, 0, 0)
@@ -292,7 +292,7 @@ class _Collapsibles(ContainerBase):
         self._mgui_change_expand()
 
         self._qwidget.layout().addWidget(self._expand_btn, 0, self._setting["align"])
-        self._qwidget.layout().addWidget(self._inner_widget, 0, self._setting["align"])
+        self._qwidget.layout().addWidget(self._inner_qwidget, 0, self._setting["align"])
         self._qwidget.layout().setContentsMargins(0, 0, 0, 0)
 
     @property
@@ -300,11 +300,11 @@ class _Collapsibles(ContainerBase):
         return not self._expand_btn.isChecked()
 
     def _collapse(self):
-        self._inner_widget.setVisible(False)
+        self._inner_qwidget.setVisible(False)
         self._expand_btn.setArrowType(self._setting["collapsed-arrow"])
 
     def _expand(self):
-        self._inner_widget.setVisible(True)
+        self._inner_qwidget.setVisible(True)
         self._expand_btn.setArrowType(self._setting["expanded-arrow"])
 
     def _mgui_change_expand(self):
@@ -425,10 +425,10 @@ class _GroupBoxContainer(ContainerBase):
         else:
             self._layout = QtW.QVBoxLayout()
 
-        self._inner_widget = QtW.QWidget(self._groupbox)
-        self._inner_widget.setLayout(self._layout)
+        self._inner_qwidget = QtW.QWidget(self._groupbox)
+        self._inner_qwidget.setLayout(self._layout)
         self._groupbox.setLayout(QtW.QHBoxLayout())
-        self._groupbox.layout().addWidget(self._inner_widget)
+        self._groupbox.layout().addWidget(self._inner_qwidget)
 
         self._qwidget.setLayout(QtW.QVBoxLayout())
         self._qwidget.layout().addWidget(self._groupbox)
