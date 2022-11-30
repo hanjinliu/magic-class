@@ -35,7 +35,7 @@ if TYPE_CHECKING:
     from magicclass._gui._macro import GuiMacro
     from magicclass.fields import MagicField
 
-__all__ = ["thread_worker", "Timer", "Callback"]
+__all__ = ["thread_worker", "Timer", "Callback", "to_callback"]
 
 
 class ProgressDict(TypedDict):
@@ -849,3 +849,6 @@ class Callback:
         if obj is None:
             return self
         return self(obj)
+
+
+to_callback = thread_worker.to_callback
