@@ -9,6 +9,10 @@ of the parent and often update its parent.
 
 With class method ``warps``, you can easily connect parent methods to its child while keeping code clean.
 
+.. contents:: Contents
+    :local:
+    :depth: 1
+
 Basic Syntax
 ------------
 
@@ -57,13 +61,53 @@ child widget.
 
 .. note::
 
-    Method predefinition in Step 3. is not a must. It is recommended, however, in several reasons:
+    Method pre-definition in Step 3. is not a must. It is recommended, however, in several reasons:
 
     1. It plays as an "index" of functions. One can know what functions are implemented in the GUI,
        and in what order they will appear in widgets.
 
     2. If the widget is composed of nested magic classes and other widgets or fields, the order of
        widgets will not be sorted due to different timing of widget creation.
+
+Use @abstractapi decorator
+--------------------------
+
+Method pre-definition cannot be statically checked by IDEs; if you mistakely re-defined a method with
+misspelled name, the GUI will have an button that does nothing with no warning nor error.
+
+.. code-block:: python
+
+    @magicclass
+    class Parent:
+        @magicclass
+        class Child:
+            def run_fucntion(self): ...  # <------ misspelled!!
+
+        @Child.wraps
+        def run_function(self, value: float):
+            """Do something"""
+
+    ui = Parent()
+    ui.show()
+
+To avoid this, you can use ``@abstractapi`` decorator to define abstract methods. Abstract API will
+be resolve only if the function is re-defined by :meth:`wraps` function or overriden by such as
+its subclass.
+
+.. code-block:: python
+
+    @magicclass
+    class Parent:
+        @magicclass
+        class Child:
+            @abstractapi
+            def run_fucntion(self): ...  # <------ misspelled!!
+
+        @Child.wraps
+        def run_function(self, value: float):
+            """Do something"""
+
+    ui = Parent()  # AbstracAPIError will be raised here
 
 
 Use Template Functions
