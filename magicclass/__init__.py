@@ -23,6 +23,7 @@ from .wrappers import (
     impl_preview,
     mark_on_calling,
     mark_on_called,
+    abstractapi,
 )
 
 from .fields import (
@@ -61,6 +62,7 @@ __all__ = [
     "impl_preview",
     "mark_on_calling",
     "mark_on_called",
+    "abstractapi",
     "field",
     "vfield",
     "widget_property",

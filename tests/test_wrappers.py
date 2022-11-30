@@ -1,5 +1,7 @@
 from types import MethodType
 from unittest.mock import MagicMock
+
+import pytest
 from magicclass import magicclass, set_options, get_function_gui
 from magicclass.testing import MockConfirmation
 from magicgui.widgets import PushButton
@@ -389,3 +391,21 @@ def test_confirm_with_thread_worker():
     mconf.assert_value("conf-text-1")
     fgui2()
     mconf.assert_value("conf-text-2")
+
+def test_abstractapi():
+    from magicclass import abstractapi
+
+    @magicclass
+    class A:
+        @magicclass
+        class B:
+            @abstractapi
+            def f(self): ...
+        @B.wraps
+        def f(self, i: int):
+            ...
+
+    ui = A()
+    ui.f(0)
+    with pytest.raises(Exception):
+        ui.B.f(0)

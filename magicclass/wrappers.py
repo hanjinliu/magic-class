@@ -1,6 +1,7 @@
 from __future__ import annotations
 import inspect
 from typing import Any, Callable, TYPE_CHECKING, TypeVar, overload
+import functools
 import warnings
 from magicgui.widgets import FunctionGui
 
@@ -10,6 +11,7 @@ from magicclass.signature import get_additional_option, upgrade_signature
 
 if TYPE_CHECKING:
     from magicclass._gui import BaseGui
+    from typing import NoReturn
 
 R = TypeVar("R")
 T = TypeVar("T")
@@ -453,3 +455,48 @@ def mark_on_called(function: Callable) -> Callable[[_Fn], _Fn]:
         return on_called
 
     return _wrapper
+
+
+class AbstractAPIError(Exception):
+    """Raised when an abstract API is called."""
+
+
+class abstractapi(Callable):
+    """
+    Wrapper used for marking abstract APIs.
+
+    This wrapper is intended to be used in combination with the ``wraps`` method
+    of magic-classes.
+
+    Examples
+    --------
+    >>> @magicclass
+    >>> class A:
+    >>>     @magicclass
+    >>>     class B:
+    >>>         @abstractapi  # mark as abstract
+    >>>         def f(self): ...
+    >>>     @B.wraps
+    >>>     def f(self, i: int):
+    >>>         print(i)  # do something
+    """
+
+    def __init__(self, func: Callable):
+        if not callable(func) or isinstance(func, type):
+            raise TypeError("abstractapi can only be used on functions and methods")
+
+        self.__name__ = repr(func)
+        functools.wraps(func)(self)
+
+    def __call__(self, *args, **kwargs) -> NoReturn:
+        raise AbstractAPIError(
+            f"Function {self._get_qual_name()} is an abstract API so it cannot be called."
+        )
+
+    def __get__(self, instance, owner=None) -> NoReturn:
+        raise AbstractAPIError(
+            f"Function {self._get_qual_name()} is an abstract API so it cannot be accessed."
+        )
+
+    def _get_qual_name(self) -> str:
+        return getattr(self, "__qualname__", self.__name__)
