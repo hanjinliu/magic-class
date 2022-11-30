@@ -16,7 +16,6 @@ from typing_extensions import _AnnotatedAlias, Literal
 import inspect
 import warnings
 from enum import Enum
-from docstring_parser import parse, compose
 from qtpy.QtWidgets import QWidget, QDockWidget
 
 from psygnal import Signal
@@ -66,7 +65,7 @@ from magicclass.signature import (
     get_additional_option,
     split_annotated_type,
 )
-from magicclass.wrappers import upgrade_signature
+from magicclass.wrappers import upgrade_signature, abstractapi
 from magicclass.types import BoundLiteral
 from magicclass.functools import wraps
 
@@ -488,6 +487,10 @@ class MagicTemplate(MutableSequence[_W], metaclass=_MagicTemplateMeta):
                     )
                 upgrade_signature(predefined, additional_options={"copyto": []})
 
+                # if abstractapi, mark as resolved
+                if isinstance(predefined, abstractapi):
+                    predefined.resolve()
+
             if copy:
                 copyto_list = get_additional_option(func, "copyto", [])
                 copyto_list.append(cls.__name__)
@@ -607,6 +610,8 @@ class MagicTemplate(MutableSequence[_W], metaclass=_MagicTemplateMeta):
 
     def _create_widget_from_method(self, obj: MethodType):
         """Convert instance methods into GUI objects, such as push buttons or actions."""
+        if isinstance(obj, abstractapi):
+            obj.check_resolved()
         if hasattr(obj, "__name__"):
             obj_name = obj.__name__
         else:
@@ -1111,7 +1116,15 @@ def convert_attributes(cls: type[_T], hide: tuple[type, ...]) -> dict[str, Any]:
         New namespace.
     """
     _dict: dict[str, Callable] = {}
-    _pass_type = (property, classmethod, staticmethod, type, Widget, MagicField)
+    _pass_type = (
+        property,
+        classmethod,
+        staticmethod,
+        type,
+        Widget,
+        MagicField,
+        abstractapi,
+    )
     mro = [c for c in cls.__mro__ if c not in hide]
     for subcls in reversed(mro):
         for name, obj in subcls.__dict__.items():

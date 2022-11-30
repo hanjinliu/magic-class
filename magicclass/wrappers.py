@@ -487,16 +487,29 @@ class abstractapi(Callable):
 
         self.__name__ = repr(func)
         functools.wraps(func)(self)
+        self._resolved = False
 
     def __call__(self, *args, **kwargs) -> NoReturn:
         raise AbstractAPIError(
             f"Function {self._get_qual_name()} is an abstract API so it cannot be called."
         )
 
-    def __get__(self, instance, owner=None) -> NoReturn:
-        raise AbstractAPIError(
-            f"Function {self._get_qual_name()} is an abstract API so it cannot be accessed."
-        )
+    def __get__(self, instance, owner=None) -> abstractapi:
+        """Always return the same object."""
+        return self
+
+    def __repr__(self):
+        return f"abstractapi<{self._get_qual_name()}>"
 
     def _get_qual_name(self) -> str:
         return getattr(self, "__qualname__", self.__name__)
+
+    def resolve(self) -> None:
+        self._resolved = True
+        return None
+
+    def check_resolved(self) -> None:
+        """Check if the abstract API has been resolved by `wraps`."""
+        if not self._resolved:
+            raise AbstractAPIError(f"{self!r} is not redefined in the parent class.")
+        return None

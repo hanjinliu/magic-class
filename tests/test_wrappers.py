@@ -393,7 +393,7 @@ def test_confirm_with_thread_worker():
     mconf.assert_value("conf-text-2")
 
 def test_abstractapi():
-    from magicclass import abstractapi
+    from magicclass import abstractapi, field
 
     @magicclass
     class A:
@@ -409,3 +409,71 @@ def test_abstractapi():
     ui.f(0)
     with pytest.raises(Exception):
         ui.B.f(0)
+
+    # separate classes
+    @magicclass
+    class B:
+        @abstractapi
+        def f(self): ...
+
+    @magicclass
+    class A:
+        b = B
+        @b.wraps
+        def f(self, i: int):
+            ...
+
+    ui = A()
+    ui.f(0)
+    with pytest.raises(Exception):
+        ui.b.f(0)
+
+    # class with field
+    @magicclass
+    class A:
+        b = field(B)
+        @b.wraps
+        def f(self, i: int):
+            ...
+
+    ui = A()
+    ui.f(0)
+    with pytest.raises(Exception):
+        ui.b.f(0)
+
+
+
+def test_abstractapi_on_construction():
+    from magicclass import abstractapi, field
+
+    @magicclass
+    class A:
+        @magicclass
+        class B:
+            @abstractapi
+            def f(self): ...
+
+
+    with pytest.raises(Exception):
+        ui = A()
+
+    # separate classes
+    @magicclass
+    class B:
+        @abstractapi
+        def f(self): ...
+
+    @magicclass
+    class A:
+        b = B
+
+    with pytest.raises(Exception):
+        ui = A()
+
+    # class with field
+    @magicclass
+    class A:
+        b = field(B)
+
+    with pytest.raises(Exception):
+        ui = A()
