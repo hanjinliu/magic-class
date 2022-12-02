@@ -72,8 +72,13 @@ child widget.
 Use @abstractapi decorator
 --------------------------
 
+.. note::
+
+    New in version 0.6.13
+
 Method pre-definition cannot be statically checked by IDEs; if you mistakely re-defined a method with
-misspelled name, the GUI will have an button that does nothing with no warning nor error.
+misspelled name, or you forgot to re-define a method, the GUI will have an button that does nothing
+with no warning nor error.
 
 .. code-block:: python
 
@@ -90,7 +95,7 @@ misspelled name, the GUI will have an button that does nothing with no warning n
     ui = Parent()
     ui.show()
 
-To avoid this, you can use ``@abstractapi`` decorator to define abstract methods. Abstract API will
+To avoid this, you can use :class:`abstractapi` class to define abstract methods. Abstract API will
 be resolve only if the function is re-defined by :meth:`wraps` function or overriden by such as
 its subclass.
 
@@ -109,6 +114,16 @@ its subclass.
 
     ui = Parent()  # AbstracAPIError will be raised here
 
+:class:`abstractapi` is not necessarily used as a decorator. It can be instantiated
+as if a field object.
+
+.. code-block:: python
+
+    @magicclass
+    class Parent:
+        @magicclass
+        class Child:
+            run_fucntion = abstractapi()  # <------ like this
 
 Use Template Functions
 ----------------------
@@ -125,7 +140,7 @@ functions, and this function is integrated in ``wraps`` method (You might have n
 
 .. code-block:: python
 
-    from magicclass import magicclass, wraps
+    from magicclass import magicclass, wraps, abstractapi
 
     def template(i: int, s: str): pass
 
@@ -133,7 +148,7 @@ functions, and this function is integrated in ``wraps`` method (You might have n
     class Main:
         @magicclass
         class Child:
-            def f1(self): ...
+            f1 = abstractapi()
 
         @Child.wraps(template=template)
         def f1(self, i, s): ...
@@ -159,17 +174,17 @@ main widget ``Main``.
 
 .. code-block:: python
 
-    from magicclass import magicclass, magicmenu, magictoolbar
+    from magicclass import magicclass, magicmenu, magictoolbar, abstractapi
 
     @magicclass
     class Main:
         @magicmenu
         class Menu:
-            def func(self): ...
+            func = abstractapi()
 
         @magictoolbar
         class Tools:
-            def func(self): ...
+            func = abstractapi()
 
         @Menu.wraps(copy=True)
         @Tools.wraps(copy=True)
@@ -222,6 +237,20 @@ Widget designs can be separetely set via pre-defined methods.
         def func(self):
             """write program here."""
 
+.. note::
+
+    You can also use :class:`abstractapi` here, like this.
+
+    .. code-block:: python
+
+        @magicclass
+        class Main:
+            @magicmenu
+            class Menu:
+                @set_design(text="func in Menu")
+                @abstractapi
+                def func(self): ...
+
 Find Ancestor Widgets
 ---------------------
 
@@ -260,3 +289,9 @@ are pros and cons between ``@wraps`` and ``find_ancestor``.
   macro will be recorded as ``"ui.ChildClass.method(...)"`` while it will be
   ``"ui.method(...)"`` if you used ``@wraps``. In terms of readability,
   usually ``@wraps`` will be better.
+
+.. note::
+
+    If parent widget will not change, you can cache the parent widget by
+    ``self.find_ancestor(Main, cache=True)``. This is faster so is useful if
+    the function will be repeatitively called.
