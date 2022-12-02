@@ -28,6 +28,8 @@ def _factorize_buttons(mod):
 
 
 class MouseClickEvent(_MouseClickEvent):
+    """More pythonic way to access the button and modifiers"""
+
     def __init__(self, event: _MouseClickEvent, coord_item):
         self.accepted = event.accepted
         self.currentItem = (
@@ -57,3 +59,7 @@ class MouseClickEvent(_MouseClickEvent):
     def buttons(self):
         buttons = super().buttons()
         return _factorize_buttons(buttons)
+
+    def __repr__(self):
+        cls = type(self).__name__
+        return f"{cls}(pos={self.pos()}, buttons={self.buttons()}, modifiers={self.modifiers()})"

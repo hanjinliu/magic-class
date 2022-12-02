@@ -1,10 +1,11 @@
 from __future__ import annotations
+import warnings
 import pyqtgraph as pg
 from pyqtgraph import colormap as cmap
 from typing import Generic, Iterator, Sequence, TypeVar, overload, MutableSequence
 import numpy as np
 
-from .components import Legend, Region, ScaleBar, TextItem
+from .components import Grid, Legend, Region, ScaleBar, TextItem
 from .graph_items import (
     BarPlot,
     Curve,
@@ -16,10 +17,13 @@ from .graph_items import (
     TextGroup,
 )
 from .mouse_event import MouseClickEvent
-from .._shared_utils import convert_color_code, to_rgba
-from .._doc import write_docs
-from ...widgets.utils import FreeWidget
-from ..._app import get_app
+
+from psygnal import Signal, SignalInstance
+
+from magicclass.ext._shared_utils import convert_color_code, to_rgba
+from magicclass.ext._doc import write_docs
+from magicclass.widgets.utils import FreeWidget
+from magicclass._app import get_app
 
 BOTTOM = "bottom"
 LEFT = "left"
@@ -488,14 +492,31 @@ class HasDataItems:
             i += 1
         return name
 
+class SignalCompat:
+    def __init__(self, signal: SignalInstance, name: str):
+        self.signal = signal
+        self.name = name
+    
+    def _warn(self):
+        warnings.warn(
+            f"Use of `{self.name}.append` is deprecated. Please use `{self.signal.name}.connect` instead.",
+            DeprecationWarning,
+        )
+        
+    def append(self, slot):
+        self._warn()
+        self.signal.connect(slot)
 
 class HasViewBox(HasDataItems):
+    range_changed = Signal(object)
+    mouse_clicked = Signal(MouseClickEvent)
+
     def __init__(self, viewbox: pg.ViewBox):
         self._viewbox = viewbox
         self._items: list[LayerItem] = []
 
         # prepare mouse event
-        self.mouse_click_callbacks = []
+        self.mouse_click_callbacks = SignalCompat(self.mouse_clicked, "mouse_click_callbacks")
 
         # This ROI is not editable. Mouse click event will use it to determine
         # the origin of the coordinate system.
@@ -514,8 +535,10 @@ class HasViewBox(HasDataItems):
         [xmin, xmax], [ymin, ymax] = self._viewbox.viewRange()
 
         if xmin <= x <= xmax and ymin <= y <= ymax:
-            for callback in self.mouse_click_callbacks:
-                callback(ev)
+            self.mouse_clicked.emit(ev)
+    
+    def _range_changed(self):
+        self.range_changed.emit(self._viewbox.viewRange())
 
     @property
     def xlim(self):
@@ -560,6 +583,9 @@ class HasViewBox(HasDataItems):
     def border(self, value):
         value = convert_color_code(value)
         self._viewbox.setBorder(value)
+
+    def auto_range(self):
+        self._viewbox.autoRange()
 
 
 class SimpleViewBox(HasViewBox):
@@ -641,10 +667,15 @@ class PlotItem(HasViewBox):
         value = str(value)
         self.pgitem.setTitle(value)
 
+    def show_grid(self, x: bool = True, y: bool = True, alpha: float | None = None):
+        """Show grid lines."""
+        self.pgitem.showGrid(x, y, alpha=alpha)
+        
     def _update_scene(self):
         # Since plot item does not have graphics scene before being added to
         # a graphical layout, mouse event should be connected afterward.
         self.pgitem.scene().sigMouseClicked.connect(self._mouse_clicked)
+        self.pgitem.sigRangeChanged.connect(self._range_changed)
 
 
 class ViewBoxExt(pg.ViewBox):
@@ -738,6 +769,7 @@ class ImageItem(HasViewBox):
         # Since plot item does not have graphics scene before being added to
         # a graphical layout, mouse event should be connected afterward.
         self._image_item.scene().sigMouseClicked.connect(self._mouse_clicked)
+        self._viewbox.sigRangeChanged.connect(self._range_changed)
 
     @property
     def text_overlay(self) -> TextItem:

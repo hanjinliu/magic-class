@@ -84,6 +84,12 @@ class Roi(GraphicComponent):
         self.native.setPen(pg.mkPen(value))
         self.native._updateView()
 
+class Grid(GraphicComponent):
+    native: pg.GridItem
+    
+    def __init__(self) -> None:
+        self.native = pg.GridItem()
+
 
 class TextItem(GraphicComponent):
     """A text item with napari-like API."""

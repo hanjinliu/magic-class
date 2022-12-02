@@ -110,7 +110,7 @@ def __getattr__(key: str):
             DeprecationWarning,
             stacklevel=2,
         )
-        from .functools import wraps
+        from magicclass.functools import wraps
 
         return wraps
 
