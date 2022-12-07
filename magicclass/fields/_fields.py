@@ -23,6 +23,7 @@ from magicclass.utils import (
     method_as_getter,
     eval_attribute,
 )
+from magicclass.signature import MagicMethodSignature
 from magicclass._gui.mgui_ext import Action, WidgetAction
 
 if TYPE_CHECKING:
@@ -106,6 +107,9 @@ class MagicField(_FieldObject, Generic[_W, _V]):
         # that it can "know" the namespace it belongs to.
         self._parent_class: type | None = None
 
+        # This attribute will be used when wrapped field/vfield is used.
+        self._destination_class: type | None = None
+
     def __repr__(self):
         attrs = ["value", "name", "widget_type", "record", "options"]
         kw = ", ".join(f"{a}={getattr(self, a)!r}" for a in attrs)
@@ -115,6 +119,25 @@ class MagicField(_FieldObject, Generic[_W, _V]):
         self._parent_class = owner
         if self.name is None:
             self.name = name
+
+        if self._destination_class is not None:
+            from magicclass.wrappers import abstractapi
+
+            api = getattr(self._destination_class, name, None)
+            if isinstance(api, abstractapi):
+                api.resolve()
+                api.__signature__ = MagicMethodSignature([])
+
+    def set_destination(self, dest: type) -> None:
+        self._destination_class = dest
+        return None
+
+    @property
+    def __signature__(self):
+        additional_options = {}
+        if self._destination_class is not None:
+            additional_options["into"] = self._destination_class.__name__
+        return MagicMethodSignature([], additional_options=additional_options)
 
     @property
     def constructor(self) -> Callable[..., Widget]:

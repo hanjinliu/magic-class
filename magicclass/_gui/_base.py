@@ -59,7 +59,7 @@ from magicclass.utils import (
     eval_attribute,
 )
 from magicclass.widgets import Separator, FreeWidget
-from magicclass.fields import MagicField
+from magicclass.fields import MagicField, MagicValueField
 from magicclass.signature import (
     MagicMethodSignature,
     get_additional_option,
@@ -504,7 +504,7 @@ class MagicTemplate(MutableSequence[_W], metaclass=_MagicTemplateMeta):
     def _unwrap_method(
         self,
         method_name: str,
-        widget: FunctionGui | PushButtonPlus | Action,
+        widget: FunctionGui | PushButtonPlus | AbstractAction,
         moveto: str,
         copyto: list[str],
     ):
@@ -548,10 +548,10 @@ class MagicTemplate(MutableSequence[_W], metaclass=_MagicTemplateMeta):
                     index = n_children
                     new = True
 
-                self._fast_insert(len(self), widget)
+                self._fast_insert(len(self), widget, remove_label=True)
                 copy = _name in copyto
 
-                if isinstance(widget, FunctionGui):
+                if not isinstance(widget, (PushButtonPlus, AbstractAction)):
                     if copy:
                         widget = widget.copy()
                     if new:
@@ -559,6 +559,7 @@ class MagicTemplate(MutableSequence[_W], metaclass=_MagicTemplateMeta):
                     else:
                         del child_instance[index - 1]
                         child_instance._fast_insert(index, widget)
+
                     widget.visible = True
 
                 else:
@@ -587,6 +588,22 @@ class MagicTemplate(MutableSequence[_W], metaclass=_MagicTemplateMeta):
             raise RuntimeError(
                 f"{method_name} not found in class {self.__class__.__name__}"
             )
+
+    @classmethod
+    def field(cls, *args, **kwargs) -> MagicField:
+        from magicclass import field
+
+        fld = field(*args, **kwargs)
+        fld.set_destination(cls)
+        return fld
+
+    @classmethod
+    def vfield(cls, *args, **kwargs) -> MagicValueField:
+        from magicclass import vfield
+
+        fld = vfield(*args, **kwargs)
+        fld.set_destination(cls)
+        return fld
 
     def _convert_attributes_into_widgets(self):
         """

@@ -163,7 +163,10 @@ class MenuGuiBase(ContainerLikeGui):
         return None
 
     def _fast_insert(
-        self, key: int, obj: Callable | MenuGuiBase | AbstractAction
+        self,
+        key: int,
+        obj: Callable | MenuGuiBase | AbstractAction,
+        remove_label: bool = False,
     ) -> None:
         if isinstance(obj, Callable):
             # Sometimes users want to dynamically add new functions to GUI.
@@ -211,8 +214,9 @@ class MenuGuiBase(ContainerLikeGui):
                     Table,
                 )
                 _obj_labeled = _obj
-                if (not isinstance(_obj.widget, _hide_labels)) and self.labels:
-                    _obj_labeled = _LabeledWidgetAction.from_action(_obj)
+                if self.labels:
+                    if not isinstance(_obj.widget, _hide_labels) and not remove_label:
+                        _obj_labeled = _LabeledWidgetAction.from_action(_obj)
                 _obj_labeled.parent = self
                 insert_action_like(self.native, key, _obj_labeled.native)
 

@@ -158,3 +158,40 @@ def test_wraps_no_predefinition():
     ui.B.C["any_func"].changed()
     ui.B.D["any_func"].changed()
     ui.B.E["any_func"].changed()
+
+def test_wrapped_field():
+    from magicclass import abstractapi
+
+    @magicclass
+    class A:
+        @magicclass
+        class B:
+            a = abstractapi()
+        a = B.field(int)
+
+    ui = A()
+    assert ui.B[0].widget_type == "SpinBox"
+    assert ui.a.widget_type == "SpinBox"
+
+    ui.a.value = 2
+    assert ui.B[0].value == 2
+    assert ui.a.value == 2
+
+
+def test_wrapped_vfield():
+    from magicclass import abstractapi
+
+    @magicclass
+    class A:
+        @magicclass
+        class B:
+            a = abstractapi()
+        a = B.vfield(int)
+
+    ui = A()
+    assert ui.B[0].widget_type == "SpinBox"
+    assert ui["a"].widget_type == "SpinBox"
+
+    ui.a = 2
+    assert ui.B[0].value == 2
+    assert ui.a == 2

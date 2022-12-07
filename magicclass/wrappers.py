@@ -505,7 +505,7 @@ class abstractapi(Callable):
         return self
 
     def __repr__(self):
-        return f"abstractapi<{self._get_qual_name()}>"
+        return f"abstractapi<{self._get_qual_name()}, resolved={self._resolved}>"
 
     def _get_qual_name(self) -> str:
         return getattr(self, "__qualname__", self.__name__)
