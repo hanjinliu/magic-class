@@ -473,14 +473,29 @@ class thread_worker:
     def func(self) -> Callable[_P, _R1]:
         return self._func
 
+    @classmethod
     def with_progress(
-        self=None,
+        cls,
         desc: str | Callable | None = None,
         total: str | Callable | int = 0,
-        pbar: ProgressBar | _SupportProgress | MagicField = None,
+        pbar: ProgressBar | _SupportProgress | MagicField | None = None,
     ) -> Self:
-        if self is None:
-            self = thread_worker()
+        """
+        Configure the progressbar.
+
+        Parameters
+        ----------
+        desc : str or callable
+            The description of the progressbar. If a callable is given, it will be
+            called to get the description.
+        total : str, int or callable
+            Total iteration of the progressbar. If a callable is given, it will be
+            called to get the total iteration. If str is given, it will be evaluated
+            with the function's arguments.
+        pbar : ProgressBar or MagicField
+            Progressbar object.
+        """
+        self = cls()
 
         progress = dict(desc=desc, total=total, pbar=pbar)
 
