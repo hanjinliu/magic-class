@@ -549,19 +549,6 @@ class MagicValueField(MagicField[_W, _V]):
 
 @overload
 def field(
-    obj: _X,
-    *,
-    name: str | None = None,
-    label: str | None = None,
-    widget_type: str | type[WidgetProtocol] | type[Widget] | None = None,
-    options: dict[str, Any] = {},
-    record: bool = True,
-) -> MagicField[ValueWidget, _X]:
-    ...
-
-
-@overload
-def field(
     widget_type: type[_W],
     *,
     name: str | None = None,
@@ -575,6 +562,19 @@ def field(
 @overload
 def field(
     obj: type[_X],
+    *,
+    name: str | None = None,
+    label: str | None = None,
+    widget_type: str | type[WidgetProtocol] | type[Widget] | None = None,
+    options: dict[str, Any] = {},
+    record: bool = True,
+) -> MagicField[ValueWidget, _X]:
+    ...
+
+
+@overload
+def field(
+    obj: _X,
     *,
     name: str | None = None,
     label: str | None = None,
@@ -625,14 +625,14 @@ def field(
 
 
 def field(
-    obj: Any = Undefined,
+    obj=Undefined,
     *,
-    name: str | None = None,
-    label: str | None = None,
-    widget_type: str | type[WidgetProtocol] | None = None,
-    options: dict[str, Any] = {},
-    record: bool = True,
-) -> MagicField[Widget, Any]:
+    name=None,
+    label=None,
+    widget_type=None,
+    options={},
+    record=True,
+):
     """
     Make a MagicField object.
 
@@ -667,6 +667,18 @@ def field(
 
 @overload
 def vfield(
+    widget_type: type[_W],
+    *,
+    name: str | None = None,
+    label: str | None = None,
+    options: dict[str, Any] = {},
+    record: bool = True,
+) -> MagicValueField[_W, Any]:
+    ...
+
+
+@overload
+def vfield(
     obj: _X,
     *,
     name: str | None = None,
@@ -675,18 +687,6 @@ def vfield(
     options: dict[str, Any] = {},
     record: bool = True,
 ) -> MagicValueField[ValueWidget, _X]:
-    ...
-
-
-@overload
-def vfield(
-    widget_type: type[_W],
-    *,
-    name: str | None = None,
-    label: str | None = None,
-    options: dict[str, Any] = {},
-    record: bool = True,
-) -> MagicValueField[_W, Any]:
     ...
 
 

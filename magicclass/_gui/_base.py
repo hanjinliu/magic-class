@@ -599,7 +599,7 @@ class MagicTemplate(MutableSequence[_W], metaclass=_MagicTemplateMeta):
     # fmt: off
     @overload
     @classmethod
-    def field(cls, obj: _X, *, name: str | None = None, label: str | None = None, widget_type: str | type[WidgetProtocol] | type[Widget] | None = None, options: dict[str, Any] = {}, record: bool = True) -> MagicField[ValueWidget, _X]: ...  # noqa
+    def field(cls, gui_class: type[_M], *, name: str | None = None, label: str | None = None, widget_type: str | type[WidgetProtocol] | type[Widget] | None = None, options: dict[str, Any] = {}, record: bool = True, ) -> MagicField[_M, Any]: ...  # noqa
 
     @overload
     @classmethod
@@ -607,11 +607,11 @@ class MagicTemplate(MutableSequence[_W], metaclass=_MagicTemplateMeta):
 
     @overload
     @classmethod
-    def field(cls, obj: type[_X], *, name: str | None = None, label: str | None = None, widget_type: str | type[WidgetProtocol] | type[Widget] | None = None, options: dict[str, Any] = {}, record: bool = True, ) -> MagicField[ValueWidget, _X]: ...  # noqa
+    def field(cls, obj: _X, *, name: str | None = None, label: str | None = None, widget_type: str | type[WidgetProtocol] | type[Widget] | None = None, options: dict[str, Any] = {}, record: bool = True) -> MagicField[ValueWidget, _X]: ...  # noqa
 
     @overload
     @classmethod
-    def field(cls, gui_class: type[_M], *, name: str | None = None, label: str | None = None, widget_type: str | type[WidgetProtocol] | type[Widget] | None = None, options: dict[str, Any] = {}, record: bool = True, ) -> MagicField[_M, Any]: ...  # noqa
+    def field(cls, obj: type[_X], *, name: str | None = None, label: str | None = None, widget_type: str | type[WidgetProtocol] | type[Widget] | None = None, options: dict[str, Any] = {}, record: bool = True, ) -> MagicField[ValueWidget, _X]: ...  # noqa
 
     @overload
     @classmethod
@@ -625,13 +625,13 @@ class MagicTemplate(MutableSequence[_W], metaclass=_MagicTemplateMeta):
     @classmethod
     def field(
         cls,
-        obj: Any = Undefined,
+        obj=Undefined,
         *,
-        name: str | None = None,
-        label: str | None = None,
-        widget_type: str | type[WidgetProtocol] | None = None,
-        options: dict[str, Any] = {},
-        record: bool = True,
+        name=None,
+        label=None,
+        widget_type=None,
+        options={},
+        record=True,
     ) -> MagicField:
         """
         Make a MagicField object, with the widget in the child class.
@@ -680,11 +680,11 @@ class MagicTemplate(MutableSequence[_W], metaclass=_MagicTemplateMeta):
     # fmt: off
     @overload
     @classmethod
-    def vfield(cls, obj: _X, *, name: str | None = None, label: str | None = None, widget_type: str | type[WidgetProtocol] | type[Widget] | None = None, options: dict[str, Any] = {}, record: bool = True, ) -> MagicValueField[ValueWidget, _X]: ...  # noqa
+    def vfield(cls, widget_type: type[_W], *, name: str | None = None, label: str | None = None, options: dict[str, Any] = {}, record: bool = True, ) -> MagicValueField[_W, Any]: ...  # noqa
 
     @overload
     @classmethod
-    def vfield(cls, widget_type: type[_W], *, name: str | None = None, label: str | None = None, options: dict[str, Any] = {}, record: bool = True, ) -> MagicValueField[_W, Any]: ...  # noqa
+    def vfield(cls, obj: _X, *, name: str | None = None, label: str | None = None, widget_type: str | type[WidgetProtocol] | type[Widget] | None = None, options: dict[str, Any] = {}, record: bool = True, ) -> MagicValueField[ValueWidget, _X]: ...  # noqa
 
     @overload
     @classmethod
@@ -702,13 +702,13 @@ class MagicTemplate(MutableSequence[_W], metaclass=_MagicTemplateMeta):
     @classmethod
     def vfield(
         cls,
-        obj: Any = Undefined,
+        obj=Undefined,
         *,
-        name: str | None = None,
-        label: str | None = None,
-        widget_type: str | type[WidgetProtocol] | None = None,
-        options: dict[str, Any] = {},
-        record: bool = True,
+        name=None,
+        label=None,
+        widget_type=None,
+        options={},
+        record=True,
     ) -> MagicValueField:
         fld = vfield(
             obj,
