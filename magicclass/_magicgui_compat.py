@@ -17,3 +17,27 @@ else:
     from magicgui.widgets._concrete import _LabeledWidget, merge_super_sigs
     from magicgui.widgets.protocols import WidgetProtocol
     from magicgui.widgets._image import _mpl_image
+
+
+from pathlib import Path
+import datetime
+from enum import Enum
+from typing import Union
+
+MGUI_SIMPLE_TYPES = (
+    Union[
+        int,
+        float,
+        bool,
+        str,
+        Path,
+        datetime.datetime,
+        datetime.date,
+        datetime.time,
+        Enum,
+        range,
+        slice,
+        list,
+        tuple,
+    ],
+)

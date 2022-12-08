@@ -117,7 +117,7 @@ class Has2DViewBox(HasViewBox):
         face_color, edge_color = _check_colors(face_color, edge_color, color)
         if isinstance(edge_color, np.ndarray) and edge_color.ndim == 1:
             edge_color = np.stack([edge_color] * y.size, axis=0)
-        line = Scatter(
+        scatter = Scatter(
             self._viewbox,
             x,
             y,
@@ -127,11 +127,11 @@ class Has2DViewBox(HasViewBox):
             name=name,
             symbol=symbol,
         )
-        self._layerlist.append(line)
+        self._layerlist.append(scatter)
         if len(self._layerlist) == 1:
             self.xrange = (np.min(x), np.max(x))
             self.yrange = (np.min(y), np.max(y))
-        return line
+        return scatter
 
     @write_docs
     def add_hist(

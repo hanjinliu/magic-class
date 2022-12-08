@@ -240,6 +240,8 @@ class ClassGuiBase(BaseGui[Widget]):
                                 UserWarning,
                             )
                             continue
+                        if widget is None:
+                            continue
 
                         # contextmenu
                         contextmenu = get_additional_option(attr, "context_menu", None)
@@ -283,7 +285,9 @@ class ClassGuiBase(BaseGui[Widget]):
         self._unify_label_widths()
         return None
 
-    def _fast_insert(self, key: int, obj: Widget | Callable) -> None:
+    def _fast_insert(
+        self, key: int, obj: Widget | Callable, remove_label: bool = False
+    ) -> None:
         if isinstance(obj, Callable):
             # Sometimes users want to dynamically add new functions to GUI.
             if isinstance(obj, FunctionGui):
@@ -339,7 +343,7 @@ class ClassGuiBase(BaseGui[Widget]):
 
         if self.labels:
             # no labels for button widgets (push buttons, checkboxes, have their own)
-            if not isinstance(widget, _hide_labels):
+            if not isinstance(widget, _hide_labels) and not remove_label:
                 _widget = _LabeledWidget(widget)
                 widget.label_changed.connect(self._unify_label_widths)
 

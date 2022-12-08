@@ -187,6 +187,9 @@ class ToolBarGui(ContainerLikeGui):
                             continue
                         widget = self._create_widget_from_method(widget)
 
+                        if widget is None:
+                            continue
+
                         # contextmenu
                         contextmenu = get_additional_option(attr, "context_menu", None)
                         if contextmenu is not None:
@@ -222,7 +225,9 @@ class ToolBarGui(ContainerLikeGui):
         self._unify_label_widths()
         return None
 
-    def _fast_insert(self, key: int, obj: AbstractAction | Callable) -> None:
+    def _fast_insert(
+        self, key: int, obj: AbstractAction | Callable, remove_label: bool = False
+    ) -> None:
         """
         Insert object into the toolbar. Could be widget or callable.
 
@@ -271,8 +276,9 @@ class ToolBarGui(ContainerLikeGui):
                     Table,
                 )
                 _obj_labeled = _obj
-                if (not isinstance(_obj.widget, _hide_labels)) and self.labels:
-                    _obj_labeled = _LabeledWidgetAction.from_action(_obj)
+                if self.labels:
+                    if not isinstance(_obj.widget, _hide_labels) and not remove_label:
+                        _obj_labeled = _LabeledWidgetAction.from_action(_obj)
                 _obj_labeled.parent = self
                 insert_action_like(self.native, key, _obj_labeled.native)
             self._list.insert(key, _obj)

@@ -158,3 +158,58 @@ def test_wraps_no_predefinition():
     ui.B.C["any_func"].changed()
     ui.B.D["any_func"].changed()
     ui.B.E["any_func"].changed()
+
+def test_wrapped_field():
+    from magicclass import abstractapi
+
+    @magicclass
+    class A:
+        @magicclass
+        class B:
+            a = abstractapi()
+            b = abstractapi()
+        a = B.field(int)
+        b = B.field(str)
+
+    ui = A()
+    assert ui.B[0].widget_type == "SpinBox"
+    assert ui.B[1].widget_type == "LineEdit"
+    assert ui.a.widget_type == "SpinBox"
+    assert ui.b.widget_type == "LineEdit"
+
+    ui.a.value = 2
+    ui.b.value = "x"
+    assert ui.B[0].value == 2
+    assert ui.B[1].value == "x"
+    assert ui.a.value == 2
+    assert ui.b.value == "x"
+    assert str(ui.macro[1]) == "ui.a.value = 2"
+    assert str(ui.macro[2]) == "ui.b.value = 'x'"
+
+
+def test_wrapped_vfield():
+    from magicclass import abstractapi
+
+    @magicclass
+    class A:
+        @magicclass
+        class B:
+            a = abstractapi()
+            b = abstractapi()
+        a = B.vfield(int)
+        b = B.vfield(str)
+
+    ui = A()
+    assert ui.B[0].widget_type == "SpinBox"
+    assert ui.B[1].widget_type == "LineEdit"
+    assert ui["a"].widget_type == "SpinBox"
+    assert ui["b"].widget_type == "LineEdit"
+
+    ui.a = 2
+    ui.b = "x"
+    assert ui.B[0].value == 2
+    assert ui.B[1].value == "x"
+    assert ui.a == 2
+    assert ui.b == "x"
+    assert str(ui.macro[1]) == "ui.a = 2"
+    assert str(ui.macro[2]) == "ui.b = 'x'"

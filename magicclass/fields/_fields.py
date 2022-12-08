@@ -6,15 +6,16 @@ from typing import (
     TypeVar,
     overload,
     Generic,
-    Union,
 )
 from typing_extensions import Literal, _AnnotatedAlias
-from pathlib import Path
-import datetime
 import sys
-from enum import Enum
 from magicgui.widgets import create_widget, Widget
-from magicclass._magicgui_compat import ValueWidget, ContainerWidget, Undefined
+from magicclass._magicgui_compat import (
+    ValueWidget,
+    ContainerWidget,
+    Undefined,
+    MGUI_SIMPLE_TYPES,
+)
 
 from ._define import define_callback, define_callback_gui
 
@@ -23,6 +24,7 @@ from magicclass.utils import (
     method_as_getter,
     eval_attribute,
 )
+from magicclass.signature import MagicMethodSignature
 from magicclass._gui.mgui_ext import Action, WidgetAction
 
 if TYPE_CHECKING:
@@ -32,6 +34,7 @@ if TYPE_CHECKING:
     from magicclass._gui.mgui_ext import AbstractAction
 
     _M = TypeVar("_M", bound=MagicTemplate)
+    _X = TypeVar("_X", bound=MGUI_SIMPLE_TYPES)
 
 if sys.version_info >= (3, 10):
     from typing import _BaseGenericAlias
@@ -106,6 +109,9 @@ class MagicField(_FieldObject, Generic[_W, _V]):
         # that it can "know" the namespace it belongs to.
         self._parent_class: type | None = None
 
+        # This attribute will be used when wrapped field/vfield is used.
+        self._destination_class: type | None = None
+
     def __repr__(self):
         attrs = ["value", "name", "widget_type", "record", "options"]
         kw = ", ".join(f"{a}={getattr(self, a)!r}" for a in attrs)
@@ -115,6 +121,26 @@ class MagicField(_FieldObject, Generic[_W, _V]):
         self._parent_class = owner
         if self.name is None:
             self.name = name
+
+        if self._destination_class is not None:
+            from magicclass.wrappers import abstractapi
+
+            api = getattr(self._destination_class, name, None)
+            if isinstance(api, abstractapi):
+                api.resolve()
+                api.__signature__ = MagicMethodSignature([])
+
+    def set_destination(self, dest: type) -> None:
+        self._destination_class = dest
+        return None
+
+    @property
+    def __signature__(self):
+        """This property is necessary to hack _unwrap_method."""
+        additional_options = {}
+        if self._destination_class is not None:
+            additional_options["into"] = self._destination_class.__name__
+        return MagicMethodSignature([], additional_options=additional_options)
 
     @property
     def constructor(self) -> Callable[..., Widget]:
@@ -519,27 +545,6 @@ class MagicValueField(MagicField[_W, _V]):
 
     def _presethook(self, obj, value):
         return value
-
-
-# magicgui symple types
-_X = TypeVar(
-    "_X",
-    bound=Union[
-        int,
-        float,
-        bool,
-        str,
-        Path,
-        datetime.datetime,
-        datetime.date,
-        datetime.time,
-        Enum,
-        range,
-        slice,
-        list,
-        tuple,
-    ],
-)
 
 
 @overload
