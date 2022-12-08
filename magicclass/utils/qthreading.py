@@ -34,6 +34,7 @@ if TYPE_CHECKING:
     from magicclass._gui.mgui_ext import PushButtonPlus, Action
     from magicclass._gui._macro import GuiMacro
     from magicclass.fields import MagicField
+    from typing_extensions import Self
 
 __all__ = ["thread_worker", "Timer", "Callback", "to_callback"]
 
@@ -472,8 +473,22 @@ class thread_worker:
     def func(self) -> Callable[_P, _R1]:
         return self._func
 
+    def with_progress(
+        self=None,
+        desc: str | Callable | None = None,
+        total: str | Callable | int = 0,
+        pbar: ProgressBar | _SupportProgress | MagicField = None,
+    ) -> Self:
+        if self is None:
+            self = thread_worker()
+
+        progress = dict(desc=desc, total=total, pbar=pbar)
+
+        self._progress = progress
+        return self
+
     @classmethod
-    def set_default(cls, pbar_cls: Callable | str):
+    def set_default(cls, pbar_cls: Callable | str) -> Self:
         """
         Set the default progressbar class.
 
