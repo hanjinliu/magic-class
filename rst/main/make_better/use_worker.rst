@@ -369,3 +369,24 @@ to the "total" argument.
             for i in range(self.n.value):
                 time.sleep(0.1)
                 yield
+
+Better way to pass progress bar parameters
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. note::
+
+    New in version 0.6.13.
+
+Parameteres for the progress bar should be passed as a dictionary. This is not good for
+many reasons such as readability and type hinting. You can use ``with_progress`` method
+for the progress bar configuration.
+
+.. code-block:: python
+
+    @magicclass
+    class Main:
+        # instead of `@thread_worker(progress={"total": 10})`
+        @thread_worker.with_progress(total=10)
+        def func(self):
+        for i in range(10):
+            time.sleep(0.1)
