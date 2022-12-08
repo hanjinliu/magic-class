@@ -178,6 +178,25 @@ def test_progressbar():
     b = B()
     b.f()
 
+def test_with_progress():
+    @magicclass
+    class A:
+        # a progress bar widget is newly created
+        @thread_worker.with_progress(desc="test")
+        def f(self):
+            time.sleep(0.2)
+
+    @magicclass
+    class B:
+        @thread_worker.with_progress(desc="test")
+        def f(self):
+            time.sleep(0.2)
+
+    a = A()
+    a.f()
+    b = B()
+    b.f()
+
 def test_error(qtbot):
     @magicclass(error_mode="stderr")
     class A:
