@@ -187,6 +187,9 @@ class ToolBarGui(ContainerLikeGui):
                             continue
                         widget = self._create_widget_from_method(widget)
 
+                        if widget is None:
+                            continue
+
                         # contextmenu
                         contextmenu = get_additional_option(attr, "context_menu", None)
                         if contextmenu is not None:

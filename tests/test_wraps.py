@@ -182,7 +182,7 @@ def test_wrapped_field():
     assert ui.B[0].value == 2
     assert ui.B[1].value == "x"
     assert ui.a.value == 2
-    assert ui.b.value == "y"
+    assert ui.b.value == "x"
     assert str(ui.macro[1]) == "ui.a.value = 2"
     assert str(ui.macro[2]) == "ui.b.value = 'x'"
 

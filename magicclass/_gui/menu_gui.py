@@ -135,6 +135,9 @@ class MenuGuiBase(ContainerLikeGui):
                             continue
                         widget = self._create_widget_from_method(widget)
 
+                        if widget is None:
+                            continue
+
                     elif hasattr(widget, "__magicclass_parent__") or hasattr(
                         widget.__class__, "__magicclass_parent__"
                     ):

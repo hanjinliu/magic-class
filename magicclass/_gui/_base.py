@@ -747,6 +747,7 @@ class MagicTemplate(MutableSequence[_W], metaclass=_MagicTemplateMeta):
         """Convert instance methods into GUI objects, such as push buttons or actions."""
         if isinstance(obj, abstractapi):
             obj.check_resolved()
+            return None
         if hasattr(obj, "__name__"):
             obj_name = obj.__name__
         else:

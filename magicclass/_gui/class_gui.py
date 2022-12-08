@@ -240,6 +240,8 @@ class ClassGuiBase(BaseGui[Widget]):
                                 UserWarning,
                             )
                             continue
+                        if widget is None:
+                            continue
 
                         # contextmenu
                         contextmenu = get_additional_option(attr, "context_menu", None)
