@@ -6,15 +6,16 @@ from typing import (
     TypeVar,
     overload,
     Generic,
-    Union,
 )
 from typing_extensions import Literal, _AnnotatedAlias
-from pathlib import Path
-import datetime
 import sys
-from enum import Enum
 from magicgui.widgets import create_widget, Widget
-from magicclass._magicgui_compat import ValueWidget, ContainerWidget, Undefined
+from magicclass._magicgui_compat import (
+    ValueWidget,
+    ContainerWidget,
+    Undefined,
+    MGUI_SIMPLE_TYPES,
+)
 
 from ._define import define_callback, define_callback_gui
 
@@ -33,6 +34,7 @@ if TYPE_CHECKING:
     from magicclass._gui.mgui_ext import AbstractAction
 
     _M = TypeVar("_M", bound=MagicTemplate)
+    _X = TypeVar("_X", bound=MGUI_SIMPLE_TYPES)
 
 if sys.version_info >= (3, 10):
     from typing import _BaseGenericAlias
@@ -134,6 +136,7 @@ class MagicField(_FieldObject, Generic[_W, _V]):
 
     @property
     def __signature__(self):
+        """This property is necessary to hack _unwrap_method."""
         additional_options = {}
         if self._destination_class is not None:
             additional_options["into"] = self._destination_class.__name__
@@ -542,27 +545,6 @@ class MagicValueField(MagicField[_W, _V]):
 
     def _presethook(self, obj, value):
         return value
-
-
-# magicgui symple types
-_X = TypeVar(
-    "_X",
-    bound=Union[
-        int,
-        float,
-        bool,
-        str,
-        Path,
-        datetime.datetime,
-        datetime.date,
-        datetime.time,
-        Enum,
-        range,
-        slice,
-        list,
-        tuple,
-    ],
-)
 
 
 @overload

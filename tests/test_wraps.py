@@ -167,15 +167,24 @@ def test_wrapped_field():
         @magicclass
         class B:
             a = abstractapi()
+            b = abstractapi()
         a = B.field(int)
+        b = B.field(str)
 
     ui = A()
     assert ui.B[0].widget_type == "SpinBox"
+    assert ui.B[1].widget_type == "LineEdit"
     assert ui.a.widget_type == "SpinBox"
+    assert ui.b.widget_type == "LineEdit"
 
     ui.a.value = 2
+    ui.b.value = "x"
     assert ui.B[0].value == 2
+    assert ui.B[1].value == "x"
     assert ui.a.value == 2
+    assert ui.b.value == "y"
+    assert str(ui.macro[1]) == "ui.a.value = 2"
+    assert str(ui.macro[2]) == "ui.b.value = 'x'"
 
 
 def test_wrapped_vfield():
@@ -186,12 +195,21 @@ def test_wrapped_vfield():
         @magicclass
         class B:
             a = abstractapi()
+            b = abstractapi()
         a = B.vfield(int)
+        b = B.vfield(str)
 
     ui = A()
     assert ui.B[0].widget_type == "SpinBox"
+    assert ui.B[1].widget_type == "LineEdit"
     assert ui["a"].widget_type == "SpinBox"
+    assert ui["b"].widget_type == "LineEdit"
 
     ui.a = 2
+    ui.b = "x"
     assert ui.B[0].value == 2
+    assert ui.B[1].value == "x"
     assert ui.a == 2
+    assert ui.b == "x"
+    assert str(ui.macro[1]) == "ui.a = 2"
+    assert str(ui.macro[2]) == "ui.b = 'x'"

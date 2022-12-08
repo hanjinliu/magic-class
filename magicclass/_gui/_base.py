@@ -32,7 +32,13 @@ from magicgui.widgets import (
     MainWindow,
 )
 from magicgui.application import use_app
-from magicclass._magicgui_compat import ButtonWidget
+from magicclass._magicgui_compat import (
+    ButtonWidget,
+    WidgetProtocol,
+    Undefined,
+    MGUI_SIMPLE_TYPES,
+    ValueWidget,
+)
 from macrokit import Symbol
 
 from .keybinding import as_shortcut
@@ -59,7 +65,7 @@ from magicclass.utils import (
     eval_attribute,
 )
 from magicclass.widgets import Separator, FreeWidget
-from magicclass.fields import MagicField, MagicValueField
+from magicclass.fields import MagicField, MagicValueField, field, vfield
 from magicclass.signature import (
     MagicMethodSignature,
     get_additional_option,
@@ -74,6 +80,9 @@ if TYPE_CHECKING:
     import napari
     from types import TracebackType
     from typing_extensions import Self
+
+    _X = TypeVar("_X", bound=MGUI_SIMPLE_TYPES)
+    _M = TypeVar("_M", bound="MagicTemplate")
 
 
 class PopUpMode(Enum):
@@ -589,19 +598,128 @@ class MagicTemplate(MutableSequence[_W], metaclass=_MagicTemplateMeta):
                 f"{method_name} not found in class {self.__class__.__name__}"
             )
 
+    # fmt: off
+    @overload
     @classmethod
-    def field(cls, *args, **kwargs) -> MagicField:
-        from magicclass import field
+    def field(cls, obj: _X, *, name: str | None = None, label: str | None = None, widget_type: str | type[WidgetProtocol] | type[Widget] | None = None, options: dict[str, Any] = {}, record: bool = True) -> MagicField[ValueWidget, _X]: ...  # noqa
 
-        fld = field(*args, **kwargs)
+    @overload
+    @classmethod
+    def field(cls, widget_type: type[_W], *, name: str | None = None, label: str | None = None, options: dict[str, Any] = {}, record: bool = True) -> MagicField[_W, Any]: ...  # noqa
+
+    @overload
+    @classmethod
+    def field(cls, obj: type[_X], *, name: str | None = None, label: str | None = None, widget_type: str | type[WidgetProtocol] | type[Widget] | None = None, options: dict[str, Any] = {}, record: bool = True, ) -> MagicField[ValueWidget, _X]: ...  # noqa
+
+    @overload
+    @classmethod
+    def field(cls, gui_class: type[_M], *, name: str | None = None, label: str | None = None, widget_type: str | type[WidgetProtocol] | type[Widget] | None = None, options: dict[str, Any] = {}, record: bool = True, ) -> MagicField[_M, Any]: ...  # noqa
+
+    @overload
+    @classmethod
+    def field(cls, obj: Any, *, name: str | None = None, label: str | None = None, widget_type: type[_W] = None, options: dict[str, Any] = {}, record: bool = True, ) -> MagicField[_W, Any]: ...  # noqa
+
+    @overload
+    @classmethod
+    def field(cls, obj: Any, *, name: str | None = None, label: str | None = None, widget_type: str | type[WidgetProtocol] | None = None, options: dict[str, Any] = {}, record: bool = True, ) -> MagicField[Widget, Any]: ...  # noqa
+    # fmt: on
+
+    @classmethod
+    def field(
+        cls,
+        obj: Any = Undefined,
+        *,
+        name: str | None = None,
+        label: str | None = None,
+        widget_type: str | type[WidgetProtocol] | None = None,
+        options: dict[str, Any] = {},
+        record: bool = True,
+    ) -> MagicField:
+        """
+        Make a MagicField object, with the widget in the child class.
+
+        >>> @magicclass
+        ... class A:
+        ...     @magicclass
+        ...     class B:
+        ...         i = ...  # pre-definition
+        ...     i = B.field(1)
+
+        Parameters
+        ----------
+        obj : Any, default is Undefined
+            Reference to determine what type of widget will be created. If Widget
+            subclass is given, it will be used as is. If other type of class is given,
+            it will used as type annotation. If an object (not type) is given, it will
+            be assumed to be the default value.
+        name : str, optional
+            Name of the widget.
+        label : str, optional
+            Label of the widget.
+        widget_type : str, optional
+            Widget type. This argument will be sent to ``create_widget`` function.
+        options : dict, optional
+            Widget options. This parameter will be passed to the ``options`` keyword
+            argument of ``create_widget``.
+        record : bool, default is True
+            A magic-class specific parameter. If true, record value changes as macro.
+
+        Returns
+        -------
+        MagicField
+        """
+        fld = field(
+            obj,
+            name=name,
+            label=label,
+            widget_type=widget_type,
+            options=options,
+            record=record,
+        )
         fld.set_destination(cls)
         return fld
 
+    # fmt: off
+    @overload
     @classmethod
-    def vfield(cls, *args, **kwargs) -> MagicValueField:
-        from magicclass import vfield
+    def vfield(cls, obj: _X, *, name: str | None = None, label: str | None = None, widget_type: str | type[WidgetProtocol] | type[Widget] | None = None, options: dict[str, Any] = {}, record: bool = True, ) -> MagicValueField[ValueWidget, _X]: ...  # noqa
 
-        fld = vfield(*args, **kwargs)
+    @overload
+    @classmethod
+    def vfield(cls, widget_type: type[_W], *, name: str | None = None, label: str | None = None, options: dict[str, Any] = {}, record: bool = True, ) -> MagicValueField[_W, Any]: ...  # noqa
+
+    @overload
+    @classmethod
+    def vfield(cls, annotation: type[_X], *, name: str | None = None, label: str | None = None, widget_type: str | type[WidgetProtocol] | type[Widget] | None = None, options: dict[str, Any] = {}, record: bool = True, ) -> MagicValueField[ValueWidget, _X]: ...  # noqa
+
+    @overload
+    @classmethod
+    def vfield(cls, obj: Any, *, name: str | None = None, label: str | None = None, widget_type: type[_W] = None, options: dict[str, Any] = {}, record: bool = True, ) -> MagicValueField[_W, Any]: ...  # noqa
+
+    @overload
+    @classmethod
+    def vfield(cls, obj: Any, *, name: str | None = None, label: str | None = None, widget_type: str | type[WidgetProtocol] | type[Widget] | None = None, options: dict[str, Any] = {}, record: bool = True, ) -> MagicValueField[Widget, Any]: ...  # noqa
+    # fmt: on
+
+    @classmethod
+    def vfield(
+        cls,
+        obj: Any = Undefined,
+        *,
+        name: str | None = None,
+        label: str | None = None,
+        widget_type: str | type[WidgetProtocol] | None = None,
+        options: dict[str, Any] = {},
+        record: bool = True,
+    ) -> MagicValueField:
+        fld = vfield(
+            obj,
+            name=name,
+            label=label,
+            widget_type=widget_type,
+            options=options,
+            record=record,
+        )
         fld.set_destination(cls)
         return fld
 
