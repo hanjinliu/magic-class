@@ -1,4 +1,7 @@
-from magicclass import magicclass, magicmenu, magictoolbar, field, vfield, set_design
+from magicclass import (
+    magicclass, magicmenu, magictoolbar, field, vfield, set_options,
+    set_design, abstractapi
+)
 from magicclass.types import Bound
 from unittest.mock import MagicMock
 
@@ -160,8 +163,6 @@ def test_wraps_no_predefinition():
     ui.B.E["any_func"].changed()
 
 def test_wrapped_field():
-    from magicclass import abstractapi
-
     @magicclass
     class A:
         @magicclass

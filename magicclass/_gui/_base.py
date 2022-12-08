@@ -743,6 +743,9 @@ class MagicTemplate(MutableSequence[_W], metaclass=_MagicTemplateMeta):
 
     def _create_widget_from_method(self, obj: MethodType):
         """Convert instance methods into GUI objects, such as push buttons or actions."""
+        if isinstance(obj, abstractapi):
+            obj.check_resolved()
+
         if hasattr(obj, "__name__"):
             obj_name = obj.__name__
         else:
@@ -752,10 +755,6 @@ class MagicTemplate(MutableSequence[_W], metaclass=_MagicTemplateMeta):
             obj_name = getattr(_inner_func, "__name__", str(_inner_func))
         text = obj_name.replace("_", " ")
         widget = self._component_class(name=obj_name, text=text, gui_only=True)
-
-        if isinstance(obj, abstractapi):
-            obj.check_resolved()
-            return widget
 
         func = _create_gui_method(self, obj)
 
