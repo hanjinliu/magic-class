@@ -7,6 +7,8 @@ from macrokit import Symbol
 from qtpy.QtWidgets import QMenu
 from qtpy.QtCore import Qt
 
+from magicclass.wrappers import abstractapi
+
 from .mgui_ext import AbstractAction, WidgetAction, _LabeledWidgetAction
 from .keybinding import register_shortcut
 from ._base import (
@@ -134,9 +136,6 @@ class MenuGuiBase(ContainerLikeGui):
                                 )
                             continue
                         widget = self._create_widget_from_method(widget)
-
-                        if widget is None:
-                            continue
 
                     elif hasattr(widget, "__magicclass_parent__") or hasattr(
                         widget.__class__, "__magicclass_parent__"

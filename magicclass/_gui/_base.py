@@ -566,10 +566,8 @@ class MagicTemplate(MutableSequence[_W], metaclass=_MagicTemplateMeta):
                     if new:
                         child_instance._fast_insert(n_children, widget)
                     else:
-                        del child_instance[index - 1]
+                        del child_instance[index]
                         child_instance._fast_insert(index, widget)
-
-                    widget.visible = True
 
                 else:
                     widget.visible = copy
@@ -745,9 +743,6 @@ class MagicTemplate(MutableSequence[_W], metaclass=_MagicTemplateMeta):
 
     def _create_widget_from_method(self, obj: MethodType):
         """Convert instance methods into GUI objects, such as push buttons or actions."""
-        if isinstance(obj, abstractapi):
-            obj.check_resolved()
-            return None
         if hasattr(obj, "__name__"):
             obj_name = obj.__name__
         else:
@@ -757,6 +752,10 @@ class MagicTemplate(MutableSequence[_W], metaclass=_MagicTemplateMeta):
             obj_name = getattr(_inner_func, "__name__", str(_inner_func))
         text = obj_name.replace("_", " ")
         widget = self._component_class(name=obj_name, text=text, gui_only=True)
+
+        if isinstance(obj, abstractapi):
+            obj.check_resolved()
+            return widget
 
         func = _create_gui_method(self, obj)
 

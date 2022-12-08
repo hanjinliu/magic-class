@@ -23,6 +23,7 @@ from magicclass.signature import get_additional_option
 from magicclass.fields import MagicField
 from magicclass.widgets import FreeWidget, Separator
 from magicclass.utils import iter_members, Tooltips
+from magicclass.wrappers import abstractapi
 
 if TYPE_CHECKING:
     import napari
@@ -186,9 +187,6 @@ class ToolBarGui(ContainerLikeGui):
                                 )
                             continue
                         widget = self._create_widget_from_method(widget)
-
-                        if widget is None:
-                            continue
 
                         # contextmenu
                         contextmenu = get_additional_option(attr, "context_menu", None)
