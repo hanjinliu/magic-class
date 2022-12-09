@@ -719,6 +719,18 @@ def field(
     ...
 
 
+@overload
+def field(
+    *,
+    name: str | None = None,
+    label: str | None = None,
+    widget_type: str | type[WidgetProtocol] | type[Widget] | None = None,
+    options: dict[str, Any] = {},
+    record: bool = True,
+) -> MagicField[Widget, Any]:
+    ...
+
+
 def field(
     obj=Undefined,
     *,

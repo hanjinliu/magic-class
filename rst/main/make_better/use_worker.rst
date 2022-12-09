@@ -373,9 +373,7 @@ to the "total" argument.
 Better way to pass progress bar parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. note::
-
-    New in version 0.6.13.
+.. versionadded:: 0.6.13.
 
 Parameteres for the progress bar should be passed as a dictionary. This is not good for
 many reasons such as readability and type hinting. You can use ``with_progress`` method

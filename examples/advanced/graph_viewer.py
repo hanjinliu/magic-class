@@ -1,4 +1,4 @@
-from magicclass import magicclass, field, magiccontext, MagicTemplate, nogui
+from magicclass import magicclass, field, magiccontext, MagicTemplate, nogui, abstractapi
 from magicclass.ext.pyqtgraph import QtPlotCanvas
 from magicclass.ext.qtconsole import QtConsole
 
@@ -6,11 +6,14 @@ from magicclass.ext.qtconsole import QtConsole
 class Layer(MagicTemplate):
     @magiccontext
     class ContextMenu(MagicTemplate):
-        def Delete_item(self): ...
+        Delete_item = abstractapi()
 
-    def __init__(self, linked_item=None, viewer=None):
+    def __init__(self, linked_item=None):
         self.item = linked_item
-        self.viewer = viewer
+
+    @property
+    def viewer(self):
+        return self.find_ancestor(Viewer)
 
     @ContextMenu.wraps
     def Delete_item(self):
@@ -45,7 +48,7 @@ class Viewer(MagicTemplate):
     def _add_plot_item(self, f, x, y, name, **kwargs):
         f(x, y, **kwargs)
         name = name or "Data"
-        layer = Layer(self.canvas._items[-1], viewer=self)
+        layer = Layer(self.canvas._items[-1])
         layer.check.text = ""
         layer.layer_name.value = name
         layer.layer_name.max_width = 64
