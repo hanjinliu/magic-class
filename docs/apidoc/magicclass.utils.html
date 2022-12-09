@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.utils package &mdash; magic-class 0.6.12 documentation</title>
+  <title>magicclass.utils package &mdash; magic-class 0.6.13 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/columns.css" type="text/css" />
@@ -31,7 +31,7 @@
             <a href="../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.12
+                0.6.13
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -44,11 +44,32 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../main/quick_start.html">Quick Start</a></li>
 </ul>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../main/basics/index.html">Basics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../main/make_better/index.html">Make Your GUI Better</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../main/visualization/index.html">Data Visualization</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../main/advanced/index.html">Advanced Topics</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../main/advanced/index.html">Advanced Topics</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../main/advanced/freewidget.html">Convert QtWidgets into a Magic Widget</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main/advanced/keybinding.html">Define Custom Keybindings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main/advanced/customize_macro.html">Customize Macro Recording</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main/advanced/class_inheritance.html">Inherit Magic Class</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../main/advanced/api.html">API References</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html">magicclass package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.html">magicclass.ext package</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">magicclass.utils package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-magicclass.utils.qt">magicclass.utils.qt module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-magicclass.utils.qthreading">magicclass.utils.qthreading module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-magicclass.utils.qtsignal">magicclass.utils.qtsignal module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-magicclass.utils">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.widgets.html">magicclass.widgets package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.widgets.pywidgets.html">magicclass.widgets.pywidgets package</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../main/best_practice.html">Best Practice</a></li>
@@ -282,7 +303,7 @@ You can copy text, ndarray as an image or data frame as a table data.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="magicclass.utils.qthreading.thread_worker.set_default">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_default</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pbar_cls</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/utils/qthreading.html#thread_worker.set_default"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.utils.qthreading.thread_worker.set_default" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_default</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pbar_cls</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Self</span></span></span><a class="reference internal" href="../_modules/magicclass/utils/qthreading.html#thread_worker.set_default"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.utils.qthreading.thread_worker.set_default" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the default progressbar class.</p>
 <p>This class method is useful when there is an user-defined class that
 follows <code class="docutils literal notranslate"><span class="pre">_SupportProgress</span></code> protocol.</p>
@@ -307,12 +328,36 @@ object it works. Either &quot;default&quot; or &quot;napari&quot; is also accept
 <dd><p>Convert a callback to a callback object.</p>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.utils.qthreading.thread_worker.with_progress">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">with_progress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">desc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Callable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Callable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pbar</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ProgressBar</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">_SupportProgress</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">MagicField</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Self</span></span></span><a class="reference internal" href="../_modules/magicclass/utils/qthreading.html#thread_worker.with_progress"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.utils.qthreading.thread_worker.with_progress" title="Permalink to this definition">¶</a></dt>
+<dd><p>Configure the progressbar.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>desc</strong> (<em>str</em><em> or </em><em>callable</em>) -- The description of the progressbar. If a callable is given, it will be
+called to get the description.</p></li>
+<li><p><strong>total</strong> (<em>str</em><em>, </em><em>int</em><em> or </em><em>callable</em>) -- Total iteration of the progressbar. If a callable is given, it will be
+called to get the total iteration. If str is given, it will be evaluated
+with the function's arguments.</p></li>
+<li><p><strong>pbar</strong> (<em>ProgressBar</em><em> or </em><em>MagicField</em>) -- Progressbar object.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="magicclass.utils.qthreading.thread_worker.yielded">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">yielded</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">magicclass.utils.qthreading.CallbackList</span><span class="p"><span class="pre">[</span></span><span class="pre">magicclass.utils.qthreading._R1</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#magicclass.utils.qthreading.thread_worker.yielded" title="Permalink to this definition">¶</a></dt>
 <dd><p>Event that will be emitted on yielded.</p>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="magicclass.utils.qthreading.to_callback">
+<span class="sig-prename descclassname"><span class="pre">magicclass.utils.qthreading.</span></span><span class="sig-name descname"><span class="pre">to_callback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">callback</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#magicclass.utils.qthreading.Callback" title="magicclass.utils.qthreading.Callback"><span class="pre">magicclass.utils.qthreading.Callback</span></a></span></span><a class="headerlink" href="#magicclass.utils.qthreading.to_callback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a callback to a callback object.</p>
 </dd></dl>
 
 </section>

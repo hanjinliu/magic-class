@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.ext.qtconsole.widgets &mdash; magic-class 0.6.12 documentation</title>
+  <title>magicclass.ext.qtconsole.widgets &mdash; magic-class 0.6.13 documentation</title>
       <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.12
+                0.6.13
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
@@ -124,7 +124,12 @@
         <span class="sd">&quot;&quot;&quot;Execute current code block.&quot;&quot;&quot;</span>
         <span class="n">code</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">executed</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">code</span><span class="p">)</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">executed</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">code</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="QtConsole.update_console"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.qtconsole.html#magicclass.ext.qtconsole.widgets.QtConsole.update_console">[docs]</a>    <span class="k">def</span> <span class="nf">update_console</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">namespace</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{},</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Update console namespace&quot;&quot;&quot;</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">namespace</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>

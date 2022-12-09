@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.ext.pyqtgraph.widgets &mdash; magic-class 0.6.12 documentation</title>
+  <title>magicclass.ext.pyqtgraph.widgets &mdash; magic-class 0.6.13 documentation</title>
       <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.12
+                0.6.13
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
@@ -77,12 +77,13 @@
 
   <h1>Source code for magicclass.ext.pyqtgraph.widgets</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">import</span> <span class="nn">pyqtgraph</span> <span class="k">as</span> <span class="nn">pg</span>
 <span class="kn">from</span> <span class="nn">pyqtgraph</span> <span class="kn">import</span> <span class="n">colormap</span> <span class="k">as</span> <span class="n">cmap</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">overload</span><span class="p">,</span> <span class="n">MutableSequence</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">.components</span> <span class="kn">import</span> <span class="n">Legend</span><span class="p">,</span> <span class="n">Region</span><span class="p">,</span> <span class="n">ScaleBar</span><span class="p">,</span> <span class="n">TextItem</span>
+<span class="kn">from</span> <span class="nn">.components</span> <span class="kn">import</span> <span class="n">Grid</span><span class="p">,</span> <span class="n">Legend</span><span class="p">,</span> <span class="n">Region</span><span class="p">,</span> <span class="n">ScaleBar</span><span class="p">,</span> <span class="n">TextItem</span>
 <span class="kn">from</span> <span class="nn">.graph_items</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">BarPlot</span><span class="p">,</span>
     <span class="n">Curve</span><span class="p">,</span>
@@ -94,10 +95,13 @@
     <span class="n">TextGroup</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">.mouse_event</span> <span class="kn">import</span> <span class="n">MouseClickEvent</span>
-<span class="kn">from</span> <span class="nn">.._shared_utils</span> <span class="kn">import</span> <span class="n">convert_color_code</span><span class="p">,</span> <span class="n">to_rgba</span>
-<span class="kn">from</span> <span class="nn">.._doc</span> <span class="kn">import</span> <span class="n">write_docs</span>
-<span class="kn">from</span> <span class="nn">...widgets.utils</span> <span class="kn">import</span> <span class="n">FreeWidget</span>
-<span class="kn">from</span> <span class="nn">..._app</span> <span class="kn">import</span> <span class="n">get_app</span>
+
+<span class="kn">from</span> <span class="nn">psygnal</span> <span class="kn">import</span> <span class="n">Signal</span><span class="p">,</span> <span class="n">SignalInstance</span>
+
+<span class="kn">from</span> <span class="nn">magicclass.ext._shared_utils</span> <span class="kn">import</span> <span class="n">convert_color_code</span><span class="p">,</span> <span class="n">to_rgba</span>
+<span class="kn">from</span> <span class="nn">magicclass.ext._doc</span> <span class="kn">import</span> <span class="n">write_docs</span>
+<span class="kn">from</span> <span class="nn">magicclass.widgets.utils</span> <span class="kn">import</span> <span class="n">FreeWidget</span>
+<span class="kn">from</span> <span class="nn">magicclass._app</span> <span class="kn">import</span> <span class="n">get_app</span>
 
 <span class="n">BOTTOM</span> <span class="o">=</span> <span class="s2">&quot;bottom&quot;</span>
 <span class="n">LEFT</span> <span class="o">=</span> <span class="s2">&quot;left&quot;</span>
@@ -566,14 +570,31 @@
             <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">return</span> <span class="n">name</span></div>
 
+<div class="viewcode-block" id="SignalCompat"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.SignalCompat">[docs]</a><span class="k">class</span> <span class="nc">SignalCompat</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">signal</span><span class="p">:</span> <span class="n">SignalInstance</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">signal</span> <span class="o">=</span> <span class="n">signal</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+    <span class="k">def</span> <span class="nf">_warn</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Use of `</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">.append` is deprecated. Please use `</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">.connect` instead.&quot;</span><span class="p">,</span>
+            <span class="ne">DeprecationWarning</span><span class="p">,</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="SignalCompat.append"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.SignalCompat.append">[docs]</a>    <span class="k">def</span> <span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">slot</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_warn</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">slot</span><span class="p">)</span></div></div>
 
 <div class="viewcode-block" id="HasViewBox"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.HasViewBox">[docs]</a><span class="k">class</span> <span class="nc">HasViewBox</span><span class="p">(</span><span class="n">HasDataItems</span><span class="p">):</span>
+    <span class="n">range_changed</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">(</span><span class="nb">object</span><span class="p">)</span>
+    <span class="n">mouse_clicked</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">(</span><span class="n">MouseClickEvent</span><span class="p">)</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">viewbox</span><span class="p">:</span> <span class="n">pg</span><span class="o">.</span><span class="n">ViewBox</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span> <span class="o">=</span> <span class="n">viewbox</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">LayerItem</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="c1"># prepare mouse event</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">mouse_click_callbacks</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mouse_click_callbacks</span> <span class="o">=</span> <span class="n">SignalCompat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mouse_clicked</span><span class="p">,</span> <span class="s2">&quot;mouse_click_callbacks&quot;</span><span class="p">)</span>
 
         <span class="c1"># This ROI is not editable. Mouse click event will use it to determine</span>
         <span class="c1"># the origin of the coordinate system.</span>
@@ -592,8 +613,10 @@
         <span class="p">[</span><span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">],</span> <span class="p">[</span><span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">viewRange</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="n">xmin</span> <span class="o">&lt;=</span> <span class="n">x</span> <span class="o">&lt;=</span> <span class="n">xmax</span> <span class="ow">and</span> <span class="n">ymin</span> <span class="o">&lt;=</span> <span class="n">y</span> <span class="o">&lt;=</span> <span class="n">ymax</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">callback</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mouse_click_callbacks</span><span class="p">:</span>
-                <span class="n">callback</span><span class="p">(</span><span class="n">ev</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mouse_clicked</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">ev</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_range_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">range_changed</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">viewRange</span><span class="p">())</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">xlim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -637,7 +660,10 @@
     <span class="nd">@border</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">border</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="n">value</span> <span class="o">=</span> <span class="n">convert_color_code</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">setBorder</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">setBorder</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+<div class="viewcode-block" id="HasViewBox.auto_range"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.HasViewBox.auto_range">[docs]</a>    <span class="k">def</span> <span class="nf">auto_range</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">autoRange</span><span class="p">()</span></div></div>
 
 
 <div class="viewcode-block" id="SimpleViewBox"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.SimpleViewBox">[docs]</a><span class="k">class</span> <span class="nc">SimpleViewBox</span><span class="p">(</span><span class="n">HasViewBox</span><span class="p">):</span>
@@ -719,10 +745,15 @@
         <span class="n">value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pgitem</span><span class="o">.</span><span class="n">setTitle</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
+<div class="viewcode-block" id="PlotItem.show_grid"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.PlotItem.show_grid">[docs]</a>    <span class="k">def</span> <span class="nf">show_grid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Show grid lines.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pgitem</span><span class="o">.</span><span class="n">showGrid</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">)</span></div>
+
     <span class="k">def</span> <span class="nf">_update_scene</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># Since plot item does not have graphics scene before being added to</span>
         <span class="c1"># a graphical layout, mouse event should be connected afterward.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pgitem</span><span class="o">.</span><span class="n">scene</span><span class="p">()</span><span class="o">.</span><span class="n">sigMouseClicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mouse_clicked</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pgitem</span><span class="o">.</span><span class="n">scene</span><span class="p">()</span><span class="o">.</span><span class="n">sigMouseClicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mouse_clicked</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pgitem</span><span class="o">.</span><span class="n">sigRangeChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_range_changed</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="ViewBoxExt"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.ViewBoxExt">[docs]</a><span class="k">class</span> <span class="nc">ViewBoxExt</span><span class="p">(</span><span class="n">pg</span><span class="o">.</span><span class="n">ViewBox</span><span class="p">):</span>
@@ -816,6 +847,7 @@
         <span class="c1"># Since plot item does not have graphics scene before being added to</span>
         <span class="c1"># a graphical layout, mouse event should be connected afterward.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_image_item</span><span class="o">.</span><span class="n">scene</span><span class="p">()</span><span class="o">.</span><span class="n">sigMouseClicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mouse_clicked</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">sigRangeChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_range_changed</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">text_overlay</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TextItem</span><span class="p">:</span>

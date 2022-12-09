@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.widgets.containers &mdash; magic-class 0.6.12 documentation</title>
+  <title>magicclass.widgets.containers &mdash; magic-class 0.6.13 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.12
+                0.6.13
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -82,8 +82,8 @@
 <span class="kn">from</span> <span class="nn">qtpy</span> <span class="kn">import</span> <span class="n">QtWidgets</span> <span class="k">as</span> <span class="n">QtW</span>
 <span class="kn">from</span> <span class="nn">qtpy.QtCore</span> <span class="kn">import</span> <span class="n">Qt</span><span class="p">,</span> <span class="n">QEvent</span><span class="p">,</span> <span class="n">QSize</span>
 <span class="kn">from</span> <span class="nn">magicgui.application</span> <span class="kn">import</span> <span class="n">use_app</span>
-<span class="kn">from</span> <span class="nn">magicgui.widgets._bases</span> <span class="kn">import</span> <span class="n">Widget</span>
-<span class="kn">from</span> <span class="nn">magicgui.widgets._concrete</span> <span class="kn">import</span> <span class="n">ContainerWidget</span>
+<span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">Widget</span>
+<span class="kn">from</span> <span class="nn">magicclass._magicgui_compat</span> <span class="kn">import</span> <span class="n">ContainerWidget</span>
 <span class="kn">from</span> <span class="nn">magicgui.backends._qtpy.widgets</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">QBaseWidget</span><span class="p">,</span>
     <span class="n">Container</span> <span class="k">as</span> <span class="n">ContainerBase</span><span class="p">,</span>
@@ -218,10 +218,10 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_stacked_widget</span> <span class="o">=</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QStackedWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_stacked_widget</span><span class="o">.</span><span class="n">setContentsMargins</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_inner_widget</span> <span class="o">=</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_inner_qwidget</span> <span class="o">=</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_layout</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_stacked_widget</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_inner_widget</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_inner_qwidget</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_mgui_insert_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">widget</span><span class="p">:</span> <span class="n">Widget</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_stacked_widget</span><span class="o">.</span><span class="n">insertWidget</span><span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="n">widget</span><span class="o">.</span><span class="n">native</span><span class="p">)</span>
@@ -244,9 +244,9 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_area</span><span class="o">.</span><span class="n">setWidgetResizable</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_area</span><span class="o">.</span><span class="n">setContentsMargins</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_inner_widget</span> <span class="o">=</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scroll_area</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_inner_widget</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_layout</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_area</span><span class="o">.</span><span class="n">setWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_inner_widget</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_inner_qwidget</span> <span class="o">=</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scroll_area</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_inner_qwidget</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_layout</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_area</span><span class="o">.</span><span class="n">setWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_inner_qwidget</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">QtW</span><span class="o">.</span><span class="n">QVBoxLayout</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scroll_area</span><span class="p">)</span>
@@ -273,9 +273,9 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_area</span><span class="o">.</span><span class="n">setWidgetResizable</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_area</span><span class="o">.</span><span class="n">setContentsMargins</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_inner_widget</span> <span class="o">=</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scroll_area</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_inner_widget</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_layout</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_area</span><span class="o">.</span><span class="n">setWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_inner_widget</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_inner_qwidget</span> <span class="o">=</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scroll_area</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_inner_qwidget</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_layout</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_area</span><span class="o">.</span><span class="n">setWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_inner_qwidget</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">QtW</span><span class="o">.</span><span class="n">QVBoxLayout</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scroll_area</span><span class="p">)</span>
@@ -301,12 +301,12 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_layout</span> <span class="o">=</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QVBoxLayout</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span> <span class="o">=</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QPushButton</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_inner_widget</span> <span class="o">=</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QWidget</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_inner_widget</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inner_widget</span><span class="o">.</span><span class="n">windowFlags</span><span class="p">())</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_inner_widget</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_layout</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_inner_qwidget</span> <span class="o">=</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QWidget</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_inner_qwidget</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inner_qwidget</span><span class="o">.</span><span class="n">windowFlags</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_inner_qwidget</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_layout</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inner_widget</span><span class="o">.</span><span class="n">show</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inner_qwidget</span><span class="o">.</span><span class="n">show</span><span class="p">())</span>
 
 
 <span class="n">_VERTICAL_SETTING</span> <span class="o">=</span> <span class="p">{</span>
@@ -346,8 +346,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_get_setting</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span> <span class="o">=</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QWidget</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_setting</span><span class="p">[</span><span class="s2">&quot;layout&quot;</span><span class="p">]())</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_inner_widget</span> <span class="o">=</span> <span class="n">_QCollapsible</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_inner_widget</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_layout</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_inner_qwidget</span> <span class="o">=</span> <span class="n">_QCollapsible</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_inner_qwidget</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_layout</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">setSpacing</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_layout</span><span class="o">.</span><span class="n">setContentsMargins</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
@@ -370,7 +370,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_mgui_change_expand</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_expand_btn</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_setting</span><span class="p">[</span><span class="s2">&quot;align&quot;</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_inner_widget</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_setting</span><span class="p">[</span><span class="s2">&quot;align&quot;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_inner_qwidget</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_setting</span><span class="p">[</span><span class="s2">&quot;align&quot;</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">setContentsMargins</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 
     <span class="nd">@property</span>
@@ -378,11 +378,11 @@
         <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expand_btn</span><span class="o">.</span><span class="n">isChecked</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">_collapse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_inner_widget</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_inner_qwidget</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_expand_btn</span><span class="o">.</span><span class="n">setArrowType</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_setting</span><span class="p">[</span><span class="s2">&quot;collapsed-arrow&quot;</span><span class="p">])</span>
 
     <span class="k">def</span> <span class="nf">_expand</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_inner_widget</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_inner_qwidget</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_expand_btn</span><span class="o">.</span><span class="n">setArrowType</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_setting</span><span class="p">[</span><span class="s2">&quot;expanded-arrow&quot;</span><span class="p">])</span>
 
     <span class="k">def</span> <span class="nf">_mgui_change_expand</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -503,10 +503,10 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_layout</span> <span class="o">=</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QVBoxLayout</span><span class="p">()</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_inner_widget</span> <span class="o">=</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_groupbox</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_inner_widget</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_layout</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_inner_qwidget</span> <span class="o">=</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_groupbox</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_inner_qwidget</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_layout</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_groupbox</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">QtW</span><span class="o">.</span><span class="n">QHBoxLayout</span><span class="p">())</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_groupbox</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_inner_widget</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_groupbox</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_inner_qwidget</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">QtW</span><span class="o">.</span><span class="n">QVBoxLayout</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_groupbox</span><span class="p">)</span>

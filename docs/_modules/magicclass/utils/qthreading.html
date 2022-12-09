@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.utils.qthreading &mdash; magic-class 0.6.12 documentation</title>
+  <title>magicclass.utils.qthreading &mdash; magic-class 0.6.13 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.12
+                0.6.13
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -101,18 +101,20 @@
 <span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">ProgressBar</span><span class="p">,</span> <span class="n">Container</span><span class="p">,</span> <span class="n">Widget</span><span class="p">,</span> <span class="n">PushButton</span><span class="p">,</span> <span class="n">Label</span>
 <span class="kn">from</span> <span class="nn">magicgui.application</span> <span class="kn">import</span> <span class="n">use_app</span>
 
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">get_signature</span><span class="p">,</span> <span class="n">move_to_screen_center</span>
+<span class="kn">from</span> <span class="nn">.qt</span> <span class="kn">import</span> <span class="n">move_to_screen_center</span>
 <span class="kn">from</span> <span class="nn">.qtsignal</span> <span class="kn">import</span> <span class="n">QtSignal</span>
+<span class="kn">from</span> <span class="nn">._functions</span> <span class="kn">import</span> <span class="n">get_signature</span>
 
-<span class="kn">from</span> <span class="nn">..widgets.containers</span> <span class="kn">import</span> <span class="n">FrameContainer</span>
+<span class="kn">from</span> <span class="nn">magicclass.widgets.containers</span> <span class="kn">import</span> <span class="n">FrameContainer</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">.._gui</span> <span class="kn">import</span> <span class="n">BaseGui</span>
-    <span class="kn">from</span> <span class="nn">.._gui.mgui_ext</span> <span class="kn">import</span> <span class="n">PushButtonPlus</span><span class="p">,</span> <span class="n">Action</span>
-    <span class="kn">from</span> <span class="nn">.._gui._macro</span> <span class="kn">import</span> <span class="n">GuiMacro</span>
-    <span class="kn">from</span> <span class="nn">..fields</span> <span class="kn">import</span> <span class="n">MagicField</span>
+    <span class="kn">from</span> <span class="nn">magicclass._gui</span> <span class="kn">import</span> <span class="n">BaseGui</span>
+    <span class="kn">from</span> <span class="nn">magicclass._gui.mgui_ext</span> <span class="kn">import</span> <span class="n">PushButtonPlus</span><span class="p">,</span> <span class="n">Action</span>
+    <span class="kn">from</span> <span class="nn">magicclass._gui._macro</span> <span class="kn">import</span> <span class="n">GuiMacro</span>
+    <span class="kn">from</span> <span class="nn">magicclass.fields</span> <span class="kn">import</span> <span class="n">MagicField</span>
+    <span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Self</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;thread_worker&quot;</span><span class="p">,</span> <span class="s2">&quot;Timer&quot;</span><span class="p">,</span> <span class="s2">&quot;Callback&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;thread_worker&quot;</span><span class="p">,</span> <span class="s2">&quot;Timer&quot;</span><span class="p">,</span> <span class="s2">&quot;Callback&quot;</span><span class="p">,</span> <span class="s2">&quot;to_callback&quot;</span><span class="p">]</span>
 
 
 <span class="k">class</span> <span class="nc">ProgressDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
@@ -406,7 +408,7 @@
     <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_CONTAINER</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_CONTAINER</span><span class="o">.</span><span class="n">parent</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_CONTAINER</span><span class="o">.</span><span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">parent</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_CONTAINER</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span>
                 <span class="n">parent</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_CONTAINER</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">windowFlags</span><span class="p">(),</span>
@@ -549,8 +551,37 @@
     <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[</span><span class="n">_P</span><span class="p">,</span> <span class="n">_R1</span><span class="p">]:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_func</span>
 
+<div class="viewcode-block" id="thread_worker.with_progress"><a class="viewcode-back" href="../../../apidoc/magicclass.utils.html#magicclass.utils.qthreading.thread_worker.with_progress">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">with_progress</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">desc</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Callable</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">total</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Callable</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">pbar</span><span class="p">:</span> <span class="n">ProgressBar</span> <span class="o">|</span> <span class="n">_SupportProgress</span> <span class="o">|</span> <span class="n">MagicField</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Configure the progressbar.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        desc : str or callable</span>
+<span class="sd">            The description of the progressbar. If a callable is given, it will be</span>
+<span class="sd">            called to get the description.</span>
+<span class="sd">        total : str, int or callable</span>
+<span class="sd">            Total iteration of the progressbar. If a callable is given, it will be</span>
+<span class="sd">            called to get the total iteration. If str is given, it will be evaluated</span>
+<span class="sd">            with the function&#39;s arguments.</span>
+<span class="sd">        pbar : ProgressBar or MagicField</span>
+<span class="sd">            Progressbar object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
+
+        <span class="n">progress</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">desc</span><span class="o">=</span><span class="n">desc</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="n">total</span><span class="p">,</span> <span class="n">pbar</span><span class="o">=</span><span class="n">pbar</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_progress</span> <span class="o">=</span> <span class="n">progress</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
 <div class="viewcode-block" id="thread_worker.set_default"><a class="viewcode-back" href="../../../apidoc/magicclass.utils.html#magicclass.utils.qthreading.thread_worker.set_default">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">set_default</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">pbar_cls</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">|</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">set_default</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">pbar_cls</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the default progressbar class.</span>
 
@@ -926,6 +957,9 @@
         <span class="k">if</span> <span class="n">obj</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span>
         <span class="k">return</span> <span class="bp">self</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span></div>
+
+
+<span class="n">to_callback</span> <span class="o">=</span> <span class="n">thread_worker</span><span class="o">.</span><span class="n">to_callback</span>
 </pre></div>
 
            </div>

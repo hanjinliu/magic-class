@@ -116,9 +116,7 @@ Following example is a file explorer similar to the previous one but defined usi
 Choices type
 ------------
 
-.. note::
-
-    This feature is available since ``magicclass >= 0.6.7``.
+.. versionadded:: 0.6.7
 
 Like ``Bound`` type, ``Choices`` type is also useful for type annotation with choices.
 

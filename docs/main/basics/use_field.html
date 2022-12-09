@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Use Fields in magic-class &mdash; magic-class 0.6.12 documentation</title>
+  <title>Use Fields in magic-class &mdash; magic-class 0.6.13 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/columns.css" type="text/css" />
@@ -31,7 +31,7 @@
             <a href="../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.12
+                0.6.13
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -53,6 +53,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#basics">Basics</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#define-callbacks">Define Callbacks</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#make-fields-more-property-like">Make Fields More Property-like</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#even-better-widget-configuration">Even better widget configuration</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#advanced-fieldgroup">(Advanced) FieldGroup</a><ul>
@@ -114,18 +115,19 @@
 <li><p><a class="reference internal" href="#basics" id="id2">Basics</a></p></li>
 <li><p><a class="reference internal" href="#define-callbacks" id="id3">Define Callbacks</a></p></li>
 <li><p><a class="reference internal" href="#make-fields-more-property-like" id="id4">Make Fields More Property-like</a></p></li>
+<li><p><a class="reference internal" href="#even-better-widget-configuration" id="id5">Even better widget configuration</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#advanced-fieldgroup" id="id5">(Advanced) FieldGroup</a></p>
+<li><p><a class="reference internal" href="#advanced-fieldgroup" id="id6">(Advanced) FieldGroup</a></p>
 <ul>
-<li><p><a class="reference internal" href="#deal-with-widgets-and-values" id="id6">Deal with Widgets and Values</a></p></li>
-<li><p><a class="reference internal" href="#create-many-similar-containers" id="id7">Create Many Similar Containers</a></p></li>
+<li><p><a class="reference internal" href="#deal-with-widgets-and-values" id="id7">Deal with Widgets and Values</a></p></li>
+<li><p><a class="reference internal" href="#create-many-similar-containers" id="id8">Create Many Similar Containers</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#use-fields-in-non-gui-classes" id="id8">Use Fields in Non-GUI Classes</a></p>
+<li><p><a class="reference internal" href="#use-fields-in-non-gui-classes" id="id9">Use Fields in Non-GUI Classes</a></p>
 <ul>
-<li><p><a class="reference internal" href="#hasfields-trait" id="id9">HasFields trait</a></p></li>
-<li><p><a class="reference internal" href="#dataclass-like-usage" id="id10">Dataclass-like Usage</a></p></li>
+<li><p><a class="reference internal" href="#hasfields-trait" id="id10">HasFields trait</a></p></li>
+<li><p><a class="reference internal" href="#dataclass-like-usage" id="id11">Dataclass-like Usage</a></p></li>
 </ul>
 </li>
 </ul>
@@ -229,9 +231,47 @@ using <code class="docutils literal notranslate"><span class="pre">vfield</span>
 </pre></div>
 </div>
 </section>
+<section id="even-better-widget-configuration">
+<h3><a class="toc-backref" href="#id5">Even better widget configuration</a><a class="headerlink" href="#even-better-widget-configuration" title="Permalink to this headline">¶</a></h3>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 0.6.13.</span></p>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">MagicField</span></code> and <code class="docutils literal notranslate"><span class="pre">MagicValueField</span></code> can be configured with <code class="docutils literal notranslate"><span class="pre">options</span></code> keyword
+argument. However, passing a <code class="docutils literal notranslate"><span class="pre">dict</span></code> is not good for code readability and typing.</p>
+<p>An alternative but more recommended way is to use <code class="docutils literal notranslate"><span class="pre">with_options</span></code> method.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">vfield</span>
+
+<span class="nd">@magicclass</span>
+<span class="k">class</span> <span class="nc">MyClass</span><span class="p">:</span>
+
+    <span class="n">a</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">})</span>  <span class="c1"># instead of this</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span><span class="o">.</span><span class="n">with_options</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>  <span class="c1"># use this</span>
+
+    <span class="k">def</span> <span class="nf">print_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;a = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If you only want to set <code class="docutils literal notranslate"><span class="pre">choices</span></code>, <code class="docutils literal notranslate"><span class="pre">with_choices</span></code> method is provided for this
+purpose.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">vfield</span>
+
+<span class="nd">@magicclass</span>
+<span class="k">class</span> <span class="nc">MyClass</span><span class="p">:</span>
+
+    <span class="n">a</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;choices&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]})</span>  <span class="c1"># instead of this</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">()</span><span class="o">.</span><span class="n">with_options</span><span class="p">(</span><span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>  <span class="c1"># or this</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">()</span><span class="o">.</span><span class="n">with_choices</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>  <span class="c1"># you can use this</span>
+
+    <span class="k">def</span> <span class="nf">print_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;a = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Using <code class="docutils literal notranslate"><span class="pre">with_choices</span></code> is not just a shortcut. It also properly predicts the type of
+the output widget.</p>
+</section>
 </section>
 <section id="advanced-fieldgroup">
-<h2><a class="toc-backref" href="#id5">(Advanced) FieldGroup</a><a class="headerlink" href="#advanced-fieldgroup" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id6">(Advanced) FieldGroup</a><a class="headerlink" href="#advanced-fieldgroup" title="Permalink to this headline">¶</a></h2>
 <p>A <code class="docutils literal notranslate"><span class="pre">FieldGroup</span></code> is a class that is used as a container of field objects and behave
 like a <code class="docutils literal notranslate"><span class="pre">field</span></code> or <code class="docutils literal notranslate"><span class="pre">vfield</span></code> function itself.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">FieldGroup</span><span class="p">,</span> <span class="n">vfield</span>
@@ -256,7 +296,7 @@ like a <code class="docutils literal notranslate"><span class="pre">field</span>
 <p>Here, a <code class="docutils literal notranslate"><span class="pre">Points</span></code> class has two child fields <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code>. Since they are created
 by <code class="docutils literal notranslate"><span class="pre">vfield</span></code>, their values can be simply obtained by <code class="docutils literal notranslate"><span class="pre">self.points.x</span></code>.</p>
 <section id="deal-with-widgets-and-values">
-<h3><a class="toc-backref" href="#id6">Deal with Widgets and Values</a><a class="headerlink" href="#deal-with-widgets-and-values" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id7">Deal with Widgets and Values</a><a class="headerlink" href="#deal-with-widgets-and-values" title="Permalink to this headline">¶</a></h3>
 <p>Basically, a <code class="docutils literal notranslate"><span class="pre">FieldGroup</span></code> can always be substituted with a <code class="docutils literal notranslate"><span class="pre">magicclass</span></code>. However,
 there are some benefits to use <code class="docutils literal notranslate"><span class="pre">FieldGroup</span></code> over creating <code class="docutils literal notranslate"><span class="pre">magicclass</span></code>.</p>
 <p>A <code class="docutils literal notranslate"><span class="pre">FieldGroup</span></code> is aware of its child fields. Even if you defined all the fields
@@ -285,7 +325,7 @@ following code works.</p>
 </div>
 </section>
 <section id="create-many-similar-containers">
-<h3><a class="toc-backref" href="#id7">Create Many Similar Containers</a><a class="headerlink" href="#create-many-similar-containers" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id8">Create Many Similar Containers</a><a class="headerlink" href="#create-many-similar-containers" title="Permalink to this headline">¶</a></h3>
 <p>Since a <code class="docutils literal notranslate"><span class="pre">FieldGroup</span></code> can be considered as a &quot;widget creator&quot;, you can easily define a
 widget template by subclassing it.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">LabeledLineEdit</span><span class="p">(</span><span class="n">FieldGroup</span><span class="p">):</span>
@@ -308,9 +348,9 @@ widget template by subclassing it.</p>
 </section>
 </section>
 <section id="use-fields-in-non-gui-classes">
-<h2><a class="toc-backref" href="#id8">Use Fields in Non-GUI Classes</a><a class="headerlink" href="#use-fields-in-non-gui-classes" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id9">Use Fields in Non-GUI Classes</a><a class="headerlink" href="#use-fields-in-non-gui-classes" title="Permalink to this headline">¶</a></h2>
 <section id="hasfields-trait">
-<h3><a class="toc-backref" href="#id9">HasFields trait</a><a class="headerlink" href="#hasfields-trait" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id10">HasFields trait</a><a class="headerlink" href="#hasfields-trait" title="Permalink to this headline">¶</a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">MagicField</span></code> and <code class="docutils literal notranslate"><span class="pre">FieldGroup</span></code> are also designed for general usage of widgets.
 This means that essentially you can use <code class="docutils literal notranslate"><span class="pre">vfield</span></code> instead of <code class="docutils literal notranslate"><span class="pre">property</span></code> for
 getting or setting parameters.</p>
@@ -345,7 +385,7 @@ Therefore, the inaccessibility of widgets can generally be solved in a similar w
 </div>
 </section>
 <section id="dataclass-like-usage">
-<h3><a class="toc-backref" href="#id10">Dataclass-like Usage</a><a class="headerlink" href="#dataclass-like-usage" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id11">Dataclass-like Usage</a><a class="headerlink" href="#dataclass-like-usage" title="Permalink to this headline">¶</a></h3>
 <p>A typical way to use <code class="docutils literal notranslate"><span class="pre">HasFields</span></code> is to combine it with <code class="docutils literal notranslate"><span class="pre">&#64;dataclass</span></code>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">HasFields</span><span class="p">,</span> <span class="n">vfield</span>

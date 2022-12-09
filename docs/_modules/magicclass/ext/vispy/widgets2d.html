@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.ext.vispy.widgets2d &mdash; magic-class 0.6.12 documentation</title>
+  <title>magicclass.ext.vispy.widgets2d &mdash; magic-class 0.6.13 documentation</title>
       <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.12
+                0.6.13
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
@@ -86,8 +86,8 @@
 <span class="kn">from</span> <span class="nn">._base</span> <span class="kn">import</span> <span class="n">HasViewBox</span><span class="p">,</span> <span class="n">SceneCanvas</span><span class="p">,</span> <span class="n">MultiPlot</span>
 
 <span class="kn">from</span> <span class="nn">.._doc</span> <span class="kn">import</span> <span class="n">write_docs</span>
-<span class="kn">from</span> <span class="nn">...widgets</span> <span class="kn">import</span> <span class="n">FreeWidget</span>
-<span class="kn">from</span> <span class="nn">..._app</span> <span class="kn">import</span> <span class="n">get_app</span>
+<span class="kn">from</span> <span class="nn">magicclass.widgets</span> <span class="kn">import</span> <span class="n">FreeWidget</span>
+<span class="kn">from</span> <span class="nn">magicclass._app</span> <span class="kn">import</span> <span class="n">get_app</span>
 
 
 <div class="viewcode-block" id="Has2DViewBox"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.widgets2d.Has2DViewBox">[docs]</a><span class="k">class</span> <span class="nc">Has2DViewBox</span><span class="p">(</span><span class="n">HasViewBox</span><span class="p">):</span>
@@ -195,7 +195,7 @@
         <span class="n">face_color</span><span class="p">,</span> <span class="n">edge_color</span> <span class="o">=</span> <span class="n">_check_colors</span><span class="p">(</span><span class="n">face_color</span><span class="p">,</span> <span class="n">edge_color</span><span class="p">,</span> <span class="n">color</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">edge_color</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">edge_color</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">edge_color</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">edge_color</span><span class="p">]</span> <span class="o">*</span> <span class="n">y</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">line</span> <span class="o">=</span> <span class="n">Scatter</span><span class="p">(</span>
+        <span class="n">scatter</span> <span class="o">=</span> <span class="n">Scatter</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="p">,</span>
             <span class="n">x</span><span class="p">,</span>
             <span class="n">y</span><span class="p">,</span>
@@ -205,11 +205,11 @@
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
             <span class="n">symbol</span><span class="o">=</span><span class="n">symbol</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_layerlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_layerlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">scatter</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_layerlist</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">xrange</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">yrange</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">line</span></div>
+        <span class="k">return</span> <span class="n">scatter</span></div>
 
 <div class="viewcode-block" id="Has2DViewBox.add_hist"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.widgets2d.Has2DViewBox.add_hist">[docs]</a>    <span class="nd">@write_docs</span>
     <span class="k">def</span> <span class="nf">add_hist</span><span class="p">(</span>
@@ -420,8 +420,8 @@
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">app</span> <span class="o">=</span> <span class="n">get_app</span><span class="p">()</span>
-        <span class="c1"># prepare widget</span>
 
+        <span class="c1"># prepare widget</span>
         <span class="n">_scene</span> <span class="o">=</span> <span class="n">SceneCanvas</span><span class="p">(</span><span class="n">keys</span><span class="o">=</span><span class="s2">&quot;interactive&quot;</span><span class="p">)</span>
         <span class="n">_scene</span><span class="o">.</span><span class="n">create_native</span><span class="p">()</span>
         <span class="n">viewbox</span> <span class="o">=</span> <span class="n">_scene</span><span class="o">.</span><span class="n">central_widget</span><span class="o">.</span><span class="n">add_view</span><span class="p">()</span>

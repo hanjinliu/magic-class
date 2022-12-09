@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.signature &mdash; magic-class 0.6.12 documentation</title>
+  <title>magicclass.signature &mdash; magic-class 0.6.13 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.12
+                0.6.13
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -77,13 +77,12 @@
 
   <h1>Source code for magicclass.signature</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">TypedDict</span><span class="p">,</span> <span class="n">Callable</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">TypedDict</span>
 <span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">_AnnotatedAlias</span>
 <span class="kn">from</span> <span class="nn">magicgui.signature</span> <span class="kn">import</span> <span class="n">MagicSignature</span>
 <span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">FunctionGui</span>
-<span class="kn">from</span> <span class="nn">magicgui.types</span> <span class="kn">import</span> <span class="n">WidgetOptions</span>
 <span class="kn">import</span> <span class="nn">inspect</span>
-<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">get_signature</span>
+<span class="kn">from</span> <span class="nn">magicclass.utils</span> <span class="kn">import</span> <span class="n">get_signature</span>
 
 
 <div class="viewcode-block" id="AdditionalOptions"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.signature.AdditionalOptions">[docs]</a><span class="k">class</span> <span class="nc">AdditionalOptions</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
@@ -99,7 +98,7 @@
 <div class="viewcode-block" id="upgrade_signature"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.signature.upgrade_signature">[docs]</a><span class="k">def</span> <span class="nf">upgrade_signature</span><span class="p">(</span>
     <span class="n">func</span><span class="p">,</span>
     <span class="n">gui_options</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">caller_options</span><span class="p">:</span> <span class="n">WidgetOptions</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">caller_options</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">additional_options</span><span class="p">:</span> <span class="n">AdditionalOptions</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -112,7 +111,7 @@
 <span class="sd">        Input function.</span>
 <span class="sd">    gui_options : dict, optional</span>
 <span class="sd">        Options of FunctionGui.</span>
-<span class="sd">    caller_options : WidgetOptions, optional</span>
+<span class="sd">    caller_options : dict, optional</span>
 <span class="sd">        Options of PushButton.</span>
 <span class="sd">    additional_options : AdditionalOptions, optional</span>
 <span class="sd">        Additional options that will be used in magic class.</span>
@@ -226,9 +225,9 @@
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="MagicMethodSignature.get_gui_options"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.signature.MagicMethodSignature.get_gui_options">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">get_gui_options</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">sig</span><span class="p">:</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Signature</span> <span class="o">|</span> <span class="n">MagicSignature</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WidgetOptions</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">get_gui_options</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">sig</span><span class="p">:</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Signature</span> <span class="o">|</span> <span class="n">MagicSignature</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">sig</span><span class="p">)</span> <span class="ow">is</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Signature</span><span class="p">:</span>
-            <span class="n">out</span><span class="p">:</span> <span class="n">WidgetOptions</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">out</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{}</span>
             <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">sig</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="n">annot</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">annotation</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">annot</span><span class="p">,</span> <span class="n">_AnnotatedAlias</span><span class="p">):</span>
@@ -264,7 +263,7 @@
         <span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="split_annotated_type"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.signature.split_annotated_type">[docs]</a><span class="k">def</span> <span class="nf">split_annotated_type</span><span class="p">(</span><span class="n">annotation</span><span class="p">:</span> <span class="n">_AnnotatedAlias</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">WidgetOptions</span><span class="p">]:</span>
+<div class="viewcode-block" id="split_annotated_type"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.signature.split_annotated_type">[docs]</a><span class="k">def</span> <span class="nf">split_annotated_type</span><span class="p">(</span><span class="n">annotation</span><span class="p">:</span> <span class="n">_AnnotatedAlias</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Split an Annotated type into its base type and options dict.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">annotation</span><span class="p">,</span> <span class="n">_AnnotatedAlias</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Type hint must be an &#39;Annotated&#39; type.&quot;</span><span class="p">)</span>
@@ -273,7 +272,7 @@
             <span class="s2">&quot;Invalid Annotated format for magicgui. First arg must be a dict&quot;</span>
         <span class="p">)</span>
 
-    <span class="n">meta</span><span class="p">:</span> <span class="n">WidgetOptions</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">meta</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">_meta</span> <span class="ow">in</span> <span class="n">annotation</span><span class="o">.</span><span class="n">__metadata__</span><span class="p">:</span>
         <span class="n">meta</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">_meta</span><span class="p">)</span>
 

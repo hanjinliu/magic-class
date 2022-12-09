@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.fields._fields &mdash; magic-class 0.6.12 documentation</title>
+  <title>magicclass.fields._fields &mdash; magic-class 0.6.13 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.12
+                0.6.13
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -81,36 +81,40 @@
     <span class="n">Any</span><span class="p">,</span>
     <span class="n">TYPE_CHECKING</span><span class="p">,</span>
     <span class="n">Callable</span><span class="p">,</span>
+    <span class="n">Sequence</span><span class="p">,</span>
     <span class="n">TypeVar</span><span class="p">,</span>
     <span class="n">overload</span><span class="p">,</span>
     <span class="n">Generic</span><span class="p">,</span>
-    <span class="n">Union</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">_AnnotatedAlias</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">import</span> <span class="nn">datetime</span>
 <span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
-<span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">create_widget</span>
-<span class="kn">from</span> <span class="nn">magicgui.widgets._bases</span> <span class="kn">import</span> <span class="n">Widget</span><span class="p">,</span> <span class="n">ValueWidget</span><span class="p">,</span> <span class="n">ContainerWidget</span>
-<span class="kn">from</span> <span class="nn">magicgui.widgets._bases.value_widget</span> <span class="kn">import</span> <span class="n">UNSET</span>
+<span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">create_widget</span><span class="p">,</span> <span class="n">Widget</span>
+<span class="kn">from</span> <span class="nn">magicclass._magicgui_compat</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ValueWidget</span><span class="p">,</span>
+    <span class="n">ContainerWidget</span><span class="p">,</span>
+    <span class="n">CategoricalWidget</span><span class="p">,</span>
+    <span class="n">Undefined</span><span class="p">,</span>
+    <span class="n">MGUI_SIMPLE_TYPES</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="kn">from</span> <span class="nn">._define</span> <span class="kn">import</span> <span class="n">define_callback</span><span class="p">,</span> <span class="n">define_callback_gui</span>
 
-<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span> <span class="nn">magicclass.utils</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">is_instance_method</span><span class="p">,</span>
     <span class="n">method_as_getter</span><span class="p">,</span>
     <span class="n">eval_attribute</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">.._gui.mgui_ext</span> <span class="kn">import</span> <span class="n">Action</span><span class="p">,</span> <span class="n">WidgetAction</span>
+<span class="kn">from</span> <span class="nn">magicclass.signature</span> <span class="kn">import</span> <span class="n">MagicMethodSignature</span>
+<span class="kn">from</span> <span class="nn">magicclass._gui.mgui_ext</span> <span class="kn">import</span> <span class="n">Action</span><span class="p">,</span> <span class="n">WidgetAction</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">magicgui.widgets._protocols</span> <span class="kn">import</span> <span class="n">WidgetProtocol</span>
+    <span class="kn">from</span> <span class="nn">magicclass._magicgui_compat</span> <span class="kn">import</span> <span class="n">WidgetProtocol</span>
     <span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Self</span>
-    <span class="kn">from</span> <span class="nn">.._gui._base</span> <span class="kn">import</span> <span class="n">MagicTemplate</span>
-    <span class="kn">from</span> <span class="nn">.._gui.mgui_ext</span> <span class="kn">import</span> <span class="n">AbstractAction</span>
+    <span class="kn">from</span> <span class="nn">magicclass._gui._base</span> <span class="kn">import</span> <span class="n">MagicTemplate</span>
+    <span class="kn">from</span> <span class="nn">magicclass._gui.mgui_ext</span> <span class="kn">import</span> <span class="n">AbstractAction</span>
 
     <span class="n">_M</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;_M&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">MagicTemplate</span><span class="p">)</span>
+    <span class="n">_X</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;_X&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">MGUI_SIMPLE_TYPES</span><span class="p">)</span>
 
 <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">10</span><span class="p">):</span>
     <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">_BaseGenericAlias</span>
@@ -127,7 +131,8 @@
 
 
 <span class="n">_W</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;_W&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">Widget</span><span class="p">)</span>
-<span class="n">_V</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;_V&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
+<span class="n">_V</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;_V&quot;</span><span class="p">)</span>
+<span class="n">_U</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;_U&quot;</span><span class="p">)</span>
 
 
 <span class="k">class</span> <span class="nc">MagicField</span><span class="p">(</span><span class="n">_FieldObject</span><span class="p">,</span> <span class="n">Generic</span><span class="p">[</span><span class="n">_W</span><span class="p">,</span> <span class="n">_V</span><span class="p">]):</span>
@@ -142,7 +147,7 @@
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">value</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">UNSET</span><span class="p">,</span>
+        <span class="n">value</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">Undefined</span><span class="p">,</span>
         <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">annotation</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -153,8 +158,8 @@
     <span class="p">):</span>
         <span class="k">if</span> <span class="n">options</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">options</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="n">UNSET</span><span class="p">:</span>
-            <span class="n">value</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="n">UNSET</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="n">Undefined</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="n">Undefined</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">constructor</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
 
@@ -185,6 +190,9 @@
         <span class="c1"># that it can &quot;know&quot; the namespace it belongs to.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_parent_class</span><span class="p">:</span> <span class="nb">type</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 
+        <span class="c1"># This attribute will be used when wrapped field/vfield is used.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_destination_class</span><span class="p">:</span> <span class="nb">type</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">attrs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;widget_type&quot;</span><span class="p">,</span> <span class="s2">&quot;record&quot;</span><span class="p">,</span> <span class="s2">&quot;options&quot;</span><span class="p">]</span>
         <span class="n">kw</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">a</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span><span class="si">!r}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">attrs</span><span class="p">)</span>
@@ -194,6 +202,90 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_parent_class</span> <span class="o">=</span> <span class="n">owner</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_destination_class</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">magicclass.wrappers</span> <span class="kn">import</span> <span class="n">abstractapi</span>
+
+            <span class="n">api</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_destination_class</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">api</span><span class="p">,</span> <span class="n">abstractapi</span><span class="p">):</span>
+                <span class="n">api</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+                <span class="n">api</span><span class="o">.</span><span class="n">__signature__</span> <span class="o">=</span> <span class="n">MagicMethodSignature</span><span class="p">([])</span>
+
+    <span class="k">def</span> <span class="nf">set_destination</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dest</span><span class="p">:</span> <span class="nb">type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_destination_class</span> <span class="o">=</span> <span class="n">dest</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">with_options</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">value</span><span class="p">:</span> <span class="n">_V</span> <span class="o">=</span> <span class="n">Undefined</span><span class="p">,</span>
+        <span class="n">tooltip</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Undefined</span><span class="p">,</span>
+        <span class="n">visible</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Undefined</span><span class="p">,</span>
+        <span class="n">enabled</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Undefined</span><span class="p">,</span>
+        <span class="n">gui_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Undefined</span><span class="p">,</span>
+        <span class="n">bind</span><span class="o">=</span><span class="n">Undefined</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Method ot add options to the field.</span>
+
+<span class="sd">        Following expressions returns the same field.</span>
+<span class="sd">        &gt;&gt;&gt; x = field(int, options={&quot;max&quot;: 10})</span>
+<span class="sd">        &gt;&gt;&gt; x = field(int).with_options(max=10)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span>
+            <span class="n">tooltip</span><span class="o">=</span><span class="n">tooltip</span><span class="p">,</span>
+            <span class="n">visible</span><span class="o">=</span><span class="n">visible</span><span class="p">,</span>
+            <span class="n">enabled</span><span class="o">=</span><span class="n">enabled</span><span class="p">,</span>
+            <span class="n">gui_only</span><span class="o">=</span><span class="n">gui_only</span><span class="p">,</span>
+            <span class="n">bind</span><span class="o">=</span><span class="n">bind</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">to_pop</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="n">Undefined</span><span class="p">:</span>
+                <span class="n">to_pop</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">to_pop</span><span class="p">:</span>
+            <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;value&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="nf">with_choices</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">choices</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">_U</span><span class="p">]]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicField</span><span class="p">[</span><span class="n">CategoricalWidget</span><span class="p">,</span> <span class="n">_U</span><span class="p">]:</span>
+        <span class="o">...</span>
+
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="nf">with_choices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">choices</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">_U</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">MagicField</span><span class="p">[</span><span class="n">CategoricalWidget</span><span class="p">,</span> <span class="n">_U</span><span class="p">]:</span>
+        <span class="o">...</span>
+
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="nf">with_choices</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">choices</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">_U</span><span class="p">]]]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicField</span><span class="p">[</span><span class="n">CategoricalWidget</span><span class="p">,</span> <span class="n">_U</span><span class="p">]:</span>
+        <span class="o">...</span>
+
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="nf">with_choices</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">choices</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">_U</span><span class="p">]]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicField</span><span class="p">[</span><span class="n">CategoricalWidget</span><span class="p">,</span> <span class="n">_U</span><span class="p">]:</span>
+        <span class="o">...</span>
+
+    <span class="k">def</span> <span class="nf">with_choices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">choices</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Method to add choices to the field.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s2">&quot;choices&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">choices</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">__signature__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;This property is necessary to hack _unwrap_method.&quot;&quot;&quot;</span>
+        <span class="n">additional_options</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_destination_class</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">additional_options</span><span class="p">[</span><span class="s2">&quot;into&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_destination_class</span><span class="o">.</span><span class="vm">__name__</span>
+        <span class="k">return</span> <span class="n">MagicMethodSignature</span><span class="p">([],</span> <span class="n">additional_options</span><span class="o">=</span><span class="n">additional_options</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">constructor</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Widget</span><span class="p">]:</span>
@@ -290,7 +382,7 @@
             <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">bool</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">annotation</span> <span class="ow">is</span> <span class="nb">bool</span><span class="p">:</span>
                 <span class="c1"># we should not use &quot;isinstance&quot; or &quot;issubclass&quot; because subclass</span>
                 <span class="c1"># may be mapped to different widget by users.</span>
-                <span class="n">value</span> <span class="o">=</span> <span class="kc">False</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="n">UNSET</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="kc">False</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="n">Undefined</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span>
                 <span class="n">action</span> <span class="o">=</span> <span class="n">Action</span><span class="p">(</span>
                     <span class="n">checkable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                     <span class="n">checked</span><span class="o">=</span><span class="n">value</span><span class="p">,</span>
@@ -377,7 +469,7 @@
 
     <span class="k">def</span> <span class="nf">not_ready</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="n">UNSET</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="n">Undefined</span>
             <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">annotation</span> <span class="ow">is</span> <span class="kc">None</span>
             <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget_type</span> <span class="ow">is</span> <span class="kc">None</span>
             <span class="ow">and</span> <span class="s2">&quot;choices&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span>
@@ -599,44 +691,38 @@
     <span class="k">def</span> <span class="nf">_presethook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">value</span>
 
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="nf">with_choices</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">choices</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">_U</span><span class="p">]]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicValueField</span><span class="p">[</span><span class="n">CategoricalWidget</span><span class="p">,</span> <span class="n">_U</span><span class="p">]:</span>
+        <span class="o">...</span>
 
-<span class="c1"># magicgui symple types</span>
-<span class="n">_X</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span>
-    <span class="s2">&quot;_X&quot;</span><span class="p">,</span>
-    <span class="n">bound</span><span class="o">=</span><span class="n">Union</span><span class="p">[</span>
-        <span class="nb">int</span><span class="p">,</span>
-        <span class="nb">float</span><span class="p">,</span>
-        <span class="nb">bool</span><span class="p">,</span>
-        <span class="nb">str</span><span class="p">,</span>
-        <span class="n">Path</span><span class="p">,</span>
-        <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">,</span>
-        <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">,</span>
-        <span class="n">datetime</span><span class="o">.</span><span class="n">time</span><span class="p">,</span>
-        <span class="n">Enum</span><span class="p">,</span>
-        <span class="nb">range</span><span class="p">,</span>
-        <span class="nb">slice</span><span class="p">,</span>
-        <span class="nb">list</span><span class="p">,</span>
-        <span class="nb">tuple</span><span class="p">,</span>
-    <span class="p">],</span>
-<span class="p">)</span>
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="nf">with_choices</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">choices</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">_U</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicValueField</span><span class="p">[</span><span class="n">CategoricalWidget</span><span class="p">,</span> <span class="n">_U</span><span class="p">]:</span>
+        <span class="o">...</span>
 
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="nf">with_choices</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">choices</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">_U</span><span class="p">]]]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicValueField</span><span class="p">[</span><span class="n">CategoricalWidget</span><span class="p">,</span> <span class="n">_U</span><span class="p">]:</span>
+        <span class="o">...</span>
 
-<span class="nd">@overload</span>
-<span class="k">def</span> <span class="nf">field</span><span class="p">(</span>
-    <span class="n">obj</span><span class="p">:</span> <span class="n">_X</span><span class="p">,</span>
-    <span class="o">*</span><span class="p">,</span>
-    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">widget_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">type</span><span class="p">[</span><span class="n">WidgetProtocol</span><span class="p">]</span> <span class="o">|</span> <span class="nb">type</span><span class="p">[</span><span class="n">Widget</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{},</span>
-    <span class="n">record</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicField</span><span class="p">[</span><span class="n">ValueWidget</span><span class="p">,</span> <span class="n">_X</span><span class="p">]:</span>
-    <span class="o">...</span>
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="nf">with_choices</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">choices</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">_U</span><span class="p">]]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicValueField</span><span class="p">[</span><span class="n">CategoricalWidget</span><span class="p">,</span> <span class="n">_U</span><span class="p">]:</span>
+        <span class="o">...</span>
+
+    <span class="k">def</span> <span class="nf">with_choices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">choices</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Method to add choices to the field.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">with_choices</span><span class="p">(</span><span class="n">choices</span><span class="p">)</span>
 
 
 <span class="nd">@overload</span>
 <span class="k">def</span> <span class="nf">field</span><span class="p">(</span>
-    <span class="n">widget_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">_W</span><span class="p">],</span>
+    <span class="n">type_of_widget</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">_W</span><span class="p">],</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -649,6 +735,19 @@
 <span class="nd">@overload</span>
 <span class="k">def</span> <span class="nf">field</span><span class="p">(</span>
     <span class="n">obj</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">_X</span><span class="p">],</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">widget_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">type</span><span class="p">[</span><span class="n">WidgetProtocol</span><span class="p">]</span> <span class="o">|</span> <span class="nb">type</span><span class="p">[</span><span class="n">Widget</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{},</span>
+    <span class="n">record</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicField</span><span class="p">[</span><span class="n">ValueWidget</span><span class="p">,</span> <span class="n">_X</span><span class="p">]:</span>
+    <span class="o">...</span>
+
+
+<span class="nd">@overload</span>
+<span class="k">def</span> <span class="nf">field</span><span class="p">(</span>
+    <span class="n">obj</span><span class="p">:</span> <span class="n">_X</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -698,15 +797,27 @@
     <span class="o">...</span>
 
 
-<div class="viewcode-block" id="field"><a class="viewcode-back" href="../../../apidoc/magicclass.html#magicclass.field">[docs]</a><span class="k">def</span> <span class="nf">field</span><span class="p">(</span>
-    <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">UNSET</span><span class="p">,</span>
+<span class="nd">@overload</span>
+<span class="k">def</span> <span class="nf">field</span><span class="p">(</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">widget_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">type</span><span class="p">[</span><span class="n">WidgetProtocol</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">widget_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">type</span><span class="p">[</span><span class="n">WidgetProtocol</span><span class="p">]</span> <span class="o">|</span> <span class="nb">type</span><span class="p">[</span><span class="n">Widget</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{},</span>
     <span class="n">record</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicField</span><span class="p">[</span><span class="n">Widget</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+    <span class="o">...</span>
+
+
+<div class="viewcode-block" id="field"><a class="viewcode-back" href="../../../apidoc/magicclass.html#magicclass.field">[docs]</a><span class="k">def</span> <span class="nf">field</span><span class="p">(</span>
+    <span class="n">obj</span><span class="o">=</span><span class="n">Undefined</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">widget_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">options</span><span class="o">=</span><span class="p">{},</span>
+    <span class="n">record</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Make a MagicField object.</span>
 
@@ -715,7 +826,7 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    obj : Any, default is UNSET</span>
+<span class="sd">    obj : Any, default is Undefined</span>
 <span class="sd">        Reference to determine what type of widget will be created. If Widget</span>
 <span class="sd">        subclass is given, it will be used as is. If other type of class is given,</span>
 <span class="sd">        it will used as type annotation. If an object (not type) is given, it will</span>
@@ -726,7 +837,7 @@
 <span class="sd">        Label of the widget.</span>
 <span class="sd">    widget_type : str, optional</span>
 <span class="sd">        Widget type. This argument will be sent to ``create_widget`` function.</span>
-<span class="sd">    options : WidgetOptions, optional</span>
+<span class="sd">    options : dict, optional</span>
 <span class="sd">        Widget options. This parameter will be passed to the ``options`` keyword</span>
 <span class="sd">        argument of ``create_widget``.</span>
 <span class="sd">    record : bool, default is True</span>
@@ -741,6 +852,18 @@
 
 <span class="nd">@overload</span>
 <span class="k">def</span> <span class="nf">vfield</span><span class="p">(</span>
+    <span class="n">widget_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">_W</span><span class="p">],</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{},</span>
+    <span class="n">record</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicValueField</span><span class="p">[</span><span class="n">_W</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+    <span class="o">...</span>
+
+
+<span class="nd">@overload</span>
+<span class="k">def</span> <span class="nf">vfield</span><span class="p">(</span>
     <span class="n">obj</span><span class="p">:</span> <span class="n">_X</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -749,18 +872,6 @@
     <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{},</span>
     <span class="n">record</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicValueField</span><span class="p">[</span><span class="n">ValueWidget</span><span class="p">,</span> <span class="n">_X</span><span class="p">]:</span>
-    <span class="o">...</span>
-
-
-<span class="nd">@overload</span>
-<span class="k">def</span> <span class="nf">vfield</span><span class="p">(</span>
-    <span class="n">widget_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">_W</span><span class="p">],</span>
-    <span class="o">*</span><span class="p">,</span>
-    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{},</span>
-    <span class="n">record</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicValueField</span><span class="p">[</span><span class="n">_W</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
     <span class="o">...</span>
 
 
@@ -803,8 +914,20 @@
     <span class="o">...</span>
 
 
+<span class="nd">@overload</span>
+<span class="k">def</span> <span class="nf">vfield</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">widget_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">type</span><span class="p">[</span><span class="n">WidgetProtocol</span><span class="p">]</span> <span class="o">|</span> <span class="nb">type</span><span class="p">[</span><span class="n">Widget</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{},</span>
+    <span class="n">record</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicValueField</span><span class="p">[</span><span class="n">Widget</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+    <span class="o">...</span>
+
+
 <div class="viewcode-block" id="vfield"><a class="viewcode-back" href="../../../apidoc/magicclass.html#magicclass.vfield">[docs]</a><span class="k">def</span> <span class="nf">vfield</span><span class="p">(</span>
-    <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">UNSET</span><span class="p">,</span>
+    <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">Undefined</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -825,7 +948,7 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    obj : Any, default is UNSET</span>
+<span class="sd">    obj : Any, default is Undefined</span>
 <span class="sd">        Reference to determine what type of widget will be created. If Widget</span>
 <span class="sd">        subclass is given, it will be used as is. If other type of class is given,</span>
 <span class="sd">        it will used as type annotation. If an object (not type) is given, it will</span>
@@ -836,7 +959,7 @@
 <span class="sd">        Label of the widget.</span>
 <span class="sd">    widget_type : str, optional</span>
 <span class="sd">        Widget type. This argument will be sent to ``create_widget`` function.</span>
-<span class="sd">    options : WidgetOptions, optional</span>
+<span class="sd">    options : dict, optional</span>
 <span class="sd">        Widget options. This parameter will be passed to the ``options`` keyword</span>
 <span class="sd">        argument of ``create_widget``.</span>
 <span class="sd">    record : bool, default is True</span>
@@ -915,7 +1038,7 @@
             <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;annotation&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">annotation</span><span class="o">=</span><span class="n">obj</span><span class="p">)</span>
             <span class="n">f</span> <span class="o">=</span> <span class="n">field_class</span><span class="p">(</span><span class="n">widget_type</span><span class="o">=</span><span class="n">widget_type</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">obj</span> <span class="ow">is</span> <span class="n">UNSET</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">obj</span> <span class="ow">is</span> <span class="n">Undefined</span><span class="p">:</span>
         <span class="n">f</span> <span class="o">=</span> <span class="n">field_class</span><span class="p">(</span><span class="n">widget_type</span><span class="o">=</span><span class="n">widget_type</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">f</span> <span class="o">=</span> <span class="n">field_class</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">obj</span><span class="p">,</span> <span class="n">widget_type</span><span class="o">=</span><span class="n">widget_type</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>

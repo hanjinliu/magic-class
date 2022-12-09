@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.ext.pyqtgraph.mouse_event &mdash; magic-class 0.6.12 documentation</title>
+  <title>magicclass.ext.pyqtgraph.mouse_event &mdash; magic-class 0.6.13 documentation</title>
       <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.12
+                0.6.13
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
@@ -85,27 +85,29 @@
 
 <span class="k">def</span> <span class="nf">_factorize_modifiers</span><span class="p">(</span><span class="n">mod</span><span class="p">):</span>
     <span class="n">out</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">if</span> <span class="n">mod</span> <span class="o">&amp;</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ShiftModifier</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">mod</span> <span class="o">&amp;</span> <span class="n">Qt</span><span class="o">.</span><span class="n">KeyboardModifier</span><span class="o">.</span><span class="n">ShiftModifier</span><span class="p">:</span>
         <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Modifier</span><span class="o">.</span><span class="n">shift</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">mod</span> <span class="o">&amp;</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ControlModifier</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">mod</span> <span class="o">&amp;</span> <span class="n">Qt</span><span class="o">.</span><span class="n">KeyboardModifier</span><span class="o">.</span><span class="n">ControlModifier</span><span class="p">:</span>
         <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Modifier</span><span class="o">.</span><span class="n">control</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">mod</span> <span class="o">&amp;</span> <span class="n">Qt</span><span class="o">.</span><span class="n">AltModifier</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">mod</span> <span class="o">&amp;</span> <span class="n">Qt</span><span class="o">.</span><span class="n">KeyboardModifier</span><span class="o">.</span><span class="n">AltModifier</span><span class="p">:</span>
         <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Modifier</span><span class="o">.</span><span class="n">alt</span><span class="p">)</span>
     <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">_factorize_buttons</span><span class="p">(</span><span class="n">mod</span><span class="p">):</span>
     <span class="n">out</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">if</span> <span class="n">mod</span> <span class="o">&amp;</span> <span class="n">Qt</span><span class="o">.</span><span class="n">LeftButton</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">mod</span> <span class="o">&amp;</span> <span class="n">Qt</span><span class="o">.</span><span class="n">MouseButton</span><span class="o">.</span><span class="n">LeftButton</span><span class="p">:</span>
         <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Button</span><span class="o">.</span><span class="n">left</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">mod</span> <span class="o">&amp;</span> <span class="n">Qt</span><span class="o">.</span><span class="n">RightButton</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">mod</span> <span class="o">&amp;</span> <span class="n">Qt</span><span class="o">.</span><span class="n">MouseButton</span><span class="o">.</span><span class="n">RightButton</span><span class="p">:</span>
         <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Button</span><span class="o">.</span><span class="n">right</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">mod</span> <span class="o">&amp;</span> <span class="n">Qt</span><span class="o">.</span><span class="n">MiddleButton</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">mod</span> <span class="o">&amp;</span> <span class="n">Qt</span><span class="o">.</span><span class="n">MouseButton</span><span class="o">.</span><span class="n">MiddleButton</span><span class="p">:</span>
         <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Button</span><span class="o">.</span><span class="n">middle</span><span class="p">)</span>
     <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="MouseClickEvent"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.mouse_event.MouseClickEvent">[docs]</a><span class="k">class</span> <span class="nc">MouseClickEvent</span><span class="p">(</span><span class="n">_MouseClickEvent</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;More pythonic way to access the button and modifiers&quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">_MouseClickEvent</span><span class="p">,</span> <span class="n">coord_item</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">accepted</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">accepted</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">currentItem</span> <span class="o">=</span> <span class="p">(</span>
@@ -134,7 +136,11 @@
 
 <div class="viewcode-block" id="MouseClickEvent.buttons"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.mouse_event.MouseClickEvent.buttons">[docs]</a>    <span class="k">def</span> <span class="nf">buttons</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">buttons</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">buttons</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">_factorize_buttons</span><span class="p">(</span><span class="n">buttons</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="n">_factorize_buttons</span><span class="p">(</span><span class="n">buttons</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">cls</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">cls</span><span class="si">}</span><span class="s2">(pos=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pos</span><span class="p">()</span><span class="si">}</span><span class="s2">, buttons=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">buttons</span><span class="p">()</span><span class="si">}</span><span class="s2">, modifiers=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">modifiers</span><span class="p">()</span><span class="si">}</span><span class="s2">)&quot;</span></div>
 </pre></div>
 
            </div>

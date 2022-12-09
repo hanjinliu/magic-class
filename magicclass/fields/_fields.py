@@ -644,6 +644,19 @@ class MagicValueField(MagicField[_W, _V]):
 
 @overload
 def field(
+    gui_class: type[_M],
+    *,
+    name: str | None = None,
+    label: str | None = None,
+    widget_type: str | type[WidgetProtocol] | type[Widget] | None = None,
+    options: dict[str, Any] = {},
+    record: bool = True,
+) -> MagicField[_M, Any]:
+    ...
+
+
+@overload
+def field(
     type_of_widget: type[_W],
     *,
     name: str | None = None,
@@ -677,19 +690,6 @@ def field(
     options: dict[str, Any] = {},
     record: bool = True,
 ) -> MagicField[ValueWidget, _X]:
-    ...
-
-
-@overload
-def field(
-    gui_class: type[_M],
-    *,
-    name: str | None = None,
-    label: str | None = None,
-    widget_type: str | type[WidgetProtocol] | type[Widget] | None = None,
-    options: dict[str, Any] = {},
-    record: bool = True,
-) -> MagicField[_M, Any]:
     ...
 
 

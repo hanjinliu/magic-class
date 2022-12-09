@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.core &mdash; magic-class 0.6.12 documentation</title>
+  <title>magicclass.core &mdash; magic-class 0.6.13 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.12
+                0.6.13
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -82,7 +82,7 @@
 <span class="kn">from</span> <span class="nn">weakref</span> <span class="kn">import</span> <span class="n">WeakValueDictionary</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Callable</span>
 
-<span class="kn">from</span> <span class="nn">._gui.class_gui</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span> <span class="nn">magicclass._gui.class_gui</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">ClassGuiBase</span><span class="p">,</span>
     <span class="n">ClassGui</span><span class="p">,</span>
     <span class="n">FrameClassGui</span><span class="p">,</span>
@@ -100,7 +100,7 @@
     <span class="n">ToolBoxClassGui</span><span class="p">,</span>
     <span class="n">ListClassGui</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">._gui._base</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span> <span class="nn">magicclass._gui._base</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">PopUpMode</span><span class="p">,</span>
     <span class="n">ErrorMode</span><span class="p">,</span>
     <span class="n">defaults</span><span class="p">,</span>
@@ -108,17 +108,17 @@
     <span class="n">check_override</span><span class="p">,</span>
     <span class="n">convert_attributes</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">._gui</span> <span class="kn">import</span> <span class="n">ContextMenuGui</span><span class="p">,</span> <span class="n">MenuGui</span><span class="p">,</span> <span class="n">ToolBarGui</span>
-<span class="kn">from</span> <span class="nn">._app</span> <span class="kn">import</span> <span class="n">get_app</span>
-<span class="kn">from</span> <span class="nn">.types</span> <span class="kn">import</span> <span class="n">WidgetType</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">_register_types</span>  <span class="c1"># activate type registration things.</span>
+<span class="kn">from</span> <span class="nn">magicclass._gui</span> <span class="kn">import</span> <span class="n">ContextMenuGui</span><span class="p">,</span> <span class="n">MenuGui</span><span class="p">,</span> <span class="n">ToolBarGui</span>
+<span class="kn">from</span> <span class="nn">magicclass._app</span> <span class="kn">import</span> <span class="n">get_app</span>
+<span class="kn">from</span> <span class="nn">magicclass.types</span> <span class="kn">import</span> <span class="n">WidgetType</span>
+<span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">_register_types</span>  <span class="c1"># activate type registration things.</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">.stylesheets</span> <span class="kn">import</span> <span class="n">StyleSheet</span>
-    <span class="kn">from</span> <span class="nn">._gui</span> <span class="kn">import</span> <span class="n">MenuGuiBase</span>
-    <span class="kn">from</span> <span class="nn">._gui._function_gui</span> <span class="kn">import</span> <span class="n">FunctionGuiPlus</span>
-    <span class="kn">from</span> <span class="nn">.types</span> <span class="kn">import</span> <span class="n">WidgetTypeStr</span><span class="p">,</span> <span class="n">PopUpModeStr</span><span class="p">,</span> <span class="n">ErrorModeStr</span>
-    <span class="kn">from</span> <span class="nn">.help</span> <span class="kn">import</span> <span class="n">HelpWidget</span>
+    <span class="kn">from</span> <span class="nn">magicclass.stylesheets</span> <span class="kn">import</span> <span class="n">StyleSheet</span>
+    <span class="kn">from</span> <span class="nn">magicclass._gui</span> <span class="kn">import</span> <span class="n">MenuGuiBase</span>
+    <span class="kn">from</span> <span class="nn">magicclass._gui._function_gui</span> <span class="kn">import</span> <span class="n">FunctionGuiPlus</span>
+    <span class="kn">from</span> <span class="nn">magicclass.types</span> <span class="kn">import</span> <span class="n">WidgetTypeStr</span><span class="p">,</span> <span class="n">PopUpModeStr</span><span class="p">,</span> <span class="n">ErrorModeStr</span>
+    <span class="kn">from</span> <span class="nn">magicclass.help</span> <span class="kn">import</span> <span class="n">HelpWidget</span>
     <span class="kn">from</span> <span class="nn">macrokit</span> <span class="kn">import</span> <span class="n">Macro</span>
 
 <span class="n">_BASE_CLASS_SUFFIX</span> <span class="o">=</span> <span class="s2">&quot;_Base&quot;</span>
@@ -155,6 +155,7 @@
     <span class="n">widget_type</span><span class="p">:</span> <span class="n">WidgetTypeStr</span> <span class="o">|</span> <span class="n">WidgetType</span> <span class="o">=</span> <span class="n">WidgetType</span><span class="o">.</span><span class="n">none</span><span class="p">,</span>
     <span class="n">icon</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">stylesheet</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">StyleSheet</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">properties</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Decorator that can convert a Python class into a widget.</span>
@@ -178,8 +179,8 @@
 <span class="sd">    visible : bool, optional</span>
 <span class="sd">        Initial visibility of GUI. Useful when magic class is nested.</span>
 <span class="sd">    close_on_run : bool, default is True</span>
-<span class="sd">        If True, magicgui created by every method will be deleted after the method is completed without</span>
-<span class="sd">        exceptions, i.e. magicgui is more like a dialog.</span>
+<span class="sd">        If True, magicgui created by every method will be deleted after the method is</span>
+<span class="sd">        completed without exceptions, i.e. magicgui is more like a dialog.</span>
 <span class="sd">    popup : bool, default is True</span>
 <span class="sd">        Deprecated.</span>
 <span class="sd">    popup_mode : str or PopUpMode, default is PopUpMode.popup</span>
@@ -192,6 +193,9 @@
 <span class="sd">        Path to the icon image or any object that can be converted into an icon.</span>
 <span class="sd">    stylesheet : str or StyleSheet object, optional</span>
 <span class="sd">        Set stylesheet to the widget if given.</span>
+<span class="sd">    properties : dict, optional</span>
+<span class="sd">        Set properties to the widget if given. This argument is useful when you want</span>
+<span class="sd">        to set width, height or margin without defining __post_init__.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -281,6 +285,9 @@
             <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;__post_init__&quot;</span><span class="p">):</span>
                 <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">macro</span><span class="o">.</span><span class="n">blocked</span><span class="p">():</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">__post_init__</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">properties</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">properties</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
 
         <span class="n">newclass</span><span class="o">.</span><span class="fm">__init__</span> <span class="o">=</span> <span class="fm">__init__</span>
 

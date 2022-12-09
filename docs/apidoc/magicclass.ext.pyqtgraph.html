@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.ext.pyqtgraph package &mdash; magic-class 0.6.12 documentation</title>
+  <title>magicclass.ext.pyqtgraph package &mdash; magic-class 0.6.13 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/columns.css" type="text/css" />
@@ -31,7 +31,7 @@
             <a href="../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.12
+                0.6.13
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -44,11 +44,29 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../main/quick_start.html">Quick Start</a></li>
 </ul>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../main/basics/index.html">Basics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../main/make_better/index.html">Make Your GUI Better</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../main/visualization/index.html">Data Visualization</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../main/advanced/index.html">Advanced Topics</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../main/advanced/index.html">Advanced Topics</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../main/advanced/freewidget.html">Convert QtWidgets into a Magic Widget</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main/advanced/keybinding.html">Define Custom Keybindings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main/advanced/customize_macro.html">Customize Macro Recording</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main/advanced/class_inheritance.html">Inherit Magic Class</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../main/advanced/api.html">API References</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html">magicclass package</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="magicclass.ext.html">magicclass.ext package</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="magicclass.ext.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.html#module-magicclass.ext">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.utils.html">magicclass.utils package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.widgets.html">magicclass.widgets package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.widgets.pywidgets.html">magicclass.widgets.pywidgets package</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../main/best_practice.html">Best Practice</a></li>
@@ -121,6 +139,17 @@
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">visible</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#magicclass.ext.pyqtgraph.components.GraphicComponent.visible" title="Permalink to this definition">¶</a></dt>
 <dd><p>Linear region visibility.</p>
 </dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.ext.pyqtgraph.components.Grid">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.pyqtgraph.components.</span></span><span class="sig-name descname"><span class="pre">Grid</span></span><a class="reference internal" href="../_modules/magicclass/ext/pyqtgraph/components.html#Grid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.pyqtgraph.components.Grid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#magicclass.ext.pyqtgraph.components.GraphicComponent" title="magicclass.ext.pyqtgraph.components.GraphicComponent"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.pyqtgraph.components.GraphicComponent</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.ext.pyqtgraph.components.Grid.native">
+<span class="sig-name descname"><span class="pre">native</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">pyqtgraph.graphicsItems.GridItem.GridItem</span></em><a class="headerlink" href="#magicclass.ext.pyqtgraph.components.Grid.native" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -750,6 +779,7 @@ connecting a new callback. This can also be provided at connection time using
 <dt class="sig sig-object py" id="magicclass.ext.pyqtgraph.mouse_event.MouseClickEvent">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.pyqtgraph.mouse_event.</span></span><span class="sig-name descname"><span class="pre">MouseClickEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pyqtgraph.GraphicsScene.mouseEvents.MouseClickEvent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coord_item</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/pyqtgraph/mouse_event.html#MouseClickEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.pyqtgraph.mouse_event.MouseClickEvent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pyqtgraph.GraphicsScene.mouseEvents.MouseClickEvent</span></code></p>
+<p>More pythonic way to access the button and modifiers</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="magicclass.ext.pyqtgraph.mouse_event.MouseClickEvent.buttons">
 <span class="sig-name descname"><span class="pre">buttons</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/pyqtgraph/mouse_event.html#MouseClickEvent.buttons"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.pyqtgraph.mouse_event.MouseClickEvent.buttons" title="Permalink to this definition">¶</a></dt>
@@ -1043,6 +1073,11 @@ supports.</p>
 <dt class="sig sig-object py" id="magicclass.ext.pyqtgraph.widgets.HasViewBox">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.pyqtgraph.widgets.</span></span><span class="sig-name descname"><span class="pre">HasViewBox</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">viewbox</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pyqtgraph.graphicsItems.ViewBox.ViewBox.ViewBox</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/pyqtgraph/widgets.html#HasViewBox"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.pyqtgraph.widgets.HasViewBox" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#magicclass.ext.pyqtgraph.widgets.HasDataItems" title="magicclass.ext.pyqtgraph.widgets.HasDataItems"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.pyqtgraph.widgets.HasDataItems</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.ext.pyqtgraph.widgets.HasViewBox.auto_range">
+<span class="sig-name descname"><span class="pre">auto_range</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/pyqtgraph/widgets.html#HasViewBox.auto_range"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.pyqtgraph.widgets.HasViewBox.auto_range" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="magicclass.ext.pyqtgraph.widgets.HasViewBox.border">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">border</span></span><a class="headerlink" href="#magicclass.ext.pyqtgraph.widgets.HasViewBox.border" title="Permalink to this definition">¶</a></dt>
@@ -1058,6 +1093,98 @@ supports.</p>
 <dt class="sig sig-object py" id="magicclass.ext.pyqtgraph.widgets.HasViewBox.interactive">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">interactive</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#magicclass.ext.pyqtgraph.widgets.HasViewBox.interactive" title="Permalink to this definition">¶</a></dt>
 <dd><p>Mouse interactivity</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.ext.pyqtgraph.widgets.HasViewBox.mouse_clicked">
+<span class="sig-name descname"><span class="pre">mouse_clicked</span></span><a class="headerlink" href="#magicclass.ext.pyqtgraph.widgets.HasViewBox.mouse_clicked" title="Permalink to this definition">¶</a></dt>
+<dd><p>Declares a signal emitter on a class.</p>
+<p>This is class implements the [descriptor
+protocol](<a class="reference external" href="https://docs.python.org/3/howto/descriptor.html#descriptorhowto">https://docs.python.org/3/howto/descriptor.html#descriptorhowto</a>)
+and is designed to be used as a class attribute, with the supported signature types
+provided in the contructor:</p>
+<p><a href="#id9"><span class="problematic" id="id10">``</span></a><a href="#id11"><span class="problematic" id="id12">`</span></a>python
+from psygnal import Signal</p>
+<dl class="simple">
+<dt>class MyEmitter:</dt><dd><p>changed = Signal(int)</p>
+</dd>
+<dt>def receiver(arg: int):</dt><dd><p>print(&quot;new value:&quot;, arg)</p>
+</dd>
+</dl>
+<p>emitter = MyEmitter()
+emitter.changed.connect(receiver)
+emitter.changed.emit(1)  # prints 'new value: 1'
+<a href="#id13"><span class="problematic" id="id14">``</span></a><a href="#id15"><span class="problematic" id="id16">`</span></a></p>
+<p>!!! note</p>
+<blockquote>
+<div><p>in the example above, <cite>MyEmitter.changed</cite> is an instance of <cite>Signal</cite>,
+and <cite>emitter.changed</cite> is an instance of <cite>SignalInstance</cite>.  See the
+documentation on [<cite>SignalInstance</cite>][psygnal.SignalInstance] for details
+on how to connect to and/or emit a signal on an instance of an object
+that has a <cite>Signal</cite>.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>*types</strong> (<a class="reference internal" href="magicclass.html#magicclass.types.Union" title="magicclass.types.Union"><em>Union</em></a><em>[</em><em>Type</em><em>[</em><em>Any</em><em>]</em><em>, </em><em>Signature</em><em>]</em>) -- A sequence of individual types, or a <em>single</em> [<cite>inspect.Signature</cite>][] object.</p></li>
+<li><p><strong>description</strong> (<em>str</em>) -- Optional descriptive text for the signal.  (not used internally).</p></li>
+<li><p><strong>name</strong> (<a class="reference internal" href="magicclass.html#magicclass.types.Optional" title="magicclass.types.Optional"><em>Optional</em></a><em>[</em><em>str</em><em>]</em>) -- Optional name of the signal. If it is not specified then the name of the
+class attribute that is bound to the signal will be used. default None</p></li>
+<li><p><strong>check_nargs_on_connect</strong> (<em>bool</em>) -- Whether to check the number of positional args against <cite>signature</cite> when
+connecting a new callback. This can also be provided at connection time using
+<cite>.connect(..., check_nargs=True)</cite>. By default, True.</p></li>
+<li><p><strong>check_types_on_connect</strong> (<em>bool</em>) -- Whether to check the callback parameter types against <cite>signature</cite> when
+connecting a new callback. This can also be provided at connection time using
+<cite>.connect(..., check_types=True)</cite>. By default, False.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.ext.pyqtgraph.widgets.HasViewBox.range_changed">
+<span class="sig-name descname"><span class="pre">range_changed</span></span><a class="headerlink" href="#magicclass.ext.pyqtgraph.widgets.HasViewBox.range_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Declares a signal emitter on a class.</p>
+<p>This is class implements the [descriptor
+protocol](<a class="reference external" href="https://docs.python.org/3/howto/descriptor.html#descriptorhowto">https://docs.python.org/3/howto/descriptor.html#descriptorhowto</a>)
+and is designed to be used as a class attribute, with the supported signature types
+provided in the contructor:</p>
+<p><a href="#id17"><span class="problematic" id="id18">``</span></a><a href="#id19"><span class="problematic" id="id20">`</span></a>python
+from psygnal import Signal</p>
+<dl class="simple">
+<dt>class MyEmitter:</dt><dd><p>changed = Signal(int)</p>
+</dd>
+<dt>def receiver(arg: int):</dt><dd><p>print(&quot;new value:&quot;, arg)</p>
+</dd>
+</dl>
+<p>emitter = MyEmitter()
+emitter.changed.connect(receiver)
+emitter.changed.emit(1)  # prints 'new value: 1'
+<a href="#id21"><span class="problematic" id="id22">``</span></a><a href="#id23"><span class="problematic" id="id24">`</span></a></p>
+<p>!!! note</p>
+<blockquote>
+<div><p>in the example above, <cite>MyEmitter.changed</cite> is an instance of <cite>Signal</cite>,
+and <cite>emitter.changed</cite> is an instance of <cite>SignalInstance</cite>.  See the
+documentation on [<cite>SignalInstance</cite>][psygnal.SignalInstance] for details
+on how to connect to and/or emit a signal on an instance of an object
+that has a <cite>Signal</cite>.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>*types</strong> (<a class="reference internal" href="magicclass.html#magicclass.types.Union" title="magicclass.types.Union"><em>Union</em></a><em>[</em><em>Type</em><em>[</em><em>Any</em><em>]</em><em>, </em><em>Signature</em><em>]</em>) -- A sequence of individual types, or a <em>single</em> [<cite>inspect.Signature</cite>][] object.</p></li>
+<li><p><strong>description</strong> (<em>str</em>) -- Optional descriptive text for the signal.  (not used internally).</p></li>
+<li><p><strong>name</strong> (<a class="reference internal" href="magicclass.html#magicclass.types.Optional" title="magicclass.types.Optional"><em>Optional</em></a><em>[</em><em>str</em><em>]</em>) -- Optional name of the signal. If it is not specified then the name of the
+class attribute that is bound to the signal will be used. default None</p></li>
+<li><p><strong>check_nargs_on_connect</strong> (<em>bool</em>) -- Whether to check the number of positional args against <cite>signature</cite> when
+connecting a new callback. This can also be provided at connection time using
+<cite>.connect(..., check_nargs=True)</cite>. By default, True.</p></li>
+<li><p><strong>check_types_on_connect</strong> (<em>bool</em>) -- Whether to check the callback parameter types against <cite>signature</cite> when
+connecting a new callback. This can also be provided at connection time using
+<cite>.connect(..., check_types=True)</cite>. By default, False.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
@@ -1185,6 +1312,12 @@ supports.</p>
 <dd><p>Linear region item.</p>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.ext.pyqtgraph.widgets.PlotItem.show_grid">
+<span class="sig-name descname"><span class="pre">show_grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/pyqtgraph/widgets.html#PlotItem.show_grid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.pyqtgraph.widgets.PlotItem.show_grid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show grid lines.</p>
+</dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="magicclass.ext.pyqtgraph.widgets.PlotItem.title">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">title</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#magicclass.ext.pyqtgraph.widgets.PlotItem.title" title="Permalink to this definition">¶</a></dt>
@@ -1248,6 +1381,17 @@ supports.</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.pyqtgraph.widgets.</span></span><span class="sig-name descname"><span class="pre">QtPlotCanvas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/pyqtgraph/widgets.html#QtPlotCanvas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.pyqtgraph.widgets.QtPlotCanvas" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#magicclass.ext.pyqtgraph.widgets.HasBackground" title="magicclass.ext.pyqtgraph.widgets.HasBackground"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.pyqtgraph.widgets.HasBackground</span></code></a>, <a class="reference internal" href="#magicclass.ext.pyqtgraph.widgets.PlotItem" title="magicclass.ext.pyqtgraph.widgets.PlotItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.pyqtgraph.widgets.PlotItem</span></code></a></p>
 <p>A 1-D data viewer that have similar API as napari Viewer.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.ext.pyqtgraph.widgets.SignalCompat">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.pyqtgraph.widgets.</span></span><span class="sig-name descname"><span class="pre">SignalCompat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">psygnal._signal.SignalInstance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/pyqtgraph/widgets.html#SignalCompat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.pyqtgraph.widgets.SignalCompat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.ext.pyqtgraph.widgets.SignalCompat.append">
+<span class="sig-name descname"><span class="pre">append</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">slot</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/pyqtgraph/widgets.html#SignalCompat.append"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.pyqtgraph.widgets.SignalCompat.append" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="py class">

@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.ext.vispy package &mdash; magic-class 0.6.12 documentation</title>
+  <title>magicclass.ext.vispy package &mdash; magic-class 0.6.13 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/columns.css" type="text/css" />
@@ -31,7 +31,7 @@
             <a href="../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.12
+                0.6.13
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -44,11 +44,29 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../main/quick_start.html">Quick Start</a></li>
 </ul>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../main/basics/index.html">Basics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../main/make_better/index.html">Make Your GUI Better</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../main/visualization/index.html">Data Visualization</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../main/advanced/index.html">Advanced Topics</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../main/advanced/index.html">Advanced Topics</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../main/advanced/freewidget.html">Convert QtWidgets into a Magic Widget</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main/advanced/keybinding.html">Define Custom Keybindings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main/advanced/customize_macro.html">Customize Macro Recording</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main/advanced/class_inheritance.html">Inherit Magic Class</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../main/advanced/api.html">API References</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html">magicclass package</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="magicclass.ext.html">magicclass.ext package</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="magicclass.ext.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.ext.html#module-magicclass.ext">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.utils.html">magicclass.utils package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.widgets.html">magicclass.widgets package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.widgets.pywidgets.html">magicclass.widgets.pywidgets package</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../main/best_practice.html">Best Practice</a></li>
@@ -104,7 +122,7 @@
 <span id="magicclass-ext-vispy-camera-module"></span><h2>magicclass.ext.vispy.camera module<a class="headerlink" href="#module-magicclass.ext.vispy.camera" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.ext.vispy.camera.Camera">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vispy.camera.</span></span><span class="sig-name descname"><span class="pre">Camera</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">viewbox</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">vispy.scene.widgets.viewbox.ViewBox</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vispy/camera.html#Camera"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.camera.Camera" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vispy.camera.</span></span><span class="sig-name descname"><span class="pre">Camera</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">viewbox</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">scene.ViewBox</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vispy/camera.html#Camera"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.camera.Camera" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="magicclass.html#magicclass.HasFields" title="magicclass.fields._group.HasFields"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.fields._group.HasFields</span></code></a></p>
 <p>The camera interface for vispy canvas.</p>
 <dl class="py attribute">
@@ -1125,7 +1143,7 @@ arrows with lines, the shape of the input array will be (N, 2, 3) and
 
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.ext.vispy.widgets3d.Vispy3DCanvas">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vispy.widgets3d.</span></span><span class="sig-name descname"><span class="pre">Vispy3DCanvas</span></span><a class="reference internal" href="../_modules/magicclass/ext/vispy/widgets3d.html#Vispy3DCanvas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.widgets3d.Vispy3DCanvas" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vispy.widgets3d.</span></span><span class="sig-name descname"><span class="pre">Vispy3DCanvas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vispy/widgets3d.html#Vispy3DCanvas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.widgets3d.Vispy3DCanvas" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="magicclass.widgets.html#magicclass.widgets.utils.FreeWidget" title="magicclass.widgets.utils.FreeWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.widgets.utils.FreeWidget</span></code></a>, <a class="reference internal" href="#magicclass.ext.vispy.widgets3d.Has3DViewBox" title="magicclass.ext.vispy.widgets3d.Has3DViewBox"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.vispy.widgets3d.Has3DViewBox</span></code></a></p>
 <p>A Vispy based 3-D canvas.</p>
 </dd></dl>
@@ -1142,7 +1160,7 @@ arrows with lines, the shape of the input array will be (N, 2, 3) and
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-magicclass.ext.vispy" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="magicclass.ext.vispy.Vispy3DCanvas">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vispy.</span></span><span class="sig-name descname"><span class="pre">Vispy3DCanvas</span></span><a class="reference internal" href="../_modules/magicclass/ext/vispy/widgets3d.html#Vispy3DCanvas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.Vispy3DCanvas" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vispy.</span></span><span class="sig-name descname"><span class="pre">Vispy3DCanvas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vispy/widgets3d.html#Vispy3DCanvas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.Vispy3DCanvas" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="magicclass.widgets.html#magicclass.widgets.utils.FreeWidget" title="magicclass.widgets.utils.FreeWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.widgets.utils.FreeWidget</span></code></a>, <a class="reference internal" href="#magicclass.ext.vispy.widgets3d.Has3DViewBox" title="magicclass.ext.vispy.widgets3d.Has3DViewBox"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.vispy.widgets3d.Has3DViewBox</span></code></a></p>
 <p>A Vispy based 3-D canvas.</p>
 </dd></dl>

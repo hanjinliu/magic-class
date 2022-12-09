@@ -178,10 +178,7 @@ Following example shows how you can update widget every 0.3 second.
 Better Way to Define Callbacks
 ------------------------------
 
-.. note::
-
-    This feature is available since ``magicclass >= 0.6.7``.
-
+.. versionadded:: 0.6.7
 
 The ``returned`` callbacks and the ``yielded`` callbacks are very useful for letting
 users know the progress and results of the function. However, a problem occurs when

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.ext.vispy.camera &mdash; magic-class 0.6.12 documentation</title>
+  <title>magicclass.ext.vispy.camera &mdash; magic-class 0.6.13 documentation</title>
       <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.12
+                0.6.13
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
@@ -82,7 +82,7 @@
 <span class="kn">from</span> <span class="nn">psygnal</span> <span class="kn">import</span> <span class="n">Signal</span>
 <span class="kn">from</span> <span class="nn">vispy</span> <span class="kn">import</span> <span class="n">scene</span>
 <span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">FloatSlider</span><span class="p">,</span> <span class="n">Container</span>
-<span class="kn">from</span> <span class="nn">...fields</span> <span class="kn">import</span> <span class="n">HasFields</span><span class="p">,</span> <span class="n">vfield</span>
+<span class="kn">from</span> <span class="nn">magicclass.fields</span> <span class="kn">import</span> <span class="n">HasFields</span><span class="p">,</span> <span class="n">vfield</span>
 
 
 <div class="viewcode-block" id="VispyCamera"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.camera.VispyCamera">[docs]</a><span class="k">class</span> <span class="nc">VispyCamera</span><span class="p">(</span><span class="n">scene</span><span class="o">.</span><span class="n">ArcballCamera</span><span class="p">):</span>
@@ -149,9 +149,10 @@
 <span class="sd">        The Euler angles of the camera in degree, in x, y, z order.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">viewbox</span><span class="p">:</span> <span class="n">scene</span><span class="o">.</span><span class="n">ViewBox</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">viewbox</span><span class="p">:</span> <span class="n">scene</span><span class="o">.</span><span class="n">ViewBox</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">camera</span> <span class="o">=</span> <span class="n">VispyCamera</span><span class="p">(</span><span class="n">fov</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">viewbox</span><span class="o">.</span><span class="n">camera</span> <span class="o">=</span> <span class="n">camera</span>
+        <span class="k">if</span> <span class="n">viewbox</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">viewbox</span><span class="o">.</span><span class="n">camera</span> <span class="o">=</span> <span class="n">camera</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_camera</span> <span class="o">=</span> <span class="n">camera</span>
         <span class="n">camera</span><span class="o">.</span><span class="n">changed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_on_vispy_camera_change</span><span class="p">)</span>
 
@@ -174,7 +175,7 @@
 
     <span class="nd">@center</span><span class="o">.</span><span class="n">connect</span>
     <span class="k">def</span> <span class="nf">_on_center_change</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_camera</span><span class="o">.</span><span class="n">center</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">center</span>  <span class="c1"># TupleEdit signal is wrong now</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_camera</span><span class="o">.</span><span class="n">center</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">center</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_camera</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
 
     <span class="nd">@angles</span><span class="o">.</span><span class="n">connect</span>
@@ -190,11 +191,13 @@
 
     <span class="k">def</span> <span class="nf">_on_vispy_camera_change</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">blocked</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">fov</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_camera</span><span class="o">.</span><span class="n">fov</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">scale</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_camera</span><span class="o">.</span><span class="n">scale_factor</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">center</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_camera</span><span class="o">.</span><span class="n">center</span>
-            <span class="n">angles</span> <span class="o">=</span> <span class="n">quaternion2euler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_camera</span><span class="o">.</span><span class="n">_quaternion</span><span class="p">,</span> <span class="n">degrees</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">angles</span> <span class="o">=</span> <span class="n">angles</span></div>
+            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_camera</span><span class="o">.</span><span class="n">changed</span><span class="o">.</span><span class="n">blocked</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fov</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_camera</span><span class="o">.</span><span class="n">fov</span>
+                <span class="k">if</span> <span class="n">scale</span> <span class="o">:=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_camera</span><span class="o">.</span><span class="n">scale_factor</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">scale</span> <span class="o">=</span> <span class="n">scale</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">center</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_camera</span><span class="o">.</span><span class="n">center</span>
+                <span class="n">angles</span> <span class="o">=</span> <span class="n">quaternion2euler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_camera</span><span class="o">.</span><span class="n">_quaternion</span><span class="p">,</span> <span class="n">degrees</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">angles</span> <span class="o">=</span> <span class="n">angles</span></div>
 
 
 <span class="c1"># copied from napari/_vispy/utils/quaternion.py</span>

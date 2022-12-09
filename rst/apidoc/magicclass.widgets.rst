@@ -60,14 +60,6 @@ magicclass.widgets.separator module
    :undoc-members:
    :show-inheritance:
 
-magicclass.widgets.sequence module
-----------------------------------
-
-.. automodule:: magicclass.widgets.sequence
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 magicclass.widgets.utils module
 -------------------------------
 
