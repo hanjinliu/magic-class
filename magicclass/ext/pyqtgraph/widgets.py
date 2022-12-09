@@ -14,6 +14,7 @@ from .graph_items import (
     LayerItem,
     Scatter,
     Histogram,
+    Target,
     TextGroup,
 )
 from .mouse_event import MouseClickEvent
@@ -434,6 +435,12 @@ class HasDataItems:
             text = [text]
         item = TextGroup(x, y, text, color, name)
         self._add_item(item)
+        return item
+
+    def add_target(self, pos, size: int = 10, color=None, name=None) -> Target:
+        item = Target(pos, size=size, edge_color=color, name=name)
+        self._add_item(item)
+        return item
 
     def _add_item(self, item: LayerItem):
         item.zorder = len(self._items)
@@ -492,20 +499,22 @@ class HasDataItems:
             i += 1
         return name
 
+
 class SignalCompat:
     def __init__(self, signal: SignalInstance, name: str):
         self.signal = signal
         self.name = name
-    
+
     def _warn(self):
         warnings.warn(
             f"Use of `{self.name}.append` is deprecated. Please use `{self.signal.name}.connect` instead.",
             DeprecationWarning,
         )
-        
+
     def append(self, slot):
         self._warn()
         self.signal.connect(slot)
+
 
 class HasViewBox(HasDataItems):
     range_changed = Signal(object)
@@ -516,7 +525,9 @@ class HasViewBox(HasDataItems):
         self._items: list[LayerItem] = []
 
         # prepare mouse event
-        self.mouse_click_callbacks = SignalCompat(self.mouse_clicked, "mouse_click_callbacks")
+        self.mouse_click_callbacks = SignalCompat(
+            self.mouse_clicked, "mouse_click_callbacks"
+        )
 
         # This ROI is not editable. Mouse click event will use it to determine
         # the origin of the coordinate system.
@@ -536,7 +547,7 @@ class HasViewBox(HasDataItems):
 
         if xmin <= x <= xmax and ymin <= y <= ymax:
             self.mouse_clicked.emit(ev)
-    
+
     def _range_changed(self):
         self.range_changed.emit(self._viewbox.viewRange())
 
@@ -670,7 +681,7 @@ class PlotItem(HasViewBox):
     def show_grid(self, x: bool = True, y: bool = True, alpha: float | None = None):
         """Show grid lines."""
         self.pgitem.showGrid(x, y, alpha=alpha)
-        
+
     def _update_scene(self):
         # Since plot item does not have graphics scene before being added to
         # a graphical layout, mouse event should be connected afterward.
