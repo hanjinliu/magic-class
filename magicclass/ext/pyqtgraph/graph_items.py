@@ -184,6 +184,7 @@ class Scatter(PlotDataLayer):
 
     @property
     def symbol(self):
+        """Get the symbol of the scatter plot."""
         return self.native.opts["symbol"]
 
     @symbol.setter
@@ -193,11 +194,12 @@ class Scatter(PlotDataLayer):
 
     @property
     def size(self):
-        return self.native.opts["symbolSize"]
+        """Get the size of the scatter plot."""
+        return self.native.opts["size"]
 
     @size.setter
     def size(self, size: float):
-        self.native.setSymbolSize(size)
+        self.native.setSize(size)
 
 
 class Curve(PlotDataLayer):
@@ -747,6 +749,40 @@ class TextItemView:
                 item.setAnchor(value)
         else:
             self.native.setAnchor(value)
+
+
+class Target(LayerItem):
+    native: pg.TargetItem
+
+    def __init__(
+        self,
+        pos,
+        size: int,
+        edge_color=None,
+        name: str | None = None,
+        lw: float = 1,
+        ls: str = "-",
+    ):
+        if edge_color is None:
+            edge_color = "yellow"
+        edge_color = convert_color_code(edge_color)
+        pen = pg.mkPen(edge_color, width=lw, style=_LINE_STYLE[ls])
+        self.native = pg.TargetItem(pos, size=size, pen=pen)
+        self.name = name
+
+    @property
+    def pos(self):
+        """Position in (x, y)"""
+        point = self.native.pos()
+        return point.x(), point.y()
+
+    @pos.setter
+    def pos(self, value):
+        self.native.setPos(value)
+
+    @property
+    def size(self):
+        return self.native.scale
 
 
 def _set_default_colors(face_color, edge_color, default_f, default_e):
