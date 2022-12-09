@@ -72,9 +72,7 @@ child widget.
 Use @abstractapi decorator
 --------------------------
 
-.. note::
-
-    New in version 0.6.13
+.. versionadded:: 0.6.13
 
 Method pre-definition cannot be statically checked by IDEs; if you mistakely re-defined a method with
 misspelled name, or you forgot to re-define a method, the GUI will have an button that does nothing

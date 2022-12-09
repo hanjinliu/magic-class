@@ -7,6 +7,7 @@ from qtconsole.rich_jupyter_widget import RichJupyterWidget
 class _Console(RichJupyterWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self._connected = False
 
     def connect_parent(self, ui: Widget):
         from IPython import get_ipython
@@ -17,6 +18,8 @@ class _Console(RichJupyterWidget):
         from qtconsole.client import QtKernelClient
         from qtconsole.inprocess import QtInProcessKernelManager
 
+        if self._connected:
+            return
         if not isinstance(ui, Widget):
             raise TypeError(f"Cannot connect QtConsole to {type(ui)}.")
 
@@ -36,6 +39,7 @@ class _Console(RichJupyterWidget):
             self.kernel_client = kernel_client
             self.shell = kernel_manager.kernel.shell
             self.push = self.shell.push
+            self._connected = True
         elif type(shell) == InProcessInteractiveShell:
             # If there is an existing running InProcessInteractiveShell
             # it is likely because multiple viewers have been launched from
@@ -48,6 +52,7 @@ class _Console(RichJupyterWidget):
             self.kernel_client = kernel_client
             self.shell = kernel_manager.kernel.shell
             self.push = self.shell.push
+            self._connected = True
         elif isinstance(shell, TerminalInteractiveShell):
             # if launching from an ipython terminal then adding a console is
             # not supported. Instead users should use the ipython terminal for
@@ -68,6 +73,7 @@ class _Console(RichJupyterWidget):
             self.kernel_client = kernel_client
             self.shell = shell
             self.push = self.shell.push
+            self._connected = True
         else:
             raise ValueError("ipython shell not recognized; " f"got {type(shell)}")
 

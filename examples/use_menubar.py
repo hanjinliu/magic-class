@@ -1,4 +1,4 @@
-from magicclass import magicclass, magicmenu, set_options
+from magicclass import magicclass, magicmenu, set_options, abstractapi
 from magicgui.widgets import Image
 from pathlib import Path
 from skimage import io, filters
@@ -7,13 +7,13 @@ from skimage import io, filters
 class Main:
     @magicmenu
     class File:
-        def Open_image(self): ...
-        def Save_image(self): ...
+        Open_image = abstractapi()
+        Save_image = abstractapi()
 
     @magicmenu
     class Filters:
-        def Gaussian_filter(self, sigma: float = 1): ...
-        def Sobel_filter(self): ...
+        Gaussian_filter = abstractapi()
+        Sobel_filter = abstractapi()
 
     @File.wraps
     @set_options(path={"filter": "*.png;*.jpeg;*.tif;*.tiff", "mode": "r"})

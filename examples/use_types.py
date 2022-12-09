@@ -1,14 +1,8 @@
 from magicclass import magicclass
-from magicclass.types import List, Tuple, Optional
+from magicclass.types import Optional
 
 @magicclass
 class Main:
-    def use_list(self, l: List[int] = (1,)):
-        print(l)
-
-    def use_tuple(self, t: Tuple[int, str]):
-        print(t)
-
     def use_optional(self, x: Optional[int] = None):
         print(x)
 

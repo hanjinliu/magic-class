@@ -47,3 +47,8 @@ class QtConsole(FreeWidget):
         code = self.value
         self.console.execute()
         self.executed.emit(code)
+
+    def update_console(self, namespace: dict = {}, **kwargs):
+        """Update console namespace"""
+        kwargs = dict(namespace, **kwargs)
+        self.console.push(kwargs)

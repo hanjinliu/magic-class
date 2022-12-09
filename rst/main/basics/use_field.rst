@@ -124,6 +124,49 @@ using ``vfield`` function. You can also defined callbacks similar to ``MagicFiel
         def print_value(self):
             print(f"a = {self.a}")  # instead of "self.a.value"!
 
+Even better widget configuration
+--------------------------------
+
+.. versionadded:: 0.6.13
+
+``MagicField`` and ``MagicValueField`` can be configured with ``options`` keyword
+argument. However, passing a ``dict`` is not good for code readability and typing.
+
+An alternative but more recommended way is to use ``with_options`` method.
+
+.. code-block:: python
+
+    from magicclass import magicclass, vfield
+
+    @magicclass
+    class MyClass:
+
+        a = vfield(int, options={"min": 0, "max": 10})  # instead of this
+        a = vfield(int).with_options(min=0, max=10)  # use this
+
+        def print_value(self):
+            print(f"a = {self.a}")
+
+If you only want to set ``choices``, ``with_choices`` method is provided for this
+purpose.
+
+.. code-block:: python
+
+    from magicclass import magicclass, vfield
+
+    @magicclass
+    class MyClass:
+
+        a = vfield(options={"choices": [1, 2, 3]})  # instead of this
+        a = vfield().with_options(choices=[1, 2, 3])  # or this
+        a = vfield().with_choices([1, 2, 3])  # you can use this
+
+        def print_value(self):
+            print(f"a = {self.a}")
+
+Using ``with_choices`` is not just a shortcut. It also properly predicts the type of
+the output widget.
+
 (Advanced) FieldGroup
 =====================
 
