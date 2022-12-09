@@ -8,7 +8,7 @@
 
 ![](https://github.com/hanjinliu/magic-class/blob/main/Figs/Example.gif)
 
-`magic-class` makes GUI development as easy as daily coding by converting well-typed Python class directly into GUI. It is powered by [magicgui](https://github.com/napari/magicgui) and has smooth interface with [napari](https://github.com/napari/napari). `magic-class` is also implemented with useful widgets such as `matplotlib` figure canvas, logger widget and color edit.
+`magic-class` makes GUI development as easy as daily coding by converting well-typed Python class directly into GUI. It is powered by [magicgui](https://github.com/pyapp-kit/magicgui) and has a smooth interface with [napari](https://github.com/napari/napari). `magic-class` is also implemented with useful widgets such as `matplotlib` figure canvas, logger widget and color edit.
 
 #### Target users
 
@@ -68,9 +68,7 @@ class PlotData:
         self.data = np.loadtxt(str(path))
 
     def plot(self):
-        """
-        Plot data.
-        """
+        """Plot data."""
         plt.plot(self.data)
         plt.show()
 ```
