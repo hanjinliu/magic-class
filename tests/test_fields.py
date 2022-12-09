@@ -653,3 +653,17 @@ def test_dataclass_gui():
     assert A(2) == A(a=2, b="x")
     assert A(a=2) == A(a=2, b="x")
     assert A(b="a") == A(a=0, b="a")
+
+def test_with_options():
+    @magicclass
+    class A:
+        a_int = field(int).with_options(max=10)
+        a_float = field(float).with_options(max=20.0)
+        a_str = field(str).with_options(enabled=False)
+        a_bool = field(bool).with_options(visible=False)
+
+    ui = A()
+    assert ui.a_int.max == 10
+    assert ui.a_float.max == 20.0
+    assert not ui.a_str.enabled
+    assert not ui.a_bool.visible

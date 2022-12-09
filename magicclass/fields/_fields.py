@@ -3,6 +3,7 @@ from typing import (
     Any,
     TYPE_CHECKING,
     Callable,
+    Sequence,
     TypeVar,
     overload,
     Generic,
@@ -13,6 +14,7 @@ from magicgui.widgets import create_widget, Widget
 from magicclass._magicgui_compat import (
     ValueWidget,
     ContainerWidget,
+    CategoricalWidget,
     Undefined,
     MGUI_SIMPLE_TYPES,
 )
@@ -50,8 +52,9 @@ class _FieldObject:
         raise NotImplementedError()
 
 
-_W = TypeVar("_W", bound=Widget)
-_V = TypeVar("_V", bound=object)
+_W = TypeVar("_W")
+_V = TypeVar("_V")
+_U = TypeVar("_U")
 
 
 class MagicField(_FieldObject, Generic[_W, _V]):
@@ -133,6 +136,70 @@ class MagicField(_FieldObject, Generic[_W, _V]):
     def set_destination(self, dest: type) -> None:
         self._destination_class = dest
         return None
+
+    def with_options(
+        self,
+        value: _V = Undefined,
+        tooltip: str = Undefined,
+        visible: bool = Undefined,
+        enabled: bool = Undefined,
+        gui_only: bool = Undefined,
+        bind=Undefined,
+        **kwargs,
+    ) -> Self:
+        """
+        Method ot add options to the field.
+
+        Following expressions returns the same field.
+        >>> x = field(int, options={"max": 10})
+        >>> x = field(int).with_options(max=10)
+        """
+        kwargs = dict(
+            value=value,
+            tooltip=tooltip,
+            visible=visible,
+            enabled=enabled,
+            gui_only=gui_only,
+            bind=bind,
+            **kwargs,
+        )
+        to_pop: list[str] = []
+        for k, v in kwargs.items():
+            if v is Undefined:
+                to_pop.append(k)
+        for k in to_pop:
+            kwargs.pop(k)
+        if "value" in kwargs:
+            self.value = kwargs.pop("value")
+        self.options.update(kwargs)
+        return self
+
+    @overload
+    def with_choices(
+        self, choices: Sequence[tuple[str, _U]]
+    ) -> MagicField[CategoricalWidget, _U]:
+        ...
+
+    @overload
+    def with_choices(self, choices: Sequence[_U]) -> MagicField[CategoricalWidget, _U]:
+        ...
+
+    @overload
+    def with_choices(
+        self, choices: Callable[..., Sequence[tuple[str, _U]]]
+    ) -> MagicField[CategoricalWidget, _U]:
+        ...
+
+    @overload
+    def with_choices(
+        self, choices: Callable[..., Sequence[_U]]
+    ) -> MagicField[CategoricalWidget, _U]:
+        ...
+
+    def with_choices(self, choices):
+        """Method to add choices to the field."""
+        self.options["choices"] = choices
+        return self
 
     @property
     def __signature__(self):
@@ -546,6 +613,34 @@ class MagicValueField(MagicField[_W, _V]):
     def _presethook(self, obj, value):
         return value
 
+    @overload
+    def with_choices(
+        self, choices: Sequence[tuple[str, _U]]
+    ) -> MagicValueField[CategoricalWidget, _U]:
+        ...
+
+    @overload
+    def with_choices(
+        self, choices: Sequence[_U]
+    ) -> MagicValueField[CategoricalWidget, _U]:
+        ...
+
+    @overload
+    def with_choices(
+        self, choices: Callable[..., Sequence[tuple[str, _U]]]
+    ) -> MagicValueField[CategoricalWidget, _U]:
+        ...
+
+    @overload
+    def with_choices(
+        self, choices: Callable[..., Sequence[_U]]
+    ) -> MagicValueField[CategoricalWidget, _U]:
+        ...
+
+    def with_choices(self, choices):
+        """Method to add choices to the field."""
+        return super().with_choices(choices)
+
 
 @overload
 def field(
@@ -719,6 +814,18 @@ def vfield(
 @overload
 def vfield(
     obj: Any,
+    *,
+    name: str | None = None,
+    label: str | None = None,
+    widget_type: str | type[WidgetProtocol] | type[Widget] | None = None,
+    options: dict[str, Any] = {},
+    record: bool = True,
+) -> MagicValueField[Widget, Any]:
+    ...
+
+
+@overload
+def vfield(
     *,
     name: str | None = None,
     label: str | None = None,
