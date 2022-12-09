@@ -246,7 +246,7 @@ class _MagicTemplateMeta(ABCMeta):
         return self
 
 
-_W = TypeVar("_W")
+_W = TypeVar("_W", bound=Widget)
 
 
 class MagicTemplate(MutableSequence[_W], metaclass=_MagicTemplateMeta):
@@ -308,11 +308,13 @@ class MagicTemplate(MutableSequence[_W], metaclass=_MagicTemplateMeta):
     def __getitem__(self, key):
         raise NotImplementedError()
 
-    def index(self, value: Any, start: int, stop: int) -> int:
-        raise NotImplementedError()
+    if TYPE_CHECKING:
 
-    def remove(self, value: Widget | str):
-        raise NotImplementedError()
+        def index(self, value: Any, start: int, stop: int) -> int:
+            raise NotImplementedError()
+
+        def remove(self, value: Widget | str):
+            raise NotImplementedError()
 
     def _fast_insert(self, key: int, widget: _W | Callable) -> None:
         raise NotImplementedError()
@@ -601,11 +603,11 @@ class MagicTemplate(MutableSequence[_W], metaclass=_MagicTemplateMeta):
     # fmt: off
     @overload
     @classmethod
-    def field(cls, gui_class: type[_M], *, name: str | None = None, label: str | None = None, widget_type: str | type[WidgetProtocol] | type[Widget] | None = None, options: dict[str, Any] = {}, record: bool = True, ) -> MagicField[_M, Any]: ...  # noqa
+    def field(cls, type_of_widget: type[_W], *, name: str | None = None, label: str | None = None, options: dict[str, Any] = {}, record: bool = True) -> MagicField[_W, Any]: ...  # noqa
 
     @overload
     @classmethod
-    def field(cls, widget_type: type[_W], *, name: str | None = None, label: str | None = None, options: dict[str, Any] = {}, record: bool = True) -> MagicField[_W, Any]: ...  # noqa
+    def field(cls, obj: type[_X], *, name: str | None = None, label: str | None = None, widget_type: str | type[WidgetProtocol] | type[Widget] | None = None, options: dict[str, Any] = {}, record: bool = True, ) -> MagicField[ValueWidget, _X]: ...  # noqa
 
     @overload
     @classmethod
@@ -613,7 +615,7 @@ class MagicTemplate(MutableSequence[_W], metaclass=_MagicTemplateMeta):
 
     @overload
     @classmethod
-    def field(cls, obj: type[_X], *, name: str | None = None, label: str | None = None, widget_type: str | type[WidgetProtocol] | type[Widget] | None = None, options: dict[str, Any] = {}, record: bool = True, ) -> MagicField[ValueWidget, _X]: ...  # noqa
+    def field(cls, gui_class: type[_M], *, name: str | None = None, label: str | None = None, widget_type: str | type[WidgetProtocol] | type[Widget] | None = None, options: dict[str, Any] = {}, record: bool = True, ) -> MagicField[_M, Any]: ...  # noqa
 
     @overload
     @classmethod
@@ -622,6 +624,10 @@ class MagicTemplate(MutableSequence[_W], metaclass=_MagicTemplateMeta):
     @overload
     @classmethod
     def field(cls, obj: Any, *, name: str | None = None, label: str | None = None, widget_type: str | type[WidgetProtocol] | None = None, options: dict[str, Any] = {}, record: bool = True, ) -> MagicField[Widget, Any]: ...  # noqa
+
+    @overload
+    @classmethod
+    def field(cls, *, name: str | None = None, label: str | None = None, widget_type: str | type[WidgetProtocol] | None = None, options: dict[str, Any] = {}, record: bool = True, ) -> MagicField[Widget, Any]: ...  # noqa
     # fmt: on
 
     @classmethod

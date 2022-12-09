@@ -52,7 +52,7 @@ class _FieldObject:
         raise NotImplementedError()
 
 
-_W = TypeVar("_W")
+_W = TypeVar("_W", bound=Widget)
 _V = TypeVar("_V")
 _U = TypeVar("_U")
 
@@ -644,7 +644,7 @@ class MagicValueField(MagicField[_W, _V]):
 
 @overload
 def field(
-    widget_type: type[_W],
+    type_of_widget: type[_W],
     *,
     name: str | None = None,
     label: str | None = None,
