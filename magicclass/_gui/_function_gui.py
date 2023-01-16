@@ -210,9 +210,10 @@ def _append_preview(self: FunctionGui, f: Callable, text: str = "Preview"):
         bound.apply_defaults()
         _args = bound.args
         _kwargs = bound.kwargs
-        context.exit()
-        generator = _prev_context_method(*_args, **_kwargs)
-        context.enter(generator)
+        with f.__self__.macro.blocked():
+            context.exit()
+            generator = _prev_context_method(*_args, **_kwargs)
+            context.enter(generator)
         return f(*_args, **_kwargs)
 
     if _prev_context_method is not _dummy_context_manager:
@@ -253,12 +254,14 @@ def _append_auto_call_preview(self: FunctionGui, f: Callable, text: str = "Previ
             bound.apply_defaults()
             _args = bound.args
             _kwargs = bound.kwargs
-            context.send(active=True)
-            generator = _prev_context_method(*_args, **_kwargs)
-            context.enter(generator)
-            return f(*_args, **_kwargs)
+            with f.__self__.macro.blocked():
+                context.send(active=True)
+                generator = _prev_context_method(*_args, **_kwargs)
+                context.enter(generator)
+                return f(*_args, **_kwargs)
         else:
-            context.exit()  # reset the original state
+            with f.__self__.macro.blocked():
+                context.exit()  # reset the original state
 
     if _prev_context_method is not _dummy_context_manager:
         if not isinstance(self, FunctionGuiPlus):
