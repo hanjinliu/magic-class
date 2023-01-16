@@ -1431,10 +1431,9 @@ def _empty_func(name: str) -> Callable[[Any], None]:
     return f
 
 
-def _find_viewer_ancestor(widget: Widget) -> napari.Viewer | None:
+def _find_viewer_ancestor(widget: QWidget) -> napari.Viewer | None:
     """Return the closest parent napari Viewer."""
-    qw: QWidget = widget.native
-    parent = qw.parent()
+    parent = widget.parent()
     while parent:
         if hasattr(parent, "_qt_viewer"):  # QMainWindow
             return parent._qt_viewer.viewer
