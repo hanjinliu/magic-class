@@ -119,3 +119,16 @@ def test_plot_canvas():
     ui.plot.legend.background_color = [1, 1, 1, 0.2]
     ui.plot.legend.border
     ui.plot.legend.border = "red"
+
+def test_infline():
+    @magicclass
+    class A:
+        plot = field(QtPlotCanvas)
+
+    ui = A()
+    ui.plot.add_infline(0.5, 0.3)  # slope/intercept
+    ui.plot.add_infline(0.5, intercept=0.3)  # slope/intercept
+    ui.plot.add_infline(slope=0.5, intercept=0.3)  # slope/intercept
+    ui.plot.add_infline((1, 1), 83)  # pos/degree
+    ui.plot.add_infline((1, 1), degree=83)  # pos/degree
+    ui.plot.add_infline(pos=(1, 1), degree=83)  # pos/degree

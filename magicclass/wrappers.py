@@ -289,14 +289,17 @@ def nogui(method: F) -> F:
 
 
 if TYPE_CHECKING:
-    from typing import Protocol
+    from typing_extensions import ParamSpec
 
-    class PreviewFunction(Protocol):
+    _P = ParamSpec("_P")
+    _R = TypeVar("_R")
+
+    class PreviewFunction(Callable[_P, _R]):
         __name__: str
         __qualname__: str
 
-        def __call__(self, *args, **kwargs):
-            ...
+        def __call__(self, *args: _P.args, **kwargs: _P.kwargs) -> _R:
+            """Run function."""
 
         def during_preview(self, f: F) -> F:
             """Wrapped function will be used as a context manager during preview."""
@@ -391,6 +394,16 @@ def impl_preview(
             return _func
 
         def _wrapper(preview: F) -> F:
+            _is_generator = inspect.isgeneratorfunction(preview)
+            if _is_generator:
+                _preview_context_generator = preview
+                preview = lambda: None
+                for attr in ["__name__", "__qualname__", "__module__"]:
+                    if hasattr(_preview_context_generator, attr):
+                        setattr(
+                            preview, attr, getattr(_preview_context_generator, attr)
+                        )
+
             _filter = _get_arg_filter(preview)
             _preview = _impl_arg_filter(preview, _filter)
             _preview.__wrapped__ = preview
@@ -414,6 +427,9 @@ def impl_preview(
                 append_preview(target_func, _preview, text=text, auto_call=auto_call)
 
             # add method
+            if _is_generator:
+                _set_during_preview(_preview_context_generator)
+                return _preview_context_generator
             preview.during_preview = _set_during_preview
             return preview
 

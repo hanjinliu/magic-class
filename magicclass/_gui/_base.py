@@ -346,12 +346,7 @@ class MagicTemplate(MutableSequence[_W], metaclass=_MagicTemplateMeta):
         parent_self = self._search_parent_magicclass()
         if parent_self.native.parent() is None:
             return None
-        try:
-            from napari.utils._magicgui import find_viewer_ancestor
-        except ImportError:
-            return None
-        viewer = find_viewer_ancestor(parent_self.native)
-        return viewer
+        return _find_viewer_ancestor(parent_self.native)
 
     @property
     def parent_dock_widget(self) -> QDockWidget | None:
@@ -1147,6 +1142,7 @@ def _create_gui_method(self: BaseGui, obj: MethodType):
 
 
 def _build_mgui(widget_: Action | PushButtonPlus, func: Callable, parent: BaseGui):
+    """Build a magicgui from a function for the give button/action."""
     if widget_.mgui is not None:
         return widget_.mgui
     try:
@@ -1433,3 +1429,14 @@ def _empty_func(name: str) -> Callable[[Any], None]:
     f = lambda x: None
     f.__name__ = name
     return f
+
+
+def _find_viewer_ancestor(widget: QWidget) -> napari.Viewer | None:
+    """Return the closest parent napari Viewer."""
+    parent = widget.parent()
+    while parent:
+        if hasattr(parent, "_qt_viewer"):  # QMainWindow
+            return parent._qt_viewer.viewer
+
+        parent = parent.parent()
+    return None

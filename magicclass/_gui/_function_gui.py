@@ -154,6 +154,7 @@ class PreviewContext:
         self._generator = None
 
     def enter(self, gen: GeneratorType):
+        """Start preview context defined by the given generator."""
         if not isinstance(gen, GeneratorType):
             raise TypeError("Must be a generator.")
 
@@ -161,14 +162,20 @@ class PreviewContext:
         next(self._generator)
         return None
 
+    def send(self, active: bool) -> bool:
+        """Advance the preview context and return True if it is still active."""
+        if self._generator is None:
+            return False
+        try:
+            self._generator.send(active)
+        except StopIteration:
+            return False
+        return True
+
     def exit(self):
         if self._generator is None:
             return None
-        try:
-            next(self._generator)
-        except StopIteration:
-            pass
-        else:
+        if self.send(active=False):
             import warnings
 
             warnings.warn(
@@ -203,9 +210,10 @@ def _append_preview(self: FunctionGui, f: Callable, text: str = "Preview"):
         bound.apply_defaults()
         _args = bound.args
         _kwargs = bound.kwargs
-        context.exit()
-        generator = _prev_context_method(*_args, **_kwargs)
-        context.enter(generator)
+        with f.__self__.macro.blocked():
+            context.exit()
+            generator = _prev_context_method(*_args, **_kwargs)
+            context.enter(generator)
         return f(*_args, **_kwargs)
 
     if _prev_context_method is not _dummy_context_manager:
@@ -246,12 +254,14 @@ def _append_auto_call_preview(self: FunctionGui, f: Callable, text: str = "Previ
             bound.apply_defaults()
             _args = bound.args
             _kwargs = bound.kwargs
-            context.exit()
-            generator = _prev_context_method(*_args, **_kwargs)
-            context.enter(generator)
-            return f(*_args, **_kwargs)
+            with f.__self__.macro.blocked():
+                context.send(active=True)
+                generator = _prev_context_method(*_args, **_kwargs)
+                context.enter(generator)
+                return f(*_args, **_kwargs)
         else:
-            context.exit()  # reset the original state
+            with f.__self__.macro.blocked():
+                context.exit()  # reset the original state
 
     if _prev_context_method is not _dummy_context_manager:
         if not isinstance(self, FunctionGuiPlus):

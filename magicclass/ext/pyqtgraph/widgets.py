@@ -60,15 +60,17 @@ class LayerList(MutableSequence[LayerItem]):
     def __delitem__(self, key: int | str):
         return self.parent._remove_item(key)
 
-    def append(self, item: LayerItem):
+    def append(self, item: LayerItem) -> None:
         if not isinstance(item, LayerItem):
             raise TypeError(f"Cannot append type {type(item)}.")
         self.parent._add_item(item)
+        return None
 
-    def insert(self, pos: int, item: LayerItem):
+    def insert(self, pos: int, item: LayerItem) -> None:
         if not isinstance(item, LayerItem):
             raise TypeError(f"Cannot insert type {type(item)}.")
         self.parent._insert_item(pos, item)
+        return None
 
     def __len__(self):
         return len(self.parent._items)
@@ -345,6 +347,7 @@ class HasDataItems:
             ls=ls,
         )
         self._add_item(item)
+        return item
 
     @overload
     def add_infline(
@@ -380,13 +383,24 @@ class HasDataItems:
         **kwargs,
     ) -> InfLine:
         if kwargs:
-            if args:
-                raise TypeError(
-                    "Cannot mix args and kwargs for infinite line parameters."
+            if "angle" in kwargs:
+                # backward compatibility
+                warnings.warn(
+                    "`angle` keyword argument is deprecated. Please use `degree` instead."
                 )
+                kwargs["degree"] = kwargs.pop("angle")
+            if len(args) == 1:
+                if "degree" in kwargs:
+                    kwargs["pos"] = args[0]
+                elif "intercept" in kwargs:
+                    kwargs["slope"] = args[0]
+                else:
+                    raise ValueError(f"{args=}, {kwargs=} is invalid input.")
+            elif len(args) == 2:
+                raise ValueError(f"{args=}, {kwargs=} is invalid input.")
             keys = set(kwargs.keys())
-            if keys <= {"pos", "angle"}:
-                args = (kwargs.get("pos", (0, 0)), kwargs.get("angle", 0))
+            if keys <= {"pos", "degree"}:
+                args = (kwargs.get("pos", (0, 0)), kwargs.get("degree", 0))
             elif keys <= {"slope", "intercept"}:
                 args = (kwargs.get("slope", (0, 0)), kwargs.get("intercept", 0))
             else:
@@ -417,6 +431,7 @@ class HasDataItems:
 
         item = InfLine(pos, angle, edge_color=color, name=name, lw=lw, ls=ls)
         self._add_item(item)
+        return item
 
     @overload
     def add_text(self, x: float, y: float, text: str, **kwargs) -> TextGroup:

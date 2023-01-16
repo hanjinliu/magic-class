@@ -21,9 +21,6 @@ from magicclass._magicgui_compat import (
 )
 from macrokit import Symbol
 
-from magicclass.wrappers import abstractapi
-
-
 from .keybinding import register_shortcut
 from .mgui_ext import PushButtonPlus
 from .toolbar import ToolBarGui, QtTabToolBar
