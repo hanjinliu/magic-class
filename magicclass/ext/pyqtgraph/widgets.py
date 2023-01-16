@@ -383,11 +383,17 @@ class HasDataItems:
         **kwargs,
     ) -> InfLine:
         if kwargs:
+            if "angle" in kwargs:
+                # backward compatibility
+                warnings.warn(
+                    "`angle` keyword argument is deprecated. Please use `degree` instead."
+                )
+                kwargs["degree"] = kwargs.pop("angle")
             if len(args) == 1:
                 if "degree" in kwargs:
                     kwargs["pos"] = args[0]
                 elif "intercept" in kwargs:
-                    kwargs["intercept"] = args[0]
+                    kwargs["slope"] = args[0]
                 else:
                     raise ValueError(f"{args=}, {kwargs=} is invalid input.")
             elif len(args) == 2:
