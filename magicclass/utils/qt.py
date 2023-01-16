@@ -108,7 +108,11 @@ def to_clipboard(obj) -> None:
         if obj.dtype != np.uint8:
             raise ValueError(f"Cannot copy an array of dtype {obj.dtype} to clipboard.")
         # See https://gist.github.com/smex/5287589
-        qimg_format = QImage.Format_RGB888 if obj.ndim == 3 else QImage.Format_Indexed8
+        qimg_format = (
+            QImage.Format.Format_RGB888
+            if obj.ndim == 3
+            else QImage.Format.Format_Indexed8
+        )
         *_, h, w = obj.shape
         qimg = QImage(obj.data, w, h, obj.strides[0], qimg_format)
         gray_color_table = [qRgb(i, i, i) for i in range(256)]
