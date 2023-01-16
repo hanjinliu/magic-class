@@ -338,6 +338,10 @@ class GuiMacro(Macro):
             return Macro(self._args, flags=self.flags)[key]
         return super().__getitem__(key)
 
+    def subset(self, indices: list[int]) -> Macro:
+        args = [self._args[i] for i in indices]
+        return Macro(args, flags=self.flags)
+
     def _update_widget(self, expr=None):
         if self.widget.synchronize:
             self.widget.textedit.append(str(self.args[-1]))
