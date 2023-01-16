@@ -160,11 +160,9 @@ def test_impl_preview_nested():
     class A:
         @magicclass
         class B:
-            @impl_preview(text="preview 0")
             def f0(self, x: int, y: str = "v"):
                 mock(type=type(self), x=x, y=y)
 
-            @impl_preview(text="preview 1")
             def f1(self, x: int = 10):
                 mock(type=type(self), x=x)
 
@@ -272,6 +270,100 @@ def test_impl_preview_auto_call_and_context():
     call_button.changed()
     assert ui._result == 1
 
+def test_impl_preview_using_context_only():
+    from magicclass import impl_preview
+
+    @magicclass
+    class A:
+        def __init__(self):
+            self._result = 0
+
+        def f(self, dx: int):
+            self._result += dx
+
+        @impl_preview(f, auto_call=True)
+        def _preview(self, dx):
+            old = self._result
+            self.f(dx)
+            yield
+            self._result = old
+
+    ui = A()
+    f_gui = get_function_gui(ui, "f")
+    check_box = f_gui[-2]
+    call_button = f_gui[-1]
+    spinbox = f_gui[0]
+
+    # changing parameters without preview
+    spinbox.value = 1
+    assert ui._result == 0
+
+    # turn on preview
+    check_box.value = True
+    assert ui._result == 1
+
+    spinbox.value = 2
+    assert ui._result == 2
+
+    # turn off
+    check_box.value = False
+    assert ui._result == 0
+
+    spinbox.value = 1
+    assert ui._result == 0
+
+    call_button.changed()
+    assert ui._result == 1
+
+
+def test_impl_preview_with_cleanup():
+    from magicclass import impl_preview
+
+    @magicclass
+    class A:
+        def __init__(self):
+            self._result = None
+
+        def f(self, dx: int):
+            if self._result is None:
+                self._result = 0
+            self._result += dx
+
+        @impl_preview(f, auto_call=True)
+        def _preview(self, dx):
+            old = self._result
+            self.f(dx)
+            active = yield
+            self._result = old
+            if not active:
+                self._result = None
+
+    ui = A()
+    f_gui = get_function_gui(ui, "f")
+    check_box = f_gui[-2]
+    call_button = f_gui[-1]
+    spinbox = f_gui[0]
+
+    # changing parameters without preview
+    spinbox.value = 1
+    assert ui._result is None
+
+    # turn on preview
+    check_box.value = True
+    assert ui._result == 1
+
+    spinbox.value = 2
+    assert ui._result == 2
+
+    # turn off
+    check_box.value = False
+    assert ui._result is None
+
+    spinbox.value = 1
+    assert ui._result == None
+
+    call_button.changed()
+    assert ui._result == 1
 
 def test_confirm():
     from magicclass import confirm
