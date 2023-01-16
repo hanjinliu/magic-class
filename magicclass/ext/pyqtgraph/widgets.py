@@ -389,7 +389,7 @@ class HasDataItems:
                 elif "intercept" in kwargs:
                     kwargs["intercept"] = args[0]
                 else:
-                    raise ValueError(f"{arg=}, {kwargs=} is invalid input.")
+                    raise ValueError(f"{args=}, {kwargs=} is invalid input.")
             elif len(args) == 2:
                 raise ValueError(f"{args=}, {kwargs=} is invalid input.")
             keys = set(kwargs.keys())

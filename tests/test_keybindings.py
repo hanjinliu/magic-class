@@ -2,12 +2,11 @@ from magicclass import magicclass, magicmenu, magictoolbar, bind_key
 from qtpy.QtCore import Qt
 from magicclass._app import get_app
 from unittest.mock import MagicMock
+from pytestqt.qtbot import QtBot
 
-def test_basic_keybindings(qtbot):
-    app = get_app()
+def test_basic_keybindings(qtbot: QtBot):
     mock = MagicMock()
-    from qtpy.QtTest import QTest
-
+    app = get_app()
     @magicclass
     class A:
         @magicclass
@@ -40,41 +39,38 @@ def test_basic_keybindings(qtbot):
     ui = A()
     with qtbot.waitExposed(ui.native, timeout=500):
         ui.show(False)
+    qtbot.addWidget(ui.native)
     app.processEvents()
-    QTest.keyClick(ui.native, Qt.Key_A, Qt.ControlModifier)
+    qtbot.keyClick(ui.native, Qt.Key.Key_A, Qt.KeyboardModifier.ControlModifier)
     app.processEvents()
     qtbot.wait(400)
     assert str(ui.macro[-1]) == "ui.f()"
     mock.assert_not_called()
-    QTest.keyClick(ui.native, Qt.Key_B, Qt.ControlModifier)
-    app.processEvents()
-    qtbot.wait(400)
+    qtbot.keyClick(ui.native, Qt.Key.Key_B, Qt.KeyboardModifier.ControlModifier)
     mock.assert_called_once()
     mock.reset_mock()
 
-    QTest.keyClick(ui.native, Qt.Key_T, Qt.ControlModifier)
+    qtbot.keyClick(ui.native, Qt.Key.Key_T, Qt.KeyboardModifier.ControlModifier)
     app.processEvents()
     qtbot.wait(400)
     assert str(ui.macro[-1]) == "ui.B.f()"
     mock.assert_not_called()
-    QTest.keyClick(ui.native, Qt.Key_U, Qt.ControlModifier)
+    qtbot.keyClick(ui.native, Qt.Key.Key_U, Qt.KeyboardModifier.ControlModifier)
     app.processEvents()
-    qtbot.wait(400)
     mock.assert_called_once()
     mock.reset_mock()
 
-    QTest.keyClick(ui.native, Qt.Key_P, Qt.ControlModifier)
+    qtbot.keyClick(ui.native, Qt.Key.Key_P, Qt.KeyboardModifier.ControlModifier)
     app.processEvents()
     qtbot.wait(400)
     assert str(ui.macro[-1]) == "ui.C.f()"
 
-    QTest.keyClick(ui.native, Qt.Key_R, Qt.ControlModifier)
+    qtbot.keyClick(ui.native, Qt.Key.Key_R, Qt.KeyboardModifier.ControlModifier)
     app.processEvents()
     qtbot.wait(400)
     assert str(ui.macro[-1]) == "ui.D.f()"
     mock.assert_not_called()
-    QTest.keyClick(ui.native, Qt.Key_S, Qt.ControlModifier)
+    qtbot.keyClick(ui.native, Qt.Key.Key_S, Qt.KeyboardModifier.ControlModifier)
     app.processEvents()
-    qtbot.wait(400)
     mock.assert_called_once()
     mock.reset_mock()
