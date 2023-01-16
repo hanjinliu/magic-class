@@ -150,10 +150,36 @@ def set_design(
     return wrapper
 
 
-def do_not_record(method: F) -> F:
-    """Wrapped method will not be recorded in macro."""
-    upgrade_signature(method, additional_options={"record": False})
-    return method
+@overload
+def do_not_record(method: None = None, recursive: bool = True) -> Callable[[F], F]:
+    ...
+
+
+@overload
+def do_not_record(method: F, recursive: bool = True) -> F:
+    ...
+
+
+def do_not_record(method=None, recursive=False):
+    """
+    Wrapped method will not be recorded in macro.
+
+    Parameters
+    ----------
+    recursive : bool, default is False
+        If True, all recordable methods called inside this method will also be
+        suppressed.
+    """
+
+    def wrapper(f):
+        if recursive:
+            record = "all-false"
+        else:
+            record = "false"
+        upgrade_signature(f, additional_options={"record": record})
+        return f
+
+    return wrapper if method is None else wrapper(method)
 
 
 def bind_key(*key) -> Callable[[F], F]:

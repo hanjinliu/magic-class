@@ -90,6 +90,34 @@ def test_do_not_record():
     ui["f"].changed()
     assert len(ui.macro) == 1
 
+def test_do_not_record_recursive():
+    from magicclass import do_not_record
+    @magicclass
+    class A:
+        def g(self): pass
+        @do_not_record(recursive=True)
+        def f(self):
+            self.g()
+
+    ui = A()
+    ui["f"].changed()
+    assert len(ui.macro) == 1
+
+def test_do_not_record_not_recursive():
+    from magicclass import do_not_record
+    @magicclass
+    class A:
+        def g(self): pass
+        @do_not_record(recursive=False)
+        def f(self):
+            self.g()
+
+    ui = A()
+    ui["f"].changed()
+    assert len(ui.macro) == 2
+    assert str(ui.macro[-1]) == "ui.g()"
+
+
 def test_nogui():
     from magicclass import nogui
     @magicclass

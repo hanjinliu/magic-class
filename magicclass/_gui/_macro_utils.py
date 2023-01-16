@@ -162,6 +162,52 @@ def inject_recorder(func: Callable, is_method: bool = True) -> Callable:
         return _func
 
 
+def inject_silencer(func: Callable, is_method: bool = True) -> Callable:
+    sig = get_signature(func)
+    if is_method:
+        sig = sig.replace(
+            parameters=list(sig.parameters.values())[1:],
+            return_annotation=sig.return_annotation,
+        )
+        _func = func
+    else:
+        if isinstance(func, partial):
+
+            @functools_wraps(func)
+            def _func(self, *args, **kwargs):
+                return func(*args, **kwargs)
+
+            _func.func = func.func  # to make the function partialmethod-like
+
+        else:
+
+            @functools_wraps(func)
+            def _func(self, *args, **kwargs):
+                return func(*args, **kwargs)
+
+        _func.__signature__ = sig.replace(
+            parameters=[_SELF] + list(sig.parameters.values()),
+            return_annotation=sig.return_annotation,
+        )
+
+    if not isinstance(_func, thread_worker):
+
+        @functools_wraps(_func)
+        def _silent(bgui: MagicTemplate, *args, **kwargs):
+            with bgui._search_parent_magicclass().macro.blocked():
+                out = _func.__get__(bgui)(*args, **kwargs)
+            return out
+
+        if hasattr(_func, "__signature__"):
+            _silent.__signature__ = _func.__signature__
+        setattr(_silent, _IS_RECORDABLE, False)
+        return _silent
+
+    else:
+        _func._set_recorder(None)
+        return _func
+
+
 def _define_macro_recorder(sig: inspect.Signature, func: Callable):
     if isinstance(sig, MagicMethodSignature):
         opt = sig.additional_options
