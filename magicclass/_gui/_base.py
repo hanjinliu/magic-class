@@ -52,7 +52,7 @@ from .mgui_ext import (
 )
 from .utils import copy_class, callable_to_classes
 from ._macro import GuiMacro
-from ._macro_utils import inject_recorder, value_widget_callback
+from ._macro_utils import inject_recorder, inject_silencer, value_widget_callback
 from ._icon import get_icon
 
 from magicclass.utils import (
@@ -1254,7 +1254,7 @@ def convert_attributes(cls: type[_T], hide: tuple[type, ...]) -> dict[str, Any]:
         New namespace.
     """
     _dict: dict[str, Callable] = {}
-    _pass_type = (
+    _pass = (
         property,
         classmethod,
         staticmethod,
@@ -1266,15 +1266,20 @@ def convert_attributes(cls: type[_T], hide: tuple[type, ...]) -> dict[str, Any]:
     mro = [c for c in cls.__mro__ if c not in hide]
     for subcls in reversed(mro):
         for name, obj in subcls.__dict__.items():
+            _isfunc = callable(obj)
             if isinstance(obj, _MagicTemplateMeta):
                 new_attr = copy_class(obj, cls, name=name)
-            elif (
-                name.startswith("_") or isinstance(obj, _pass_type) or not callable(obj)
-            ):
+            elif name.startswith("_") or isinstance(obj, _pass) or not _isfunc:
                 # private method, non-action-like object, not-callable object are passed.
                 new_attr = obj
-            elif callable(obj) and get_additional_option(obj, "record", True):
-                new_attr = inject_recorder(obj)
+            elif _isfunc:
+                _record_policy = get_additional_option(obj, "record", None)
+                if _record_policy is None:
+                    new_attr = inject_recorder(obj)
+                elif _record_policy == "false":
+                    new_attr = obj
+                elif _record_policy == "all-false":
+                    new_attr = inject_silencer(obj)
             else:
                 new_attr = obj
 
