@@ -34,9 +34,11 @@ from .separator import Separator
 from .utils import FreeWidget
 from .logger import Logger
 from .runner import CommandRunner
+from .codeedit import CodeEdit
 
 __all__ = [
     "ButtonContainer",
+    "CodeEdit",
     "ColorEdit",
     "ColorSlider",
     "ConsoleTextEdit",

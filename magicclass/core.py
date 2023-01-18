@@ -568,7 +568,7 @@ def update_widget_state(ui: MagicTemplate, macro: Macro | str | None = None) -> 
     macro : Macro or str, optional
         An executable macro or string that dictates how GUI will be updated.
     """
-    from macrokit import Head, Expr, Macro
+    from macrokit import Head, Macro
 
     if macro is None:
         macro = ui.macro
@@ -583,47 +583,28 @@ def update_widget_state(ui: MagicTemplate, macro: Macro | str | None = None) -> 
         )
 
     for expr in macro:
-        if expr.head == Head.call:
+        if expr.head is Head.call:
             # ui.func(...)
-            ui_f, *arguments = expr.args
-            fname = str(ui_f.args[1])
+            fname = str(expr.at(0, 1))
+            args, kwargs = expr.eval_call_args()
             if fname.startswith("_"):
                 if fname != "_call_with_return_callback":
                     continue
-                args, kwargs = _arguments_to_values(arguments)
                 fgui = get_function_gui(ui, args[0])
 
             else:
-                args, kwargs = _arguments_to_values(arguments)
                 fgui = get_function_gui(ui, fname)
 
             with fgui.changed.blocked():
                 for key, value in kwargs.items():
                     getattr(fgui, key).value = value
 
-        elif expr.head == Head.assign:
+        elif expr.head is Head.assign:
             # ui.field.value = ...
             # ui.vfield = ...
             expr.eval({}, {str(ui._my_symbol): ui})
 
     return None
-
-
-def _tuple(*args) -> tuple:
-    return args
-
-
-def _arguments_to_values(arguments) -> tuple[tuple, dict[str, Any]]:
-    from macrokit import Head, Expr, symbol
-
-    for i, arg in enumerate(arguments):
-        if isinstance(arg, Expr) and arg.head == Head.kw:
-            break
-    args = arguments[:i]
-    kwargs: list[Expr] = arguments[i:]
-    args = Expr(Head.call, [_tuple] + args).eval({symbol(_tuple): _tuple})
-    kwargs = Expr(Head.call, [dict] + kwargs).eval()
-    return args, kwargs
 
 
 class Parameters:

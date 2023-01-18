@@ -1,15 +1,16 @@
 from __future__ import annotations
-from macrokit import Symbol, Expr, Head, Macro, parse
-from typing import TYPE_CHECKING, Iterable, overload
+
+from typing import TYPE_CHECKING, Any, Iterable, overload
 from qtpy.QtWidgets import QMenuBar, QMenu, QAction
+from macrokit import Symbol, Expr, Head, Macro, parse
 from magicgui.widgets import FileEdit
 
-from magicclass.widgets.misc import FreeWidget, ConsoleTextEdit
+from magicclass.widgets import FreeWidget, CodeEdit
 from magicclass.utils import to_clipboard, show_messagebox
 
 if TYPE_CHECKING:
     from ._base import BaseGui
-
+    from .mgui_ext import Clickable
 
 # TODO: Tabs
 
@@ -22,7 +23,7 @@ class MacroEdit(FreeWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.__magicclass_parent__ = None
-        self.textedit = ConsoleTextEdit()
+        self.textedit = CodeEdit()
         from magicclass import defaults
 
         if defaults["macro-highlight"]:
@@ -181,8 +182,8 @@ class MacroEdit(FreeWidget):
                 selected = self.textedit.selected
                 code = parse(selected.strip())
 
-                # to safely run code, every line should be fully selected even if selected
-                # region does not raise SyntaxError.
+                # to safely run code, every line should be fully selected even if the
+                # selected region does not raise SyntaxError.
                 l = len(selected)
                 start = all_code.find(selected)
                 end = start + l
@@ -302,6 +303,8 @@ class MacroEdit(FreeWidget):
 
 
 class GuiMacro(Macro):
+    """Macro object with GUI-specific functions."""
+
     def __init__(self, max_lines: int, flags={}):
         super().__init__(flags=flags)
         self._widget = None
@@ -318,6 +321,11 @@ class GuiMacro(Macro):
             now = datetime.now()
             self.append(Expr(Head.comment, [now.strftime("%Y/%m/%d %H:%M:%S")]))
         return self._widget
+
+    @property
+    def _gui_parent(self) -> BaseGui:
+        """The parent GUI object."""
+        return self.widget.__magicclass_parent__
 
     def copy(self) -> Macro:
         """GuiMacro does not support deepcopy (and apparently _widget should not be copied)."""
@@ -338,9 +346,48 @@ class GuiMacro(Macro):
             return Macro(self._args, flags=self.flags)[key]
         return super().__getitem__(key)
 
-    def subset(self, indices: list[int]) -> Macro:
+    def subset(self, indices: Iterable[int]) -> Macro:
+        """Generate a subset of macro."""
         args = [self._args[i] for i in indices]
         return Macro(args, flags=self.flags)
+
+    def get_evaluator(self, key: int | slice | Iterable[int], ns: dict[str, Any] = {}):
+        if isinstance(key, (int, slice)):
+            subset = self[key]
+        else:
+            subset = self.subset(key)
+        ns = dict(ns)
+        ui = self._gui_parent
+        ns.setdefault("ui", ui)
+        if (viewer := ui.parent_viewer) is not None:
+            ns.setdefault("viewer", viewer)
+        return lambda: subset.eval(ns)
+
+    def repeat_method(
+        self, index: int = -1, same_args: bool = False, wait: bool = False
+    ) -> None:
+        _object, _args, _kwargs = self[index].split_call()
+        _ui, *_attributes, _last = _object.split_getattr()
+        ui = self._gui_parent
+        assert _ui == ui._my_symbol
+        ins = ui
+        for attr in _attributes:
+            ins = getattr(ins, attr.name)
+
+        wdt: Clickable = ins[_last.name]
+        if not wait:
+            if same_args:
+                wdt.mgui.call_button.changed()
+            else:
+                wdt.changed()
+        else:
+            if same_args:
+                wdt.mgui()
+            else:
+                raise NotImplementedError(
+                    "wait=True and same_args=False is not implemented yet."
+                )
+        return None
 
     def _update_widget(self, expr=None):
         if self.widget.synchronize:
