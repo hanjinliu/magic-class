@@ -52,6 +52,8 @@ class QCodeEditor(QtW.QPlainTextEdit):
         super().__init__(parent)
         if sys.platform == "win32":
             _font = "Consolas"
+        elif sys.platform == "darwin":
+            _font = "Menlo"
         else:
             _font = "Monospace"
         font = QtGui.QFont(_font, self.font().pointSize())
