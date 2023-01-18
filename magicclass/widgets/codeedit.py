@@ -31,6 +31,7 @@ class QLineNumberArea(QtW.QWidget):
         cursor.setPosition(block.position(), QtGui.QTextCursor.MoveMode.MoveAnchor)
         cursor.select(QtGui.QTextCursor.SelectionType.LineUnderCursor)
         editor.setTextCursor(cursor)
+        editor.horizontalScrollBar().setValue(0)
 
     def mouseMoveEvent(self, a0: QtGui.QMouseEvent) -> None:
         if a0.buttons() & Qt.MouseButton.LeftButton:

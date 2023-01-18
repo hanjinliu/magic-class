@@ -3,9 +3,11 @@ from pathlib import Path
 
 from typing import TYPE_CHECKING, Any, Callable, Union
 import weakref
+
+from qtpy import QtWidgets as QtW
 from macrokit import Expr, Symbol, parse
-from magicgui.widgets import PushButton
-from magicclass.widgets.containers import ScrollableContainer
+from magicclass._gui.mgui_ext import Action
+
 
 if TYPE_CHECKING:
     from magicclass import MagicTemplate
@@ -13,49 +15,34 @@ if TYPE_CHECKING:
     _ActionLike = Union[Callable[[], Any], Expr]
 
 
-def _create_button(func: Callable, text: str, tooltip: str):
-    button = PushButton(text=text, tooltip=tooltip)
-    button.changed.connect(func)
-    return button
-
-
-class CommandRunner(ScrollableContainer):
-    """
-    A command runner widget for magicclass.
-
-    This widget is a collection of buttons that run the commands derived from the
-    viewer. This widget can auto-detect its parent magicclass via the attribute
-    ``__magicclass_parent__``.
-
-    Examples
-    --------
-    >>> from magicclass import magicclass, field
-    >>> from magicclass.widgets import CommandRunner
-    >>> @magicclass
-    >>> class A:
-    ...     cmd = field(CommandRunner)
-    ...     def f(self, x: int):
-    ...         print(x)
-    ...     def g(self):
-    ...         print("g")
-    >>> ui = A()
-    >>> ui.show()
-
-    After clicking the button "g", you can add the command ``ui.g()`` by calling
-    ``ui.cmd.add_last_action()``.
-    """
-
-    def __init__(self, **kwargs):
-        super().__init__(labels=False, **kwargs)
-        self._magicclass_parent_ref = None
+class CommandRunnerMenu(QtW.QMenu):
+    def __init__(
+        self,
+        title: str,
+        parent: QtW.QWidget = None,
+        magicclass_parent: MagicTemplate = None,
+    ):
+        super().__init__(title, parent)
+        self.setToolTipsVisible(True)
+        self.__magicclass_parent__ = magicclass_parent
+        self._command_actions: list[Action] = []
 
     @property
     def parent_ui(self) -> MagicTemplate:
         return self.__magicclass_parent__._search_parent_magicclass()
 
+    def __getitem__(self, index: int) -> Action:
+        return self._command_actions[index]
+
+    def __len__(self) -> int:
+        return len(self._command_actions)
+
+    def __iter__(self) -> iter[Action]:
+        return iter(self._command_actions)
+
     def add_action(
         self, slot: _ActionLike, text: str = None, tooltip: str = None
-    ) -> CommandRunner:
+    ) -> CommandRunnerMenu:
         """Add a function or an expression as an action."""
         if isinstance(slot, Expr):
             ns = {Symbol.var("ui"): self.parent_ui}
@@ -70,10 +57,16 @@ class CommandRunner(ScrollableContainer):
         if tooltip is None:
             tooltip = getattr(slot, "__doc__", None)
         tooltip = tooltip.replace("\n", "<br>")
-        self.append(_create_button(slot, text, tooltip))
+
+        action = Action(text=text)
+        action.tooltip = tooltip
+        action.native.triggered.connect(slot)
+        self.addAction(action.native)
+        self._command_actions.append(action)
         return self
 
-    def add_file(self, path: str | Path | bytes) -> CommandRunner:
+    def add_file(self, path: str | Path | bytes) -> CommandRunnerMenu:
+        """Add a executable file as an action."""
         with open(path) as f:
             expr = parse(f.read())
         return self.add_action(expr)

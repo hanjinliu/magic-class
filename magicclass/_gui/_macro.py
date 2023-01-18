@@ -6,8 +6,9 @@ from qtpy import QtWidgets as QtW, QtCore
 from macrokit import Symbol, Expr, Head, Macro, parse
 from magicgui.widgets import FileEdit
 
-from magicclass.widgets import CodeEdit, TabbedContainer, CommandRunner
+from magicclass.widgets import CodeEdit, TabbedContainer
 from magicclass.utils import show_messagebox, move_to_screen_center
+from magicclass._gui.runner import CommandRunnerMenu
 
 if TYPE_CHECKING:
     from ._base import BaseGui
@@ -27,7 +28,6 @@ class MacroEdit(TabbedContainer):
         self.native_tab_widget.setTabBarAutoHide(True)
         self._native_macro = None
         self._recorded_macro = None
-        self._command_runner = None
         self._set_menubar()
 
     def add_code_edit(self, name: str = "macro", native: bool = False) -> CodeEdit:
@@ -45,12 +45,6 @@ class MacroEdit(TabbedContainer):
         if defaults["macro-highlight"]:
             textedit.syntax_highlight()
         return textedit
-
-    def add_command_runner(self):
-        self._command_runner = CommandRunner(name="Commands")
-        self._command_runner.__magicclass_parent__ = self.__magicclass_parent__
-        self.append(self._command_runner)
-        return self._command_runner
 
     def get_selected_expr(self) -> Expr:
         """Return the selected code in the current code editor."""
@@ -73,12 +67,10 @@ class MacroEdit(TabbedContainer):
         parent = self._search_parent_magicclass()
         code = self.get_selected_expr()
         fn = lambda: code.eval({Symbol.var("ui"): parent})
-        if self.command_runner is None:
-            self.add_command_runner()
         tooltip = f"<b><code>{code}</code></b>"
         # replace \n with <br> to show multiline code in tooltip
         tooltip = tooltip.replace("\n", "<br>")
-        self.command_runner.add_action(fn, tooltip=tooltip)
+        self._command_runner_menu.add_action(fn, tooltip=tooltip)
 
     @property
     def textedit(self) -> CodeEdit | None:
@@ -97,10 +89,6 @@ class MacroEdit(TabbedContainer):
     def recorded_macro(self) -> CodeEdit | None:
         """The code edit widget for the recording macro"""
         return self._recorded_macro
-
-    @property
-    def command_runner(self) -> CommandRunner | None:
-        return self._command_runner
 
     def load(self, path: str):
         """Load macro text from a file."""
@@ -191,7 +179,7 @@ class MacroEdit(TabbedContainer):
             ns = {Symbol.var("ui"): parent}
             if (viewer := parent.parent_viewer) is not None:
                 ns.setdefault(Symbol.var("viewer"), viewer)
-            code.eval()
+            code.eval(ns)
         except Exception as e:
             show_messagebox(
                 "error", title=e.__class__.__name__, text=str(e), parent=self.native
@@ -200,6 +188,18 @@ class MacroEdit(TabbedContainer):
     def _execute_selected(self, e=None):
         """Run selected line of macro."""
         self._execute(self.get_selected_expr())
+
+    def execute_lines(self, indices: int | slice | Iterable[int]):
+        all_text: str = self.textedit.value
+        lines = all_text.split("\n")
+        if isinstance(indices, int):
+            input_text = lines[indices]
+        elif isinstance(indices, slice):
+            input_text = "\n".join(lines[indices])
+        else:
+            input_text = "\n".join(lines[i] for i in indices)
+        code = parse(input_text)
+        return self._execute(code)
 
     def _search_parent_magicclass(self) -> BaseGui:
         current_self = self
@@ -278,11 +278,19 @@ class MacroEdit(TabbedContainer):
         _action_finish = self._macro_menu.addAction(
             "Finish recording", self._finish_recording
         )
-        self._macro_menu.addAction("Create command", self._create_command)
 
         _action_finish.setEnabled(False)
         _action_start.triggered.connect(lambda: _action_finish.setEnabled(True))
         _action_finish.triggered.connect(lambda: _action_finish.setEnabled(False))
+
+        self._command_runner_menu = CommandRunnerMenu(
+            "Command",
+            parent=self.native,
+            magicclass_parent=self._search_parent_magicclass(),
+        )
+        self._menubar.addMenu(self._command_runner_menu)
+        self._command_runner_menu.addAction("Create command", self._create_command)
+        self._command_runner_menu.addSeparator()
 
 
 class GuiMacro(Macro):
