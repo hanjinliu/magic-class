@@ -1,22 +1,22 @@
 from __future__ import annotations
+from pathlib import Path
 
-from typing import TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING, Any, Callable, Union
 import weakref
-from magicgui.widgets import PushButton, Container, Label, Select, Dialog, LineEdit
+from macrokit import Expr, Symbol, parse
+from magicgui.widgets import PushButton
 from magicclass.widgets.containers import ScrollableContainer
-from macrokit import Macro
 
 if TYPE_CHECKING:
     from magicclass import MagicTemplate
 
+    _ActionLike = Union[Callable[[], Any], Expr]
 
-def annotated_button(func: Callable, text: str, desc: str):
-    button = PushButton(text=text)
+
+def _create_button(func: Callable, text: str, tooltip: str):
+    button = PushButton(text=text, tooltip=tooltip)
     button.changed.connect(func)
-    label = Label(value=desc)
-    cnt = Container(widgets=[button, label], layout="horizontal")
-    cnt.margins = (0, 0, 0, 0)
-    return cnt
+    return button
 
 
 class CommandRunner(ScrollableContainer):
@@ -45,62 +45,38 @@ class CommandRunner(ScrollableContainer):
     ``ui.cmd.add_last_action()``.
     """
 
-    def __init__(self):
-        super().__init__(labels=False)
+    def __init__(self, **kwargs):
+        super().__init__(labels=False, **kwargs)
         self._magicclass_parent_ref = None
 
     @property
     def parent_ui(self) -> MagicTemplate:
         return self.__magicclass_parent__._search_parent_magicclass()
 
-    def add_action(self, ranges: int | slice | list[int]) -> CommandRunner:
-        """Add (a collection of) action(s)."""
-        ui = self.parent_ui
-        if isinstance(ranges, list):
-            expr = ui.macro.subset(ranges)
-        else:
-            expr = ui.macro[ranges]
-        text = f"Command {len(self)}"
-        if isinstance(expr, Macro):
-            desc = f"<code>{expr[0]}</code>..."
-        else:
-            desc = f"<code>{expr}</code>"
-        self.append(annotated_button(lambda: expr.eval({"ui": ui}), text, desc))
-        return self
-
-    def add_last_action(self) -> CommandRunner:
-        """Add the last action of the parent magicclass."""
-        return self.add_action(-1)
-
-    def add_action_from_dialog(self) -> CommandRunner:
-        ui = self.parent_ui
-        select = Select(
-            choices=[(f"{i}: {line}", i) for i, line in enumerate(ui.macro)]
-        )
-        line_text = LineEdit(label="Command name:")
-        line_desc = LineEdit(label="Command description:")
-        dlg = Dialog(widgets=[select, line_text, line_desc], parent=ui.native)
-        if dlg.exec():
-            self.add_action(list(select.value))
-            text = line_text.value or None
-            desc = line_desc.value or None
-            self.update_info(-1, text, desc)
-        return self
-
-    def update_info(
-        self,
-        index: int,
-        text: str | None = None,
-        desc: str | None = None,
-        tooltip: str | None = None,
+    def add_action(
+        self, slot: _ActionLike, text: str = None, tooltip: str = None
     ) -> CommandRunner:
-        if text is not None:
-            self[index][0].text = text
-        if desc is not None:
-            self[index][1].value = desc
-        if tooltip is not None:
-            self[index][0].tooltip = tooltip
+        """Add a function or an expression as an action."""
+        if isinstance(slot, Expr):
+            ns = {Symbol.var("ui"): self.parent_ui}
+            if (viewer := self.parent_ui.parent_viewer) is not None:
+                ns.setdefault(Symbol.var("viewer"), viewer)
+            slot = lambda: slot.eval(ns)
+            slot.__doc__ = f"<b><code>{slot}</code></b>"
+        elif not callable(slot):
+            raise TypeError(f"slot must be callable or an Expr, got {type(slot)}")
+        if text is None:
+            text = f"Command {len(self)}"
+        if tooltip is None:
+            tooltip = getattr(slot, "__doc__", None)
+        tooltip = tooltip.replace("\n", "<br>")
+        self.append(_create_button(slot, text, tooltip))
         return self
+
+    def add_file(self, path: str | Path | bytes) -> CommandRunner:
+        with open(path) as f:
+            expr = parse(f.read())
+        return self.add_action(expr)
 
     @property
     def __magicclass_parent__(self) -> MagicTemplate | None:

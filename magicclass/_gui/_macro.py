@@ -1,18 +1,17 @@
 from __future__ import annotations
+from pathlib import Path
 
 from typing import TYPE_CHECKING, Any, Iterable, overload
 from qtpy import QtWidgets as QtW, QtCore
 from macrokit import Symbol, Expr, Head, Macro, parse
 from magicgui.widgets import FileEdit
 
-from magicclass.widgets import CodeEdit, TabbedContainer
-from magicclass.utils import show_messagebox
+from magicclass.widgets import CodeEdit, TabbedContainer, CommandRunner
+from magicclass.utils import show_messagebox, move_to_screen_center
 
 if TYPE_CHECKING:
     from ._base import BaseGui
     from .mgui_ext import Clickable
-
-# TODO: Tabs
 
 
 class MacroEdit(TabbedContainer):
@@ -22,25 +21,64 @@ class MacroEdit(TabbedContainer):
 
     def __init__(self, **kwargs):
         super().__init__(labels=False, **kwargs)
-        self.native: QtW.QTabWidget
+        self.native: QtW.QWidget
         self.__magicclass_parent__ = None
         self.native.setWindowTitle("Macro")
+        self.native_tab_widget.setTabBarAutoHide(True)
         self._native_macro = None
+        self._recorded_macro = None
+        self._command_runner = None
         self._set_menubar()
 
-    def add_code_edit(self, native: bool = False) -> CodeEdit:
+    def add_code_edit(self, name: str = "macro", native: bool = False) -> CodeEdit:
+        """Add a new code edit widget as a new tab."""
         from magicclass import defaults
 
-        textedit = CodeEdit(name="macro")
+        textedit = CodeEdit(name=name)
         if native:
             if self._native_macro is not None:
                 raise ValueError("Native macro already exists.")
             textedit.read_only = True
             self._native_macro = textedit
+
         self.append(textedit)
         if defaults["macro-highlight"]:
             textedit.syntax_highlight()
         return textedit
+
+    def add_command_runner(self):
+        self._command_runner = CommandRunner(name="Commands")
+        self._command_runner.__magicclass_parent__ = self.__magicclass_parent__
+        self.append(self._command_runner)
+        return self._command_runner
+
+    def get_selected_expr(self) -> Expr:
+        """Return the selected code in the current code editor."""
+        all_code: str = self.textedit.value
+        selected = self.textedit.selected
+        code = parse(selected.strip())
+
+        # to safely run code, every line should be fully selected even if the
+        # selected region does not raise SyntaxError.
+        l = len(selected)
+        start = all_code.find(selected)
+        end = start + l
+        if start != 0 and "\n" not in all_code[start - 1 : start + 1]:
+            raise SyntaxError("Select full line(s).")
+        if end < l and "\n" not in all_code[end : end + 2]:
+            raise SyntaxError("Select full line(s).")
+        return code
+
+    def _create_command(self):
+        parent = self._search_parent_magicclass()
+        code = self.get_selected_expr()
+        fn = lambda: code.eval({Symbol.var("ui"): parent})
+        if self.command_runner is None:
+            self.add_command_runner()
+        tooltip = f"<b><code>{code}</code></b>"
+        # replace \n with <br> to show multiline code in tooltip
+        tooltip = tooltip.replace("\n", "<br>")
+        self.command_runner.add_action(fn, tooltip=tooltip)
 
     @property
     def textedit(self) -> CodeEdit | None:
@@ -48,32 +86,34 @@ class MacroEdit(TabbedContainer):
         wdt = self[self.current_index]
         if isinstance(wdt, CodeEdit):
             return wdt
-        return None
+        raise ValueError("This tab is not a code editor.")
 
     @property
     def native_macro(self) -> CodeEdit | None:
+        """The code edit widget for the native macro"""
         return self._native_macro
 
     @property
-    def value(self):
-        """Get macro text."""
-        return self.textedit.value
+    def recorded_macro(self) -> CodeEdit | None:
+        """The code edit widget for the recording macro"""
+        return self._recorded_macro
 
-    @value.setter
-    def value(self, value: str):
-        self.textedit.value = value
+    @property
+    def command_runner(self) -> CommandRunner | None:
+        return self._command_runner
 
     def load(self, path: str):
         """Load macro text from a file."""
-        path = str(path)
-        with open(path) as f:
-            self.value = f.read()
+        _path = Path(path)
+        with open(_path) as f:
+            edit = self.new_tab(_path.stem)
+            edit.value = f.read()
 
     def save(self, path: str):
         """Save current macro text."""
         path = str(path)
         with open(path, mode="w") as f:
-            f.write(self.value)
+            f.write(self.textedit.value)
 
     def _close(self, e=None):
         """Close widget."""
@@ -81,31 +121,7 @@ class MacroEdit(TabbedContainer):
 
     def execute(self):
         """Execute macro."""
-        parent = self._search_parent_magicclass()
-        try:
-            # substitute :ui and :viewer to the actual objects
-            code = parse(self.textedit.value)
-            _ui = Symbol.var("ui")
-            code.eval({_ui: parent})
-        except Exception as e:
-            show_messagebox(
-                "error", title=e.__class__.__name__, text=str(e), parent=self.native
-            )
-
-    def execute_lines(self, line_numbers: int | slice | Iterable[int] = -1):
-        """Execute macro at selected lines."""
-        parent = self._search_parent_magicclass()
-        try:
-            code = parse(self.textedit.value)
-            if isinstance(line_numbers, (int, slice)):
-                lines = code.args[line_numbers]
-            else:
-                lines = "\n".join(code.args[l] for l in line_numbers)
-            lines.eval({Symbol.var("ui"): parent})
-        except Exception as e:
-            show_messagebox(
-                "error", title=e.__class__.__name__, text=str(e), parent=self.native
-            )
+        self._execute(parse(self.textedit.value))
 
     def _create_native_duplicate(self, e=None):
         new = self.new_tab("script")
@@ -122,7 +138,7 @@ class MacroEdit(TabbedContainer):
         while tab_name in existing_names:
             tab_name = f"{name}-{suffix}"
             suffix += 1
-        new = self.add_code_edit()
+        new = self.add_code_edit(tab_name)
         self.current_index = len(self) - 1
         return new
 
@@ -163,38 +179,27 @@ class MacroEdit(TabbedContainer):
         del self[index]
 
     def show(self):
-        from magicclass.utils import move_to_screen_center
-
         super().show()
         move_to_screen_center(self.native)
 
-    def _execute(self, e=None):
+    def _execute(self, code: Expr):
         """Run macro."""
-        self.execute()
-
-    def _execute_selected(self, e=None):
-        """Run selected line of macro."""
         parent = self._search_parent_magicclass()
         try:
-            all_code: str = self.textedit.value
-            selected = self.textedit.selected
-            code = parse(selected.strip())
-
-            # to safely run code, every line should be fully selected even if the
-            # selected region does not raise SyntaxError.
-            l = len(selected)
-            start = all_code.find(selected)
-            end = start + l
-            if start != 0 and "\n" not in all_code[start - 1 : start + 1]:
-                raise SyntaxError("Select full line(s).")
-            if end < l and "\n" not in all_code[end : end + 2]:
-                raise SyntaxError("Select full line(s).")
-
-            code.eval({Symbol.var("ui"): parent})
+            if str(code) == "":
+                raise ValueError("No code selected")
+            ns = {Symbol.var("ui"): parent}
+            if (viewer := parent.parent_viewer) is not None:
+                ns.setdefault(Symbol.var("viewer"), viewer)
+            code.eval()
         except Exception as e:
             show_messagebox(
                 "error", title=e.__class__.__name__, text=str(e), parent=self.native
             )
+
+    def _execute_selected(self, e=None):
+        """Run selected line of macro."""
+        self._execute(self.get_selected_expr())
 
     def _search_parent_magicclass(self) -> BaseGui:
         current_self = self
@@ -226,6 +231,12 @@ class MacroEdit(TabbedContainer):
         if result:
             self.save(result)
 
+    def _start_recording(self):
+        self._recorded_macro = self.textedit
+
+    def _finish_recording(self):
+        self._recorded_macro = None
+
     def _set_menubar(self):
 
         self._menubar = QtW.QMenuBar(self.native)
@@ -240,26 +251,38 @@ class MacroEdit(TabbedContainer):
         self._file_menu.addAction("Open file", self._load, "Ctrl+O")
         self._file_menu.addAction("Save", self._save, "Ctrl+S")
         self._file_menu.addSeparator()
-        self._file_menu.addAction("Close", self._close, "Ctrl+W")
+        self._file_menu.addAction("Close", self._close)
 
         self._tab_menu = QtW.QMenu("Tab", self.native)
         self._menubar.addMenu(self._tab_menu)
         self._tab_menu.addAction("New tab", self.new_tab, "Ctrl+T")
         self._tab_menu.addAction("Duplicate tab", self.duplicate_tab, "Ctrl+D")
+        self._tab_menu.addAction(
+            "Current macro in new tab", self._create_native_duplicate
+        )
         self._tab_menu.addAction("Delete tab", self.delete_tab, "Ctrl+W")
 
         # set macro menu
         self._macro_menu = QtW.QMenu("Macro", self.native)
         self._menubar.addMenu(self._macro_menu)
 
-        self._macro_menu.addAction("Execute", self._execute, "Ctrl+F5")
+        self._macro_menu.addAction("Execute", self.execute, "Ctrl+F5")
         self._macro_menu.addAction(
             "Execute selected lines", self._execute_selected, "Ctrl+Shift+F5"
         )
         self._macro_menu.addSeparator()
-        self._macro_menu.addAction(
-            "Create", self._create_native_duplicate, "Ctrl+Shift+D"
+        _action_start = self._macro_menu.addAction(
+            "Start recording",
+            self._start_recording,
         )
+        _action_finish = self._macro_menu.addAction(
+            "Finish recording", self._finish_recording
+        )
+        self._macro_menu.addAction("Create command", self._create_command)
+
+        _action_finish.setEnabled(False)
+        _action_start.triggered.connect(lambda: _action_finish.setEnabled(True))
+        _action_finish.triggered.connect(lambda: _action_finish.setEnabled(False))
 
 
 class GuiMacro(Macro):
@@ -274,11 +297,11 @@ class GuiMacro(Macro):
     @property
     def widget(self) -> MacroEdit:
         """Returns the macro editor."""
+        from datetime import datetime
+
         if self._widget is None:
             self._widget = MacroEdit(name="Macro")
             self._widget.add_code_edit(native=True)
-            from datetime import datetime
-
             now = datetime.now()
             self.append(Expr(Head.comment, [now.strftime("%Y/%m/%d %H:%M:%S")]))
         return self._widget
@@ -351,11 +374,16 @@ class GuiMacro(Macro):
         return None
 
     def _update_widget(self, expr=None):
+        line = str(self.args[-1])
         if wdt := self.widget.native_macro:
-            wdt.append(str(self.args[-1]))
+            wdt.append(line)
+        if wdt := self.widget.recorded_macro:
+            wdt.append(line)
         if len(self) > self._max_lines:
             del self[0]
 
     def _erase_last(self):
         if wdt := self.widget.native_macro:
+            wdt.erase_last()
+        if wdt := self.widget.recorded_macro:
             wdt.erase_last()
