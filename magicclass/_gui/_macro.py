@@ -45,7 +45,16 @@ class MacroEdit(TabbedContainer):
         if defaults["macro-highlight"]:
             textedit.syntax_highlight()
         textedit.__magicclass_parent__ = self.__magicclass_parent__
+        textedit.executing.connect(self._on_executing)
         return textedit
+
+    def _on_executing(self, desc: str):
+        if desc == "exec-line":
+            self._execute_selected()
+        elif desc == "register-command":
+            self._create_command()
+        else:
+            raise RuntimeError(f"Unknown executing description: {desc}")
 
     def get_selected_expr(self) -> Expr:
         """Return the selected code in the current code editor."""
@@ -151,6 +160,7 @@ class MacroEdit(TabbedContainer):
         new = self.__class__(name=name)
         new.__magicclass_parent__ = self.__magicclass_parent__
         new.native.setParent(self.native.parent(), new.native.windowFlags())
+        new.add_code_edit()
         new.show()
         geometry = self.native.geometry()
         geometry.moveTopLeft(geometry.topLeft() + QtCore.QPoint(20, 20))
@@ -243,7 +253,7 @@ class MacroEdit(TabbedContainer):
         self._menubar = QtW.QMenuBar(self.native)
         self.native.layout().setMenuBar(self._menubar)
 
-        # set file menu
+        # fmt: off
         self._file_menu = QtW.QMenu("File", self.native)
         self._menubar.addMenu(self._file_menu)
 
@@ -258,9 +268,7 @@ class MacroEdit(TabbedContainer):
         self._menubar.addMenu(self._tab_menu)
         self._tab_menu.addAction("New tab", self.new_tab, "Ctrl+T")
         self._tab_menu.addAction("Duplicate tab", self.duplicate_tab, "Ctrl+D")
-        self._tab_menu.addAction(
-            "Current macro in new tab", self._create_native_duplicate
-        )
+        self._tab_menu.addAction("Current macro in new tab", self._create_native_duplicate)
         self._tab_menu.addAction("Delete tab", self.delete_tab, "Ctrl+W")
 
         # set macro menu
@@ -268,17 +276,10 @@ class MacroEdit(TabbedContainer):
         self._menubar.addMenu(self._macro_menu)
 
         self._macro_menu.addAction("Execute", self.execute, "Ctrl+F5")
-        self._macro_menu.addAction(
-            "Execute selected lines", self._execute_selected, "Ctrl+Shift+F5"
-        )
+        self._macro_menu.addAction("Execute selected lines", self._execute_selected, "Ctrl+Shift+F5")
         self._macro_menu.addSeparator()
-        _action_start = self._macro_menu.addAction(
-            "Start recording",
-            self._start_recording,
-        )
-        _action_finish = self._macro_menu.addAction(
-            "Finish recording", self._finish_recording
-        )
+        _action_start = self._macro_menu.addAction("Start recording", self._start_recording)
+        _action_finish = self._macro_menu.addAction("Finish recording", self._finish_recording)
 
         _action_finish.setEnabled(False)
         _action_start.triggered.connect(lambda: _action_finish.setEnabled(True))
@@ -292,6 +293,7 @@ class MacroEdit(TabbedContainer):
         self._menubar.addMenu(self._command_runner_menu)
         self._command_runner_menu.addAction("Create command", self._create_command)
         self._command_runner_menu.addSeparator()
+        # fmt: on
 
 
 class GuiMacro(Macro):

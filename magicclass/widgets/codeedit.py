@@ -7,11 +7,13 @@ from qtpy.QtCore import Qt, Signal as pyqtSignal
 
 from psygnal import Signal
 from magicgui.backends._qtpy.widgets import TextEdit as QBaseTextEdit, QBaseStringWidget
-from magicgui.widgets import TextEdit
+from magicgui.widgets import TextEdit, EmptyWidget, FileEdit
 from magicgui.application import use_app
 
 from macrokit import parse, Symbol, Expr, Head
+from magicclass._gui.utils import show_dialog_from_mgui
 from magicclass._magicgui_compat import ValueWidget, Undefined
+from magicclass.utils import show_messagebox
 
 if TYPE_CHECKING:
     from magicclass import MagicTemplate
@@ -21,6 +23,8 @@ class QLineNumberArea(QtW.QWidget):
     def __init__(self, editor: QCodeEditor):
         super().__init__(editor)
         self.editor = editor
+        self.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.customContextMenuRequested.connect(self.editor._show_context_menu)
 
     def sizeHint(self):
         return QtCore.QSize(self.editor.lineNumberAreaWidth(), 0)
@@ -57,6 +61,8 @@ class QLineNumberArea(QtW.QWidget):
 
 
 class QCodeEditor(QtW.QPlainTextEdit):
+    executionRequested = pyqtSignal(object)
+
     def __init__(self, parent: QtW.QWidget | None = None):
         super().__init__(parent)
         if sys.platform == "win32":
@@ -120,12 +126,6 @@ class QCodeEditor(QtW.QPlainTextEdit):
             QtCore.QRect(cr.left(), cr.top(), self.lineNumberAreaWidth(), cr.height())
         )
 
-    def mousePressEvent(self, e: QtGui.QMouseEvent) -> None:
-        if e.modifiers() & Qt.KeyboardModifier.ControlModifier:
-            ...
-
-        return super().mousePressEvent(e)
-
     def event(self, ev: QtCore.QEvent):
         if ev.type() == QtCore.QEvent.Type.ToolTip:
             ev = QtGui.QHelpEvent(ev)
@@ -150,7 +150,7 @@ class QCodeEditor(QtW.QPlainTextEdit):
         info = self.wordAt(pos)
         if info is None:
             return ""
-        return f"{info.word} (type: {type(info.obj).__name__})"
+        return f"{info.expr} (type: {type(info.obj).__name__})"
 
     def wordAt(self, pos: QtCore.QPoint) -> WordInfo | None:
         cursor = self.cursorForPosition(pos)
@@ -162,12 +162,58 @@ class QCodeEditor(QtW.QPlainTextEdit):
             return eval_under_cursor(
                 line, clicked_pos, self._search_parent_magicclass()
             )
-        except Exception:
+        except Exception as e:
+            print(e)
+            # raise e
             return None
 
+    def _open_magicgui(self, pos: QtCore.QPoint):
+        from magicclass._gui.mgui_ext import PushButtonPlus, Action
+
+        info = self.wordAt(pos)
+        if info and isinstance(info.obj, (PushButtonPlus, Action)):
+            mgui = info.obj.mgui
+            if mgui is None:
+                return show_messagebox("error", "Error", "No magicgui found", self)
+            nwidgets = sum(not isinstance(wdt, EmptyWidget) for wdt in mgui)
+            if nwidgets > 1:
+                if isinstance(mgui[0], FileEdit):
+                    show_dialog_from_mgui(mgui)
+                else:
+                    mgui.show()
+            else:
+                show_messagebox(
+                    "error",
+                    "Error",
+                    f"No parameter can be chosen in {info.obj.name!r}.",
+                    self,
+                )
+        return
+
     def _show_context_menu(self, pos: QtCore.QPoint):
-        ...
-        #
+        menu = QtW.QMenu(self.viewport())
+        cursor = self.textCursor()
+        new_pos = self.cursorForPosition(pos).position()
+        if not cursor.selectionStart() <= new_pos <= cursor.selectionEnd():
+            cursor.setPosition(new_pos, QtGui.QTextCursor.MoveMode.MoveAnchor)
+        text = cursor.selectedText()
+        has_selection = len(text) > 0
+
+        # fmt: off
+        menu.addAction("Select All", self.selectAll, "Ctrl+A")
+        menu.addAction("Cut", self.cut, "Ctrl+X").setEnabled(has_selection)
+        menu.addAction("Copy", self.copy, "Ctrl+C").setEnabled(has_selection)
+        menu.addAction("Paste", self.paste, "Ctrl+V")
+        menu.addSeparator()
+        menu.addAction("Undo", self.undo, "Ctrl+Z")
+        menu.addAction("Redo", self.redo, "Ctrl+Y")
+        menu.addSeparator()
+        menu.addAction("Execute selected lines", lambda: self.executionRequested.emit("exec-line")).setEnabled(has_selection)
+        menu.addAction("Register as a command", lambda: self.executionRequested.emit("register-command")).setEnabled(has_selection)
+        menu.addAction("Rerun with new parameters", lambda: self._open_magicgui(pos)).setEnabled(has_selection)
+        # fmt: on
+
+        return menu.exec(self.mapToGlobal(pos))
 
     def _iter_visible_blocks(self, rect: QtCore.QRect = None):
         if rect is None:
@@ -297,6 +343,7 @@ class QCodeEditor(QtW.QPlainTextEdit):
 
 class WordInfo(NamedTuple):
     obj: Any
+    expr: Expr
     word: str
 
 
@@ -309,35 +356,35 @@ def eval_under_cursor(
     if not isinstance(expr, Expr):
         # got a Symbol
         obj = expr.eval({expr: parent})
-        word = str(expr)
+        words = expr
 
     elif expr.head is Head.call:
         first = expr.args[0]
         while isinstance(first, Expr) and first.head is Head.getattr:
             next_first, _ = first.args
             _length = len(str(next_first))
-            if len(_length) < clicked_pos:
+            if _length < clicked_pos - 1:
                 pos_start = _length
                 break
             first = next_first
 
         if isinstance(first, Expr):
             left, right = first.args
-            word = str(first)
+            words = first
             expr = Expr(Head.getitem, [left, str(right)])
             obj = expr.eval({Symbol.var("ui"): parent})
         else:
             obj = first.eval({first: parent})
-            word = str(first)
+            words = first
 
     elif expr.head is Head.assign:
         first = expr.args[0]
         if not isinstance(first, Expr) or not str(first.args[0]).startswith("ui"):
-            return
+            return None
         while isinstance(first, Expr) and first.head is Head.getattr:
             next_first, _ = first.args
             _length = len(str(next_first))
-            if len(_length) < clicked_pos:
+            if _length < clicked_pos - 1:
                 pos_start = _length
                 break
             first = next_first
@@ -349,13 +396,13 @@ def eval_under_cursor(
                 obj = left_obj[str(right)]
             else:
                 obj = getattr(left_obj, str(right))
-            word = str(first)
+            words = first
         else:
             obj = first.eval({first: parent})
-            word = str(first)
+            words = first
     else:
-        obj = None
-    return WordInfo(obj, word)
+        return None
+    return WordInfo(obj, words, str(words).split(".")[-1])
 
 
 # ##############################################################################
@@ -377,13 +424,9 @@ class QBaseCodeEdit(QBaseTextEdit):
         return self._qwidget.isReadOnly()
 
 
-class ClickedText(NamedTuple):
-    line: str
-    word: str
-    pos: int
-
-
 class CodeEdit(TextEdit):
+    executing = Signal(object)
+
     def __init__(self, value=Undefined, **kwargs):
         app = use_app()
         assert app.native
@@ -393,6 +436,7 @@ class CodeEdit(TextEdit):
             widget_type=QBaseCodeEdit,
             **kwargs,
         )
+        self._qcode_edit().executionRequested.connect(self.executing.emit)
 
     def _qcode_edit(self) -> QCodeEditor:
         return self._widget._qwidget
