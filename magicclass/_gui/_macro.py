@@ -2,6 +2,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from typing import TYPE_CHECKING, Any, Iterable, overload
+import warnings
 from qtpy import QtWidgets as QtW, QtCore
 from macrokit import Symbol, Expr, Head, Macro, parse
 from magicgui.widgets import FileEdit, LineEdit
@@ -30,7 +31,7 @@ class MacroEdit(TabbedContainer):
         self._recorded_macro = None
         self._set_menubar()
 
-    def add_code_edit(self, name: str = "macro", native: bool = False) -> CodeEdit:
+    def _add_code_edit(self, name: str = "macro", native: bool = False) -> CodeEdit:
         """Add a new code edit widget as a new tab."""
         from magicclass import defaults
 
@@ -150,7 +151,7 @@ class MacroEdit(TabbedContainer):
         while tab_name in existing_names:
             tab_name = f"{name}-{suffix}"
             suffix += 1
-        new = self.add_code_edit(tab_name)
+        new = self._add_code_edit(tab_name)
         self.current_index = len(self) - 1
         return new
 
@@ -174,20 +175,38 @@ class MacroEdit(TabbedContainer):
         new = self.__class__(name=name)
         new.__magicclass_parent__ = self.__magicclass_parent__
         new.native.setParent(self.native.parent(), new.native.windowFlags())
-        new.add_code_edit()
+        new._add_code_edit()
         new.show()
         geometry = self.native.geometry()
         geometry.moveTopLeft(geometry.topLeft() + QtCore.QPoint(20, 20))
         new.native.setGeometry(geometry)
         return new
 
-    def duplicate_tab(self):
+    def duplicate(self, name: str = None):
+        warnings.warn(
+            "duplicate() is deprecated. MacroEdit is now a tabbed widget. "
+            "Use 'new_window()' or 'new_tab()' instead.",
+            DeprecationWarning,
+        )
+        new = self.new_window(name=name)
+        new.textedit.value = self.textedit.value
+        return new
+
+    def new(self, name: str = None):
+        warnings.warn(
+            "new() is deprecated. MacroEdit is now a tabbed widget. "
+            "Use 'new_window()' or 'new_tab()' instead.",
+            DeprecationWarning,
+        )
+        return self.new_window(name=name)
+
+    def _duplicate_tab(self):
         new = self.new_tab(self.textedit.name)
         new.value = self.textedit.value
         self.current_index = len(self) - 1
         return new
 
-    def delete_tab(self):
+    def _delete_tab(self):
         index = self.current_index
         del self[index]
 
@@ -281,9 +300,9 @@ class MacroEdit(TabbedContainer):
         self._tab_menu = QtW.QMenu("Tab", self.native)
         self._menubar.addMenu(self._tab_menu)
         self._tab_menu.addAction("New tab", self.new_tab, "Ctrl+T")
-        self._tab_menu.addAction("Duplicate tab", self.duplicate_tab, "Ctrl+D")
+        self._tab_menu.addAction("Duplicate tab", self._duplicate_tab, "Ctrl+D")
         self._tab_menu.addAction("Current macro in new tab", self._create_native_duplicate)
-        self._tab_menu.addAction("Delete tab", self.delete_tab, "Ctrl+W")
+        self._tab_menu.addAction("Delete tab", self._delete_tab, "Ctrl+W")
 
         # set macro menu
         self._macro_menu = QtW.QMenu("Macro", self.native)
@@ -323,7 +342,7 @@ class GuiMacro(Macro):
 
         self._widget = MacroEdit(name="Macro")
         self._widget.__magicclass_parent__ = ui
-        self._widget.add_code_edit(native=True)
+        self._widget._add_code_edit(native=True)
         now = datetime.now()
         self.append(Expr(Head.comment, [now.strftime("%Y/%m/%d %H:%M:%S")]))
 
