@@ -4,9 +4,9 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, Iterable, overload
 from qtpy import QtWidgets as QtW, QtCore
 from macrokit import Symbol, Expr, Head, Macro, parse
-from magicgui.widgets import FileEdit
+from magicgui.widgets import FileEdit, LineEdit
 
-from magicclass.widgets import CodeEdit, TabbedContainer
+from magicclass.widgets import CodeEdit, TabbedContainer, ScrollableContainer, Dialog
 from magicclass.utils import show_messagebox, move_to_screen_center
 from magicclass._gui.runner import CommandRunnerMenu
 
@@ -74,13 +74,27 @@ class MacroEdit(TabbedContainer):
         return code
 
     def _create_command(self):
+        """Create command from the selected code."""
         parent = self._search_parent_magicclass()
         code = self.get_selected_expr()
         fn = lambda: code.eval({Symbol.var("ui"): parent})
         tooltip = f"<b><code>{code}</code></b>"
         # replace \n with <br> to show multiline code in tooltip
         tooltip = tooltip.replace("\n", "<br>")
-        self._command_runner_menu.add_action(fn, tooltip=tooltip)
+        self._command_menu.add_action(fn, tooltip=tooltip)
+
+    def _rename_command(self):
+        """Rename currently registered commands."""
+        cnt = ScrollableContainer()
+        for i, action in enumerate(self._command_menu):
+            cnt.append(
+                LineEdit(label=str(i), value=action.text, tooltip=action.tooltip)
+            )
+        dlg = Dialog(widgets=[cnt], parent=self)
+        dlg.exec()
+        for i, line in enumerate(cnt):
+            action = self._command_menu[i]
+            action.text = line.value
 
     @property
     def textedit(self) -> CodeEdit | None:
@@ -285,14 +299,15 @@ class MacroEdit(TabbedContainer):
         _action_start.triggered.connect(lambda: _action_finish.setEnabled(True))
         _action_finish.triggered.connect(lambda: _action_finish.setEnabled(False))
 
-        self._command_runner_menu = CommandRunnerMenu(
+        self._command_menu = CommandRunnerMenu(
             "Command",
             parent=self.native,
             magicclass_parent=self._search_parent_magicclass(),
         )
-        self._menubar.addMenu(self._command_runner_menu)
-        self._command_runner_menu.addAction("Create command", self._create_command)
-        self._command_runner_menu.addSeparator()
+        self._menubar.addMenu(self._command_menu.native)
+        self._command_menu.native.addAction("Create command", self._create_command)
+        self._command_menu.native.addAction("Rename command", self._rename_command)
+        self._command_menu.native.addSeparator()
         # fmt: on
 
 

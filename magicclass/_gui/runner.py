@@ -1,7 +1,7 @@
 from __future__ import annotations
 from pathlib import Path
 
-from typing import TYPE_CHECKING, Any, Callable, Union
+from typing import TYPE_CHECKING, Any, Callable, Iterator, Union, Sequence
 import weakref
 
 from qtpy import QtWidgets as QtW
@@ -15,17 +15,21 @@ if TYPE_CHECKING:
     _ActionLike = Union[Callable[[], Any], Expr]
 
 
-class CommandRunnerMenu(QtW.QMenu):
+class CommandRunnerMenu(Sequence[Action]):
     def __init__(
         self,
         title: str,
         parent: QtW.QWidget = None,
         magicclass_parent: MagicTemplate = None,
     ):
-        super().__init__(title, parent)
-        self.setToolTipsVisible(True)
+        self._native = QtW.QMenu(title, parent)
+        self.native.setToolTipsVisible(True)
         self.__magicclass_parent__ = magicclass_parent
         self._command_actions: list[Action] = []
+
+    @property
+    def native(self) -> QtW.QMenu:
+        return self._native
 
     @property
     def parent_ui(self) -> MagicTemplate:
@@ -37,7 +41,7 @@ class CommandRunnerMenu(QtW.QMenu):
     def __len__(self) -> int:
         return len(self._command_actions)
 
-    def __iter__(self) -> iter[Action]:
+    def __iter__(self) -> Iterator[Action]:
         return iter(self._command_actions)
 
     def add_action(
@@ -61,7 +65,7 @@ class CommandRunnerMenu(QtW.QMenu):
         action = Action(text=text)
         action.tooltip = tooltip
         action.native.triggered.connect(slot)
-        self.addAction(action.native)
+        self.native.addAction(action.native)
         self._command_actions.append(action)
         return self
 
