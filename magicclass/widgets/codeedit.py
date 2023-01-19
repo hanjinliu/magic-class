@@ -1,12 +1,20 @@
 from __future__ import annotations
 import sys
+from typing import NamedTuple, TYPE_CHECKING
+import weakref
 from qtpy import QtWidgets as QtW, QtGui, QtCore
-from qtpy.QtCore import Qt, Signal
+from qtpy.QtCore import Qt, Signal as pyqtSignal
 
+from psygnal import Signal
 from magicgui.backends._qtpy.widgets import TextEdit as QBaseTextEdit, QBaseStringWidget
 from magicgui.widgets import TextEdit
-from magicclass._magicgui_compat import ValueWidget, Undefined
 from magicgui.application import use_app
+
+from macrokit import parse, Symbol, Expr, Head
+from magicclass._magicgui_compat import ValueWidget, Undefined
+
+if TYPE_CHECKING:
+    from magicclass import MagicTemplate
 
 
 class QLineNumberArea(QtW.QWidget):
@@ -49,6 +57,8 @@ class QLineNumberArea(QtW.QWidget):
 
 
 class QCodeEditor(QtW.QPlainTextEdit):
+    attributeClicked = pyqtSignal(str, str, int)  # line, word, pos
+
     def __init__(self, parent: QtW.QWidget | None = None):
         super().__init__(parent)
         if sys.platform == "win32":
@@ -72,6 +82,8 @@ class QCodeEditor(QtW.QPlainTextEdit):
         self.syntaxHighlight()
         self.setTabSize(4)
         self.setWordWrapMode(QtGui.QTextOption.WrapMode.NoWrap)
+
+        self._magicclass_parent_ref: weakref.ReferenceType[MagicTemplate] = None
 
     def tabSize(self):
         metrics = self.fontMetrics()
@@ -108,6 +120,55 @@ class QCodeEditor(QtW.QPlainTextEdit):
         self._line_number_area.setGeometry(
             QtCore.QRect(cr.left(), cr.top(), self.lineNumberAreaWidth(), cr.height())
         )
+
+    def mousePressEvent(self, e: QtGui.QMouseEvent) -> None:
+        if e.modifiers() & Qt.KeyboardModifier.ControlModifier:
+            cursor = self.cursorForPosition(e.pos())
+            cursor.select(QtGui.QTextCursor.SelectionType.WordUnderCursor)
+            block = cursor.block()
+            text = block.text()
+            clicked_pos = cursor.position() - block.position()
+            self.attributeClicked.emit(text, cursor.selectedText(), clicked_pos)
+
+        return super().mousePressEvent(e)
+
+    def event(self, ev: QtCore.QEvent):
+        if ev.type() == QtCore.QEvent.Type.ToolTip:
+            ev = QtGui.QHelpEvent(ev)
+            line = self._analyze_line(self.viewport().mapFromGlobal(ev.globalPos()))
+            QtW.QToolTip.showText(ev.globalPos(), str(line), self)
+        return super().event(ev)
+
+    def _magicclass_parent(self):
+        if self._magicclass_parent_ref is None:
+            return None
+        return self._magicclass_parent_ref()
+
+    def _search_parent_magicclass(self) -> MagicTemplate | None:
+        if self._magicclass_parent_ref is None:
+            return None
+        if obj := self._magicclass_parent_ref():
+            return obj._search_parent_magicclass()
+        return None
+
+    def _analyze_line(self, pos: QtCore.QPoint):
+        """Analyze the line under position."""
+        cursor = self.cursorForPosition(pos)
+        cursor.select(QtGui.QTextCursor.SelectionType.WordUnderCursor)
+        block = cursor.block()
+        line = block.text()
+        clicked_pos = cursor.position() - block.position()
+
+        try:
+            obj, word = eval_under_cursor(
+                line, clicked_pos, self._search_parent_magicclass()
+            )
+            if obj is None:
+                line = ""
+            line = f"{word} (type: {type(obj).__name__})"
+        except Exception:
+            line = ""
+        return line
 
     def _iter_visible_blocks(self, rect: QtCore.QRect = None):
         if rect is None:
@@ -235,6 +296,60 @@ class QCodeEditor(QtW.QPlainTextEdit):
         self.setPlainText(text.replace("\n", "\u2029"))
 
 
+def eval_under_cursor(line: str, clicked_pos: int, parent: MagicTemplate):
+    expr = parse(line)
+    if not isinstance(expr, Expr):
+        # got a Symbol
+        obj = expr.eval({expr: parent})
+        word = str(expr)
+
+    elif expr.head is Head.call:
+        first = expr.args[0]
+        while isinstance(first, Expr) and first.head is Head.getattr:
+            next_first, _ = first.args
+            if len(str(next_first)) < clicked_pos:
+                break
+            first = next_first
+
+        if isinstance(first, Expr):
+            left, right = first.args
+            expr = Expr(Head.getitem, [left, str(right)])
+            obj = expr.eval({Symbol.var("ui"): parent})
+            word = str(expr)
+        else:
+            obj = first.eval({first: parent})
+            word = str(first)
+
+    elif expr.head is Head.assign:
+        first = expr.args[0]
+        if not isinstance(first, Expr) or not str(first.args[0]).startswith("ui"):
+            return
+        while isinstance(first, Expr) and first.head is Head.getattr:
+            next_first, _ = first.args
+            if len(str(next_first)) < clicked_pos:
+                break
+            first = next_first
+
+        if isinstance(first, Expr):
+            left, right = first.args
+            left_obj = left.eval({Symbol.var("ui"): parent})
+            if hasattr(left_obj, "__getitem__"):
+                obj = left_obj[str(right)]
+            else:
+                obj = getattr(left_obj, str(right))
+            word = str(first)
+        else:
+            obj = first.eval({first: parent})
+            word = str(first)
+    else:
+        obj = None
+    return obj, word
+
+
+# ##############################################################################
+# ##############################################################################
+
+
 class QBaseCodeEdit(QBaseTextEdit):
     _qwidget: QCodeEditor
 
@@ -250,7 +365,15 @@ class QBaseCodeEdit(QBaseTextEdit):
         return self._qwidget.isReadOnly()
 
 
+class ClickedText(NamedTuple):
+    line: str
+    word: str
+    pos: int
+
+
 class CodeEdit(TextEdit):
+    text_clicked = Signal(ClickedText)
+
     def __init__(self, value=Undefined, **kwargs):
         app = use_app()
         assert app.native
@@ -260,32 +383,47 @@ class CodeEdit(TextEdit):
             widget_type=QBaseCodeEdit,
             **kwargs,
         )
+        self._qcode_edit().attributeClicked.connect(self._on_attribute_clicked)
+
+    def _on_attribute_clicked(self, line: str, word: str, pos: int):
+        self.text_clicked.emit(ClickedText(line, word, pos))
+
+    def _qcode_edit(self) -> QCodeEditor:
+        return self._widget._qwidget
 
     @property
     def tab_size(self):
-        return self._widget._qwidget.tabSize()
+        return self._qcode_edit().tabSize()
 
     @tab_size.setter
     def tab_size(self, size: int):
-        return self._widget._qwidget.setTabSize(size)
+        return self._qcode_edit().setTabSize(size)
 
     def erase_last(self):
         """Erase the last line."""
-        self._widget._qwidget.eraseLast()
+        self._qcode_edit().eraseLast()
 
     def erase_first(self):
         """Erase the first line."""
-        self._widget._qwidget.eraseFirst()
+        self._qcode_edit().eraseFirst()
 
     def append(self, text: str):
         """Append text to the end of the document."""
-        self._widget._qwidget.appendPlainText(text)
+        self._qcode_edit().appendPlainText(text)
 
     @property
     def selected(self) -> str:
         """Return selected string."""
-        return self._widget._qwidget.selectedText()
+        return self._qcode_edit().selectedText()
 
     def syntax_highlight(self, lang: str = "python", theme: str = "default"):
         """Highlight syntax."""
-        self._widget._qwidget.syntaxHighlight(lang, theme)
+        self._qcode_edit().syntaxHighlight(lang, theme)
+
+    @property
+    def __magicclass_parent__(self):
+        return self._qcode_edit()._magicclass_parent()
+
+    @__magicclass_parent__.setter
+    def __magicclass_parent__(self, val):
+        self._qcode_edit()._magicclass_parent_ref = weakref.ref(val)

@@ -910,6 +910,7 @@ class BaseGui(MagicTemplate[_W]):
         self._macro_instance = GuiMacro(
             max_lines=defaults["macro-max-history"],
             flags={"Get": False, "Return": False},
+            ui=self,
         )
         self.__magicclass_parent__: BaseGui | None = None
         self.__magicclass_children__: list[MagicTemplate] = []
@@ -918,8 +919,6 @@ class BaseGui(MagicTemplate[_W]):
         self._error_mode = error_mode or ErrorMode.msgbox
         self._my_symbol = Symbol.var("ui")
         self._icon = None
-
-        self.macro.widget.__magicclass_parent__ = self
 
     @property
     def icon(self):

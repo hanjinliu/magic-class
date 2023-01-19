@@ -44,6 +44,7 @@ class MacroEdit(TabbedContainer):
         self.append(textedit)
         if defaults["macro-highlight"]:
             textedit.syntax_highlight()
+        textedit.__magicclass_parent__ = self.__magicclass_parent__
         return textedit
 
     def get_selected_expr(self) -> Expr:
@@ -296,22 +297,22 @@ class MacroEdit(TabbedContainer):
 class GuiMacro(Macro):
     """Macro object with GUI-specific functions."""
 
-    def __init__(self, max_lines: int, flags={}):
+    def __init__(self, max_lines: int, flags={}, ui: BaseGui = None):
+        from datetime import datetime
+
         super().__init__(flags=flags)
-        self._widget = None
         self._max_lines = max_lines
         self.callbacks.append(self._update_widget)
+
+        self._widget = MacroEdit(name="Macro")
+        self._widget.__magicclass_parent__ = ui
+        self._widget.add_code_edit(native=True)
+        now = datetime.now()
+        self.append(Expr(Head.comment, [now.strftime("%Y/%m/%d %H:%M:%S")]))
 
     @property
     def widget(self) -> MacroEdit:
         """Returns the macro editor."""
-        from datetime import datetime
-
-        if self._widget is None:
-            self._widget = MacroEdit(name="Macro")
-            self._widget.add_code_edit(native=True)
-            now = datetime.now()
-            self.append(Expr(Head.comment, [now.strftime("%Y/%m/%d %H:%M:%S")]))
         return self._widget
 
     @property
