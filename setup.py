@@ -30,7 +30,6 @@ setup(
         "pytest-qt",
         "numpy",
         "pyqt5",
-        "superqt",
         "pyqtgraph",
         "vispy",
     ],

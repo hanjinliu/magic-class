@@ -4,6 +4,9 @@ from typing import Iterable, Callable, TYPE_CHECKING
 from magicgui import register_type, application as app
 from magicgui.widgets import Container, ComboBox, Label, Widget
 
+import macrokit as mk
+
+import napari
 from napari.utils._magicgui import find_viewer_ancestor
 
 if TYPE_CHECKING:
@@ -15,9 +18,12 @@ def get_features(widget: Widget) -> list[tuple[str, Features]]:
     viewer = find_viewer_ancestor(widget)
     if viewer is None:
         return []
+    viewer_mock = mk.Mock("viewer")
     features: list[Features] = []
     for layer in viewer.layers:
         if len(feat := getattr(layer, "features", [])) > 0:
+            # very dirty solution ...
+            feat._macrokit_expr = viewer_mock.layers[layer.name].features
             features.append((layer.name, feat))
     return features
 
@@ -118,6 +124,8 @@ class ColumnNameChoice(Container):
 
 def _register_mgui_types():
     from .types import Features, FeatureColumn, FeatureInfoInstance
+    import macrokit as mk
+    from macrokit.mock import Mock
 
     register_type(Features, choices=get_features, nullable=False)
 
@@ -133,3 +141,7 @@ def _register_mgui_types():
         widget_type=ColumnNameChoice,
         data_choices=get_features,
     )
+
+    @mk.register_type(Features)
+    def _format_feature(x: Features) -> str:
+        return getattr(x, "_macrokit_expr", mk.Symbol.make_symbol_str(x))
