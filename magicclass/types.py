@@ -471,6 +471,9 @@ class Union(metaclass=_UnionAlias):
 
 class _StoredMeta(type):
     _instances: dict[Hashable, _StoredMeta] = {}
+    _store: list
+    _maxsize: int
+    __args__: tuple[type]
 
     @overload
     def __getitem__(cls, value: type[_T]) -> type[_T]:
@@ -481,30 +484,7 @@ class _StoredMeta(type):
         ...
 
     def __getitem__(cls, value):
-        if isinstance(value, tuple):
-            if len(value) != 2:
-                raise TypeError("Input of Stored must be a type or (type, Any)")
-            _tp, _hash = value
-        else:
-            if not _is_type_like(value):
-                raise TypeError(
-                    "The first argument of Stored must be a type but "
-                    f"got {type(value)}."
-                )
-            _tp, _hash = value, 0
-        key = (_tp, _hash)
-        if outtype := _StoredMeta._instances.get(key):
-            return outtype
-        name = f"Stored[{_tp.__name__}, {_hash!r}]"
-        outtype: Stored = _StoredMeta(name, (Stored,), {})
-        outtype._store = []
-        outtype._maxsize = float("inf")
-        _StoredMeta._instances[key] = outtype
-        return outtype
-
-    @property
-    def last(self) -> type[_T]:
-        return bound(lambda *_: self._store[-1])
+        return Stored._class_getitem(value)
 
 
 _U = TypeVar("_U")
@@ -522,15 +502,16 @@ class Stored(Generic[_T], metaclass=_StoredMeta):
     ...         return str(a)
     ...     def print_one_of_stored(self, a: Stored[str]):
     ...         print(a)
-    ...     def print_last_stored(self, a: Stored[str].last):
-    ...         print(a)
     """
 
     _store: list[_T]
     _maxsize: int
+    last: _StoredLastAlias
+
+    _repr_map: dict[type[_U], Callable[[_U], str]] = {}
 
     @classmethod
-    def new(cls, tp: type[_U], maxsize: int | None = None) -> Stored[_U]:
+    def new(cls, tp: type[_U], maxsize: int | None = 12) -> Stored[_U]:
         i = 0
         while (tp, i) in _StoredMeta._instances:
             i += 1
@@ -543,11 +524,14 @@ class Stored(Generic[_T], metaclass=_StoredMeta):
             outtype._maxsize = maxsize
         return outtype
 
-    @staticmethod
-    def _get_choice(w: CategoricalWidget):
+    @classmethod
+    def _get_choice(cls, w: CategoricalWidget):
         ann = w.annotation
         assert issubclass(ann, Stored), ann
-        return ann._store
+        _repr_func = cls._repr_map.get(ann.__args__[0], _repr_like)
+        return [
+            (f"{i}: {_repr_func(x)}", x) for i, x in enumerate(reversed(ann._store))
+        ]
 
     @staticmethod
     def _store_value(gui: FunctionGui, value, return_type):
@@ -555,11 +539,71 @@ class Stored(Generic[_T], metaclass=_StoredMeta):
         return_type._store.append(value)
         if len(return_type._store) > return_type._maxsize:
             return_type._store.pop(0)
-        gui.reset_choices()
+
+        # Callback of the inner type annotation
+        from magicclass._magicgui_compat import type2callback
+
+        inner_type = return_type.__args__[0]
+        for cb in type2callback(inner_type):
+            cb(gui, value, inner_type)
+
+    @classmethod
+    def _class_getitem(cls, value):
+        if isinstance(value, tuple):
+            if len(value) != 2:
+                raise TypeError("Input of Stored must be a type or (type, Any)")
+            _tp, _hash = value
+        else:
+            if not _is_type_like(value):
+                raise TypeError(
+                    "The first argument of Stored must be a type but "
+                    f"got {type(value)}."
+                )
+            _tp, _hash = value, None
+        key = (_tp, _hash)
+        if outtype := _StoredMeta._instances.get(key):
+            return outtype
+        name = f"Stored[{_tp.__name__}, {_hash!r}]"
+        outtype: cls = _StoredMeta(name, (cls,), {})
+        outtype._store = []
+        outtype.__args__ = (_tp,)
+        outtype.last = StoredLast
+        outtype._maxsize = float("inf")
+        _StoredMeta._instances[key] = outtype
+        return outtype
+
+
+class _StoredLastAlias(type):
+    @overload
+    def __getitem__(cls, value: type[_T]) -> type[_T]:
+        ...
+
+    @overload
+    def __getitem__(cls, value: tuple[type[_T], Hashable]) -> type[_T]:
+        ...
+
+    def __getitem__(cls, value):
+        return bound(lambda *_: Stored._class_getitem(value)._store[-1])
+
+
+class StoredLast(Generic[_T], metaclass=_StoredLastAlias):
+    def __new__(cls, *args, **kwargs):
+        raise TypeError("Type StoredLast cannot be instantiated.")
+
+    def __init_subclass__(cls, *args, **kwargs):
+        raise TypeError(f"Cannot subclass {cls.__module__}.StoredLast.")
 
 
 def _is_type_like(x: Any):
     return isinstance(x, (type, typing._GenericAlias)) or hasattr(x, "__supertype__")
+
+
+def _repr_like(x: Any):
+    lines = repr(x).split("\n")
+    if len(lines) == 1:
+        return lines[0]
+    else:
+        return lines[0] + " ... "
 
 
 def __getattr__(key: str):

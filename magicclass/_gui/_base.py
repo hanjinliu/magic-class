@@ -881,7 +881,7 @@ class MagicTemplate(MutableSequence[_W], metaclass=_MagicTemplateMeta):
             yield from child._iter_child_magicclasses()
 
     def _call_with_return_callback(self, fname: str, *args, **kwargs) -> None:
-        from ..core import get_function_gui
+        from magicclass.core import get_function_gui
 
         fgui = get_function_gui(self, fname)
         fgui(*args, **kwargs)

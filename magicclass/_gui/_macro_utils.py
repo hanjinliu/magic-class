@@ -8,7 +8,7 @@ from magicclass._magicgui_compat import ValueWidget
 from .utils import get_parameters
 from magicclass.utils import get_signature, thread_worker
 from magicclass.signature import MagicMethodSignature
-
+from magicclass.types import _StoredMeta
 
 if TYPE_CHECKING:
     from ._base import MagicTemplate
@@ -149,7 +149,7 @@ def inject_recorder(func: Callable, is_method: bool = True) -> Callable:
             with bgui.macro.blocked():
                 out = _func.__get__(bgui)(*args, **kwargs)
             if bgui.macro.active:
-                _record_macro(bgui, *args, **kwargs)
+                _record_macro(bgui, out, *args, **kwargs)
             return out
 
         if hasattr(_func, "__signature__"):
@@ -217,7 +217,7 @@ def _define_macro_recorder(sig: inspect.Signature, func: Callable):
 
     if sig.return_annotation is inspect.Parameter.empty:
 
-        def _record_macro(bgui: MagicTemplate, *args, **kwargs):
+        def _record_macro(bgui: MagicTemplate, out, *args, **kwargs):
             bound = sig.bind(*args, **kwargs)
             kwargs = dict(bound.arguments.items())
             expr = Expr.parse_method(bgui, func, (), kwargs)
@@ -238,10 +238,41 @@ def _define_macro_recorder(sig: inspect.Signature, func: Callable):
             bgui.macro._last_setval = None
             return None
 
+    elif isinstance(sig.return_annotation, _StoredMeta):
+        if _auto_call and sig.return_annotation._maxsize == float("inf"):
+            raise ValueError(
+                f"Cannot use auto_call=True with a Stored type {sig.return_annotation}"
+                " with infinite size."
+            )
+
+        def _record_macro(bgui: MagicTemplate, out, *args, **kwargs):
+            bound = sig.bind(*args, **kwargs)
+            kwargs = dict(bound.arguments.items())
+            method_expr = Expr.parse_method(bgui, func, (), kwargs)
+            target = Symbol.asvar(out)
+            expr = Expr(Head.assign, [target, method_expr])
+
+            if _auto_call:
+                last_expr = bgui.macro[-1]
+                if last_expr.head is Head.assign and last_expr[0] == target:
+                    last_method_expr = last_expr.args[1]
+                    if (
+                        last_method_expr.head is Head.call
+                        and last_method_expr.args[0].head is Head.getattr
+                        and last_method_expr.at(0, 1) == expr.at(0, 1)
+                        and len(bgui.macro) > 0
+                    ):
+                        bgui.macro.pop()
+                        bgui.macro._erase_last()
+
+            bgui.macro.append(expr)
+            bgui.macro._last_setval = None
+            return None
+
     else:
         _cname_ = "_call_with_return_callback"
 
-        def _record_macro(bgui: MagicTemplate, *args, **kwargs):
+        def _record_macro(bgui: MagicTemplate, out, *args, **kwargs):
             bound = sig.bind(*args, **kwargs)
             kwargs = dict(bound.arguments.items())
             expr = Expr.parse_method(bgui, _cname_, (func.__name__,), kwargs)
@@ -279,7 +310,7 @@ def _define_macro_recorder_for_partial(
 
     if sig.return_annotation is inspect.Parameter.empty:
 
-        def _record_macro(bgui: MagicTemplate, *args, **kwargs):
+        def _record_macro(bgui: MagicTemplate, out, *args, **kwargs):
             bound = sig.bind(*args, **kwargs)
             bound.apply_defaults()
             kwargs = bound.arguments
@@ -304,7 +335,7 @@ def _define_macro_recorder_for_partial(
     else:
         _cname_ = "_call_with_return_callback"
 
-        def _record_macro(bgui: MagicTemplate, *args, **kwargs):
+        def _record_macro(bgui: MagicTemplate, out, *args, **kwargs):
             bound = sig.bind(*args, **kwargs)
             bound.apply_defaults()
             kwargs = bound.arguments
