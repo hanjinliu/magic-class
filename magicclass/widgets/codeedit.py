@@ -83,7 +83,6 @@ class QCodeEditor(QtW.QPlainTextEdit):
         self.cursorPositionChanged.connect(self._highlight_current_line)
         self._update_line_number_area_width()
 
-        self.syntaxHighlight()
         self.setTabSize(4)
         self.setWordWrapMode(QtGui.QTextOption.WrapMode.NoWrap)
         self.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
