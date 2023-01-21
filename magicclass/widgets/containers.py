@@ -470,12 +470,16 @@ class TabbedContainer(ContainerWidget):
     """A tab categorized Container Widget."""
 
     @property
+    def native_tab_widget(self) -> QtW.QTabWidget:
+        return self._widget._tab_widget
+
+    @property
     def current_index(self):
-        return self._widget._tab_widget.currentIndex()
+        return self.native_tab_widget.currentIndex()
 
     @current_index.setter
     def current_index(self, index: int):
-        self._widget._tab_widget.setCurrentIndex(index)
+        self.native_tab_widget.setCurrentIndex(index)
 
 
 @wrap_container(base=_Stack)

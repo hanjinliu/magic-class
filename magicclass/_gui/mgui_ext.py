@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Callable, Iterable, Any, Generic, TypeVar
+from typing import Callable, Iterable, Any, Generic, TypeVar, Union
 from qtpy.QtWidgets import (
     QPushButton,
     QAction,
@@ -16,6 +16,7 @@ from ._function_gui import FunctionGuiPlus
 from ._icon import get_icon
 
 # magicgui widgets that need to be extended to fit into magicclass
+Clickable = Union["PushButtonPlus", "Action"]
 
 
 class PushButtonPlus(PushButton):
@@ -288,6 +289,9 @@ class Action(AbstractAction):
         icon = get_icon(val)
         icon.install(self)
         self._icon = icon
+
+    def trigger(self):
+        return self.native.trigger()
 
     def from_options(self, options: dict[str] | Callable):
         if callable(options):

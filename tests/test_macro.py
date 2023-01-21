@@ -64,8 +64,6 @@ def test_macro_rerun():
 
     mock.assert_not_called()
 
-    ui.macro.widget.execute_lines(0)
-    mock.assert_not_called()
     ui.macro.widget.execute_lines(1)
     mock.assert_not_called()
     ui.macro.widget.execute_lines(2)

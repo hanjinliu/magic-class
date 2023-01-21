@@ -22,7 +22,7 @@ setup(
     install_requires=[
         "magicgui>=0.5.1",
         "qtpy>=1.10.0",
-        "macro-kit>=0.3.5",
+        "macro-kit>=0.3.9",
         "superqt>=0.4.0",
     ],
     tests_require=[
@@ -30,7 +30,6 @@ setup(
         "pytest-qt",
         "numpy",
         "pyqt5",
-        "superqt",
         "pyqtgraph",
         "vispy",
     ],

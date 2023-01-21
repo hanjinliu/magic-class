@@ -33,9 +33,11 @@ from .plot import Figure, SeabornFigure
 from .separator import Separator
 from .utils import FreeWidget
 from .logger import Logger
+from .codeedit import CodeEdit
 
 __all__ = [
     "ButtonContainer",
+    "CodeEdit",
     "ColorEdit",
     "ColorSlider",
     "ConsoleTextEdit",

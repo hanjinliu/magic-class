@@ -12,10 +12,12 @@ from magicclass._gui._base import MagicTemplate
 _datetime = Expr(Head.getattr, [datetime, datetime.datetime])
 _date = Expr(Head.getattr, [datetime, datetime.date])
 _time = Expr(Head.getattr, [datetime, datetime.time])
+_timedelta = Expr(Head.getattr, [datetime, datetime.timedelta])
 
 # magicgui-style input
 mk.register_type(Enum, lambda e: symbol(e.value))
 mk.register_type(Path, lambda e: f"r'{e}'")
+mk.register_type(float, lambda e: str(round(e, 8)))
 
 try:
     from magicgui.widgets._concrete import ListDataView
@@ -48,6 +50,9 @@ mk.register_type(
 )
 mk.register_type(
     datetime.time, lambda e: Expr.parse_call(_time, (e.hour, e.minute), {})
+)
+mk.register_type(
+    datetime.timedelta, lambda e: Expr.parse_call(_timedelta, (e.days, e.seconds), {})
 )
 
 

@@ -50,7 +50,7 @@ from .mgui_ext import (
     _LabeledWidgetAction,
     mguiLike,
 )
-from .utils import copy_class, callable_to_classes
+from .utils import copy_class, callable_to_classes, show_dialog_from_mgui
 from ._macro import GuiMacro
 from ._macro_utils import inject_recorder, inject_silencer, value_widget_callback
 from ._icon import get_icon
@@ -788,20 +788,12 @@ class MagicTemplate(MutableSequence[_W], metaclass=_MagicTemplateMeta):
 
         elif nparams == 1 and issubclass(fgui_classes[0], FileEdit) and not has_preview:
             # We don't want to open a magicgui dialog and again open a file dialog.
+
             def run_function():
                 mgui = _build_mgui(widget, func, self)
                 mgui.native.setParent(self.native, mgui.native.windowFlags())
-                fdialog: FileEdit = mgui[0]
-                if result := fdialog._show_file_dialog(
-                    fdialog.mode,
-                    caption=fdialog._btn_text,
-                    start_path=str(fdialog.value),
-                    filter=fdialog.filter,
-                ):
-                    fdialog.value = result
-                    out = mgui(result)
-                else:
-                    out = None
+                out = show_dialog_from_mgui(mgui)
+                _define_close_callback(self, mgui)
                 return out
 
         else:
@@ -831,16 +823,7 @@ class MagicTemplate(MutableSequence[_W], metaclass=_MagicTemplateMeta):
                             mgui.insert(0, title)
 
                     if self._close_on_run and not mgui._auto_call:
-                        if self._popup_mode not in (
-                            PopUpMode.dock,
-                            PopUpMode.parentsub,
-                            PopUpMode.dialog,
-                        ):
-                            mgui.called.connect(mgui.hide)
-                        elif self._popup_mode in (PopUpMode.dock, PopUpMode.parentsub):
-                            # If FunctioGui is docked or in a subwindow, we should close
-                            # the parent QDockWidget/QMdiSubwindow.
-                            mgui.called.connect(lambda: mgui.parent.hide())
+                        _define_close_callback(self, mgui)
 
                 if nparams == 1 and issubclass(fgui_classes[0], FileEdit):
                     fdialog: FileEdit = mgui[int(_need_title_bar)]
@@ -910,6 +893,7 @@ class BaseGui(MagicTemplate[_W]):
         self._macro_instance = GuiMacro(
             max_lines=defaults["macro-max-history"],
             flags={"Get": False, "Return": False},
+            ui=self,
         )
         self.__magicclass_parent__: BaseGui | None = None
         self.__magicclass_children__: list[MagicTemplate] = []
@@ -918,8 +902,6 @@ class BaseGui(MagicTemplate[_W]):
         self._error_mode = error_mode or ErrorMode.msgbox
         self._my_symbol = Symbol.var("ui")
         self._icon = None
-
-        self.macro.widget.__magicclass_parent__ = self
 
     @property
     def icon(self):
@@ -1369,6 +1351,19 @@ def _define_popup(self: BaseGui, obj, widget: PushButtonPlus | Action):
     else:
         raise RuntimeError(popup_mode)
     return _prep
+
+
+def _define_close_callback(self: BaseGui, mgui: FunctionGui):
+    if self._popup_mode not in (
+        PopUpMode.dock,
+        PopUpMode.parentsub,
+        PopUpMode.dialog,
+    ):
+        mgui.called.connect(mgui.hide)
+    elif self._popup_mode in (PopUpMode.dock, PopUpMode.parentsub):
+        # If FunctioGui is docked or in a subwindow, we should close
+        # the parent QDockWidget/QMdiSubwindow.
+        mgui.called.connect(lambda: mgui.parent.hide())
 
 
 def _implement_confirmation(
