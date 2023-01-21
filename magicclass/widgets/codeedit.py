@@ -477,3 +477,11 @@ class CodeEdit(TextEdit):
     @__magicclass_parent__.setter
     def __magicclass_parent__(self, val):
         self._qcode_edit()._magicclass_parent_ref = weakref.ref(val)
+
+    def zoom_in(self):
+        """Zoom in."""
+        self._qcode_edit().zoomIn()
+
+    def zoom_out(self):
+        """Zoom out."""
+        self._qcode_edit().zoomOut()

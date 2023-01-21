@@ -208,7 +208,15 @@ class MacroEdit(TabbedContainer):
 
     def _delete_tab(self):
         index = self.current_index
-        del self[index]
+        if self[index] is not self.native_macro:
+            """Don't delete the native macro tab."""
+            del self[index]
+
+    def _zoom_in(self):
+        self.textedit.zoom_in()
+
+    def _zoom_out(self):
+        self.textedit.zoom_out()
 
     def show(self):
         super().show()
@@ -303,6 +311,10 @@ class MacroEdit(TabbedContainer):
         self._tab_menu.addAction("Duplicate tab", self._duplicate_tab, "Ctrl+D")
         self._tab_menu.addAction("Current macro in new tab", self._create_native_duplicate)
         self._tab_menu.addAction("Delete tab", self._delete_tab, "Ctrl+W")
+        self._tab_menu.addSeparator()
+        self._tab_menu.addAction("Zoom in", self._zoom_in, "Ctrl+Shift+.")
+        self._tab_menu.addAction("Zoom out", self._zoom_out, "Ctrl+Shift+,")
+
 
         # set macro menu
         self._macro_menu = QtW.QMenu("Macro", self.native)

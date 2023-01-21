@@ -124,6 +124,7 @@ def test_stored_type():
     lefts = [str(ui.macro[i]).split("=")[0].strip() for i in (1, 2, 3)]
     assert lefts[0] != lefts[1] and lefts[1] != lefts[2]
     assert str(ui.macro[4]) == f"ui.receive(s={lefts[-1]})"
+    assert X(3) == ui.provide(3), "provide did not work programmatically"
 
 def test_stored_last_type():
     class X:
