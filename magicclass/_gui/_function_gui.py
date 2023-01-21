@@ -66,8 +66,8 @@ class FunctionGuiPlus(FunctionGui[_R]):
         # 2. Running flag
         # We sometimes want to know if the function is called programmatically or
         # from GUI. The "running" argument is True only when it's called via GUI.
-        self.running = True
         self.calling.emit(self)  # 3. calling signal
+        self.running = True
         try:
             value = self._function(*bound.args, **bound.kwargs)
         finally:
