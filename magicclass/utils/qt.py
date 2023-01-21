@@ -74,7 +74,9 @@ def screen_center():
 
 def move_to_screen_center(qwidget: QWidget) -> None:
     """Move a QWidget to the center of screen."""
-    qwidget.move(screen_center() - qwidget.rect().center())
+    point = screen_center() - qwidget.rect().center()
+    qwidget.move(point)
+    qwidget.adjustSize()
     return None
 
 

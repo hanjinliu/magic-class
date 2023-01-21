@@ -1276,8 +1276,10 @@ def _define_popup(self: BaseGui, obj, widget: PushButtonPlus | Action):
         # To be popped up correctly, window flags of FunctionGui should be
         # "windowFlags" and should appear at the center.
         def _prep(mgui: FunctionGui):
-            mgui.native.setParent(self.native, mgui.native.windowFlags())
-            move_to_screen_center(mgui.native)
+            if mgui.native.parent() is not self.native:
+                mgui.native.setParent(self.native, mgui.native.windowFlags())
+                mgui.show()
+                move_to_screen_center(mgui.native)
 
     elif popup_mode == PopUpMode.parentlast:
 
