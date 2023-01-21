@@ -526,6 +526,14 @@ class _StoredMeta(type):
 _U = TypeVar("_U")
 
 
+class DefaultSpec:
+    def __repr__(self) -> str:
+        return "<default>"
+
+    def __hash__(self) -> int:
+        return id(self)
+
+
 class Stored(Generic[_T], metaclass=_StoredMeta):
     """
     Use variable store of specific type.
@@ -560,6 +568,7 @@ class Stored(Generic[_T], metaclass=_StoredMeta):
     _maxsize: int
     _hash_value: Hashable
     Last = StoredLast
+    _no_spec = DefaultSpec()
 
     __args__: tuple[type] = ()
     _repr_map: dict[type[_U], Callable[[_U], str]] = {}
@@ -652,7 +661,7 @@ class Stored(Generic[_T], metaclass=_StoredMeta):
                     "The first argument of Stored must be a type but "
                     f"got {type(value)}."
                 )
-            _tp, _hash = value, None
+            _tp, _hash = value, cls._no_spec
         key = (_tp, _hash)
         if outtype := _StoredMeta._instances.get(key):
             return outtype
