@@ -1,7 +1,7 @@
 from __future__ import annotations
 from pathlib import Path
 
-from typing import TYPE_CHECKING, Any, Iterable, overload
+from typing import TYPE_CHECKING, Any, Callable, Iterable, overload
 import warnings
 from qtpy import QtWidgets as QtW, QtCore
 from macrokit import Symbol, Expr, Head, Macro, parse
@@ -61,7 +61,6 @@ class MacroEdit(TabbedContainer):
         """Return the selected code in the current code editor."""
         all_code: str = self.textedit.value
         selected = self.textedit.selected
-        code = parse(selected.strip())
 
         # to safely run code, every line should be fully selected even if the
         # selected region does not raise SyntaxError.
@@ -72,6 +71,8 @@ class MacroEdit(TabbedContainer):
             raise SyntaxError("Select full line(s).")
         if end < l and "\n" not in all_code[end : end + 2]:
             raise SyntaxError("Select full line(s).")
+
+        code = parse(selected.strip())
         return code
 
     def _create_command(self):
@@ -380,7 +381,17 @@ class GuiMacro(Macro):
         args = [self._args[i] for i in indices]
         return Macro(args, flags=self.flags)
 
-    def get_evaluator(self, key: int | slice | Iterable[int], ns: dict[str, Any] = {}):
+    def get_command(self, key: int) -> Callable[[], Any]:
+        """Get the command function at the give index."""
+        action = self.widget._command_menu[key]
+        return lambda: action.trigger()
+
+    def get_evaluator(
+        self,
+        key: int | slice | Iterable[int],
+        ns: dict[str, Any] = {},
+    ) -> Callable[[], Any]:
+        """Get the function that evaluate the macro lines at given indices."""
         if isinstance(key, (int, slice)):
             subset = self[key]
         else:

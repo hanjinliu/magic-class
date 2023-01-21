@@ -290,6 +290,9 @@ class Action(AbstractAction):
         icon.install(self)
         self._icon = icon
 
+    def trigger(self):
+        return self.native.trigger()
+
     def from_options(self, options: dict[str] | Callable):
         if callable(options):
             try:
