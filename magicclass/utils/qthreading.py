@@ -644,7 +644,9 @@ class thread_worker:
 
             # bind macro-recorder if exists
             if self._recorder is not None:
-                worker.returned.connect(lambda _: self._recorder(gui, *args, **kwargs))
+                worker.returned.connect(
+                    lambda out: self._recorder(gui, out, *args, **kwargs)
+                )
 
             if self._progress:
                 if not getattr(pbar, "visible", False):

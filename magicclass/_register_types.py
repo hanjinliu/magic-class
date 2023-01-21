@@ -4,7 +4,7 @@ from macrokit import Expr, Head, symbol
 from enum import Enum
 from pathlib import Path
 import datetime
-from magicclass.types import Color
+from magicclass.types import Color, Stored
 from magicclass.widgets import ColorEdit
 from magicclass._gui._base import MagicTemplate
 
@@ -69,3 +69,8 @@ def find_myname(gui: MagicTemplate):
 import magicgui as mgui
 
 mgui.register_type(Color, widget_type=ColorEdit)
+mgui.register_type(
+    Stored,
+    choices=Stored._get_choice,
+    return_callback=Stored._store_value,
+)
