@@ -250,7 +250,7 @@ _HORIZONTAL_SETTING = {
     "layout": QtW.QHBoxLayout,
 }
 
-
+# modified from superqt\collapsible\_collapsible.py
 class _QCollapsible(QtW.QWidget):
     def __init__(self, parent: QtW.QWidget | None = None, layout: str = "vertical"):
         super().__init__(parent)
@@ -265,6 +265,7 @@ class _QCollapsible(QtW.QWidget):
         self._collapsed = True
 
         self._animation = QtCore.QPropertyAnimation(self)
+        self._animation.setEasingCurve(QtCore.QEasingCurve.Type.InOutCubic)
 
     def setPropertyName(self, name: bytes):
         self._animation.setPropertyName(name)
@@ -316,10 +317,10 @@ class _Collapsibles(ContainerBase):
 
         self._expand_btn = QtW.QToolButton(self._qwidget)
         self._expand_btn.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
-        self._expand_btn.setArrowType(self._setting["collapsed-arrow"])
+        self._expand_btn.setArrowType(self._setting["expanded-arrow"])
         self._expand_btn.setText(text)
         self._expand_btn.setCheckable(True)
-        self._expand_btn.setChecked(False)
+        self._expand_btn.setChecked(True)
         self._expand_btn.setStyleSheet(
             f"""
             QToolButton {{
@@ -329,7 +330,6 @@ class _Collapsibles(ContainerBase):
             """
         )
         self._expand_btn.clicked.connect(self._mgui_change_expand)
-        self._mgui_change_expand()
 
         self._qwidget.layout().addWidget(self._expand_btn, 0, self._setting["align"])
         self._qwidget.layout().addWidget(self._inner_qwidget, 0, self._setting["align"])
