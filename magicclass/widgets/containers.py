@@ -1,16 +1,18 @@
 from __future__ import annotations
+
 from typing import Any, TypeVar, Callable
 import warnings
-from qtpy import QtWidgets as QtW
+from qtpy import QtWidgets as QtW, QtCore
 from qtpy.QtCore import Qt, QEvent, QSize
+
 from magicgui.application import use_app
 from magicgui.widgets import Widget
-from magicclass._magicgui_compat import ContainerWidget
 from magicgui.backends._qtpy.widgets import (
     QBaseWidget,
     Container as ContainerBase,
     MainWindow as MainWindowBase,
 )
+from magicclass._magicgui_compat import ContainerWidget
 
 from .utils import merge_super_sigs
 
@@ -236,6 +238,7 @@ _VERTICAL_SETTING = {
     "collapsed-arrow": Qt.ArrowType.RightArrow,
     "align": Qt.AlignmentFlag.AlignTop,
     "text-align": "left",
+    "property-name": b"maximumHeight",
     "layout": QtW.QVBoxLayout,
 }
 _HORIZONTAL_SETTING = {
@@ -243,43 +246,81 @@ _HORIZONTAL_SETTING = {
     "collapsed-arrow": Qt.ArrowType.LeftArrow,
     "align": Qt.AlignmentFlag.AlignLeft,
     "text-align": "center",
+    "property-name": b"maximumWidth",
     "layout": QtW.QHBoxLayout,
 }
 
-
+# modified from superqt\collapsible\_collapsible.py
 class _QCollapsible(QtW.QWidget):
+    def __init__(self, parent: QtW.QWidget | None = None, layout: str = "vertical"):
+        super().__init__(parent)
+
+        if layout == "horizontal":
+            _layout: QtW.QLayout = QtW.QHBoxLayout()
+        else:
+            _layout = QtW.QVBoxLayout()
+
+        _layout.setContentsMargins(0, 0, 0, 0)
+        self.setLayout(_layout)
+        self._collapsed = True
+
+        self._animation = QtCore.QPropertyAnimation(self)
+        self._animation.setEasingCurve(QtCore.QEasingCurve.Type.InOutCubic)
+
+    def setPropertyName(self, name: bytes):
+        self._animation.setPropertyName(name)
+        self._animation.setStartValue(0)
+        self._animation.setDuration(300)
+        self._animation.setTargetObject(self)
+
     def sizeHint(self) -> QSize:
-        if self.isVisible():
+        if not self._collapsed:
             return super().sizeHint()
         else:
             return QSize(0, 0)
+
+    def collapsed(self):
+        return self._collapsed
+
+    def setCollapsed(self, col: bool):
+        if col:
+            direction = QtCore.QPropertyAnimation.Direction.Backward
+        else:
+            direction = QtCore.QPropertyAnimation.Direction.Forward
+        self._collapsed = col
+        _content_height = self.sizeHint().height() + 10
+        self._animation.setDirection(direction)
+        self._animation.setEndValue(_content_height)
+        self._animation.start()
 
 
 class _Collapsibles(ContainerBase):
     _setting: dict[str, Any]
 
-    def __init__(self, layout="vertical", text="", scrollable: bool = False, **kwargs):
-        QBaseWidget.__init__(self, QtW.QWidget)
-        if layout == "horizontal":
-            self._layout: QtW.QLayout = QtW.QHBoxLayout()
-        else:
-            self._layout = QtW.QVBoxLayout()
+    def __init__(
+        self,
+        layout: str = "vertical",
+        text: str = "",
+        scrollable: bool = False,
+        **kwargs,
+    ):
+        QBaseWidget.__init__(self, QtW.QWidget, **kwargs)
 
         self._get_setting()
         self._qwidget = QtW.QWidget()
         self._qwidget.setLayout(self._setting["layout"]())
-        self._inner_qwidget = _QCollapsible(self._qwidget)
-        self._inner_qwidget.setLayout(self._layout)
+        self._inner_qwidget = _QCollapsible(self._qwidget, layout)
+        self._inner_qwidget.setPropertyName(self._setting["property-name"])
+        self._layout = self._inner_qwidget.layout()
 
         self._qwidget.layout().setSpacing(0)
-        self._layout.setContentsMargins(0, 0, 0, 0)
 
         self._expand_btn = QtW.QToolButton(self._qwidget)
-        self._expand_btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        self._expand_btn.setArrowType(self._setting["collapsed-arrow"])
+        self._expand_btn.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
+        self._expand_btn.setArrowType(self._setting["expanded-arrow"])
         self._expand_btn.setText(text)
         self._expand_btn.setCheckable(True)
-        self._expand_btn.setChecked(False)
+        self._expand_btn.setChecked(True)
         self._expand_btn.setStyleSheet(
             f"""
             QToolButton {{
@@ -289,7 +330,6 @@ class _Collapsibles(ContainerBase):
             """
         )
         self._expand_btn.clicked.connect(self._mgui_change_expand)
-        self._mgui_change_expand()
 
         self._qwidget.layout().addWidget(self._expand_btn, 0, self._setting["align"])
         self._qwidget.layout().addWidget(self._inner_qwidget, 0, self._setting["align"])
@@ -300,11 +340,11 @@ class _Collapsibles(ContainerBase):
         return not self._expand_btn.isChecked()
 
     def _collapse(self):
-        self._inner_qwidget.setVisible(False)
+        self._inner_qwidget.setCollapsed(True)
         self._expand_btn.setArrowType(self._setting["collapsed-arrow"])
 
     def _expand(self):
-        self._inner_qwidget.setVisible(True)
+        self._inner_qwidget.setCollapsed(False)
         self._expand_btn.setArrowType(self._setting["expanded-arrow"])
 
     def _mgui_change_expand(self):
@@ -487,12 +527,16 @@ class StackedContainer(ContainerWidget):
     """A stacked Container Widget"""
 
     @property
+    def native_stacked_widget(self) -> QtW.QStackedWidget:
+        return self._widget._stacked_widget
+
+    @property
     def current_index(self):
-        return self._widget._stacked_widget.currentIndex()
+        return self.native_stacked_widget.currentIndex()
 
     @current_index.setter
     def current_index(self, index: int):
-        self._widget._stacked_widget.setCurrentIndex(index)
+        self.native_stacked_widget.setCurrentIndex(index)
 
 
 @wrap_container(base=_ScrollableContainer)
