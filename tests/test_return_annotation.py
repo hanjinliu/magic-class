@@ -21,8 +21,8 @@ def test_return_annotation():
             return s + "-0"
 
     ui = A()
-    fgui_f = get_function_gui(ui, "f")
-    fgui_g = get_function_gui(ui, "g")
+    fgui_f = get_function_gui(ui.f)
+    fgui_g = get_function_gui(ui.g)
 
     assert len(ui.macro) == 1
     mock.assert_not_called()
@@ -45,7 +45,7 @@ def test_return_annotation_auto_call():
             pass
 
     ui = A()
-    fgui_f = get_function_gui(ui, "f")
+    fgui_f = get_function_gui(ui.f)
 
     assert len(ui.macro) == 1
     fgui_f.x.value = 2

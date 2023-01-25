@@ -1,4 +1,5 @@
 from __future__ import annotations
+from types import MethodType
 
 from typing import TYPE_CHECKING, Callable, Generic, TypeVar, overload, Any, Protocol
 from typing_extensions import Literal
@@ -30,6 +31,9 @@ class _MagicClassDecorator(Protocol, Generic[_Base]):
     def __call__(self, cls: _C) -> type[_Base] | _C: ...
 
 def build_help(ui: MagicTemplate, parent: QWidget | None = None) -> "HelpWidget": ...
+@overload
+def get_function_gui(method: MethodType) -> FunctionGuiPlus: ...
+@overload
 def get_function_gui(ui: MagicTemplate, name: str) -> FunctionGuiPlus: ...
 @overload
 def magicclass(

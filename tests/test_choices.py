@@ -18,12 +18,13 @@ def test_get_choices(widget_type):
             pass
 
     ui = A()
+    fgui = get_function_gui(ui.func)
     ui["func"].changed()
-    assert ui["func"].mgui.x.widget_type == widget_type
-    assert ui["func"].mgui.x.choices == (0, 1, 2)
+    assert fgui.x.widget_type == widget_type
+    assert fgui.x.choices == (0, 1, 2)
     ui._a = [3, 4]
     ui.reset_choices()
-    assert ui["func"].mgui.x.choices == (3, 4)
+    assert fgui.x.choices == (3, 4)
 
 @pytest.mark.parametrize("widget_type", ["ComboBox", "RadioButtons", "Select"])
 def test_nesting(widget_type):
@@ -48,14 +49,16 @@ def test_nesting(widget_type):
     ui = A()
     ui["func"].changed()
     ui.B["func"].changed()
-    assert ui["func"].mgui.x.widget_type == widget_type
-    assert ui["func"].mgui.x.choices == (0, 1, 2)
-    assert ui.B["func"].mgui.x.widget_type == widget_type
-    assert ui.B["func"].mgui.x.choices == (0, 1, 2)
+    fgui0 = get_function_gui(ui.func)
+    fgui1 = get_function_gui(ui.B.func)
+    assert fgui0.x.widget_type == widget_type
+    assert fgui0.x.choices == (0, 1, 2)
+    assert fgui1.x.widget_type == widget_type
+    assert fgui1.x.choices == (0, 1, 2)
     ui.B._a = [3, 4]
     ui.reset_choices()
-    assert ui["func"].mgui.x.choices == (3, 4)
-    assert ui.B["func"].mgui.x.choices == (3, 4)
+    assert fgui0.x.choices == (3, 4)
+    assert fgui1.x.choices == (3, 4)
 
 
 def test_wraps():
@@ -77,11 +80,12 @@ def test_wraps():
 
     ui = A()
     ui["func"].changed()
-    assert ui["func"].mgui.x.widget_type == "ComboBox"
-    assert ui["func"].mgui.x.choices == (0, 1, 2)
+    fgui = get_function_gui(ui.func)
+    assert fgui.x.widget_type == "ComboBox"
+    assert fgui.x.choices == (0, 1, 2)
     ui._a = [3, 4]
     ui.reset_choices()
-    assert ui["func"].mgui.x.choices == (3, 4)
+    assert fgui.x.choices == (3, 4)
 
 def test_field():
     @magicclass
@@ -123,8 +127,8 @@ def test_multi_gui():
     assert a1.choices.choices[0] == id(a1)
     assert a0.choices.choices[1] != a1.choices.choices[1]
 
-    fgui0 = get_function_gui(a0, "f")
-    fgui1 = get_function_gui(a1, "f")
+    fgui0 = get_function_gui(a0.f)
+    fgui1 = get_function_gui(a1.f)
 
     assert fgui0.c.choices[0] == id(a0)
     assert fgui1.c.choices[0] == id(a1)
@@ -142,7 +146,7 @@ def test_choices_with_string():
 
     ui = A()
     assert ui.choices.choices[0] == id(ui)
-    fgui = get_function_gui(ui, "f")
+    fgui = get_function_gui(ui.f)
     assert fgui.c.choices[0] == id(ui)
 
     @magicclass
@@ -159,7 +163,7 @@ def test_choices_with_string():
 
     ui = A()
     assert ui.choices.choices[0] == 1
-    fgui = get_function_gui(ui, "f")
+    fgui = get_function_gui(ui.f)
     assert fgui.c.choices[0] == 1
 
 def test_choices_type():
@@ -183,9 +187,9 @@ def test_choices_type():
             c.bit_length()
 
     ui = A()
-    cbox = get_function_gui(ui, "f").c
+    cbox = get_function_gui(ui.f).c
     assert cbox.choices == (1, 2)
-    cbox = get_function_gui(ui, "g").c
+    cbox = get_function_gui(ui.g).c
     assert cbox.choices == (0, 1)
 
 def test_someof_type():
@@ -209,9 +213,9 @@ def test_someof_type():
             c[0].bit_length()
 
     ui = A()
-    cbox = get_function_gui(ui, "f").c
+    cbox = get_function_gui(ui.f).c
     assert cbox.choices == (1, 2)
-    cbox = get_function_gui(ui, "g").c
+    cbox = get_function_gui(ui.g).c
     assert cbox.choices == (0, 1)
 
 def test_slice_choices():
@@ -224,6 +228,6 @@ def test_slice_choices():
             y.is_integer()
 
     ui = A()
-    fgui = get_function_gui(ui, "f")
+    fgui = get_function_gui(ui.f)
     assert fgui.x.choices == (3, 4, 5)
     assert fgui.y.choices == (0.1, 0.15, 0.2, 0.25)

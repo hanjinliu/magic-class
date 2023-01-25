@@ -9,8 +9,8 @@ def test_get_function_gui():
         def f(self): ...
 
     ui = A()
-    f = get_function_gui(ui, "f")
-    b = get_function_gui(ui.B, "b")
+    f = get_function_gui(ui.f)
+    b = get_function_gui(ui.B.b)
     assert f is ui["f"].mgui
     assert b is ui.B["b"].mgui
 
@@ -26,7 +26,7 @@ def test_update_widget_state():
             pass
 
     ui = A()
-    fgui = get_function_gui(ui, "f")
+    fgui = get_function_gui(ui.f)
     assert ui.x.value == 0
     assert ui.y == "s"
     assert fgui.asdict() == {"x": 0, "y": 1.0}

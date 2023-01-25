@@ -10,7 +10,7 @@ def test_basics():
             pass
     ui = A()
     ui["f"].changed()
-    opt = get_function_gui(ui, "f")[0]
+    opt = get_function_gui(ui.f)[0]
 
     assert isinstance(opt, widgets.OptionalWidget)
     assert opt.value is None
@@ -24,7 +24,7 @@ def test_set_options():
 
     ui = A()
     ui["f"].changed()
-    opt = get_function_gui(ui, "f")[0]
+    opt = get_function_gui(ui.f)[0]
 
     assert isinstance(opt, widgets.OptionalWidget)
     assert opt.text == "x-text"
@@ -41,7 +41,7 @@ def test_optional_with_annotated():
 
     ui = A()
     ui["f"].changed()
-    opt = get_function_gui(ui, "f")[0]
+    opt = get_function_gui(ui.f)[0]
 
     assert isinstance(opt, widgets.OptionalWidget)
     assert opt.text == "x-text"
@@ -55,7 +55,7 @@ def test_union():
             pass
 
     ui = A()
-    wdt = get_function_gui(ui, "f")[0]
+    wdt = get_function_gui(ui.f)[0]
     assert wdt.widget_type == "UnionWidget"
     assert wdt[0].widget_type == "SpinBox"
     assert wdt[1].widget_type == "LineEdit"
@@ -67,7 +67,7 @@ def test_union_with_default():
             pass
 
     ui = A()
-    wdt = get_function_gui(ui, "f")[0]
+    wdt = get_function_gui(ui.f)[0]
     assert wdt.widget_type == "UnionWidget"
     assert wdt[0].widget_type == "SpinBox"
     assert wdt[1].widget_type == "LineEdit"
@@ -82,7 +82,7 @@ def test_union_with_set_option():
             pass
 
     ui = A()
-    wdt = get_function_gui(ui, "f")[0]
+    wdt = get_function_gui(ui.f)[0]
     assert wdt.widget_type == "UnionWidget"
     assert wdt[0].widget_type == "SpinBox"
     assert wdt[1].widget_type == "FloatSpinBox"
@@ -111,8 +111,8 @@ def test_stored_type():
             pass
 
     ui = A()
-    provide = get_function_gui(ui, "provide")
-    receive = get_function_gui(ui, "receive")
+    provide = get_function_gui(ui.provide)
+    receive = get_function_gui(ui.receive)
     provide(2)
     assert receive.s.choices == (X(2),)
     provide(2)
@@ -149,8 +149,8 @@ def test_stored_last_type():
 
 
     ui = A()
-    provide = get_function_gui(ui, "provide")
-    receive = get_function_gui(ui, "receive")
+    provide = get_function_gui(ui.provide)
+    receive = get_function_gui(ui.receive)
     provide(2)
     assert receive.s.value == X(2)
     provide(3)

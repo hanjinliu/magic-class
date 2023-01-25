@@ -94,7 +94,7 @@ def test_singledispatchmethod():
             mock(i, bool)
 
     ui = A()
-    mgui = get_function_gui(ui, "f")
+    mgui = get_function_gui(ui.f)
     wdt = mgui[0]
     assert len(wdt) == 3
 
@@ -138,7 +138,7 @@ def test_singledispatchmethod_with_options():
             mock(i, float)
 
     ui = A()
-    mgui = get_function_gui(ui, "f")
+    mgui = get_function_gui(ui.f)
     wdt = mgui[0]
     assert len(wdt) == 3
 

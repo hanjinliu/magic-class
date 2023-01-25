@@ -84,10 +84,10 @@ def test_basic_usage():
     ui = T()
     assert ui.X["f"].text == "Text"
     assert ui.X["f"].tooltip == "doc-f"
-    assert get_function_gui(ui.X, "f").x.min == 1
-    assert get_function_gui(ui.X, "f").layout == "horizontal"
+    assert get_function_gui(ui.X.f).x.min == 1
+    assert get_function_gui(ui.X.f).layout == "horizontal"
     assert ui["g"].tooltip == "doc-g"
-    assert get_function_gui(ui, "g").y.tooltip == "param-y"
+    assert get_function_gui(ui.g).y.tooltip == "param-y"
     assert isinstance(ui["i"], MethodType)
     assert ui.i.__doc__ == "doc-i"
     ui["k"].changed()
@@ -112,7 +112,7 @@ def test_thread_worker():
     assert isinstance(T.f, thread_worker)
     assert ui["f"].tooltip == "doc-f"
     assert ui["f"].text == "Text"
-    assert get_function_gui(ui, "f").x.min == 1
+    assert get_function_gui(ui.f).x.min == 1
 
 def test_wraps():
     @magicclass

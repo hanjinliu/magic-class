@@ -33,7 +33,11 @@ from magicclass._gui._base import (
 from magicclass._gui import ContextMenuGui, MenuGui, ToolBarGui
 from magicclass._app import get_app
 from magicclass.types import WidgetType
-from magicclass import _register_types  # activate type registration things.
+
+# activate type registration things.
+from magicclass import _register_types
+
+del _register_types
 
 if TYPE_CHECKING:
     from magicclass.stylesheets import StyleSheet
@@ -43,9 +47,9 @@ if TYPE_CHECKING:
     from magicclass.help import HelpWidget
     from macrokit import Macro
 
-_BASE_CLASS_SUFFIX = "_Base"
+_BASE_CLASS_SUFFIX = ".base"
 
-_TYPE_MAP = {
+_TYPE_MAP: dict[WidgetType, type[ClassGuiBase]] = {
     WidgetType.none: ClassGui,
     WidgetType.scrollable: ScrollableClassGui,
     WidgetType.draggable: DraggableClassGui,
@@ -497,25 +501,30 @@ def build_help(ui: MagicTemplate, parent=None) -> HelpWidget:
     return help_widget
 
 
-def get_function_gui(ui: MagicTemplate, name: str) -> FunctionGuiPlus:
+def get_function_gui(ui: MagicTemplate, name: str = None) -> FunctionGuiPlus:
     """
-    Get the FunctionGui object hidden beneath push button or menu.
+    Get the FunctionGui object hidden beneath push button or menu action.
 
-    This function is a helper function for magicclass.
+    This function is a helper function for magicclass. Using this method is
+    always safer than directly accessing it by ``ui["method"].mgui``.
+    Either of following expression is allowed.
 
-    Parameters
-    ----------
-    ui : MagicTemplate
-        Any of a magic-class instance.
-    name : str
-        Name of method (or strictly speaking, the name of PushButton).
+    >>> get_function_gui(ui, "method")
+    >>> get_function_gui(ui.method)
 
-    Returns
-    -------
-    FunctionGuiPlus
-        FunctionGui object.
     """
-    func = getattr(ui, name)
+    if name is None:
+        if hasattr(ui, "__self__") and callable(ui):
+            func = ui
+            ui = func.__self__
+            name = func.__name__
+        else:
+            raise TypeError(
+                "The first argument of `get_function_gui() must be a method if "
+                "the method name is not given."
+            )
+    else:
+        func = getattr(ui, name)
     widget = ui[name]
 
     if not hasattr(widget, "mgui"):
