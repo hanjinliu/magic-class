@@ -77,8 +77,8 @@ def test_options():
             pass
 
     ui = A()
-    assert get_function_gui(ui, "f").a.widget_type == "LogSlider"
-    assert get_function_gui(ui, "g").a.widget_type == "LogSlider"
+    assert get_function_gui(ui.f).a.widget_type == "LogSlider"
+    assert get_function_gui(ui.g).a.widget_type == "LogSlider"
 
 def test_bind():
     @magicclass(error_mode="stderr")
@@ -97,7 +97,7 @@ def test_bind():
 
     ui = A()
     assert ui.a == 0
-    assert not get_function_gui(ui, "f").a.visible
+    assert not get_function_gui(ui.f).a.visible
     ui["f"].changed()
 
 def test_choice():
@@ -123,8 +123,8 @@ def test_choice():
             mock()
 
     ui = A()
-    assert get_function_gui(ui, "f").a.choices == (0, 1)
-    assert get_function_gui(ui, "g").a.choices == (0, 1)
+    assert get_function_gui(ui.f).a.choices == (0, 1)
+    assert get_function_gui(ui.g).a.choices == (0, 1)
     mock.assert_not_called()
     ui.f(0)
     mock.assert_called_once()

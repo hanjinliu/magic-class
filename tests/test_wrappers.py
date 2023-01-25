@@ -153,10 +153,10 @@ def test_impl_preview():
             mock(x=x, preview=True)
 
     ui = A()
-    f0_gui = get_function_gui(ui, "f0")
+    f0_gui = get_function_gui(ui.f0)
     assert f0_gui[-2].widget_type == "PushButton"
     assert f0_gui[-2].text == "preview 0"
-    f1_gui = get_function_gui(ui, "f1")
+    f1_gui = get_function_gui(ui.f1)
     assert f1_gui[-2].widget_type == "PushButton"
     assert f1_gui[-2].text == "preview 1"
 
@@ -200,10 +200,10 @@ def test_impl_preview_nested():
             mock(type=type(self), x=x, preview=True)
 
     ui = A()
-    f0_gui = get_function_gui(ui.B, "f0")
+    f0_gui = get_function_gui(ui.B.f0)
     assert f0_gui[-2].widget_type == "PushButton"
     assert f0_gui[-2].text == "preview 0"
-    f1_gui = get_function_gui(ui.B, "f1")
+    f1_gui = get_function_gui(ui.B.f1)
     assert f1_gui[-2].widget_type == "PushButton"
     assert f1_gui[-2].text == "preview 1"
 
@@ -238,7 +238,7 @@ def test_impl_preview_using_itself():
             mock(i)
 
     ui = A()
-    f_gui = get_function_gui(ui, "f")
+    f_gui = get_function_gui(ui.f)
     assert f_gui[-2].widget_type == "PushButton"
 
     mock.assert_not_called()
@@ -272,7 +272,7 @@ def test_impl_preview_auto_call_and_context():
             self._result = old
 
     ui = A()
-    f_gui = get_function_gui(ui, "f")
+    f_gui = get_function_gui(ui.f)
     check_box = f_gui[-2]
     call_button = f_gui[-1]
     spinbox = f_gui[0]
@@ -317,7 +317,7 @@ def test_impl_preview_using_context_only():
             self._result = old
 
     ui = A()
-    f_gui = get_function_gui(ui, "f")
+    f_gui = get_function_gui(ui.f)
     check_box = f_gui[-2]
     call_button = f_gui[-1]
     spinbox = f_gui[0]
@@ -367,7 +367,7 @@ def test_impl_preview_with_cleanup():
                 self._result = None
 
     ui = A()
-    f_gui = get_function_gui(ui, "f")
+    f_gui = get_function_gui(ui.f)
     check_box = f_gui[-2]
     call_button = f_gui[-1]
     spinbox = f_gui[0]
@@ -410,7 +410,7 @@ def test_confirm():
     mconf.assert_not_called()
     ui.f(0)
     mconf.assert_not_called()  # no confirmation if executed programatically
-    get_function_gui(ui, "f")()
+    get_function_gui(ui.f)()
     mconf.assert_value("conf-text")
 
     # text formating
@@ -425,7 +425,7 @@ def test_confirm():
     ui = A()
 
     mconf.assert_not_called()
-    fgui = get_function_gui(ui, "f")
+    fgui = get_function_gui(ui.f)
     fgui()
     mconf.assert_value("<0>")
     fgui.a.value = 16
@@ -445,7 +445,7 @@ def test_confirm():
     ui = A()
 
     mconf.assert_not_called()
-    fgui = get_function_gui(ui, "f")
+    fgui = get_function_gui(ui.f)
     fgui()
     mconf.assert_not_called()
     fgui.a.value = 16
@@ -471,8 +471,8 @@ def test_confirm_with_other_wrapper():
             pass
 
     ui = A()
-    fgui1 = get_function_gui(ui, "f1")
-    fgui2 = get_function_gui(ui, "f2")
+    fgui1 = get_function_gui(ui.f1)
+    fgui2 = get_function_gui(ui.f2)
     assert fgui1.a.max == 10
     assert fgui2.a.max == 12
 
@@ -501,8 +501,8 @@ def test_confirm_with_thread_worker():
             pass
 
     ui = A()
-    fgui1 = get_function_gui(ui, "f1")
-    fgui2 = get_function_gui(ui, "f2")
+    fgui1 = get_function_gui(ui.f1)
+    fgui2 = get_function_gui(ui.f2)
     assert isinstance(A.f1, thread_worker)
     assert isinstance(A.f2, thread_worker)
 

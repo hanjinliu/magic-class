@@ -123,8 +123,8 @@ def test_multi_gui():
     assert a1.choices.choices[0] == id(a1)
     assert a0.choices.choices[1] != a1.choices.choices[1]
 
-    fgui0 = get_function_gui(a0, "f")
-    fgui1 = get_function_gui(a1, "f")
+    fgui0 = get_function_gui(a0.f)
+    fgui1 = get_function_gui(a1.f)
 
     assert fgui0.c.choices[0] == id(a0)
     assert fgui1.c.choices[0] == id(a1)
@@ -142,7 +142,7 @@ def test_choices_with_string():
 
     ui = A()
     assert ui.choices.choices[0] == id(ui)
-    fgui = get_function_gui(ui, "f")
+    fgui = get_function_gui(ui.f)
     assert fgui.c.choices[0] == id(ui)
 
     @magicclass
@@ -159,7 +159,7 @@ def test_choices_with_string():
 
     ui = A()
     assert ui.choices.choices[0] == 1
-    fgui = get_function_gui(ui, "f")
+    fgui = get_function_gui(ui.f)
     assert fgui.c.choices[0] == 1
 
 def test_choices_type():
@@ -183,9 +183,9 @@ def test_choices_type():
             c.bit_length()
 
     ui = A()
-    cbox = get_function_gui(ui, "f").c
+    cbox = get_function_gui(ui.f).c
     assert cbox.choices == (1, 2)
-    cbox = get_function_gui(ui, "g").c
+    cbox = get_function_gui(ui.g).c
     assert cbox.choices == (0, 1)
 
 def test_someof_type():
@@ -209,9 +209,9 @@ def test_someof_type():
             c[0].bit_length()
 
     ui = A()
-    cbox = get_function_gui(ui, "f").c
+    cbox = get_function_gui(ui.f).c
     assert cbox.choices == (1, 2)
-    cbox = get_function_gui(ui, "g").c
+    cbox = get_function_gui(ui.g).c
     assert cbox.choices == (0, 1)
 
 def test_slice_choices():
@@ -224,6 +224,6 @@ def test_slice_choices():
             y.is_integer()
 
     ui = A()
-    fgui = get_function_gui(ui, "f")
+    fgui = get_function_gui(ui.f)
     assert fgui.x.choices == (3, 4, 5)
     assert fgui.y.choices == (0.1, 0.15, 0.2, 0.25)

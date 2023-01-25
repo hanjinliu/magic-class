@@ -610,7 +610,7 @@ class thread_worker:
         return worker
 
     def _create_method(self, gui: BaseGui):
-        from ..fields import MagicField
+        from magicclass.fields import MagicField
 
         @wraps(self)
         def _create_worker(*args, **kwargs):
@@ -685,6 +685,7 @@ class thread_worker:
 
             return None
 
+        _create_worker.__self__ = gui
         return _create_worker
 
     def _get_method_signature(self) -> inspect.Signature:
