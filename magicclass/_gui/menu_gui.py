@@ -145,7 +145,7 @@ class MenuGuiBase(ContainerLikeGui):
                         # with a type object (not instance).
                         widget.__magicclass_parent__ = self
 
-                    if name.startswith("_"):
+                    if widget.name.startswith("_"):
                         continue
                     moveto = get_additional_option(attr, "into")
                     copyto = get_additional_option(attr, "copyto", [])

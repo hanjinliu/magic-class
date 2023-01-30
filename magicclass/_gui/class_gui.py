@@ -264,7 +264,7 @@ class ClassGuiBase(BaseGui[Widget]):
 
                     # Now, "widget" is a Widget object. Add widget in a way similar to "insert" method
                     # of Container.
-                    if name.startswith("_"):
+                    if widget.name.startswith("_"):
                         continue
 
                     moveto = get_additional_option(attr, "into")
@@ -471,11 +471,10 @@ def make_gui(
                 to close the window immediately. If true, application gets executed if
                 needed.
             """
-            if self.__magicclass_parent__ is not None and self.parent is None:
+            mcls_parent = self.__magicclass_parent__
+            if mcls_parent is not None and self.parent is None:
                 # If child magic class is closed before, we have to set parent again.
-                self.native.setParent(
-                    self.__magicclass_parent__.native, self.native.windowFlags()
-                )
+                self.native.setParent(mcls_parent.native, self.native.windowFlags())
 
             viewer = self.parent_viewer
             if viewer is not None and self.parent is not None:
@@ -496,6 +495,11 @@ def make_gui(
                     dock.setFloating(_floating)
             else:
                 container.show(self, run=False)
+                if mcls_parent is not None:
+                    topleft = mcls_parent.native.geometry().topLeft()
+                    topleft.setX(topleft.x() + 20)
+                    topleft.setY(topleft.y() + 20)
+                    self.native.move(topleft)
                 self.native.activateWindow()
                 if run:
                     run_app()
