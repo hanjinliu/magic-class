@@ -30,7 +30,6 @@ from magicclass.signature import MagicMethodSignature
 from magicclass._gui.mgui_ext import Action, WidgetAction
 
 if TYPE_CHECKING:
-    from magicclass._magicgui_compat import WidgetProtocol
     from typing_extensions import Self
     from magicclass._gui._base import MagicTemplate
     from magicclass._gui.mgui_ext import AbstractAction
@@ -648,7 +647,7 @@ def field(
     *,
     name: str | None = None,
     label: str | None = None,
-    widget_type: str | type[WidgetProtocol] | type[Widget] | None = None,
+    widget_type: str | type[Widget] | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
 ) -> MagicField[_M, Any]:
@@ -673,7 +672,7 @@ def field(
     *,
     name: str | None = None,
     label: str | None = None,
-    widget_type: str | type[WidgetProtocol] | type[Widget] | None = None,
+    widget_type: str | type[Widget] | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
 ) -> MagicField[ValueWidget, _X]:
@@ -686,7 +685,7 @@ def field(
     *,
     name: str | None = None,
     label: str | None = None,
-    widget_type: str | type[WidgetProtocol] | type[Widget] | None = None,
+    widget_type: str | type[Widget] | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
 ) -> MagicField[ValueWidget, _X]:
@@ -712,7 +711,7 @@ def field(
     *,
     name: str | None = None,
     label: str | None = None,
-    widget_type: str | type[WidgetProtocol] | None = None,
+    widget_type: str | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
 ) -> MagicField[Widget, Any]:
@@ -724,7 +723,7 @@ def field(
     *,
     name: str | None = None,
     label: str | None = None,
-    widget_type: str | type[WidgetProtocol] | type[Widget] | None = None,
+    widget_type: str | type[Widget] | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
 ) -> MagicField[Widget, Any]:
@@ -786,11 +785,11 @@ def vfield(
 
 @overload
 def vfield(
-    obj: _X,
+    obj: type[_X],
     *,
     name: str | None = None,
     label: str | None = None,
-    widget_type: str | type[WidgetProtocol] | type[Widget] | None = None,
+    widget_type: str | type[Widget] | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
 ) -> MagicValueField[ValueWidget, _X]:
@@ -799,11 +798,11 @@ def vfield(
 
 @overload
 def vfield(
-    annotation: type[_X],
+    obj: _X,
     *,
     name: str | None = None,
     label: str | None = None,
-    widget_type: str | type[WidgetProtocol] | type[Widget] | None = None,
+    widget_type: str | type[Widget] | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
 ) -> MagicValueField[ValueWidget, _X]:
@@ -829,7 +828,7 @@ def vfield(
     *,
     name: str | None = None,
     label: str | None = None,
-    widget_type: str | type[WidgetProtocol] | type[Widget] | None = None,
+    widget_type: str | type[Widget] | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
 ) -> MagicValueField[Widget, Any]:
@@ -841,7 +840,7 @@ def vfield(
     *,
     name: str | None = None,
     label: str | None = None,
-    widget_type: str | type[WidgetProtocol] | type[Widget] | None = None,
+    widget_type: str | type[Widget] | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
 ) -> MagicValueField[Widget, Any]:
@@ -853,7 +852,7 @@ def vfield(
     *,
     name: str | None = None,
     label: str | None = None,
-    widget_type: str | type[WidgetProtocol] | None = None,
+    widget_type: str | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
 ) -> MagicValueField[Widget, Any]:
@@ -934,7 +933,7 @@ def _get_field(
     obj,
     name: str,
     label: str,
-    widget_type: str | type[WidgetProtocol] | None,
+    widget_type: str | None,
     options: dict[str, Any],
     record: bool,
     field_class: type[MagicField],
