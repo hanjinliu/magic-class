@@ -233,6 +233,7 @@ class Logger(Widget, logging.Handler):
         Widget.__init__(
             self, widget_type=QBaseWidget, backend_kwargs={"qwidg": QtLogger}
         )
+        self.native: QtLogger
 
     def emit(self, record):
         """Handle the logging event."""

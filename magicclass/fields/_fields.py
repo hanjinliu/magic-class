@@ -272,7 +272,7 @@ class MagicField(_FieldObject, Generic[_W, _V]):
         Get a widget from ``obj``. This function will be called every time MagicField is referred
         by ``obj.field``.
         """
-        from .._gui import MagicTemplate
+        from magicclass._gui import MagicTemplate
 
         obj_id = id(obj)
         if (widget := self._guis.get(obj_id, None)) is None:
@@ -295,7 +295,7 @@ class MagicField(_FieldObject, Generic[_W, _V]):
         Get an action from ``obj``. This function will be called every time MagicField is referred
         by ``obj.field``.
         """
-        from .._gui import MagicTemplate
+        from magicclass._gui import MagicTemplate
 
         obj_id = id(obj)
         if obj_id in self._guis.keys():
