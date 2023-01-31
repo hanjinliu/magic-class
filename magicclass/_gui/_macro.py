@@ -24,7 +24,7 @@ class MacroEdit(TabbedContainer):
     def __init__(self, **kwargs):
         super().__init__(labels=False, **kwargs)
         self.native: QtW.QWidget
-        self.__magicclass_parent__ = None
+        self.__magicclass_parent__: BaseGui | None = None
         self.native.setWindowTitle("Macro")
         self.native_tab_widget.setTabBarAutoHide(True)
         self._native_macro = None
@@ -33,7 +33,7 @@ class MacroEdit(TabbedContainer):
 
     def _add_code_edit(self, name: str = "macro", native: bool = False) -> CodeEdit:
         """Add a new code edit widget as a new tab."""
-        from magicclass import defaults
+        from magicclass._gui._base import defaults
 
         textedit = CodeEdit(name=name)
         if native:
@@ -115,6 +115,12 @@ class MacroEdit(TabbedContainer):
     def recorded_macro(self) -> CodeEdit | None:
         """The code edit widget for the recording macro"""
         return self._recorded_macro
+
+    def show(self, run=False):
+        if self.parent is None:
+            ui = self.__magicclass_parent__
+            self.native.setParent(ui.native, self.native.windowFlags())
+        return super().show(run)
 
     def load(self, path: str):
         """Load macro text from a file."""
@@ -455,3 +461,8 @@ class GuiMacro(Macro):
             wdt.erase_last()
         if wdt := self.widget.recorded_macro:
             wdt.erase_last()
+
+
+class DummyMacro(Macro):
+    def insert(self, index, expr):
+        pass
