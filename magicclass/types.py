@@ -41,6 +41,12 @@ __all__ = [
     "Union",
 ]
 
+_T = TypeVar("_T")
+_T1 = TypeVar("_T1")
+_T2 = TypeVar("_T2")
+_T3 = TypeVar("_T3")
+_U = TypeVar("_U")
+
 
 class WidgetType(Enum):
     none = "none"
@@ -363,8 +369,6 @@ class SomeOf(metaclass=_SomeOfAlias):
 
 # Optional type
 
-_T = TypeVar("_T")
-
 
 class _OptionalAlias(type):
     @overload
@@ -427,16 +431,33 @@ class Optional(metaclass=_OptionalAlias):
 
 
 class _UnionAlias(type):
+    @overload
+    def __getitem__(cls, value: tuple[_T, _T1]) -> typing.Union[_T, _T1]:
+        ...
+
+    @overload
+    def __getitem__(cls, value: tuple[_T, _T1, _T2]) -> typing.Union[_T, _T1, _T2]:
+        ...
+
+    @overload
+    def __getitem__(
+        cls, value: tuple[_T, _T1, _T2, _T3]
+    ) -> typing.Union[_T, _T1, _T2, _T3]:
+        ...
+
     def __getitem__(cls, value):
         from .functools._dispatch import UnionWidget
 
         annotations = []
         opt = dict(widget_type=UnionWidget, nullable=False, annotations=annotations)
-        for val in value:
-            if val is not None:
-                annotations.append(val)
-            else:
-                opt["nullable"] = True
+        if isinstance(value, tuple):
+            for val in value:
+                if val is not None:
+                    annotations.append(val)
+                else:
+                    opt["nullable"] = True
+        else:
+            raise TypeError("Union must be a tuple or a dict.")
         # union = Union[tuple(annotations)]  # type: ignore
         return Annotated[Any, opt]
 
@@ -521,9 +542,6 @@ class _StoredMeta(type):
 
     def __getitem__(cls, value):
         return Stored._class_getitem(value)
-
-
-_U = TypeVar("_U")
 
 
 class DefaultSpec:
