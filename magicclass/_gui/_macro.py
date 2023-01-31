@@ -116,12 +116,6 @@ class MacroEdit(TabbedContainer):
         """The code edit widget for the recording macro"""
         return self._recorded_macro
 
-    def show(self, run=False):
-        if self.parent is None:
-            ui = self.__magicclass_parent__
-            self.native.setParent(ui.native, self.native.windowFlags())
-        return super().show(run)
-
     def load(self, path: str):
         """Load macro text from a file."""
         _path = Path(path)
@@ -195,8 +189,10 @@ class MacroEdit(TabbedContainer):
             "Use 'new_window()' or 'new_tab()' instead.",
             DeprecationWarning,
         )
+        current = self.textedit
+        text = current.value
         new = self.new_window(name=name)
-        new.textedit.value = self.textedit.value
+        new.textedit.value = text
         return new
 
     def new(self, name: str = None):
@@ -208,8 +204,9 @@ class MacroEdit(TabbedContainer):
         return self.new_window(name=name)
 
     def _duplicate_tab(self):
+        current_value = self.textedit.value
         new = self.new_tab(self.textedit.name)
-        new.value = self.textedit.value
+        new.value = current_value
         self.current_index = len(self) - 1
         return new
 
@@ -226,6 +223,9 @@ class MacroEdit(TabbedContainer):
         self.textedit.zoom_out()
 
     def show(self):
+        if self.parent is None:
+            ui = self.__magicclass_parent__
+            self.native.setParent(ui.native, self.native.windowFlags())
         super().show()
         move_to_screen_center(self.native)
 
@@ -291,6 +291,9 @@ class MacroEdit(TabbedContainer):
             self.save(result)
 
     def _start_recording(self):
+        index = self.current_index
+        if self[index] is self.native_macro:
+            self.new_tab("record")
         self._recorded_macro = self.textedit
 
     def _finish_recording(self):
