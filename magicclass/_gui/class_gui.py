@@ -334,9 +334,6 @@ class ClassGuiBase(BaseGui[Widget]):
                     self.__magicclass_children__.append(widget)
                     widget._my_symbol = Symbol(widget.name)
 
-                # NOTE: This is not safe. Attributes could collision and macro recording
-                # may break if not correctly named.
-
         _widget = widget
 
         if self.labels:

@@ -1,6 +1,7 @@
 from __future__ import annotations
 from functools import wraps as functools_wraps
 import inspect
+from types import ModuleType
 from weakref import WeakValueDictionary
 from typing import Any, TYPE_CHECKING, Callable
 
@@ -82,6 +83,7 @@ def magicclass(
     icon: Any | None = None,
     stylesheet: str | StyleSheet = None,
     properties: dict[str, Any] = None,
+    record: bool = True,
 ):
     """
     Decorator that can convert a Python class into a widget.
@@ -107,8 +109,6 @@ def magicclass(
     close_on_run : bool, default is True
         If True, magicgui created by every method will be deleted after the method is
         completed without exceptions, i.e. magicgui is more like a dialog.
-    popup : bool, default is True
-        Deprecated.
     popup_mode : str or PopUpMode, default is PopUpMode.popup
         Option of how to popup FunctionGui widget when a button is clicked.
     error_mode : str or ErrorMode, default is ErrorMode.msgbox
@@ -122,7 +122,8 @@ def magicclass(
     properties : dict, optional
         Set properties to the widget if given. This argument is useful when you want
         to set width, height or margin without defining __post_init__.
-
+    record : bool, default is True
+        If True, macro recording is enabled.
     Returns
     -------
     Decorated class or decorator.
@@ -155,7 +156,7 @@ def magicclass(
         mod = cls.__module__
         qualname = cls.__qualname__
 
-        new_attrs = convert_attributes(cls, hide=class_gui.__mro__)
+        new_attrs = convert_attributes(cls, hide=class_gui.__mro__, record=record)
         oldclass = type(cls.__name__ + _BASE_CLASS_SUFFIX, (cls,), {})
         newclass = type(cls.__name__, (class_gui, oldclass), new_attrs)
 
@@ -188,13 +189,7 @@ def magicclass(
                 gui_kwargs.update(kwargs)
                 kwargs = {}
 
-            class_gui.__init__(
-                self,
-                **gui_kwargs,
-            )
-            # prepare macro
-            macrowidget = self.macro.widget.native
-            macrowidget.setParent(self.native, macrowidget.windowFlags())
+            class_gui.__init__(self, **gui_kwargs)
 
             with self.macro.blocked():
                 super(oldclass, self).__init__(*args, **kwargs)
@@ -237,6 +232,7 @@ def magicmenu(
     labels: bool = True,
     name: str | None = None,
     icon: Any | None = None,
+    record: bool = True,
 ):
     """Decorator that converts a Python class into a menu bar."""
     return _call_magicmenu(**locals(), menugui_class=MenuGui)
@@ -252,6 +248,7 @@ def magiccontext(
     labels: bool = True,
     name: str | None = None,
     icon: Any | None = None,
+    record: bool = True,
 ):
     """Decorator that converts a Python class into a context menu."""
 
@@ -283,7 +280,7 @@ def magiccontext(
         mod = cls.__module__
         qualname = cls.__qualname__
 
-        new_attrs = convert_attributes(cls, hide=ContextMenuGui.__mro__)
+        new_attrs = convert_attributes(cls, hide=ContextMenuGui.__mro__, record=record)
         oldclass = type(cls.__name__ + _BASE_CLASS_SUFFIX, (cls,), {})
         newclass = type(cls.__name__, (ContextMenuGui, oldclass), new_attrs)
 
@@ -310,13 +307,7 @@ def magiccontext(
                 gui_kwargs.update(kwargs)
                 kwargs = {}
 
-            ContextMenuGui.__init__(
-                self,
-                **gui_kwargs,
-            )
-
-            macrowidget = self.macro.widget.native
-            macrowidget.setParent(self.native, macrowidget.windowFlags())
+            ContextMenuGui.__init__(self, **gui_kwargs)
 
             with self.macro.blocked():
                 super(oldclass, self).__init__(*args, **kwargs)
@@ -352,6 +343,7 @@ def magictoolbar(
     labels: bool = True,
     name: str | None = None,
     icon: Any | None = None,
+    record: bool = True,
 ):
     """Decorator that converts a Python class into a menu bar."""
     return _call_magicmenu(**locals(), menugui_class=ToolBarGui)
@@ -365,6 +357,7 @@ def _call_magicmenu(
     labels: bool = True,
     name: str = None,
     icon: Any | None = None,
+    record: bool = True,
     menugui_class: type[MenuGuiBase] = None,
 ):
     """
@@ -412,7 +405,7 @@ def _call_magicmenu(
         mod = cls.__module__
         qualname = cls.__qualname__
 
-        new_attrs = convert_attributes(cls, hide=menugui_class.__mro__)
+        new_attrs = convert_attributes(cls, hide=menugui_class.__mro__, record=record)
         oldclass = type(cls.__name__ + _BASE_CLASS_SUFFIX, (cls,), {})
         newclass = type(cls.__name__, (menugui_class, oldclass), new_attrs)
 
@@ -439,13 +432,7 @@ def _call_magicmenu(
                 gui_kwargs.update(kwargs)
                 kwargs = {}
 
-            menugui_class.__init__(
-                self,
-                **gui_kwargs,
-            )
-
-            macrowidget = self.macro.widget.native
-            macrowidget.setParent(self.native, macrowidget.windowFlags())
+            menugui_class.__init__(self, **gui_kwargs)
 
             with self.macro.blocked():
                 super(oldclass, self).__init__(*args, **kwargs)
@@ -501,7 +488,9 @@ def build_help(ui: MagicTemplate, parent=None) -> HelpWidget:
     return help_widget
 
 
-def get_function_gui(ui: MagicTemplate, name: str = None) -> FunctionGuiPlus:
+def get_function_gui(
+    ui: MagicTemplate | ModuleType, name: str = None
+) -> FunctionGuiPlus:
     """
     Get the FunctionGui object hidden beneath push button or menu action.
 

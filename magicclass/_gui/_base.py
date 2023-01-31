@@ -51,7 +51,7 @@ from .mgui_ext import (
     mguiLike,
 )
 from .utils import copy_class, callable_to_classes, show_dialog_from_mgui
-from ._macro import GuiMacro
+from ._macro import GuiMacro, DummyMacro
 from ._macro_utils import inject_recorder, inject_silencer, value_widget_callback
 from ._icon import get_icon
 
@@ -171,7 +171,6 @@ _RESERVED = frozenset(
         "_popup_mode",
         "_my_symbol",
         "_macro_instance",
-        "macro",
         "annotation",
         "enabled",
         "find_ancestor",
@@ -889,7 +888,9 @@ class MagicTemplate(MutableSequence[_W], metaclass=_MagicTemplateMeta):
 
 
 class BaseGui(MagicTemplate[_W]):
-    def __init__(self, close_on_run, popup_mode, error_mode):
+    def __init__(
+        self, close_on_run=True, popup_mode=PopUpMode.popup, error_mode=ErrorMode.msgbox
+    ):
         self._macro_instance = GuiMacro(
             max_lines=defaults["macro-max-history"],
             flags={"Get": False, "Return": False},
@@ -905,6 +906,7 @@ class BaseGui(MagicTemplate[_W]):
 
     @property
     def icon(self):
+        """Icon of this GUI."""
         return self._icon
 
     @icon.setter
@@ -1214,7 +1216,9 @@ def _child_that_has_widget(
     return child_instance
 
 
-def convert_attributes(cls: type[_T], hide: tuple[type, ...]) -> dict[str, Any]:
+def convert_attributes(
+    cls: type[_T], hide: tuple[type, ...], record: bool = True
+) -> dict[str, Any]:
     """
     Convert class attributes into macro recordable ones.
 
@@ -1246,6 +1250,7 @@ def convert_attributes(cls: type[_T], hide: tuple[type, ...]) -> dict[str, Any]:
         abstractapi,
     )
     mro = [c for c in cls.__mro__ if c not in hide]
+    default = None if record else "false"
     for subcls in reversed(mro):
         for name, obj in subcls.__dict__.items():
             _isfunc = callable(obj)
@@ -1255,18 +1260,32 @@ def convert_attributes(cls: type[_T], hide: tuple[type, ...]) -> dict[str, Any]:
                 # private method, non-action-like object, not-callable object are passed.
                 new_attr = obj
             elif _isfunc:
-                _record_policy = get_additional_option(obj, "record", None)
+                _record_policy = get_additional_option(obj, "record", default)
                 if _record_policy is None:
                     new_attr = inject_recorder(obj)
                 elif _record_policy == "false":
                     new_attr = obj
                 elif _record_policy == "all-false":
                     new_attr = inject_silencer(obj)
+                else:
+                    raise ValueError(f"Invalid record policy: {_record_policy}")
             else:
                 new_attr = obj
 
             _dict[name] = new_attr
+    # replace the macro object with the dummy one.
+    if not record:
+        _dict["macro"] = macro
     return _dict
+
+
+_dummy_macro = DummyMacro()
+
+
+@property
+def macro(self: BaseGui):
+    """Return the dummy macro object"""
+    return _dummy_macro
 
 
 def _define_popup(self: BaseGui, obj, widget: PushButtonPlus | Action):

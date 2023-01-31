@@ -24,7 +24,7 @@ class MacroEdit(TabbedContainer):
     def __init__(self, **kwargs):
         super().__init__(labels=False, **kwargs)
         self.native: QtW.QWidget
-        self.__magicclass_parent__ = None
+        self.__magicclass_parent__: BaseGui | None = None
         self.native.setWindowTitle("Macro")
         self.native_tab_widget.setTabBarAutoHide(True)
         self._native_macro = None
@@ -33,7 +33,7 @@ class MacroEdit(TabbedContainer):
 
     def _add_code_edit(self, name: str = "macro", native: bool = False) -> CodeEdit:
         """Add a new code edit widget as a new tab."""
-        from magicclass import defaults
+        from magicclass._gui._base import defaults
 
         textedit = CodeEdit(name=name)
         if native:
@@ -189,8 +189,10 @@ class MacroEdit(TabbedContainer):
             "Use 'new_window()' or 'new_tab()' instead.",
             DeprecationWarning,
         )
+        current = self.textedit
+        text = current.value
         new = self.new_window(name=name)
-        new.textedit.value = self.textedit.value
+        new.textedit.value = text
         return new
 
     def new(self, name: str = None):
@@ -202,8 +204,9 @@ class MacroEdit(TabbedContainer):
         return self.new_window(name=name)
 
     def _duplicate_tab(self):
+        current_value = self.textedit.value
         new = self.new_tab(self.textedit.name)
-        new.value = self.textedit.value
+        new.value = current_value
         self.current_index = len(self) - 1
         return new
 
@@ -220,6 +223,9 @@ class MacroEdit(TabbedContainer):
         self.textedit.zoom_out()
 
     def show(self):
+        if self.parent is None:
+            ui = self.__magicclass_parent__
+            self.native.setParent(ui.native, self.native.windowFlags())
         super().show()
         move_to_screen_center(self.native)
 
@@ -285,6 +291,9 @@ class MacroEdit(TabbedContainer):
             self.save(result)
 
     def _start_recording(self):
+        index = self.current_index
+        if self[index] is self.native_macro:
+            self.new_tab("record")
         self._recorded_macro = self.textedit
 
     def _finish_recording(self):
@@ -455,3 +464,8 @@ class GuiMacro(Macro):
             wdt.erase_last()
         if wdt := self.widget.recorded_macro:
             wdt.erase_last()
+
+
+class DummyMacro(Macro):
+    def insert(self, index, expr):
+        pass

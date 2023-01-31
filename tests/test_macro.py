@@ -152,3 +152,39 @@ def test_repeat():
     assert str(ui.macro[2]) == "ui.f()"
     assert str(ui.macro[3]) == "ui.g(a=2)"
     assert str(ui.macro[4]) == "ui.g(a=2)"
+
+def test_mcls_record_arg():
+    from magicclass import field
+    @magicclass
+    class A:
+        @magicclass(record=False)
+        class B:
+            x = field(int)
+
+            def f(self):
+                ...
+            @magicmenu
+            class M:
+                x = field(int)
+                def f(self):
+                    ...
+        def g(self):
+            ...
+
+    ui = A()
+    @ui.B.append
+    def new():
+        ...
+    @ui.B.M.append
+    def new():
+        ...
+    ui.g()
+    ui.B.x.value = 5
+    ui.B.f()
+    ui.B.new()
+    ui.B.M.x.value = 5
+    ui.B.M.f()
+    ui.B.M.new()
+
+    assert len(ui.macro) == 2
+    assert str(ui.macro[1]) == "ui.g()"

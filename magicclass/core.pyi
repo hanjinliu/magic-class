@@ -4,17 +4,17 @@ from types import MethodType
 from typing import TYPE_CHECKING, Callable, Generic, TypeVar, overload, Any, Protocol
 from typing_extensions import Literal
 
-from ._gui.menu_gui import ContextMenuGui, MenuGui
-from ._gui.toolbar import ToolBarGui
-from ._gui.class_gui import ClassGuiBase
-from ._gui._base import PopUpMode, ErrorMode, MagicTemplate
+from magicclass._gui.menu_gui import ContextMenuGui, MenuGui
+from magicclass._gui.toolbar import ToolBarGui
+from magicclass._gui.class_gui import ClassGuiBase
+from magicclass._gui._base import PopUpMode, ErrorMode, MagicTemplate
 
 if TYPE_CHECKING:
-    from .types import WidgetType, WidgetTypeStr, PopUpModeStr, ErrorModeStr
-    from ._gui._function_gui import FunctionGuiPlus
-    from .stylesheets import StyleSheet
+    from magicclass.types import WidgetType, WidgetTypeStr, PopUpModeStr, ErrorModeStr
+    from magicclass._gui._function_gui import FunctionGuiPlus
+    from magicclass.stylesheets import StyleSheet
+    from magicclass.help import HelpWidget
     from qtpy.QtWidgets import QWidget
-    from .help import HelpWidget
     from macrokit import Macro
 
 Layout = Literal["vertical", "horizontal"]
@@ -50,6 +50,7 @@ def magicclass(
     icon: Any | None = None,
     stylesheet: str | StyleSheet | None = None,
     properties: dict[str, Any] | None = None,
+    record: bool = True,
 ) -> type[_M]: ...
 @overload
 def magicclass(
@@ -66,6 +67,7 @@ def magicclass(
     icon: Any | None = None,
     stylesheet: str | StyleSheet | None = None,
     properties: dict[str, Any] | None = None,
+    record: bool = True,
 ) -> type[ClassGuiBase] | _C: ...
 @overload
 def magicclass(
@@ -81,6 +83,7 @@ def magicclass(
     icon: Any | None = None,
     stylesheet: str | StyleSheet | None = None,
     properties: dict[str, Any] | None = None,
+    record: bool = True,
 ) -> _MagicClassDecorator[ClassGuiBase]: ...
 @overload
 def magicmenu(
@@ -92,7 +95,7 @@ def magicmenu(
     labels: bool = True,
     name: str | None = None,
     icon: Any | None = None,
-    parent=None,
+    record: bool = True,
 ) -> type[_M]: ...
 @overload
 def magicmenu(
@@ -104,7 +107,7 @@ def magicmenu(
     labels: bool = True,
     name: str | None = None,
     icon: Any | None = None,
-    parent=None,
+    record: bool = True,
 ) -> type[MenuGui] | _C: ...
 @overload
 def magicmenu(
@@ -115,7 +118,7 @@ def magicmenu(
     labels: bool = True,
     name: str | None = None,
     icon: Any | None = None,
-    parent=None,
+    record: bool = True,
 ) -> _MagicClassDecorator[MenuGui]: ...
 @overload
 def magiccontext(
@@ -128,7 +131,7 @@ def magiccontext(
     labels: bool = True,
     name: str | None = None,
     icon: Any | None = None,
-    parent=None,
+    record: bool = True,
 ) -> type[_M]: ...
 @overload
 def magiccontext(
@@ -141,7 +144,7 @@ def magiccontext(
     labels: bool = True,
     name: str | None = None,
     icon: Any | None = None,
-    parent=None,
+    record: bool = True,
 ) -> type[ContextMenuGui] | _C: ...
 @overload
 def magiccontext(
@@ -153,7 +156,7 @@ def magiccontext(
     labels: bool = True,
     name: str | None = None,
     icon: Any | None = None,
-    parent=None,
+    record: bool = True,
 ) -> _MagicClassDecorator[ContextMenuGui]: ...
 @overload
 def magictoolbar(
@@ -165,7 +168,7 @@ def magictoolbar(
     labels: bool = True,
     name: str | None = None,
     icon: Any | None = None,
-    parent=None,
+    record: bool = True,
 ) -> type[_M]: ...
 @overload
 def magictoolbar(
@@ -177,7 +180,7 @@ def magictoolbar(
     labels: bool = True,
     name: str | None = None,
     icon: Any | None = None,
-    parent=None,
+    record: bool = True,
 ) -> type[ToolBarGui] | _C: ...
 @overload
 def magictoolbar(
@@ -188,7 +191,7 @@ def magictoolbar(
     labels: bool = True,
     name: str | None = None,
     icon: Any | None = None,
-    parent=None,
+    record: bool = True,
 ) -> _MagicClassDecorator[ToolBarGui]: ...
 def repeat(ui: MagicTemplate, index: int = -1) -> None: ...
 def update_widget_state(
