@@ -1,6 +1,8 @@
 from __future__ import annotations
+from abc import ABCMeta
 from collections import defaultdict
 
+import pathlib
 from enum import Enum
 import typing
 from typing import (
@@ -14,6 +16,7 @@ from typing import (
     TypeVar,
     Callable,
     Literal,
+    MutableSequence,
 )
 from typing_extensions import Annotated, _AnnotatedAlias
 from magicgui.widgets import Widget, EmptyWidget
@@ -29,6 +32,7 @@ except ImportError:
 if TYPE_CHECKING:
     from magicgui.widgets import FunctionGui
     from magicclass._magicgui_compat import CategoricalWidget
+    from typing_extensions import Self
 
 __all__ = [
     "WidgetType",
@@ -211,6 +215,60 @@ class Bound(metaclass=_BoundAlias):
 
     def __init_subclass__(cls, *args, **kwargs):
         raise TypeError(f"Cannot subclass {cls.__module__}.Bound")
+
+
+# Path type
+
+
+class _AnnotatedPathAlias(type):
+    _file_edit_mode: str
+
+    def __getitem__(cls, filter: str) -> Self:
+        return Annotated[pathlib.Path, {"mode": cls._file_edit_mode, "filter": filter}]
+
+
+class _AnnotatedPathAliasMultiple(ABCMeta):
+    def __getitem__(cls, filter: str) -> Self:
+        return Annotated[list[Path], {"mode": "rm", "filter": filter}]
+
+
+class _Path(pathlib.Path, metaclass=_AnnotatedPathAlias):
+    _file_edit_mode = "r"
+
+
+class _SavePath(_Path):
+    _file_edit_mode = "w"
+
+
+class _DirPath(_Path):
+    _file_edit_mode = "d"
+
+
+class _MultiplePaths(
+    MutableSequence[pathlib.Path], metaclass=_AnnotatedPathAliasMultiple
+):
+    pass
+
+
+class Path(_Path):
+    """
+    A subclass of ``pathlib.Path`` with additional type annotation variations.
+
+    >>> Path  # identical to pathlib.Path for magicgui
+    >>> Path.Read  # pathlib.Path with mode "r" (identical to Path)
+    >>> Path.Save  # pathlib.Path with mode "w"
+    >>> Path.Dir  # pathlib.Path with mode "d"
+    >>> Path.Multiple  # pathlib.Path with mode "rm"
+    >>> Path.Read["*.py"]  # pathlib.Path with mode "r" and filter "*.py"
+    """
+
+    Read = _Path
+    Save = _SavePath
+    Dir = _DirPath
+    Multiple = _MultiplePaths
+
+    def __new__(cls, *args, **kwargs):
+        return pathlib.Path(*args, **kwargs)
 
 
 # OneOf/SomeOf types

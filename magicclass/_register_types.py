@@ -2,9 +2,9 @@ from __future__ import annotations
 import macrokit as mk
 from macrokit import Expr, Head, symbol
 from enum import Enum
-from pathlib import Path
+import pathlib
 import datetime
-from magicclass.types import Color, Stored
+from magicclass.types import Color, Stored, Path
 from magicclass.widgets import ColorEdit
 from magicclass._gui._base import MagicTemplate
 
@@ -16,7 +16,7 @@ _timedelta = Expr(Head.getattr, [datetime, datetime.timedelta])
 
 # magicgui-style input
 mk.register_type(Enum, lambda e: symbol(e.value))
-mk.register_type(Path, lambda e: f"r'{e}'")
+mk.register_type(pathlib.Path, lambda e: f"r'{e}'")
 mk.register_type(float, lambda e: str(round(e, 8)))
 
 try:
@@ -74,3 +74,7 @@ mgui.register_type(
     choices=Stored._get_choice,
     return_callback=Stored._store_value,
 )
+
+mgui.register_type(Path.Save, widget_type="FileEdit", mode="w")
+mgui.register_type(Path.Dir, widget_type="FileEdit", mode="d")
+mgui.register_type(Path.Multiple, widget_type="FileEdit", mode="rm")

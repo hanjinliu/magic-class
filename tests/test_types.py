@@ -1,6 +1,8 @@
 from typing_extensions import Annotated
+
+import pytest
 from magicclass import magicclass, set_options, get_function_gui
-from magicclass.types import Optional, Union, Stored
+from magicclass.types import Optional, Union, Stored, Path
 from magicclass import widgets
 
 def test_basics():
@@ -155,3 +157,32 @@ def test_stored_last_type():
     assert receive.s.value == X(2)
     provide(3)
     assert receive.s.value == X(3)
+
+@pytest.mark.parametrize(
+    "typ, mode",
+    [(Path, "r"), (Path.Read, "r"), (Path.Save, "w"), (Path.Dir, "d"), (Path.Multiple, "rm")]
+)
+def test_path_annotation(typ, mode):
+    from magicgui.types import FileDialogMode
+    @magicclass
+    class A:
+        def f0(self, x: typ):
+            pass
+    ui = A()
+    wdt = get_function_gui(ui.f0).x
+    assert type(wdt) is widgets.FileEdit
+    assert wdt.mode == FileDialogMode(mode)
+
+@pytest.mark.parametrize(
+    "typ",
+    [Path, Path.Read, Path.Save, Path.Dir, Path.Multiple]
+)
+def test_path_filter(typ):
+    @magicclass
+    class A:
+        def f0(self, x: typ["*.py"]):
+            pass
+    ui = A()
+    wdt = get_function_gui(ui.f0).x
+    assert type(wdt) is widgets.FileEdit
+    assert wdt.filter == "*.py"

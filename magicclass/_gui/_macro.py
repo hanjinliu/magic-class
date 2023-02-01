@@ -211,6 +211,8 @@ class MacroEdit(TabbedContainer):
         return new
 
     def _delete_tab(self):
+        if len(self) == 0:
+            return
         index = self.current_index
         if self[index] is not self.native_macro:
             """Don't delete the native macro tab."""
