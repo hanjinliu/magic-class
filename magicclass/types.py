@@ -16,6 +16,7 @@ from typing import (
     TypeVar,
     Callable,
     Literal,
+    List,
     MutableSequence,
 )
 from typing_extensions import Annotated, _AnnotatedAlias
@@ -229,7 +230,7 @@ class _AnnotatedPathAlias(type):
 
 class _AnnotatedPathAliasMultiple(ABCMeta):
     def __getitem__(cls, filter: str) -> Self:
-        return Annotated[list[Path], {"mode": "rm", "filter": filter}]
+        return Annotated[List[Path], {"mode": "rm", "filter": filter}]
 
 
 class _Path(pathlib.Path, metaclass=_AnnotatedPathAlias):
