@@ -227,6 +227,8 @@ class _AnnotatedPathAlias(type):
     def __getitem__(cls, filter: str) -> Self:
         return Annotated[pathlib.Path, {"mode": cls._file_edit_mode, "filter": filter}]
 
+
+class _AnnotatedPathAlias2(_AnnotatedPathAlias):
     def __instancecheck__(cls, instance: Any) -> bool:
         return isinstance(instance, pathlib.Path)
 
@@ -255,7 +257,7 @@ class _MultiplePaths(Sequence[pathlib.Path], metaclass=_AnnotatedMultiPathAlias)
     pass
 
 
-class Path(_Path):
+class Path(pathlib.Path, metaclass=_AnnotatedPathAlias2):
     """
     A subclass of ``pathlib.Path`` with additional type annotation variations.
 
@@ -266,6 +268,8 @@ class Path(_Path):
     >>> Path.Multiple  # pathlib.Path with mode "rm"
     >>> Path.Read["*.py"]  # pathlib.Path with mode "r" and filter "*.py"
     """
+
+    _file_edit_mode = "r"
 
     Read = _Path
     Save = _SavePath

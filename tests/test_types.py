@@ -174,10 +174,11 @@ def test_path_annotation(typ, mode):
     assert wdt.mode == FileDialogMode(mode)
 
 @pytest.mark.parametrize(
-    "typ",
-    [Path, Path.Read, Path.Save, Path.Dir, Path.Multiple]
+    "typ, mode",
+    [(Path, "r"), (Path.Read, "r"), (Path.Save, "w"), (Path.Dir, "d"), (Path.Multiple, "rm")]
 )
-def test_path_filter(typ):
+def test_path_filter(typ, mode):
+    from magicgui.types import FileDialogMode
     @magicclass
     class A:
         def f0(self, x: typ["*.py"]):
@@ -185,4 +186,5 @@ def test_path_filter(typ):
     ui = A()
     wdt = get_function_gui(ui.f0).x
     assert type(wdt) is widgets.FileEdit
+    assert wdt.mode == FileDialogMode(mode)
     assert wdt.filter == "*.py"
