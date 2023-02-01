@@ -17,7 +17,7 @@ from typing import (
     Callable,
     Literal,
     List,
-    MutableSequence,
+    Sequence,
 )
 from typing_extensions import Annotated, _AnnotatedAlias
 from magicgui.widgets import Widget, EmptyWidget
@@ -227,8 +227,14 @@ class _AnnotatedPathAlias(type):
     def __getitem__(cls, filter: str) -> Self:
         return Annotated[pathlib.Path, {"mode": cls._file_edit_mode, "filter": filter}]
 
+    def __instancecheck__(cls, instance: Any) -> bool:
+        return isinstance(instance, pathlib.Path)
 
-class _AnnotatedPathAliasMultiple(ABCMeta):
+    def __subclasscheck__(cls, subclass: type) -> bool:
+        return issubclass(subclass, pathlib.Path)
+
+
+class _AnnotatedMultiPathAlias(ABCMeta):
     def __getitem__(cls, filter: str) -> Self:
         return Annotated[List[Path], {"mode": "rm", "filter": filter}]
 
@@ -245,9 +251,7 @@ class _DirPath(_Path):
     _file_edit_mode = "d"
 
 
-class _MultiplePaths(
-    MutableSequence[pathlib.Path], metaclass=_AnnotatedPathAliasMultiple
-):
+class _MultiplePaths(Sequence[pathlib.Path], metaclass=_AnnotatedMultiPathAlias):
     pass
 
 
