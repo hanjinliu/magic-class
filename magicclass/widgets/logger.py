@@ -373,13 +373,21 @@ class Logger(Widget, logging.Handler):
             sys.stdout = sys.__stdout__
 
     @contextmanager
-    def set_logger(self, name=None):
+    def set_logger(self, name=None, clear: bool = True):
         """A context manager for logging things in this widget."""
+        logger = logging.getLogger(name)
+        current_handler = logger.handlers
         try:
-            logging.getLogger(name).addHandler(self)
+            if clear:
+                for hd in current_handler:
+                    logger.removeHandler(hd)
+            logger.addHandler(self)
             yield self
         finally:
-            logging.getLogger(name).removeHandler(self)
+            logger.removeHandler(self)
+            if clear:
+                for hd in current_handler:
+                    logger.addHandler(hd)
 
     @overload
     def set_plt(self, style: str | None) -> None:

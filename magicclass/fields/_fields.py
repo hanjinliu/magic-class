@@ -232,7 +232,7 @@ class MagicField(_FieldObject, Generic[_W, _V]):
         if is_instance_method(_arg_choices):
             self.options["choices"] = method_as_getter(obj, _arg_choices)
         try:
-            if _is_subclass(constructor, Widget):
+            if _is_magicclass(constructor):
                 widget = constructor(**self.options)
             else:
                 widget = constructor(obj)
@@ -486,7 +486,7 @@ class MagicField(_FieldObject, Generic[_W, _V]):
         Callable
             Same method as input, but has updated signature.
         """
-        from .._gui import BaseGui
+        from magicclass._gui import BaseGui
 
         cls = self.constructor
         if not (isinstance(cls, type) and issubclass(cls, BaseGui)):
@@ -946,12 +946,12 @@ def _get_field(
     )
     if isinstance(obj, (type, _BaseGenericAlias)):
         if isinstance(obj, _AnnotatedAlias):
-            from ..signature import split_annotated_type
+            from magicclass.signature import split_annotated_type
 
             tp, widget_option = split_annotated_type(obj)
             kwargs.update(annotation=tp)
             options.update(**widget_option)
-        if _is_subclass(obj, Widget):
+        if _is_magicclass(obj):
             if widget_type is not None:
                 raise ValueError("Cannot specify Widget type twice.")
             f = field_class(constructor=obj, widget_type=obj, **kwargs)
@@ -967,8 +967,10 @@ def _get_field(
     return f
 
 
-def _is_subclass(obj: Any, class_or_tuple):
+def _is_magicclass(obj: Any):
+    from magicclass._gui import BaseGui
+
     try:
-        return issubclass(obj, class_or_tuple)
+        return issubclass(obj, (Widget, BaseGui))
     except Exception:
         return False
