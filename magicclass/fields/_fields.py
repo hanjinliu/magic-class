@@ -647,10 +647,23 @@ def field(
     *,
     name: str | None = None,
     label: str | None = None,
-    widget_type: str | type[Widget] | None = None,
+    widget_type: str | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
 ) -> MagicField[_M, Any]:
+    ...
+
+
+@overload
+def field(
+    obj: Any | None = None,
+    widget_type: type[_W] = None,
+    *,
+    name: str | None = None,
+    label: str | None = None,
+    options: dict[str, Any] = {},
+    record: bool = True,
+) -> MagicField[_W, Any]:
     ...
 
 
@@ -672,7 +685,7 @@ def field(
     *,
     name: str | None = None,
     label: str | None = None,
-    widget_type: str | type[Widget] | None = None,
+    widget_type: str | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
 ) -> MagicField[ValueWidget, _X]:
@@ -685,24 +698,24 @@ def field(
     *,
     name: str | None = None,
     label: str | None = None,
-    widget_type: str | type[Widget] | None = None,
+    widget_type: str | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
 ) -> MagicField[ValueWidget, _X]:
     ...
 
 
-@overload
-def field(
-    obj: Any,
-    *,
-    name: str | None = None,
-    label: str | None = None,
-    widget_type: type[_W] = None,
-    options: dict[str, Any] = {},
-    record: bool = True,
-) -> MagicField[_W, Any]:
-    ...
+# @overload
+# def field(
+#     obj: Any,
+#     *,
+#     name: str | None = None,
+#     label: str | None = None,
+#     widget_type: type[_W] = None,
+#     options: dict[str, Any] = {},
+#     record: bool = True,
+# ) -> MagicField[_W, Any]:
+#     ...
 
 
 @overload
