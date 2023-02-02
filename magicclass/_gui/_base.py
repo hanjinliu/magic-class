@@ -15,7 +15,6 @@ from abc import ABCMeta
 from typing_extensions import _AnnotatedAlias, Literal
 import inspect
 import warnings
-from enum import Enum
 from qtpy.QtWidgets import QWidget, QDockWidget
 
 from psygnal import Signal
@@ -54,6 +53,7 @@ from .utils import copy_class, callable_to_classes, show_dialog_from_mgui
 from ._macro import GuiMacro, DummyMacro
 from ._macro_utils import inject_recorder, inject_silencer, value_widget_callback
 from ._icon import get_icon
+from ._gui_modes import PopUpMode, ErrorMode
 
 from magicclass.utils import (
     get_signature,
@@ -78,81 +78,10 @@ from magicclass.functools import wraps
 if TYPE_CHECKING:
     import numpy as np
     import napari
-    from types import TracebackType
     from typing_extensions import Self
 
     _X = TypeVar("_X", bound=MGUI_SIMPLE_TYPES)
     _M = TypeVar("_M", bound="MagicTemplate")
-
-
-class PopUpMode(Enum):
-    """Define how to popup FunctionGui."""
-
-    popup = "popup"
-    first = "first"
-    last = "last"
-    above = "above"
-    below = "below"
-    dock = "dock"
-    dialog = "dialog"
-    parentlast = "parentlast"
-    parentsub = "parentsub"
-
-
-def _msgbox_raising(e: Exception, parent: Widget):
-    from ._message_box import QtErrorMessageBox
-
-    return QtErrorMessageBox.raise_(e, parent=parent.native)
-
-
-def _stderr_raising(e: Exception, parent: Widget):
-    pass
-
-
-def _stdout_raising(e: Exception, parent: Widget):
-    print(f"{e.__class__.__name__}: {e}")
-
-
-def _napari_notification_raising(e: Exception, parent: Widget):
-    from napari.utils.notifications import show_error
-
-    return show_error(str(e))
-
-
-class ErrorMode(Enum):
-    msgbox = "msgbox"
-    stderr = "stderr"
-    stdout = "stdout"
-    napari = "napari"
-
-    def get_handler(self):
-        """Get error handler."""
-        return ErrorModeHandlers[self]
-
-    def wrap_handler(self, func: Callable, parent):
-        """Wrap function with the error handler."""
-        handler = self.get_handler()
-
-        @functools.wraps(func)
-        def wrapped_func(*args, **kwargs):
-            try:
-                out = func(*args, **kwargs)
-            except Exception as e:
-                e.__traceback__ = _cleanup_tb(e.__traceback__)
-                handler(e, parent=parent)
-                out = e
-            return out
-
-        return wrapped_func
-
-
-ErrorModeHandlers = {
-    ErrorMode.msgbox: _msgbox_raising,
-    ErrorMode.stderr: _stderr_raising,
-    ErrorMode.stdout: _stdout_raising,
-    ErrorMode.napari: _napari_notification_raising,
-}
-
 
 defaults = {
     "popup_mode": PopUpMode.popup,
@@ -308,6 +237,9 @@ class MagicTemplate(MutableSequence[_W], metaclass=_MagicTemplateMeta):
         raise NotImplementedError()
 
     if TYPE_CHECKING:
+
+        def __iter__(self) -> Iterator[_W]:
+            raise NotImplementedError()
 
         def index(self, value: Any, start: int, stop: int) -> int:
             raise NotImplementedError()
@@ -792,7 +724,7 @@ class MagicTemplate(MutableSequence[_W], metaclass=_MagicTemplateMeta):
                 mgui = _build_mgui(widget, func, self)
                 mgui.native.setParent(self.native, mgui.native.windowFlags())
                 out = show_dialog_from_mgui(mgui)
-                _define_close_callback(self, mgui)
+                self._popup_mode.connect_close_callback(mgui)
                 return out
 
         else:
@@ -800,12 +732,7 @@ class MagicTemplate(MutableSequence[_W], metaclass=_MagicTemplateMeta):
 
             def run_function():
                 mgui = _build_mgui(widget, func, self)
-                _need_title_bar = self._popup_mode not in (
-                    PopUpMode.popup,
-                    PopUpMode.dock,
-                    PopUpMode.parentsub,
-                    PopUpMode.dialog,
-                )
+                _need_title_bar = self._popup_mode.need_title_bar()
                 if mgui.call_count == 0:  # connect only once
                     _prep_func(mgui)
                     if _need_title_bar:
@@ -822,7 +749,7 @@ class MagicTemplate(MutableSequence[_W], metaclass=_MagicTemplateMeta):
                             mgui.insert(0, title)
 
                     if self._close_on_run and not mgui._auto_call:
-                        _define_close_callback(self, mgui)
+                        self._popup_mode.connect_close_callback(mgui)
 
                 if nparams == 1 and issubclass(fgui_classes[0], FileEdit):
                     fdialog: FileEdit = mgui[int(_need_title_bar)]
@@ -836,19 +763,7 @@ class MagicTemplate(MutableSequence[_W], metaclass=_MagicTemplateMeta):
                     else:
                         return None
 
-                if self._popup_mode not in (
-                    PopUpMode.dock,
-                    PopUpMode.dialog,
-                    PopUpMode.parentsub,
-                ):
-                    widget.mgui.show()
-                elif self._popup_mode == PopUpMode.dock:
-                    mgui.parent.show()  # show dock widget
-                elif self._popup_mode == PopUpMode.parentsub:
-                    mgui.native.parent().setVisible(True)
-                else:
-                    mgui.exec_as_dialog(parent=self)
-
+                self._popup_mode.activate_magicgui(mgui)
                 return None
 
         widget.changed.connect(run_function)
@@ -1374,19 +1289,6 @@ def _define_popup(self: BaseGui, obj, widget: PushButtonPlus | Action):
     return _prep
 
 
-def _define_close_callback(self: BaseGui, mgui: FunctionGui):
-    if self._popup_mode not in (
-        PopUpMode.dock,
-        PopUpMode.parentsub,
-        PopUpMode.dialog,
-    ):
-        mgui.called.connect(mgui.hide)
-    elif self._popup_mode in (PopUpMode.dock, PopUpMode.parentsub):
-        # If FunctioGui is docked or in a subwindow, we should close
-        # the parent QDockWidget/QMdiSubwindow.
-        mgui.called.connect(lambda: mgui.parent.hide())
-
-
 def _implement_confirmation(
     method: MethodType,
     self: BaseGui,
@@ -1432,17 +1334,6 @@ def _implement_confirmation(
         _method.__signature__ = method.__signature__
 
     return _method
-
-
-def _cleanup_tb(tb: TracebackType):
-    """Remove useless info from a traceback object."""
-    current_tb = tb
-    while current_tb is not None:
-        if current_tb.tb_frame.f_code.co_name == "_recordable":
-            tb = current_tb.tb_next
-            break
-        current_tb = current_tb.tb_next
-    return tb
 
 
 def _empty_func(name: str) -> Callable[[Any], None]:
