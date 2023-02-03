@@ -1,26 +1,32 @@
 from __future__ import annotations
 
 import sys
-import re
 from types import MappingProxyType
 from typing import Any, Mapping
-from functools import lru_cache
-
+from macrokit import parse, Head, Expr
 from qtpy import QtWidgets as QtW, QtCore, QtGui
-from qtpy.QtCore import Qt, Signal
+from qtpy.QtCore import Qt
 from magicgui.backends._qtpy.widgets import QBaseStringWidget
 from magicclass._magicgui_compat import ValueWidget
-import builtins
 
 
-@lru_cache(maxsize=1)
-def builtin_ns() -> list[str]:
-    return {k: v for k, v in builtins.__dict__.items() if not k.startswith("_")}
+def _get_last_group(text: str) -> str | None:
+    if text.endswith(" "):
+        return None
+    _ends_with_dot = text.endswith(".")
+    if _ends_with_dot:
+        text = text[:-1]
+    try:
+        mk_expr = parse(text)
+    except Exception:
+        return None
 
-
-_WordPattern = re.compile(
-    r"[0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_\.]+"
-)
+    while isinstance(mk_expr, Expr) and mk_expr.head in (Head.binop, Head.unop):
+        mk_expr = mk_expr.args[-1]
+    last_found = str(mk_expr)
+    if _ends_with_dot:
+        last_found += "."
+    return last_found
 
 
 class QCompletionPopup(QtW.QListWidget):
@@ -34,9 +40,7 @@ class QCompletionPopup(QtW.QListWidget):
         return super().parentWidget()
 
     def _on_item_clicked(self, item: QtW.QListWidgetItem):
-        self.parentWidget().setText(item.text())
-        self.parentWidget().setFocus()
-        self.close()
+        self.parentWidget()._complete_with_current_item()
 
     def focusInEvent(self, e: QtGui.QFocusEvent) -> None:
         self.parentWidget().setFocus()
@@ -46,24 +50,6 @@ class QCompletionPopup(QtW.QListWidget):
 
     def setPrevious(self):
         self.setCurrentRow((self.currentRow() - 1) % self.count())
-
-
-class LazyAttrGetter(Mapping[str, Any]):
-    def __init__(self, obj):
-        self._obj = obj
-        self._attrs = dir(obj)
-
-    def __getitem__(self, __key: str) -> Any:
-        try:
-            return getattr(self._obj, __key)
-        except AttributeError:
-            raise KeyError(__key) from None
-
-    def __len__(self) -> int:
-        return len(self._attrs)
-
-    def __iter__(self) -> iter[str]:
-        return iter(self._attrs)
 
 
 class QEvalLineEdit(QtW.QLineEdit):
@@ -85,7 +71,7 @@ class QEvalLineEdit(QtW.QLineEdit):
         return self._namespace
 
     def setNamespace(self, ns: Mapping[str, Any]):
-        self._namespace = dict(builtin_ns(), **ns)
+        self._namespace = dict(ns)
 
     def _update_completion_state(self, allow_auto: bool) -> bool:
         self._current_completion_state = self._get_completion_list(self.text())
@@ -113,27 +99,33 @@ class QEvalLineEdit(QtW.QLineEdit):
         self.setFocus()
 
     def _get_completion_list(self, text: str) -> tuple[str, list[str]]:
-        found = _WordPattern.findall(text.split(" ")[-1])
+        last_found = _get_last_group(text)
+        if last_found is None:
+            return "", []
+
         ns = self._namespace
-        if len(found) == 0:
+        if len(last_found) == 0:
             return "", list(ns.keys())
-        last_found: str = found[-1]
         *strs, last = last_found.split(".")
         if len(strs) == 0:
             return last, [k for k in ns.keys() if k.startswith(last_found)]
         else:
-            for head in strs:
-                val = ns.get(head, None)
-                if val is None:
-                    return last, []
-                try:
-                    ns = LazyAttrGetter(val)
-                except Exception:
-                    return last, []
+            try:
+                val = eval(".".join(strs), self.namespace(), {})
+            except Exception:
+                return last, []
+
+            attrs = dir(val)
 
             if last == "":
-                return last, [k for k in ns if not k.startswith("_")]
-            return last, [k for k in ns if k.startswith(last)]
+                return last, sorted(
+                    (k for k in attrs if not k.startswith("_")),
+                    key=lambda x: x.swapcase(),
+                )
+
+            return last, sorted(
+                (k for k in attrs if k.startswith(last)), key=lambda x: x.swapcase()
+            )
 
     def _on_text_changed(self, text: str):
         if self._list_widget is not None:
@@ -168,8 +160,7 @@ class QEvalLineEdit(QtW.QLineEdit):
                     return True
             elif event.key() == Qt.Key.Key_Return:
                 if self._list_widget is not None:
-                    comp = self._list_widget.currentItem().text()
-                    self._complete_with(comp)
+                    self._complete_with_current_item()
                     return True
             elif event.key() == Qt.Key.Key_Escape:
                 if self._list_widget is not None:
@@ -177,6 +168,10 @@ class QEvalLineEdit(QtW.QLineEdit):
                     self._list_widget = None
                     return True
         return super().event(event)
+
+    def _complete_with_current_item(self):
+        comp = self._list_widget.currentItem().text()
+        self._complete_with(comp)
 
     def focusOutEvent(self, a0: QtGui.QFocusEvent) -> None:
         if self._list_widget is not None:
@@ -210,4 +205,5 @@ class EvalLineEdit(ValueWidget):
         self.native.setNamespace(ns)
 
     def eval(self):
+        """Evaluate current text."""
         return eval(self.value, self.native.namespace(), {})
