@@ -4,8 +4,8 @@ from macrokit import Expr, Head, symbol
 from enum import Enum
 import pathlib
 import datetime
-from magicclass.types import Color, Stored, Path
-from magicclass.widgets import ColorEdit
+from magicclass.types import Color, Stored, Path, ExprStr
+from magicclass.widgets import ColorEdit, EvalLineEdit
 from magicclass._gui._base import MagicTemplate
 
 # classes
@@ -32,18 +32,6 @@ mk.register_type(
         _datetime, (e.year, e.month, e.day, e.hour, e.minute), {}
     ),
 )
-
-
-@mk.register_type(range)
-def _fmt_range(e: range) -> str:
-    if e.step == 1:
-        if e.start == 0:
-            return f"range({e.stop})"
-        else:
-            return f"range({e.start}, {e.stop})"
-    else:
-        return f"range({e.start}, {e.stop}, {e.step})"
-
 
 mk.register_type(
     datetime.date, lambda e: Expr.parse_call(_date, (e.year, e.month, e.day), {})
@@ -78,3 +66,4 @@ mgui.register_type(
 mgui.register_type(Path.Save, widget_type="FileEdit", mode="w")
 mgui.register_type(Path.Dir, widget_type="FileEdit", mode="d")
 mgui.register_type(Path.Multiple, widget_type="FileEdit", mode="rm")
+mgui.register_type(ExprStr, widget_type=EvalLineEdit)

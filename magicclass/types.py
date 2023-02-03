@@ -106,6 +106,17 @@ ErrorModeStr = Literal["msgbox", "stderr", "stdout"]
 
 Color = Union[Iterable[float], str]
 
+
+class ExprStr(str):
+    def __new__(cls, x, ns) -> None:
+        self = str.__new__(cls, x)
+        self.__ns = ns
+        return self
+
+    def eval(self):
+        return eval(str(self), self.__ns, {})
+
+
 # Bound type
 
 _W = TypeVar("_W", bound=Widget)
