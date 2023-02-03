@@ -191,9 +191,6 @@ class _EvalLineEdit(QBaseStringWidget):
     def __init__(self, **kwargs):
         super().__init__(QEvalLineEdit, "text", "setText", "textChanged", **kwargs)
 
-    def _post_get_hook(self, value):
-        return eval(value, self._qwidget.namespace(), {})
-
 
 class EvalLineEdit(ValueWidget):
     def __init__(self, namespace: Mapping[str, Any] = {}, **kwargs):
@@ -211,3 +208,6 @@ class EvalLineEdit(ValueWidget):
     def namespace(self, ns: Mapping[str, Any]):
         """Set the namespace of the eval line edit."""
         self.native.setNamespace(ns)
+
+    def eval(self):
+        return eval(self.value, self.native.namespace(), {})

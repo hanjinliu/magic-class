@@ -96,8 +96,8 @@ class QToggleSwitch(QtW.QAbstractButton):
         return self._checked
 
     def setChecked(self, val: bool):
-        start = self.positionForValue(self._checked)
-        end = self.positionForValue(val)
+        start = int(self.positionForValue(self._checked))
+        end = int(self.positionForValue(val))
         self._checked = val
         self._anim.setStartValue(start)
         self._anim.setEndValue(end)
