@@ -35,6 +35,7 @@ from .utils import FreeWidget
 from .logger import Logger
 from .codeedit import CodeEdit
 from .toggle_switch import ToggleSwitch
+from .eval import EvalLineEdit
 
 __all__ = [
     "ButtonContainer",
@@ -46,6 +47,7 @@ __all__ = [
     "CollapsibleContainer",
     "DictWidget",
     "DraggableContainer",
+    "EvalLineEdit",
     "FrameContainer",
     "Figure",
     "FloatRangeSlider",
