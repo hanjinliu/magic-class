@@ -1,10 +1,10 @@
 from __future__ import annotations
-from functools import lru_cache
 
 import sys
 import re
-
+from types import MappingProxyType
 from typing import Any, Mapping
+from functools import lru_cache
 
 from qtpy import QtWidgets as QtW, QtCore, QtGui
 from qtpy.QtCore import Qt, Signal
@@ -104,6 +104,7 @@ class QEvalLineEdit(QtW.QLineEdit):
 
         list_widget = QCompletionPopup()
         list_widget.setParent(self, Qt.WindowType.ToolTip)
+        list_widget.setFont(self.font())
         list_widget.addItems(self._current_completion_state[1])
         list_widget.move(self.mapToGlobal(self.cursorRect().bottomRight()))
         list_widget.show()
@@ -197,13 +198,16 @@ class _EvalLineEdit(QBaseStringWidget):
 class EvalLineEdit(ValueWidget):
     def __init__(self, namespace: Mapping[str, Any] = {}, **kwargs):
         kwargs["widget_type"] = _EvalLineEdit
-        super().__init__(
-            # backend_kwargs={"qwidg": QEvalLineEdit},
-            **kwargs,
-        )
+        super().__init__(**kwargs)
         self.native: QEvalLineEdit
         self.native.setNamespace(namespace)
 
     @property
     def namespace(self):
-        return self.native.namespace()
+        """Namespace of the eval line edit."""
+        return MappingProxyType(self.native.namespace())
+
+    @namespace.setter
+    def namespace(self, ns: Mapping[str, Any]):
+        """Set the namespace of the eval line edit."""
+        self.native.setNamespace(ns)
