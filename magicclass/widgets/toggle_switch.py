@@ -7,7 +7,7 @@ from magicgui.backends._qtpy.widgets import QBaseButtonWidget
 
 # A iPhone style toggle switch.
 # See https://stackoverflow.com/questions/14780517/toggle-switch-in-qt
-class _QToggleSwitch(QtW.QAbstractButton):
+class QToggleSwitch(QtW.QAbstractButton):
     toggled = Signal(bool)
 
     def __init__(self, parent: QtW.QWidget | None = None):
@@ -112,14 +112,14 @@ class _QToggleSwitch(QtW.QAbstractButton):
             return self._height / 2
 
 
-class QToggleSwitch(QtW.QWidget):
+class QToggleSwitchBase(QtW.QWidget):
     toggled = Signal(bool)
 
     def __init__(self, parent: QtW.QWidget | None = None):
         super().__init__(parent)
         layout = QtW.QHBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
-        self._switch = _QToggleSwitch(self)
+        self._switch = QToggleSwitch(self)
         self._text = QtW.QLabel(self)
         layout.addWidget(self._switch)
         layout.addWidget(self._text)
@@ -143,7 +143,7 @@ class ToggleSwitch(ButtonWidget):
     def __init__(self, **kwargs):
         super().__init__(
             widget_type=QBaseButtonWidget,
-            backend_kwargs={"qwidg": QToggleSwitch},
+            backend_kwargs={"qwidg": QToggleSwitchBase},
             **kwargs,
         )
-        self.native: QToggleSwitch
+        self.native: QToggleSwitchBase
