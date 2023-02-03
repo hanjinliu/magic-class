@@ -45,6 +45,7 @@ class Has3DViewBox(HasViewBox):
         cmap: str = "grays",
         gamma: float = 1.0,
         interpolation: str = "linear",
+        name: str | None = None,
     ) -> layer3d.Image:
         """
         Add a 3D array as a volumic image.
@@ -86,6 +87,7 @@ class Has3DViewBox(HasViewBox):
             cmap=cmap,
             gamma=gamma,
             interpolation=interpolation,
+            name=name,
         )
 
         return self.add_layer(image)
@@ -99,6 +101,7 @@ class Has3DViewBox(HasViewBox):
         face_color: Color | None = None,
         edge_color: Color | None = None,
         shading: str = "smooth",
+        name: str | None = None,
     ) -> layer3d.IsoSurface:
         """
         Add a 3D array as a iso-surface.
@@ -134,6 +137,7 @@ class Has3DViewBox(HasViewBox):
             edge_color=edge_color,
             face_color=face_color,
             shading=shading,
+            name=name,
         )
 
         return self.add_layer(surface)
@@ -145,6 +149,7 @@ class Has3DViewBox(HasViewBox):
         face_color: Color | None = None,
         edge_color: Color | None = None,
         shading: str = "smooth",
+        name: str | None = None,
     ) -> layer3d.Surface:
         """
         Add vertices, faces and optional values as a surface.
@@ -171,6 +176,7 @@ class Has3DViewBox(HasViewBox):
             face_color=face_color,
             edge_color=edge_color,
             shading=shading,
+            name=name,
         )
         return self.add_layer(surface)
 
@@ -180,6 +186,7 @@ class Has3DViewBox(HasViewBox):
         color: Color = "white",
         width: float = 1,
         blending: str = "translucent",
+        name: str | None = None,
     ) -> layer3d.Curve3D:
         """
         Add a (N, 3) array as a curve.
@@ -206,6 +213,7 @@ class Has3DViewBox(HasViewBox):
             color=color,
             width=width,
             blending=blending,
+            name=name,
         )
         return self.add_layer(curve)
 
@@ -218,6 +226,7 @@ class Has3DViewBox(HasViewBox):
         size: float = 5.0,
         blending: str = "translucent",
         spherical: bool = True,
+        name: str | None = None,
     ) -> layer3d.Points3D:
         """
         Add a (N, 3) array as a point cloud.
@@ -253,6 +262,7 @@ class Has3DViewBox(HasViewBox):
             size=size,
             blending=blending,
             spherical=spherical,
+            name=name,
         )
         return self.add_layer(points)
 
@@ -264,6 +274,7 @@ class Has3DViewBox(HasViewBox):
         color: Color = "white",
         width: float = 1.0,
         blending: str = "translucent",
+        name: str | None = None,
     ) -> layer3d.Arrows3D:
         """
         Add a (N, P, 3) array as a set of arrows.
@@ -300,6 +311,7 @@ class Has3DViewBox(HasViewBox):
             color=color,
             width=width,
             blending=blending,
+            name=name,
         )
         return self.add_layer(arrows)
 

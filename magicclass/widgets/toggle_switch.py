@@ -14,7 +14,9 @@ class _QToggleSwitch(QtW.QAbstractButton):
         super().__init__(parent)
 
         self._height = 16
-        self._brush = QtGui.QColor("#4D79C7")
+        self._on_color = QtGui.QColor("#4D79C7")
+        self._off_color = QtGui.QColor("#909090")
+        self._handle_color = QtGui.QColor("#d5d5d5")
         self.offset = self._height / 2
         self._checked = False
         self._margin = 3
@@ -23,12 +25,20 @@ class _QToggleSwitch(QtW.QAbstractButton):
         self.setFixedWidth(38)
 
     @Property(QtGui.QColor)
-    def brush(self):
-        return self._brush
+    def onColor(self):
+        return self._on_color
 
-    @brush.setter
-    def brush(self, brsh: QtGui.QBrush):
-        self._brush = brsh
+    @onColor.setter
+    def onColor(self, brsh: QtGui.QBrush):
+        self._on_color = brsh
+
+    @Property(QtGui.QColor)
+    def offColor(self):
+        return self._off_color
+
+    @offColor.setter
+    def offColor(self, brsh: QtGui.QBrush):
+        self._off_color = brsh
 
     @Property(int)
     def offset(self):
@@ -38,6 +48,14 @@ class _QToggleSwitch(QtW.QAbstractButton):
     def offset(self, o: int):
         self._x = o
         self.update()
+
+    @Property(QtGui.QColor)
+    def handleColor(self):
+        return self._handle_color
+
+    @handleColor.setter
+    def handleColor(self, color: QtGui.QColor):
+        self._handle_color = color
 
     def sizeHint(self) -> QtCore.QSize:
         return QtCore.QSize(
@@ -55,15 +73,13 @@ class _QToggleSwitch(QtW.QAbstractButton):
             self.height() - 2 * self._margin,
         )
         if self.isEnabled():
-            p.setBrush(self.brush if self._checked else Qt.GlobalColor.black)
+            p.setBrush(self._on_color if self._checked else self._off_color)
             p.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing, True)
-            handle_color = QtGui.QColor("#d5d5d5")
         else:
-            p.setBrush(Qt.GlobalColor.black)
+            p.setBrush(self._off_color)
             p.setOpacity(0.12)
-            handle_color = QtGui.QColor("#BDBDBD")
         p.drawRoundedRect(rrect, _y, _y)
-        p.setBrush(handle_color)
+        p.setBrush(self._handle_color)
         p.setOpacity(1.0)
         p.drawEllipse(QtCore.QRectF(self.offset - _y, 0, self.height(), self.height()))
 
@@ -80,18 +96,20 @@ class _QToggleSwitch(QtW.QAbstractButton):
         return self._checked
 
     def setChecked(self, val: bool):
+        start = self.positionForValue(self._checked)
+        end = self.positionForValue(val)
         self._checked = val
-        if self._checked:
-            start = self._height / 2
-            end = self.width() - self._height
-        else:
-            start = self.offset
-            end = self._height / 2
         self._anim.setStartValue(start)
         self._anim.setEndValue(end)
         self._anim.setDuration(120)
         self._anim.start()
         self.toggled.emit(self._checked)
+
+    def positionForValue(self, val: bool) -> int:
+        if val:
+            return self.width() - self._height
+        else:
+            return self._height / 2
 
 
 class QToggleSwitch(QtW.QWidget):
@@ -108,7 +126,7 @@ class QToggleSwitch(QtW.QWidget):
         self.setLayout(layout)
         self._switch.toggled.connect(self.toggled)
 
-    def checked(self):
+    def isChecked(self):
         return self._switch.checked()
 
     def setChecked(self, val: bool):
