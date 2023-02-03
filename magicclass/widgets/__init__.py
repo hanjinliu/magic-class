@@ -34,6 +34,7 @@ from .separator import Separator
 from .utils import FreeWidget
 from .logger import Logger
 from .codeedit import CodeEdit
+from .toggle_switch import ToggleSwitch
 
 __all__ = [
     "ButtonContainer",
@@ -66,5 +67,6 @@ __all__ = [
     "SpreadSheet",
     "StackedContainer",
     "TabbedContainer",
+    "ToggleSwitch",
     "ToolBoxContainer",
 ]
