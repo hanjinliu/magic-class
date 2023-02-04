@@ -39,7 +39,7 @@ These options are `magicclass` specific:
     + ``msgbox``: Open a message box.
     + ``stderr``: Print output as standard.
 
-* ``widget_type: str | WidgetType = WidgetType.none`` ... Specify widget types. See :doc:`/main/containers`.
+* ``widget_type: str | WidgetType = WidgetType.none`` ... Specify widget types. See :doc:`/main/make_better/containers`.
 
 To avoid writing the same options many times, you can change the default setting via ``default`` constant:
 
