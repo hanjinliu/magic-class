@@ -3,6 +3,8 @@ from __future__ import annotations
 import sys
 from types import MappingProxyType
 from typing import Any, Mapping
+from collections import Counter
+
 from macrokit import parse, Head, Expr
 from qtpy import QtWidgets as QtW, QtCore, QtGui
 from qtpy.QtCore import Qt
@@ -13,10 +15,28 @@ from magicclass._magicgui_compat import ValueWidget
 
 def _get_last_group(text: str) -> str | None:
     if text.endswith(" "):
-        return None
+        # look for the global namespace
+        return ""
+
     _ends_with_dot = text.endswith(".")
     if _ends_with_dot:
         text = text[:-1]
+
+    # check unmatched brackets
+    counter = Counter(text)
+    for left, right in ["()", "[]", "{}"]:
+        if counter[left] > counter[right]:
+            _n_left = 0
+            for i in range(1, len(text) + 1):
+                c = text[-i]
+                if c == left:
+                    _n_left += 1
+                elif c == right:
+                    _n_left -= 1
+                if _n_left > 0:
+                    break
+            text = text[-i + 1 :]
+    print(text)
     try:
         mk_expr = parse(text)
     except Exception:
