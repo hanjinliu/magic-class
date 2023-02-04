@@ -21,6 +21,7 @@ from .wrappers import (
     nogui,
     mark_preview,
     impl_preview,
+    setup_function_gui,
     mark_on_calling,
     mark_on_called,
     abstractapi,
