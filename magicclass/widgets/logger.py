@@ -76,37 +76,40 @@ class QtLogger(QtW.QTextEdit):
         self._last_save_path = None
 
     def update(self, output: tuple[int, Printable]):
-        with suppress(RuntimeError):
-            output_type, obj = output
-            if output_type == Output.TEXT:
-                self.moveCursor(QtGui.QTextCursor.MoveOperation.End)
-                self.insertPlainText(obj)
-                self.moveCursor(QtGui.QTextCursor.MoveOperation.End)
-            elif output_type == Output.HTML:
-                self.moveCursor(QtGui.QTextCursor.MoveOperation.End)
-                self.insertHtml(obj)
-                self.moveCursor(QtGui.QTextCursor.MoveOperation.End)
-            elif output_type == Output.IMAGE:
-                cursor = self.textCursor()
-                cursor.insertImage(obj)
-                self.insertPlainText("\n\n")
-                self.verticalScrollBar().setValue(self.verticalScrollBar().maximum())
-            else:
-                raise TypeError("Wrong type.")
-            self._post_append()
+        output_type, obj = output
+        if output_type == Output.TEXT:
+            self.moveCursor(QtGui.QTextCursor.MoveOperation.End)
+            self.insertPlainText(obj)
+            self.moveCursor(QtGui.QTextCursor.MoveOperation.End)
+        elif output_type == Output.HTML:
+            self.moveCursor(QtGui.QTextCursor.MoveOperation.End)
+            self.insertHtml(obj)
+            self.moveCursor(QtGui.QTextCursor.MoveOperation.End)
+        elif output_type == Output.IMAGE:
+            cursor = self.textCursor()
+            cursor.insertImage(obj)
+            self.insertPlainText("\n\n")
+            self.verticalScrollBar().setValue(self.verticalScrollBar().maximum())
+        else:
+            raise TypeError("Wrong type.")
+        self._post_append()
         return None
 
     def appendText(self, text: str):
         """Append text in the main thread."""
-        self.process.emit((Output.TEXT, text))
+        self._emit_output(Output.TEXT, text)
 
     def appendHtml(self, html: str):
         """Append HTML in the main thread."""
-        self.process.emit((Output.HTML, html))
+        self._emit_output(Output.HTML, html)
 
     def appendImage(self, qimage: QtGui.QImage):
         """Append image in the main thread."""
-        self.process.emit((Output.IMAGE, qimage))
+        self._emit_output(Output.IMAGE, qimage)
+
+    def _emit_output(self, output: int, obj: Printable):
+        with suppress(RuntimeError):
+            self.process.emit((output, obj))
 
     def _post_append(self):
         """Check the history length."""

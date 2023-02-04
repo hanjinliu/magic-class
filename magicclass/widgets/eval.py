@@ -36,7 +36,7 @@ def _get_last_group(text: str) -> str | None:
                 if _n_left > 0:
                     break
             text = text[-i + 1 :]
-    print(text)
+
     try:
         mk_expr = parse(text)
     except Exception:

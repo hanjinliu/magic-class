@@ -1,4 +1,5 @@
 from __future__ import annotations
+from contextlib import suppress
 import threading
 import time
 from timeit import default_timer
@@ -276,10 +277,11 @@ class DefaultProgressBar(FrameContainer, _SupportProgress):
         super().__init__(widgets=[self.progress_label, self.pbar, cnt], labels=False)
 
     def _on_timer_updated(self, _=None):
-        if self._timer.sec < 3600:
-            self.time_label.value = self._timer.format_time("{min:0>2}:{sec:0>2}")
-        else:
-            self.time_label.value = self._timer.format_time()
+        with suppress(RuntimeError):
+            if self._timer.sec < 3600:
+                self.time_label.value = self._timer.format_time("{min:0>2}:{sec:0>2}")
+            else:
+                self.time_label.value = self._timer.format_time()
         return None
 
     def _start_thread(self):
@@ -293,11 +295,12 @@ class DefaultProgressBar(FrameContainer, _SupportProgress):
 
     def _update_timer_label(self):
         """Background thread for updating the progress bar"""
-        while self._running:
-            if self._timer._running:
-                self._time_signal.emit()
+        with suppress(RuntimeError):
+            while self._running:
+                if self._timer._running:
+                    self._time_signal.emit()
 
-            time.sleep(0.1)
+                time.sleep(0.1)
         return None
 
     def _finish(self):
@@ -329,25 +332,27 @@ class DefaultProgressBar(FrameContainer, _SupportProgress):
 
     def show(self):
         parent = self.native.parent()
-        self._CONTAINER.append(self)
-        if self._CONTAINER.parent is not parent:
-            self._CONTAINER.native.setParent(
-                parent,
-                self._CONTAINER.native.windowFlags(),
-            )
-        if not self._CONTAINER.visible:
-            self._CONTAINER.show()
-            move_to_screen_center(self._CONTAINER.native)
+        with suppress(RuntimeError):
+            self._CONTAINER.append(self)
+            if self._CONTAINER.parent is not parent:
+                self._CONTAINER.native.setParent(
+                    parent,
+                    self._CONTAINER.native.windowFlags(),
+                )
+            if not self._CONTAINER.visible:
+                self._CONTAINER.show()
+                move_to_screen_center(self._CONTAINER.native)
         return None
 
     def close(self):
         for i, wdt in enumerate(self._CONTAINER):
             if wdt is self:
                 break
-        self._CONTAINER.pop(i)
-        self._CONTAINER.height = 1  # minimize height
-        if len(self._CONTAINER) == 0:
-            self._CONTAINER.close()
+        with suppress(RuntimeError):
+            self._CONTAINER.pop(i)
+            self._CONTAINER.height = 1  # minimize height
+            if len(self._CONTAINER) == 0:
+                self._CONTAINER.close()
         return None
 
     def set_description(self, desc: str):
@@ -853,10 +858,11 @@ def close_pbar(pbar: ProgressBarLike):
 
 def increment(pbar: ProgressBarLike):
     """Increment progressbar."""
-    if pbar.value == pbar.max:
-        pbar.max = 0
-    else:
-        pbar.value += 1
+    with suppress(RuntimeError):
+        if pbar.value == pbar.max:
+            pbar.max = 0
+        else:
+            pbar.value += 1
     return None
 
 
