@@ -4,6 +4,7 @@ import inspect
 from types import ModuleType
 from weakref import WeakValueDictionary
 from typing import Any, TYPE_CHECKING, Callable
+from macrokit import Symbol, Expr
 
 from magicclass._gui.class_gui import (
     ClassGuiBase,
@@ -84,6 +85,7 @@ def magicclass(
     stylesheet: str | StyleSheet = None,
     properties: dict[str, Any] = None,
     record: bool = True,
+    symbol: str = "ui",
 ):
     """
     Decorator that can convert a Python class into a widget.
@@ -124,6 +126,9 @@ def magicclass(
         to set width, height or margin without defining __post_init__.
     record : bool, default is True
         If True, macro recording is enabled.
+    symbol : str, default is "ui"
+        The identifier used in macro to represent this widget.
+
     Returns
     -------
     Decorated class or decorator.
@@ -209,6 +214,7 @@ def magicclass(
             if properties:
                 for k, v in properties.items():
                     setattr(self, k, v)
+            self._my_symbol = _as_symbol(symbol)
 
         newclass.__init__ = __init__
 
@@ -654,3 +660,11 @@ class Parameters:
         """
         params = list(self.__signature__.parameters.keys())[1:]
         return {param: getattr(self, param) for param in params}
+
+
+def _as_symbol(s: str) -> Symbol | Expr:
+    if isinstance(s, str):
+        return Symbol(s)
+    elif not isinstance(s, (Symbol, Expr)):
+        raise TypeError(f"Expected a string or Symbol, got {type(s)}.")
+    return s

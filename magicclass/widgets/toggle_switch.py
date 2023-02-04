@@ -40,12 +40,12 @@ class QToggleSwitch(QtW.QAbstractButton):
     def offColor(self, brsh: QtGui.QBrush):
         self._off_color = brsh
 
-    @Property(int)
+    @Property(float)
     def offset(self):
         return self._x
 
     @offset.setter
-    def offset(self, o: int):
+    def offset(self, o: float):
         self._x = o
         self.update()
 
@@ -107,9 +107,9 @@ class QToggleSwitch(QtW.QAbstractButton):
 
     def positionForValue(self, val: bool) -> int:
         if val:
-            return self.width() - self._height
+            return int(self.width() - self._height)
         else:
-            return self._height / 2
+            return self._height // 2
 
 
 class QToggleSwitchBase(QtW.QWidget):
