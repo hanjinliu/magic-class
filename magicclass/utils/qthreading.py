@@ -484,6 +484,7 @@ class thread_worker:
         desc: str | Callable | None = None,
         total: str | Callable | int = 0,
         pbar: ProgressBar | _SupportProgress | MagicField | None = None,
+        **kwargs,
     ) -> Self:
         """
         Configure the progressbar.
@@ -502,7 +503,7 @@ class thread_worker:
         """
         self = cls()
 
-        progress = dict(desc=desc, total=total, pbar=pbar)
+        progress = dict(desc=desc, total=total, pbar=pbar, **kwargs)
 
         self._progress = progress
         return self
@@ -733,7 +734,7 @@ class thread_worker:
 
     def _find_progressbar(self, gui: BaseGui, desc: str | None = None, total: int = 0):
         """Find available progressbar. Create a new one if not found."""
-        from ..fields import MagicField
+        from magicclass.fields import MagicField
 
         gui_id = id(gui)
         if gui_id in self._progressbars:
