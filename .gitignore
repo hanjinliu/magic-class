@@ -1,6 +1,7 @@
 .vscode/
 *.ipynb
 rst/_build/*
+_docs_temp/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

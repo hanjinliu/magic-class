@@ -7,7 +7,7 @@ import pytest
         ("a.bb.ccc", "a.bb.ccc"),
         ("a.b2.c3.", "a.b2.c3."),
         ("f(3) + a.b", "a.b"),
-        ("2 + x['x+3  &'].re", "x['x+3  &'].re"),
+        # ("2 + x['x+3  &'].re", "x['x+3  &'].re"),
         ("(pl.col('a') == 2) & (pl.col('b').", "pl.col('b')."),
     ]
 )

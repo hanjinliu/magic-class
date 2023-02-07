@@ -7,3 +7,6 @@ release:
 	python setup.py bdist_wheel
 	twine upload --repository testpypi dist/*
 	twine upload --repository pypi dist/*
+
+watch-rst:
+	watchfiles "sphinx-build -b html ./rst ./_docs_temp" rst

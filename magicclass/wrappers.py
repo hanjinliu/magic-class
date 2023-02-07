@@ -472,6 +472,48 @@ def impl_preview(
 
 mark_preview = impl_preview
 
+
+def setup_function_gui(target: Callable):
+    """
+    Mark a function as a setup function for a FunctionGui.
+
+    Function decorated with ``setup_function_gui(func)`` will be called when the
+    FunctionGui widget for method ``func`` was built. This decorator is used to
+    define complicated setting of a FunctionGui, which is not achievable by
+    simple configurations.
+
+    >>> @magicclass
+    >>> class A:
+    ...     def func(self, x: int, xmax: int):
+    ...         # target function
+    ...
+    ...     @setup_function_gui(func)
+    ...     def _setup_func(self, gui: FunctionGui):
+    ...         @gui.xmax.changed.connect
+    ...         def _(xmax_value):
+    ...             gui.x.max = xmax_value
+    """
+
+    def wrapper(setup: Callable[[BaseGui, FunctionGui], None]):
+        setup_qualname = setup.__qualname__
+        target_qualname = target.__qualname__
+        if setup_qualname.split(".")[-2] != target_qualname.split(".")[-2]:
+            # have to search for the proper parent instance
+            def _setup(self: BaseGui, mgui: FunctionGui):
+                prev_ns = setup_qualname.split(".")[-2]
+                while self.__class__.__name__ != prev_ns:
+                    self = self.__magicclass_parent__
+                return setup(self, mgui)
+
+        else:
+            _setup = setup
+        upgrade_signature(target, additional_options={"setup": _setup})
+        upgrade_signature(setup, additional_options={"nogui": True})
+        return setup
+
+    return wrapper
+
+
 _Fn = TypeVar("_Fn", bound=Callable[[FunctionGui], Any])
 
 

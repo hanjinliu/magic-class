@@ -2,7 +2,7 @@ from types import MethodType
 from unittest.mock import MagicMock
 
 import pytest
-from magicclass import magicclass, set_options, get_function_gui
+from magicclass import magicclass, set_options, get_function_gui, abstractapi, setup_function_gui
 from magicclass.testing import MockConfirmation
 from magicgui.widgets import PushButton
 
@@ -597,3 +597,58 @@ def test_abstractapi_on_construction():
 
     with pytest.raises(Exception):
         ui = A()
+
+def test_setup_function_gui():
+    mock = MagicMock()
+    @magicclass
+    class A:
+        def f(self, a: int = 20):
+            pass
+
+        @setup_function_gui(f)
+        def _f_setup(self, mgui):
+            mock(mgui.a.value)
+
+    ui = A()
+    mock.assert_not_called()
+    get_function_gui(ui.f)
+    mock.assert_called_with(20)
+
+def test_setup_function_gui_with_wraps():
+    mock = MagicMock()
+    @magicclass
+    class A:
+        @magicclass
+        class B:
+            f = abstractapi()
+
+        @B.wraps
+        def f(self, a: int = 20):
+            pass
+
+        @setup_function_gui(f)
+        def _f_setup(self, mgui):
+            mock(self, mgui.a.value)
+
+    ui = A()
+    mock.assert_not_called()
+    get_function_gui(ui.f)
+    mock.assert_called_with(ui, 20)
+
+def test_setup_function_from_parent():
+    mock = MagicMock()
+    @magicclass
+    class A:
+        @magicclass
+        class B:
+            def f(self, a: int = 20):
+                ...
+
+        @setup_function_gui(B.f)
+        def _f_setup(self, mgui):
+            mock(self, mgui.a.value)
+
+    ui = A()
+    mock.assert_not_called()
+    get_function_gui(ui.B.f)
+    mock.assert_called_with(ui, 20)

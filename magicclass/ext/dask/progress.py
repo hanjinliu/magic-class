@@ -1,5 +1,6 @@
 from __future__ import annotations
 from functools import wraps
+from types import GeneratorType
 from typing import Any, Callable, TYPE_CHECKING
 from dask.diagnostics import Callback as DaskCallback
 from psygnal import Signal
@@ -14,13 +15,14 @@ from magicclass.utils.qthreading import (
 )
 
 if TYPE_CHECKING:
-    from ..._gui import BaseGui
+    from magicclass._gui import BaseGui
 
 
 class DaskProgressBar(DefaultProgressBar, DaskCallback):
     """A progress bar widget for dask computation."""
 
     computed = Signal(object)
+    new_cycle = Signal(int)
 
     def __init__(
         self,
@@ -45,6 +47,7 @@ class DaskProgressBar(DefaultProgressBar, DaskCallback):
     def _start(self, dsk):
         self._state = None
         self._frac = 0.0
+        self.new_cycle.emit(self._n_computation)
         self._n_computation += 1
         self._start_thread()
         return None
@@ -94,8 +97,6 @@ class DaskProgressBar(DefaultProgressBar, DaskCallback):
     def set_worker(self, worker: GeneratorWorker | FunctionWorker):
         """Set currently running worker."""
         self._worker = worker
-        if isinstance(self._worker, GeneratorWorker):
-            raise TypeError("Cannot set generator.")
         self.footer[1].visible = False
         self.footer[2].visible = False
         self._time_signal.emit()
@@ -155,6 +156,7 @@ class dask_thread_worker(thread_worker):
                 "pbar": None,
                 "desc": "Progress",
                 "total": 100,
+                "descs": [],
             }
         else:
             self._progress["pbar"] = None
@@ -170,6 +172,18 @@ class dask_thread_worker(thread_worker):
         self._progressbars[gui_id] = pbar
         for c in self.computed._iter_as_method(gui):
             pbar.computed.connect(c)
+        if descs := self._progress.get("descs"):
+            if callable(descs):
+                _descs = descs
+            else:
+                _descs = lambda: iter(descs)
+            self._progress["desc"] = next(_descs(), "<No description>")
+            it = _descs()
+
+            @pbar.new_cycle.connect
+            def _(i: int):
+                pbar.set_description(next(it, "<No description>"))
+
         pbar.native.setParent(gui.native, self.__class__._WINDOW_FLAG)
         move_to_screen_center(pbar.native)
 
@@ -180,6 +194,11 @@ class dask_thread_worker(thread_worker):
             *args,
             **kwargs,
         )
+        if isinstance(worker, GeneratorWorker):
+
+            @self.yielded.connect
+            def _(*args):
+                pbar.value = 0
 
         return worker
 
@@ -188,6 +207,9 @@ class dask_thread_worker(thread_worker):
         def _wrapped(*args, **kwargs):
             with pbar:
                 out = self._func(*args, **kwargs)
-            return out
+                if isinstance(out, GeneratorType):
+                    yield from out
+                else:
+                    return out
 
         return _wrapped

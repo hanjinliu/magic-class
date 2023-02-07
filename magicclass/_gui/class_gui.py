@@ -394,7 +394,7 @@ def make_gui(
         )
 
         def __init__(
-            self: cls,
+            self,
             layout: str = "vertical",
             close_on_run: bool = None,
             popup_mode: str | PopUpMode = None,
@@ -403,7 +403,6 @@ def make_gui(
             name: str = None,
             visible: bool = None,
         ):
-
             container.__init__(
                 self, layout=layout, labels=labels, name=name, visible=visible
             )
@@ -422,7 +421,7 @@ def make_gui(
 
         # ui["x"] will not return widget if x is a MagicValueField.
         # To ensure __getitem__ returns a Widget, this method should be overriden.
-        def __getitem__(self: cls, key):
+        def __getitem__(self, key):
             """Get item by integer, str, or slice."""
             if isinstance(key, str):
                 for widget in self._list:
@@ -430,18 +429,18 @@ def make_gui(
                         return widget
             return container.__getattr__(self, key)
 
-        def __setattr__(self: cls, name: str, value: Any) -> None:
+        def __setattr__(self, name: str, value: Any) -> None:
             if not isinstance(getattr(self.__class__, name, None), MagicField):
                 container.__setattr__(self, name, value)
             else:
                 object.__setattr__(self, name, value)
 
-        def insert(self: cls, key: int, widget: Widget) -> None:
+        def insert(self, key: int, widget: Widget) -> None:
             self._fast_insert(key, widget)
             self._unify_label_widths()
             return None
 
-        def reset_choices(self: cls, *_: Any):
+        def reset_choices(self, *_: Any):
             """Reset child Categorical widgets"""
             all_widgets: set[Widget] = set()
 
@@ -456,7 +455,7 @@ def make_gui(
                     w.reset_choices()
             return None
 
-        def show(self: cls, run: bool = True) -> None:
+        def show(self, run: bool = True) -> None:
             """
             Show GUI. If any of the parent GUI is a dock widget in napari, then this
             will also show up as a dock widget (floating if in popup mode).
@@ -502,7 +501,7 @@ def make_gui(
                     run_app()
             return None
 
-        def close(self: cls):
+        def close(self):
             """Close GUI. if this widget is a dock widget, then also close it."""
 
             current_self = self._search_parent_magicclass()
@@ -527,7 +526,7 @@ def make_gui(
             # try to convert it into widget. Should decorate with @nogui.
             @nogui
             def add_dock_widget(
-                self: cls,
+                self,
                 widget: Widget,
                 *,
                 name: str = "",
