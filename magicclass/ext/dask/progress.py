@@ -1,6 +1,6 @@
 from __future__ import annotations
 from functools import wraps
-from types import GeneratorType
+import inspect
 from typing import Any, Callable, TYPE_CHECKING
 from dask.diagnostics import Callback as DaskCallback
 from psygnal import Signal
@@ -194,7 +194,7 @@ class dask_thread_worker(thread_worker):
             *args,
             **kwargs,
         )
-        if isinstance(worker, GeneratorWorker):
+        if self.is_generator:
 
             @self.yielded.connect
             def _(*args):
@@ -203,13 +203,20 @@ class dask_thread_worker(thread_worker):
         return worker
 
     def _define_function(self, pbar):
-        @wraps(self._func)
-        def _wrapped(*args, **kwargs):
-            with pbar:
-                out = self._func(*args, **kwargs)
-                if isinstance(out, GeneratorType):
+        if inspect.isgeneratorfunction(self._func):
+
+            @wraps(self._func)
+            def _wrapped(*args, **kwargs):
+                with pbar:
+                    out = self._func(*args, **kwargs)
                     yield from out
-                else:
-                    return out
+
+        else:
+
+            @wraps(self._func)
+            def _wrapped(*args, **kwargs):
+                with pbar:
+                    out = self._func(*args, **kwargs)
+                return out
 
         return _wrapped
