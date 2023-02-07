@@ -44,6 +44,7 @@ del _register_types
 if TYPE_CHECKING:
     from magicclass.stylesheets import StyleSheet
     from magicclass._gui import MenuGuiBase
+    from magicclass._gui.mgui_ext import Clickable
     from magicclass._gui._function_gui import FunctionGuiPlus
     from magicclass.types import WidgetTypeStr, PopUpModeStr, ErrorModeStr
     from magicclass.help import HelpWidget
@@ -492,6 +493,36 @@ def build_help(ui: MagicTemplate, parent=None) -> HelpWidget:
         help_widget = HelpWidget(ui, parent=parent)
         _HELPS[ui_id] = help_widget
     return help_widget
+
+
+def get_button(ui: MagicTemplate | ModuleType, name: str = None) -> Clickable:
+    """
+    Get the button/action object for the given method.
+
+    This function is a helper function for magicclass. Using this method is
+    always safer than directly accessing it by ``ui["method"]``.
+    Either of following expression is allowed.
+
+    >>> get_button(ui, "method")
+    >>> get_button(ui.method)
+
+    """
+    if name is None:
+        if hasattr(ui, "__self__") and callable(ui):
+            func = ui
+            ui = func.__self__
+            name = func.__name__
+        else:
+            raise TypeError(
+                "The first argument of `get_function_gui() must be a method if "
+                "the method name is not given."
+            )
+    widget = ui[name]
+
+    if not hasattr(widget, "mgui"):
+        raise TypeError(f"Widget {widget} does not have FunctionGui inside it.")
+
+    return widget
 
 
 def get_function_gui(

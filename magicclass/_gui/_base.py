@@ -1066,6 +1066,11 @@ def _build_mgui(widget_: Action | PushButtonPlus, func: Callable, parent: BaseGu
         mgui = FunctionGuiPlus(
             func, call_button, layout=layout, labels=labels, auto_call=auto_call
         )
+        # set function GUI.
+        widget_.mgui = mgui
+        name = widget_.name or ""
+        mgui.native.setWindowTitle(name.replace("_", " ").strip())
+
         preview_setting = opt.get("preview", None)
         if preview_setting is not None:
             btn_text, is_auto_call, previewer = preview_setting
@@ -1081,11 +1086,8 @@ def _build_mgui(widget_: Action | PushButtonPlus, func: Callable, parent: BaseGu
             "Exception was raised during building magicgui from method "
             f"{func.__name__}.\n{e.__class__.__name__}: {e}"
         )
+        widget_.mgui = None
         raise type(e)(msg)
-
-    widget_.mgui = mgui
-    name = widget_.name or ""
-    mgui.native.setWindowTitle(name.replace("_", " ").strip())
 
     return _connect_functiongui_event(mgui, opt)
 

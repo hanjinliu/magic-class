@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Callable, Generic, TypeVar, overload, Any, Pro
 from typing_extensions import Literal
 
 from magicclass._gui.menu_gui import ContextMenuGui, MenuGui
+from magicclass._gui.mgui_ext import Clickable
 from magicclass._gui.toolbar import ToolBarGui
 from magicclass._gui.class_gui import ClassGuiBase
 from magicclass._gui._base import PopUpMode, ErrorMode, MagicTemplate
@@ -31,6 +32,10 @@ class _MagicClassDecorator(Protocol, Generic[_Base]):
     def __call__(self, cls: _C) -> type[_Base] | _C: ...
 
 def build_help(ui: MagicTemplate, parent: QWidget | None = None) -> "HelpWidget": ...
+@overload
+def get_button(method: MethodType) -> Clickable: ...
+@overload
+def get_button(ui: MagicTemplate, name: str) -> Clickable: ...
 @overload
 def get_function_gui(method: MethodType) -> FunctionGuiPlus: ...
 @overload
