@@ -469,7 +469,7 @@ class thread_worker:
                 progress = {}
 
             progress.setdefault("desc", None)
-            progress.setdefault("total", 0)
+            progress.setdefault("total", self.__class__._DEFAULT_TOTAL)
             progress.setdefault("pbar", None)
 
         self._progress = progress
@@ -482,7 +482,7 @@ class thread_worker:
     def with_progress(
         cls,
         desc: str | Callable | None = None,
-        total: str | Callable | int = 0,
+        total: str | Callable | int | None = None,
         pbar: ProgressBar | _SupportProgress | MagicField | None = None,
         **kwargs,
     ) -> Self:
@@ -502,7 +502,8 @@ class thread_worker:
             Progressbar object.
         """
         self = cls()
-
+        if total is None:
+            total = cls._DEFAULT_TOTAL
         progress = dict(desc=desc, total=total, pbar=pbar, **kwargs)
 
         self._progress = progress

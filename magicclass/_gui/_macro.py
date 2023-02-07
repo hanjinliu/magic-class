@@ -230,6 +230,7 @@ class MacroEdit(TabbedContainer):
             self.native.setParent(ui.native, self.native.windowFlags())
         super().show()
         move_to_screen_center(self.native)
+        self.textedit.native.setFocus()
 
     def _execute(self, code: Expr):
         """Run macro."""

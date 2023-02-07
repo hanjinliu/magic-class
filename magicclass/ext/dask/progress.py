@@ -1,5 +1,6 @@
 from __future__ import annotations
 from functools import wraps
+from types import GeneratorType
 from typing import Any, Callable, TYPE_CHECKING
 from dask.diagnostics import Callback as DaskCallback
 from psygnal import Signal
@@ -96,8 +97,6 @@ class DaskProgressBar(DefaultProgressBar, DaskCallback):
     def set_worker(self, worker: GeneratorWorker | FunctionWorker):
         """Set currently running worker."""
         self._worker = worker
-        if isinstance(self._worker, GeneratorWorker):
-            raise TypeError("Cannot set generator.")
         self.footer[1].visible = False
         self.footer[2].visible = False
         self._time_signal.emit()
@@ -195,6 +194,11 @@ class dask_thread_worker(thread_worker):
             *args,
             **kwargs,
         )
+        if isinstance(worker, GeneratorWorker):
+
+            @self.yielded.connect
+            def _(*args):
+                pbar.value = 0
 
         return worker
 
@@ -203,6 +207,9 @@ class dask_thread_worker(thread_worker):
         def _wrapped(*args, **kwargs):
             with pbar:
                 out = self._func(*args, **kwargs)
-            return out
+                if isinstance(out, GeneratorType):
+                    yield from out
+                else:
+                    return out
 
         return _wrapped
