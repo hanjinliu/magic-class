@@ -4,7 +4,7 @@ import pandas as pd
 from pandas._typing import Axes, Dtype, Axis
 from magicgui.widgets import Table
 
-from ...fields import field
+from magicclass.fields import field
 
 Defaults = {
     "read_only": True,
