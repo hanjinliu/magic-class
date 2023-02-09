@@ -79,18 +79,19 @@ class QDataFrameModel(QtCore.QAbstractTableModel):
 
 def _format_float(value, ndigits: int = 4) -> str:
     """convert string to int or float if possible"""
-    try:
-        if 0.1 <= abs(value) < 10 ** (ndigits + 1) or value == 0:
-            text = f"{value:.{ndigits}f}"
-        else:
-            text = f"{value:.{ndigits-1}e}"
-    except Exception:
-        text = "NA"
+    if value is None:
+        return "null"
+    if 0.1 <= abs(value) < 10 ** (ndigits + 1) or value == 0:
+        text = f"{value:.{ndigits}f}"
+    else:
+        text = f"{value:.{ndigits-1}e}"
 
     return text
 
 
 def _format_int(value, ndigits: int = 4) -> str:
+    if value is None:
+        return "null"
     if 0.1 <= abs(value) < 10 ** (ndigits + 1) or value == 0:
         text = str(value)
     else:
@@ -100,13 +101,12 @@ def _format_int(value, ndigits: int = 4) -> str:
 
 
 def _format_complex(value: complex, ndigits: int = 3) -> str:
-    try:
-        if 0.1 <= abs(value) < 10 ** (ndigits + 1) or value == 0:
-            text = f"{value.real:.{ndigits}f}{value.imag:+.{ndigits}f}j"
-        else:
-            text = f"{value.real:.{ndigits-1}e}{value.imag:+.{ndigits-1}e}j"
-    except Exception:
-        text = "NA"
+    if value is None:
+        return "null"
+    if 0.1 <= abs(value) < 10 ** (ndigits + 1) or value == 0:
+        text = f"{value.real:.{ndigits}f}{value.imag:+.{ndigits}f}j"
+    else:
+        text = f"{value.real:.{ndigits-1}e}{value.imag:+.{ndigits-1}e}j"
 
     return text
 
