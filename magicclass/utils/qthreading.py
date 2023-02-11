@@ -774,13 +774,13 @@ class thread_worker:
         _desc = self._progress["desc"]
         _total = self._progress["total"]
 
-        all_args = None
+        all_args = None  # all the argument of the function
         # progress bar description
         if callable(_desc):
             arguments = self.__signature__.bind(gui, *args, **kwargs)
             arguments.apply_defaults()
             all_args = arguments.arguments
-            desc = _desc(**all_args)
+            desc = _desc(**_filter_args(_desc, all_args))
         else:
             desc = str(_desc or self._func.__name__)
 
@@ -868,6 +868,18 @@ def increment(pbar: ProgressBarLike):
     return None
 
 
+def _filter_args(fn: Callable, arguments: dict[str, Any]) -> dict[str, Any]:
+    sig = inspect.signature(fn)
+    params = sig.parameters
+    nparams = len(params)
+    if nparams == 0:
+        return {}
+    if list(sig.parameters.values())[-1] == inspect.Parameter.VAR_KEYWORD:
+        return arguments
+    existing_args = set(sig.parameters.keys())
+    return {k: v for k, v in arguments.items() if k in existing_args}
+
+
 class Callback:
     """Callback object that can be recognized by thread_worker."""
 
@@ -892,4 +904,4 @@ class Callback:
         return self(obj)
 
 
-to_callback = thread_worker.to_callback
+to_callback = thread_worker.to_callback  # function version

@@ -3,6 +3,7 @@ from magicclass.types import Bound
 from magicclass.utils import thread_worker
 import time
 from unittest.mock import MagicMock
+from pytestqt.qtbot import QtBot
 
 def test_worker_basic():
     mock = MagicMock()
@@ -197,7 +198,22 @@ def test_with_progress():
     b = B()
     b.f()
 
-def test_error(qtbot):
+def test_callable_desc():
+    @magicclass
+    class A:
+        @thread_worker.with_progress(desc=lambda i, s: f"test {i}, {s}")
+        def f(self, i: int, s: str):
+            pass
+
+        @thread_worker.with_progress(desc=lambda i: f"test {i}")
+        def g(self, i: int, s: str):
+            pass
+
+    a = A()
+    a.f(1, "a")
+    a.g(1, "a")
+
+def test_error(qtbot: QtBot):
     @magicclass(error_mode="stderr")
     class A:
         @thread_worker

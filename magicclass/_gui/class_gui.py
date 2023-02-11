@@ -520,7 +520,7 @@ def make_gui(
         if issubclass(container, MainWindow):
             # Similar to napari's viewer.window.add_dock_widget.
             # See napari/_qt/widgets/qt_viewer_dock_widget.py
-            from ..wrappers import nogui
+            from magicclass.wrappers import nogui
 
             # This function will be detected as non-reserved method so that magicclass will
             # try to convert it into widget. Should decorate with @nogui.

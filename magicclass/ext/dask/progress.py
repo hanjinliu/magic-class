@@ -174,7 +174,9 @@ class dask_thread_worker(thread_worker):
             pbar.computed.connect(c)
         if descs := self._progress.get("descs"):
             if callable(descs):
-                _descs = descs
+                arguments = self.__signature__.bind(gui, *args, **kwargs)
+                arguments.apply_defaults()
+                _descs = lambda: descs(**_filter_args(descs, arguments.arguments))
             else:
                 _descs = lambda: iter(descs)
             self._progress["desc"] = next(_descs(), "<No description>")
@@ -220,3 +222,15 @@ class dask_thread_worker(thread_worker):
                 return out
 
         return _wrapped
+
+
+def _filter_args(fn: Callable, arguments: dict[str, Any]) -> dict[str, Any]:
+    sig = inspect.signature(fn)
+    params = sig.parameters
+    nparams = len(params)
+    if nparams == 0:
+        return {}
+    if list(sig.parameters.values())[-1] == inspect.Parameter.VAR_KEYWORD:
+        return arguments
+    existing_args = set(sig.parameters.keys())
+    return {k: v for k, v in arguments.items() if k in existing_args}
