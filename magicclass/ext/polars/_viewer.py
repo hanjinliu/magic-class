@@ -7,9 +7,9 @@ from qtpy.QtCore import Qt, Signal
 
 from magicgui.backends._qtpy.widgets import QBaseValueWidget
 from magicclass._magicgui_compat import ValueWidget, Undefined
+import polars as pl
 
 if TYPE_CHECKING:  # pragma: no cover
-    import polars as pl
     from polars.datatypes import DataType
 
 
@@ -118,9 +118,29 @@ _DEFAULT_FORMATTERS: dict[str, Callable[[Any], str]] = {
     "c": _format_complex,
 }
 
+_DTYPE_KIND = {
+    pl.Int8: "i",
+    pl.Int16: "i",
+    pl.Int32: "i",
+    pl.Int64: "i",
+    pl.UInt8: "u",
+    pl.UInt16: "u",
+    pl.UInt32: "u",
+    pl.UInt64: "u",
+    pl.Float32: "f",
+    pl.Float64: "f",
+    pl.Utf8: "U",
+    pl.Boolean: "b",
+    pl.Date: "M",
+    pl.Datetime: "M",
+    pl.Time: "M",
+    pl.Duration: "m",
+    pl.Categorical: "O",
+}
+
 
 def _format_value(val, dtype: DataType):
-    return _DEFAULT_FORMATTERS.get(dtype.string_repr(dtype)[0], str)(val)
+    return _DEFAULT_FORMATTERS.get(_DTYPE_KIND.get(dtype, "O"), str)(val)
 
 
 class QDataFrameView(QtW.QTableView):
@@ -136,8 +156,6 @@ class QDataFrameView(QtW.QTableView):
         return self.model().df
 
     def setDataFrame(self, val):
-        import polars as pl
-
         if not isinstance(val, pl.DataFrame):
             df = pl.DataFrame(val)
         else:
