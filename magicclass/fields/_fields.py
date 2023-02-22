@@ -692,19 +692,6 @@ def field(
     ...
 
 
-# @overload
-# def field(
-#     obj: Any,
-#     *,
-#     name: str | None = None,
-#     label: str | None = None,
-#     widget_type: type[_W] = None,
-#     options: dict[str, Any] = {},
-#     record: bool = True,
-# ) -> MagicField[_W, Any]:
-#     ...
-
-
 @overload
 def field(
     obj: Any | None = None,
