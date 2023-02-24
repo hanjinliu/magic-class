@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import Any, Callable, TypedDict
-from typing_extensions import _AnnotatedAlias
+from typing_extensions import _AnnotatedAlias, get_args
 from magicgui.signature import MagicSignature
 from magicgui.widgets import FunctionGui
 import inspect
@@ -189,13 +189,14 @@ def split_annotated_type(annotation: _AnnotatedAlias) -> tuple[Any, dict]:
     """Split an Annotated type into its base type and options dict."""
     if not isinstance(annotation, _AnnotatedAlias):
         raise TypeError("Type hint must be an 'Annotated' type.")
-    if not isinstance(annotation.__metadata__[0], dict):
-        raise TypeError(
-            "Invalid Annotated format for magicgui. First arg must be a dict"
-        )
 
-    meta: dict = {}
-    for _meta in annotation.__metadata__:
-        meta.update(_meta)
+    typ, *meta = get_args(annotation)
+    all_meta = {}
+    for m in meta:
+        if not isinstance(m, dict):
+            raise TypeError(
+                "Invalid Annotated format for magicgui. Arguments must be a dict"
+            )
+        all_meta.update(m)
 
-    return annotation.__args__[0], meta
+    return typ, all_meta
