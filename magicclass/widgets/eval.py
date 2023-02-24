@@ -171,7 +171,7 @@ class QEvalLineEdit(QtW.QLineEdit):
             self._update_completion_state(allow_auto=False)
             self._list_widget.clear()
             items = self._current_completion_state[1]
-            if len(items) == 0:
+            if len(items) == 0 or len(text) == 0:
                 self._list_widget.close()
                 self._list_widget = None
                 return
