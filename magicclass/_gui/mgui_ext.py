@@ -1,5 +1,6 @@
 from __future__ import annotations
 from typing import Callable, Iterable, Any, Generic, TypeVar, Union
+from typing_extensions import TypeGuard
 from qtpy.QtWidgets import (
     QPushButton,
     QAction,
@@ -17,6 +18,10 @@ from ._icon import get_icon
 
 # magicgui widgets that need to be extended to fit into magicclass
 Clickable = Union["PushButtonPlus", "Action"]
+
+
+def is_clickable(wdt: Widget) -> TypeGuard[Clickable]:
+    return isinstance(wdt, (PushButtonPlus, Action))
 
 
 class PushButtonPlus(PushButton):

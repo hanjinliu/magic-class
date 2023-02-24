@@ -167,10 +167,10 @@ class QCodeEditor(QtW.QPlainTextEdit):
             return None
 
     def _open_magicgui(self, pos: QtCore.QPoint):
-        from magicclass._gui.mgui_ext import PushButtonPlus, Action
+        from magicclass._gui.mgui_ext import is_clickable
 
         info = self.wordAt(pos)
-        if info and isinstance(info.obj, (PushButtonPlus, Action)):
+        if info and is_clickable(info.obj):
             mgui = info.obj.mgui
             if mgui is None:
                 return show_messagebox("error", "Error", "No magicgui found", self)
