@@ -3,7 +3,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Iterable
+from typing import TYPE_CHECKING, Callable, Iterable
 from qt_command_palette import get_palette
 from magicclass._gui import BaseGui
 from magicclass._gui.mgui_ext import Clickable, is_clickable
@@ -42,23 +42,37 @@ def exec_command_palette(gui: BaseGui):
     for parent, wdt in _iter_executable(gui):
         _qualname = type(parent).__qualname__
         palette.register(
-            lambda: wdt.clicked.emit(),
+            _define_command(wdt.changed.emit),
             title=_qualname,
             desc=wdt.text,
-            when=lambda: wdt.enabled,
+            when=_define_when(wdt),
         )
     _PALETTES[_id] = palette
     palette.install(gui.native)
     return palette.show_widget(gui.native)
 
 
+def _define_command(fn: Callable) -> Callable:
+    return lambda: fn()
+
+
+def _define_when(wdt: Clickable) -> Callable[[], bool]:
+    return lambda: wdt.enabled
+
+
 def _iter_executable(gui: BaseGui) -> Iterable[tuple[BaseGui, Clickable]]:
+    processed: set[int] = set()
     for child in gui.__magicclass_children__:
+        processed.add(id(child))
         yield from _iter_executable(child)
     for wdt in gui:
         if is_clickable(wdt):
+            if wdt._unwrapped:  # @wraps
+                continue
             yield gui, wdt
         elif isinstance(wdt, BaseGui):
-            if wdt in gui.__magicclass_children__:
+            _id = id(wdt)
+            if _id in processed:
                 continue
+            processed.add(_id)
             yield from _iter_executable(wdt)
