@@ -428,7 +428,7 @@ class Aborted(RuntimeError):
 ProgressBarLike = Union[ProgressBar, _SupportProgress]
 
 
-class thread_worker:
+class thread_worker(Generic[_P]):
     """Create a worker in a superqt/napari style."""
 
     _DEFAULT_PROGRESS_BAR = DefaultProgressBar
@@ -444,7 +444,7 @@ class thread_worker:
         f: Callable[_P, _R1] | None = None,
         *,
         ignore_errors: bool = False,
-        progress: ProgressDict | None = None,
+        progress: ProgressDict | bool | None = None,
     ) -> None:
         self._func: Callable[_P, _R1] | None = None
         self._callback_dict_ = {
@@ -573,7 +573,7 @@ class thread_worker:
         return None
 
     @overload
-    def __call__(self, f: Callable[_P, _R1]) -> thread_worker:
+    def __call__(self, f: Callable[_P, _R1]) -> thread_worker[_P]:
         ...
 
     @overload
@@ -589,7 +589,7 @@ class thread_worker:
         else:
             return self._func(*args, **kwargs)
 
-    def __get__(self, gui: BaseGui, objtype=None):
+    def __get__(self, gui: BaseGui, objtype=None) -> Callable[_P, Any]:
         if gui is None:
             return self
 
@@ -616,7 +616,7 @@ class thread_worker:
         )
         return worker
 
-    def _create_method(self, gui: BaseGui):
+    def _create_method(self, gui: BaseGui) -> Callable[_P, Any]:
         from magicclass.fields import MagicField
 
         @wraps(self)
@@ -785,14 +785,17 @@ class thread_worker:
             desc = str(_desc or self._func.__name__)
 
         # total number of steps
-        if isinstance(_total, str):
+        if isinstance(_total, str) or callable(_total):
             if all_args is None:
                 arguments = self.__signature__.bind(gui, *args, **kwargs)
                 arguments.apply_defaults()
                 all_args = arguments.arguments
-            total = eval(_total, {}, all_args)
-        elif callable(_total):
-            total = _total(gui)
+            if isinstance(_total, str):
+                total = eval(_total, {}, all_args)
+            elif callable(_total):
+                total = _total(**_filter_args(_total, all_args))
+            else:
+                raise RuntimeError("Unreachable.")
         elif isinstance(_total, int):
             total = _total
         else:

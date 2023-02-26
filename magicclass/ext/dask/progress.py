@@ -82,16 +82,10 @@ class DaskProgressBar(DefaultProgressBar, DaskCallback):
         return None
 
     def _on_timer_updated(self, _=None):
-        if self._n_computation > 1:
-            _prefix = f"({self._n_computation}) "
-        else:
-            _prefix = ""
         if self._timer.sec < 3600:
-            self.time_label.value = _prefix + self._timer.format_time(
-                "{min:0>2}:{sec:0>2}"
-            )
+            self.time_label.value = self._timer.format_time("{min:0>2}:{sec:0>2}")
         else:
-            self.time_label.value = _prefix + self._timer.format_time()
+            self.time_label.value = self._timer.format_time()
         return None
 
     def set_worker(self, worker: GeneratorWorker | FunctionWorker):
