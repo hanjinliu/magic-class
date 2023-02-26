@@ -45,7 +45,7 @@ class VtkComponent(HasFields):
         self._update()
 
     def _update(self):
-        self._parent_ref().window.Render()
+        self._parent_ref().qt_widget.Render()
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}<{hex(id(self))}>"

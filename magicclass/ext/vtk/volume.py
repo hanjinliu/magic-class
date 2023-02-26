@@ -139,10 +139,10 @@ class Volume(VtkComponent, base=vedo.Volume):
         elif self.mode == Mode.mesh:
             actor = self._obj.tomesh()
         elif self.mode == Mode.iso:
-            actor = self._obj.isosurface(threshold=self.iso_threshold)
+            actor = self._obj.isosurface(value=self.iso_threshold)
         elif self.mode == Mode.wireframe:
             actor = (
-                self._obj.isosurface(threshold=self.iso_threshold)
+                self._obj.isosurface(value=self.iso_threshold)
                 .color(rgb, alpha=alpha)
                 .wireframe()
             )
@@ -154,7 +154,7 @@ class Volume(VtkComponent, base=vedo.Volume):
         plotter = self._parent_ref()
         plotter.remove(self._current_obj)
         plotter.add(actor)
-        plotter.window.Render()
+        plotter.qt_widget.Render()
         self._current_obj = actor
         self._update_cmap()
         return None
