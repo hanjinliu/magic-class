@@ -984,7 +984,13 @@ def _create_gui_method(self: BaseGui, obj: MethodType):
     for param in func.__signature__.parameters.values():
         if isinstance(param.annotation, _AnnotatedAlias):
             annot, opt = split_annotated_type(param.annotation)
-            param = MagicParameter.from_parameter(param, gui_options=opt)
+            param = MagicParameter(
+                param.name,
+                param.kind,
+                default=param.default,
+                annotation=annot,
+                gui_options=opt,
+            )
 
         if isinstance(param, MagicParameter):
             _param = MagicParameter(

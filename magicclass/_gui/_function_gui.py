@@ -250,6 +250,10 @@ def _append_auto_call_preview(self: FunctionGui, f: Callable, text: str = "Previ
         nonlocal generator
         sig = self.__signature__
         if cbox.value:
+            if not self._call_button.enabled:
+                # Button is disabled, such as when the call button is clicked.
+                context.exit()
+                return
             bound = sig.bind()
             bound.apply_defaults()
             _args = bound.args
