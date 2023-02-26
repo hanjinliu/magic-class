@@ -355,6 +355,9 @@ class DefaultProgressBar(FrameContainer, _SupportProgress):
                 self._CONTAINER.close()
         return None
 
+    def hide_footer(self):
+        self.footer[1].visible = self.footer[2].visible = False
+
     def set_description(self, desc: str):
         """Set description as the label of the progressbar."""
         self.progress_label.value = desc
@@ -372,8 +375,7 @@ class DefaultProgressBar(FrameContainer, _SupportProgress):
         self._worker.started.connect(self._start_thread)
         if not isinstance(self._worker, GeneratorWorker):
             # FunctionWorker does not have yielded/aborted signals.
-            self.footer[1].visible = False
-            self.footer[2].visible = False
+            self.hide_footer()
             return None
         # initialize abort_button
         self.abort_button.text = "Abort"

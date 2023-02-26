@@ -35,7 +35,7 @@ class DaskProgressBar(DefaultProgressBar, DaskCallback):
         self._frac = 0.0
         self._n_computation = 0
         super().__init__(max=max)
-        self.footer[1].visible = self.footer[2].visible = False
+        self.hide_footer()
         self._computed_signal = QtSignal()
         self._computed_signal.connect(self._on_computed)
 
@@ -91,8 +91,8 @@ class DaskProgressBar(DefaultProgressBar, DaskCallback):
     def set_worker(self, worker: GeneratorWorker | FunctionWorker):
         """Set currently running worker."""
         self._worker = worker
-        self.footer[1].visible = False
-        self.footer[2].visible = False
+        if not isinstance(worker, GeneratorWorker):
+            self.hide_footer()
         self._time_signal.emit()
         return None
 
