@@ -9,9 +9,9 @@ from magicgui.widgets import FloatSlider
 from .components import VtkComponent
 from .const import Mode, Rendering
 
-from ...fields import vfield
-from ...widgets import FloatRangeSlider
-from ...types import Color
+from magicclass.fields import vfield
+from magicclass.widgets import FloatRangeSlider
+from magicclass.types import Color
 
 
 def split_rgba(col: str | Sequence[float]) -> tuple[str | Sequence[float], float]:

@@ -4,8 +4,8 @@ import weakref
 import vedo
 import numpy as np
 from .const import Representation
-from ...fields import vfield, HasFields
-from ...types import Color
+from magicclass.fields import vfield, HasFields
+from magicclass.types import Color
 
 _VtkType = TypeVar("_VtkType", bound=vedo.BaseActor)
 
