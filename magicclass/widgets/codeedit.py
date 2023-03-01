@@ -1,6 +1,6 @@
 from __future__ import annotations
 import sys
-from typing import Any, NamedTuple, TYPE_CHECKING
+from typing import Any, Iterator, NamedTuple, TYPE_CHECKING
 import weakref
 from qtpy import QtWidgets as QtW, QtGui, QtCore
 from qtpy.QtCore import Qt, Signal as pyqtSignal
@@ -128,8 +128,101 @@ class QCodeEditor(QtW.QPlainTextEdit):
     def event(self, ev: QtCore.QEvent):
         if ev.type() == QtCore.QEvent.Type.ToolTip:
             ev = QtGui.QHelpEvent(ev)
-            line = self._analyze_line(self.viewport().mapFromGlobal(ev.globalPos()))
-            QtW.QToolTip.showText(ev.globalPos(), str(line), self)
+            try:
+                line = self._analyze_line(self.viewport().mapFromGlobal(ev.globalPos()))
+            except Exception:
+                pass
+            else:
+                QtW.QToolTip.showText(ev.globalPos(), str(line), self)
+        elif ev.type() == QtCore.QEvent.Type.KeyPress:
+            ev = QtGui.QKeyEvent(ev)
+            if (
+                ev.key() == Qt.Key.Key_Tab
+                and ev.modifiers() & Qt.KeyboardModifier.ShiftModifier
+            ) or ev.key() == Qt.Key.Key_Backtab:
+                # unindent
+                for cursor in self.iter_selected_lines():
+                    self.setTextCursor(cursor)
+                    self.remove_at_the_start("\t")
+                return True
+            # comment out selected lines
+            elif (
+                ev.key() == Qt.Key.Key_Slash
+                and ev.modifiers() & Qt.KeyboardModifier.ControlModifier
+            ):
+                for cursor in self.iter_selected_lines():
+                    self.setTextCursor(cursor)
+                    line = self.textCursor().block().text()
+                    if line.startswith("#"):
+                        if line.startswith("# "):
+                            self.remove_at_the_start("# ")
+                        else:
+                            self.remove_at_the_start("#")
+                    else:
+                        self.add_at_the_start("# ")
+                return True
+            # move selected lines up or down
+            elif (
+                ev.key() in (Qt.Key.Key_Up, Qt.Key.Key_Down)
+                and ev.modifiers() & Qt.KeyboardModifier.AltModifier
+            ):
+                cursor = self.textCursor()
+                cursor0 = self.textCursor()
+                start = cursor.selectionStart()
+                end = cursor.selectionEnd()
+                if ev.key() == Qt.Key.Key_Up and min(start, end) > 0:
+                    cursor0.setPosition(start)
+                    cursor0.movePosition(QtGui.QTextCursor.MoveOperation.PreviousBlock)
+                    cursor0.movePosition(QtGui.QTextCursor.MoveOperation.StartOfLine)
+                    cursor0.movePosition(
+                        QtGui.QTextCursor.MoveOperation.EndOfLine,
+                        QtGui.QTextCursor.MoveMode.KeepAnchor,
+                    )
+                    cursor0.movePosition(
+                        QtGui.QTextCursor.MoveOperation.NextCharacter,
+                        QtGui.QTextCursor.MoveMode.KeepAnchor,
+                    )
+                    txt = cursor0.selectedText()
+                    cursor0.removeSelectedText()
+                    cursor0.setPosition(
+                        cursor.selectionEnd()
+                    )  # NOTE: cursor position changed!
+                    cursor0.movePosition(QtGui.QTextCursor.MoveOperation.EndOfLine)
+                    if cursor0.position() == self.document().characterCount() - 1:
+                        cursor0.insertText("\n")
+                        txt = txt.rstrip("\u2029")
+                    cursor0.movePosition(QtGui.QTextCursor.MoveOperation.NextCharacter)
+                    cursor0.insertText(txt)
+                    self.setTextCursor(cursor)
+                elif (
+                    ev.key() == Qt.Key.Key_Down
+                    and max(start, end) < self.document().characterCount() - 1
+                ):
+                    cursor0.setPosition(end)
+                    cursor0.movePosition(QtGui.QTextCursor.MoveOperation.EndOfLine)
+                    cursor0.movePosition(
+                        QtGui.QTextCursor.MoveOperation.NextCharacter,
+                        QtGui.QTextCursor.MoveMode.KeepAnchor,
+                    )
+                    cursor0.movePosition(
+                        QtGui.QTextCursor.MoveOperation.EndOfLine,
+                        QtGui.QTextCursor.MoveMode.KeepAnchor,
+                    )
+                    txt = cursor0.selectedText()
+                    cursor0.removeSelectedText()
+                    cursor0.setPosition(
+                        cursor.selectionStart()
+                    )  # NOTE: cursor position changed!
+                    cursor0.movePosition(QtGui.QTextCursor.MoveOperation.StartOfLine)
+                    if cursor0.position() == 0:
+                        cursor0.insertText("\n")
+                        txt = txt.lstrip("\u2029")
+                    cursor0.movePosition(
+                        QtGui.QTextCursor.MoveOperation.PreviousCharacter
+                    )
+                    cursor0.insertText(txt)
+                    self.setTextCursor(cursor)
+                return True
         return super().event(ev)
 
     def _magicclass_parent(self):
@@ -155,7 +248,7 @@ class QCodeEditor(QtW.QPlainTextEdit):
         cursor = self.cursorForPosition(pos)
         cursor.select(QtGui.QTextCursor.SelectionType.WordUnderCursor)
         block = cursor.block()
-        line = block.text()
+        line = block.text().strip()
         clicked_pos = cursor.position() - block.position()
         try:
             return eval_under_cursor(
@@ -298,6 +391,30 @@ class QCodeEditor(QtW.QPlainTextEdit):
             extraSelections.append(selection)
         self.setExtraSelections(extraSelections)
 
+    def add_at_the_start(self, text: str):
+        cursor = self.textCursor()
+        pos = cursor.position()
+        cursor.movePosition(QtGui.QTextCursor.MoveOperation.StartOfLine)
+        cursor.insertText(text)
+        cursor.removeSelectedText()
+        cursor.setPosition(pos + len(text))
+        self.setTextCursor(cursor)
+
+    def remove_at_the_start(self, text: str):
+        cursor = self.textCursor()
+        pos = cursor.position()
+        line = cursor.block().text()
+        if line.startswith(text):
+            cursor.movePosition(QtGui.QTextCursor.MoveOperation.StartOfLine)
+            cursor.movePosition(
+                QtGui.QTextCursor.MoveOperation.Right,
+                QtGui.QTextCursor.MoveMode.KeepAnchor,
+                len(text),
+            )
+            cursor.removeSelectedText()
+            cursor.setPosition(pos - len(text))
+            self.setTextCursor(cursor)
+
     def syntaxHighlight(self, lang: str = "python", theme: str = "default"):
         """Highlight syntax."""
         from superqt.utils import CodeSyntaxHighlight
@@ -330,6 +447,24 @@ class QCodeEditor(QtW.QPlainTextEdit):
         """Return selected string."""
         cursor = self.textCursor()
         return cursor.selectedText().replace("\u2029", "\n")
+
+    def selectedLines(self) -> list[str]:
+        """Return the selected lines that contain the cursor selection."""
+        return [cursor.block().text() for cursor in self.iter_selected_lines()]
+
+    def iter_selected_lines(self) -> Iterator[QtGui.QTextCursor]:
+        """Iterate text cursors for each selected line."""
+        cursor = self.textCursor()
+        start = cursor.selectionStart()
+        end = cursor.selectionEnd()
+        cursor.setPosition(start)
+        while cursor.position() <= end:
+            cursor.movePosition(QtGui.QTextCursor.MoveOperation.EndOfLine)
+            yield cursor
+            cursor.movePosition(QtGui.QTextCursor.MoveOperation.NextCharacter)
+        cursor.setPosition(start)
+        cursor.setPosition(end, QtGui.QTextCursor.MoveMode.KeepAnchor)
+        self.setTextCursor(cursor)
 
     def text(self) -> str:
         """Return the text."""

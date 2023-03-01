@@ -115,6 +115,7 @@ def callable_to_classes(f: Callable) -> list[type[Widget]]:
 
 
 def show_dialog_from_mgui(mgui: FunctionGui):
+    """Show file dialog from given magicgui widget."""
     fdialog: FileEdit = mgui[0]
     if result := fdialog._show_file_dialog(
         fdialog.mode,
