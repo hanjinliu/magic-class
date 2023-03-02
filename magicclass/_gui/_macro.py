@@ -243,9 +243,7 @@ class MacroEdit(TabbedContainer):
                 ns.setdefault(Symbol.var("viewer"), viewer)
             code.eval(ns)
         except Exception as e:
-            show_messagebox(
-                "error", title=e.__class__.__name__, text=str(e), parent=self.native
-            )
+            parent._error_mode.get_handler()(e, self)
 
     def _execute_selected(self, e=None):
         """Run selected line of macro."""

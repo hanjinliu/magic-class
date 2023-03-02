@@ -512,7 +512,7 @@ class thread_worker(Generic[_P]):
         return self
 
     @classmethod
-    def set_default(cls, pbar_cls: Callable | str) -> Self:
+    def set_default(cls, pbar_cls: Callable | str):
         """
         Set the default progressbar class.
 
