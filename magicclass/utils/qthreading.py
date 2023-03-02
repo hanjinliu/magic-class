@@ -685,17 +685,32 @@ class thread_worker(Generic[_P]):
             else:
                 # If function is called from script, some events must get processed by
                 # the application while keep script stopping at each line of code.
-                app = use_app()
-                worker.returned.connect(app.process_events)
-                worker.started.connect(app.process_events)
-                if isinstance(worker, GeneratorWorker):
-                    worker.yielded.connect(app.process_events)
-                worker.run()
+                self._run_blocked(gui, worker, pbar)
 
             return None
 
         _create_worker.__self__ = gui
         return _create_worker
+
+    def _run_blocked(
+        self, gui: BaseGui, worker: FunctionWorker | GeneratorWorker, pbar: ProgressBar
+    ):
+        app = use_app()
+        worker.started.connect(app.process_events)
+        if isinstance(pbar, DefaultProgressBar):
+            connection = pbar._time_signal.connect(app.process_events)
+        try:
+            worker.run()
+        except KeyboardInterrupt:
+            if isinstance(pbar, DefaultProgressBar):
+                pbar._abort_worker()
+            else:
+                worker.quit()
+            worker.finished.emit()
+            gui._error_mode.wrap_handler(Aborted.raise_, parent=gui)()
+        finally:
+            if isinstance(pbar, DefaultProgressBar):
+                pbar._time_signal.disconnect(connection)
 
     def _get_method_signature(self) -> inspect.Signature:
         sig = self.__signature__
