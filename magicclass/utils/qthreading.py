@@ -618,7 +618,7 @@ class thread_worker(Generic[_P]):
         )
         return worker
 
-    def _create_method(self, gui: BaseGui) -> Callable[_P, Any]:
+    def _create_method(self, gui: BaseGui) -> Callable[_P, None]:
         from magicclass.fields import MagicField
 
         @wraps(self)

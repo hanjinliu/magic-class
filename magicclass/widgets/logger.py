@@ -418,7 +418,10 @@ class Logger(Widget, logging.Handler):
             style = None
 
         if style is None:
-            style = self._get_proper_plt_style()
+            try:
+                style = self._get_proper_plt_style()
+            except RuntimeError:
+                style = "default"
 
         backend = mpl.get_backend()
         show._called = False
