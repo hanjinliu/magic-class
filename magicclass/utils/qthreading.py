@@ -32,7 +32,7 @@ from magicclass.widgets.containers import FrameContainer
 
 if TYPE_CHECKING:
     from magicclass._gui import BaseGui
-    from magicclass._gui.mgui_ext import PushButtonPlus, Action
+    from magicclass._gui.mgui_ext import Clickable
     from magicclass._gui._macro import GuiMacro
     from magicclass.fields import MagicField
     from typing_extensions import Self
@@ -683,7 +683,7 @@ class thread_worker(Generic[_P]):
                 if hasattr(pbar, "set_title"):
                     pbar.set_title(self._func.__name__.replace("_", " "))
 
-            _obj: PushButtonPlus | Action = gui[self._func.__name__]
+            _obj: Clickable = gui[self._func.__name__]
             if _obj.running:
                 worker.errored.connect(
                     partial(gui._error_mode.get_handler(), parent=gui)
