@@ -32,7 +32,7 @@ from magicclass.widgets.containers import FrameContainer
 
 if TYPE_CHECKING:
     from magicclass._gui import BaseGui
-    from magicclass._gui.mgui_ext import PushButtonPlus, Action
+    from magicclass._gui.mgui_ext import Clickable
     from magicclass._gui._macro import GuiMacro
     from magicclass.fields import MagicField
     from typing_extensions import Self
@@ -606,11 +606,29 @@ class thread_worker(Generic[_P]):
         return _create_worker
 
     def _create_qt_worker(
-        self, gui, *args, **kwargs
+        self, gui: BaseGui, *args, **kwargs
     ) -> FunctionWorker | GeneratorWorker:
         """Create a worker object."""
+        if self.is_generator:
+
+            def _run(*args, **kwargs):
+                with gui.macro.blocked():
+                    out = yield from self._func.__get__(gui)(*args, **kwargs)
+                if gui.macro.active and self._recorder is not None:
+                    self._recorder(gui, out, *args, **kwargs)
+                return out
+
+        else:
+
+            def _run(*args, **kwargs):
+                with gui.macro.blocked():
+                    out = self._func.__get__(gui)(*args, **kwargs)
+                if gui.macro.active and self._recorder is not None:
+                    self._recorder(gui, out, *args, **kwargs)
+                return out
+
         worker = create_worker(
-            self._func.__get__(gui),
+            _run,
             _ignore_errors=self._ignore_errors,
             _start_thread=False,
             *args,
@@ -651,12 +669,6 @@ class thread_worker(Generic[_P]):
 
             self._bind_callbacks(worker, gui)
 
-            # bind macro-recorder if exists
-            if self._recorder is not None:
-                worker.returned.connect(
-                    lambda out: self._recorder(gui, out, *args, **kwargs)
-                )
-
             if self._progress:
                 if not getattr(pbar, "visible", False):
                     # return the progressbar to the initial state
@@ -671,7 +683,7 @@ class thread_worker(Generic[_P]):
                 if hasattr(pbar, "set_title"):
                     pbar.set_title(self._func.__name__.replace("_", " "))
 
-            _obj: PushButtonPlus | Action = gui[self._func.__name__]
+            _obj: Clickable = gui[self._func.__name__]
             if _obj.running:
                 worker.errored.connect(
                     partial(gui._error_mode.get_handler(), parent=gui)

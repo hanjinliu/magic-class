@@ -384,7 +384,7 @@ class QCodeEditor(QtW.QPlainTextEdit):
                 int(self._line_number_area.width() - 2),
                 int(height),
                 Qt.AlignmentFlag.AlignRight,
-                str(num + 1),
+                str(num),
             )
 
     def _highlight_current_line(self):
