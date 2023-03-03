@@ -9,8 +9,8 @@ available in ``magicgui``.
     :local:
     :depth: 2
 
-Optional type
-=============
+``Optional`` type
+=================
 
 ``Optional`` type is almost identical to ``typing.Optional``. Using this type annotation
 ``@magicgui`` can create an ``OptionalWidget``, which has a checkbox and an widget of any
@@ -41,8 +41,8 @@ The "Use default value" text can be changed by "text" option. Options of the inn
         print(a)
     func.show(True)
 
-Color type
-==========
+``Color`` type
+==============
 
 There is no straightforward way to use a color as an input. In ``magic-class`` you can
 use ``Color`` type as a type annotation. This type is an alias of
@@ -59,3 +59,45 @@ behaves very similar to the color editor in ``napari``'s layer control.
         print(col)
 
 .. image:: ../images/fig_8-2.png
+
+``Path`` type
+=============
+
+``pathlib.Path`` is a type supported by :func:`magicgui` by default. However, you usually
+have to specify the ``mode`` and ``filter`` parameters.
+
+.. code-block:: python
+
+    from magicgui import magicgui
+    from pathlib import Path
+
+    @magicgui(path={"mode": "w", "filter": "Image files (*.png)"})
+    def func(path: Path):
+        print(path)
+
+In :mod:`magicclass` you can use :class:`magicclass.types.Path` type instead. It is identical
+to ``pathlib.Path`` when used as a constructor, but supports many other advanced annotations.
+
+.. code-block:: python
+
+    from magicclass.types import Path
+
+    # mode="r" and filter="Image files (*.png)
+    @magicgui
+    def func1(path: Path.Read["Image files (*.png)"]):
+        print("reading:", path)
+
+    # mode="w" and filter="Image files (*.png)
+    @magicgui
+    def func2(path: Path.Save["Image files (*.png)"]):
+        print("saving at:", path)
+
+    # mode="rm" and filter="Image files (*.png)
+    @magicgui
+    def func3(path: Path.Multiple["Image files (*.png)"]):
+        print("selected files:", path)
+
+    # mode="d"
+    @magicgui
+    def func4(path: Path.Dir):
+        print("selected directory =", path)
