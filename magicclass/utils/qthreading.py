@@ -606,11 +606,29 @@ class thread_worker(Generic[_P]):
         return _create_worker
 
     def _create_qt_worker(
-        self, gui, *args, **kwargs
+        self, gui: BaseGui, *args, **kwargs
     ) -> FunctionWorker | GeneratorWorker:
         """Create a worker object."""
+        if self.is_generator:
+
+            def _run(*args, **kwargs):
+                with gui.macro.blocked():
+                    out = yield from self._func.__get__(gui)(*args, **kwargs)
+                if gui.macro.active and self._recorder is not None:
+                    self._recorder(gui, out, *args, **kwargs)
+                return out
+
+        else:
+
+            def _run(*args, **kwargs):
+                with gui.macro.blocked():
+                    out = self._func.__get__(gui)(*args, **kwargs)
+                if gui.macro.active and self._recorder is not None:
+                    self._recorder(gui, out, *args, **kwargs)
+                return out
+
         worker = create_worker(
-            self._func.__get__(gui),
+            _run,
             _ignore_errors=self._ignore_errors,
             _start_thread=False,
             *args,
@@ -650,12 +668,6 @@ class thread_worker(Generic[_P]):
                 worker.started.connect(init_pbar.__get__(pbar))
 
             self._bind_callbacks(worker, gui)
-
-            # bind macro-recorder if exists
-            if self._recorder is not None:
-                worker.returned.connect(
-                    lambda out: self._recorder(gui, out, *args, **kwargs)
-                )
 
             if self._progress:
                 if not getattr(pbar, "visible", False):
