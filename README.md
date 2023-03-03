@@ -1,5 +1,5 @@
 [![License BSD-3](https://img.shields.io/pypi/l/magic-class.svg?color=green)](https://github.com/hanjinliu/magic-class/raw/main/LICENSE)
-[![Downloads](https://pepy.tech/badge/magic-class/month)](https://pepy.tech/project/magic-class)
+[![Python package index download statistics](https://img.shields.io/pypi/dm/magic-class.svg)](https://pypistats.org/packages/magic-class)
 [![PyPI version](https://badge.fury.io/py/magic-class.svg)](https://badge.fury.io/py/magic-class)
 [![Conda version](https://anaconda.org/conda-forge/magic-class/badges/version.svg)](https://anaconda.org/conda-forge/magic-class/badges/version.svg)
 

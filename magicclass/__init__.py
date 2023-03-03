@@ -1,4 +1,4 @@
-__version__ = "0.6.14.dev0"
+__version__ = "0.6.14"
 
 from .core import (
     magicclass,
@@ -63,6 +63,7 @@ __all__ = [
     "nogui",
     "mark_preview",
     "impl_preview",
+    "setup_function_gui",
     "mark_on_calling",
     "mark_on_called",
     "abstractapi",

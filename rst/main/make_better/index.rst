@@ -17,6 +17,7 @@ and tidiness of the source code.
    use_preview
    use_worker
    use_icon
+   use_logging
    use_functools
    additional_types
    containers

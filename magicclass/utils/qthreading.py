@@ -626,7 +626,7 @@ class thread_worker(Generic[_P]):
             # create a worker object
             worker = self._create_qt_worker(gui, *args, **kwargs)
             is_generator = isinstance(worker, GeneratorWorker)
-
+            pbar = None
             if self._progress:
                 # prepare progress bar
                 _pbar = self._progress["pbar"]
@@ -693,7 +693,10 @@ class thread_worker(Generic[_P]):
         return _create_worker
 
     def _run_blocked(
-        self, gui: BaseGui, worker: FunctionWorker | GeneratorWorker, pbar: ProgressBar
+        self,
+        gui: BaseGui,
+        worker: FunctionWorker | GeneratorWorker,
+        pbar: ProgressBar | None,
     ):
         app = use_app()
         worker.started.connect(app.process_events)
@@ -916,7 +919,7 @@ class Callback:
 
     def __call__(self, *args, **kwargs) -> Callback:
         """Return a partial callback."""
-        return self.__class__(partial(self._func, *args, *kwargs))
+        return self.__class__(partial(self._func, *args, **kwargs))
 
     def __get__(self, obj, type=None) -> Callback:
         if obj is None:
