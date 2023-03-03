@@ -287,3 +287,40 @@ def test_callback_partial():
     ui = A()
     ui.gen()
     assert ui._gen_yielded == [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+def test_nested_worker_macro():
+    mock1 = MagicMock()
+    mock2 = MagicMock()
+
+    @magicclass
+    class A:
+        @thread_worker
+        def f1(self):
+            mock1("f1")
+
+        @thread_worker
+        def f2(self):
+            mock2("f2")
+
+        @thread_worker
+        def f12(self):
+            self.f1()
+            self.f2()
+
+        def g12(self):
+            self.f1()
+            self.f2()
+
+    ui = A()
+    ui.f12()
+    mock1.assert_called_with("f1")
+    mock2.assert_called_with("f2")
+    assert len(ui.macro) == 2
+    assert str(ui.macro[-1]) == "ui.f12()"
+    mock1.reset_mock()
+    mock2.reset_mock()
+    ui.g12()
+    mock1.assert_called_with("f1")
+    mock2.assert_called_with("f2")
+    assert len(ui.macro) == 3
+    assert str(ui.macro[-1]) == "ui.g12()"

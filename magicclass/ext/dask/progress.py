@@ -184,7 +184,7 @@ class dask_thread_worker(thread_worker):
         move_to_screen_center(pbar.native)
 
         worker = create_worker(
-            self._define_function(pbar).__get__(gui),
+            self._define_function(pbar, gui).__get__(gui),
             _ignore_errors=self._ignore_errors,
             _start_thread=False,
             *args,
@@ -198,21 +198,23 @@ class dask_thread_worker(thread_worker):
 
         return worker
 
-    def _define_function(self, pbar):
+    def _define_function(self, pbar, gui: BaseGui):
         if inspect.isgeneratorfunction(self._func):
 
             @wraps(self._func)
             def _wrapped(*args, **kwargs):
                 with pbar:
-                    out = self._func(*args, **kwargs)
-                    yield from out
+                    with gui.macro.blocked():
+                        out = yield from self._func(*args, **kwargs)
+                return out
 
         else:
 
             @wraps(self._func)
             def _wrapped(*args, **kwargs):
                 with pbar:
-                    out = self._func(*args, **kwargs)
+                    with gui.macro.blocked():
+                        out = self._func(*args, **kwargs)
                 return out
 
         return _wrapped
