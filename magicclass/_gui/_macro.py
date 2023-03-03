@@ -8,7 +8,7 @@ from macrokit import Symbol, Expr, Head, Macro, parse
 from magicgui.widgets import FileEdit, LineEdit
 
 from magicclass.widgets import CodeEdit, TabbedContainer, ScrollableContainer, Dialog
-from magicclass.utils import show_messagebox, move_to_screen_center
+from magicclass.utils import move_to_screen_center
 from magicclass._gui.runner import CommandRunnerMenu
 
 if TYPE_CHECKING:
