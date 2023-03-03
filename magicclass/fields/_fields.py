@@ -54,6 +54,7 @@ class _FieldObject:
 _W = TypeVar("_W", bound=Widget)
 _V = TypeVar("_V")
 _U = TypeVar("_U")
+_F = TypeVar("_F", bound=Callable)
 
 
 class MagicField(_FieldObject, Generic[_W, _V]):
@@ -445,13 +446,14 @@ class MagicField(_FieldObject, Generic[_W, _V]):
         self._callbacks.pop(i)
         return None
 
-    def wraps(
-        self,
-        method: Callable | None = None,
-        *,
-        template: Callable | None = None,
-        copy: bool = False,
-    ):
+    # fmt: off
+    @overload
+    def wraps(self, method: _F, *, template: Callable | None = None, copy: bool = False) -> _F: ...
+    @overload
+    def wraps(self, method: None = ..., *, template: Callable | None = None, copy: bool = False) -> Callable[[_F], _F]: ...
+    # fmt: on
+
+    def wraps(self, method, *, template=None, copy=False):
         """
         Call the ``wraps`` class method of magic class.
 
