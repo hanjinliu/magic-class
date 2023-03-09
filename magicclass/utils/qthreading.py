@@ -20,6 +20,7 @@ from typing import (
 from typing_extensions import TypedDict, ParamSpec
 
 from superqt.utils import create_worker, GeneratorWorker, FunctionWorker
+from superqt import ensure_main_thread
 from qtpy.QtCore import Qt
 from magicgui.widgets import ProgressBar, Container, Widget, PushButton, Label
 from magicgui.application import use_app
@@ -614,8 +615,6 @@ class thread_worker(Generic[_P]):
             def _run(*args, **kwargs):
                 with gui.macro.blocked():
                     out = yield from self._func.__get__(gui)(*args, **kwargs)
-                if gui.macro.active and self._recorder is not None:
-                    self._recorder(gui, out, *args, **kwargs)
                 return out
 
         else:
@@ -623,8 +622,6 @@ class thread_worker(Generic[_P]):
             def _run(*args, **kwargs):
                 with gui.macro.blocked():
                     out = self._func.__get__(gui)(*args, **kwargs)
-                if gui.macro.active and self._recorder is not None:
-                    self._recorder(gui, out, *args, **kwargs)
                 return out
 
         worker = create_worker(
@@ -634,7 +631,17 @@ class thread_worker(Generic[_P]):
             *args,
             **kwargs,
         )
+
+        @worker.returned.connect
+        def _on_returned(out):
+            if gui.macro.active and self._recorder is not None:
+                self._recorder(gui, out, *args, **kwargs)
+
         return worker
+
+    def button(self, gui: BaseGui) -> Clickable:
+        """Return the button widget associated with this function."""
+        return gui[self._func.__name__]
 
     def _create_method(self, gui: BaseGui) -> Callable[_P, None]:
         from magicclass.fields import MagicField
@@ -665,12 +672,13 @@ class thread_worker(Generic[_P]):
                     pbar = _pbar
                     pbar.set_description(desc)
 
-                worker.started.connect(init_pbar.__get__(pbar))
+                if self.button(gui).running:
+                    worker.started.connect(init_pbar.__get__(pbar))
 
             self._bind_callbacks(worker, gui)
 
             if self._progress:
-                if not getattr(pbar, "visible", False):
+                if not getattr(pbar, "visible", False) and self.button(gui).running:
                     # return the progressbar to the initial state
                     worker.finished.connect(close_pbar.__get__(pbar))
                 if pbar.max != 0 and is_generator:
@@ -683,8 +691,7 @@ class thread_worker(Generic[_P]):
                 if hasattr(pbar, "set_title"):
                     pbar.set_title(self._func.__name__.replace("_", " "))
 
-            _obj: Clickable = gui[self._func.__name__]
-            if _obj.running:
+            if self.button(gui).running:
                 worker.errored.connect(
                     partial(gui._error_mode.get_handler(), parent=gui)
                 )
@@ -790,7 +797,8 @@ class thread_worker(Generic[_P]):
             _pbar = self.__class__._DEFAULT_PROGRESS_BAR(max=total)
             if isinstance(_pbar, Widget) and _pbar.parent is None:
                 # Popup progressbar as a splashscreen if it is not a child widget.
-                _pbar.native.setParent(gui.native, self.__class__._WINDOW_FLAG)
+                if self.button(gui).running:
+                    _pbar.native.setParent(gui.native, self.__class__._WINDOW_FLAG)
 
         else:
             _pbar.max = total

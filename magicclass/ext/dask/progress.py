@@ -180,8 +180,9 @@ class dask_thread_worker(thread_worker):
             def _(i: int):
                 pbar.set_description(next(it, "<No description>"))
 
-        pbar.native.setParent(gui.native, self.__class__._WINDOW_FLAG)
-        move_to_screen_center(pbar.native)
+        if self.button(gui).running:
+            pbar.native.setParent(gui.native, self.__class__._WINDOW_FLAG)
+            move_to_screen_center(pbar.native)
 
         worker = create_worker(
             self._define_function(pbar, gui).__get__(gui),

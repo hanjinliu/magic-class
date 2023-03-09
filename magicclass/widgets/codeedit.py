@@ -436,7 +436,6 @@ class QCodeEditor(QtW.QPlainTextEdit):
         cursor.select(QtGui.QTextCursor.SelectionType.LineUnderCursor)
         cursor.removeSelectedText()
         cursor.deletePreviousChar()
-        self.setTextCursor(cursor)
 
     def eraseFirst(self):
         """Erase the first line."""
@@ -447,7 +446,6 @@ class QCodeEditor(QtW.QPlainTextEdit):
         cursor.movePosition(QtGui.QTextCursor.MoveOperation.Down)
         cursor.deletePreviousChar()
         cursor.movePosition(QtGui.QTextCursor.MoveOperation.End)
-        self.setTextCursor(cursor)
 
     def selectedText(self) -> str:
         """Return selected string."""
