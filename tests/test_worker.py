@@ -324,3 +324,21 @@ def test_nested_worker_macro():
     mock2.assert_called_with("f2")
     assert len(ui.macro) == 3
     assert str(ui.macro[-1]) == "ui.g12()"
+
+def test_nested_worker_with_progress():
+
+    @magicclass
+    class A:
+        @thread_worker.with_progress(total=10)
+        def f1(self):
+            for i in range(10):
+                pass
+            self.f2()
+
+        @thread_worker.with_progress(total=4)
+        def f2(self):
+            for i in range(4):
+                pass
+
+    ui = A()
+    ui.f1()
