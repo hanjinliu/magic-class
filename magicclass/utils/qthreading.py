@@ -803,7 +803,7 @@ class thread_worker(Generic[_P]):
         if _pbar is None:
             _pbar = self.__class__._DEFAULT_PROGRESS_BAR(max=total)
             if isinstance(_pbar, Widget) and _pbar.parent is None:
-                if self.button(gui).running:
+                if QThread.currentThread().loopLevel() > 0:
                     # Popup progressbar as a splashscreen if it is not a child widget.
                     _pbar.native.setParent(gui.native, self.__class__._WINDOW_FLAG)
 
