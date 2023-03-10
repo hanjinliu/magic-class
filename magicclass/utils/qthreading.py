@@ -614,8 +614,6 @@ class thread_worker(Generic[_P]):
             def _run(*args, **kwargs):
                 with gui.macro.blocked():
                     out = yield from self._func.__get__(gui)(*args, **kwargs)
-                if gui.macro.active and self._recorder is not None:
-                    self._recorder(gui, out, *args, **kwargs)
                 return out
 
         else:
@@ -623,9 +621,6 @@ class thread_worker(Generic[_P]):
             def _run(*args, **kwargs):
                 with gui.macro.blocked():
                     out = self._func.__get__(gui)(*args, **kwargs)
-                if gui.macro.active and self._recorder is not None:
-                    self._recorder(gui, out, *args, **kwargs)
-                return out
 
         worker = create_worker(
             _run,
@@ -634,6 +629,13 @@ class thread_worker(Generic[_P]):
             *args,
             **kwargs,
         )
+
+        @worker.returned.connect
+        def _on_returned(out):
+            if gui.macro.active and self._recorder is not None:
+                self._recorder(gui, out, *args, **kwargs)
+            return out
+
         return worker
 
     def _create_method(self, gui: BaseGui) -> Callable[_P, None]:
@@ -711,9 +713,10 @@ class thread_worker(Generic[_P]):
         pbar: ProgressBar | None,
     ):
         app = use_app()
+        worker.returned.connect(app.process_events)
         worker.started.connect(app.process_events)
-        if isinstance(pbar, DefaultProgressBar):
-            connection = pbar._time_signal.connect(app.process_events)
+        if isinstance(worker, GeneratorWorker):
+            worker.yielded.connect(app.process_events)
         try:
             worker.run()
         except KeyboardInterrupt:
@@ -724,8 +727,7 @@ class thread_worker(Generic[_P]):
             worker.finished.emit()
             gui._error_mode.wrap_handler(Aborted.raise_, parent=gui)()
         finally:
-            if isinstance(pbar, DefaultProgressBar):
-                pbar._time_signal.disconnect(connection)
+            pass
 
     def _get_method_signature(self) -> inspect.Signature:
         sig = self.__signature__
