@@ -196,6 +196,12 @@ class dask_thread_worker(thread_worker):
             def _(*args):
                 pbar.value = 0
 
+        @worker.returned.connect
+        def _on_returned(out):
+            if gui.macro.active and self._recorder is not None:
+                self._recorder(gui, out, *args, **kwargs)
+            return
+
         return worker
 
     def _define_function(self, pbar, gui: BaseGui):

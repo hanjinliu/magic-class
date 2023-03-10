@@ -20,7 +20,8 @@ from typing import (
 from typing_extensions import TypedDict, ParamSpec
 
 from superqt.utils import create_worker, GeneratorWorker, FunctionWorker
-from qtpy.QtCore import Qt
+from superqt import ensure_main_thread
+from qtpy.QtCore import Qt, QThread
 from magicgui.widgets import ProgressBar, Container, Widget, PushButton, Label
 from magicgui.application import use_app
 
@@ -333,26 +334,31 @@ class DefaultProgressBar(FrameContainer, _SupportProgress):
     def show(self):
         parent = self.native.parent()
         with suppress(RuntimeError):
-            self._CONTAINER.append(self)
-            if self._CONTAINER.parent is not parent:
-                self._CONTAINER.native.setParent(
-                    parent,
-                    self._CONTAINER.native.windowFlags(),
-                )
+            if QThread().currentThread().loopLevel() > 0:
+                self._CONTAINER.append(self)
+                if self._CONTAINER.parent is not parent:
+                    self._CONTAINER.native.setParent(
+                        parent,
+                        self._CONTAINER.native.windowFlags(),
+                    )
             if not self._CONTAINER.visible:
                 self._CONTAINER.show()
                 move_to_screen_center(self._CONTAINER.native)
         return None
 
     def close(self):
+        i = -1
         for i, wdt in enumerate(self._CONTAINER):
             if wdt is self:
                 break
+        if i < 0:
+            return None
         with suppress(RuntimeError):
-            self._CONTAINER.pop(i)
-            self._CONTAINER.height = 1  # minimize height
-            if len(self._CONTAINER) == 0:
-                self._CONTAINER.close()
+            if QThread().currentThread().loopLevel() > 0:
+                self._CONTAINER.pop(i)
+                self._CONTAINER.height = 1  # minimize height
+                if len(self._CONTAINER) == 0:
+                    self._CONTAINER.close()
         return None
 
     def hide_footer(self):
@@ -605,6 +611,10 @@ class thread_worker(Generic[_P]):
         self._objects[gui_id] = _create_worker  # cache
         return _create_worker
 
+    def button(self, gui: BaseGui) -> Clickable:
+        """The corresponding button object."""
+        return gui[self._func.__name__]
+
     def _create_qt_worker(
         self, gui: BaseGui, *args, **kwargs
     ) -> FunctionWorker | GeneratorWorker:
@@ -614,8 +624,6 @@ class thread_worker(Generic[_P]):
             def _run(*args, **kwargs):
                 with gui.macro.blocked():
                     out = yield from self._func.__get__(gui)(*args, **kwargs)
-                if gui.macro.active and self._recorder is not None:
-                    self._recorder(gui, out, *args, **kwargs)
                 return out
 
         else:
@@ -623,8 +631,6 @@ class thread_worker(Generic[_P]):
             def _run(*args, **kwargs):
                 with gui.macro.blocked():
                     out = self._func.__get__(gui)(*args, **kwargs)
-                if gui.macro.active and self._recorder is not None:
-                    self._recorder(gui, out, *args, **kwargs)
                 return out
 
         worker = create_worker(
@@ -634,6 +640,13 @@ class thread_worker(Generic[_P]):
             *args,
             **kwargs,
         )
+
+        @worker.returned.connect
+        def _on_returned(out):
+            if gui.macro.active and self._recorder is not None:
+                self._recorder(gui, out, *args, **kwargs)
+            return
+
         return worker
 
     def _create_method(self, gui: BaseGui) -> Callable[_P, None]:
@@ -683,8 +696,7 @@ class thread_worker(Generic[_P]):
                 if hasattr(pbar, "set_title"):
                     pbar.set_title(self._func.__name__.replace("_", " "))
 
-            _obj: Clickable = gui[self._func.__name__]
-            if _obj.running:
+            if self.button(gui).running:
                 worker.errored.connect(
                     partial(gui._error_mode.get_handler(), parent=gui)
                 )
@@ -712,10 +724,12 @@ class thread_worker(Generic[_P]):
     ):
         app = use_app()
         worker.started.connect(app.process_events)
+        worker.finished.connect(app.process_events)
         if isinstance(pbar, DefaultProgressBar):
             connection = pbar._time_signal.connect(app.process_events)
         try:
             worker.run()
+
         except KeyboardInterrupt:
             if isinstance(pbar, DefaultProgressBar):
                 pbar._abort_worker()
@@ -789,8 +803,9 @@ class thread_worker(Generic[_P]):
         if _pbar is None:
             _pbar = self.__class__._DEFAULT_PROGRESS_BAR(max=total)
             if isinstance(_pbar, Widget) and _pbar.parent is None:
-                # Popup progressbar as a splashscreen if it is not a child widget.
-                _pbar.native.setParent(gui.native, self.__class__._WINDOW_FLAG)
+                if QThread.currentThread().loopLevel() > 0:
+                    # Popup progressbar as a splashscreen if it is not a child widget.
+                    _pbar.native.setParent(gui.native, self.__class__._WINDOW_FLAG)
 
         else:
             _pbar.max = total
