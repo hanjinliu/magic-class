@@ -294,15 +294,15 @@ def test_nested_worker_macro():
 
     @magicclass
     class A:
-        @thread_worker
+        @thread_worker.with_progress(desc="f1")
         def f1(self):
             mock1("f1")
 
-        @thread_worker
+        @thread_worker.with_progress(desc="f1")
         def f2(self):
             mock2("f2")
 
-        @thread_worker
+        @thread_worker.with_progress(desc="f1")
         def f12(self):
             self.f1()
             self.f2()
