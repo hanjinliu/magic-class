@@ -2,6 +2,7 @@
 *.ipynb
 rst/_build/*
 _docs_temp/
+_main.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
