@@ -20,8 +20,7 @@ from typing import (
 from typing_extensions import TypedDict, ParamSpec
 
 from superqt.utils import create_worker, GeneratorWorker, FunctionWorker
-from superqt import ensure_main_thread
-from qtpy.QtCore import Qt, QThread
+from qtpy.QtCore import Qt, QThread, QCoreApplication
 from magicgui.widgets import ProgressBar, Container, Widget, PushButton, Label
 from magicgui.application import use_app
 
@@ -334,7 +333,7 @@ class DefaultProgressBar(FrameContainer, _SupportProgress):
     def show(self):
         parent = self.native.parent()
         with suppress(RuntimeError):
-            if QThread().currentThread().loopLevel() > 0:
+            if _is_main_thread():
                 self._CONTAINER.append(self)
                 if self._CONTAINER.parent is not parent:
                     self._CONTAINER.native.setParent(
@@ -354,7 +353,7 @@ class DefaultProgressBar(FrameContainer, _SupportProgress):
         if i < 0:
             return None
         with suppress(RuntimeError):
-            if QThread().currentThread().loopLevel() > 0:
+            if _is_main_thread():
                 self._CONTAINER.pop(i)
                 self._CONTAINER.height = 1  # minimize height
                 if len(self._CONTAINER) == 0:
@@ -802,10 +801,9 @@ class thread_worker(Generic[_P]):
 
         if _pbar is None:
             _pbar = self.__class__._DEFAULT_PROGRESS_BAR(max=total)
-            if isinstance(_pbar, Widget) and _pbar.parent is None:
-                if QThread.currentThread().loopLevel() > 0:
-                    # Popup progressbar as a splashscreen if it is not a child widget.
-                    _pbar.native.setParent(gui.native, self.__class__._WINDOW_FLAG)
+            if isinstance(_pbar, Widget) and _pbar.parent is None and _is_main_thread():
+                # Popup progressbar as a splashscreen if it is not a child widget.
+                _pbar.native.setParent(gui.native, self.__class__._WINDOW_FLAG)
 
         else:
             _pbar.max = total
@@ -928,6 +926,11 @@ def _filter_args(fn: Callable, arguments: dict[str, Any]) -> dict[str, Any]:
         return arguments
     existing_args = set(sig.parameters.keys())
     return {k: v for k, v in arguments.items() if k in existing_args}
+
+
+def _is_main_thread() -> bool:
+    """True if the current thread is the main thread."""
+    return QThread.currentThread() is QCoreApplication.instance().thread()
 
 
 class Callback:
