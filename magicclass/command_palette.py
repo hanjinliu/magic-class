@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Callable, Iterable
+from typing_extensions import Literal
 from qt_command_palette import get_palette
 from magicclass._gui import BaseGui
 from magicclass._gui.mgui_ext import Clickable, is_clickable
@@ -14,7 +15,10 @@ if TYPE_CHECKING:
 _PALETTES: dict[int, CommandPalette] = {}
 
 
-def exec_command_palette(gui: BaseGui):
+def exec_command_palette(
+    gui: BaseGui,
+    alignment: Literal["parent", "screen"] = "parent",
+):
     """
     Register all the methods available from GUI to the command palette.
 
@@ -37,7 +41,7 @@ def exec_command_palette(gui: BaseGui):
     if _id in _PALETTES:
         return _PALETTES[_id].show_widget(gui.native)
     name = f"magicclass-{id(gui)}"
-    palette = get_palette(name)
+    palette = get_palette(name, alignment=alignment)
 
     processed: set[int] = set()
     for parent, wdt in _iter_executable(gui):
