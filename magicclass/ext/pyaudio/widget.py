@@ -12,6 +12,8 @@ from magicclass.widgets.utils import merge_super_sigs
 
 
 class QAudioImage(QtW.QLabel):
+    """The (auto-updating) image of the audio data."""
+
     resized = Signal()
 
     def __init__(self, parent: QtW.QWidget | None = None):
@@ -42,17 +44,21 @@ class QAudioImage(QtW.QLabel):
     def _image_array(self) -> NDArray[np.uint8]:
         w, h = self.width(), self.height()
         audio = _max_binning(self._audio_data, self._chunksize, w * 2)
+        nh = h // 2
+        sigmax = 2**16
         half_array = np.stack(
-            [np.linspace(0, 2**16 - 1, h // 2)] * audio.size, axis=1
+            [np.linspace(sigmax / nh, sigmax, nh, endpoint=False)] * audio.size,
+            axis=1,
         )
         array = np.concatenate([half_array[::-1], half_array], axis=0)
         binary = array < audio
-        image = np.full(array.shape + (4,), 248, dtype=np.uint8)
+        image = np.full(array.shape + (4,), 240, dtype=np.uint8)
         image[binary] = np.array([0, 0, 255, 255], dtype=np.uint8)[np.newaxis]
         return image
 
 
 def _max_binning(arr: NDArray[np.int16], n: int, width: int) -> NDArray[np.int16]:
+    """Bin the input 1D data, clipped by the given width."""
     nchunks, res = divmod(arr.size, n)
     if nchunks < width:
         out_left = np.abs(arr[:-res]).reshape(-1, n).max(axis=1)
@@ -86,16 +92,22 @@ class QAudioRecorder(QtW.QWidget):
         self._recoding = False
 
     def _setup_ui(self):
-        self._btn = QtW.QPushButton("Rec")
-        self._btn.setFixedSize(36, 24)
+        self._btn_rec = QtW.QPushButton("Rec")
+        self._btn_rec.setFixedSize(28, 24)
+        self._btn_clear = QtW.QPushButton("Clear")
+        self._btn_rec.setFixedSize(36, 24)
         self._label = QAudioImage()
         layout = QtW.QHBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(layout)
         layout.addWidget(self._label)
-        layout.addWidget(self._btn)
+        layout.addWidget(self._btn_rec)
+        layout.addWidget(self._btn_clear)
 
-        self._btn.clicked.connect(self._on_button_clicked)
+        self._btn_rec.clicked.connect(lambda: self.setRecording(not self.recording()))
+        self._btn_clear.clicked.connect(
+            lambda: self.setValue(np.zeros(0, dtype=np.int16))
+        )
 
     def _update_data(self):
         _incoming = self._read_input()
@@ -106,9 +118,6 @@ class QAudioRecorder(QtW.QWidget):
         ret = np.frombuffer(ret_bytes, dtype=np.int16)
         return ret
 
-    def _on_button_clicked(self):
-        self.setRecording(not self.recording())
-
     def recording(self) -> bool:
         return self._recoding
 
@@ -117,10 +126,10 @@ class QAudioRecorder(QtW.QWidget):
         self._recoding = value
         if self._recoding and not was_recording:
             self._timer.start(10)
-            self._btn.setText("Stop")
+            self._btn_rec.setText("Stop")
         elif not self._recoding and was_recording:
             self._timer.stop()
-            self._btn.setText("Rec")
+            self._btn_rec.setText("Rec")
 
     def value(self) -> NDArray[np.int16]:
         return self._label._audio_data
