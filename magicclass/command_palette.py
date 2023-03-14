@@ -52,6 +52,7 @@ def exec_command_palette(gui: BaseGui):
             when=_define_when(wdt),
         )
         processed.add(_id)
+    palette.sort(rule=lambda cmd: str(cmd.title.count(".")) + cmd.title + cmd.desc)
     _PALETTES[_id] = palette
     palette.install(gui.native)
     return palette.show_widget(gui.native)
