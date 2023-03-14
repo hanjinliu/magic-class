@@ -36,6 +36,8 @@ def exec_command_palette(
     ----------
     gui : magic-class
         Magic-class instance.
+    alignment : "parent" or "screen", default is "parent"
+        How to align the command palette.
     """
     _id = id(gui)
     if _id in _PALETTES:

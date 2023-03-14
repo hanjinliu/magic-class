@@ -288,6 +288,44 @@ and parameter annotations of functions are summerized with rich texts.
 
 .. image:: images/fig_1-5.png
 
+Build Command Palette Widget Automatically
+==========================================
+
+.. versionadded:: 0.6.14
+
+Command palette is very useful if you have many functions and widgets in your UI.
+Since each magic-class instance is well organized, you can build a command palette
+widget without any additional effort.
+
+To use this feature, you need to install
+`qt-command-palette <https://github.com/hanjinliu/qt-command-palette>`_
+package.
+
+.. code-block:: bash
+
+    pip install qt-command-palette
+
+You may want to use the command palette with the :meth:`bind_key` decorator.
+
+.. code-block:: python
+
+    from magicclass import magicclass, magicmenu, bind_key
+    from magicclass.command_palette import exec_command_palette
+
+    @magicclass
+    class Main:
+        # many functions and widgets here.
+        @magicmenu
+        class SubClass:
+            def func_sub(self): ...
+
+        def func(self): ...
+
+        @bind_key("Ctrl-Shift-P")
+        def _show_palette(self):
+            exec_command_palette(self)
+
+In the example above, two commands ``Main: func`` and ``Main.SubClass: func sub`` will be registered.
 
 Add Functions after Construction
 ================================
