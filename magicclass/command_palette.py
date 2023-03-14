@@ -39,7 +39,11 @@ def exec_command_palette(gui: BaseGui):
     name = f"magicclass-{id(gui)}"
     palette = get_palette(name)
 
+    processed: set[int] = set()
     for parent, wdt in _iter_executable(gui):
+        _id = id(wdt)
+        if _id in processed:
+            continue
         _qualname = type(parent).__qualname__
         palette.register(
             _define_command(wdt.changed.emit),
@@ -47,6 +51,7 @@ def exec_command_palette(gui: BaseGui):
             desc=wdt.text,
             when=_define_when(wdt),
         )
+        processed.add(_id)
     _PALETTES[_id] = palette
     palette.install(gui.native)
     return palette.show_widget(gui.native)
@@ -61,9 +66,7 @@ def _define_when(wdt: Clickable) -> Callable[[], bool]:
 
 
 def _iter_executable(gui: BaseGui) -> Iterable[tuple[BaseGui, Clickable]]:
-    processed: set[int] = set()
     for child in gui.__magicclass_children__:
-        processed.add(id(child))
         yield from _iter_executable(child)
     for wdt in gui:
         if is_clickable(wdt):
@@ -71,8 +74,4 @@ def _iter_executable(gui: BaseGui) -> Iterable[tuple[BaseGui, Clickable]]:
                 continue
             yield gui, wdt
         elif isinstance(wdt, BaseGui):
-            _id = id(wdt)
-            if _id in processed:
-                continue
-            processed.add(_id)
             yield from _iter_executable(wdt)
