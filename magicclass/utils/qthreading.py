@@ -724,8 +724,8 @@ class thread_worker(Generic[_P]):
         app = use_app()
         worker.started.connect(app.process_events)
         worker.finished.connect(app.process_events)
-        if isinstance(pbar, DefaultProgressBar):
-            connection = pbar._time_signal.connect(app.process_events)
+        if isinstance(worker, GeneratorWorker):
+            worker.yielded.connect(app.process_events)
         try:
             worker.run()
 
@@ -736,9 +736,6 @@ class thread_worker(Generic[_P]):
                 worker.quit()
             worker.finished.emit()
             gui._error_mode.wrap_handler(Aborted.raise_, parent=gui)()
-        finally:
-            if isinstance(pbar, DefaultProgressBar):
-                pbar._time_signal.disconnect(connection)
 
     def _get_method_signature(self) -> inspect.Signature:
         sig = self.__signature__
