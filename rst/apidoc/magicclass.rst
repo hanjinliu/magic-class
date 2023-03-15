@@ -18,6 +18,14 @@ Subpackages
 Submodules
 ----------
 
+magicclass.command\_palette module
+----------------------------------
+
+.. automodule:: magicclass.command_palette
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 magicclass.core module
 ----------------------
 

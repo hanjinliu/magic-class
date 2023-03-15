@@ -10,6 +10,7 @@ Subpackages
    magicclass.ext.dask
    magicclass.ext.napari
    magicclass.ext.pandas
+   magicclass.ext.polars
    magicclass.ext.pyqtgraph
    magicclass.ext.qtconsole
    magicclass.ext.vispy

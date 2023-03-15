@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="English" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>magicclass.widgets.codeedit &mdash; magic-class 0.6.14 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+</head>
+
+<body class="wy-body-for-nav">
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> magic-class
+          </a>
+              <div class="version">
+                0.6.14
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../main/quick_start.html">Quick Start</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../main/basics/index.html">Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../main/make_better/index.html">Make Your GUI Better</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../main/visualization/index.html">Data Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../main/advanced/index.html">Advanced Topics</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../main/best_practice.html">Best Practice</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">magic-class</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>magicclass.widgets.codeedit</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+
+  <h1>Source code for magicclass.widgets.codeedit</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">NamedTuple</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span>
+<span class="kn">import</span> <span class="nn">weakref</span>
+<span class="kn">from</span> <span class="nn">qtpy</span> <span class="kn">import</span> <span class="n">QtWidgets</span> <span class="k">as</span> <span class="n">QtW</span><span class="p">,</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtCore</span>
+<span class="kn">from</span> <span class="nn">qtpy.QtCore</span> <span class="kn">import</span> <span class="n">Qt</span><span class="p">,</span> <span class="n">Signal</span> <span class="k">as</span> <span class="n">pyqtSignal</span>
+
+<span class="kn">from</span> <span class="nn">psygnal</span> <span class="kn">import</span> <span class="n">Signal</span>
+<span class="kn">from</span> <span class="nn">magicgui.backends._qtpy.widgets</span> <span class="kn">import</span> <span class="n">TextEdit</span> <span class="k">as</span> <span class="n">QBaseTextEdit</span><span class="p">,</span> <span class="n">QBaseStringWidget</span>
+<span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">TextEdit</span><span class="p">,</span> <span class="n">EmptyWidget</span><span class="p">,</span> <span class="n">FileEdit</span>
+<span class="kn">from</span> <span class="nn">magicgui.application</span> <span class="kn">import</span> <span class="n">use_app</span>
+
+<span class="kn">from</span> <span class="nn">macrokit</span> <span class="kn">import</span> <span class="n">parse</span><span class="p">,</span> <span class="n">Symbol</span><span class="p">,</span> <span class="n">Expr</span><span class="p">,</span> <span class="n">Head</span>
+<span class="kn">from</span> <span class="nn">magicclass._gui.utils</span> <span class="kn">import</span> <span class="n">show_dialog_from_mgui</span>
+<span class="kn">from</span> <span class="nn">magicclass._magicgui_compat</span> <span class="kn">import</span> <span class="n">ValueWidget</span><span class="p">,</span> <span class="n">Undefined</span>
+<span class="kn">from</span> <span class="nn">magicclass.utils</span> <span class="kn">import</span> <span class="n">show_messagebox</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">MagicTemplate</span>
+
+
+<div class="viewcode-block" id="QLineNumberArea"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.codeedit.QLineNumberArea">[docs]</a><span class="k">class</span> <span class="nc">QLineNumberArea</span><span class="p">(</span><span class="n">QtW</span><span class="o">.</span><span class="n">QWidget</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">editor</span><span class="p">:</span> <span class="n">QCodeEditor</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">editor</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">editor</span> <span class="o">=</span> <span class="n">editor</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setContextMenuPolicy</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">ContextMenuPolicy</span><span class="o">.</span><span class="n">CustomContextMenu</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">customContextMenuRequested</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">_show_context_menu</span><span class="p">)</span>
+
+<div class="viewcode-block" id="QLineNumberArea.sizeHint"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.codeedit.QLineNumberArea.sizeHint">[docs]</a>    <span class="k">def</span> <span class="nf">sizeHint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QSize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">lineNumberAreaWidth</span><span class="p">(),</span> <span class="mi">0</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="QLineNumberArea.paintEvent"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.codeedit.QLineNumberArea.paintEvent">[docs]</a>    <span class="k">def</span> <span class="nf">paintEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPaintEvent</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">lineNumberAreaPaintEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="QLineNumberArea.mousePressEvent"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.codeedit.QLineNumberArea.mousePressEvent">[docs]</a>    <span class="k">def</span> <span class="nf">mousePressEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a0</span><span class="p">:</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QMouseEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">editor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">editor</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">a0</span><span class="o">.</span><span class="n">pos</span><span class="p">()</span><span class="o">.</span><span class="n">y</span><span class="p">()</span>
+
+        <span class="n">num</span><span class="p">,</span> <span class="n">block</span> <span class="o">=</span> <span class="n">editor</span><span class="o">.</span><span class="n">blockAt</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">num</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">cursor</span> <span class="o">=</span> <span class="n">editor</span><span class="o">.</span><span class="n">textCursor</span><span class="p">()</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">setPosition</span><span class="p">(</span><span class="n">block</span><span class="o">.</span><span class="n">position</span><span class="p">(),</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveMode</span><span class="o">.</span><span class="n">MoveAnchor</span><span class="p">)</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">SelectionType</span><span class="o">.</span><span class="n">LineUnderCursor</span><span class="p">)</span>
+        <span class="n">editor</span><span class="o">.</span><span class="n">setTextCursor</span><span class="p">(</span><span class="n">cursor</span><span class="p">)</span>
+        <span class="n">editor</span><span class="o">.</span><span class="n">horizontalScrollBar</span><span class="p">()</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="QLineNumberArea.mouseMoveEvent"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.codeedit.QLineNumberArea.mouseMoveEvent">[docs]</a>    <span class="k">def</span> <span class="nf">mouseMoveEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a0</span><span class="p">:</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QMouseEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">a0</span><span class="o">.</span><span class="n">buttons</span><span class="p">()</span> <span class="o">&amp;</span> <span class="n">Qt</span><span class="o">.</span><span class="n">MouseButton</span><span class="o">.</span><span class="n">LeftButton</span><span class="p">:</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">a0</span><span class="o">.</span><span class="n">pos</span><span class="p">()</span><span class="o">.</span><span class="n">y</span><span class="p">()</span>
+            <span class="n">num</span><span class="p">,</span> <span class="n">block</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">blockAt</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">num</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span>
+            <span class="n">cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">textCursor</span><span class="p">()</span>
+            <span class="n">cursor</span><span class="o">.</span><span class="n">setPosition</span><span class="p">(</span><span class="n">block</span><span class="o">.</span><span class="n">position</span><span class="p">(),</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveMode</span><span class="o">.</span><span class="n">KeepAnchor</span><span class="p">)</span>
+            <span class="n">cursor</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span>
+                <span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveOperation</span><span class="o">.</span><span class="n">EndOfLine</span><span class="p">,</span>
+                <span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveMode</span><span class="o">.</span><span class="n">KeepAnchor</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">setTextCursor</span><span class="p">(</span><span class="n">cursor</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="QCodeEditor"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.codeedit.QCodeEditor">[docs]</a><span class="k">class</span> <span class="nc">QCodeEditor</span><span class="p">(</span><span class="n">QtW</span><span class="o">.</span><span class="n">QPlainTextEdit</span><span class="p">):</span>
+    <span class="n">executionRequested</span> <span class="o">=</span> <span class="n">pyqtSignal</span><span class="p">(</span><span class="nb">object</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">:</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QWidget</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s2">&quot;win32&quot;</span><span class="p">:</span>
+            <span class="n">_font</span> <span class="o">=</span> <span class="s2">&quot;Consolas&quot;</span>
+        <span class="k">elif</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s2">&quot;darwin&quot;</span><span class="p">:</span>
+            <span class="n">_font</span> <span class="o">=</span> <span class="s2">&quot;Menlo&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">_font</span> <span class="o">=</span> <span class="s2">&quot;Monospace&quot;</span>
+        <span class="n">font</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFont</span><span class="p">(</span><span class="n">_font</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">font</span><span class="p">()</span><span class="o">.</span><span class="n">pointSize</span><span class="p">())</span>
+        <span class="n">font</span><span class="o">.</span><span class="n">setStyleHint</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QFont</span><span class="o">.</span><span class="n">StyleHint</span><span class="o">.</span><span class="n">Monospace</span><span class="p">)</span>
+        <span class="n">font</span><span class="o">.</span><span class="n">setFixedPitch</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setFont</span><span class="p">(</span><span class="n">font</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_line_number_area</span> <span class="o">=</span> <span class="n">QLineNumberArea</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">blockCountChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_update_line_number_area_width</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">updateRequest</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_update_line_number_area</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cursorPositionChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_highlight_current_line</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_line_number_area_width</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">setTabSize</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWordWrapMode</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QTextOption</span><span class="o">.</span><span class="n">WrapMode</span><span class="o">.</span><span class="n">NoWrap</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setContextMenuPolicy</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">ContextMenuPolicy</span><span class="o">.</span><span class="n">CustomContextMenu</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">customContextMenuRequested</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_show_context_menu</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_magicclass_parent_ref</span><span class="p">:</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ReferenceType</span><span class="p">[</span><span class="n">MagicTemplate</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="QCodeEditor.tabSize"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.codeedit.QCodeEditor.tabSize">[docs]</a>    <span class="k">def</span> <span class="nf">tabSize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fontMetrics</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabStopWidth</span><span class="p">()</span> <span class="o">//</span> <span class="n">metrics</span><span class="o">.</span><span class="n">width</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="QCodeEditor.setTabSize"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.codeedit.QCodeEditor.setTabSize">[docs]</a>    <span class="k">def</span> <span class="nf">setTabSize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="n">metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fontMetrics</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setTabStopWidth</span><span class="p">(</span><span class="n">size</span> <span class="o">*</span> <span class="n">metrics</span><span class="o">.</span><span class="n">width</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="QCodeEditor.lineNumberAreaWidth"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.codeedit.QCodeEditor.lineNumberAreaWidth">[docs]</a>    <span class="k">def</span> <span class="nf">lineNumberAreaWidth</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">blockCount</span><span class="p">())</span>
+        <span class="n">digits</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">count</span><span class="p">))</span>
+        <span class="n">space</span> <span class="o">=</span> <span class="mi">8</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">fontMetrics</span><span class="p">()</span><span class="o">.</span><span class="n">width</span><span class="p">(</span><span class="s2">&quot;9&quot;</span><span class="p">)</span> <span class="o">*</span> <span class="n">digits</span>
+        <span class="k">return</span> <span class="n">space</span></div>
+
+    <span class="k">def</span> <span class="nf">_update_line_number_area_width</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setViewportMargins</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lineNumberAreaWidth</span><span class="p">(),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_update_line_number_area</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rect</span><span class="p">:</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">,</span> <span class="n">dy</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">dy</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_line_number_area</span><span class="o">.</span><span class="n">scroll</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dy</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_line_number_area</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                <span class="mi">0</span><span class="p">,</span> <span class="n">rect</span><span class="o">.</span><span class="n">y</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_line_number_area</span><span class="o">.</span><span class="n">width</span><span class="p">(),</span> <span class="n">rect</span><span class="o">.</span><span class="n">height</span><span class="p">()</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">rect</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">viewport</span><span class="p">()</span><span class="o">.</span><span class="n">rect</span><span class="p">()):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_update_line_number_area_width</span><span class="p">()</span>
+
+<div class="viewcode-block" id="QCodeEditor.resizeEvent"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.codeedit.QCodeEditor.resizeEvent">[docs]</a>    <span class="k">def</span> <span class="nf">resizeEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QResizeEvent</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">resizeEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+
+        <span class="n">cr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">contentsRect</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_line_number_area</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span>
+            <span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">(</span><span class="n">cr</span><span class="o">.</span><span class="n">left</span><span class="p">(),</span> <span class="n">cr</span><span class="o">.</span><span class="n">top</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineNumberAreaWidth</span><span class="p">(),</span> <span class="n">cr</span><span class="o">.</span><span class="n">height</span><span class="p">())</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="QCodeEditor.event"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.codeedit.QCodeEditor.event">[docs]</a>    <span class="k">def</span> <span class="nf">event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ev</span><span class="p">:</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QEvent</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">ev</span><span class="o">.</span><span class="n">type</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QEvent</span><span class="o">.</span><span class="n">Type</span><span class="o">.</span><span class="n">ToolTip</span><span class="p">:</span>
+                <span class="n">ev</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QHelpEvent</span><span class="p">(</span><span class="n">ev</span><span class="p">)</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_analyze_line</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">viewport</span><span class="p">()</span><span class="o">.</span><span class="n">mapFromGlobal</span><span class="p">(</span><span class="n">ev</span><span class="o">.</span><span class="n">globalPos</span><span class="p">()))</span>
+                <span class="n">QtW</span><span class="o">.</span><span class="n">QToolTip</span><span class="o">.</span><span class="n">showText</span><span class="p">(</span><span class="n">ev</span><span class="o">.</span><span class="n">globalPos</span><span class="p">(),</span> <span class="nb">str</span><span class="p">(</span><span class="n">line</span><span class="p">),</span> <span class="bp">self</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">ev</span><span class="o">.</span><span class="n">type</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QEvent</span><span class="o">.</span><span class="n">Type</span><span class="o">.</span><span class="n">KeyPress</span><span class="p">:</span>
+                <span class="n">ev</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QKeyEvent</span><span class="p">(</span><span class="n">ev</span><span class="p">)</span>
+                <span class="k">if</span> <span class="p">(</span>
+                    <span class="n">ev</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Key</span><span class="o">.</span><span class="n">Key_Tab</span>
+                    <span class="ow">and</span> <span class="n">ev</span><span class="o">.</span><span class="n">modifiers</span><span class="p">()</span> <span class="o">&amp;</span> <span class="n">Qt</span><span class="o">.</span><span class="n">KeyboardModifier</span><span class="o">.</span><span class="n">NoModifier</span>
+                <span class="p">):</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">textCursor</span><span class="p">()</span><span class="o">.</span><span class="n">hasSelection</span><span class="p">():</span>
+                        <span class="k">for</span> <span class="n">cursor</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">iter_selected_lines</span><span class="p">():</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">add_at_the_start</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">cursor</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">textCursor</span><span class="p">()</span><span class="o">.</span><span class="n">insertText</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="kc">True</span>
+                <span class="k">if</span> <span class="p">(</span>
+                    <span class="n">ev</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Key</span><span class="o">.</span><span class="n">Key_Tab</span>
+                    <span class="ow">and</span> <span class="n">ev</span><span class="o">.</span><span class="n">modifiers</span><span class="p">()</span> <span class="o">&amp;</span> <span class="n">Qt</span><span class="o">.</span><span class="n">KeyboardModifier</span><span class="o">.</span><span class="n">ShiftModifier</span>
+                <span class="p">)</span> <span class="ow">or</span> <span class="n">ev</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Key</span><span class="o">.</span><span class="n">Key_Backtab</span><span class="p">:</span>
+                    <span class="c1"># unindent</span>
+                    <span class="k">for</span> <span class="n">cursor</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">iter_selected_lines</span><span class="p">():</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">remove_at_the_start</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">cursor</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="kc">True</span>
+                <span class="c1"># comment out selected lines</span>
+                <span class="k">elif</span> <span class="p">(</span>
+                    <span class="n">ev</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Key</span><span class="o">.</span><span class="n">Key_Slash</span>
+                    <span class="ow">and</span> <span class="n">ev</span><span class="o">.</span><span class="n">modifiers</span><span class="p">()</span> <span class="o">&amp;</span> <span class="n">Qt</span><span class="o">.</span><span class="n">KeyboardModifier</span><span class="o">.</span><span class="n">ControlModifier</span>
+                <span class="p">):</span>
+                    <span class="k">for</span> <span class="n">cursor</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">iter_selected_lines</span><span class="p">():</span>
+                        <span class="n">line</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">block</span><span class="p">()</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
+                        <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">):</span>
+                            <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;# &quot;</span><span class="p">):</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">remove_at_the_start</span><span class="p">(</span><span class="s2">&quot;# &quot;</span><span class="p">,</span> <span class="n">cursor</span><span class="p">)</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">remove_at_the_start</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">,</span> <span class="n">cursor</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">add_at_the_start</span><span class="p">(</span><span class="s2">&quot;# &quot;</span><span class="p">,</span> <span class="n">cursor</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="kc">True</span>
+                <span class="c1"># move selected lines up or down</span>
+                <span class="k">elif</span> <span class="p">(</span>
+                    <span class="n">ev</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="ow">in</span> <span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">Key</span><span class="o">.</span><span class="n">Key_Up</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Key</span><span class="o">.</span><span class="n">Key_Down</span><span class="p">)</span>
+                    <span class="ow">and</span> <span class="n">ev</span><span class="o">.</span><span class="n">modifiers</span><span class="p">()</span> <span class="o">&amp;</span> <span class="n">Qt</span><span class="o">.</span><span class="n">KeyboardModifier</span><span class="o">.</span><span class="n">AltModifier</span>
+                <span class="p">):</span>
+                    <span class="n">cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">textCursor</span><span class="p">()</span>
+                    <span class="n">cursor0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">textCursor</span><span class="p">()</span>
+                    <span class="n">start</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">selectionStart</span><span class="p">()</span>
+                    <span class="n">end</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">selectionEnd</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">ev</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Key</span><span class="o">.</span><span class="n">Key_Up</span> <span class="ow">and</span> <span class="nb">min</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">cursor0</span><span class="o">.</span><span class="n">setPosition</span><span class="p">(</span><span class="n">start</span><span class="p">)</span>
+                        <span class="n">cursor0</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span>
+                            <span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveOperation</span><span class="o">.</span><span class="n">PreviousBlock</span>
+                        <span class="p">)</span>
+                        <span class="n">cursor0</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span>
+                            <span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveOperation</span><span class="o">.</span><span class="n">StartOfLine</span>
+                        <span class="p">)</span>
+                        <span class="n">cursor0</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span>
+                            <span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveOperation</span><span class="o">.</span><span class="n">EndOfLine</span><span class="p">,</span>
+                            <span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveMode</span><span class="o">.</span><span class="n">KeepAnchor</span><span class="p">,</span>
+                        <span class="p">)</span>
+                        <span class="n">cursor0</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span>
+                            <span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveOperation</span><span class="o">.</span><span class="n">NextCharacter</span><span class="p">,</span>
+                            <span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveMode</span><span class="o">.</span><span class="n">KeepAnchor</span><span class="p">,</span>
+                        <span class="p">)</span>
+                        <span class="n">txt</span> <span class="o">=</span> <span class="n">cursor0</span><span class="o">.</span><span class="n">selectedText</span><span class="p">()</span>
+                        <span class="n">cursor0</span><span class="o">.</span><span class="n">removeSelectedText</span><span class="p">()</span>
+                        <span class="n">cursor0</span><span class="o">.</span><span class="n">setPosition</span><span class="p">(</span>
+                            <span class="n">cursor</span><span class="o">.</span><span class="n">selectionEnd</span><span class="p">()</span>
+                        <span class="p">)</span>  <span class="c1"># NOTE: cursor position changed!</span>
+                        <span class="n">cursor0</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveOperation</span><span class="o">.</span><span class="n">EndOfLine</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">cursor0</span><span class="o">.</span><span class="n">position</span><span class="p">()</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">document</span><span class="p">()</span><span class="o">.</span><span class="n">characterCount</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                            <span class="n">cursor0</span><span class="o">.</span><span class="n">insertText</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                            <span class="n">txt</span> <span class="o">=</span> <span class="n">txt</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\u2029</span><span class="s2">&quot;</span><span class="p">)</span>
+                        <span class="n">cursor0</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span>
+                            <span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveOperation</span><span class="o">.</span><span class="n">NextCharacter</span>
+                        <span class="p">)</span>
+                        <span class="n">cursor0</span><span class="o">.</span><span class="n">insertText</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">setTextCursor</span><span class="p">(</span><span class="n">cursor</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="p">(</span>
+                        <span class="n">ev</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Key</span><span class="o">.</span><span class="n">Key_Down</span>
+                        <span class="ow">and</span> <span class="nb">max</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">document</span><span class="p">()</span><span class="o">.</span><span class="n">characterCount</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span>
+                    <span class="p">):</span>
+                        <span class="n">cursor0</span><span class="o">.</span><span class="n">setPosition</span><span class="p">(</span><span class="n">end</span><span class="p">)</span>
+                        <span class="n">cursor0</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveOperation</span><span class="o">.</span><span class="n">EndOfLine</span><span class="p">)</span>
+                        <span class="n">cursor0</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span>
+                            <span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveOperation</span><span class="o">.</span><span class="n">NextCharacter</span><span class="p">,</span>
+                            <span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveMode</span><span class="o">.</span><span class="n">KeepAnchor</span><span class="p">,</span>
+                        <span class="p">)</span>
+                        <span class="n">cursor0</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span>
+                            <span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveOperation</span><span class="o">.</span><span class="n">EndOfLine</span><span class="p">,</span>
+                            <span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveMode</span><span class="o">.</span><span class="n">KeepAnchor</span><span class="p">,</span>
+                        <span class="p">)</span>
+                        <span class="n">txt</span> <span class="o">=</span> <span class="n">cursor0</span><span class="o">.</span><span class="n">selectedText</span><span class="p">()</span>
+                        <span class="n">cursor0</span><span class="o">.</span><span class="n">removeSelectedText</span><span class="p">()</span>
+                        <span class="n">cursor0</span><span class="o">.</span><span class="n">setPosition</span><span class="p">(</span>
+                            <span class="n">cursor</span><span class="o">.</span><span class="n">selectionStart</span><span class="p">()</span>
+                        <span class="p">)</span>  <span class="c1"># NOTE: cursor position changed!</span>
+                        <span class="n">cursor0</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span>
+                            <span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveOperation</span><span class="o">.</span><span class="n">StartOfLine</span>
+                        <span class="p">)</span>
+                        <span class="k">if</span> <span class="n">cursor0</span><span class="o">.</span><span class="n">position</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="n">cursor0</span><span class="o">.</span><span class="n">insertText</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                            <span class="n">txt</span> <span class="o">=</span> <span class="n">txt</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\u2029</span><span class="s2">&quot;</span><span class="p">)</span>
+                        <span class="n">cursor0</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span>
+                            <span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveOperation</span><span class="o">.</span><span class="n">PreviousCharacter</span>
+                        <span class="p">)</span>
+                        <span class="n">cursor0</span><span class="o">.</span><span class="n">insertText</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">setTextCursor</span><span class="p">(</span><span class="n">cursor</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">event</span><span class="p">(</span><span class="n">ev</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_magicclass_parent</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_magicclass_parent_ref</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_magicclass_parent_ref</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_search_parent_magicclass</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicTemplate</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_magicclass_parent_ref</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">obj</span> <span class="o">:=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_magicclass_parent_ref</span><span class="p">():</span>
+            <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">_search_parent_magicclass</span><span class="p">()</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">_analyze_line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">:</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QPoint</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Analyze the line under position.&quot;&quot;&quot;</span>
+        <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wordAt</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">info</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">info</span><span class="o">.</span><span class="n">expr</span><span class="si">}</span><span class="s2"> (type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">info</span><span class="o">.</span><span class="n">obj</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">)&quot;</span>
+
+<div class="viewcode-block" id="QCodeEditor.wordAt"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.codeedit.QCodeEditor.wordAt">[docs]</a>    <span class="k">def</span> <span class="nf">wordAt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">:</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QPoint</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WordInfo</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursorForPosition</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">SelectionType</span><span class="o">.</span><span class="n">WordUnderCursor</span><span class="p">)</span>
+        <span class="n">block</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">block</span><span class="p">()</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">text</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">clicked_pos</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">position</span><span class="p">()</span> <span class="o">-</span> <span class="n">block</span><span class="o">.</span><span class="n">position</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">eval_under_cursor</span><span class="p">(</span>
+                <span class="n">line</span><span class="p">,</span> <span class="n">clicked_pos</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_search_parent_magicclass</span><span class="p">()</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="c1"># raise e</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
+
+    <span class="k">def</span> <span class="nf">_open_magicgui</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">:</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QPoint</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">magicclass._gui.mgui_ext</span> <span class="kn">import</span> <span class="n">is_clickable</span>
+
+        <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wordAt</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">info</span> <span class="ow">and</span> <span class="n">is_clickable</span><span class="p">(</span><span class="n">info</span><span class="o">.</span><span class="n">obj</span><span class="p">):</span>
+            <span class="n">mgui</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">mgui</span>
+            <span class="k">if</span> <span class="n">mgui</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">show_messagebox</span><span class="p">(</span><span class="s2">&quot;error&quot;</span><span class="p">,</span> <span class="s2">&quot;Error&quot;</span><span class="p">,</span> <span class="s2">&quot;No magicgui found&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+            <span class="n">nwidgets</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">wdt</span><span class="p">,</span> <span class="n">EmptyWidget</span><span class="p">)</span> <span class="k">for</span> <span class="n">wdt</span> <span class="ow">in</span> <span class="n">mgui</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">nwidgets</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mgui</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">FileEdit</span><span class="p">):</span>
+                    <span class="n">show_dialog_from_mgui</span><span class="p">(</span><span class="n">mgui</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">mgui</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">show_messagebox</span><span class="p">(</span>
+                    <span class="s2">&quot;error&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;Error&quot;</span><span class="p">,</span>
+                    <span class="sa">f</span><span class="s2">&quot;No parameter can be chosen in </span><span class="si">{</span><span class="n">info</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">name</span><span class="si">!r}</span><span class="s2">.&quot;</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="p">,</span>
+                <span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">_show_context_menu</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">:</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QPoint</span><span class="p">):</span>
+        <span class="n">menu</span> <span class="o">=</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QMenu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">viewport</span><span class="p">())</span>
+        <span class="n">cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">textCursor</span><span class="p">()</span>
+        <span class="n">new_pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursorForPosition</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span><span class="o">.</span><span class="n">position</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">cursor</span><span class="o">.</span><span class="n">selectionStart</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="n">new_pos</span> <span class="o">&lt;=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">selectionEnd</span><span class="p">():</span>
+            <span class="n">cursor</span><span class="o">.</span><span class="n">setPosition</span><span class="p">(</span><span class="n">new_pos</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveMode</span><span class="o">.</span><span class="n">MoveAnchor</span><span class="p">)</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">selectedText</span><span class="p">()</span>
+        <span class="n">has_selection</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+
+        <span class="c1"># fmt: off</span>
+        <span class="n">menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">&quot;Select All&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectAll</span><span class="p">,</span> <span class="s2">&quot;Ctrl+A&quot;</span><span class="p">)</span>
+        <span class="n">menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">&quot;Cut&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cut</span><span class="p">,</span> <span class="s2">&quot;Ctrl+X&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="n">has_selection</span><span class="p">)</span>
+        <span class="n">menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">&quot;Copy&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy</span><span class="p">,</span> <span class="s2">&quot;Ctrl+C&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="n">has_selection</span><span class="p">)</span>
+        <span class="n">menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">&quot;Paste&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">paste</span><span class="p">,</span> <span class="s2">&quot;Ctrl+V&quot;</span><span class="p">)</span>
+        <span class="n">menu</span><span class="o">.</span><span class="n">addSeparator</span><span class="p">()</span>
+        <span class="n">menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">&quot;Undo&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">undo</span><span class="p">,</span> <span class="s2">&quot;Ctrl+Z&quot;</span><span class="p">)</span>
+        <span class="n">menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">&quot;Redo&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">redo</span><span class="p">,</span> <span class="s2">&quot;Ctrl+Y&quot;</span><span class="p">)</span>
+        <span class="n">menu</span><span class="o">.</span><span class="n">addSeparator</span><span class="p">()</span>
+        <span class="n">menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">&quot;Execute selected lines&quot;</span><span class="p">,</span> <span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">executionRequested</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="s2">&quot;exec-line&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="n">has_selection</span><span class="p">)</span>
+        <span class="n">menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">&quot;Register as a command&quot;</span><span class="p">,</span> <span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">executionRequested</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="s2">&quot;register-command&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="n">has_selection</span><span class="p">)</span>
+        <span class="n">menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">&quot;Rerun with new parameters&quot;</span><span class="p">,</span> <span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_open_magicgui</span><span class="p">(</span><span class="n">pos</span><span class="p">))</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="n">has_selection</span><span class="p">)</span>
+        <span class="c1"># fmt: on</span>
+
+        <span class="k">return</span> <span class="n">menu</span><span class="o">.</span><span class="n">exec</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mapToGlobal</span><span class="p">(</span><span class="n">pos</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_iter_visible_blocks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rect</span><span class="p">:</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">rect</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">rect</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">viewport</span><span class="p">()</span><span class="o">.</span><span class="n">rect</span><span class="p">()</span>
+        <span class="n">block</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">firstVisibleBlock</span><span class="p">()</span>
+        <span class="n">block_num</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">blockNumber</span><span class="p">()</span>
+        <span class="n">top</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">blockBoundingGeometry</span><span class="p">(</span><span class="n">block</span><span class="p">)</span><span class="o">.</span><span class="n">translated</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contentOffset</span><span class="p">())</span><span class="o">.</span><span class="n">top</span><span class="p">()</span>
+        <span class="n">bottom</span> <span class="o">=</span> <span class="n">top</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">blockBoundingRect</span><span class="p">(</span><span class="n">block</span><span class="p">)</span><span class="o">.</span><span class="n">height</span><span class="p">()</span>
+
+        <span class="k">while</span> <span class="n">block</span><span class="o">.</span><span class="n">isValid</span><span class="p">()</span> <span class="ow">and</span> <span class="p">(</span><span class="n">top</span> <span class="o">&lt;=</span> <span class="n">rect</span><span class="o">.</span><span class="n">bottom</span><span class="p">()):</span>
+            <span class="k">if</span> <span class="n">block</span><span class="o">.</span><span class="n">isVisible</span><span class="p">()</span> <span class="ow">and</span> <span class="p">(</span><span class="n">bottom</span> <span class="o">&gt;=</span> <span class="n">rect</span><span class="o">.</span><span class="n">top</span><span class="p">()):</span>
+                <span class="k">yield</span> <span class="n">block_num</span><span class="p">,</span> <span class="n">block</span>
+
+            <span class="n">block</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+            <span class="n">top</span> <span class="o">=</span> <span class="n">bottom</span>
+            <span class="n">bottom</span> <span class="o">=</span> <span class="n">top</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">blockBoundingRect</span><span class="p">(</span><span class="n">block</span><span class="p">)</span><span class="o">.</span><span class="n">height</span><span class="p">()</span>
+            <span class="n">block_num</span> <span class="o">+=</span> <span class="mi">1</span>
+
+<div class="viewcode-block" id="QCodeEditor.blockAt"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.codeedit.QCodeEditor.blockAt">[docs]</a>    <span class="k">def</span> <span class="nf">blockAt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">num</span><span class="p">,</span> <span class="n">block</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iter_visible_blocks</span><span class="p">():</span>
+            <span class="n">rect</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">blockBoundingGeometry</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">rect</span><span class="o">.</span><span class="n">top</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="n">y</span> <span class="o">&lt;=</span> <span class="n">rect</span><span class="o">.</span><span class="n">bottom</span><span class="p">():</span>
+                <span class="k">return</span> <span class="n">num</span><span class="p">,</span> <span class="n">block</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="QCodeEditor.block"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.codeedit.QCodeEditor.block">[docs]</a>    <span class="k">def</span> <span class="nf">block</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QTextBlock</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return the text block at index or None if not found.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">num</span><span class="p">,</span> <span class="n">block</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iter_visible_blocks</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">num</span> <span class="o">==</span> <span class="n">index</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">block</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="QCodeEditor.blocks"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.codeedit.QCodeEditor.blocks">[docs]</a>    <span class="k">def</span> <span class="nf">blocks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indices</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QTextBlock</span><span class="p">]:</span>
+        <span class="n">blocks</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QTextBlock</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">num</span><span class="p">,</span> <span class="n">block</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iter_visible_blocks</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">num</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">:</span>
+                <span class="n">blocks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">blocks</span></div>
+
+<div class="viewcode-block" id="QCodeEditor.lineNumberAreaPaintEvent"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.codeedit.QCodeEditor.lineNumberAreaPaintEvent">[docs]</a>    <span class="k">def</span> <span class="nf">lineNumberAreaPaintEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPaintEvent</span><span class="p">):</span>
+        <span class="n">painter</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPainter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_line_number_area</span><span class="p">)</span>
+
+        <span class="n">bgcolor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">palette</span><span class="p">()</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">backgroundRole</span><span class="p">())</span>
+        <span class="n">color</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span>
+            <span class="n">bgcolor</span><span class="o">.</span><span class="n">red</span><span class="p">()</span> <span class="o">-</span> <span class="mi">14</span><span class="p">,</span> <span class="n">bgcolor</span><span class="o">.</span><span class="n">green</span><span class="p">()</span> <span class="o">-</span> <span class="mi">14</span><span class="p">,</span> <span class="n">bgcolor</span><span class="o">.</span><span class="n">blue</span><span class="p">()</span> <span class="o">+</span> <span class="mi">14</span>
+        <span class="p">)</span>
+        <span class="n">painter</span><span class="o">.</span><span class="n">fillRect</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">rect</span><span class="p">(),</span> <span class="n">color</span><span class="p">)</span>
+
+        <span class="n">height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fontMetrics</span><span class="p">()</span><span class="o">.</span><span class="n">height</span><span class="p">()</span>
+        <span class="n">text_color</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">palette</span><span class="p">()</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">foregroundRole</span><span class="p">())</span>
+
+        <span class="k">for</span> <span class="n">num</span><span class="p">,</span> <span class="n">block</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iter_visible_blocks</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">rect</span><span class="p">()):</span>
+            <span class="n">painter</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">text_color</span><span class="p">)</span>
+            <span class="n">block_rect</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">blockBoundingGeometry</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+            <span class="n">block_height</span> <span class="o">=</span> <span class="n">block_rect</span><span class="o">.</span><span class="n">height</span><span class="p">()</span>
+            <span class="n">draw_y</span> <span class="o">=</span> <span class="n">block_rect</span><span class="o">.</span><span class="n">top</span><span class="p">()</span> <span class="o">+</span> <span class="nb">max</span><span class="p">(</span><span class="n">block_height</span> <span class="o">-</span> <span class="n">height</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+            <span class="n">painter</span><span class="o">.</span><span class="n">drawText</span><span class="p">(</span>
+                <span class="mi">0</span><span class="p">,</span>
+                <span class="nb">int</span><span class="p">(</span><span class="n">draw_y</span><span class="p">),</span>
+                <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_line_number_area</span><span class="o">.</span><span class="n">width</span><span class="p">()</span> <span class="o">-</span> <span class="mi">2</span><span class="p">),</span>
+                <span class="nb">int</span><span class="p">(</span><span class="n">height</span><span class="p">),</span>
+                <span class="n">Qt</span><span class="o">.</span><span class="n">AlignmentFlag</span><span class="o">.</span><span class="n">AlignRight</span><span class="p">,</span>
+                <span class="nb">str</span><span class="p">(</span><span class="n">num</span><span class="p">),</span>
+            <span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_highlight_current_line</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">extraSelections</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">bgcolor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">palette</span><span class="p">()</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">backgroundRole</span><span class="p">())</span>
+        <span class="n">_highlight_color</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span>
+            <span class="n">bgcolor</span><span class="o">.</span><span class="n">red</span><span class="p">()</span> <span class="o">-</span> <span class="mi">6</span><span class="p">,</span> <span class="n">bgcolor</span><span class="o">.</span><span class="n">green</span><span class="p">()</span> <span class="o">-</span> <span class="mi">6</span><span class="p">,</span> <span class="n">bgcolor</span><span class="o">.</span><span class="n">blue</span><span class="p">()</span> <span class="o">+</span> <span class="mi">6</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">isReadOnly</span><span class="p">():</span>
+            <span class="n">selection</span> <span class="o">=</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QTextEdit</span><span class="o">.</span><span class="n">ExtraSelection</span><span class="p">()</span>
+            <span class="n">selection</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">setBackground</span><span class="p">(</span><span class="n">_highlight_color</span><span class="p">)</span>
+            <span class="n">selection</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">setProperty</span><span class="p">(</span>
+                <span class="n">QtGui</span><span class="o">.</span><span class="n">QTextFormat</span><span class="o">.</span><span class="n">Property</span><span class="o">.</span><span class="n">FullWidthSelection</span><span class="p">,</span> <span class="kc">True</span>
+            <span class="p">)</span>
+            <span class="n">selection</span><span class="o">.</span><span class="n">cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">textCursor</span><span class="p">()</span>
+            <span class="n">selection</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">clearSelection</span><span class="p">()</span>
+            <span class="n">extraSelections</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">selection</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setExtraSelections</span><span class="p">(</span><span class="n">extraSelections</span><span class="p">)</span>
+
+<div class="viewcode-block" id="QCodeEditor.add_at_the_start"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.codeedit.QCodeEditor.add_at_the_start">[docs]</a>    <span class="k">def</span> <span class="nf">add_at_the_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">cursor</span><span class="p">:</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="p">):</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveOperation</span><span class="o">.</span><span class="n">StartOfLine</span><span class="p">)</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">insertText</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="QCodeEditor.remove_at_the_start"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.codeedit.QCodeEditor.remove_at_the_start">[docs]</a>    <span class="k">def</span> <span class="nf">remove_at_the_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">cursor</span><span class="p">:</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="p">):</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">block</span><span class="p">()</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+            <span class="n">cursor</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveOperation</span><span class="o">.</span><span class="n">StartOfLine</span><span class="p">)</span>
+            <span class="n">cursor</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span>
+                <span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveOperation</span><span class="o">.</span><span class="n">Right</span><span class="p">,</span>
+                <span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveMode</span><span class="o">.</span><span class="n">KeepAnchor</span><span class="p">,</span>
+                <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="n">cursor</span><span class="o">.</span><span class="n">removeSelectedText</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="QCodeEditor.syntaxHighlight"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.codeedit.QCodeEditor.syntaxHighlight">[docs]</a>    <span class="k">def</span> <span class="nf">syntaxHighlight</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lang</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;python&quot;</span><span class="p">,</span> <span class="n">theme</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Highlight syntax.&quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">superqt.utils</span> <span class="kn">import</span> <span class="n">CodeSyntaxHighlight</span>
+
+        <span class="n">highlight</span> <span class="o">=</span> <span class="n">CodeSyntaxHighlight</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">document</span><span class="p">(),</span> <span class="n">lang</span><span class="p">,</span> <span class="n">theme</span><span class="o">=</span><span class="n">theme</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_highlight</span> <span class="o">=</span> <span class="n">highlight</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="QCodeEditor.eraseLast"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.codeedit.QCodeEditor.eraseLast">[docs]</a>    <span class="k">def</span> <span class="nf">eraseLast</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Erase the last line.&quot;&quot;&quot;</span>
+        <span class="n">cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">textCursor</span><span class="p">()</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveOperation</span><span class="o">.</span><span class="n">End</span><span class="p">)</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">SelectionType</span><span class="o">.</span><span class="n">LineUnderCursor</span><span class="p">)</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">removeSelectedText</span><span class="p">()</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">deletePreviousChar</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setTextCursor</span><span class="p">(</span><span class="n">cursor</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="QCodeEditor.eraseFirst"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.codeedit.QCodeEditor.eraseFirst">[docs]</a>    <span class="k">def</span> <span class="nf">eraseFirst</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Erase the first line.&quot;&quot;&quot;</span>
+        <span class="n">cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">textCursor</span><span class="p">()</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveOperation</span><span class="o">.</span><span class="n">Start</span><span class="p">)</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">SelectionType</span><span class="o">.</span><span class="n">LineUnderCursor</span><span class="p">)</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">removeSelectedText</span><span class="p">()</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveOperation</span><span class="o">.</span><span class="n">Down</span><span class="p">)</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">deletePreviousChar</span><span class="p">()</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveOperation</span><span class="o">.</span><span class="n">End</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setTextCursor</span><span class="p">(</span><span class="n">cursor</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="QCodeEditor.selectedText"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.codeedit.QCodeEditor.selectedText">[docs]</a>    <span class="k">def</span> <span class="nf">selectedText</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return selected string.&quot;&quot;&quot;</span>
+        <span class="n">cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">textCursor</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">cursor</span><span class="o">.</span><span class="n">selectedText</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\u2029</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="QCodeEditor.selectedLines"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.codeedit.QCodeEditor.selectedLines">[docs]</a>    <span class="k">def</span> <span class="nf">selectedLines</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Return the selected lines that contain the cursor selection.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">cursor</span><span class="o">.</span><span class="n">block</span><span class="p">()</span><span class="o">.</span><span class="n">text</span><span class="p">()</span> <span class="k">for</span> <span class="n">cursor</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">iter_selected_lines</span><span class="p">()]</span></div>
+
+<div class="viewcode-block" id="QCodeEditor.iter_selected_lines"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.codeedit.QCodeEditor.iter_selected_lines">[docs]</a>    <span class="k">def</span> <span class="nf">iter_selected_lines</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Iterate text cursors for each selected line.&quot;&quot;&quot;</span>
+        <span class="n">_cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">textCursor</span><span class="p">()</span>
+        <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">_cursor</span><span class="o">.</span><span class="n">selectionStart</span><span class="p">(),</span> <span class="n">_cursor</span><span class="o">.</span><span class="n">selectionEnd</span><span class="p">()])</span>
+        <span class="n">_cursor</span><span class="o">.</span><span class="n">setPosition</span><span class="p">(</span><span class="n">start</span><span class="p">)</span>
+        <span class="n">_cursor</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveOperation</span><span class="o">.</span><span class="n">StartOfLine</span><span class="p">)</span>
+        <span class="n">nline</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">_cursor</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveOperation</span><span class="o">.</span><span class="n">EndOfLine</span><span class="p">)</span>
+            <span class="n">_cursor</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveOperation</span><span class="o">.</span><span class="n">NextCharacter</span><span class="p">)</span>
+            <span class="n">nline</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">_cursor</span><span class="o">.</span><span class="n">position</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="n">end</span><span class="p">:</span>
+                <span class="k">break</span>
+
+        <span class="n">_cursor</span><span class="o">.</span><span class="n">setPosition</span><span class="p">(</span><span class="n">start</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nline</span><span class="p">):</span>
+            <span class="n">_cursor</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveOperation</span><span class="o">.</span><span class="n">EndOfLine</span><span class="p">)</span>
+            <span class="k">yield</span> <span class="n">_cursor</span>
+            <span class="n">_cursor</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveOperation</span><span class="o">.</span><span class="n">EndOfLine</span><span class="p">)</span>
+            <span class="n">_cursor</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveOperation</span><span class="o">.</span><span class="n">NextCharacter</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="QCodeEditor.text"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.codeedit.QCodeEditor.text">[docs]</a>    <span class="k">def</span> <span class="nf">text</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return the text.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">toPlainText</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\u2029</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="QCodeEditor.setText"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.codeedit.QCodeEditor.setText">[docs]</a>    <span class="k">def</span> <span class="nf">setText</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set the text.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setPlainText</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\u2029</span><span class="s2">&quot;</span><span class="p">))</span></div></div>
+
+
+<div class="viewcode-block" id="WordInfo"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.codeedit.WordInfo">[docs]</a><span class="k">class</span> <span class="nc">WordInfo</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
+    <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span>
+    <span class="n">expr</span><span class="p">:</span> <span class="n">Expr</span>
+    <span class="n">word</span><span class="p">:</span> <span class="nb">str</span></div>
+
+
+<div class="viewcode-block" id="eval_under_cursor"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.codeedit.eval_under_cursor">[docs]</a><span class="k">def</span> <span class="nf">eval_under_cursor</span><span class="p">(</span>
+    <span class="n">line</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">clicked_pos</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">parent</span><span class="p">:</span> <span class="n">MagicTemplate</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WordInfo</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">expr</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+    <span class="n">pos_start</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">pos_stop</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">Expr</span><span class="p">):</span>
+        <span class="c1"># got a Symbol</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="n">expr</span><span class="o">.</span><span class="n">eval</span><span class="p">({</span><span class="n">expr</span><span class="p">:</span> <span class="n">parent</span><span class="p">})</span>
+        <span class="n">words</span> <span class="o">=</span> <span class="n">expr</span>
+
+    <span class="k">elif</span> <span class="n">expr</span><span class="o">.</span><span class="n">head</span> <span class="ow">is</span> <span class="n">Head</span><span class="o">.</span><span class="n">call</span><span class="p">:</span>
+        <span class="n">first</span> <span class="o">=</span> <span class="n">expr</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">while</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">first</span><span class="p">,</span> <span class="n">Expr</span><span class="p">)</span> <span class="ow">and</span> <span class="n">first</span><span class="o">.</span><span class="n">head</span> <span class="ow">is</span> <span class="n">Head</span><span class="o">.</span><span class="n">getattr</span><span class="p">:</span>
+            <span class="n">next_first</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">first</span><span class="o">.</span><span class="n">args</span>
+            <span class="n">_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">next_first</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">_length</span> <span class="o">&lt;</span> <span class="n">clicked_pos</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">pos_start</span> <span class="o">=</span> <span class="n">_length</span>
+                <span class="k">break</span>
+            <span class="n">first</span> <span class="o">=</span> <span class="n">next_first</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">first</span><span class="p">,</span> <span class="n">Expr</span><span class="p">):</span>
+            <span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="n">first</span><span class="o">.</span><span class="n">args</span>
+            <span class="n">words</span> <span class="o">=</span> <span class="n">first</span>
+            <span class="n">expr</span> <span class="o">=</span> <span class="n">Expr</span><span class="p">(</span><span class="n">Head</span><span class="o">.</span><span class="n">getitem</span><span class="p">,</span> <span class="p">[</span><span class="n">left</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">right</span><span class="p">)])</span>
+            <span class="n">obj</span> <span class="o">=</span> <span class="n">expr</span><span class="o">.</span><span class="n">eval</span><span class="p">({</span><span class="n">Symbol</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="s2">&quot;ui&quot;</span><span class="p">):</span> <span class="n">parent</span><span class="p">})</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">obj</span> <span class="o">=</span> <span class="n">first</span><span class="o">.</span><span class="n">eval</span><span class="p">({</span><span class="n">first</span><span class="p">:</span> <span class="n">parent</span><span class="p">})</span>
+            <span class="n">words</span> <span class="o">=</span> <span class="n">first</span>
+
+    <span class="k">elif</span> <span class="n">expr</span><span class="o">.</span><span class="n">head</span> <span class="ow">is</span> <span class="n">Head</span><span class="o">.</span><span class="n">assign</span><span class="p">:</span>
+        <span class="n">first</span> <span class="o">=</span> <span class="n">expr</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">first</span><span class="p">,</span> <span class="n">Expr</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">(</span><span class="n">first</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;ui&quot;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">while</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">first</span><span class="p">,</span> <span class="n">Expr</span><span class="p">)</span> <span class="ow">and</span> <span class="n">first</span><span class="o">.</span><span class="n">head</span> <span class="ow">is</span> <span class="n">Head</span><span class="o">.</span><span class="n">getattr</span><span class="p">:</span>
+            <span class="n">next_first</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">first</span><span class="o">.</span><span class="n">args</span>
+            <span class="n">_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">next_first</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">_length</span> <span class="o">&lt;</span> <span class="n">clicked_pos</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">pos_start</span> <span class="o">=</span> <span class="n">_length</span>
+                <span class="k">break</span>
+            <span class="n">first</span> <span class="o">=</span> <span class="n">next_first</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">first</span><span class="p">,</span> <span class="n">Expr</span><span class="p">):</span>
+            <span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="n">first</span><span class="o">.</span><span class="n">args</span>
+            <span class="n">left_obj</span> <span class="o">=</span> <span class="n">left</span><span class="o">.</span><span class="n">eval</span><span class="p">({</span><span class="n">Symbol</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="s2">&quot;ui&quot;</span><span class="p">):</span> <span class="n">parent</span><span class="p">})</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">left_obj</span><span class="p">,</span> <span class="s2">&quot;__getitem__&quot;</span><span class="p">):</span>
+                <span class="n">obj</span> <span class="o">=</span> <span class="n">left_obj</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">right</span><span class="p">)]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">obj</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">left_obj</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">right</span><span class="p">))</span>
+            <span class="n">words</span> <span class="o">=</span> <span class="n">first</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">obj</span> <span class="o">=</span> <span class="n">first</span><span class="o">.</span><span class="n">eval</span><span class="p">({</span><span class="n">first</span><span class="p">:</span> <span class="n">parent</span><span class="p">})</span>
+            <span class="n">words</span> <span class="o">=</span> <span class="n">first</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">WordInfo</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">words</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">words</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span></div>
+
+
+<span class="c1"># ##############################################################################</span>
+<span class="c1"># ##############################################################################</span>
+
+
+<div class="viewcode-block" id="QBaseCodeEdit"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.codeedit.QBaseCodeEdit">[docs]</a><span class="k">class</span> <span class="nc">QBaseCodeEdit</span><span class="p">(</span><span class="n">QBaseTextEdit</span><span class="p">):</span>
+    <span class="n">_qwidget</span><span class="p">:</span> <span class="n">QCodeEditor</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">QBaseStringWidget</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">QCodeEditor</span><span class="p">,</span> <span class="s2">&quot;toPlainText&quot;</span><span class="p">,</span> <span class="s2">&quot;setText&quot;</span><span class="p">,</span> <span class="s2">&quot;textChanged&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_mgui_set_read_only</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">setReadOnly</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_mgui_get_read_only</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">isReadOnly</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="CodeEdit"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.codeedit.CodeEdit">[docs]</a><span class="k">class</span> <span class="nc">CodeEdit</span><span class="p">(</span><span class="n">TextEdit</span><span class="p">):</span>
+    <span class="n">executing</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">(</span><span class="nb">object</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">Undefined</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">app</span> <span class="o">=</span> <span class="n">use_app</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">app</span><span class="o">.</span><span class="n">native</span>
+        <span class="n">ValueWidget</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span>
+            <span class="n">widget_type</span><span class="o">=</span><span class="n">QBaseCodeEdit</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_qcode_edit</span><span class="p">()</span><span class="o">.</span><span class="n">executionRequested</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">executing</span><span class="o">.</span><span class="n">emit</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_qcode_edit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QCodeEditor</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_widget</span><span class="o">.</span><span class="n">_qwidget</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">tab_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_qcode_edit</span><span class="p">()</span><span class="o">.</span><span class="n">tabSize</span><span class="p">()</span>
+
+    <span class="nd">@tab_size</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">tab_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_qcode_edit</span><span class="p">()</span><span class="o">.</span><span class="n">setTabSize</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
+
+<div class="viewcode-block" id="CodeEdit.erase_last"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.codeedit.CodeEdit.erase_last">[docs]</a>    <span class="k">def</span> <span class="nf">erase_last</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Erase the last line.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_qcode_edit</span><span class="p">()</span><span class="o">.</span><span class="n">eraseLast</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="CodeEdit.erase_first"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.codeedit.CodeEdit.erase_first">[docs]</a>    <span class="k">def</span> <span class="nf">erase_first</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Erase the first line.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_qcode_edit</span><span class="p">()</span><span class="o">.</span><span class="n">eraseFirst</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="CodeEdit.append"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.codeedit.CodeEdit.append">[docs]</a>    <span class="k">def</span> <span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Append text to the end of the document.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_qcode_edit</span><span class="p">()</span><span class="o">.</span><span class="n">appendPlainText</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">selected</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return selected string.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_qcode_edit</span><span class="p">()</span><span class="o">.</span><span class="n">selectedText</span><span class="p">()</span>
+
+<div class="viewcode-block" id="CodeEdit.syntax_highlight"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.codeedit.CodeEdit.syntax_highlight">[docs]</a>    <span class="k">def</span> <span class="nf">syntax_highlight</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lang</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;python&quot;</span><span class="p">,</span> <span class="n">theme</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Highlight syntax.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_qcode_edit</span><span class="p">()</span><span class="o">.</span><span class="n">syntaxHighlight</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="n">theme</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">__magicclass_parent__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_qcode_edit</span><span class="p">()</span><span class="o">.</span><span class="n">_magicclass_parent</span><span class="p">()</span>
+
+    <span class="nd">@__magicclass_parent__</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">__magicclass_parent__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_qcode_edit</span><span class="p">()</span><span class="o">.</span><span class="n">_magicclass_parent_ref</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+
+<div class="viewcode-block" id="CodeEdit.zoom_in"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.codeedit.CodeEdit.zoom_in">[docs]</a>    <span class="k">def</span> <span class="nf">zoom_in</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Zoom in.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_qcode_edit</span><span class="p">()</span><span class="o">.</span><span class="n">zoomIn</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="CodeEdit.zoom_out"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.codeedit.CodeEdit.zoom_out">[docs]</a>    <span class="k">def</span> <span class="nf">zoom_out</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Zoom out.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_qcode_edit</span><span class="p">()</span><span class="o">.</span><span class="n">zoomOut</span><span class="p">()</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Hanjin Liu.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+</body>
+</html>

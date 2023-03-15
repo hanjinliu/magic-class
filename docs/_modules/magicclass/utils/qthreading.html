@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.utils.qthreading &mdash; magic-class 0.6.13 documentation</title>
+  <title>magicclass.utils.qthreading &mdash; magic-class 0.6.14 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.13
+                0.6.14
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -77,6 +77,7 @@
 
   <h1>Source code for magicclass.utils.qthreading</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">suppress</span>
 <span class="kn">import</span> <span class="nn">threading</span>
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">from</span> <span class="nn">timeit</span> <span class="kn">import</span> <span class="n">default_timer</span>
@@ -97,7 +98,7 @@
 <span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">TypedDict</span><span class="p">,</span> <span class="n">ParamSpec</span>
 
 <span class="kn">from</span> <span class="nn">superqt.utils</span> <span class="kn">import</span> <span class="n">create_worker</span><span class="p">,</span> <span class="n">GeneratorWorker</span><span class="p">,</span> <span class="n">FunctionWorker</span>
-<span class="kn">from</span> <span class="nn">qtpy.QtCore</span> <span class="kn">import</span> <span class="n">Qt</span>
+<span class="kn">from</span> <span class="nn">qtpy.QtCore</span> <span class="kn">import</span> <span class="n">Qt</span><span class="p">,</span> <span class="n">QThread</span><span class="p">,</span> <span class="n">QCoreApplication</span>
 <span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">ProgressBar</span><span class="p">,</span> <span class="n">Container</span><span class="p">,</span> <span class="n">Widget</span><span class="p">,</span> <span class="n">PushButton</span><span class="p">,</span> <span class="n">Label</span>
 <span class="kn">from</span> <span class="nn">magicgui.application</span> <span class="kn">import</span> <span class="n">use_app</span>
 
@@ -109,7 +110,7 @@
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">magicclass._gui</span> <span class="kn">import</span> <span class="n">BaseGui</span>
-    <span class="kn">from</span> <span class="nn">magicclass._gui.mgui_ext</span> <span class="kn">import</span> <span class="n">PushButtonPlus</span><span class="p">,</span> <span class="n">Action</span>
+    <span class="kn">from</span> <span class="nn">magicclass._gui.mgui_ext</span> <span class="kn">import</span> <span class="n">Clickable</span>
     <span class="kn">from</span> <span class="nn">magicclass._gui._macro</span> <span class="kn">import</span> <span class="n">GuiMacro</span>
     <span class="kn">from</span> <span class="nn">magicclass.fields</span> <span class="kn">import</span> <span class="n">MagicField</span>
     <span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Self</span>
@@ -354,10 +355,11 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">widgets</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">progress_label</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pbar</span><span class="p">,</span> <span class="n">cnt</span><span class="p">],</span> <span class="n">labels</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_on_timer_updated</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timer</span><span class="o">.</span><span class="n">sec</span> <span class="o">&lt;</span> <span class="mi">3600</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">time_label</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timer</span><span class="o">.</span><span class="n">format_time</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{min:0&gt;2}</span><span class="s2">:</span><span class="si">{sec:0&gt;2}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">time_label</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timer</span><span class="o">.</span><span class="n">format_time</span><span class="p">()</span>
+        <span class="k">with</span> <span class="n">suppress</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timer</span><span class="o">.</span><span class="n">sec</span> <span class="o">&lt;</span> <span class="mi">3600</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">time_label</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timer</span><span class="o">.</span><span class="n">format_time</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{min:0&gt;2}</span><span class="s2">:</span><span class="si">{sec:0&gt;2}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">time_label</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timer</span><span class="o">.</span><span class="n">format_time</span><span class="p">()</span>
         <span class="k">return</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">_start_thread</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -371,11 +373,12 @@
 
     <span class="k">def</span> <span class="nf">_update_timer_label</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Background thread for updating the progress bar&quot;&quot;&quot;</span>
-        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">_running</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timer</span><span class="o">.</span><span class="n">_running</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_time_signal</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span>
+        <span class="k">with</span> <span class="n">suppress</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
+            <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">_running</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timer</span><span class="o">.</span><span class="n">_running</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_time_signal</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span>
 
-            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">_finish</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -407,26 +410,36 @@
 
     <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_CONTAINER</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_CONTAINER</span><span class="o">.</span><span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">parent</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_CONTAINER</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span>
-                <span class="n">parent</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_CONTAINER</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">windowFlags</span><span class="p">(),</span>
-            <span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_CONTAINER</span><span class="o">.</span><span class="n">visible</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_CONTAINER</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-            <span class="n">move_to_screen_center</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_CONTAINER</span><span class="o">.</span><span class="n">native</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">suppress</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">_is_main_thread</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_CONTAINER</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_CONTAINER</span><span class="o">.</span><span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">parent</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_CONTAINER</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span>
+                        <span class="n">parent</span><span class="p">,</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_CONTAINER</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">windowFlags</span><span class="p">(),</span>
+                    <span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_CONTAINER</span><span class="o">.</span><span class="n">visible</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_CONTAINER</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+                <span class="n">move_to_screen_center</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_CONTAINER</span><span class="o">.</span><span class="n">native</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">wdt</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_CONTAINER</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">wdt</span> <span class="ow">is</span> <span class="bp">self</span><span class="p">:</span>
                 <span class="k">break</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_CONTAINER</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_CONTAINER</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># minimize height</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_CONTAINER</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_CONTAINER</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">with</span> <span class="n">suppress</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">_is_main_thread</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_CONTAINER</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_CONTAINER</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># minimize height</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_CONTAINER</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_CONTAINER</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">hide_footer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">footer</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">visible</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">footer</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">visible</span> <span class="o">=</span> <span class="kc">False</span>
 
     <span class="k">def</span> <span class="nf">set_description</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">desc</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Set description as the label of the progressbar.&quot;&quot;&quot;</span>
@@ -445,8 +458,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_worker</span><span class="o">.</span><span class="n">started</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_start_thread</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_worker</span><span class="p">,</span> <span class="n">GeneratorWorker</span><span class="p">):</span>
             <span class="c1"># FunctionWorker does not have yielded/aborted signals.</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">footer</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">visible</span> <span class="o">=</span> <span class="kc">False</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">footer</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">visible</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">hide_footer</span><span class="p">()</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="c1"># initialize abort_button</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">abort_button</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;Abort&quot;</span>
@@ -501,7 +513,7 @@
 <span class="n">ProgressBarLike</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">ProgressBar</span><span class="p">,</span> <span class="n">_SupportProgress</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="thread_worker"><a class="viewcode-back" href="../../../apidoc/magicclass.utils.html#magicclass.utils.qthreading.thread_worker">[docs]</a><span class="k">class</span> <span class="nc">thread_worker</span><span class="p">:</span>
+<div class="viewcode-block" id="thread_worker"><a class="viewcode-back" href="../../../apidoc/magicclass.utils.html#magicclass.utils.qthreading.thread_worker">[docs]</a><span class="k">class</span> <span class="nc">thread_worker</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">_P</span><span class="p">]):</span>
     <span class="sd">&quot;&quot;&quot;Create a worker in a superqt/napari style.&quot;&quot;&quot;</span>
 
     <span class="n">_DEFAULT_PROGRESS_BAR</span> <span class="o">=</span> <span class="n">DefaultProgressBar</span>
@@ -517,7 +529,7 @@
         <span class="n">f</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="n">_P</span><span class="p">,</span> <span class="n">_R1</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">ignore_errors</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-        <span class="n">progress</span><span class="p">:</span> <span class="n">ProgressDict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">progress</span><span class="p">:</span> <span class="n">ProgressDict</span> <span class="o">|</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="n">_P</span><span class="p">,</span> <span class="n">_R1</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_callback_dict_</span> <span class="o">=</span> <span class="p">{</span>
@@ -542,7 +554,7 @@
                 <span class="n">progress</span> <span class="o">=</span> <span class="p">{}</span>
 
             <span class="n">progress</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;desc&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-            <span class="n">progress</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;total&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">progress</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;total&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">_DEFAULT_TOTAL</span><span class="p">)</span>
             <span class="n">progress</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;pbar&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_progress</span> <span class="o">=</span> <span class="n">progress</span>
@@ -555,8 +567,9 @@
     <span class="k">def</span> <span class="nf">with_progress</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
         <span class="n">desc</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Callable</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">total</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Callable</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">total</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Callable</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">pbar</span><span class="p">:</span> <span class="n">ProgressBar</span> <span class="o">|</span> <span class="n">_SupportProgress</span> <span class="o">|</span> <span class="n">MagicField</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Configure the progressbar.</span>
@@ -574,14 +587,15 @@
 <span class="sd">            Progressbar object.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
-
-        <span class="n">progress</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">desc</span><span class="o">=</span><span class="n">desc</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="n">total</span><span class="p">,</span> <span class="n">pbar</span><span class="o">=</span><span class="n">pbar</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">total</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">total</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_DEFAULT_TOTAL</span>
+        <span class="n">progress</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">desc</span><span class="o">=</span><span class="n">desc</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="n">total</span><span class="p">,</span> <span class="n">pbar</span><span class="o">=</span><span class="n">pbar</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_progress</span> <span class="o">=</span> <span class="n">progress</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
 <div class="viewcode-block" id="thread_worker.set_default"><a class="viewcode-back" href="../../../apidoc/magicclass.utils.html#magicclass.utils.qthreading.thread_worker.set_default">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">set_default</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">pbar_cls</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">set_default</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">pbar_cls</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">|</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the default progressbar class.</span>
 
@@ -644,7 +658,7 @@
         <span class="k">return</span> <span class="kc">None</span>
 
     <span class="nd">@overload</span>
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="n">_P</span><span class="p">,</span> <span class="n">_R1</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">thread_worker</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="n">_P</span><span class="p">,</span> <span class="n">_R1</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">thread_worker</span><span class="p">[</span><span class="n">_P</span><span class="p">]:</span>
         <span class="o">...</span>
 
     <span class="nd">@overload</span>
@@ -660,7 +674,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gui</span><span class="p">:</span> <span class="n">BaseGui</span><span class="p">,</span> <span class="n">objtype</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gui</span><span class="p">:</span> <span class="n">BaseGui</span><span class="p">,</span> <span class="n">objtype</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[</span><span class="n">_P</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
         <span class="k">if</span> <span class="n">gui</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span>
 
@@ -674,28 +688,53 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_objects</span><span class="p">[</span><span class="n">gui_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">_create_worker</span>  <span class="c1"># cache</span>
         <span class="k">return</span> <span class="n">_create_worker</span>
 
+<div class="viewcode-block" id="thread_worker.button"><a class="viewcode-back" href="../../../apidoc/magicclass.utils.html#magicclass.utils.qthreading.thread_worker.button">[docs]</a>    <span class="k">def</span> <span class="nf">button</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gui</span><span class="p">:</span> <span class="n">BaseGui</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Clickable</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;The corresponding button object.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">gui</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">]</span></div>
+
     <span class="k">def</span> <span class="nf">_create_qt_worker</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">gui</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">gui</span><span class="p">:</span> <span class="n">BaseGui</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FunctionWorker</span> <span class="o">|</span> <span class="n">GeneratorWorker</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Create a worker object.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_generator</span><span class="p">:</span>
+
+            <span class="k">def</span> <span class="nf">_run</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+                <span class="k">with</span> <span class="n">gui</span><span class="o">.</span><span class="n">macro</span><span class="o">.</span><span class="n">blocked</span><span class="p">():</span>
+                    <span class="n">out</span> <span class="o">=</span> <span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">_func</span><span class="o">.</span><span class="fm">__get__</span><span class="p">(</span><span class="n">gui</span><span class="p">)(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">out</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="k">def</span> <span class="nf">_run</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+                <span class="k">with</span> <span class="n">gui</span><span class="o">.</span><span class="n">macro</span><span class="o">.</span><span class="n">blocked</span><span class="p">():</span>
+                    <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_func</span><span class="o">.</span><span class="fm">__get__</span><span class="p">(</span><span class="n">gui</span><span class="p">)(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">out</span>
+
         <span class="n">worker</span> <span class="o">=</span> <span class="n">create_worker</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_func</span><span class="o">.</span><span class="fm">__get__</span><span class="p">(</span><span class="n">gui</span><span class="p">),</span>
+            <span class="n">_run</span><span class="p">,</span>
             <span class="n">_ignore_errors</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_ignore_errors</span><span class="p">,</span>
             <span class="n">_start_thread</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="o">*</span><span class="n">args</span><span class="p">,</span>
             <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
         <span class="p">)</span>
+
+        <span class="nd">@worker</span><span class="o">.</span><span class="n">returned</span><span class="o">.</span><span class="n">connect</span>
+        <span class="k">def</span> <span class="nf">_on_returned</span><span class="p">(</span><span class="n">out</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">gui</span><span class="o">.</span><span class="n">macro</span><span class="o">.</span><span class="n">active</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_recorder</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_recorder</span><span class="p">(</span><span class="n">gui</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">return</span>
+
         <span class="k">return</span> <span class="n">worker</span>
 
-    <span class="k">def</span> <span class="nf">_create_method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gui</span><span class="p">:</span> <span class="n">BaseGui</span><span class="p">):</span>
-        <span class="kn">from</span> <span class="nn">..fields</span> <span class="kn">import</span> <span class="n">MagicField</span>
+    <span class="k">def</span> <span class="nf">_create_method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gui</span><span class="p">:</span> <span class="n">BaseGui</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[</span><span class="n">_P</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+        <span class="kn">from</span> <span class="nn">magicclass.fields</span> <span class="kn">import</span> <span class="n">MagicField</span>
 
         <span class="nd">@wraps</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="k">def</span> <span class="nf">_create_worker</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
             <span class="c1"># create a worker object</span>
             <span class="n">worker</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_qt_worker</span><span class="p">(</span><span class="n">gui</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
             <span class="n">is_generator</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">worker</span><span class="p">,</span> <span class="n">GeneratorWorker</span><span class="p">)</span>
-
+            <span class="n">pbar</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_progress</span><span class="p">:</span>
                 <span class="c1"># prepare progress bar</span>
                 <span class="n">_pbar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_progress</span><span class="p">[</span><span class="s2">&quot;pbar&quot;</span><span class="p">]</span>
@@ -720,10 +759,6 @@
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_bind_callbacks</span><span class="p">(</span><span class="n">worker</span><span class="p">,</span> <span class="n">gui</span><span class="p">)</span>
 
-            <span class="c1"># bind macro-recorder if exists</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_recorder</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">worker</span><span class="o">.</span><span class="n">returned</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span> <span class="n">_</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_recorder</span><span class="p">(</span><span class="n">gui</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
-
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_progress</span><span class="p">:</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">pbar</span><span class="p">,</span> <span class="s2">&quot;visible&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
                     <span class="c1"># return the progressbar to the initial state</span>
@@ -738,8 +773,7 @@
                 <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">pbar</span><span class="p">,</span> <span class="s2">&quot;set_title&quot;</span><span class="p">):</span>
                     <span class="n">pbar</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_func</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">))</span>
 
-            <span class="n">_obj</span><span class="p">:</span> <span class="n">PushButtonPlus</span> <span class="o">|</span> <span class="n">Action</span> <span class="o">=</span> <span class="n">gui</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">]</span>
-            <span class="k">if</span> <span class="n">_obj</span><span class="o">.</span><span class="n">running</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">button</span><span class="p">(</span><span class="n">gui</span><span class="p">)</span><span class="o">.</span><span class="n">running</span><span class="p">:</span>
                 <span class="n">worker</span><span class="o">.</span><span class="n">errored</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
                     <span class="n">partial</span><span class="p">(</span><span class="n">gui</span><span class="o">.</span><span class="n">_error_mode</span><span class="o">.</span><span class="n">get_handler</span><span class="p">(),</span> <span class="n">parent</span><span class="o">=</span><span class="n">gui</span><span class="p">)</span>
                 <span class="p">)</span>
@@ -752,16 +786,34 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># If function is called from script, some events must get processed by</span>
                 <span class="c1"># the application while keep script stopping at each line of code.</span>
-                <span class="n">app</span> <span class="o">=</span> <span class="n">use_app</span><span class="p">()</span>
-                <span class="n">worker</span><span class="o">.</span><span class="n">returned</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">process_events</span><span class="p">)</span>
-                <span class="n">worker</span><span class="o">.</span><span class="n">started</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">process_events</span><span class="p">)</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">worker</span><span class="p">,</span> <span class="n">GeneratorWorker</span><span class="p">):</span>
-                    <span class="n">worker</span><span class="o">.</span><span class="n">yielded</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">process_events</span><span class="p">)</span>
-                <span class="n">worker</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_run_blocked</span><span class="p">(</span><span class="n">gui</span><span class="p">,</span> <span class="n">worker</span><span class="p">,</span> <span class="n">pbar</span><span class="p">)</span>
 
             <span class="k">return</span> <span class="kc">None</span>
 
+        <span class="n">_create_worker</span><span class="o">.</span><span class="vm">__self__</span> <span class="o">=</span> <span class="n">gui</span>
         <span class="k">return</span> <span class="n">_create_worker</span>
+
+    <span class="k">def</span> <span class="nf">_run_blocked</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">gui</span><span class="p">:</span> <span class="n">BaseGui</span><span class="p">,</span>
+        <span class="n">worker</span><span class="p">:</span> <span class="n">FunctionWorker</span> <span class="o">|</span> <span class="n">GeneratorWorker</span><span class="p">,</span>
+        <span class="n">pbar</span><span class="p">:</span> <span class="n">ProgressBar</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="n">app</span> <span class="o">=</span> <span class="n">use_app</span><span class="p">()</span>
+        <span class="n">worker</span><span class="o">.</span><span class="n">started</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">process_events</span><span class="p">)</span>
+        <span class="n">worker</span><span class="o">.</span><span class="n">finished</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">process_events</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">worker</span><span class="p">,</span> <span class="n">GeneratorWorker</span><span class="p">):</span>
+            <span class="n">worker</span><span class="o">.</span><span class="n">yielded</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">process_events</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">worker</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+        <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pbar</span><span class="p">,</span> <span class="n">DefaultProgressBar</span><span class="p">):</span>
+                <span class="n">pbar</span><span class="o">.</span><span class="n">_abort_worker</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">worker</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+            <span class="n">worker</span><span class="o">.</span><span class="n">finished</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span>
+            <span class="n">gui</span><span class="o">.</span><span class="n">_error_mode</span><span class="o">.</span><span class="n">wrap_handler</span><span class="p">(</span><span class="n">Aborted</span><span class="o">.</span><span class="n">raise_</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">gui</span><span class="p">)()</span>
 
     <span class="k">def</span> <span class="nf">_get_method_signature</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Signature</span><span class="p">:</span>
         <span class="n">sig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__signature__</span>
@@ -803,7 +855,7 @@
 
     <span class="k">def</span> <span class="nf">_find_progressbar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gui</span><span class="p">:</span> <span class="n">BaseGui</span><span class="p">,</span> <span class="n">desc</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">total</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Find available progressbar. Create a new one if not found.&quot;&quot;&quot;</span>
-        <span class="kn">from</span> <span class="nn">..fields</span> <span class="kn">import</span> <span class="n">MagicField</span>
+        <span class="kn">from</span> <span class="nn">magicclass.fields</span> <span class="kn">import</span> <span class="n">MagicField</span>
 
         <span class="n">gui_id</span> <span class="o">=</span> <span class="nb">id</span><span class="p">(</span><span class="n">gui</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">gui_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_progressbars</span><span class="p">:</span>
@@ -824,7 +876,7 @@
 
         <span class="k">if</span> <span class="n">_pbar</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">_pbar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">_DEFAULT_PROGRESS_BAR</span><span class="p">(</span><span class="nb">max</span><span class="o">=</span><span class="n">total</span><span class="p">)</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_pbar</span><span class="p">,</span> <span class="n">Widget</span><span class="p">)</span> <span class="ow">and</span> <span class="n">_pbar</span><span class="o">.</span><span class="n">parent</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_pbar</span><span class="p">,</span> <span class="n">Widget</span><span class="p">)</span> <span class="ow">and</span> <span class="n">_pbar</span><span class="o">.</span><span class="n">parent</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">_is_main_thread</span><span class="p">():</span>
                 <span class="c1"># Popup progressbar as a splashscreen if it is not a child widget.</span>
                 <span class="n">_pbar</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span><span class="n">gui</span><span class="o">.</span><span class="n">native</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">_WINDOW_FLAG</span><span class="p">)</span>
 
@@ -842,25 +894,28 @@
         <span class="n">_desc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_progress</span><span class="p">[</span><span class="s2">&quot;desc&quot;</span><span class="p">]</span>
         <span class="n">_total</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_progress</span><span class="p">[</span><span class="s2">&quot;total&quot;</span><span class="p">]</span>
 
-        <span class="n">all_args</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">all_args</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># all the argument of the function</span>
         <span class="c1"># progress bar description</span>
         <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">_desc</span><span class="p">):</span>
             <span class="n">arguments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__signature__</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="n">gui</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
             <span class="n">arguments</span><span class="o">.</span><span class="n">apply_defaults</span><span class="p">()</span>
             <span class="n">all_args</span> <span class="o">=</span> <span class="n">arguments</span><span class="o">.</span><span class="n">arguments</span>
-            <span class="n">desc</span> <span class="o">=</span> <span class="n">_desc</span><span class="p">(</span><span class="o">**</span><span class="n">all_args</span><span class="p">)</span>
+            <span class="n">desc</span> <span class="o">=</span> <span class="n">_desc</span><span class="p">(</span><span class="o">**</span><span class="n">_filter_args</span><span class="p">(</span><span class="n">_desc</span><span class="p">,</span> <span class="n">all_args</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">desc</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">_desc</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
 
         <span class="c1"># total number of steps</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_total</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_total</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="n">callable</span><span class="p">(</span><span class="n">_total</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">all_args</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">arguments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__signature__</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="n">gui</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
                 <span class="n">arguments</span><span class="o">.</span><span class="n">apply_defaults</span><span class="p">()</span>
                 <span class="n">all_args</span> <span class="o">=</span> <span class="n">arguments</span><span class="o">.</span><span class="n">arguments</span>
-            <span class="n">total</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">_total</span><span class="p">,</span> <span class="p">{},</span> <span class="n">all_args</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">callable</span><span class="p">(</span><span class="n">_total</span><span class="p">):</span>
-            <span class="n">total</span> <span class="o">=</span> <span class="n">_total</span><span class="p">(</span><span class="n">gui</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_total</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">total</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">_total</span><span class="p">,</span> <span class="p">{},</span> <span class="n">all_args</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">callable</span><span class="p">(</span><span class="n">_total</span><span class="p">):</span>
+                <span class="n">total</span> <span class="o">=</span> <span class="n">_total</span><span class="p">(</span><span class="o">**</span><span class="n">_filter_args</span><span class="p">(</span><span class="n">_total</span><span class="p">,</span> <span class="n">all_args</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Unreachable.&quot;</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_total</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
             <span class="n">total</span> <span class="o">=</span> <span class="n">_total</span>
         <span class="k">else</span><span class="p">:</span>
@@ -928,11 +983,29 @@
 
 <span class="k">def</span> <span class="nf">increment</span><span class="p">(</span><span class="n">pbar</span><span class="p">:</span> <span class="n">ProgressBarLike</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Increment progressbar.&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">pbar</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="n">pbar</span><span class="o">.</span><span class="n">max</span><span class="p">:</span>
-        <span class="n">pbar</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">pbar</span><span class="o">.</span><span class="n">value</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">with</span> <span class="n">suppress</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">pbar</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="n">pbar</span><span class="o">.</span><span class="n">max</span><span class="p">:</span>
+            <span class="n">pbar</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pbar</span><span class="o">.</span><span class="n">value</span> <span class="o">+=</span> <span class="mi">1</span>
     <span class="k">return</span> <span class="kc">None</span>
+
+
+<span class="k">def</span> <span class="nf">_filter_args</span><span class="p">(</span><span class="n">fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">arguments</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+    <span class="n">sig</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="n">sig</span><span class="o">.</span><span class="n">parameters</span>
+    <span class="n">nparams</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">nparams</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="nb">list</span><span class="p">(</span><span class="n">sig</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="o">.</span><span class="n">VAR_KEYWORD</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">arguments</span>
+    <span class="n">existing_args</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">sig</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">arguments</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">existing_args</span><span class="p">}</span>
+
+
+<span class="k">def</span> <span class="nf">_is_main_thread</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;True if the current thread is the main thread.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">QThread</span><span class="o">.</span><span class="n">currentThread</span><span class="p">()</span> <span class="ow">is</span> <span class="n">QCoreApplication</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">thread</span><span class="p">()</span>
 
 
 <div class="viewcode-block" id="Callback"><a class="viewcode-back" href="../../../apidoc/magicclass.utils.html#magicclass.utils.qthreading.Callback">[docs]</a><span class="k">class</span> <span class="nc">Callback</span><span class="p">:</span>
@@ -951,7 +1024,7 @@
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callback</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Return a partial callback.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">*</span><span class="n">kwargs</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callback</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">obj</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -959,7 +1032,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span></div>
 
 
-<span class="n">to_callback</span> <span class="o">=</span> <span class="n">thread_worker</span><span class="o">.</span><span class="n">to_callback</span>
+<span class="n">to_callback</span> <span class="o">=</span> <span class="n">thread_worker</span><span class="o">.</span><span class="n">to_callback</span>  <span class="c1"># function version</span>
 </pre></div>
 
            </div>

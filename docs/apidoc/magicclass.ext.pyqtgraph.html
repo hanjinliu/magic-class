@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.ext.pyqtgraph package &mdash; magic-class 0.6.13 documentation</title>
+  <title>magicclass.ext.pyqtgraph package &mdash; magic-class 0.6.14 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/columns.css" type="text/css" />
@@ -20,7 +20,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="magicclass.ext.pyqtgraph.tests package" href="magicclass.ext.pyqtgraph.tests.html" />
-    <link rel="prev" title="magicclass.ext.pandas package" href="magicclass.ext.pandas.html" />
+    <link rel="prev" title="magicclass.ext.polars package" href="magicclass.ext.polars.html" />
 </head>
 
 <body class="wy-body-for-nav">
@@ -31,7 +31,7 @@
             <a href="../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.13
+                0.6.14
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -196,48 +196,7 @@
 <dl class="py attribute">
 <dt class="sig sig-object py" id="magicclass.ext.pyqtgraph.components.Region.changed">
 <span class="sig-name descname"><span class="pre">changed</span></span><a class="headerlink" href="#magicclass.ext.pyqtgraph.components.Region.changed" title="Permalink to this definition">¶</a></dt>
-<dd><p>Declares a signal emitter on a class.</p>
-<p>This is class implements the [descriptor
-protocol](<a class="reference external" href="https://docs.python.org/3/howto/descriptor.html#descriptorhowto">https://docs.python.org/3/howto/descriptor.html#descriptorhowto</a>)
-and is designed to be used as a class attribute, with the supported signature types
-provided in the contructor:</p>
-<p><a href="#id1"><span class="problematic" id="id2">``</span></a><a href="#id3"><span class="problematic" id="id4">`</span></a>python
-from psygnal import Signal</p>
-<dl class="simple">
-<dt>class MyEmitter:</dt><dd><p>changed = Signal(int)</p>
-</dd>
-<dt>def receiver(arg: int):</dt><dd><p>print(&quot;new value:&quot;, arg)</p>
-</dd>
-</dl>
-<p>emitter = MyEmitter()
-emitter.changed.connect(receiver)
-emitter.changed.emit(1)  # prints 'new value: 1'
-<a href="#id5"><span class="problematic" id="id6">``</span></a><a href="#id7"><span class="problematic" id="id8">`</span></a></p>
-<p>!!! note</p>
-<blockquote>
-<div><p>in the example above, <cite>MyEmitter.changed</cite> is an instance of <cite>Signal</cite>,
-and <cite>emitter.changed</cite> is an instance of <cite>SignalInstance</cite>.  See the
-documentation on [<cite>SignalInstance</cite>][psygnal.SignalInstance] for details
-on how to connect to and/or emit a signal on an instance of an object
-that has a <cite>Signal</cite>.</p>
-</div></blockquote>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>*types</strong> (<a class="reference internal" href="magicclass.html#magicclass.types.Union" title="magicclass.types.Union"><em>Union</em></a><em>[</em><em>Type</em><em>[</em><em>Any</em><em>]</em><em>, </em><em>Signature</em><em>]</em>) -- A sequence of individual types, or a <em>single</em> [<cite>inspect.Signature</cite>][] object.</p></li>
-<li><p><strong>description</strong> (<em>str</em>) -- Optional descriptive text for the signal.  (not used internally).</p></li>
-<li><p><strong>name</strong> (<a class="reference internal" href="magicclass.html#magicclass.types.Optional" title="magicclass.types.Optional"><em>Optional</em></a><em>[</em><em>str</em><em>]</em>) -- Optional name of the signal. If it is not specified then the name of the
-class attribute that is bound to the signal will be used. default None</p></li>
-<li><p><strong>check_nargs_on_connect</strong> (<em>bool</em>) -- Whether to check the number of positional args against <cite>signature</cite> when
-connecting a new callback. This can also be provided at connection time using
-<cite>.connect(..., check_nargs=True)</cite>. By default, True.</p></li>
-<li><p><strong>check_types_on_connect</strong> (<em>bool</em>) -- Whether to check the callback parameter types against <cite>signature</cite> when
-connecting a new callback. This can also be provided at connection time using
-<cite>.connect(..., check_types=True)</cite>. By default, False.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="magicclass.ext.pyqtgraph.components.Region.color">
@@ -671,11 +630,35 @@ connecting a new callback. This can also be provided at connection time using
 <dl class="py property">
 <dt class="sig sig-object py" id="magicclass.ext.pyqtgraph.graph_items.Scatter.size">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">size</span></span><a class="headerlink" href="#magicclass.ext.pyqtgraph.graph_items.Scatter.size" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Get the size of the scatter plot.</p>
+</dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="magicclass.ext.pyqtgraph.graph_items.Scatter.symbol">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">symbol</span></span><a class="headerlink" href="#magicclass.ext.pyqtgraph.graph_items.Scatter.symbol" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the symbol of the scatter plot.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.ext.pyqtgraph.graph_items.Target">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.pyqtgraph.graph_items.</span></span><span class="sig-name descname"><span class="pre">Target</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lw</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ls</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'-'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/pyqtgraph/graph_items.html#Target"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.pyqtgraph.graph_items.Target" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#magicclass.ext.pyqtgraph.graph_items.LayerItem" title="magicclass.ext.pyqtgraph.graph_items.LayerItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.pyqtgraph.graph_items.LayerItem</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.ext.pyqtgraph.graph_items.Target.native">
+<span class="sig-name descname"><span class="pre">native</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">pyqtgraph.graphicsItems.TargetItem.TargetItem</span></em><a class="headerlink" href="#magicclass.ext.pyqtgraph.graph_items.Target.native" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.ext.pyqtgraph.graph_items.Target.pos">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pos</span></span><a class="headerlink" href="#magicclass.ext.pyqtgraph.graph_items.Target.pos" title="Permalink to this definition">¶</a></dt>
+<dd><p>Position in (x, y)</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.ext.pyqtgraph.graph_items.Target.size">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">size</span></span><a class="headerlink" href="#magicclass.ext.pyqtgraph.graph_items.Target.size" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1056,6 +1039,11 @@ supports.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="magicclass.ext.pyqtgraph.widgets.HasDataItems.add_target">
+<span class="sig-name descname"><span class="pre">add_target</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#magicclass.ext.pyqtgraph.graph_items.Target" title="magicclass.ext.pyqtgraph.graph_items.Target"><span class="pre">magicclass.ext.pyqtgraph.graph_items.Target</span></a></span></span><a class="reference internal" href="../_modules/magicclass/ext/pyqtgraph/widgets.html#HasDataItems.add_target"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.pyqtgraph.widgets.HasDataItems.add_target" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="magicclass.ext.pyqtgraph.widgets.HasDataItems.add_text">
 <span class="sig-name descname"><span class="pre">add_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#magicclass.ext.pyqtgraph.graph_items.TextGroup" title="magicclass.ext.pyqtgraph.graph_items.TextGroup"><span class="pre">magicclass.ext.pyqtgraph.graph_items.TextGroup</span></a></span></span><a class="reference internal" href="../_modules/magicclass/ext/pyqtgraph/widgets.html#HasDataItems.add_text"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.pyqtgraph.widgets.HasDataItems.add_text" title="Permalink to this definition">¶</a></dt>
 <dt class="sig sig-object py">
@@ -1098,94 +1086,12 @@ supports.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="magicclass.ext.pyqtgraph.widgets.HasViewBox.mouse_clicked">
 <span class="sig-name descname"><span class="pre">mouse_clicked</span></span><a class="headerlink" href="#magicclass.ext.pyqtgraph.widgets.HasViewBox.mouse_clicked" title="Permalink to this definition">¶</a></dt>
-<dd><p>Declares a signal emitter on a class.</p>
-<p>This is class implements the [descriptor
-protocol](<a class="reference external" href="https://docs.python.org/3/howto/descriptor.html#descriptorhowto">https://docs.python.org/3/howto/descriptor.html#descriptorhowto</a>)
-and is designed to be used as a class attribute, with the supported signature types
-provided in the contructor:</p>
-<p><a href="#id9"><span class="problematic" id="id10">``</span></a><a href="#id11"><span class="problematic" id="id12">`</span></a>python
-from psygnal import Signal</p>
-<dl class="simple">
-<dt>class MyEmitter:</dt><dd><p>changed = Signal(int)</p>
-</dd>
-<dt>def receiver(arg: int):</dt><dd><p>print(&quot;new value:&quot;, arg)</p>
-</dd>
-</dl>
-<p>emitter = MyEmitter()
-emitter.changed.connect(receiver)
-emitter.changed.emit(1)  # prints 'new value: 1'
-<a href="#id13"><span class="problematic" id="id14">``</span></a><a href="#id15"><span class="problematic" id="id16">`</span></a></p>
-<p>!!! note</p>
-<blockquote>
-<div><p>in the example above, <cite>MyEmitter.changed</cite> is an instance of <cite>Signal</cite>,
-and <cite>emitter.changed</cite> is an instance of <cite>SignalInstance</cite>.  See the
-documentation on [<cite>SignalInstance</cite>][psygnal.SignalInstance] for details
-on how to connect to and/or emit a signal on an instance of an object
-that has a <cite>Signal</cite>.</p>
-</div></blockquote>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>*types</strong> (<a class="reference internal" href="magicclass.html#magicclass.types.Union" title="magicclass.types.Union"><em>Union</em></a><em>[</em><em>Type</em><em>[</em><em>Any</em><em>]</em><em>, </em><em>Signature</em><em>]</em>) -- A sequence of individual types, or a <em>single</em> [<cite>inspect.Signature</cite>][] object.</p></li>
-<li><p><strong>description</strong> (<em>str</em>) -- Optional descriptive text for the signal.  (not used internally).</p></li>
-<li><p><strong>name</strong> (<a class="reference internal" href="magicclass.html#magicclass.types.Optional" title="magicclass.types.Optional"><em>Optional</em></a><em>[</em><em>str</em><em>]</em>) -- Optional name of the signal. If it is not specified then the name of the
-class attribute that is bound to the signal will be used. default None</p></li>
-<li><p><strong>check_nargs_on_connect</strong> (<em>bool</em>) -- Whether to check the number of positional args against <cite>signature</cite> when
-connecting a new callback. This can also be provided at connection time using
-<cite>.connect(..., check_nargs=True)</cite>. By default, True.</p></li>
-<li><p><strong>check_types_on_connect</strong> (<em>bool</em>) -- Whether to check the callback parameter types against <cite>signature</cite> when
-connecting a new callback. This can also be provided at connection time using
-<cite>.connect(..., check_types=True)</cite>. By default, False.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="magicclass.ext.pyqtgraph.widgets.HasViewBox.range_changed">
 <span class="sig-name descname"><span class="pre">range_changed</span></span><a class="headerlink" href="#magicclass.ext.pyqtgraph.widgets.HasViewBox.range_changed" title="Permalink to this definition">¶</a></dt>
-<dd><p>Declares a signal emitter on a class.</p>
-<p>This is class implements the [descriptor
-protocol](<a class="reference external" href="https://docs.python.org/3/howto/descriptor.html#descriptorhowto">https://docs.python.org/3/howto/descriptor.html#descriptorhowto</a>)
-and is designed to be used as a class attribute, with the supported signature types
-provided in the contructor:</p>
-<p><a href="#id17"><span class="problematic" id="id18">``</span></a><a href="#id19"><span class="problematic" id="id20">`</span></a>python
-from psygnal import Signal</p>
-<dl class="simple">
-<dt>class MyEmitter:</dt><dd><p>changed = Signal(int)</p>
-</dd>
-<dt>def receiver(arg: int):</dt><dd><p>print(&quot;new value:&quot;, arg)</p>
-</dd>
-</dl>
-<p>emitter = MyEmitter()
-emitter.changed.connect(receiver)
-emitter.changed.emit(1)  # prints 'new value: 1'
-<a href="#id21"><span class="problematic" id="id22">``</span></a><a href="#id23"><span class="problematic" id="id24">`</span></a></p>
-<p>!!! note</p>
-<blockquote>
-<div><p>in the example above, <cite>MyEmitter.changed</cite> is an instance of <cite>Signal</cite>,
-and <cite>emitter.changed</cite> is an instance of <cite>SignalInstance</cite>.  See the
-documentation on [<cite>SignalInstance</cite>][psygnal.SignalInstance] for details
-on how to connect to and/or emit a signal on an instance of an object
-that has a <cite>Signal</cite>.</p>
-</div></blockquote>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>*types</strong> (<a class="reference internal" href="magicclass.html#magicclass.types.Union" title="magicclass.types.Union"><em>Union</em></a><em>[</em><em>Type</em><em>[</em><em>Any</em><em>]</em><em>, </em><em>Signature</em><em>]</em>) -- A sequence of individual types, or a <em>single</em> [<cite>inspect.Signature</cite>][] object.</p></li>
-<li><p><strong>description</strong> (<em>str</em>) -- Optional descriptive text for the signal.  (not used internally).</p></li>
-<li><p><strong>name</strong> (<a class="reference internal" href="magicclass.html#magicclass.types.Optional" title="magicclass.types.Optional"><em>Optional</em></a><em>[</em><em>str</em><em>]</em>) -- Optional name of the signal. If it is not specified then the name of the
-class attribute that is bound to the signal will be used. default None</p></li>
-<li><p><strong>check_nargs_on_connect</strong> (<em>bool</em>) -- Whether to check the number of positional args against <cite>signature</cite> when
-connecting a new callback. This can also be provided at connection time using
-<cite>.connect(..., check_nargs=True)</cite>. By default, True.</p></li>
-<li><p><strong>check_types_on_connect</strong> (<em>bool</em>) -- Whether to check the callback parameter types against <cite>signature</cite> when
-connecting a new callback. This can also be provided at connection time using
-<cite>.connect(..., check_types=True)</cite>. By default, False.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="magicclass.ext.pyqtgraph.widgets.HasViewBox.xlim">
@@ -1268,7 +1174,7 @@ connecting a new callback. This can also be provided at connection time using
 <p>A napari-like layer list for plot item handling.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="magicclass.ext.pyqtgraph.widgets.LayerList.append">
-<span class="sig-name descname"><span class="pre">append</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#magicclass.ext.pyqtgraph.graph_items.LayerItem" title="magicclass.ext.pyqtgraph.graph_items.LayerItem"><span class="pre">magicclass.ext.pyqtgraph.graph_items.LayerItem</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/pyqtgraph/widgets.html#LayerList.append"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.pyqtgraph.widgets.LayerList.append" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">append</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#magicclass.ext.pyqtgraph.graph_items.LayerItem" title="magicclass.ext.pyqtgraph.graph_items.LayerItem"><span class="pre">magicclass.ext.pyqtgraph.graph_items.LayerItem</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/magicclass/ext/pyqtgraph/widgets.html#LayerList.append"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.pyqtgraph.widgets.LayerList.append" title="Permalink to this definition">¶</a></dt>
 <dd><p>S.append(value) -- append value to the end of the sequence</p>
 </dd></dl>
 
@@ -1279,7 +1185,7 @@ connecting a new callback. This can also be provided at connection time using
 
 <dl class="py method">
 <dt class="sig sig-object py" id="magicclass.ext.pyqtgraph.widgets.LayerList.insert">
-<span class="sig-name descname"><span class="pre">insert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#magicclass.ext.pyqtgraph.graph_items.LayerItem" title="magicclass.ext.pyqtgraph.graph_items.LayerItem"><span class="pre">magicclass.ext.pyqtgraph.graph_items.LayerItem</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/pyqtgraph/widgets.html#LayerList.insert"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.pyqtgraph.widgets.LayerList.insert" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">insert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#magicclass.ext.pyqtgraph.graph_items.LayerItem" title="magicclass.ext.pyqtgraph.graph_items.LayerItem"><span class="pre">magicclass.ext.pyqtgraph.graph_items.LayerItem</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/magicclass/ext/pyqtgraph/widgets.html#LayerList.insert"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.pyqtgraph.widgets.LayerList.insert" title="Permalink to this definition">¶</a></dt>
 <dd><p>S.insert(index, value) -- insert value before index</p>
 </dd></dl>
 
@@ -1503,7 +1409,7 @@ visualization.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="magicclass.ext.pandas.html" class="btn btn-neutral float-left" title="magicclass.ext.pandas package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="magicclass.ext.polars.html" class="btn btn-neutral float-left" title="magicclass.ext.polars package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="magicclass.ext.pyqtgraph.tests.html" class="btn btn-neutral float-right" title="magicclass.ext.pyqtgraph.tests package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

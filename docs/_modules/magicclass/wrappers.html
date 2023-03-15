@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.wrappers &mdash; magic-class 0.6.13 documentation</title>
+  <title>magicclass.wrappers &mdash; magic-class 0.6.14 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.13
+                0.6.14
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -228,10 +228,36 @@
     <span class="k">return</span> <span class="n">wrapper</span></div>
 
 
-<div class="viewcode-block" id="do_not_record"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.wrappers.do_not_record">[docs]</a><span class="k">def</span> <span class="nf">do_not_record</span><span class="p">(</span><span class="n">method</span><span class="p">:</span> <span class="n">F</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">F</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Wrapped method will not be recorded in macro.&quot;&quot;&quot;</span>
-    <span class="n">upgrade_signature</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">additional_options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;record&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">})</span>
-    <span class="k">return</span> <span class="n">method</span></div>
+<span class="nd">@overload</span>
+<span class="k">def</span> <span class="nf">do_not_record</span><span class="p">(</span><span class="n">method</span><span class="p">:</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">recursive</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">F</span><span class="p">],</span> <span class="n">F</span><span class="p">]:</span>
+    <span class="o">...</span>
+
+
+<span class="nd">@overload</span>
+<span class="k">def</span> <span class="nf">do_not_record</span><span class="p">(</span><span class="n">method</span><span class="p">:</span> <span class="n">F</span><span class="p">,</span> <span class="n">recursive</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">F</span><span class="p">:</span>
+    <span class="o">...</span>
+
+
+<div class="viewcode-block" id="do_not_record"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.wrappers.do_not_record">[docs]</a><span class="k">def</span> <span class="nf">do_not_record</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wrapped method will not be recorded in macro.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    recursive : bool, default is False</span>
+<span class="sd">        If True, all recordable methods called inside this method will also be</span>
+<span class="sd">        suppressed.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">recursive</span><span class="p">:</span>
+            <span class="n">record</span> <span class="o">=</span> <span class="s2">&quot;all-false&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">record</span> <span class="o">=</span> <span class="s2">&quot;false&quot;</span>
+        <span class="n">upgrade_signature</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">additional_options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;record&quot;</span><span class="p">:</span> <span class="n">record</span><span class="p">})</span>
+        <span class="k">return</span> <span class="n">f</span>
+
+    <span class="k">return</span> <span class="n">wrapper</span> <span class="k">if</span> <span class="n">method</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">wrapper</span><span class="p">(</span><span class="n">method</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="bind_key"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.wrappers.bind_key">[docs]</a><span class="k">def</span> <span class="nf">bind_key</span><span class="p">(</span><span class="o">*</span><span class="n">key</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">F</span><span class="p">],</span> <span class="n">F</span><span class="p">]:</span>
@@ -367,14 +393,17 @@
 
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Protocol</span>
+    <span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">ParamSpec</span>
 
-    <span class="k">class</span> <span class="nc">PreviewFunction</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+    <span class="n">_P</span> <span class="o">=</span> <span class="n">ParamSpec</span><span class="p">(</span><span class="s2">&quot;_P&quot;</span><span class="p">)</span>
+    <span class="n">_R</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;_R&quot;</span><span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">PreviewFunction</span><span class="p">(</span><span class="n">Callable</span><span class="p">[</span><span class="n">_P</span><span class="p">,</span> <span class="n">_R</span><span class="p">]):</span>
         <span class="vm">__name__</span><span class="p">:</span> <span class="nb">str</span>
         <span class="vm">__qualname__</span><span class="p">:</span> <span class="nb">str</span>
 
-        <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-            <span class="o">...</span>
+        <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">_P</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">_P</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_R</span><span class="p">:</span>
+            <span class="sd">&quot;&quot;&quot;Run function.&quot;&quot;&quot;</span>
 
         <span class="k">def</span> <span class="nf">during_preview</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">:</span> <span class="n">F</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">F</span><span class="p">:</span>
             <span class="sd">&quot;&quot;&quot;Wrapped function will be used as a context manager during preview.&quot;&quot;&quot;</span>
@@ -469,6 +498,16 @@
             <span class="k">return</span> <span class="n">_func</span>
 
         <span class="k">def</span> <span class="nf">_wrapper</span><span class="p">(</span><span class="n">preview</span><span class="p">:</span> <span class="n">F</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">F</span><span class="p">:</span>
+            <span class="n">_is_generator</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isgeneratorfunction</span><span class="p">(</span><span class="n">preview</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">_is_generator</span><span class="p">:</span>
+                <span class="n">_preview_context_generator</span> <span class="o">=</span> <span class="n">preview</span>
+                <span class="n">preview</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="kc">None</span>
+                <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;__name__&quot;</span><span class="p">,</span> <span class="s2">&quot;__qualname__&quot;</span><span class="p">,</span> <span class="s2">&quot;__module__&quot;</span><span class="p">]:</span>
+                    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">_preview_context_generator</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+                        <span class="nb">setattr</span><span class="p">(</span>
+                            <span class="n">preview</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">_preview_context_generator</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+                        <span class="p">)</span>
+
             <span class="n">_filter</span> <span class="o">=</span> <span class="n">_get_arg_filter</span><span class="p">(</span><span class="n">preview</span><span class="p">)</span>
             <span class="n">_preview</span> <span class="o">=</span> <span class="n">_impl_arg_filter</span><span class="p">(</span><span class="n">preview</span><span class="p">,</span> <span class="n">_filter</span><span class="p">)</span>
             <span class="n">_preview</span><span class="o">.</span><span class="n">__wrapped__</span> <span class="o">=</span> <span class="n">preview</span>
@@ -492,6 +531,9 @@
                 <span class="n">append_preview</span><span class="p">(</span><span class="n">target_func</span><span class="p">,</span> <span class="n">_preview</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="n">auto_call</span><span class="o">=</span><span class="n">auto_call</span><span class="p">)</span>
 
             <span class="c1"># add method</span>
+            <span class="k">if</span> <span class="n">_is_generator</span><span class="p">:</span>
+                <span class="n">_set_during_preview</span><span class="p">(</span><span class="n">_preview_context_generator</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">_preview_context_generator</span>
             <span class="n">preview</span><span class="o">.</span><span class="n">during_preview</span> <span class="o">=</span> <span class="n">_set_during_preview</span>
             <span class="k">return</span> <span class="n">preview</span>
 
@@ -507,6 +549,48 @@
 
 
 <span class="n">mark_preview</span> <span class="o">=</span> <span class="n">impl_preview</span>
+
+
+<div class="viewcode-block" id="setup_function_gui"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.wrappers.setup_function_gui">[docs]</a><span class="k">def</span> <span class="nf">setup_function_gui</span><span class="p">(</span><span class="n">target</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Mark a function as a setup function for a FunctionGui.</span>
+
+<span class="sd">    Function decorated with ``setup_function_gui(func)`` will be called when the</span>
+<span class="sd">    FunctionGui widget for method ``func`` was built. This decorator is used to</span>
+<span class="sd">    define complicated setting of a FunctionGui, which is not achievable by</span>
+<span class="sd">    simple configurations.</span>
+
+<span class="sd">    &gt;&gt;&gt; @magicclass</span>
+<span class="sd">    &gt;&gt;&gt; class A:</span>
+<span class="sd">    ...     def func(self, x: int, xmax: int):</span>
+<span class="sd">    ...         # target function</span>
+<span class="sd">    ...</span>
+<span class="sd">    ...     @setup_function_gui(func)</span>
+<span class="sd">    ...     def _setup_func(self, gui: FunctionGui):</span>
+<span class="sd">    ...         @gui.xmax.changed.connect</span>
+<span class="sd">    ...         def _(xmax_value):</span>
+<span class="sd">    ...             gui.x.max = xmax_value</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="n">setup</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">BaseGui</span><span class="p">,</span> <span class="n">FunctionGui</span><span class="p">],</span> <span class="kc">None</span><span class="p">]):</span>
+        <span class="n">setup_qualname</span> <span class="o">=</span> <span class="n">setup</span><span class="o">.</span><span class="vm">__qualname__</span>
+        <span class="n">target_qualname</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="vm">__qualname__</span>
+        <span class="k">if</span> <span class="n">setup_qualname</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">!=</span> <span class="n">target_qualname</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">]:</span>
+            <span class="c1"># have to search for the proper parent instance</span>
+            <span class="k">def</span> <span class="nf">_setup</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">BaseGui</span><span class="p">,</span> <span class="n">mgui</span><span class="p">:</span> <span class="n">FunctionGui</span><span class="p">):</span>
+                <span class="n">prev_ns</span> <span class="o">=</span> <span class="n">setup_qualname</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+                <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">!=</span> <span class="n">prev_ns</span><span class="p">:</span>
+                    <span class="bp">self</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__magicclass_parent__</span>
+                <span class="k">return</span> <span class="n">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mgui</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">_setup</span> <span class="o">=</span> <span class="n">setup</span>
+        <span class="n">upgrade_signature</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">additional_options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;setup&quot;</span><span class="p">:</span> <span class="n">_setup</span><span class="p">})</span>
+        <span class="n">upgrade_signature</span><span class="p">(</span><span class="n">setup</span><span class="p">,</span> <span class="n">additional_options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;nogui&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+        <span class="k">return</span> <span class="n">setup</span>
+
+    <span class="k">return</span> <span class="n">wrapper</span></div>
+
 
 <span class="n">_Fn</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;_Fn&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">Callable</span><span class="p">[[</span><span class="n">FunctionGui</span><span class="p">],</span> <span class="n">Any</span><span class="p">])</span>
 

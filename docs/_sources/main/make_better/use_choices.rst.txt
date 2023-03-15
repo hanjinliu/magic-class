@@ -113,20 +113,20 @@ Following example is a file explorer similar to the previous one but defined usi
                 self.cd.value = os.path.join(self.cd.value, f)  # go to new directory
             self.reset_choices()
 
-Choices type
+OneOf type
 ------------
 
 .. versionadded:: 0.6.7
 
-Like ``Bound`` type, ``Choices`` type is also useful for type annotation with choices.
+Like ``Bound`` type, ``OneOf`` type is also useful for type annotation with choices.
 
 .. code-block:: python
 
-    from magicclass.types import Choices
+    from magicclass.types import OneOf
 
     @magicclass
     class A:
-        def f(self, x: Choices[1, 2, 3]):
+        def f(self, x: OneOf[1, 2, 3]):
             """choose 1, 2 or 3."""
             print(x)
 
@@ -162,4 +162,4 @@ so that the function passes type checkers.
 
 .. note::
 
-    For consistency, ``OneOf`` can also be used as an alias of ``Choices``.
+    ``Choices`` can also be used as an alias of ``OneOf``.
