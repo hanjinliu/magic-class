@@ -95,7 +95,7 @@ class QAudioRecorder(QtW.QWidget):
         self._btn_rec = QtW.QPushButton("Rec")
         self._btn_rec.setFixedSize(28, 24)
         self._btn_clear = QtW.QPushButton("Clear")
-        self._btn_rec.setFixedSize(36, 24)
+        self._btn_clear.setFixedSize(34, 24)
         self._label = QAudioImage()
         layout = QtW.QHBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
