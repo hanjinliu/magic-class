@@ -9,7 +9,6 @@ from typing import (
     Generic,
 )
 from typing_extensions import Literal, _AnnotatedAlias
-import sys
 from magicgui.widgets import create_widget, Widget
 from magicclass._magicgui_compat import (
     ValueWidget,
@@ -25,6 +24,7 @@ from magicclass.utils import (
     is_instance_method,
     method_as_getter,
     eval_attribute,
+    is_type_like,
 )
 from magicclass.signature import MagicMethodSignature
 from magicclass._gui.mgui_ext import Action, WidgetAction
@@ -36,11 +36,6 @@ if TYPE_CHECKING:
 
     _M = TypeVar("_M", bound=MagicTemplate)
     _X = TypeVar("_X", bound=MGUI_SIMPLE_TYPES)
-
-if sys.version_info >= (3, 10):
-    from typing import _BaseGenericAlias
-else:
-    from typing_extensions import _BaseGenericAlias
 
 
 class _FieldObject:
@@ -946,7 +941,7 @@ def _get_field(
     kwargs = dict(
         name=name, label=label, record=record, annotation=None, options=options
     )
-    if isinstance(obj, (type, _BaseGenericAlias)):
+    if is_type_like(obj):
         if isinstance(obj, _AnnotatedAlias):
             from magicclass.signature import split_annotated_type
 

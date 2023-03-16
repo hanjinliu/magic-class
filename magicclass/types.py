@@ -24,6 +24,7 @@ from magicgui.widgets import Widget, EmptyWidget
 
 from magicclass.fields import MagicField
 from magicclass.signature import split_annotated_type
+from magicclass.utils import is_type_like
 
 try:
     from typing import _tp_cache
@@ -488,7 +489,7 @@ class _OptionalAlias(type):
         ...
 
     def __getitem__(cls, value):
-        if not _is_type_like(value):
+        if not is_type_like(value):
             raise TypeError(
                 "The first argument of Optional must be a type but "
                 f"got {type(value)}."
@@ -780,7 +781,7 @@ class Stored(Generic[_T], metaclass=_StoredMeta):
                 raise TypeError("Input of Stored must be a type or (type, Any)")
             _tp, _hash = value
         else:
-            if not _is_type_like(value):
+            if not is_type_like(value):
                 raise TypeError(
                     "The first argument of Stored must be a type but "
                     f"got {type(value)}."
@@ -799,10 +800,6 @@ class Stored(Generic[_T], metaclass=_StoredMeta):
         outtype.__args__ = (_tp,)
         _StoredMeta._instances[key] = outtype
         return outtype
-
-
-def _is_type_like(x: Any):
-    return isinstance(x, (type, typing._GenericAlias)) or hasattr(x, "__supertype__")
 
 
 def _repr_like(x: Any):
