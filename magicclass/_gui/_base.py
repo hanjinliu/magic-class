@@ -207,7 +207,7 @@ class MagicTemplate(MutableSequence[_W], metaclass=_MagicTemplateMeta):
     native: QWidget
     options: dict
     param_kind: inspect._ParameterKind
-    parent: Widget
+    parent: Widget | None
     parent_changed: Signal
     tooltip: str
     visible: bool
