@@ -6,14 +6,12 @@ from magicclass import (
     vfield,
     FieldGroup,
     HasFields,
-    set_design,
 )
 from magicclass.fields import widget_property
 from magicclass.types import Optional
 from magicgui import widgets
 from typing import Tuple
 from unittest.mock import MagicMock
-from pathlib import Path
 
 def test_field_types():
     @magicclass
