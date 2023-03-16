@@ -696,13 +696,20 @@ class thread_worker(Generic[_P]):
                     pbar.set_title(self._func.__name__.replace("_", " "))
 
             if self.button(gui).running:
-                worker.errored.connect(
-                    partial(gui._error_mode.get_handler(), parent=gui)
-                )
+
+                @worker.errored.connect
+                def _on_error(err: Exception):
+                    # NOTE: Exceptions are raised in other thread so context manager
+                    # cannot catch them. Macro has to be reactived here.
+                    gui._error_mode.get_handler()(err, parent=gui)
+                    gui.macro.active = True
+
                 if is_generator:
-                    worker.aborted.connect(
-                        gui._error_mode.wrap_handler(Aborted.raise_, parent=gui)
-                    )
+
+                    @worker.aborted.connect
+                    def _on_abort():
+                        gui._error_mode.wrap_handler(Aborted.raise_, parent=gui)()
+                        gui.macro.active = True
 
                 worker.start()
             else:
