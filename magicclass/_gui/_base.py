@@ -33,7 +33,6 @@ from magicgui.widgets import (
 from magicgui.application import use_app
 from magicclass._magicgui_compat import (
     ButtonWidget,
-    WidgetProtocol,
     Undefined,
     MGUI_SIMPLE_TYPES,
     ValueWidget,
@@ -182,7 +181,7 @@ class MagicTemplate(MutableSequence[_W], metaclass=_MagicTemplateMeta):
     __magicclass_parent__: None | MagicTemplate
     __magicclass_children__: list[MagicTemplate]
     _close_on_run: bool
-    _component_class: type[Action | Widget]
+    _component_class: type[Action | PushButtonPlus]
     _error_mode: ErrorMode
     _list: list[Action | Widget]
     _macro_instance: GuiMacro
@@ -514,6 +513,7 @@ class MagicTemplate(MutableSequence[_W], metaclass=_MagicTemplateMeta):
                     child_widget.changed.connect(widget.changed)
                     child_widget.tooltip = widget.tooltip
                     child_widget._doc = widget._doc
+                    child_widget._get_running = lambda: widget.running
 
                 widget._unwrapped = True
 
