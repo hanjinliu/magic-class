@@ -424,7 +424,7 @@ class MagicField(_FieldObject, Generic[_W, _V]):
         """
         return self.get_action(self.default_object)
 
-    def connect(self, func: Callable) -> Callable:
+    def connect(self, func: _F) -> _F:
         """Set callback function to "ready to connect" state."""
         if not callable(func):
             raise TypeError("Cannot connect non-callable object")
