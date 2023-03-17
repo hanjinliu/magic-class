@@ -35,5 +35,5 @@ def test_wrapped_running():
     ui = A()
     ui.func()
     assert ui.last_running == False
-    get_button(ui.B.func).changed()
+    get_button(ui.func).changed()
     assert ui.last_running == True

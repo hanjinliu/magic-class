@@ -17,7 +17,7 @@ def test_find_ancestor():
     ui.b.f()
     assert ui.i.value == 10
 
-def test_find_ancestor_cahce():
+def test_find_ancestor_cache():
     @magicclass
     class B(MagicTemplate):
         def f(self, n: int):

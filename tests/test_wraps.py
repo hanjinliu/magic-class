@@ -1,6 +1,6 @@
 from magicclass import (
     magicclass, magicmenu, magictoolbar, field, vfield, set_options,
-    set_design, abstractapi
+    set_design, abstractapi, get_button
 )
 from magicclass.types import Bound
 from unittest.mock import MagicMock
@@ -214,3 +214,21 @@ def test_wrapped_vfield():
     assert ui.b == "x"
     assert str(ui.macro[1]) == "ui.a = 2"
     assert str(ui.macro[2]) == "ui.b = 'x'"
+
+def test_get_button():
+    @magicclass
+    class A:
+        @magicclass
+        class B:
+            @magicmenu
+            class C:
+                def f2(self): ...
+            def f1(self): ...
+        @B.wraps
+        def f1(self): ...
+        @B.C.wraps
+        def f2(self): ...
+
+    ui = A()
+    assert get_button(ui.f1) is ui.B["f1"]
+    assert get_button(ui.f2) is ui.B.C["f2"]

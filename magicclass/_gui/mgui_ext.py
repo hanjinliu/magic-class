@@ -34,11 +34,14 @@ class PushButtonPlus(PushButton):
         self.mgui: FunctionGuiPlus | None = None  # tagged function GUI
         self._doc = ""
         self._unwrapped = False
+        self._get_running: Callable[[], bool] | None = None
 
     @property
     def running(self) -> bool:
         """Return true if embedded magicgui widget is running from GUI."""
-        return getattr(self.mgui, "running", False)
+        if self._get_running is None:
+            return getattr(self.mgui, "running", False)
+        return self._get_running()
 
     def set_shortcut(self, key):
         """Set keyboard shortcut to the button."""
@@ -255,10 +258,14 @@ class Action(AbstractAction):
         self._callbacks = []
 
         self.native.triggered.connect(lambda: self.changed.emit(self.value))
+        self._get_running: Callable[[], bool] | None = None
 
     @property
     def running(self) -> bool:
-        return getattr(self.mgui, "running", False)
+        """Return true if embedded magicgui widget is running from GUI."""
+        if self._get_running is None:
+            return getattr(self.mgui, "running", False)
+        return self._get_running()
 
     def set_shortcut(self, key):
         self.native.setShortcut(key)
