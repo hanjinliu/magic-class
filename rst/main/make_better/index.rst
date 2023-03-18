@@ -13,7 +13,6 @@ and tidiness of the source code.
    use_bind
    use_choices
    use_setup
-   use_stored
    use_preview
    use_worker
    use_icon
