@@ -20,7 +20,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Multi-threading" href="use_worker.html" />
-    <link rel="prev" title="Store Outputs for the Future Inputs" href="use_stored.html" />
+    <link rel="prev" title="Complicated Settings of FunctionGui" href="use_setup.html" />
 </head>
 
 <body class="wy-body-for-nav">
@@ -28,14 +28,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> magic-class
+
+
+
+          <a href="../../index.html" class="icon icon-home">
+            magic-class
           </a>
               <div class="version">
                 0.6.14
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -51,7 +55,6 @@
 <li class="toctree-l2"><a class="reference internal" href="use_bind.html">Binding Values to Arguments</a></li>
 <li class="toctree-l2"><a class="reference internal" href="use_choices.html">Set Choices Dynamically</a></li>
 <li class="toctree-l2"><a class="reference internal" href="use_setup.html">Complicated Settings of FunctionGui</a></li>
-<li class="toctree-l2"><a class="reference internal" href="use_stored.html">Store Outputs for the Future Inputs</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Add Preview Functionalities</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#preview-a-file">1. Preview a File</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#prerun-a-function">2. Prerun a Function</a><ul>
@@ -89,9 +92,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="index.html">Make Your GUI Better</a> &raquo;</li>
-      <li>Add Preview Functionalities</li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Make Your GUI Better</a></li>
+      <li class="breadcrumb-item active">Add Preview Functionalities</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/main/make_better/use_preview.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -215,7 +218,7 @@ Gaussian filtering.</p>
         <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;img&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">min_height</span> <span class="o">=</span> <span class="mi">100</span>
 
     <span class="k">def</span> <span class="nf">gaussian_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sigma</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Run Gaussian filter inplace&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run Gaussian filter inplace&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">img</span> <span class="o">=</span> <span class="n">ndi</span><span class="o">.</span><span class="n">gaussian_filter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">img</span><span class="p">,</span> <span class="n">sigma</span><span class="p">)</span>
 
     <span class="nd">@impl_preview</span><span class="p">(</span><span class="n">gaussian_filter</span><span class="p">)</span>
@@ -287,7 +290,7 @@ has an option <code class="docutils literal notranslate"><span class="pre">auto_
 
     <span class="nd">@impl_preview</span><span class="p">(</span><span class="n">auto_call</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># use gaussian_function as the preview of itself</span>
     <span class="k">def</span> <span class="nf">gaussian_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sigma</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Run Gaussian filter inplace&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run Gaussian filter inplace&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">img</span> <span class="o">=</span> <span class="n">ndi</span><span class="o">.</span><span class="n">gaussian_filter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">img</span><span class="p">,</span> <span class="n">sigma</span><span class="p">)</span>
 
     <span class="nd">@_prerun</span><span class="o">.</span><span class="n">during_preview</span>
@@ -318,7 +321,7 @@ has an option <code class="docutils literal notranslate"><span class="pre">auto_
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="use_stored.html" class="btn btn-neutral float-left" title="Store Outputs for the Future Inputs" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="use_setup.html" class="btn btn-neutral float-left" title="Complicated Settings of FunctionGui" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="use_worker.html" class="btn btn-neutral float-right" title="Multi-threading" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

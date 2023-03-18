@@ -28,14 +28,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> magic-class
+
+
+
+          <a href="../../index.html" class="icon icon-home">
+            magic-class
           </a>
               <div class="version">
                 0.6.14
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -51,7 +55,6 @@
 <li class="toctree-l2"><a class="reference internal" href="use_bind.html">Binding Values to Arguments</a></li>
 <li class="toctree-l2"><a class="reference internal" href="use_choices.html">Set Choices Dynamically</a></li>
 <li class="toctree-l2"><a class="reference internal" href="use_setup.html">Complicated Settings of FunctionGui</a></li>
-<li class="toctree-l2"><a class="reference internal" href="use_stored.html">Store Outputs for the Future Inputs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="use_preview.html">Add Preview Functionalities</a></li>
 <li class="toctree-l2"><a class="reference internal" href="use_worker.html">Multi-threading</a></li>
 <li class="toctree-l2"><a class="reference internal" href="use_icon.html">Set Custom Icons</a></li>
@@ -61,6 +64,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#optional-type"><code class="docutils literal notranslate"><span class="pre">Optional</span></code> type</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#color-type"><code class="docutils literal notranslate"><span class="pre">Color</span></code> type</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#path-type"><code class="docutils literal notranslate"><span class="pre">Path</span></code> type</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#exprstr-type"><code class="docutils literal notranslate"><span class="pre">ExprStr</span></code> type</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="containers.html">Container Variations</a></li>
@@ -86,9 +90,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="index.html">Make Your GUI Better</a> &raquo;</li>
-      <li>Additional types</li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Make Your GUI Better</a></li>
+      <li class="breadcrumb-item active">Additional types</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/main/make_better/additional_types.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -108,6 +112,7 @@ available in <code class="docutils literal notranslate"><span class="pre">magicg
 <li><p><a class="reference internal" href="#optional-type" id="id1"><code class="docutils literal notranslate"><span class="pre">Optional</span></code> type</a></p></li>
 <li><p><a class="reference internal" href="#color-type" id="id2"><code class="docutils literal notranslate"><span class="pre">Color</span></code> type</a></p></li>
 <li><p><a class="reference internal" href="#path-type" id="id3"><code class="docutils literal notranslate"><span class="pre">Path</span></code> type</a></p></li>
+<li><p><a class="reference internal" href="#exprstr-type" id="id4"><code class="docutils literal notranslate"><span class="pre">ExprStr</span></code> type</a></p></li>
 </ul>
 </div>
 <section id="optional-type">
@@ -188,6 +193,24 @@ to <code class="docutils literal notranslate"><span class="pre">pathlib.Path</sp
 <span class="nd">@magicgui</span>
 <span class="k">def</span> <span class="nf">func4</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="o">.</span><span class="n">Dir</span><span class="p">):</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;selected directory =&quot;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="exprstr-type">
+<h2><a class="toc-backref" href="#id4"><code class="docutils literal notranslate"><span class="pre">ExprStr</span></code> type</a><a class="headerlink" href="#exprstr-type" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">ExprStr</span></code> is a subtype of <code class="docutils literal notranslate"><span class="pre">str</span></code> that allows you to use a string as an expression.
+This type will be mapped to <code class="docutils literal notranslate"><span class="pre">EvalLineEdit</span></code>, which supports evaluation in any namespace.</p>
+<p>To activate auto-completion, you can use <code class="docutils literal notranslate"><span class="pre">ExprStr.In</span></code> for the type annotation.
+<code class="docutils literal notranslate"><span class="pre">ExprStr</span></code> instance has <code class="xref py py-meth docutils literal notranslate"><span class="pre">eval()</span></code> method to evaluate the expression.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">magicgui</span> <span class="kn">import</span> <span class="n">magicgui</span>
+<span class="kn">from</span> <span class="nn">magicclass.types</span> <span class="kn">import</span> <span class="n">ExprStr</span>
+
+<span class="n">namespace</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;np&quot;</span><span class="p">:</span> <span class="n">np</span><span class="p">}</span>
+
+<span class="nd">@magicgui</span>
+<span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">arr</span><span class="p">:</span> <span class="n">ExprStr</span><span class="o">.</span><span class="n">In</span><span class="p">[</span><span class="n">namespace</span><span class="p">]):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">ExprStr</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">namespace</span><span class="p">)</span><span class="o">.</span><span class="n">eval</span><span class="p">())</span>
 </pre></div>
 </div>
 </section>

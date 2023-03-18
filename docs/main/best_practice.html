@@ -27,14 +27,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../index.html" class="icon icon-home"> magic-class
+
+
+
+          <a href="../index.html" class="icon icon-home">
+            magic-class
           </a>
               <div class="version">
                 0.6.14
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -69,8 +73,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Best Practice</li>
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Best Practice</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/main/best_practice.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -108,12 +112,12 @@ below is the mose naive implementation.</p>
 
     <span class="nd">@Menu</span><span class="o">.</span><span class="n">wraps</span>
     <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Add two values&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add two values&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">value</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="o">.</span><span class="n">value</span>
 
     <span class="nd">@Menu</span><span class="o">.</span><span class="n">wraps</span>
     <span class="k">def</span> <span class="nf">sub</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Subtract two values&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Subtract two values&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">value</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="o">.</span><span class="n">value</span>
 </pre></div>
 </div>
@@ -156,12 +160,12 @@ and saw its macro recorded like</p>
 
     <span class="nd">@Menu</span><span class="o">.</span><span class="n">wraps</span>
     <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="n">Bound</span><span class="p">[</span><span class="n">a</span><span class="p">],</span> <span class="n">b</span><span class="p">:</span> <span class="n">Bound</span><span class="p">[</span><span class="n">b</span><span class="p">]):</span>  <span class="c1"># &lt;- use Bound</span>
-        <span class="sd">&quot;&quot;&quot;Add two values&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add two values&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
 
     <span class="nd">@Menu</span><span class="o">.</span><span class="n">wraps</span>
     <span class="k">def</span> <span class="nf">sub</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="n">Bound</span><span class="p">[</span><span class="n">a</span><span class="p">],</span> <span class="n">b</span><span class="p">:</span> <span class="n">Bound</span><span class="p">[</span><span class="n">b</span><span class="p">]):</span>  <span class="c1"># &lt;- use Bound</span>
-        <span class="sd">&quot;&quot;&quot;Subtract two values&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Subtract two values&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">a</span> <span class="o">-</span> <span class="n">b</span>
 </pre></div>
 </div>

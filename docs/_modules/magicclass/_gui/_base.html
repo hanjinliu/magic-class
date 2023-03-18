@@ -25,14 +25,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../index.html" class="icon icon-home"> magic-class
+
+
+
+          <a href="../../../index.html" class="icon icon-home">
+            magic-class
           </a>
               <div class="version">
                 0.6.14
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -64,9 +68,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../../index.html">Module code</a> &raquo;</li>
-      <li>magicclass._gui._base</li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">magicclass._gui._base</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -111,7 +115,6 @@
 <span class="kn">from</span> <span class="nn">magicgui.application</span> <span class="kn">import</span> <span class="n">use_app</span>
 <span class="kn">from</span> <span class="nn">magicclass._magicgui_compat</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">ButtonWidget</span><span class="p">,</span>
-    <span class="n">WidgetProtocol</span><span class="p">,</span>
     <span class="n">Undefined</span><span class="p">,</span>
     <span class="n">MGUI_SIMPLE_TYPES</span><span class="p">,</span>
     <span class="n">ValueWidget</span><span class="p">,</span>
@@ -209,7 +212,7 @@
 
 
 <span class="k">def</span> <span class="nf">check_override</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Some of the methods should not be overriden because they are essential for magic</span>
 <span class="sd">    class construction.</span>
 
@@ -238,7 +241,7 @@
 
 
 <span class="k">class</span> <span class="nc">_MagicTemplateMeta</span><span class="p">(</span><span class="n">ABCMeta</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;This metaclass enables type checking of nested magicclasses.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;This metaclass enables type checking of nested magicclasses.&quot;&quot;&quot;</span>
 
     <span class="nd">@overload</span>
     <span class="k">def</span> <span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">_T</span><span class="p">],</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">objtype</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_T</span><span class="p">:</span>
@@ -260,7 +263,7 @@
     <span class="n">__magicclass_parent__</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="n">MagicTemplate</span>
     <span class="n">__magicclass_children__</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">MagicTemplate</span><span class="p">]</span>
     <span class="n">_close_on_run</span><span class="p">:</span> <span class="nb">bool</span>
-    <span class="n">_component_class</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">Action</span> <span class="o">|</span> <span class="n">Widget</span><span class="p">]</span>
+    <span class="n">_component_class</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">Action</span> <span class="o">|</span> <span class="n">PushButtonPlus</span><span class="p">]</span>
     <span class="n">_error_mode</span><span class="p">:</span> <span class="n">ErrorMode</span>
     <span class="n">_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Action</span> <span class="o">|</span> <span class="n">Widget</span><span class="p">]</span>
     <span class="n">_macro_instance</span><span class="p">:</span> <span class="n">GuiMacro</span>
@@ -285,7 +288,7 @@
     <span class="n">native</span><span class="p">:</span> <span class="n">QWidget</span>
     <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span>
     <span class="n">param_kind</span><span class="p">:</span> <span class="n">inspect</span><span class="o">.</span><span class="n">_ParameterKind</span>
-    <span class="n">parent</span><span class="p">:</span> <span class="n">Widget</span>
+    <span class="n">parent</span><span class="p">:</span> <span class="n">Widget</span> <span class="o">|</span> <span class="kc">None</span>
     <span class="n">parent_changed</span><span class="p">:</span> <span class="n">Signal</span>
     <span class="n">tooltip</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">visible</span><span class="p">:</span> <span class="nb">bool</span>
@@ -343,7 +346,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">macro</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GuiMacro</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The macro object bound to the ancestor widget.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The macro object bound to the ancestor widget.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__magicclass_parent__</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_macro_instance</span>
         <span class="k">else</span><span class="p">:</span>
@@ -351,7 +354,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">parent_viewer</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">napari</span><span class="o">.</span><span class="n">Viewer</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Return napari.Viewer if magic class is a dock widget of a viewer.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return napari.Viewer if magic class is a dock widget of a viewer.&quot;&quot;&quot;</span>
         <span class="n">parent_self</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_search_parent_magicclass</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parent_self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">parent</span><span class="p">(),</span> <span class="n">QDockWidget</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">None</span>
@@ -359,7 +362,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">parent_dock_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QDockWidget</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return dock widget object if magic class is a dock widget of a main</span>
 <span class="sd">        window widget, such as a napari Viewer.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -374,7 +377,7 @@
         <span class="k">return</span> <span class="n">dock</span>
 
 <div class="viewcode-block" id="MagicTemplate.find_ancestor"><a class="viewcode-back" href="../../../apidoc/magicclass.html#magicclass.MagicTemplate.find_ancestor">[docs]</a>    <span class="k">def</span> <span class="nf">find_ancestor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ancestor</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">_T</span><span class="p">],</span> <span class="n">cache</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_T</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Find magic class ancestor whose type matches the input.</span>
 
 <span class="sd">        This method is useful when a child widget class is defined outside a magic</span>
@@ -415,7 +418,7 @@
         <span class="k">return</span> <span class="n">current_self</span></div>
 
 <div class="viewcode-block" id="MagicTemplate.objectName"><a class="viewcode-back" href="../../../apidoc/magicclass.html#magicclass.MagicTemplate.objectName">[docs]</a>    <span class="k">def</span> <span class="nf">objectName</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return object name of the QWidget.</span>
 
 <span class="sd">        This function makes the object name discoverable by napari&#39;s</span>
@@ -437,7 +440,7 @@
         <span class="n">template</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">copy</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_F</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Wrap a parent method in a child magic-class.</span>
 
 <span class="sd">        Wrapped method will appear in the child widget but behaves as if it is in</span>
@@ -523,7 +526,7 @@
         <span class="n">moveto</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">copyto</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This private method converts class methods that are wrapped by its child widget class</span>
 <span class="sd">        into widget in child widget. Practically same widget is shared between parent and child,</span>
 <span class="sd">        but only visible in the child side.</span>
@@ -592,6 +595,7 @@
                     <span class="n">child_widget</span><span class="o">.</span><span class="n">changed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">widget</span><span class="o">.</span><span class="n">changed</span><span class="p">)</span>
                     <span class="n">child_widget</span><span class="o">.</span><span class="n">tooltip</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">tooltip</span>
                     <span class="n">child_widget</span><span class="o">.</span><span class="n">_doc</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">_doc</span>
+                    <span class="n">child_widget</span><span class="o">.</span><span class="n">_get_running</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">widget</span><span class="o">.</span><span class="n">running</span>
 
                 <span class="n">widget</span><span class="o">.</span><span class="n">_unwrapped</span> <span class="o">=</span> <span class="kc">True</span>
 
@@ -645,7 +649,7 @@
         <span class="n">options</span><span class="o">=</span><span class="p">{},</span>
         <span class="n">record</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicField</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Make a MagicField object, with the widget in the child class.</span>
 
 <span class="sd">        &gt;&gt;&gt; @magicclass</span>
@@ -734,14 +738,14 @@
         <span class="k">return</span> <span class="n">fld</span></div>
 
     <span class="k">def</span> <span class="nf">_convert_attributes_into_widgets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This function is called in dynamically created __init__. Methods, fields and nested</span>
 <span class="sd">        classes are converted to magicgui widgets.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">_create_widget_from_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">fld</span><span class="p">:</span> <span class="n">MagicField</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This function is called when magic-class encountered a MagicField in its definition.</span>
 
 <span class="sd">        Parameters</span>
@@ -754,7 +758,7 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">_create_widget_from_method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">MethodType</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Convert instance methods into GUI objects, such as push buttons or actions.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert instance methods into GUI objects, such as push buttons or actions.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">abstractapi</span><span class="p">):</span>
             <span class="n">obj</span><span class="o">.</span><span class="n">check_resolved</span><span class="p">()</span>
 
@@ -858,7 +862,7 @@
         <span class="k">return</span> <span class="n">widget</span>
 
     <span class="k">def</span> <span class="nf">_search_parent_magicclass</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicTemplate</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Find the ancestor.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Find the ancestor.&quot;&quot;&quot;</span>
         <span class="n">current_self</span> <span class="o">=</span> <span class="bp">self</span>
         <span class="k">while</span> <span class="p">(</span>
             <span class="n">parent</span> <span class="o">:=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">current_self</span><span class="p">,</span> <span class="s2">&quot;__magicclass_parent__&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
@@ -867,7 +871,7 @@
         <span class="k">return</span> <span class="n">current_self</span>
 
     <span class="k">def</span> <span class="nf">_iter_child_magicclasses</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">MagicTemplate</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Iterate over all the child magic classes&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterate over all the child magic classes&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__magicclass_children__</span><span class="p">:</span>
             <span class="k">yield</span> <span class="n">child</span>
             <span class="k">yield from</span> <span class="n">child</span><span class="o">.</span><span class="n">_iter_child_magicclasses</span><span class="p">()</span>
@@ -899,7 +903,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">icon</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Icon of this GUI.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Icon of this GUI.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_icon</span>
 
     <span class="nd">@icon</span><span class="o">.</span><span class="n">setter</span>
@@ -923,7 +927,7 @@
     <span class="n">_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">AbstractAction</span> <span class="o">|</span> <span class="n">ContainerLikeGui</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">reset_choices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Reset child Categorical widgets&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reset child Categorical widgets&quot;&quot;&quot;</span>
         <span class="n">all_widgets</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="n">Widget</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
 
         <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_list</span><span class="p">:</span>
@@ -1025,7 +1029,7 @@
         <span class="k">return</span> <span class="n">arr</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">]]</span>
 
     <span class="k">def</span> <span class="nf">_repr_png_</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return PNG representation of the widget for QtConsole.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return PNG representation of the widget for QtConsole.&quot;&quot;&quot;</span>
         <span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">BytesIO</span>
 
         <span class="k">try</span><span class="p">:</span>
@@ -1125,7 +1129,7 @@
 
 
 <span class="k">def</span> <span class="nf">_build_mgui</span><span class="p">(</span><span class="n">widget_</span><span class="p">:</span> <span class="n">Action</span> <span class="o">|</span> <span class="n">PushButtonPlus</span><span class="p">,</span> <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">parent</span><span class="p">:</span> <span class="n">BaseGui</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Build a magicgui from a function for the give button/action.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build a magicgui from a function for the give button/action.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">widget_</span><span class="o">.</span><span class="n">mgui</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">widget_</span><span class="o">.</span><span class="n">mgui</span>
     <span class="k">try</span><span class="p">:</span>
@@ -1190,7 +1194,7 @@
 
 
 <span class="k">def</span> <span class="nf">_get_index</span><span class="p">(</span><span class="n">container</span><span class="p">:</span> <span class="n">Container</span><span class="p">,</span> <span class="n">widget_or_name</span><span class="p">:</span> <span class="n">Widget</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Identical to container[widget_or_name], which sometimes doesn&#39;t work</span>
 <span class="sd">    in magic-class.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -1223,7 +1227,7 @@
 <span class="k">def</span> <span class="nf">convert_attributes</span><span class="p">(</span>
     <span class="bp">cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">_T</span><span class="p">],</span> <span class="n">hide</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">type</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="n">record</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert class attributes into macro recordable ones.</span>
 
 <span class="sd">    Returned dictionary can be directly used for the third argument of</span>
@@ -1288,7 +1292,7 @@
 
 <span class="nd">@property</span>
 <span class="k">def</span> <span class="nf">macro</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">BaseGui</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Return the dummy macro object&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the dummy macro object&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">_dummy_macro</span>
 
 
@@ -1385,7 +1389,7 @@
     <span class="n">condition</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">BaseGui</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">callback</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">,</span> <span class="n">BaseGui</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Implement confirmation callback to a method.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Implement confirmation callback to a method.&quot;&quot;&quot;</span>
     <span class="n">sig</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
 
     <span class="nd">@wraps</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
@@ -1426,14 +1430,14 @@
 
 
 <span class="k">def</span> <span class="nf">_empty_func</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">],</span> <span class="kc">None</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;Create a named function that does nothing.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a named function that does nothing.&quot;&quot;&quot;</span>
     <span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="kc">None</span>
     <span class="n">f</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="n">name</span>
     <span class="k">return</span> <span class="n">f</span>
 
 
 <span class="k">def</span> <span class="nf">_find_viewer_ancestor</span><span class="p">(</span><span class="n">widget</span><span class="p">:</span> <span class="n">QWidget</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">napari</span><span class="o">.</span><span class="n">Viewer</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Return the closest parent napari Viewer.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the closest parent napari Viewer.&quot;&quot;&quot;</span>
     <span class="n">parent</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span>
     <span class="k">while</span> <span class="n">parent</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="s2">&quot;_qt_viewer&quot;</span><span class="p">):</span>  <span class="c1"># QMainWindow</span>

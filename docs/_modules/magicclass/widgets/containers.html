@@ -25,14 +25,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../index.html" class="icon icon-home"> magic-class
+
+
+
+          <a href="../../../index.html" class="icon icon-home">
+            magic-class
           </a>
               <div class="version">
                 0.6.14
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -64,9 +68,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../../index.html">Module code</a> &raquo;</li>
-      <li>magicclass.widgets.containers</li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">magicclass.widgets.containers</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -100,7 +104,7 @@
 
 
 <div class="viewcode-block" id="wrap_container"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.containers.wrap_container">[docs]</a><span class="k">def</span> <span class="nf">wrap_container</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">C</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">base</span><span class="p">:</span> <span class="nb">type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span> <span class="o">|</span> <span class="nb">type</span><span class="p">[</span><span class="n">C</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Provide a wrapper for a new container widget with a new protocol.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -401,10 +405,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_expand_btn</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_expand_btn</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">            QToolButton </span><span class="se">{{</span><span class="s2"></span>
+<span class="s2">            QToolButton </span><span class="se">{{</span>
 <span class="s2">                border: none;</span>
 <span class="s2">                text-align: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_setting</span><span class="p">[</span><span class="s1">&#39;text-align&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">;</span>
-<span class="s2">                </span><span class="se">}}</span><span class="s2"></span>
+<span class="s2">                </span><span class="se">}}</span>
 <span class="s2">            &quot;&quot;&quot;</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_expand_btn</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mgui_change_expand</span><span class="p">)</span>
@@ -567,12 +571,12 @@
 
 <span class="nd">@wrap_container</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="n">_Splitter</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">SplitterContainer</span><span class="p">(</span><span class="n">ContainerWidget</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A Container equipped with splitter&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A Container equipped with splitter&quot;&quot;&quot;</span>
 
 
 <span class="nd">@wrap_container</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="n">_ToolBox</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">ToolBoxContainer</span><span class="p">(</span><span class="n">ContainerWidget</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A Tool box Widget.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A Tool box Widget.&quot;&quot;&quot;</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">current_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -585,7 +589,7 @@
 
 <span class="nd">@wrap_container</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="n">_Tab</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">TabbedContainer</span><span class="p">(</span><span class="n">ContainerWidget</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A tab categorized Container Widget.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A tab categorized Container Widget.&quot;&quot;&quot;</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">native_tab_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QTabWidget</span><span class="p">:</span>
@@ -602,7 +606,7 @@
 
 <span class="nd">@wrap_container</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="n">_Stack</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">StackedContainer</span><span class="p">(</span><span class="n">ContainerWidget</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A stacked Container Widget&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A stacked Container Widget&quot;&quot;&quot;</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">native_stacked_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QStackedWidget</span><span class="p">:</span>
@@ -619,17 +623,17 @@
 
 <span class="nd">@wrap_container</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="n">_ScrollableContainer</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">ScrollableContainer</span><span class="p">(</span><span class="n">ContainerWidget</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A scrollable Container Widget.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A scrollable Container Widget.&quot;&quot;&quot;</span>
 
 
 <span class="nd">@wrap_container</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="n">_DraggableContainer</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">DraggableContainer</span><span class="p">(</span><span class="n">ContainerWidget</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A draggable Container Widget.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A draggable Container Widget.&quot;&quot;&quot;</span>
 
 
 <span class="nd">@wrap_container</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="n">_ButtonContainer</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">ButtonContainer</span><span class="p">(</span><span class="n">ContainerWidget</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A Container Widget hidden in a button.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A Container Widget hidden in a button.&quot;&quot;&quot;</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">btn_text</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -652,7 +656,7 @@
 
 <span class="nd">@wrap_container</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="n">_VCollapsibleContainer</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">CollapsibleContainer</span><span class="p">(</span><span class="n">ContainerWidget</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A collapsible Container Widget.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A collapsible Container Widget.&quot;&quot;&quot;</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">btn_text</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -686,7 +690,7 @@
 
 <span class="nd">@wrap_container</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="n">_HCollapsibleContainer</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">HCollapsibleContainer</span><span class="p">(</span><span class="n">ContainerWidget</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A collapsible Container Widget.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A collapsible Container Widget.&quot;&quot;&quot;</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">collapsed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
@@ -702,14 +706,14 @@
 
 <span class="nd">@wrap_container</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="n">_ListContainer</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">ListContainer</span><span class="p">(</span><span class="n">ContainerWidget</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A Container Widget that support drag and drop.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A Container Widget that support drag and drop.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_widget</span><span class="o">.</span><span class="n">_listwidget</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">rowsMoved</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_drag_and_drop_happened</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_post_init</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">_drag_and_drop_happened</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">e</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Sort widget list when item drag/drop happens.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sort widget list when item drag/drop happens.&quot;&quot;&quot;</span>
         <span class="n">l</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_widget</span><span class="o">.</span><span class="n">_listwidget</span><span class="o">.</span><span class="n">count</span><span class="p">()):</span>
             <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_widget</span><span class="o">.</span><span class="n">_listwidget</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
@@ -735,12 +739,12 @@
 
 <span class="nd">@wrap_container</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="n">_SubWindowsContainer</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">SubWindowsContainer</span><span class="p">(</span><span class="n">ContainerWidget</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A window-in-window container&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A window-in-window container&quot;&quot;&quot;</span>
 
 
 <span class="nd">@wrap_container</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="n">_GroupBoxContainer</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">GroupBoxContainer</span><span class="p">(</span><span class="n">ContainerWidget</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A QGroupBox like container&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A QGroupBox like container&quot;&quot;&quot;</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -754,7 +758,7 @@
 
 <span class="nd">@wrap_container</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="n">_FrameContainer</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">FrameContainer</span><span class="p">(</span><span class="n">ContainerWidget</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A QGroupBox like container without title.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A QGroupBox like container without title.&quot;&quot;&quot;</span>
 </pre></div>
 
            </div>

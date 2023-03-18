@@ -101,3 +101,24 @@ to ``pathlib.Path`` when used as a constructor, but supports many other advanced
     @magicgui
     def func4(path: Path.Dir):
         print("selected directory =", path)
+
+``ExprStr`` type
+================
+
+``ExprStr`` is a subtype of ``str`` that allows you to use a string as an expression.
+This type will be mapped to ``EvalLineEdit``, which supports evaluation in any namespace.
+
+To activate auto-completion, you can use ``ExprStr.In`` for the type annotation.
+``ExprStr`` instance has :meth:`eval` method to evaluate the expression.
+
+.. code-block:: python
+
+    import numpy as np
+    from magicgui import magicgui
+    from magicclass.types import ExprStr
+
+    namespace = {"np": np}
+
+    @magicgui
+    def func(arr: ExprStr.In[namespace]):
+        print(ExprStr(arr, namespace).eval())

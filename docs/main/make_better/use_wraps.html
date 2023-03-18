@@ -28,14 +28,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> magic-class
+
+
+
+          <a href="../../index.html" class="icon icon-home">
+            magic-class
           </a>
               <div class="version">
                 0.6.14
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -58,7 +62,6 @@
 <li class="toctree-l2"><a class="reference internal" href="use_bind.html">Binding Values to Arguments</a></li>
 <li class="toctree-l2"><a class="reference internal" href="use_choices.html">Set Choices Dynamically</a></li>
 <li class="toctree-l2"><a class="reference internal" href="use_setup.html">Complicated Settings of FunctionGui</a></li>
-<li class="toctree-l2"><a class="reference internal" href="use_stored.html">Store Outputs for the Future Inputs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="use_preview.html">Add Preview Functionalities</a></li>
 <li class="toctree-l2"><a class="reference internal" href="use_worker.html">Multi-threading</a></li>
 <li class="toctree-l2"><a class="reference internal" href="use_icon.html">Set Custom Icons</a></li>
@@ -88,9 +91,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="index.html">Make Your GUI Better</a> &raquo;</li>
-      <li>Call Parent Methods from its Child</li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Make Your GUI Better</a></li>
+      <li class="breadcrumb-item active">Call Parent Methods from its Child</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/main/make_better/use_wraps.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -185,7 +188,7 @@ with no warning nor error.</p>
 
     <span class="nd">@Child</span><span class="o">.</span><span class="n">wraps</span>
     <span class="k">def</span> <span class="nf">run_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Do something&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Do something&quot;&quot;&quot;</span>
 
 <span class="n">ui</span> <span class="o">=</span> <span class="n">Parent</span><span class="p">()</span>
 <span class="n">ui</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
@@ -203,7 +206,7 @@ its subclass.</p>
 
     <span class="nd">@Child</span><span class="o">.</span><span class="n">wraps</span>
     <span class="k">def</span> <span class="nf">run_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Do something&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Do something&quot;&quot;&quot;</span>
 
 <span class="n">ui</span> <span class="o">=</span> <span class="n">Parent</span><span class="p">()</span>  <span class="c1"># AbstracAPIError will be raised here</span>
 </pre></div>
@@ -272,7 +275,7 @@ main widget <code class="docutils literal notranslate"><span class="pre">Main</s
     <span class="nd">@Menu</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="nd">@Tools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;write program here.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;write program here.&quot;&quot;&quot;</span>
 </pre></div>
 </div>
 <img alt="../../_images/fig_4-2.png" src="../../_images/fig_4-2.png" />
@@ -281,7 +284,7 @@ main widget <code class="docutils literal notranslate"><span class="pre">Main</s
 <span class="nd">@Menu</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="nd">@Tools</span><span class="o">.</span><span class="n">wraps</span>
 <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;write program here.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;write program here.&quot;&quot;&quot;</span>
 </pre></div>
 </div>
 <p>In this case, even the second <code class="docutils literal notranslate"><span class="pre">copy=True</span></code> option can be omitted because you'll never have to wrap
@@ -290,7 +293,7 @@ same method twice. Magic classes automatically make copies if a method is alread
 <span class="nd">@Menu</span><span class="o">.</span><span class="n">wraps</span>
 <span class="nd">@Tools</span><span class="o">.</span><span class="n">wraps</span>
 <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;write program here.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;write program here.&quot;&quot;&quot;</span>
 </pre></div>
 </div>
 <p>Widget designs can be separetely set via pre-defined methods.</p>
@@ -311,7 +314,7 @@ same method twice. Magic classes automatically make copies if a method is alread
     <span class="nd">@Menu</span><span class="o">.</span><span class="n">wraps</span>
     <span class="nd">@Tools</span><span class="o">.</span><span class="n">wraps</span>
     <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;write program here.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;write program here.&quot;&quot;&quot;</span>
 </pre></div>
 </div>
 <div class="admonition note">

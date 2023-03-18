@@ -28,14 +28,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../index.html" class="icon icon-home"> magic-class
+
+
+
+          <a href="../index.html" class="icon icon-home">
+            magic-class
           </a>
               <div class="version">
                 0.6.14
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -54,7 +58,20 @@
 <li class="toctree-l2"><a class="reference internal" href="../main/advanced/customize_macro.html">Customize Macro Recording</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../main/advanced/class_inheritance.html">Inherit Magic Class</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../main/advanced/api.html">API References</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="magicclass.html">magicclass package</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="magicclass.html">magicclass package</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="magicclass.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#module-magicclass.command_palette">magicclass.command_palette module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#module-magicclass.core">magicclass.core module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#module-magicclass.help">magicclass.help module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#module-magicclass.plot_api">magicclass.plot_api module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#module-magicclass.signature">magicclass.signature module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#module-magicclass.testing">magicclass.testing module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#module-magicclass.types">magicclass.types module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#module-magicclass.wrappers">magicclass.wrappers module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#module-magicclass">Module contents</a></li>
+</ul>
+</li>
 <li class="toctree-l3 current"><a class="reference internal" href="magicclass.ext.html">magicclass.ext package</a><ul class="current">
 <li class="toctree-l4 current"><a class="reference internal" href="magicclass.ext.html#subpackages">Subpackages</a></li>
 <li class="toctree-l4"><a class="reference internal" href="magicclass.ext.html#module-magicclass.ext">Module contents</a></li>
@@ -85,12 +102,12 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../main/advanced/index.html">Advanced Topics</a> &raquo;</li>
-          <li><a href="../main/advanced/api.html">API References</a> &raquo;</li>
-          <li><a href="magicclass.html">magicclass package</a> &raquo;</li>
-          <li><a href="magicclass.ext.html">magicclass.ext package</a> &raquo;</li>
-      <li>magicclass.ext.napari package</li>
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../main/advanced/index.html">Advanced Topics</a></li>
+          <li class="breadcrumb-item"><a href="../main/advanced/api.html">API References</a></li>
+          <li class="breadcrumb-item"><a href="magicclass.html">magicclass package</a></li>
+          <li class="breadcrumb-item"><a href="magicclass.ext.html">magicclass.ext package</a></li>
+      <li class="breadcrumb-item active">magicclass.ext.napari package</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/apidoc/magicclass.ext.napari.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -141,7 +158,7 @@
 <span id="magicclass-ext-napari-utils-module"></span><h2>magicclass.ext.napari.utils module<a class="headerlink" href="#module-magicclass.ext.napari.utils" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="magicclass.ext.napari.utils.process_worker">
-<span class="sig-prename descclassname"><span class="pre">magicclass.ext.napari.utils.</span></span><span class="sig-name descname"><span class="pre">process_worker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">magicclass.ext.napari.utils._P</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">napari._qt.qthreading.FunctionWorker</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">napari._qt.qthreading.GeneratorWorker</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">magicclass.ext.napari.utils._P</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/magicclass/ext/napari/utils.html#process_worker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.napari.utils.process_worker" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">magicclass.ext.napari.utils.</span></span><span class="sig-name descname"><span class="pre">process_worker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">_P</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">napari._qt.qthreading.FunctionWorker</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">napari._qt.qthreading.GeneratorWorker</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">_P</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/magicclass/ext/napari/utils.html#process_worker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.napari.utils.process_worker" title="Permalink to this definition">¶</a></dt>
 <dd><p>Process returned worker of <code class="docutils literal notranslate"><span class="pre">napari.qt.threading</span></code> in a proper way.</p>
 <p>Open a progress bar and start worker in a parallel thread if function is called from GUI.
 Otherwise (if function is called from script), the worker will be executed as if the

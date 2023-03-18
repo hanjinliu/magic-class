@@ -25,14 +25,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../../index.html" class="icon icon-home"> magic-class
+
+
+
+          <a href="../../../../index.html" class="icon icon-home">
+            magic-class
           </a>
               <div class="version">
                 0.6.14
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -64,9 +68,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../../../index.html">Module code</a> &raquo;</li>
-      <li>pandas.io.parsers.readers</li>
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pandas.io.parsers.readers</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -152,7 +156,7 @@
 <span class="p">)</span>
 
 <span class="n">_doc_read_csv_and_table</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">{summary}</span>
 
 <span class="sd">Also supports optionally iterating or breaking of the file</span>
@@ -381,7 +385,7 @@
 <span class="s2">    .. versionchanged:: 1.2</span>
 
 <span class="s2">       ``TextFileReader`` is a context manager.</span>
-<span class="si">{decompression_options}</span><span class="s2"></span>
+<span class="si">{decompression_options}</span>
 
 <span class="s2">    .. versionchanged:: 1.4.0 Zstandard support.</span>
 
@@ -499,7 +503,7 @@
 
 <span class="s2">    .. versionchanged:: 1.2</span>
 
-<span class="si">{storage_options}</span><span class="s2"></span>
+<span class="si">{storage_options}</span>
 
 <span class="s2">    .. versionadded:: 1.2</span>
 
@@ -593,7 +597,7 @@
 
 
 <span class="k">def</span> <span class="nf">validate_integer</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">min_val</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Checks whether the &#39;name&#39; parameter for parsing is either</span>
 <span class="sd">    an integer OR float that can SAFELY be cast to an integer</span>
 <span class="sd">    without losing accuracy. Raises a ValueError if that is</span>
@@ -623,7 +627,7 @@
 
 
 <span class="k">def</span> <span class="nf">_validate_names</span><span class="p">(</span><span class="n">names</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Hashable</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Raise ValueError if the `names` parameter contains duplicates or has an</span>
 <span class="sd">    invalid data type.</span>
 
@@ -649,7 +653,7 @@
 <span class="k">def</span> <span class="nf">_read</span><span class="p">(</span>
     <span class="n">filepath_or_buffer</span><span class="p">:</span> <span class="n">FilePath</span> <span class="o">|</span> <span class="n">ReadCsvBuffer</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]</span> <span class="o">|</span> <span class="n">ReadCsvBuffer</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">kwds</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span> <span class="o">|</span> <span class="n">TextFileReader</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Generic reader of line files.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generic reader of line files.&quot;&quot;&quot;</span>
     <span class="c1"># if we pass a date_parser and parse_dates=False, we should not parse the</span>
     <span class="c1"># dates GH#44366</span>
     <span class="k">if</span> <span class="n">kwds</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;parse_dates&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -1375,7 +1379,7 @@
     <span class="n">infer_nrows</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwds</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span> <span class="o">|</span> <span class="n">TextFileReader</span><span class="p">:</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Read a table of fixed-width formatted lines into DataFrame.</span>
 
 <span class="sd">    Also supports optionally iterating or breaking of the file</span>
@@ -1464,7 +1468,7 @@
 
 
 <span class="k">class</span> <span class="nc">TextFileReader</span><span class="p">(</span><span class="n">abc</span><span class="o">.</span><span class="n">Iterator</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    Passed dialect overrides any of the related parser options</span>
 
@@ -1895,7 +1899,7 @@
 
 
 <span class="k">def</span> <span class="nf">TextParser</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TextFileReader</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Converts lists of lists/tuples into DataFrames with proper type inference</span>
 <span class="sd">    and optional (e.g. string to datetime) conversion. Also enables iterating</span>
 <span class="sd">    lazily over chunks of large files</span>
@@ -2005,7 +2009,7 @@
 
 
 <span class="k">def</span> <span class="nf">_stringify_na_values</span><span class="p">(</span><span class="n">na_values</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;return a stringified and numeric for these values&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;return a stringified and numeric for these values&quot;&quot;&quot;</span>
     <span class="n">result</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">na_values</span><span class="p">:</span>
         <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
@@ -2042,7 +2046,7 @@
     <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">|</span> <span class="n">lib</span><span class="o">.</span><span class="n">NoDefault</span><span class="p">,</span>
     <span class="n">defaults</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Validate/refine default values of input parameters of read_csv, read_table.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate/refine default values of input parameters of read_csv, read_table.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -2208,7 +2212,7 @@
 
 
 <span class="k">def</span> <span class="nf">_extract_dialect</span><span class="p">(</span><span class="n">kwds</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">csv</span><span class="o">.</span><span class="n">Dialect</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Extract concrete csv dialect instance.</span>
 
 <span class="sd">    Returns</span>
@@ -2238,7 +2242,7 @@
 
 
 <span class="k">def</span> <span class="nf">_validate_dialect</span><span class="p">(</span><span class="n">dialect</span><span class="p">:</span> <span class="n">csv</span><span class="o">.</span><span class="n">Dialect</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Validate csv dialect instance.</span>
 
 <span class="sd">    Raises</span>
@@ -2255,7 +2259,7 @@
     <span class="n">dialect</span><span class="p">:</span> <span class="n">csv</span><span class="o">.</span><span class="n">Dialect</span><span class="p">,</span>
     <span class="n">defaults</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Merge default kwargs in TextFileReader with dialect parameters.</span>
 
 <span class="sd">    Parameters</span>
@@ -2306,7 +2310,7 @@
 
 
 <span class="k">def</span> <span class="nf">_validate_skipfooter</span><span class="p">(</span><span class="n">kwds</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Check whether skipfooter is compatible with other kwargs in TextFileReader.</span>
 
 <span class="sd">    Parameters</span>

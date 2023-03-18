@@ -25,14 +25,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../../index.html" class="icon icon-home"> magic-class
+
+
+
+          <a href="../../../../index.html" class="icon icon-home">
+            magic-class
           </a>
               <div class="version">
                 0.6.14
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -64,9 +68,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../../../index.html">Module code</a> &raquo;</li>
-      <li>magicclass.ext.dask.progress</li>
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">magicclass.ext.dask.progress</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -97,7 +101,7 @@
 
 
 <div class="viewcode-block" id="DaskProgressBar"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.dask.html#magicclass.ext.dask.progress.DaskProgressBar">[docs]</a><span class="k">class</span> <span class="nc">DaskProgressBar</span><span class="p">(</span><span class="n">DefaultProgressBar</span><span class="p">,</span> <span class="n">DaskCallback</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A progress bar widget for dask computation.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A progress bar widget for dask computation.&quot;&quot;&quot;</span>
 
     <span class="n">computed</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">(</span><span class="nb">object</span><span class="p">)</span>
     <span class="n">new_cycle</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
@@ -113,7 +117,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_frac</span> <span class="o">=</span> <span class="mf">0.0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_n_computation</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="nb">max</span><span class="o">=</span><span class="nb">max</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">hide_footer</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_computed_signal</span> <span class="o">=</span> <span class="n">QtSignal</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_computed_signal</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_on_computed</span><span class="p">)</span>
 
@@ -127,6 +130,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_frac</span> <span class="o">=</span> <span class="mf">0.0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">new_cycle</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_computation</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_n_computation</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_timer</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_start_thread</span><span class="p">()</span>
         <span class="k">return</span> <span class="kc">None</span>
 
@@ -152,11 +156,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_time_signal</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span>
         <span class="k">return</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">_finish</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dsk</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">errored</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_finish</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dsk</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">errored</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_frac</span> <span class="o">=</span> <span class="mf">1.0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_running</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_thread_timer</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_timer</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
         <span class="k">return</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">_on_timer_updated</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -167,16 +170,33 @@
         <span class="k">return</span> <span class="kc">None</span>
 
 <div class="viewcode-block" id="DaskProgressBar.set_worker"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.dask.html#magicclass.ext.dask.progress.DaskProgressBar.set_worker">[docs]</a>    <span class="k">def</span> <span class="nf">set_worker</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">worker</span><span class="p">:</span> <span class="n">GeneratorWorker</span> <span class="o">|</span> <span class="n">FunctionWorker</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Set currently running worker.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set currently running worker.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_worker</span> <span class="o">=</span> <span class="n">worker</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">worker</span><span class="p">,</span> <span class="n">GeneratorWorker</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_worker</span><span class="p">,</span> <span class="n">GeneratorWorker</span><span class="p">):</span>
+            <span class="c1"># FunctionWorker does not have yielded/aborted signals.</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">hide_footer</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_time_signal</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="c1"># initialize abort_button</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">abort_button</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;Abort&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">abort_button</span><span class="o">.</span><span class="n">changed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_abort_worker</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">abort_button</span><span class="o">.</span><span class="n">enabled</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="c1"># initialize pause_button</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pause_button</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;Pause&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pause_button</span><span class="o">.</span><span class="n">enabled</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pause_button</span><span class="o">.</span><span class="n">changed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_toggle_pause</span><span class="p">)</span>
+
+        <span class="nd">@self</span><span class="o">.</span><span class="n">_worker</span><span class="o">.</span><span class="n">paused</span><span class="o">.</span><span class="n">connect</span>
+        <span class="k">def</span> <span class="nf">_on_pause</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pause_button</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;Resume&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pause_button</span><span class="o">.</span><span class="n">enabled</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_timer</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+
         <span class="k">return</span> <span class="kc">None</span></div></div>
 
 
 <div class="viewcode-block" id="dask_thread_worker"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.dask.html#magicclass.ext.dask.progress.dask_thread_worker">[docs]</a><span class="k">class</span> <span class="nc">dask_thread_worker</span><span class="p">(</span><span class="n">thread_worker</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create a dask&#39;s worker in a superqt/napari style.</span>
 
 <span class="sd">    This thread worker class can monitor the progress of dask computation.</span>
