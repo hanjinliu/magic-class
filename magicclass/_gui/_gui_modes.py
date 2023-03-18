@@ -47,7 +47,7 @@ class PopUpMode(Enum):
     def connect_close_callback(self, mgui: FunctionGui):
         if self not in {PopUpMode.dock, PopUpMode.parentsub, PopUpMode.dialog}:
             mgui.called.connect(mgui.hide)
-        elif self in (PopUpMode.dock, PopUpMode.parentsub):
+        elif self in {PopUpMode.dock, PopUpMode.parentsub}:
             # If FunctioGui is docked or in a subwindow, we should close
             # the parent QDockWidget/QMdiSubwindow.
             mgui.called.connect(lambda: mgui.parent.hide())

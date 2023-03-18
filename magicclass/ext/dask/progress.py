@@ -35,7 +35,6 @@ class DaskProgressBar(DefaultProgressBar, DaskCallback):
         self._frac = 0.0
         self._n_computation = 0
         super().__init__(max=max)
-        self.hide_footer()
         self._computed_signal = QtSignal()
         self._computed_signal.connect(self._on_computed)
 
@@ -49,6 +48,7 @@ class DaskProgressBar(DefaultProgressBar, DaskCallback):
         self._frac = 0.0
         self.new_cycle.emit(self._n_computation)
         self._n_computation += 1
+        self._timer.reset()
         self._start_thread()
         return None
 
@@ -74,11 +74,10 @@ class DaskProgressBar(DefaultProgressBar, DaskCallback):
         self._time_signal.emit()
         return None
 
-    def _finish(self, dsk, state, errored):
+    def _finish(self, dsk=None, state=None, errored=None):
         self._frac = 1.0
         self._running = False
         self._thread_timer.join()
-        self._timer.reset()
         return None
 
     def _on_timer_updated(self, _=None):
@@ -91,9 +90,26 @@ class DaskProgressBar(DefaultProgressBar, DaskCallback):
     def set_worker(self, worker: GeneratorWorker | FunctionWorker):
         """Set currently running worker."""
         self._worker = worker
-        if not isinstance(worker, GeneratorWorker):
+        if not isinstance(self._worker, GeneratorWorker):
+            # FunctionWorker does not have yielded/aborted signals.
             self.hide_footer()
-        self._time_signal.emit()
+            return None
+        # initialize abort_button
+        self.abort_button.text = "Abort"
+        self.abort_button.changed.connect(self._abort_worker)
+        self.abort_button.enabled = True
+
+        # initialize pause_button
+        self.pause_button.text = "Pause"
+        self.pause_button.enabled = True
+        self.pause_button.changed.connect(self._toggle_pause)
+
+        @self._worker.paused.connect
+        def _on_pause():
+            self.pause_button.text = "Resume"
+            self.pause_button.enabled = True
+            self._timer.stop()
+
         return None
 
 
