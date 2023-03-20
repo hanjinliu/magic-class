@@ -653,6 +653,18 @@ def field(
 
 @overload
 def field(
+    obj: type[ValueWidget[_V]],
+    *,
+    name: str | None = None,
+    label: str | None = None,
+    options: dict[str, Any] = {},
+    record: bool = True,
+) -> MagicField[ValueWidget[_V], _V]:
+    ...
+
+
+@overload
+def field(
     obj: type[_W],
     *,
     name: str | None = None,
@@ -672,7 +684,7 @@ def field(
     widget_type: str | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
-) -> MagicField[ValueWidget, _X]:
+) -> MagicField[ValueWidget[_X], _X]:
     ...
 
 
@@ -685,7 +697,20 @@ def field(
     widget_type: str | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
-) -> MagicField[ValueWidget, _X]:
+) -> MagicField[ValueWidget[_X], _X]:
+    ...
+
+
+@overload
+def field(
+    obj: Any | None = None,
+    *,
+    name: str | None = None,
+    label: str | None = None,
+    widget_type: type[ValueWidget[_V]] = None,
+    options: dict[str, Any] = {},
+    record: bool = True,
+) -> MagicField[ValueWidget[_V], _V]:
     ...
 
 
@@ -770,6 +795,18 @@ def field(
 
 @overload
 def vfield(
+    widget_type: type[ValueWidget[_V]],
+    *,
+    name: str | None = None,
+    label: str | None = None,
+    options: dict[str, Any] = {},
+    record: bool = True,
+) -> MagicValueField[ValueWidget[_V], Any]:
+    ...
+
+
+@overload
+def vfield(
     widget_type: type[_W],
     *,
     name: str | None = None,
@@ -789,7 +826,7 @@ def vfield(
     widget_type: str | type[Widget] | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
-) -> MagicValueField[ValueWidget, _X]:
+) -> MagicValueField[ValueWidget[_X], _X]:
     ...
 
 
@@ -802,7 +839,20 @@ def vfield(
     widget_type: str | type[Widget] | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
-) -> MagicValueField[ValueWidget, _X]:
+) -> MagicValueField[ValueWidget[_X], _X]:
+    ...
+
+
+@overload
+def vfield(
+    obj: Any | None = None,
+    *,
+    name: str | None = None,
+    label: str | None = None,
+    widget_type: type[ValueWidget[_V]] = None,
+    options: dict[str, Any] = {},
+    record: bool = True,
+) -> MagicValueField[ValueWidget[_V], _V]:
     ...
 
 
