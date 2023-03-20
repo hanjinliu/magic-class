@@ -4,7 +4,7 @@ from types import FunctionType
 
 from magicgui import __version__ as _magicgui_version
 from magicgui.widgets import FunctionGui, Widget
-from magicclass._magicgui_compat import Undefined
+from magicgui.types import Undefined
 from magicgui.type_map import get_widget_class
 from magicgui.signature import magic_signature, MagicParameter
 

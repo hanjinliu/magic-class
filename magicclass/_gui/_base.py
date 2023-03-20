@@ -31,10 +31,9 @@ from magicgui.widgets import (
     MainWindow,
 )
 from magicgui.application import use_app
-from magicclass._magicgui_compat import (
+from magicgui.types import Undefined
+from magicgui.widgets.bases import (
     ButtonWidget,
-    Undefined,
-    MGUI_SIMPLE_TYPES,
     ValueWidget,
 )
 from macrokit import Symbol
@@ -71,7 +70,7 @@ from magicclass.signature import (
     split_annotated_type,
 )
 from magicclass.wrappers import upgrade_signature, abstractapi
-from magicclass.types import BoundLiteral
+from magicclass.types import BoundLiteral, MGUI_SIMPLE_TYPES
 from magicclass.functools import wraps
 
 if TYPE_CHECKING:
@@ -972,6 +971,7 @@ def _get_widget_name(widget: Widget):
 
 def _create_gui_method(self: BaseGui, obj: MethodType):
     func_sig = inspect.signature(obj)
+
     # Method type cannot set __signature__ attribute.
     @functools.wraps(obj)
     def func(*args, **kwargs):
@@ -1262,7 +1262,6 @@ def _define_popup(self: BaseGui, obj, widget: PushButtonPlus | Action):
         from .class_gui import MainWindowClassGui
 
         def _prep(mgui: FunctionGui):
-
             parent_self = self._search_parent_magicclass()
             viewer = parent_self.parent_viewer
             if viewer is None:

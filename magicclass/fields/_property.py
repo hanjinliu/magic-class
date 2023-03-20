@@ -4,10 +4,10 @@ from typing import TypeVar, Callable, Any, TYPE_CHECKING
 import inspect
 from magicgui.signature import magic_signature
 from magicgui.widgets import create_widget, Container, PushButton
+from magicgui.widgets.bases import ValueWidget
 from ._fields import MagicField
 from ._define import define_callback
 from magicclass.signature import split_annotated_type
-from magicclass._magicgui_compat import ValueWidget
 
 _V = TypeVar("_V")
 

@@ -3,9 +3,9 @@ from functools import wraps
 from typing import Callable, Iterable, Union, TYPE_CHECKING, Iterator
 
 if TYPE_CHECKING:
+    from magicgui.widgets.bases import ButtonWidget
     from magicclass._gui import BaseGui
     from magicclass._gui.mgui_ext import Action
-    from magicclass._magicgui_compat import ButtonWidget
 
 nStrings = Union[str, Iterable[str]]
 

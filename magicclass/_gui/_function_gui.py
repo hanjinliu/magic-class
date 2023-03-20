@@ -2,14 +2,14 @@ from __future__ import annotations
 from types import GeneratorType
 from typing import Any, TYPE_CHECKING, Callable, TypeVar
 import re
+from psygnal import Signal
 from magicgui.widgets import PushButton, CheckBox, FunctionGui
-from magicclass._magicgui_compat import (
+from magicgui.widgets.bases import (
     ValueWidget,
     ButtonWidget,
     ContainerWidget,
-    _LabeledWidget,
 )
-from psygnal import Signal
+from magicgui.widgets._concrete import _LabeledWidget
 
 from magicclass.widgets import Separator
 
@@ -80,7 +80,7 @@ class FunctionGuiPlus(FunctionGui[_R]):
 
         return_type = sig.return_annotation
         if return_type:
-            from magicclass._magicgui_compat import type2callback
+            from magicgui.type_map import type2callback
 
             for callback in type2callback(return_type):
                 callback(self, value, return_type)

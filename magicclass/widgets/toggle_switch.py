@@ -2,8 +2,9 @@ from __future__ import annotations
 
 from qtpy import QtWidgets as QtW, QtCore, QtGui
 from qtpy.QtCore import Qt, Signal, Property
-from magicclass._magicgui_compat import ButtonWidget
+from magicgui.widgets.bases import ButtonWidget
 from magicgui.backends._qtpy.widgets import QBaseButtonWidget
+
 
 # A iPhone style toggle switch.
 # See https://stackoverflow.com/questions/14780517/toggle-switch-in-qt

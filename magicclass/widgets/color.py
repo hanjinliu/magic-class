@@ -14,7 +14,7 @@ from qtpy.QtWidgets import (
 from qtpy.QtGui import QColor
 from qtpy.QtCore import Qt, Signal as QtSignal
 
-from magicclass._magicgui_compat import ValueWidget
+from magicgui.widgets.bases import ValueWidget
 from magicgui.backends._qtpy.widgets import QBaseValueWidget
 from magicgui.application import use_app
 from .utils import merge_super_sigs

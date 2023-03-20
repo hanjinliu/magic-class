@@ -10,13 +10,13 @@ from typing import (
 )
 from typing_extensions import Literal, _AnnotatedAlias
 from magicgui.widgets import create_widget, Widget
-from magicclass._magicgui_compat import (
+from magicgui.widgets.bases import (
     ValueWidget,
     ContainerWidget,
     CategoricalWidget,
-    Undefined,
-    MGUI_SIMPLE_TYPES,
 )
+from magicgui.types import Undefined
+from magicclass.types import MGUI_SIMPLE_TYPES
 
 from ._define import define_callback, define_callback_gui
 

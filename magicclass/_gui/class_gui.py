@@ -12,13 +12,13 @@ from magicgui.widgets import (
     Table,
     Widget,
 )
-from magicclass._magicgui_compat import (
+from magicgui.widgets.bases import (
     ButtonWidget,
     ValueWidget,
     ContainerWidget,
-    _LabeledWidget,
     ContainerWidget,
 )
+from magicgui.widgets._concrete import _LabeledWidget
 from macrokit import Symbol
 
 from .keybinding import register_shortcut

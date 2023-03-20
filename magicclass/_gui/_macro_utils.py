@@ -4,7 +4,7 @@ import inspect
 from functools import partial, partialmethod, wraps as functools_wraps
 from macrokit import Symbol, Expr, Head, symbol
 from magicgui.widgets import FunctionGui
-from magicclass._magicgui_compat import ValueWidget
+from magicgui.widgets.bases import ValueWidget
 from .utils import get_parameters
 from magicclass.utils import get_signature, thread_worker
 from magicclass.signature import MagicMethodSignature
