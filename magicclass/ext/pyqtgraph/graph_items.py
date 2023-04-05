@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import Sequence
 import pyqtgraph as pg
+from qtpy import QtGui
 from qtpy.QtCore import Qt
 import numpy as np
 
@@ -8,10 +9,10 @@ from .._shared_utils import convert_color_code, to_rgba
 
 # compatibility with matplotlib
 _LINE_STYLE = {
-    "-": Qt.SolidLine,
-    "--": Qt.DashLine,
-    ":": Qt.DotLine,
-    "-.": Qt.DashDotLine,
+    "-": Qt.PenStyle.SolidLine,
+    "--": Qt.PenStyle.DashLine,
+    ":": Qt.PenStyle.DotLine,
+    "-.": Qt.PenStyle.DashDotLine,
 }
 
 _SYMBOL_MAP = {
@@ -554,6 +555,8 @@ class TextGroup(LayerItem):
         texts: Sequence[str],
         color=None,
         name: str = None,
+        size: int = 9,
+        anchor: tuple[float, float] = (0.0, 0.0),
     ):
         self.native = pg.ItemGroup()
         if color is None:
@@ -564,6 +567,9 @@ class TextGroup(LayerItem):
             self.native.addItem(item)
 
         self.name = name
+        self._font = QtGui.QFont()
+        self.size = size
+        self.anchor = anchor
 
     @property
     def text_items(self) -> list[pg.TextItem]:
@@ -634,7 +640,7 @@ class TextGroup(LayerItem):
 
     @property
     def anchor(self) -> np.ndarray:
-        """Text anchor position."""
+        """Relative text anchor position."""
         out = []
         for item in self.text_items:
             anchor = item.anchor
@@ -645,6 +651,17 @@ class TextGroup(LayerItem):
     def anchor(self, value):
         for item in self.text_items:
             item.setAnchor(value)
+
+    @property
+    def size(self) -> float:
+        """Text point size."""
+        return self._font.pointSizeF()
+
+    @size.setter
+    def size(self, value: float):
+        self._font.setPointSizeF(value)
+        for item in self.text_items:
+            item.setFont(self._font)
 
 
 class TextItemView:
@@ -722,7 +739,6 @@ class TextItemView:
 
     @text.setter
     def text(self, value: str):
-
         if isinstance(self.native, list):
             for item in self.native:
                 item.setText(value)

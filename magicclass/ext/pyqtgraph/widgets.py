@@ -434,16 +434,41 @@ class HasDataItems:
         return item
 
     @overload
-    def add_text(self, x: float, y: float, text: str, **kwargs) -> TextGroup:
+    def add_text(
+        self,
+        x: float,
+        y: float,
+        text: str,
+        color=None,
+        name: str | None = None,
+        size: float = 9.0,
+        anchor: tuple[float, float] = (0.0, 0.0),
+    ) -> TextGroup:
         ...
 
     @overload
     def add_text(
-        self, x: Sequence[float], y: Sequence[float], text: Sequence[str], **kwargs
+        self,
+        x: Sequence[float],
+        y: Sequence[float],
+        text: Sequence[str],
+        color=None,
+        name: str | None = None,
+        size: float = 9.0,
+        anchor: tuple[float, float] = (0.0, 0.0),
     ) -> TextGroup:
         ...
 
-    def add_text(self, x, y, text, color=None, name=None) -> TextGroup:
+    def add_text(
+        self,
+        x,
+        y,
+        text,
+        color=None,
+        name=None,
+        size: int = 9,
+        anchor: tuple[float, float] = (0.0, 0.0),
+    ) -> TextGroup:
         if np.isscalar(x) and np.isscalar(y):
             x = [x]
             y = [y]
