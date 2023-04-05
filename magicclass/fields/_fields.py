@@ -52,7 +52,7 @@ _U = TypeVar("_U")
 _F = TypeVar("_F", bound=Callable)
 
 
-class MagicField(_FieldObject, Generic[_W, _V]):
+class MagicField(_FieldObject, Generic[_W]):
     """
     Field class for magicgui construction.
 
@@ -134,7 +134,7 @@ class MagicField(_FieldObject, Generic[_W, _V]):
 
     def with_options(
         self,
-        value: _V = Undefined,
+        value: Any = Undefined,
         tooltip: str = Undefined,
         visible: bool = Undefined,
         enabled: bool = Undefined,
@@ -244,7 +244,7 @@ class MagicField(_FieldObject, Generic[_W, _V]):
 
         return widget
 
-    def copy(self) -> Self[_W, _V]:
+    def copy(self) -> MagicField[_W]:
         """Copy object."""
         return self.__class__(
             value=self.value,
@@ -326,7 +326,7 @@ class MagicField(_FieldObject, Generic[_W, _V]):
 
         return action
 
-    def as_getter(self, obj: Any) -> Callable[[Any], _V]:
+    def as_getter(self, obj: Any) -> Callable[[Any], Any]:
         """Make a function that get the value of Widget or Action."""
         return lambda w: self._guis[id(obj)].value
 
@@ -364,7 +364,7 @@ class MagicField(_FieldObject, Generic[_W, _V]):
         return _func
 
     @overload
-    def __get__(self, obj: Literal[None], objtype=None) -> MagicField[_W, _V]:
+    def __get__(self, obj: Literal[None], objtype=None) -> MagicField[_W]:
         ...
 
     @overload
@@ -525,14 +525,14 @@ class MagicField(_FieldObject, Generic[_W, _V]):
         return self._widget_type
 
 
-class MagicValueField(MagicField[_W, _V]):
+class MagicValueField(MagicField[ValueWidget[_V]]):
     """
     Field class for magicgui construction. Unlike MagicField, object of this class
     always returns value itself.
     """
 
     @overload
-    def __get__(self, obj: Literal[None], objtype=None) -> MagicValueField[_W, _V] | _V:
+    def __get__(self, obj: Literal[None], objtype=None) -> MagicValueField[_V] | _V:
         ...
 
     @overload
@@ -548,6 +548,9 @@ class MagicValueField(MagicField[_W, _V]):
         if obj is None:
             raise AttributeError(f"Cannot set {self.__class__.__name__}.")
         self.get_widget(obj).value = self._presethook(obj, value)
+
+    def copy(self) -> MagicValueField[_V]:
+        return super().copy()
 
     def post_get_hook(self, hook: Callable[[Any, _V], Any] | Callable[[_V], Any]):
         """
@@ -647,7 +650,7 @@ def field(
     widget_type: str | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
-) -> MagicField[_M, Any]:
+) -> MagicField[_M]:
     ...
 
 
@@ -659,7 +662,7 @@ def field(
     label: str | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
-) -> MagicField[_W, Any]:
+) -> MagicField[_W]:
     ...
 
 
@@ -672,7 +675,7 @@ def field(
     widget_type: str | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
-) -> MagicField[ValueWidget[_X], _X]:
+) -> MagicField[ValueWidget[_X]]:
     ...
 
 
@@ -685,20 +688,7 @@ def field(
     widget_type: str | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
-) -> MagicField[ValueWidget[_X], _X]:
-    ...
-
-
-@overload
-def field(
-    obj: Any | None = None,
-    *,
-    name: str | None = None,
-    label: str | None = None,
-    widget_type: type[ValueWidget[_V]] = None,
-    options: dict[str, Any] = {},
-    record: bool = True,
-) -> MagicField[ValueWidget[_V], _V]:
+) -> MagicField[ValueWidget[_X]]:
     ...
 
 
@@ -711,7 +701,7 @@ def field(
     widget_type: type[_W] = None,
     options: dict[str, Any] = {},
     record: bool = True,
-) -> MagicField[_W, Any]:
+) -> MagicField[_W]:
     ...
 
 
@@ -724,7 +714,7 @@ def field(
     widget_type: str | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
-) -> MagicField[Widget, Any]:
+) -> MagicField[Widget]:
     ...
 
 
@@ -736,7 +726,7 @@ def field(
     widget_type: str | type[Widget] | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
-) -> MagicField[Widget, Any]:
+) -> MagicField[Widget]:
     ...
 
 
@@ -789,19 +779,19 @@ def vfield(
     label: str | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
-) -> MagicValueField[ValueWidget[_V], _V]:
+) -> MagicValueField[_V]:
     ...
 
 
 @overload
 def vfield(
-    widget_type: type[_W],
+    widget_type: type[Widget],
     *,
     name: str | None = None,
     label: str | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
-) -> MagicValueField[_W, _V]:
+) -> MagicValueField[Any]:
     ...
 
 
@@ -814,7 +804,7 @@ def vfield(
     widget_type: str | type[Widget] | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
-) -> MagicValueField[ValueWidget[_X], _X]:
+) -> MagicValueField[_X]:
     ...
 
 
@@ -827,7 +817,7 @@ def vfield(
     widget_type: str | type[Widget] | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
-) -> MagicValueField[ValueWidget[_X], _X]:
+) -> MagicValueField[_X]:
     ...
 
 
@@ -840,20 +830,7 @@ def vfield(
     widget_type: type[ValueWidget[_V]] = None,
     options: dict[str, Any] = {},
     record: bool = True,
-) -> MagicValueField[ValueWidget[_V], _V]:
-    ...
-
-
-@overload
-def vfield(
-    obj: Any,
-    *,
-    name: str | None = None,
-    label: str | None = None,
-    widget_type: type[_W] = None,
-    options: dict[str, Any] = {},
-    record: bool = True,
-) -> MagicValueField[_W, Any]:
+) -> MagicValueField[_V]:
     ...
 
 
@@ -866,7 +843,7 @@ def vfield(
     widget_type: str | type[Widget] | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
-) -> MagicValueField[Widget, Any]:
+) -> MagicValueField[Any]:
     ...
 
 
@@ -878,7 +855,7 @@ def vfield(
     widget_type: str | type[Widget] | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
-) -> MagicValueField[Widget, Any]:
+) -> MagicValueField[Any]:
     ...
 
 
