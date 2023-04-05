@@ -1074,8 +1074,7 @@ def _build_mgui(widget_: Action | PushButtonPlus, func: Callable, parent: BaseGu
         )
         # set function GUI.
         widget_.mgui = mgui
-        name = widget_.name or ""
-        mgui.native.setWindowTitle(name.replace("_", " ").strip())
+        mgui.native.setWindowTitle(widget_.text or widget_.name or "")
 
         preview_setting = opt.get("preview", None)
         if preview_setting is not None:
