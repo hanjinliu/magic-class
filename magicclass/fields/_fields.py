@@ -544,7 +544,7 @@ class MagicValueField(MagicField[_W, _V]):
             return self
         return self._postgethook(obj, self.get_widget(obj).value)
 
-    def __set__(self, obj: _M, value: _V) -> None:
+    def __set__(self, obj: MagicTemplate, value: _V) -> None:
         if obj is None:
             raise AttributeError(f"Cannot set {self.__class__.__name__}.")
         self.get_widget(obj).value = self._presethook(obj, value)
@@ -603,34 +603,34 @@ class MagicValueField(MagicField[_W, _V]):
             self._presethook = lambda _, x: hook(x)
         return hook
 
-    def _postgethook(self, obj, value):
+    def _postgethook(self, obj, value: _V) -> _V:
         return value
 
-    def _presethook(self, obj, value):
+    def _presethook(self, obj, value: _V) -> _V:
         return value
 
     @overload
     def with_choices(
         self, choices: Sequence[tuple[str, _U]]
-    ) -> MagicValueField[CategoricalWidget, _U]:
+    ) -> MagicValueField[CategoricalWidget[_U], _U]:
         ...
 
     @overload
     def with_choices(
         self, choices: Sequence[_U]
-    ) -> MagicValueField[CategoricalWidget, _U]:
+    ) -> MagicValueField[CategoricalWidget[_U], _U]:
         ...
 
     @overload
     def with_choices(
         self, choices: Callable[..., Sequence[tuple[str, _U]]]
-    ) -> MagicValueField[CategoricalWidget, _U]:
+    ) -> MagicValueField[CategoricalWidget[_U], _U]:
         ...
 
     @overload
     def with_choices(
         self, choices: Callable[..., Sequence[_U]]
-    ) -> MagicValueField[CategoricalWidget, _U]:
+    ) -> MagicValueField[CategoricalWidget[_U], _U]:
         ...
 
     def with_choices(self, choices):
@@ -648,18 +648,6 @@ def field(
     options: dict[str, Any] = {},
     record: bool = True,
 ) -> MagicField[_M, Any]:
-    ...
-
-
-@overload
-def field(
-    obj: type[ValueWidget[_V]],
-    *,
-    name: str | None = None,
-    label: str | None = None,
-    options: dict[str, Any] = {},
-    record: bool = True,
-) -> MagicField[ValueWidget[_V], _V]:
     ...
 
 
@@ -801,7 +789,7 @@ def vfield(
     label: str | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
-) -> MagicValueField[ValueWidget[_V], Any]:
+) -> MagicValueField[ValueWidget[_V], _V]:
     ...
 
 
@@ -813,7 +801,7 @@ def vfield(
     label: str | None = None,
     options: dict[str, Any] = {},
     record: bool = True,
-) -> MagicValueField[_W, Any]:
+) -> MagicValueField[_W, _V]:
     ...
 
 
