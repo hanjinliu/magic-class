@@ -18,6 +18,7 @@ if TYPE_CHECKING:
 
 # See https://stackoverflow.com/questions/28655198/best-way-to-display-logs-in-pyqt
 
+
 # Variable "FigureCanvas" should globally updated to plot figure inside the logger
 # However, importing FigureCanvasAgg should be done lazily. Here's how to hack
 # this procedure.
@@ -311,7 +312,7 @@ class Logger(Widget, logging.Handler):
         height=None,
     ) -> None:
         """Print an array as an image in the logger widget. Can be a path."""
-        from magicclass._magicgui_compat import _mpl_image
+        from magicgui.widgets._image import _mpl_image
 
         img = _mpl_image.Image()
 

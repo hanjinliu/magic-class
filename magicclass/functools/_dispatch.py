@@ -8,7 +8,7 @@ from typing_extensions import _AnnotatedAlias
 
 from magicgui.signature import MagicParameter
 from magicgui.widgets import create_widget, Widget, Label
-from magicclass._magicgui_compat import Undefined
+from magicgui.types import Undefined
 
 from magicclass.widgets import TabbedContainer
 from magicclass.signature import get_signature, split_annotated_type, upgrade_signature

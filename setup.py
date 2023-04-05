@@ -20,7 +20,7 @@ setup(
     packages=find_packages(exclude=["docs", "examples", "rst", "tests", "tests.*"]),
     package_data={"magicclass": ["**/*.pyi", "*.pyi"]},
     install_requires=[
-        "magicgui>=0.5.1",
+        "magicgui>=0.7.0",
         "qtpy>=1.10.0",
         "macro-kit>=0.4.0",
         "superqt>=0.4.0",

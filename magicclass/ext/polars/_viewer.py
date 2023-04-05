@@ -6,7 +6,8 @@ from qtpy import QtCore, QtGui, QtWidgets as QtW
 from qtpy.QtCore import Qt, Signal
 
 from magicgui.backends._qtpy.widgets import QBaseValueWidget
-from magicclass._magicgui_compat import ValueWidget, Undefined
+from magicgui.widgets.bases import ValueWidget
+from magicgui.types import Undefined
 import polars as pl
 
 if TYPE_CHECKING:  # pragma: no cover

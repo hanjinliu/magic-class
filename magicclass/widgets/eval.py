@@ -10,7 +10,7 @@ from qtpy import QtWidgets as QtW, QtCore, QtGui
 from qtpy.QtCore import Qt
 
 from magicgui.backends._qtpy.widgets import QBaseStringWidget
-from magicclass._magicgui_compat import ValueWidget
+from magicgui.widgets.bases import ValueWidget
 
 
 def _get_last_group(text: str) -> str | None:

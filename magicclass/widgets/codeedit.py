@@ -9,10 +9,11 @@ from psygnal import Signal
 from magicgui.backends._qtpy.widgets import TextEdit as QBaseTextEdit, QBaseStringWidget
 from magicgui.widgets import TextEdit, EmptyWidget, FileEdit
 from magicgui.application import use_app
+from magicgui.widgets.bases import ValueWidget
+from magicgui.types import Undefined
 
 from macrokit import parse, Symbol, Expr, Head
 from magicclass._gui.utils import show_dialog_from_mgui
-from magicclass._magicgui_compat import ValueWidget, Undefined
 from magicclass.utils import show_messagebox
 
 if TYPE_CHECKING:

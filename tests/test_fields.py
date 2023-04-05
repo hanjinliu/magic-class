@@ -125,6 +125,8 @@ def test_vfield_types():
     assert str(b.macro[-2]) == "ui.a_int = 2"
     assert str(b.macro[-1]) == "ui.a_str = 'x'"
 
+    c = C()
+    c.a_int
 
 def test_field_options():
     tooltip = "this is int"

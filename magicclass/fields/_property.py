@@ -1,13 +1,13 @@
 from __future__ import annotations
 
-from typing import TypeVar, Callable, Any, TYPE_CHECKING
+from typing import Generic, TypeVar, Callable, Any, TYPE_CHECKING
 import inspect
 from magicgui.signature import magic_signature
 from magicgui.widgets import create_widget, Container, PushButton
+from magicgui.widgets.bases import ValueWidget
 from ._fields import MagicField
 from ._define import define_callback
 from magicclass.signature import split_annotated_type
-from magicclass._magicgui_compat import ValueWidget
 
 _V = TypeVar("_V")
 
@@ -107,7 +107,7 @@ class _ButtonedWidget(Container):
         return self._call_button
 
 
-class magicproperty(MagicField[_ButtonedWidget, _V]):
+class magicproperty(MagicField[_ButtonedWidget], Generic[_V]):
     """
     A property-like descriptor that returns a field for magicgui widgets.
 

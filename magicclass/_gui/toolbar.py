@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import Callable, TYPE_CHECKING, Any
 import warnings
 from magicgui.widgets import Image, Table, Label, FunctionGui, Widget
-from magicclass._magicgui_compat import ButtonWidget
+from magicgui.widgets.bases import ButtonWidget
 from macrokit import Symbol
 from qtpy.QtWidgets import QToolBar, QMenu, QWidgetAction, QTabWidget
 
