@@ -473,7 +473,7 @@ class HasDataItems:
             x = [x]
             y = [y]
             text = [text]
-        item = TextGroup(x, y, text, color, name)
+        item = TextGroup(x, y, text, color, name, size=size, anchor=anchor)
         self._add_item(item)
         return item
 
