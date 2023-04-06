@@ -129,9 +129,13 @@ def get_tb_formatter() -> Callable[[Exception, bool, str], str]:
 
             vbtb = IPython.core.ultratb.VerboseTB(color_scheme=color)
             if as_html:
-                ansi_string = vbtb.text(*info).replace(" ", "&nbsp;")
-                html = "".join(ansi2html(ansi_string))
-                html = html.replace("\n", "<br>")
+                ansi_string = (
+                    vbtb.text(*info)
+                    .replace(" ", "&nbsp;")
+                    .replace("<", "&lt;")
+                    .replace(">", "&gt;")
+                )
+                html = "".join(ansi2html(ansi_string)).replace("\n", "<br>")
                 html = (
                     f"<span style='font-family: monaco,{_FONT},monospace;'>"
                     + html
