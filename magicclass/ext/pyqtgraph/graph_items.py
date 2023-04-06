@@ -1,17 +1,19 @@
 from __future__ import annotations
 from typing import Sequence
 import pyqtgraph as pg
+from qtpy import QtGui
 from qtpy.QtCore import Qt
 import numpy as np
+from numpy.typing import NDArray
 
 from .._shared_utils import convert_color_code, to_rgba
 
 # compatibility with matplotlib
 _LINE_STYLE = {
-    "-": Qt.SolidLine,
-    "--": Qt.DashLine,
-    ":": Qt.DotLine,
-    "-.": Qt.DashDotLine,
+    "-": Qt.PenStyle.SolidLine,
+    "--": Qt.PenStyle.DashLine,
+    ":": Qt.PenStyle.DotLine,
+    "-.": Qt.PenStyle.DashDotLine,
 }
 
 _SYMBOL_MAP = {
@@ -253,7 +255,7 @@ class Curve(PlotDataLayer):
         self.native.setSymbolSize(size)
 
     @property
-    def edge_color(self) -> np.ndarray:
+    def edge_color(self) -> NDArray[np.float64]:
         rgba = self.native.opts["pen"].color().getRgb()
         return np.array(rgba) / 255
 
@@ -264,7 +266,7 @@ class Curve(PlotDataLayer):
         self.native.setSymbolPen(value)
 
     @property
-    def face_color(self) -> np.ndarray:
+    def face_color(self) -> NDArray[np.float64]:
         rgba = self.native.opts["symbolBrush"].color().getRgb()
         return np.array(rgba) / 255
 
@@ -329,7 +331,7 @@ class BarPlot(PlotDataLayer):
         self.name = name
 
     @property
-    def edge_color(self) -> np.ndarray:
+    def edge_color(self) -> NDArray[np.float64]:
         rgba = self.native.opts["pen"].color().getRgb()
         return np.array(rgba) / 255
 
@@ -339,7 +341,7 @@ class BarPlot(PlotDataLayer):
         self.native.setOpts(pen=pg.mkPen(value))
 
     @property
-    def face_color(self) -> np.ndarray:
+    def face_color(self) -> NDArray[np.float64]:
         rgba = self.native.opts["brush"].color().getRgb()
         return np.array(rgba) / 255
 
@@ -406,7 +408,7 @@ class InfLine(LayerItem):
         self.native.setPos((0, value))
 
     @property
-    def pos(self) -> np.ndarray:
+    def pos(self) -> NDArray[np.float64]:
         return np.array(self.native.getPos())
 
     @pos.setter
@@ -423,7 +425,7 @@ class InfLine(LayerItem):
         self.native.setAngle(value)
 
     @property
-    def edge_color(self) -> np.ndarray:
+    def edge_color(self) -> NDArray[np.float64]:
         return to_rgba(self.native.pen)
 
     @edge_color.setter
@@ -490,7 +492,7 @@ class FillBetween(PlotDataLayer):
         self.name = name
 
     @property
-    def edge_color(self) -> np.ndarray:
+    def edge_color(self) -> NDArray[np.float64]:
         rgba = self.native.curves[0].opts["pen"].color().getRgb()
         return np.array(rgba) / 255
 
@@ -500,7 +502,7 @@ class FillBetween(PlotDataLayer):
         self.native.setPen(pg.mkPen(value))
 
     @property
-    def face_color(self) -> np.ndarray:
+    def face_color(self) -> NDArray[np.float64]:
         rgba = self.native.curves[0].opts["brush"].color().getRgb()
         return np.array(rgba) / 255
 
@@ -554,6 +556,8 @@ class TextGroup(LayerItem):
         texts: Sequence[str],
         color=None,
         name: str = None,
+        size: int = 9,
+        anchor: tuple[float, float] = (0.0, 0.0),
     ):
         self.native = pg.ItemGroup()
         if color is None:
@@ -564,6 +568,9 @@ class TextGroup(LayerItem):
             self.native.addItem(item)
 
         self.name = name
+        self._font = QtGui.QFont()
+        self.size = size
+        self.anchor = anchor
 
     @property
     def text_items(self) -> list[pg.TextItem]:
@@ -573,15 +580,15 @@ class TextGroup(LayerItem):
         return TextItemView(self.text_items[key])
 
     @property
-    def xdata(self) -> np.ndarray:
+    def xdata(self) -> NDArray[np.float64]:
         return np.array([item.pos().x() for item in self.text_items])
 
     @property
-    def ydata(self) -> np.ndarray:
+    def ydata(self) -> NDArray[np.float64]:
         return np.array([item.pos().y() for item in self.text_items])
 
     @property
-    def color(self) -> np.ndarray:
+    def color(self) -> NDArray[np.float64]:
         """Text color."""
         rgba = np.stack([item.color.getRgb() for item in self.text_items])
         return rgba / 255
@@ -593,7 +600,7 @@ class TextGroup(LayerItem):
             item.setText(item.toPlainText(), value)
 
     @property
-    def background_color(self) -> np.ndarray:
+    def background_color(self) -> NDArray[np.float64]:
         """Text background color."""
         return np.stack([to_rgba(item.fill) for item in self.text_items])
 
@@ -606,7 +613,7 @@ class TextGroup(LayerItem):
             item._updateView()
 
     @property
-    def border(self) -> np.ndarray:
+    def border(self) -> NDArray[np.float64]:
         """Border color of text bounding box."""
         if isinstance(self.native, list):
             return np.stack([to_rgba(item.border) for item in self.native])
@@ -633,8 +640,8 @@ class TextGroup(LayerItem):
             item.setText(value)
 
     @property
-    def anchor(self) -> np.ndarray:
-        """Text anchor position."""
+    def anchor(self) -> NDArray[np.float64]:
+        """Relative text anchor position."""
         out = []
         for item in self.text_items:
             anchor = item.anchor
@@ -645,6 +652,17 @@ class TextGroup(LayerItem):
     def anchor(self, value):
         for item in self.text_items:
             item.setAnchor(value)
+
+    @property
+    def size(self) -> float:
+        """Text point size."""
+        return self._font.pointSizeF()
+
+    @size.setter
+    def size(self, value: float):
+        self._font.setPointSizeF(value)
+        for item in self.text_items:
+            item.setFont(self._font)
 
 
 class TextItemView:
@@ -722,7 +740,6 @@ class TextItemView:
 
     @text.setter
     def text(self, value: str):
-
         if isinstance(self.native, list):
             for item in self.native:
                 item.setText(value)
