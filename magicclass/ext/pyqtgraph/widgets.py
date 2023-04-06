@@ -98,19 +98,11 @@ class HasDataItems:
     def layers(self) -> LayerList:
         return LayerList(self)
 
-    @overload
-    def add_curve(self, x: Sequence[float], **kwargs) -> Curve:
-        ...
-
-    @overload
-    def add_curve(self, x: Sequence[float], y: Sequence[float], **kwargs) -> Curve:
-        ...
-
     @write_docs
     def add_curve(
         self,
-        x=None,
-        y=None,
+        x: Sequence[float] | None = None,
+        y: Sequence[float] | None = None,
         face_color=None,
         edge_color=None,
         color=None,
@@ -118,7 +110,7 @@ class HasDataItems:
         name: str | None = None,
         lw: float = 1,
         ls: str = "-",
-        symbol=None,
+        symbol: str = None,
     ) -> Curve:
         """
         Add a line plot like ``plt.plot(x, y)``.
@@ -152,19 +144,11 @@ class HasDataItems:
         self._add_item(item)
         return item
 
-    @overload
-    def add_scatter(self, x: Sequence[float], **kwargs) -> Scatter:
-        ...
-
-    @overload
-    def add_scatter(self, x: Sequence[float], y: Sequence[float], **kwargs) -> Scatter:
-        ...
-
     @write_docs
     def add_scatter(
         self,
-        x=None,
-        y=None,
+        x: Sequence[float] | None = None,
+        y: Sequence[float] | None = None,
         face_color=None,
         edge_color=None,
         color=None,
@@ -257,19 +241,11 @@ class HasDataItems:
         self._add_item(item)
         return item
 
-    @overload
-    def add_bar(self, x: Sequence[float], **kwargs) -> BarPlot:
-        ...
-
-    @overload
-    def add_bar(self, x: Sequence[float], y: Sequence[float], **kwargs) -> BarPlot:
-        ...
-
     @write_docs
     def add_bar(
         self,
-        x=None,
-        y=None,
+        x: Sequence[float] | None = None,
+        y: Sequence[float] | None = None,
         width: float = 0.6,
         face_color=None,
         edge_color=None,
@@ -309,22 +285,12 @@ class HasDataItems:
         self._add_item(item)
         return item
 
-    @overload
-    def add_fillbetween(self, x: Sequence[float], **kwargs) -> FillBetween:
-        ...
-
-    @overload
-    def add_fillbetween(
-        self, x: Sequence[float], y: Sequence[float], **kwargs
-    ) -> FillBetween:
-        ...
-
     @write_docs
     def add_fillbetween(
         self,
-        x=None,
-        y1=None,
-        y2=None,
+        x: Sequence[float] | None = None,
+        y1: Sequence[float] | None = None,
+        y2: Sequence[float] | None = None,
         face_color=None,
         edge_color=None,
         color=None,
