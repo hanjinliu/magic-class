@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.ext.vtk.volume &mdash; magic-class 0.6.12 documentation</title>
+  <title>magicclass.ext.vtk.volume &mdash; magic-class 0.6.14 documentation</title>
       <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.12
+                0.6.14
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
@@ -87,9 +87,9 @@
 <span class="kn">from</span> <span class="nn">.components</span> <span class="kn">import</span> <span class="n">VtkComponent</span>
 <span class="kn">from</span> <span class="nn">.const</span> <span class="kn">import</span> <span class="n">Mode</span><span class="p">,</span> <span class="n">Rendering</span>
 
-<span class="kn">from</span> <span class="nn">...fields</span> <span class="kn">import</span> <span class="n">vfield</span>
-<span class="kn">from</span> <span class="nn">...widgets</span> <span class="kn">import</span> <span class="n">FloatRangeSlider</span>
-<span class="kn">from</span> <span class="nn">...types</span> <span class="kn">import</span> <span class="n">Color</span>
+<span class="kn">from</span> <span class="nn">magicclass.fields</span> <span class="kn">import</span> <span class="n">vfield</span>
+<span class="kn">from</span> <span class="nn">magicclass.widgets</span> <span class="kn">import</span> <span class="n">FloatRangeSlider</span>
+<span class="kn">from</span> <span class="nn">magicclass.types</span> <span class="kn">import</span> <span class="n">Color</span>
 
 
 <div class="viewcode-block" id="split_rgba"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vtk.html#magicclass.ext.vtk.volume.split_rgba">[docs]</a><span class="k">def</span> <span class="nf">split_rgba</span><span class="p">(</span><span class="n">col</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="nb">float</span><span class="p">]:</span>
@@ -217,10 +217,10 @@
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="n">Mode</span><span class="o">.</span><span class="n">mesh</span><span class="p">:</span>
             <span class="n">actor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">tomesh</span><span class="p">()</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="n">Mode</span><span class="o">.</span><span class="n">iso</span><span class="p">:</span>
-            <span class="n">actor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">isosurface</span><span class="p">(</span><span class="n">threshold</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">iso_threshold</span><span class="p">)</span>
+            <span class="n">actor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">isosurface</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">iso_threshold</span><span class="p">)</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="n">Mode</span><span class="o">.</span><span class="n">wireframe</span><span class="p">:</span>
             <span class="n">actor</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">isosurface</span><span class="p">(</span><span class="n">threshold</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">iso_threshold</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">isosurface</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">iso_threshold</span><span class="p">)</span>
                 <span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">rgb</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">)</span>
                 <span class="o">.</span><span class="n">wireframe</span><span class="p">()</span>
             <span class="p">)</span>
@@ -232,7 +232,7 @@
         <span class="n">plotter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent_ref</span><span class="p">()</span>
         <span class="n">plotter</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_obj</span><span class="p">)</span>
         <span class="n">plotter</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">actor</span><span class="p">)</span>
-        <span class="n">plotter</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">Render</span><span class="p">()</span>
+        <span class="n">plotter</span><span class="o">.</span><span class="n">qt_widget</span><span class="o">.</span><span class="n">Render</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_current_obj</span> <span class="o">=</span> <span class="n">actor</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_cmap</span><span class="p">()</span>
         <span class="k">return</span> <span class="kc">None</span></div>

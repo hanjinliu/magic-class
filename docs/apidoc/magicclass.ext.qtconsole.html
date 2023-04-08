@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.ext.qtconsole package &mdash; magic-class 0.6.13 documentation</title>
+  <title>magicclass.ext.qtconsole package &mdash; magic-class 0.6.14 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/columns.css" type="text/css" />
@@ -28,14 +28,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../index.html" class="icon icon-home"> magic-class
+
+
+
+          <a href="../index.html" class="icon icon-home">
+            magic-class
           </a>
               <div class="version">
-                0.6.13
+                0.6.14
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -54,7 +58,20 @@
 <li class="toctree-l2"><a class="reference internal" href="../main/advanced/customize_macro.html">Customize Macro Recording</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../main/advanced/class_inheritance.html">Inherit Magic Class</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../main/advanced/api.html">API References</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="magicclass.html">magicclass package</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="magicclass.html">magicclass package</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="magicclass.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#module-magicclass.command_palette">magicclass.command_palette module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#module-magicclass.core">magicclass.core module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#module-magicclass.help">magicclass.help module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#module-magicclass.plot_api">magicclass.plot_api module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#module-magicclass.signature">magicclass.signature module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#module-magicclass.testing">magicclass.testing module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#module-magicclass.types">magicclass.types module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#module-magicclass.wrappers">magicclass.wrappers module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#module-magicclass">Module contents</a></li>
+</ul>
+</li>
 <li class="toctree-l3 current"><a class="reference internal" href="magicclass.ext.html">magicclass.ext package</a><ul class="current">
 <li class="toctree-l4 current"><a class="reference internal" href="magicclass.ext.html#subpackages">Subpackages</a></li>
 <li class="toctree-l4"><a class="reference internal" href="magicclass.ext.html#module-magicclass.ext">Module contents</a></li>
@@ -85,12 +102,12 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../main/advanced/index.html">Advanced Topics</a> &raquo;</li>
-          <li><a href="../main/advanced/api.html">API References</a> &raquo;</li>
-          <li><a href="magicclass.html">magicclass package</a> &raquo;</li>
-          <li><a href="magicclass.ext.html">magicclass.ext package</a> &raquo;</li>
-      <li>magicclass.ext.qtconsole package</li>
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../main/advanced/index.html">Advanced Topics</a></li>
+          <li class="breadcrumb-item"><a href="../main/advanced/api.html">API References</a></li>
+          <li class="breadcrumb-item"><a href="magicclass.html">magicclass package</a></li>
+          <li class="breadcrumb-item"><a href="magicclass.ext.html">magicclass.ext package</a></li>
+      <li class="breadcrumb-item active">magicclass.ext.qtconsole package</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/apidoc/magicclass.ext.qtconsole.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -120,48 +137,7 @@
 <dl class="py attribute">
 <dt class="sig sig-object py" id="magicclass.ext.qtconsole.widgets.QtConsole.executed">
 <span class="sig-name descname"><span class="pre">executed</span></span><a class="headerlink" href="#magicclass.ext.qtconsole.widgets.QtConsole.executed" title="Permalink to this definition">¶</a></dt>
-<dd><p>Declares a signal emitter on a class.</p>
-<p>This is class implements the [descriptor
-protocol](<a class="reference external" href="https://docs.python.org/3/howto/descriptor.html#descriptorhowto">https://docs.python.org/3/howto/descriptor.html#descriptorhowto</a>)
-and is designed to be used as a class attribute, with the supported signature types
-provided in the contructor:</p>
-<p><a href="#id1"><span class="problematic" id="id2">``</span></a><a href="#id3"><span class="problematic" id="id4">`</span></a>python
-from psygnal import Signal</p>
-<dl class="simple">
-<dt>class MyEmitter:</dt><dd><p>changed = Signal(int)</p>
-</dd>
-<dt>def receiver(arg: int):</dt><dd><p>print(&quot;new value:&quot;, arg)</p>
-</dd>
-</dl>
-<p>emitter = MyEmitter()
-emitter.changed.connect(receiver)
-emitter.changed.emit(1)  # prints 'new value: 1'
-<a href="#id5"><span class="problematic" id="id6">``</span></a><a href="#id7"><span class="problematic" id="id8">`</span></a></p>
-<p>!!! note</p>
-<blockquote>
-<div><p>in the example above, <cite>MyEmitter.changed</cite> is an instance of <cite>Signal</cite>,
-and <cite>emitter.changed</cite> is an instance of <cite>SignalInstance</cite>.  See the
-documentation on [<cite>SignalInstance</cite>][psygnal.SignalInstance] for details
-on how to connect to and/or emit a signal on an instance of an object
-that has a <cite>Signal</cite>.</p>
-</div></blockquote>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>*types</strong> (<a class="reference internal" href="magicclass.html#magicclass.types.Union" title="magicclass.types.Union"><em>Union</em></a><em>[</em><em>Type</em><em>[</em><em>Any</em><em>]</em><em>, </em><em>Signature</em><em>]</em>) -- A sequence of individual types, or a <em>single</em> [<cite>inspect.Signature</cite>][] object.</p></li>
-<li><p><strong>description</strong> (<em>str</em>) -- Optional descriptive text for the signal.  (not used internally).</p></li>
-<li><p><strong>name</strong> (<a class="reference internal" href="magicclass.html#magicclass.types.Optional" title="magicclass.types.Optional"><em>Optional</em></a><em>[</em><em>str</em><em>]</em>) -- Optional name of the signal. If it is not specified then the name of the
-class attribute that is bound to the signal will be used. default None</p></li>
-<li><p><strong>check_nargs_on_connect</strong> (<em>bool</em>) -- Whether to check the number of positional args against <cite>signature</cite> when
-connecting a new callback. This can also be provided at connection time using
-<cite>.connect(..., check_nargs=True)</cite>. By default, True.</p></li>
-<li><p><strong>check_types_on_connect</strong> (<em>bool</em>) -- Whether to check the callback parameter types against <cite>signature</cite> when
-connecting a new callback. This can also be provided at connection time using
-<cite>.connect(..., check_types=True)</cite>. By default, False.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="magicclass.ext.qtconsole.widgets.QtConsole.update_console">
@@ -224,48 +200,7 @@ executable GUI.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="magicclass.ext.qtconsole.QtConsole.executed">
 <span class="sig-name descname"><span class="pre">executed</span></span><a class="headerlink" href="#magicclass.ext.qtconsole.QtConsole.executed" title="Permalink to this definition">¶</a></dt>
-<dd><p>Declares a signal emitter on a class.</p>
-<p>This is class implements the [descriptor
-protocol](<a class="reference external" href="https://docs.python.org/3/howto/descriptor.html#descriptorhowto">https://docs.python.org/3/howto/descriptor.html#descriptorhowto</a>)
-and is designed to be used as a class attribute, with the supported signature types
-provided in the contructor:</p>
-<p><a href="#id9"><span class="problematic" id="id10">``</span></a><a href="#id11"><span class="problematic" id="id12">`</span></a>python
-from psygnal import Signal</p>
-<dl class="simple">
-<dt>class MyEmitter:</dt><dd><p>changed = Signal(int)</p>
-</dd>
-<dt>def receiver(arg: int):</dt><dd><p>print(&quot;new value:&quot;, arg)</p>
-</dd>
-</dl>
-<p>emitter = MyEmitter()
-emitter.changed.connect(receiver)
-emitter.changed.emit(1)  # prints 'new value: 1'
-<a href="#id13"><span class="problematic" id="id14">``</span></a><a href="#id15"><span class="problematic" id="id16">`</span></a></p>
-<p>!!! note</p>
-<blockquote>
-<div><p>in the example above, <cite>MyEmitter.changed</cite> is an instance of <cite>Signal</cite>,
-and <cite>emitter.changed</cite> is an instance of <cite>SignalInstance</cite>.  See the
-documentation on [<cite>SignalInstance</cite>][psygnal.SignalInstance] for details
-on how to connect to and/or emit a signal on an instance of an object
-that has a <cite>Signal</cite>.</p>
-</div></blockquote>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>*types</strong> (<a class="reference internal" href="magicclass.html#magicclass.types.Union" title="magicclass.types.Union"><em>Union</em></a><em>[</em><em>Type</em><em>[</em><em>Any</em><em>]</em><em>, </em><em>Signature</em><em>]</em>) -- A sequence of individual types, or a <em>single</em> [<cite>inspect.Signature</cite>][] object.</p></li>
-<li><p><strong>description</strong> (<em>str</em>) -- Optional descriptive text for the signal.  (not used internally).</p></li>
-<li><p><strong>name</strong> (<a class="reference internal" href="magicclass.html#magicclass.types.Optional" title="magicclass.types.Optional"><em>Optional</em></a><em>[</em><em>str</em><em>]</em>) -- Optional name of the signal. If it is not specified then the name of the
-class attribute that is bound to the signal will be used. default None</p></li>
-<li><p><strong>check_nargs_on_connect</strong> (<em>bool</em>) -- Whether to check the number of positional args against <cite>signature</cite> when
-connecting a new callback. This can also be provided at connection time using
-<cite>.connect(..., check_nargs=True)</cite>. By default, True.</p></li>
-<li><p><strong>check_types_on_connect</strong> (<em>bool</em>) -- Whether to check the callback parameter types against <cite>signature</cite> when
-connecting a new callback. This can also be provided at connection time using
-<cite>.connect(..., check_types=True)</cite>. By default, False.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="magicclass.ext.qtconsole.QtConsole.name">

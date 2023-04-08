@@ -9,6 +9,7 @@ from ._functions import (
     copy_info,
     show_tree,
     rst_to_html,
+    is_type_like,
 )
 
 from .qt import (

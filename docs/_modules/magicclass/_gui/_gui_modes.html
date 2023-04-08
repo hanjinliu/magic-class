@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="English" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>magicclass._gui._gui_modes &mdash; magic-class 0.6.14 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+</head>
+
+<body class="wy-body-for-nav">
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+
+          <a href="../../../index.html" class="icon icon-home">
+            magic-class
+          </a>
+              <div class="version">
+                0.6.14
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../main/quick_start.html">Quick Start</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../main/basics/index.html">Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../main/make_better/index.html">Make Your GUI Better</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../main/visualization/index.html">Data Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../main/advanced/index.html">Advanced Topics</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../main/best_practice.html">Best Practice</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">magic-class</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">magicclass._gui._gui_modes</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+
+  <h1>Source code for magicclass._gui._gui_modes</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="n">TracebackType</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">import</span> <span class="nn">functools</span>
+<span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">FunctionGui</span><span class="p">,</span> <span class="n">Widget</span>
+<span class="kn">from</span> <span class="nn">.mgui_ext</span> <span class="kn">import</span> <span class="n">FunctionGuiPlus</span>
+
+
+<div class="viewcode-block" id="PopUpMode"><a class="viewcode-back" href="../../../apidoc/magicclass.html#magicclass.PopUpMode">[docs]</a><span class="k">class</span> <span class="nc">PopUpMode</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Define how to popup FunctionGui.&quot;&quot;&quot;</span>
+
+    <span class="n">popup</span> <span class="o">=</span> <span class="s2">&quot;popup&quot;</span>
+    <span class="n">first</span> <span class="o">=</span> <span class="s2">&quot;first&quot;</span>
+    <span class="n">last</span> <span class="o">=</span> <span class="s2">&quot;last&quot;</span>
+    <span class="n">above</span> <span class="o">=</span> <span class="s2">&quot;above&quot;</span>
+    <span class="n">below</span> <span class="o">=</span> <span class="s2">&quot;below&quot;</span>
+    <span class="n">dock</span> <span class="o">=</span> <span class="s2">&quot;dock&quot;</span>
+    <span class="n">dialog</span> <span class="o">=</span> <span class="s2">&quot;dialog&quot;</span>
+    <span class="n">parentlast</span> <span class="o">=</span> <span class="s2">&quot;parentlast&quot;</span>
+    <span class="n">parentsub</span> <span class="o">=</span> <span class="s2">&quot;parentsub&quot;</span>
+
+<div class="viewcode-block" id="PopUpMode.need_title_bar"><a class="viewcode-back" href="../../../apidoc/magicclass.html#magicclass.PopUpMode.need_title_bar">[docs]</a>    <span class="k">def</span> <span class="nf">need_title_bar</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span>
+            <span class="n">PopUpMode</span><span class="o">.</span><span class="n">popup</span><span class="p">,</span>
+            <span class="n">PopUpMode</span><span class="o">.</span><span class="n">dock</span><span class="p">,</span>
+            <span class="n">PopUpMode</span><span class="o">.</span><span class="n">parentsub</span><span class="p">,</span>
+            <span class="n">PopUpMode</span><span class="o">.</span><span class="n">dialog</span><span class="p">,</span>
+        <span class="p">}</span></div>
+
+<div class="viewcode-block" id="PopUpMode.activate_magicgui"><a class="viewcode-back" href="../../../apidoc/magicclass.html#magicclass.PopUpMode.activate_magicgui">[docs]</a>    <span class="k">def</span> <span class="nf">activate_magicgui</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mgui</span><span class="p">:</span> <span class="n">FunctionGuiPlus</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="bp">self</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span>
+            <span class="n">PopUpMode</span><span class="o">.</span><span class="n">dock</span><span class="p">,</span>
+            <span class="n">PopUpMode</span><span class="o">.</span><span class="n">dialog</span><span class="p">,</span>
+            <span class="n">PopUpMode</span><span class="o">.</span><span class="n">parentsub</span><span class="p">,</span>
+        <span class="p">):</span>
+            <span class="n">mgui</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="bp">self</span> <span class="ow">is</span> <span class="n">PopUpMode</span><span class="o">.</span><span class="n">dock</span><span class="p">:</span>
+            <span class="n">mgui</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>  <span class="c1"># show dock widget</span>
+        <span class="k">elif</span> <span class="bp">self</span> <span class="ow">is</span> <span class="n">PopUpMode</span><span class="o">.</span><span class="n">parentsub</span><span class="p">:</span>
+            <span class="n">mgui</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">mgui</span><span class="o">.</span><span class="n">exec_as_dialog</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PopUpMode.connect_close_callback"><a class="viewcode-back" href="../../../apidoc/magicclass.html#magicclass.PopUpMode.connect_close_callback">[docs]</a>    <span class="k">def</span> <span class="nf">connect_close_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mgui</span><span class="p">:</span> <span class="n">FunctionGui</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="n">PopUpMode</span><span class="o">.</span><span class="n">dock</span><span class="p">,</span> <span class="n">PopUpMode</span><span class="o">.</span><span class="n">parentsub</span><span class="p">,</span> <span class="n">PopUpMode</span><span class="o">.</span><span class="n">dialog</span><span class="p">}:</span>
+            <span class="n">mgui</span><span class="o">.</span><span class="n">called</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">mgui</span><span class="o">.</span><span class="n">hide</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span> <span class="ow">in</span> <span class="p">{</span><span class="n">PopUpMode</span><span class="o">.</span><span class="n">dock</span><span class="p">,</span> <span class="n">PopUpMode</span><span class="o">.</span><span class="n">parentsub</span><span class="p">}:</span>
+            <span class="c1"># If FunctioGui is docked or in a subwindow, we should close</span>
+            <span class="c1"># the parent QDockWidget/QMdiSubwindow.</span>
+            <span class="n">mgui</span><span class="o">.</span><span class="n">called</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">mgui</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">hide</span><span class="p">())</span></div></div>
+
+
+<span class="k">def</span> <span class="nf">_msgbox_raising</span><span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">parent</span><span class="p">:</span> <span class="n">Widget</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">._message_box</span> <span class="kn">import</span> <span class="n">QtErrorMessageBox</span>
+
+    <span class="k">return</span> <span class="n">QtErrorMessageBox</span><span class="o">.</span><span class="n">raise_</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="o">.</span><span class="n">native</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_stderr_raising</span><span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">parent</span><span class="p">:</span> <span class="n">Widget</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">def</span> <span class="nf">_stdout_raising</span><span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">parent</span><span class="p">:</span> <span class="n">Widget</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_napari_notification_raising</span><span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">parent</span><span class="p">:</span> <span class="n">Widget</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">napari.utils.notifications</span> <span class="kn">import</span> <span class="n">show_error</span>
+
+    <span class="k">return</span> <span class="n">show_error</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+
+
+<span class="k">class</span> <span class="nc">ErrorMode</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">msgbox</span> <span class="o">=</span> <span class="s2">&quot;msgbox&quot;</span>
+    <span class="n">stderr</span> <span class="o">=</span> <span class="s2">&quot;stderr&quot;</span>
+    <span class="n">stdout</span> <span class="o">=</span> <span class="s2">&quot;stdout&quot;</span>
+    <span class="n">napari</span> <span class="o">=</span> <span class="s2">&quot;napari&quot;</span>
+
+    <span class="k">def</span> <span class="nf">get_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get error handler.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">ErrorModeHandlers</span><span class="p">[</span><span class="bp">self</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">wrap_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Wrap function with the error handler.&quot;&quot;&quot;</span>
+        <span class="n">handler</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_handler</span><span class="p">()</span>
+
+        <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">wrapped_func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">out</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">e</span><span class="o">.</span><span class="n">__traceback__</span> <span class="o">=</span> <span class="n">_cleanup_tb</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">__traceback__</span><span class="p">)</span>
+                <span class="n">handler</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
+                <span class="n">out</span> <span class="o">=</span> <span class="n">e</span>
+            <span class="k">return</span> <span class="n">out</span>
+
+        <span class="k">return</span> <span class="n">wrapped_func</span>
+
+
+<span class="n">ErrorModeHandlers</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">ErrorMode</span><span class="o">.</span><span class="n">msgbox</span><span class="p">:</span> <span class="n">_msgbox_raising</span><span class="p">,</span>
+    <span class="n">ErrorMode</span><span class="o">.</span><span class="n">stderr</span><span class="p">:</span> <span class="n">_stderr_raising</span><span class="p">,</span>
+    <span class="n">ErrorMode</span><span class="o">.</span><span class="n">stdout</span><span class="p">:</span> <span class="n">_stdout_raising</span><span class="p">,</span>
+    <span class="n">ErrorMode</span><span class="o">.</span><span class="n">napari</span><span class="p">:</span> <span class="n">_napari_notification_raising</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<span class="k">def</span> <span class="nf">_cleanup_tb</span><span class="p">(</span><span class="n">tb</span><span class="p">:</span> <span class="n">TracebackType</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Remove useless info from a traceback object.&quot;&quot;&quot;</span>
+    <span class="n">current_tb</span> <span class="o">=</span> <span class="n">tb</span>
+    <span class="k">while</span> <span class="n">current_tb</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">current_tb</span><span class="o">.</span><span class="n">tb_frame</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span> <span class="o">==</span> <span class="s2">&quot;_recordable&quot;</span><span class="p">:</span>
+            <span class="n">tb</span> <span class="o">=</span> <span class="n">current_tb</span><span class="o">.</span><span class="n">tb_next</span>
+            <span class="k">break</span>
+        <span class="n">current_tb</span> <span class="o">=</span> <span class="n">current_tb</span><span class="o">.</span><span class="n">tb_next</span>
+    <span class="k">return</span> <span class="n">tb</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Hanjin Liu.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+</body>
+</html>

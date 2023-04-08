@@ -3,6 +3,7 @@ from abc import ABCMeta
 from collections import defaultdict
 
 import pathlib
+import datetime
 from enum import Enum
 import typing
 from typing import (
@@ -22,8 +23,8 @@ from typing import (
 from typing_extensions import Annotated, _AnnotatedAlias
 from magicgui.widgets import Widget, EmptyWidget
 
-from magicclass.fields import MagicField
 from magicclass.signature import split_annotated_type
+from magicclass.utils import is_type_like
 
 try:
     from typing import _tp_cache
@@ -32,8 +33,9 @@ except ImportError:
 
 if TYPE_CHECKING:
     from magicgui.widgets import FunctionGui
-    from magicclass._magicgui_compat import CategoricalWidget
+    from magicgui.widgets.bases import CategoricalWidget
     from typing_extensions import Self
+    from magicclass.fields import MagicField
 
 __all__ = [
     "WidgetType",
@@ -106,6 +108,25 @@ ErrorModeStr = Literal["msgbox", "stderr", "stdout"]
 
 Color = Union[Iterable[float], str]
 
+MGUI_SIMPLE_TYPES = (
+    Union[
+        int,
+        float,
+        bool,
+        str,
+        pathlib.Path,
+        datetime.datetime,
+        datetime.date,
+        datetime.time,
+        Enum,
+        range,
+        slice,
+        list,
+        tuple,
+    ],
+)
+
+
 # Expression string
 class _ExprInMeta(type):
     def __getitem__(cls, ns: dict[str, Any]) -> type[ExprStr]:
@@ -136,12 +157,13 @@ class ExprStr(str):
 
     In = _ExprIn
 
-    def __new__(cls, x, ns: dict[str, Any] | None = None) -> None:
+    def __new__(cls, x, ns: dict[str, Any] | None = None):
         self = str.__new__(cls, x)
         self.__ns = ns or {}
         return self
 
     def eval(self):
+        """Evaluate the expression string."""
         return eval(str(self), self.__ns, {})
 
 
@@ -165,6 +187,8 @@ def bound(obj: type[_W]) -> type: ...
 def bound(obj):
     """Function version of ``Bound[...]``."""
     # NOTE: This could be more useful than Bound??
+    from magicclass.fields import MagicField
+
     if callable(obj):
         outtype = obj.__annotations__.get("return", Any)
     elif isinstance(obj, MagicField):
@@ -240,9 +264,9 @@ class Bound(metaclass=_BoundAlias):
     >>> from magicclass import magicclass, field
     >>> @magicclass
     >>> class MyClass:
-    >>>     i = field(int)
-    >>>     def func(self, v: Bound[i]):
-    >>>         ...
+    ...     i = field(int)
+    ...     def func(self, v: Bound[i]):
+    ...         ...
 
     ``Bound[value]`` is identical to ``Annotated[Any, {"bind": value}]``.
     """
@@ -397,10 +421,7 @@ class OneOf(metaclass=_OneOfAlias):
     """
 
     def __new__(cls, *args):
-        raise TypeError(
-            "`Bound(...)` is deprecated since 0.5.21. Bound is now a generic alias instead "
-            "of a function. Please use `Bound[...]`."
-        )
+        raise TypeError("OneOf cannot be instantiated. Use OneOf[...] instead.")
 
     def __init_subclass__(cls, *args, **kwargs):
         raise TypeError(f"Cannot subclass {cls.__module__}.{cls.__name__}")
@@ -464,10 +485,7 @@ class SomeOf(metaclass=_SomeOfAlias):
     """
 
     def __new__(cls, *args):
-        raise TypeError(
-            "`Bound(...)` is deprecated since 0.5.21. Bound is now a generic alias instead "
-            "of a function. Please use `Bound[...]`."
-        )
+        raise TypeError("SomeOf cannot be instantiated. Use SomeOf[...] instead.")
 
     def __init_subclass__(cls, *args, **kwargs):
         raise TypeError(f"Cannot subclass {cls.__module__}.SomeOf")
@@ -488,7 +506,7 @@ class _OptionalAlias(type):
         ...
 
     def __getitem__(cls, value):
-        if not _is_type_like(value):
+        if not is_type_like(value):
             raise TypeError(
                 "The first argument of Optional must be a type but "
                 f"got {type(value)}."
@@ -767,7 +785,7 @@ class Stored(Generic[_T], metaclass=_StoredMeta):
             w.reset_choices()
 
         # Callback of the inner type annotation
-        from magicclass._magicgui_compat import type2callback
+        from magicgui.type_map import type2callback
 
         inner_type = return_type.__args__[0]
         for cb in type2callback(inner_type):
@@ -780,7 +798,7 @@ class Stored(Generic[_T], metaclass=_StoredMeta):
                 raise TypeError("Input of Stored must be a type or (type, Any)")
             _tp, _hash = value
         else:
-            if not _is_type_like(value):
+            if not is_type_like(value):
                 raise TypeError(
                     "The first argument of Stored must be a type but "
                     f"got {type(value)}."
@@ -799,10 +817,6 @@ class Stored(Generic[_T], metaclass=_StoredMeta):
         outtype.__args__ = (_tp,)
         _StoredMeta._instances[key] = outtype
         return outtype
-
-
-def _is_type_like(x: Any):
-    return isinstance(x, (type, typing._GenericAlias)) or hasattr(x, "__supertype__")
 
 
 def _repr_like(x: Any):

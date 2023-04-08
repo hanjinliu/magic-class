@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.utils.qt &mdash; magic-class 0.6.12 documentation</title>
+  <title>magicclass.utils.qt &mdash; magic-class 0.6.14 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.12
+                0.6.14
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -152,7 +152,9 @@
 
 <div class="viewcode-block" id="move_to_screen_center"><a class="viewcode-back" href="../../../apidoc/magicclass.utils.html#magicclass.utils.qt.move_to_screen_center">[docs]</a><span class="k">def</span> <span class="nf">move_to_screen_center</span><span class="p">(</span><span class="n">qwidget</span><span class="p">:</span> <span class="n">QWidget</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Move a QWidget to the center of screen.&quot;&quot;&quot;</span>
-    <span class="n">qwidget</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">screen_center</span><span class="p">()</span> <span class="o">-</span> <span class="n">qwidget</span><span class="o">.</span><span class="n">rect</span><span class="p">()</span><span class="o">.</span><span class="n">center</span><span class="p">())</span>
+    <span class="n">point</span> <span class="o">=</span> <span class="n">screen_center</span><span class="p">()</span> <span class="o">-</span> <span class="n">qwidget</span><span class="o">.</span><span class="n">rect</span><span class="p">()</span><span class="o">.</span><span class="n">center</span><span class="p">()</span>
+    <span class="n">qwidget</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">point</span><span class="p">)</span>
+    <span class="n">qwidget</span><span class="o">.</span><span class="n">adjustSize</span><span class="p">()</span>
     <span class="k">return</span> <span class="kc">None</span></div>
 
 
@@ -186,7 +188,11 @@
         <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">dtype</span> <span class="o">!=</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot copy an array of dtype </span><span class="si">{</span><span class="n">obj</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> to clipboard.&quot;</span><span class="p">)</span>
         <span class="c1"># See https://gist.github.com/smex/5287589</span>
-        <span class="n">qimg_format</span> <span class="o">=</span> <span class="n">QImage</span><span class="o">.</span><span class="n">Format_RGB888</span> <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span> <span class="k">else</span> <span class="n">QImage</span><span class="o">.</span><span class="n">Format_Indexed8</span>
+        <span class="n">qimg_format</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">QImage</span><span class="o">.</span><span class="n">Format</span><span class="o">.</span><span class="n">Format_RGB888</span>
+            <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span>
+            <span class="k">else</span> <span class="n">QImage</span><span class="o">.</span><span class="n">Format</span><span class="o">.</span><span class="n">Format_Indexed8</span>
+        <span class="p">)</span>
         <span class="o">*</span><span class="n">_</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">shape</span>
         <span class="n">qimg</span> <span class="o">=</span> <span class="n">QImage</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">obj</span><span class="o">.</span><span class="n">strides</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">qimg_format</span><span class="p">)</span>
         <span class="n">gray_color_table</span> <span class="o">=</span> <span class="p">[</span><span class="n">qRgb</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">256</span><span class="p">)]</span>

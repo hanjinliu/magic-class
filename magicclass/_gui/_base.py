@@ -31,11 +31,9 @@ from magicgui.widgets import (
     MainWindow,
 )
 from magicgui.application import use_app
-from magicclass._magicgui_compat import (
+from magicgui.types import Undefined
+from magicgui.widgets.bases import (
     ButtonWidget,
-    WidgetProtocol,
-    Undefined,
-    MGUI_SIMPLE_TYPES,
     ValueWidget,
 )
 from macrokit import Symbol
@@ -72,7 +70,7 @@ from magicclass.signature import (
     split_annotated_type,
 )
 from magicclass.wrappers import upgrade_signature, abstractapi
-from magicclass.types import BoundLiteral
+from magicclass.types import BoundLiteral, MGUI_SIMPLE_TYPES
 from magicclass.functools import wraps
 
 if TYPE_CHECKING:
@@ -182,7 +180,7 @@ class MagicTemplate(MutableSequence[_W], metaclass=_MagicTemplateMeta):
     __magicclass_parent__: None | MagicTemplate
     __magicclass_children__: list[MagicTemplate]
     _close_on_run: bool
-    _component_class: type[Action | Widget]
+    _component_class: type[Action | PushButtonPlus]
     _error_mode: ErrorMode
     _list: list[Action | Widget]
     _macro_instance: GuiMacro
@@ -207,7 +205,7 @@ class MagicTemplate(MutableSequence[_W], metaclass=_MagicTemplateMeta):
     native: QWidget
     options: dict
     param_kind: inspect._ParameterKind
-    parent: Widget
+    parent: Widget | None
     parent_changed: Signal
     tooltip: str
     visible: bool
@@ -514,6 +512,7 @@ class MagicTemplate(MutableSequence[_W], metaclass=_MagicTemplateMeta):
                     child_widget.changed.connect(widget.changed)
                     child_widget.tooltip = widget.tooltip
                     child_widget._doc = widget._doc
+                    child_widget._get_running = lambda: widget.running
 
                 widget._unwrapped = True
 
@@ -972,6 +971,7 @@ def _get_widget_name(widget: Widget):
 
 def _create_gui_method(self: BaseGui, obj: MethodType):
     func_sig = inspect.signature(obj)
+
     # Method type cannot set __signature__ attribute.
     @functools.wraps(obj)
     def func(*args, **kwargs):
@@ -1074,8 +1074,7 @@ def _build_mgui(widget_: Action | PushButtonPlus, func: Callable, parent: BaseGu
         )
         # set function GUI.
         widget_.mgui = mgui
-        name = widget_.name or ""
-        mgui.native.setWindowTitle(name.replace("_", " ").strip())
+        mgui.native.setWindowTitle(widget_.text or widget_.name or "")
 
         preview_setting = opt.get("preview", None)
         if preview_setting is not None:
@@ -1262,7 +1261,6 @@ def _define_popup(self: BaseGui, obj, widget: PushButtonPlus | Action):
         from .class_gui import MainWindowClassGui
 
         def _prep(mgui: FunctionGui):
-
             parent_self = self._search_parent_magicclass()
             viewer = parent_self.parent_viewer
             if viewer is None:

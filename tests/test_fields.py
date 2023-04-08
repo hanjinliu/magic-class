@@ -6,14 +6,12 @@ from magicclass import (
     vfield,
     FieldGroup,
     HasFields,
-    set_design,
 )
 from magicclass.fields import widget_property
 from magicclass.types import Optional
 from magicgui import widgets
 from typing import Tuple
 from unittest.mock import MagicMock
-from pathlib import Path
 
 def test_field_types():
     @magicclass
@@ -127,6 +125,8 @@ def test_vfield_types():
     assert str(b.macro[-2]) == "ui.a_int = 2"
     assert str(b.macro[-1]) == "ui.a_str = 'x'"
 
+    c = C()
+    c.a_int
 
 def test_field_options():
     tooltip = "this is int"

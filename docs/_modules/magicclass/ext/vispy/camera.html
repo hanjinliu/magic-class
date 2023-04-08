@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.ext.vispy.camera &mdash; magic-class 0.6.13 documentation</title>
+  <title>magicclass.ext.vispy.camera &mdash; magic-class 0.6.14 documentation</title>
       <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.13
+                0.6.14
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
@@ -159,7 +159,7 @@
     <span class="c1"># fmt: off</span>
     <span class="n">fov</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">widget_type</span><span class="o">=</span><span class="n">FloatSlider</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;FoV (deg)&quot;</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="mi">45</span><span class="p">})</span>
     <span class="n">scale</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Scale&quot;</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="mf">0.01</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="mi">10000</span><span class="p">})</span>
-    <span class="n">center</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Center&quot;</span><span class="p">)</span>
+    <span class="n">center</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Center&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">with_options</span><span class="p">(</span><span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mf">1e8</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="mf">1e8</span><span class="p">})</span>
     <span class="n">angles</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">),</span> <span class="n">widget_type</span><span class="o">=</span><span class="n">EulerAngleEdit</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Angles (deg)&quot;</span><span class="p">)</span>
     <span class="c1"># fmt: on</span>
 

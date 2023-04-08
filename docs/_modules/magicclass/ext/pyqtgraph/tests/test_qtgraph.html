@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.ext.pyqtgraph.tests.test_qtgraph &mdash; magic-class 0.6.12 documentation</title>
+  <title>magicclass.ext.pyqtgraph.tests.test_qtgraph &mdash; magic-class 0.6.14 documentation</title>
       <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../../../_static/columns.css" type="text/css" />
@@ -28,7 +28,7 @@
             <a href="../../../../../index.html" class="icon icon-home"> magic-class
           </a>
               <div class="version">
-                0.6.12
+                0.6.14
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
@@ -197,6 +197,19 @@
     <span class="n">ui</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">legend</span><span class="o">.</span><span class="n">background_color</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">]</span>
     <span class="n">ui</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">legend</span><span class="o">.</span><span class="n">border</span>
     <span class="n">ui</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">legend</span><span class="o">.</span><span class="n">border</span> <span class="o">=</span> <span class="s2">&quot;red&quot;</span></div>
+
+<div class="viewcode-block" id="test_infline"><a class="viewcode-back" href="../../../../../apidoc/magicclass.ext.pyqtgraph.tests.html#magicclass.ext.pyqtgraph.tests.test_qtgraph.test_infline">[docs]</a><span class="k">def</span> <span class="nf">test_infline</span><span class="p">():</span>
+    <span class="nd">@magicclass</span>
+    <span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+        <span class="n">plot</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">QtPlotCanvas</span><span class="p">)</span>
+
+    <span class="n">ui</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
+    <span class="n">ui</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">add_infline</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">)</span>  <span class="c1"># slope/intercept</span>
+    <span class="n">ui</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">add_infline</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">intercept</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>  <span class="c1"># slope/intercept</span>
+    <span class="n">ui</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">add_infline</span><span class="p">(</span><span class="n">slope</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">intercept</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>  <span class="c1"># slope/intercept</span>
+    <span class="n">ui</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">add_infline</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="mi">83</span><span class="p">)</span>  <span class="c1"># pos/degree</span>
+    <span class="n">ui</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">add_infline</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">degree</span><span class="o">=</span><span class="mi">83</span><span class="p">)</span>  <span class="c1"># pos/degree</span>
+    <span class="n">ui</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">add_infline</span><span class="p">(</span><span class="n">pos</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">degree</span><span class="o">=</span><span class="mi">83</span><span class="p">)</span>  <span class="c1"># pos/degree</span></div>
 </pre></div>
 
            </div>

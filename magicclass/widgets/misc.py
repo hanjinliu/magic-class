@@ -25,7 +25,8 @@ from magicgui.widgets import (
 from magicgui.application import use_app
 from magicgui.widgets import LineEdit
 from magicgui.types import FileDialogMode
-from magicclass._magicgui_compat import ValueWidget, Undefined
+from magicgui.widgets.bases import ValueWidget
+from magicgui.types import Undefined
 from magicgui.backends._qtpy.widgets import (
     QBaseWidget,
     QBaseStringWidget,

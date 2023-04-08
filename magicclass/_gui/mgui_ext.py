@@ -11,7 +11,8 @@ from qtpy.QtWidgets import (
 )
 from psygnal import Signal
 from magicgui.widgets import PushButton, Widget
-from magicclass._magicgui_compat import ValueWidget, _LabeledWidget
+from magicgui.widgets.bases import ValueWidget
+from magicgui.widgets._concrete import _LabeledWidget
 from magicgui.backends._qtpy.widgets import QBaseButtonWidget
 from ._function_gui import FunctionGuiPlus
 from ._icon import get_icon
@@ -34,11 +35,14 @@ class PushButtonPlus(PushButton):
         self.mgui: FunctionGuiPlus | None = None  # tagged function GUI
         self._doc = ""
         self._unwrapped = False
+        self._get_running: Callable[[], bool] | None = None
 
     @property
     def running(self) -> bool:
         """Return true if embedded magicgui widget is running from GUI."""
-        return getattr(self.mgui, "running", False)
+        if self._get_running is None:
+            return getattr(self.mgui, "running", False)
+        return self._get_running()
 
     def set_shortcut(self, key):
         """Set keyboard shortcut to the button."""
@@ -255,10 +259,14 @@ class Action(AbstractAction):
         self._callbacks = []
 
         self.native.triggered.connect(lambda: self.changed.emit(self.value))
+        self._get_running: Callable[[], bool] | None = None
 
     @property
     def running(self) -> bool:
-        return getattr(self.mgui, "running", False)
+        """Return true if embedded magicgui widget is running from GUI."""
+        if self._get_running is None:
+            return getattr(self.mgui, "running", False)
+        return self._get_running()
 
     def set_shortcut(self, key):
         self.native.setShortcut(key)

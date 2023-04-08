@@ -1,3 +1,5 @@
+from contextlib import suppress
+import pytest
 from magicclass import magicclass, magicmenu, set_options, do_not_record, vfield, get_function_gui
 from magicclass.types import Bound
 from magicclass.utils import thread_worker

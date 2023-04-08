@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Best Practice &mdash; magic-class 0.6.13 documentation</title>
+  <title>Best Practice &mdash; magic-class 0.6.14 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/columns.css" type="text/css" />
@@ -19,7 +19,7 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="prev" title="magicclass.widgets.pywidgets package" href="../apidoc/magicclass.widgets.pywidgets.html" />
+    <link rel="prev" title="magicclass.widgets.tests package" href="../apidoc/magicclass.widgets.tests.html" />
 </head>
 
 <body class="wy-body-for-nav">
@@ -27,14 +27,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../index.html" class="icon icon-home"> magic-class
+
+
+
+          <a href="../index.html" class="icon icon-home">
+            magic-class
           </a>
               <div class="version">
-                0.6.13
+                0.6.14
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -69,8 +73,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Best Practice</li>
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Best Practice</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/main/best_practice.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -108,12 +112,12 @@ below is the mose naive implementation.</p>
 
     <span class="nd">@Menu</span><span class="o">.</span><span class="n">wraps</span>
     <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Add two values&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add two values&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">value</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="o">.</span><span class="n">value</span>
 
     <span class="nd">@Menu</span><span class="o">.</span><span class="n">wraps</span>
     <span class="k">def</span> <span class="nf">sub</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Subtract two values&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Subtract two values&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">value</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="o">.</span><span class="n">value</span>
 </pre></div>
 </div>
@@ -139,7 +143,7 @@ and saw its macro recorded like</p>
 <span class="n">ui</span><span class="o">.</span><span class="n">add</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>To avoid this, you can use the &quot;bind&quot; option (see <span class="xref std std-doc">use_bind</span>).</p>
+<p>To avoid this, you can use the &quot;bind&quot; option (see <a class="reference internal" href="make_better/use_bind.html"><span class="doc">Binding Values to Arguments</span></a>).</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">magicmenu</span><span class="p">,</span> <span class="n">field</span>
 <span class="kn">from</span> <span class="nn">magicclass.types</span> <span class="kn">import</span> <span class="n">Bound</span>
 
@@ -156,12 +160,12 @@ and saw its macro recorded like</p>
 
     <span class="nd">@Menu</span><span class="o">.</span><span class="n">wraps</span>
     <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="n">Bound</span><span class="p">[</span><span class="n">a</span><span class="p">],</span> <span class="n">b</span><span class="p">:</span> <span class="n">Bound</span><span class="p">[</span><span class="n">b</span><span class="p">]):</span>  <span class="c1"># &lt;- use Bound</span>
-        <span class="sd">&quot;&quot;&quot;Add two values&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add two values&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
 
     <span class="nd">@Menu</span><span class="o">.</span><span class="n">wraps</span>
     <span class="k">def</span> <span class="nf">sub</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="n">Bound</span><span class="p">[</span><span class="n">a</span><span class="p">],</span> <span class="n">b</span><span class="p">:</span> <span class="n">Bound</span><span class="p">[</span><span class="n">b</span><span class="p">]):</span>  <span class="c1"># &lt;- use Bound</span>
-        <span class="sd">&quot;&quot;&quot;Subtract two values&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Subtract two values&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">a</span> <span class="o">-</span> <span class="n">b</span>
 </pre></div>
 </div>
@@ -178,7 +182,7 @@ will be recorded in a better way.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="../apidoc/magicclass.widgets.pywidgets.html" class="btn btn-neutral float-left" title="magicclass.widgets.pywidgets package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../apidoc/magicclass.widgets.tests.html" class="btn btn-neutral float-left" title="magicclass.widgets.tests package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>

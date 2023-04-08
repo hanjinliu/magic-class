@@ -12,13 +12,13 @@ from magicgui.widgets import (
     Table,
     Widget,
 )
-from magicclass._magicgui_compat import (
+from magicgui.widgets.bases import (
     ButtonWidget,
     ValueWidget,
     ContainerWidget,
-    _LabeledWidget,
     ContainerWidget,
 )
+from magicgui.widgets._concrete import _LabeledWidget
 from macrokit import Symbol
 
 from .keybinding import register_shortcut
@@ -394,7 +394,7 @@ def make_gui(
         )
 
         def __init__(
-            self,
+            self: ClassGuiBase,
             layout: str = "vertical",
             close_on_run: bool = None,
             popup_mode: str | PopUpMode = None,
@@ -421,7 +421,7 @@ def make_gui(
 
         # ui["x"] will not return widget if x is a MagicValueField.
         # To ensure __getitem__ returns a Widget, this method should be overriden.
-        def __getitem__(self, key):
+        def __getitem__(self: ClassGuiBase, key):
             """Get item by integer, str, or slice."""
             if isinstance(key, str):
                 for widget in self._list:
@@ -435,12 +435,12 @@ def make_gui(
             else:
                 object.__setattr__(self, name, value)
 
-        def insert(self, key: int, widget: Widget) -> None:
+        def insert(self: ClassGuiBase, key: int, widget: Widget) -> None:
             self._fast_insert(key, widget)
             self._unify_label_widths()
             return None
 
-        def reset_choices(self, *_: Any):
+        def reset_choices(self: ClassGuiBase, *_: Any):
             """Reset child Categorical widgets"""
             all_widgets: set[Widget] = set()
 
@@ -455,7 +455,7 @@ def make_gui(
                     w.reset_choices()
             return None
 
-        def show(self, run: bool = True) -> None:
+        def show(self: ClassGuiBase, run: bool = True) -> None:
             """
             Show GUI. If any of the parent GUI is a dock widget in napari, then this
             will also show up as a dock widget (floating if in popup mode).
@@ -501,7 +501,7 @@ def make_gui(
                     run_app()
             return None
 
-        def close(self):
+        def close(self: ClassGuiBase):
             """Close GUI. if this widget is a dock widget, then also close it."""
 
             current_self = self._search_parent_magicclass()
@@ -526,7 +526,7 @@ def make_gui(
             # try to convert it into widget. Should decorate with @nogui.
             @nogui
             def add_dock_widget(
-                self,
+                self: MainWindowClassGui,
                 widget: Widget,
                 *,
                 name: str = "",
@@ -567,7 +567,7 @@ def make_gui(
                     widget._my_symbol = Symbol(name)
 
             @nogui
-            def remove_dock_widget(self: cls, widget: Widget):
+            def remove_dock_widget(self: MainWindowClassGui, widget: Widget):
                 from ._dock_widget import QtDockWidget
 
                 dock = None
@@ -587,12 +587,12 @@ def make_gui(
                 self.__magicclass_children__.pop(i_dock)
 
             @property
-            def status(self: cls) -> str:
+            def status(self: MainWindowClassGui) -> str:
                 """Get status tip."""
                 return self.native.statusTip()
 
             @status.setter
-            def status(self: cls, text: str):
+            def status(self: MainWindowClassGui, text: str):
                 """Set status tip."""
                 self.native.setStatusTip(text)
                 self.native.statusBar().showMessage(text, 5000)

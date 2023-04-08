@@ -6,7 +6,7 @@
 magic-class
 ===========
 
-``magic-class`` is an extension of `magicgui <https://napari.org/magicgui/>`_.
+``magic-class`` is an extension of `magicgui <https://github.com/pyapp-kit/magicgui>`_.
 You can make multi-functional GUI from Python classes.
 
 Source

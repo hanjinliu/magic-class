@@ -12,7 +12,7 @@ from magicgui.backends._qtpy.widgets import (
     Container as ContainerBase,
     MainWindow as MainWindowBase,
 )
-from magicclass._magicgui_compat import ContainerWidget
+from magicgui.widgets.bases import ContainerWidget
 
 from .utils import merge_super_sigs
 
@@ -249,6 +249,7 @@ _HORIZONTAL_SETTING = {
     "property-name": b"maximumWidth",
     "layout": QtW.QHBoxLayout,
 }
+
 
 # modified from superqt\collapsible\_collapsible.py
 class _QCollapsible(QtW.QWidget):

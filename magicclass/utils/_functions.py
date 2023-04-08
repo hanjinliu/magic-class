@@ -9,6 +9,20 @@ from docstring_parser import parse
 if TYPE_CHECKING:
     from magicclass._gui import BaseGui
 
+try:
+    from typing import _BaseGenericAlias
+except ImportError:
+    from typing_extensions import _BaseGenericAlias
+
+_type_like = (type, _BaseGenericAlias)
+
+try:
+    from types import GenericAlias
+
+    _type_like += (GenericAlias,)
+except ImportError:
+    pass
+
 
 def iter_members(cls: type, exclude_prefix: str = "__") -> Iterable[tuple[str, Any]]:
     """
@@ -222,3 +236,7 @@ def _copy_info(src: type, dst: type) -> None:
                 dst_attr.__doc__ = attr.__doc__
 
     return None
+
+
+def is_type_like(x: Any) -> bool:
+    return isinstance(x, _type_like) or hasattr(x, "__supertype__")

@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Inherit Magic Class &mdash; magic-class 0.6.13 documentation</title>
+  <title>Inherit Magic Class &mdash; magic-class 0.6.14 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/columns.css" type="text/css" />
@@ -28,14 +28,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> magic-class
+
+
+
+          <a href="../../index.html" class="icon icon-home">
+            magic-class
           </a>
               <div class="version">
-                0.6.13
+                0.6.14
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -84,9 +88,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="index.html">Advanced Topics</a> &raquo;</li>
-      <li>Inherit Magic Class</li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Advanced Topics</a></li>
+      <li class="breadcrumb-item active">Inherit Magic Class</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/main/advanced/class_inheritance.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -111,12 +115,12 @@ abstract classes.</p>
 
 <span class="k">class</span> <span class="nc">Base</span><span class="p">:</span>
     <span class="k">def</span> <span class="nf">common_function</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Do some common things.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Do some common things.&quot;&quot;&quot;</span>
 
 <span class="nd">@magicclass</span>
 <span class="k">class</span> <span class="nc">Main</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">main_function</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Main one.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Main one.&quot;&quot;&quot;</span>
 
 <span class="n">ui</span> <span class="o">=</span> <span class="n">Main</span><span class="p">()</span>
 <span class="n">ui</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
@@ -167,7 +171,7 @@ function to a field, you must re-define fields in the subclasses.</p>
 <span class="nd">@magicclass</span>
 <span class="k">class</span> <span class="nc">Main</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Bound</span><span class="p">[</span><span class="n">x</span><span class="p">]):</span>
-        <span class="sd">&quot;&quot;&quot;Do something&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Do something&quot;&quot;&quot;</span>
 </pre></div>
 </div>
 </div>
@@ -184,7 +188,7 @@ function to a field, you must re-define fields in the subclasses.</p>
     <span class="n">x</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Bound</span><span class="p">[</span><span class="n">x</span><span class="p">]):</span>
-        <span class="sd">&quot;&quot;&quot;Do something&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Do something&quot;&quot;&quot;</span>
 </pre></div>
 </div>
 </div>
@@ -204,7 +208,7 @@ function to a field, you must re-define fields in the subclasses.</p>
 <span class="k">class</span> <span class="nc">Main</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
     <span class="nd">@x</span><span class="o">.</span><span class="n">connect</span>
     <span class="k">def</span> <span class="nf">_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Do something&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Do something&quot;&quot;&quot;</span>
 </pre></div>
 </div>
 </div>
@@ -221,7 +225,7 @@ function to a field, you must re-define fields in the subclasses.</p>
 
     <span class="nd">@x</span><span class="o">.</span><span class="n">connect</span>
     <span class="k">def</span> <span class="nf">_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Do something&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Do something&quot;&quot;&quot;</span>
 </pre></div>
 </div>
 </div>
@@ -283,7 +287,7 @@ define the real widgets in the subclasses.</p>
 <span class="nd">@magicclass</span>
 <span class="k">class</span> <span class="nc">A</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Do something&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Do something&quot;&quot;&quot;</span>
 
 <span class="nd">@magicclass</span>
 <span class="k">class</span> <span class="nc">B</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>

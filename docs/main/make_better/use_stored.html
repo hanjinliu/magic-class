@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="English" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Store Outputs for the Future Inputs &mdash; magic-class 0.6.14 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/columns.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Add Preview Functionalities" href="use_preview.html" />
+    <link rel="prev" title="Complicated Settings of FunctionGui" href="use_setup.html" />
+</head>
+
+<body class="wy-body-for-nav">
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> magic-class
+          </a>
+              <div class="version">
+                0.6.14
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../quick_start.html">Quick Start</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../basics/index.html">Basics</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Make Your GUI Better</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="use_wraps.html">Call Parent Methods from its Child</a></li>
+<li class="toctree-l2"><a class="reference internal" href="use_bind.html">Binding Values to Arguments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="use_choices.html">Set Choices Dynamically</a></li>
+<li class="toctree-l2"><a class="reference internal" href="use_setup.html">Complicated Settings of FunctionGui</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Store Outputs for the Future Inputs</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#stored-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stored</span></code> type</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#stored-last-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stored.Last</span></code> type</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#split-storages-for-the-same-type">Split storages for the same type</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="use_preview.html">Add Preview Functionalities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="use_worker.html">Multi-threading</a></li>
+<li class="toctree-l2"><a class="reference internal" href="use_icon.html">Set Custom Icons</a></li>
+<li class="toctree-l2"><a class="reference internal" href="use_logging.html">Logging in magic-class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="use_functools.html">Use functools-like API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="additional_types.html">Additional types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="containers.html">Container Variations</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/index.html">Data Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced/index.html">Advanced Topics</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../best_practice.html">Best Practice</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">magic-class</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">Make Your GUI Better</a> &raquo;</li>
+      <li>Store Outputs for the Future Inputs</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/main/make_better/use_stored.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+
+  <section id="store-outputs-for-the-future-inputs">
+<h1>Store Outputs for the Future Inputs<a class="headerlink" href="#store-outputs-for-the-future-inputs" title="Permalink to this headline">¶</a></h1>
+<p>When you want to define a set of functions, in which the output of one function
+will be used for the input of another function, naively, you'll have to store
+the outputs as an attribute.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@magicclass</span>
+<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_output</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">provide</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_output</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># do some computation</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output</span>
+
+    <span class="k">def</span> <span class="nf">receive</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_output</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If you provided <code class="docutils literal notranslate"><span class="pre">1</span></code>, macro will be recorded as following.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ui</span><span class="o">.</span><span class="n">provide</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ui</span><span class="o">.</span><span class="n">receive</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>However, changing the internal state is not a good idea and following script should
+be more intuitive.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">value</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">provide</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ui</span><span class="o">.</span><span class="n">receive</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</pre></div>
+</div>
+<section id="stored-type">
+<h2><code class="xref py py-class docutils literal notranslate"><span class="pre">Stored</span></code> type<a class="headerlink" href="#stored-type" title="Permalink to this headline">¶</a></h2>
+<p><code class="xref py py-class docutils literal notranslate"><span class="pre">Stored</span></code> type is a type annotation for this purpose. <code class="xref py py-class docutils literal notranslate"><span class="pre">Stored[T]</span></code> is
+identical to <code class="xref py py-class docutils literal notranslate"><span class="pre">T</span></code> for the type checker, but it stores the past output
+annotated with <code class="xref py py-class docutils literal notranslate"><span class="pre">Stored[T]</span></code> for the future inputs annotated with
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Stored[T]</span></code>.</p>
+<p>Type annotation <code class="xref py py-class docutils literal notranslate"><span class="pre">Stored[T]</span></code> is mapped to <code class="xref py py-class docutils literal notranslate"><span class="pre">ComboBox</span></code> magicgui widget.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@magicclass</span>
+<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">provide</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Stored</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># do some computation</span>
+
+    <span class="k">def</span> <span class="nf">receive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Stored</span><span class="p">[</span><span class="nb">int</span><span class="p">]):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>And the macro will look like following.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">var0</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">provide</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ui</span><span class="o">.</span><span class="n">receive</span><span class="p">(</span><span class="n">var0</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">var0</span></code> may vary depending on the order of the functions. The variable names
+are automatically generated based on their IDs.</p>
+</div>
+<p>In principle, you can give <strong>any</strong> types to <code class="xref py py-class docutils literal notranslate"><span class="pre">Stored</span></code>. This feature strongly
+enhances the reproducibility of your GUI.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="nd">@magicclass</span>
+<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">read_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Stored</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">summarize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">Stored</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">describe</span><span class="p">())</span>
+</pre></div>
+</div>
+</section>
+<section id="stored-last-type">
+<h2><code class="xref py py-class docutils literal notranslate"><span class="pre">Stored.Last</span></code> type<a class="headerlink" href="#stored-last-type" title="Permalink to this headline">¶</a></h2>
+<p>If you only want to use the last output, you can use <code class="xref py py-class docutils literal notranslate"><span class="pre">Stored.Last[T]</span></code> type.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@magicclass</span>
+<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">provide</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Stored</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># do some computation</span>
+
+    <span class="k">def</span> <span class="nf">receive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Stored</span><span class="o">.</span><span class="n">Last</span><span class="p">[</span><span class="nb">int</span><span class="p">]):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Macro will be recorded in the same way.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">var0</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">provide</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ui</span><span class="o">.</span><span class="n">receive</span><span class="p">(</span><span class="n">var0</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="split-storages-for-the-same-type">
+<h2>Split storages for the same type<a class="headerlink" href="#split-storages-for-the-same-type" title="Permalink to this headline">¶</a></h2>
+<p>Methods with same <code class="xref py py-class docutils literal notranslate"><span class="pre">Stored</span></code> types don't always share the same storage. You can
+give a hashable specifier to the second argument of <code class="xref py py-class docutils literal notranslate"><span class="pre">Stored</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@magicclass</span>
+<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">provide_0</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Stored</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># do some computation</span>
+
+    <span class="k">def</span> <span class="nf">provide_1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Stored</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">4</span>  <span class="c1"># do some computation</span>
+
+    <span class="k">def</span> <span class="nf">receive_0</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Stored</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">]):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">receive_1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Stored</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">]):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="xref py py-class docutils literal notranslate"><span class="pre">Stored.Last</span></code> follows the same rule. <code class="docutils literal notranslate"><span class="pre">Stored.Last[int,</span> <span class="pre">&quot;a&quot;]</span></code> provides the
+last output of <code class="docutils literal notranslate"><span class="pre">Stored[int,</span> <span class="pre">&quot;a&quot;]</span></code>.</p>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="use_setup.html" class="btn btn-neutral float-left" title="Complicated Settings of FunctionGui" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="use_preview.html" class="btn btn-neutral float-right" title="Add Preview Functionalities" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Hanjin Liu.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+</body>
+</html>

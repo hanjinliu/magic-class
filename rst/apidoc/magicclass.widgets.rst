@@ -8,9 +8,18 @@ Subpackages
    :maxdepth: 4
 
    magicclass.widgets.pywidgets
+   magicclass.widgets.tests
 
 Submodules
 ----------
+
+magicclass.widgets.codeedit module
+----------------------------------
+
+.. automodule:: magicclass.widgets.codeedit
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 magicclass.widgets.color module
 -------------------------------
@@ -24,6 +33,14 @@ magicclass.widgets.containers module
 ------------------------------------
 
 .. automodule:: magicclass.widgets.containers
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+magicclass.widgets.eval module
+------------------------------
+
+.. automodule:: magicclass.widgets.eval
    :members:
    :undoc-members:
    :show-inheritance:
@@ -56,6 +73,14 @@ magicclass.widgets.separator module
 -----------------------------------
 
 .. automodule:: magicclass.widgets.separator
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+magicclass.widgets.toggle\_switch module
+----------------------------------------
+
+.. automodule:: magicclass.widgets.toggle_switch
    :members:
    :undoc-members:
    :show-inheritance:

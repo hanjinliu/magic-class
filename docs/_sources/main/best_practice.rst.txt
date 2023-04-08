@@ -65,7 +65,7 @@ and saw its macro recorded like
     ui.b.value = 3.0
     ui.add()
 
-To avoid this, you can use the "bind" option (see :doc:`use_bind`).
+To avoid this, you can use the "bind" option (see :doc:`./make_better/use_bind`).
 
 .. code-block:: python
 

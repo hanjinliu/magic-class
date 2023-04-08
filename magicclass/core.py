@@ -495,7 +495,7 @@ def build_help(ui: MagicTemplate, parent=None) -> HelpWidget:
     return help_widget
 
 
-def get_button(ui: MagicTemplate | ModuleType, name: str = None) -> Clickable:
+def get_button(ui: MagicTemplate | ModuleType, name: str | None = None) -> Clickable:
     """
     Get the button/action object for the given method.
 
@@ -514,14 +514,25 @@ def get_button(ui: MagicTemplate | ModuleType, name: str = None) -> Clickable:
             name = func.__name__
         else:
             raise TypeError(
-                "The first argument of `get_function_gui() must be a method if "
+                "The first argument of `get_button() must be a method if "
                 "the method name is not given."
             )
-    widget = ui[name]
+    widget: Clickable = ui[name]
 
     if not hasattr(widget, "mgui"):
         raise TypeError(f"Widget {widget} does not have FunctionGui inside it.")
 
+    if widget._unwrapped:
+        from magicclass.signature import get_additional_option
+
+        opt = get_additional_option(getattr(ui, name), "into", None)
+        if opt is not None:
+            for child_instance in ui._iter_child_magicclasses():
+                _name = child_instance.__class__.__name__
+                if _name == opt:
+                    widget = child_instance[name]
+                    return widget
+            raise ValueError(f"Could not find {opt} in {ui}.")
     return widget
 
 
