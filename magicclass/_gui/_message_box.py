@@ -43,6 +43,8 @@ class QtErrorMessageBox(QMessageBox):
         else:
             if len(text_or_exception.args) > 0:
                 text = text_or_exception.args[0]
+                if len(text) > 1000:
+                    text = text[:1000] + "..."
             else:
                 text = ""
             exc = text_or_exception
