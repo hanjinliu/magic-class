@@ -30,7 +30,6 @@ class PopUpMode(Enum):
         }
 
     def activate_magicgui(self, mgui: FunctionGuiPlus):
-
         if self not in (
             PopUpMode.dock,
             PopUpMode.dialog,
@@ -43,6 +42,10 @@ class PopUpMode(Enum):
             mgui.native.parent().setVisible(True)
         else:
             mgui.exec_as_dialog(parent=self)
+        try:
+            mgui[0].native.setFocus()
+        except Exception:
+            pass
 
     def connect_close_callback(self, mgui: FunctionGui):
         if self not in {PopUpMode.dock, PopUpMode.parentsub, PopUpMode.dialog}:
