@@ -185,7 +185,22 @@ class magicproperty(MagicField[_ButtonedWidget], Generic[_V]):
         call_button: bool | str | None = None,
         options: dict[str, Any] | None = None,
         record: bool = True,
-    ) -> Self[_V]:
+    ) -> magicproperty[_V]:
+        """
+        Directly create a magicproperty from a setter function.
+
+        Example
+        -------
+        >>> @magicproperty.from_setter
+        >>> def x(self, val: int):
+        ...     print(f"setting x to {val}")
+
+        >>> @magicproperty.from_setter(label="X")
+        >>> def x(self, val: int):
+        ...     print(f"setting x to {val}")
+
+        """
+
         def _wrapper(fset):
             return cls(
                 fset=fset,
@@ -202,7 +217,7 @@ class magicproperty(MagicField[_ButtonedWidget], Generic[_V]):
 
         return _wrapper if fset is None else _wrapper(fset)
 
-    def copy(self) -> Self[_V]:
+    def copy(self) -> magicproperty[_V]:
         raise NotImplementedError
 
     def getter(self, fget: Callable[[Any], _V]) -> magicproperty[_V]:
@@ -236,6 +251,11 @@ class magicproperty(MagicField[_ButtonedWidget], Generic[_V]):
         """Define a deleter function."""
         self._fdel = fdel
         return self
+
+    def __set_name__(self, owner: type, name: str) -> None:
+        super().__set_name__(owner, name)
+        if annotation := owner.__annotations__.get(name):
+            self.annotation = annotation
 
     def _default_fget(self, obj) -> _V:
         """Return the widget value by default."""
