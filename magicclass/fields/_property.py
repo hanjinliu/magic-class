@@ -1,22 +1,22 @@
 from __future__ import annotations
 
-from typing import Generic, TypeVar, Callable, Any, TYPE_CHECKING
+from typing import Generic, TypeVar, Callable, Any
 import inspect
+from psygnal import debounced, Signal
 from magicgui.signature import magic_signature
 from magicgui.widgets import create_widget, Container, PushButton
 from magicgui.widgets.bases import ValueWidget
+from magicclass.signature import split_annotated_type
 from ._fields import MagicField
 from ._define import define_callback
-from magicclass.signature import split_annotated_type
 
 _V = TypeVar("_V")
-
-if TYPE_CHECKING:
-    from typing_extensions import Self
 
 
 class _ButtonedWidget(Container):
     """A widget wrapper that adds a button to set the value."""
+
+    restoring = Signal()
 
     def __init__(
         self,
@@ -52,6 +52,15 @@ class _ButtonedWidget(Container):
 
         if auto_call:
             widget.changed.connect(self.set_value)
+        else:
+
+            @self.restoring.connect
+            def _restore():
+                with widget.changed.blocked():
+                    self.widget.value = self._inner_value
+                return None
+
+            widget.changed.connect(self._create_debounced())
 
     @classmethod
     def from_options(
@@ -105,6 +114,16 @@ class _ButtonedWidget(Container):
     def call_button(self) -> PushButton | None:
         """The call button widget."""
         return self._call_button
+
+    def _create_debounced(self):
+        @debounced(timeout=1000)
+        def _reset_value(val):
+            if self.widget.native.hasFocus():
+                _reset_value(val)
+            else:
+                self.restoring.emit()
+
+        return lambda v: _reset_value(v)
 
 
 class magicproperty(MagicField[_ButtonedWidget], Generic[_V]):
@@ -185,7 +204,22 @@ class magicproperty(MagicField[_ButtonedWidget], Generic[_V]):
         call_button: bool | str | None = None,
         options: dict[str, Any] | None = None,
         record: bool = True,
-    ) -> Self[_V]:
+    ) -> magicproperty[_V]:
+        """
+        Directly create a magicproperty from a setter function.
+
+        Example
+        -------
+        >>> @magicproperty.from_setter
+        >>> def x(self, val: int):
+        ...     print(f"setting x to {val}")
+
+        >>> @magicproperty.from_setter(label="X")
+        >>> def x(self, val: int):
+        ...     print(f"setting x to {val}")
+
+        """
+
         def _wrapper(fset):
             return cls(
                 fset=fset,
@@ -202,7 +236,7 @@ class magicproperty(MagicField[_ButtonedWidget], Generic[_V]):
 
         return _wrapper if fset is None else _wrapper(fset)
 
-    def copy(self) -> Self[_V]:
+    def copy(self) -> magicproperty[_V]:
         raise NotImplementedError
 
     def getter(self, fget: Callable[[Any], _V]) -> magicproperty[_V]:
@@ -236,6 +270,11 @@ class magicproperty(MagicField[_ButtonedWidget], Generic[_V]):
         """Define a deleter function."""
         self._fdel = fdel
         return self
+
+    def __set_name__(self, owner: type, name: str) -> None:
+        super().__set_name__(owner, name)
+        if annotation := owner.__annotations__.get(name):
+            self.annotation = annotation
 
     def _default_fget(self, obj) -> _V:
         """Return the widget value by default."""
