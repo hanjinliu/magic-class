@@ -14,7 +14,7 @@ else:
 from psygnal.containers import EventedList
 from .const import AxesMode
 from .volume import Volume
-from .components import Mesh, VtkComponent, get_object_type
+from .components import Mesh, VtkComponent, get_object_type, Points
 
 from magicclass.widgets import FreeWidget
 from magicclass.types import Color
@@ -127,6 +127,25 @@ class VtkCanvas(FreeWidget):
         if len(self.layers) == 1:
             self._qt_vtk_canvas.plt.show(zoom=True)
         return mesh
+
+    def add_points(
+        self,
+        data: np.ndarray,
+        color=(0.2, 0.2, 0.2),
+        alpha=1,
+        radius=4,
+    ):
+        points = Points(
+            data,
+            color=color,
+            alpha=alpha,
+            radius=radius,
+            _parent=self._qt_vtk_canvas.plt,
+        )
+        self.layers.append(points)
+        if len(self.layers) == 1:
+            self._qt_vtk_canvas.plt.show(zoom=True)
+        return points
 
     @property
     def axes(self) -> str:

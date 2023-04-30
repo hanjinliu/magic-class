@@ -1,8 +1,7 @@
 from __future__ import annotations
-from typing import Callable, Generic, Tuple, TypeVar, overload
+from typing import Callable, Generic, TypeVar, overload
 import weakref
 import vedo
-import numpy as np
 from .const import Representation
 from magicclass.fields import vfield, HasFields
 from magicclass.types import Color
@@ -57,8 +56,20 @@ class Points(VtkComponent, base=vedo.Points):
     size = vfield(float)
     spherical = vfield(False)
     occlusion = vfield(float)
-    pos = vfield(Tuple[float, float, float])
     scale = vfield(float)
+
+    def __init__(
+        self,
+        data,
+        color=(0.2, 0.2, 0.2),
+        alpha=1,
+        radius=4,
+        _parent: vedo.Plotter = None,
+        _emit: bool = True,
+    ):
+        super().__init__(
+            data, c=color, alpha=alpha, r=radius, _parent=_parent, _emit=_emit
+        )
 
     @color.connect
     def _on_color_change(self, v):
@@ -67,12 +78,12 @@ class Points(VtkComponent, base=vedo.Points):
 
     @size.connect
     def _on_size_change(self, v):
-        self._obj.PointSize(v)
+        self._obj.point_size(v)
         self._update()
 
     @spherical.connect
     def _on_spherical_change(self, v):
-        self._obj.RenderPointsAsSpheres(v)
+        self._obj.render_points_as_spheres(v)
         self._update()
 
     @occlusion.connect
@@ -80,14 +91,9 @@ class Points(VtkComponent, base=vedo.Points):
         self._obj.occlusion(v)
         self._update()
 
-    @pos.connect
-    def _on_pos_change(self, v):
-        self._obj.pos(*v)
-        self._update()
-
     @scale.connect
     def _on_scale_change(self, v):
-        self._obj.scale(v, absolute=True)
+        self._obj.scale(v, reset=True)
         self._update()
 
 
@@ -116,7 +122,7 @@ class Mesh(VtkComponent, base=vedo.Mesh):
 
     @scale.connect
     def _on_scale_change(self, v):
-        self._obj.scale(v, absolute=True)
+        self._obj.scale(v, reset=True)
         self._update()
 
     @representation.connect
@@ -136,17 +142,17 @@ class Mesh(VtkComponent, base=vedo.Mesh):
 
     @frontface_culling.connect
     def _on_frontface_culling_change(self, v):
-        self._obj.frontFaceCulling(v)
+        self._obj.frontface_culling(v)
         self._update()
 
     @backface_culling.connect
     def _on_backface_culling_change(self, v):
-        self._obj.backFaceCulling(v)
+        self._obj.backface_culling(v)
         self._update()
 
     @lines_as_tubes.connect
     def _on_lines_as_tubes_change(self, v):
-        self._obj.renderLinesAsTubes(v)
+        self._obj.render_lines_as_tubes(v)
         self._update()
 
 
