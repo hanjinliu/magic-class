@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import Callable, TYPE_CHECKING, TypeVar, overload
 
+from macrokit import Mock, Expr
 from magicclass.utils import show_messagebox
 from magicclass.signature import upgrade_signature
 
@@ -18,7 +19,7 @@ class Canceled(RuntimeError):
 def confirm(
     *,
     text: str | None,
-    condition: Callable[..., bool] | str | None,
+    condition: Callable[..., bool] | str | Mock | Expr | None,
     callback: Callable[[str, BaseGui], None] | None = None,
 ) -> Callable[[_F], _F]:
     ...
@@ -29,7 +30,7 @@ def confirm(
     f: _F,
     *,
     text: str | None,
-    condition: Callable[..., bool] | str | None,
+    condition: Callable[..., bool] | str | Mock | Expr | None,
     callback: Callable[[str, BaseGui], None] | None = None,
 ) -> _F:
     ...
@@ -39,7 +40,7 @@ def confirm(
     f: _F | None = None,
     *,
     text: str | None = None,
-    condition: Callable[[BaseGui], bool] | str = None,
+    condition: Callable[[BaseGui], bool] | str | Mock | Expr | None = None,
     callback: Callable[[str, BaseGui], None] | None = None,
 ):
     """
@@ -72,6 +73,8 @@ def confirm(
     """
     if condition is None:
         condition = lambda x: True
+    elif isinstance(condition, (Mock, Expr)):
+        condition = str(condition)
     if callback is None:
         callback = _default_confirmation
 
