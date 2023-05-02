@@ -42,7 +42,7 @@ class QtErrorMessageBox(QMessageBox):
             exc = None
         else:
             if len(text_or_exception.args) > 0:
-                text = text_or_exception.args[0]
+                text = str(text_or_exception)
                 if len(text) > 1000:
                     text = text[:1000] + "..."
             else:

@@ -1324,7 +1324,7 @@ def _implement_confirmation(
                     msg = e.args[0]
                     e.args = (
                         f"Exception happened on evaluating condition {condition!r}.\n"
-                        f"{type(e).__name__}: {msg}"
+                        f"{type(e).__name__}: {msg}",
                     )
                     raise e
             elif callable(condition):
