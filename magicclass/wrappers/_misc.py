@@ -230,10 +230,14 @@ def setup_function_gui(target: Callable):
     def wrapper(setup: Callable[[BaseGui, FunctionGui], None]):
         setup_qualname = setup.__qualname__
         target_qualname = target.__qualname__
-        if setup_qualname.split(".")[-2] != target_qualname.split(".")[-2]:
+        setup_qualname_list = setup_qualname.split(".")
+        if (
+            len(setup_qualname_list) > 1
+            and setup_qualname_list[-2] != target_qualname.split(".")[-2]
+        ):
             # have to search for the proper parent instance
             def _setup(self: BaseGui, mgui: FunctionGui):
-                prev_ns = setup_qualname.split(".")[-2]
+                prev_ns = setup_qualname_list[-2]
                 while self.__class__.__name__ != prev_ns:
                     self = self.__magicclass_parent__
                 return setup(self, mgui)

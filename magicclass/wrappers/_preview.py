@@ -158,12 +158,14 @@ def impl_arg_filter(f: _F, tgt: Callable, tgt_sig: inspect.Signature) -> _F:
         # find proper parent instance in the case of classes being nested
         if len(args) > 0 and isinstance(args[0], BaseGui):
             ins = args[0]
-            prev_ns = f.__qualname__.split(".")[-2]
-            while ins.__class__.__name__ != prev_ns:
-                if ins.__magicclass_parent__ is None:
-                    break
-                ins = ins.__magicclass_parent__
-            args = (ins,) + args[1:]
+            qualnames = f.__qualname__.split(".")
+            if len(qualnames) >= 2:
+                prev_ns = qualnames[-2]
+                while ins.__class__.__name__ != prev_ns:
+                    if ins.__magicclass_parent__ is None:
+                        break
+                    ins = ins.__magicclass_parent__
+                args = (ins,) + args[1:]
 
         with ins.macro.blocked():
             # filter input arguments

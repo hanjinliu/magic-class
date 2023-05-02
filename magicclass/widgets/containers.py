@@ -7,6 +7,7 @@ from qtpy.QtCore import Qt, QEvent, QSize
 
 from magicgui.application import use_app
 from magicgui.widgets import Widget
+from magicgui.widgets._concrete import _LabeledWidget
 from magicgui.backends._qtpy.widgets import (
     QBaseWidget,
     Container as ContainerBase,
@@ -119,7 +120,11 @@ class _Tab(ContainerBase):
         self._qwidget.layout().setContentsMargins(0, 0, 0, 0)
 
     def _mgui_insert_widget(self, position: int, widget: Widget):
-        self._tab_widget.insertTab(position, widget.native, widget.name)
+        if isinstance(widget, _LabeledWidget):
+            tabname = widget._label_widget.value
+        else:
+            tabname = widget.name or widget.label
+        self._tab_widget.insertTab(position, widget.native, tabname)
 
     def _mgui_remove_widget(self, widget: Widget):
         for i in range(self._tab_widget.count()):
