@@ -5,7 +5,7 @@ from magicgui.widgets import FunctionGui
 
 from magicclass.signature import upgrade_signature
 
-F = TypeVar("F", bound=Callable)
+_F = TypeVar("_F", bound=Callable)
 
 
 if TYPE_CHECKING:
@@ -21,7 +21,7 @@ if TYPE_CHECKING:
         def __call__(self, *args: _P.args, **kwargs: _P.kwargs) -> _R:
             """Run function."""
 
-        def during_preview(self, f: F) -> F:
+        def during_preview(self, f: _F) -> _F:
             """Wrapped function will be used as a context manager during preview."""
 
 
@@ -39,13 +39,15 @@ def impl_preview(
     Following example shows how to define a previewer that prints the content of
     the selected file.
 
-    >>> def func(self, path: Path):
-    ...     ...
-
-    >>> @impl_preview(func)
-    >>> def _func_prev(self, path: Path):
-    ...     with open(path, mode="r") as f:
-    ...         print(f.read())
+    >>> @magicclass
+    >>> class MyGui:
+    ...     def func(self, path: Path):
+    ...         ...
+    ...
+    ...     @impl_preview(func)
+    ...     def _func_prev(self, path: Path):
+    ...         with open(path, mode="r") as f:
+    ...             print(f.read())
 
     Parameters
     ----------
@@ -62,60 +64,9 @@ def impl_preview(
     mark_self = False
 
     def _outer_wrapper(target_func: Callable) -> PreviewFunction:
-        sig_func = inspect.signature(target_func)
-        params_func = sig_func.parameters
+        target_func_sig = inspect.signature(target_func)
 
-        def _get_arg_filter(fn) -> Callable:
-            sig_preview = inspect.signature(fn)
-            params_preview = sig_preview.parameters
-
-            less = len(params_func) - len(params_preview)
-            if less == 0:
-                if params_preview.keys() != params_func.keys():
-                    raise TypeError(
-                        f"Arguments mismatch between {sig_preview!r} and {sig_func!r}."
-                    )
-                # If argument names are identical, input arguments don't have to be filtered.
-                _filter = lambda a: a
-
-            elif less > 0:
-                idx: list[int] = []
-                for i, param in enumerate(params_func.keys()):
-                    if param in params_preview:
-                        idx.append(i)
-                # If argument names are not identical, input arguments have to be filtered so
-                # that arguments match the inputs.
-                _filter = lambda _args: (a for i, a in enumerate(_args) if i in idx)
-
-            else:
-                raise TypeError(
-                    f"Number of arguments of function {fn!r} must be subset of "
-                    f"that of running function {target_func!r}."
-                )
-            return _filter
-
-        def _impl_arg_filter(f: F, _filter: Callable) -> F:
-            def _func(*args):
-                from magicclass._gui import BaseGui
-
-                # find proper parent instance in the case of classes being nested
-                if len(args) > 0 and isinstance(args[0], BaseGui):
-                    ins = args[0]
-                    prev_ns = f.__qualname__.split(".")[-2]
-                    while ins.__class__.__name__ != prev_ns:
-                        if ins.__magicclass_parent__ is None:
-                            break
-                        ins = ins.__magicclass_parent__
-                    args = (ins,) + args[1:]
-
-                with ins.macro.blocked():
-                    # filter input arguments
-                    out = f(*_filter(args))
-                return out
-
-            return _func
-
-        def _wrapper(preview: F) -> F:
+        def _wrapper(preview: _F) -> _F:
             _is_generator = inspect.isgeneratorfunction(preview)
             if _is_generator:
                 _preview_context_generator = preview
@@ -126,15 +77,13 @@ def impl_preview(
                             preview, attr, getattr(_preview_context_generator, attr)
                         )
 
-            _filter = _get_arg_filter(preview)
-            _preview = _impl_arg_filter(preview, _filter)
+            _preview = impl_arg_filter(preview, target_func, target_func_sig)
             _preview.__wrapped__ = preview
             _preview.__name__ = getattr(preview, "__name__", "_preview")
             _preview.__qualname__ = getattr(preview, "__qualname__", "")
 
-            def _set_during_preview(during: F) -> F:
-                _filter = _get_arg_filter(during)
-                _during = _impl_arg_filter(during, _filter)
+            def _set_during_preview(during: _F) -> _F:
+                _during = impl_arg_filter(during, target_func, target_func_sig)
                 _preview._preview_context = _during
                 return during
 
@@ -167,3 +116,58 @@ def impl_preview(
 
 
 mark_preview = impl_preview
+
+
+def get_arg_filter(
+    prev: Callable, tgt: Callable, tgt_sig: inspect.Signature
+) -> Callable:
+    tgt_params = tgt_sig.parameters
+    prev_sig = inspect.signature(prev)
+    prev_params = prev_sig.parameters
+
+    less = len(tgt_params) - len(prev_params)
+    if less == 0:
+        if prev_params.keys() != tgt_params.keys():
+            raise TypeError(f"Arguments mismatch between {prev_sig!r} and {tgt_sig!r}.")
+        # If argument names are identical, input arguments don't have to be filtered.
+        _filter = lambda a: a
+
+    elif less > 0:
+        idx: list[int] = []
+        for i, param in enumerate(tgt_params.keys()):
+            if param in prev_params:
+                idx.append(i)
+        # If argument names are not identical, input arguments have to be filtered so
+        # that arguments match the inputs.
+        _filter = lambda _args: (a for i, a in enumerate(_args) if i in idx)
+
+    else:
+        raise TypeError(
+            f"Number of arguments of function {prev!r} must be subset of "
+            f"that of running function {tgt!r}."
+        )
+    return _filter
+
+
+def impl_arg_filter(f: _F, tgt: Callable, tgt_sig: inspect.Signature) -> _F:
+    _filter = get_arg_filter(f, tgt, tgt_sig)
+
+    def _func(*args):
+        from magicclass._gui import BaseGui
+
+        # find proper parent instance in the case of classes being nested
+        if len(args) > 0 and isinstance(args[0], BaseGui):
+            ins = args[0]
+            prev_ns = f.__qualname__.split(".")[-2]
+            while ins.__class__.__name__ != prev_ns:
+                if ins.__magicclass_parent__ is None:
+                    break
+                ins = ins.__magicclass_parent__
+            args = (ins,) + args[1:]
+
+        with ins.macro.blocked():
+            # filter input arguments
+            out = f(*_filter(args))
+        return out
+
+    return _func
