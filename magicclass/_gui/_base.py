@@ -68,8 +68,9 @@ from magicclass.signature import (
     MagicMethodSignature,
     get_additional_option,
     split_annotated_type,
+    upgrade_signature,
 )
-from magicclass.wrappers import upgrade_signature, abstractapi
+from magicclass.wrappers import abstractapi
 from magicclass.types import BoundLiteral, MGUI_SIMPLE_TYPES
 from magicclass.functools import wraps
 
