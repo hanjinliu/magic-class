@@ -273,6 +273,8 @@ class magicproperty(MagicField[_ButtonedWidget], Generic[_V]):
 
     def __set_name__(self, owner: type, name: str) -> None:
         super().__set_name__(owner, name)
+        if not hasattr(owner, "__annotations__"):
+            return None
         if annotation := owner.__annotations__.get(name):
             self.annotation = annotation
 
