@@ -140,7 +140,6 @@ class MacroEdit(TabbedContainer):
     def _create_native_duplicate(self, e=None):
         new = self.new_tab("script")
         new.value = self.native_macro.value
-        return new
 
     def new_tab(self, name: str | None = None) -> CodeEdit:
         if name is None:
@@ -203,14 +202,16 @@ class MacroEdit(TabbedContainer):
         )
         return self.new_window(name=name)
 
-    def _duplicate_tab(self):
+    def _new_tab(self, e=None):
+        self.new_tab()
+
+    def _duplicate_tab(self, e=None):
         current_value = self.textedit.value
         new = self.new_tab(self.textedit.name)
         new.value = current_value
         self.current_index = len(self) - 1
-        return new
 
-    def _delete_tab(self):
+    def _delete_tab(self, e=None):
         if len(self) == 0:
             return
         index = self.current_index
@@ -218,10 +219,10 @@ class MacroEdit(TabbedContainer):
             """Don't delete the native macro tab."""
             del self[index]
 
-    def _zoom_in(self):
+    def _zoom_in(self, e=None):
         self.textedit.zoom_in()
 
-    def _zoom_out(self):
+    def _zoom_out(self, e=None):
         self.textedit.zoom_out()
 
     def show(self):
@@ -267,6 +268,9 @@ class MacroEdit(TabbedContainer):
             current_self = current_self.__magicclass_parent__
         return current_self
 
+    def _new_window(self, e=None):
+        self.new_window()
+
     def _load(self, e=None):
         """Load macro"""
         fdialog = FileEdit(mode="r", filter="*.txt;*.py")
@@ -301,54 +305,59 @@ class MacroEdit(TabbedContainer):
         self._recorded_macro = None
 
     def _set_menubar(self):
-
         self._menubar = QtW.QMenuBar(self.native)
         self.native.layout().setMenuBar(self._menubar)
 
         # fmt: off
         self._file_menu = QtW.QMenu("File", self.native)
+        self._file_menu.setToolTipsVisible(True)
         self._menubar.addMenu(self._file_menu)
 
-        self._file_menu.addAction("New window", self.new_window, "Ctrl+Shift+N")
+        self._file_menu.addAction("New window", self._new_window, "Ctrl+Shift+N").setToolTip("Open a new macro editor")
         self._file_menu.addSeparator()
-        self._file_menu.addAction("Open file", self._load, "Ctrl+O")
-        self._file_menu.addAction("Save", self._save, "Ctrl+S")
+        self._file_menu.addAction("Open file", self._load, "Ctrl+O").setToolTip("Open a python file")
+        self._file_menu.addAction("Save", self._save, "Ctrl+S").setToolTip("Save the macro as a python file")
         self._file_menu.addSeparator()
-        self._file_menu.addAction("Close", self._close)
+        self._file_menu.addAction("Close", self._close).setToolTip("Close this macro editor")
 
         self._tab_menu = QtW.QMenu("Tab", self.native)
+        self._tab_menu.setToolTipsVisible(True)
         self._menubar.addMenu(self._tab_menu)
-        self._tab_menu.addAction("New tab", self.new_tab, "Ctrl+T")
-        self._tab_menu.addAction("Duplicate tab", self._duplicate_tab, "Ctrl+D")
-        self._tab_menu.addAction("Current macro in new tab", self._create_native_duplicate)
-        self._tab_menu.addAction("Delete tab", self._delete_tab, "Ctrl+W")
+        self._tab_menu.addAction("New tab", self._new_tab, "Ctrl+T").setToolTip("Open a new empty tab")
+        self._tab_menu.addAction("Duplicate tab", self._duplicate_tab, "Ctrl+D").setToolTip("Duplicate current tab as a new tab")
+        self._tab_menu.addAction("Current macro in new tab", self._create_native_duplicate).setToolTip("Duplicate current GUI macro in a new tab")
+        self._tab_menu.addAction("Delete tab", self._delete_tab, "Ctrl+W").setToolTip("Delete current tab")
         self._tab_menu.addSeparator()
-        self._tab_menu.addAction("Zoom in", self._zoom_in, "Ctrl+Shift+.")
-        self._tab_menu.addAction("Zoom out", self._zoom_out, "Ctrl+Shift+,")
+        self._tab_menu.addAction("Zoom in", self._zoom_in, "Ctrl+Shift+.").setToolTip("Zoom in the text")
+        self._tab_menu.addAction("Zoom out", self._zoom_out, "Ctrl+Shift+,").setToolTip("Zoom out the text")
 
 
         # set macro menu
         self._macro_menu = QtW.QMenu("Macro", self.native)
+        self._macro_menu.setToolTipsVisible(True)
         self._menubar.addMenu(self._macro_menu)
 
-        self._macro_menu.addAction("Execute", self.execute, "Ctrl+F5")
-        self._macro_menu.addAction("Execute selected lines", self._execute_selected, "Ctrl+Shift+F5")
+        self._macro_menu.addAction("Execute", self.execute, "Ctrl+F5").setToolTip("Execute the entire script of the current tab")
+        self._macro_menu.addAction("Execute selected lines", self._execute_selected, "Ctrl+Shift+F5").setToolTip("Execute the selected lines of the current tab")
         self._macro_menu.addSeparator()
         _action_start = self._macro_menu.addAction("Start recording", self._start_recording)
         _action_finish = self._macro_menu.addAction("Finish recording", self._finish_recording)
 
         _action_finish.setEnabled(False)
         _action_start.triggered.connect(lambda: _action_finish.setEnabled(True))
+        _action_start.setToolTip("Open a new tab and start recording GUI operations in it")
         _action_finish.triggered.connect(lambda: _action_finish.setEnabled(False))
+        _action_finish.setToolTip("Finish recording task started by 'Start recording' menu")
 
         self._command_menu = CommandRunnerMenu(
             "Command",
             parent=self.native,
             magicclass_parent=self._search_parent_magicclass(),
         )
+        self._command_menu.native.setToolTipsVisible(True)
         self._menubar.addMenu(self._command_menu.native)
-        self._command_menu.native.addAction("Create command", self._create_command)
-        self._command_menu.native.addAction("Rename command", self._rename_command)
+        self._command_menu.native.addAction("Create command", self._create_command).setToolTip("Create a command using the selected lines")
+        self._command_menu.native.addAction("Rename command", self._rename_command).setToolTip("Rename regeistered commands.")
         self._command_menu.native.addSeparator()
         # fmt: on
 
