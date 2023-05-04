@@ -55,10 +55,17 @@ class QCompletionPopup(QtW.QListWidget):
         super().__init__(parent)
         self.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.itemClicked.connect(self._on_item_clicked)
-        self.setFixedWidth(100)
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
 
     def parentWidget(self) -> QEvalLineEdit:
         return super().parentWidget()
+
+    def resizeForContents(self):
+        self.setFixedSize(
+            self.sizeHintForColumn(0) + self.frameWidth() * 2,
+            min(self.sizeHintForRow(0) * self.count() + self.frameWidth() * 2, 200),
+        )
 
     def _on_item_clicked(self, item: QtW.QListWidgetItem):
         self.parentWidget()._complete_with_current_item()
@@ -69,8 +76,24 @@ class QCompletionPopup(QtW.QListWidget):
     def setNext(self):
         self.setCurrentRow((self.currentRow() + 1) % self.count())
 
+    def setNextPage(self):
+        h0 = self.sizeHintForRow(0)
+        self.setCurrentRow(
+            min(self.currentRow() + self.height() // h0, self.count() - 1)
+        )
+
+    def setLast(self):
+        self.setCurrentRow(self.count() - 1)
+
     def setPrevious(self):
         self.setCurrentRow((self.currentRow() - 1) % self.count())
+
+    def setPreviousPage(self):
+        h0 = self.sizeHintForRow(0)
+        self.setCurrentRow(max(self.currentRow() - self.height() // h0, 0))
+
+    def setFirst(self):
+        self.setCurrentRow(0)
 
 
 class QEvalLineEdit(QtW.QLineEdit):
@@ -125,6 +148,7 @@ class QEvalLineEdit(QtW.QLineEdit):
             if len(items) == 0:
                 # don't show the list widget if there are no items
                 return
+        list_widget.resizeForContents()
         list_widget.move(self.mapToGlobal(self.cursorRect().bottomRight()))
         list_widget.show()
         self._list_widget = list_widget
@@ -177,6 +201,7 @@ class QEvalLineEdit(QtW.QLineEdit):
                 return
             self._list_widget.addItems(items)
             self._list_widget.move(self.mapToGlobal(self.cursorRect().bottomLeft()))
+            self._list_widget.resizeForContents()
 
     def _complete_with(self, comp: str):
         text = self.text()
@@ -196,11 +221,29 @@ class QEvalLineEdit(QtW.QLineEdit):
                 return True
             elif event.key() == Qt.Key.Key_Down:
                 if self._list_widget is not None:
-                    self._list_widget.setNext()
+                    if event.modifiers() == Qt.KeyboardModifier.NoModifier:
+                        self._list_widget.setNext()
+                    elif event.modifiers() == Qt.KeyboardModifier.ControlModifier:
+                        self._list_widget.setLast()
+                    else:
+                        return False
+                    return True
+            elif event.key() == Qt.Key.Key_PageDown:
+                if self._list_widget is not None:
+                    self._list_widget.setNextPage()
                     return True
             elif event.key() == Qt.Key.Key_Up:
                 if self._list_widget is not None:
-                    self._list_widget.setPrevious()
+                    if event.modifiers() == Qt.KeyboardModifier.NoModifier:
+                        self._list_widget.setPrevious()
+                    elif event.modifiers() == Qt.KeyboardModifier.ControlModifier:
+                        self._list_widget.setFirst()
+                    else:
+                        return False
+                    return True
+            elif event.key() == Qt.Key.Key_PageUp:
+                if self._list_widget is not None:
+                    self._list_widget.setPreviousPage()
                     return True
             elif event.key() == Qt.Key.Key_Return:
                 if self._list_widget is not None:
@@ -211,6 +254,11 @@ class QEvalLineEdit(QtW.QLineEdit):
                     self._list_widget.deleteLater()
                     self._list_widget = None
                     return True
+        elif event.type() == QtCore.QEvent.Type.Move:
+            if self._list_widget is not None:
+                print("moved")
+                self._list_widget.close()
+                self._list_widget = None
         return super().event(event)
 
     def _complete_with_current_item(self):
