@@ -373,12 +373,12 @@ class QCodeEditor(QtW.QPlainTextEdit):
 
         height = self.fontMetrics().height()
         text_color = self.palette().color(self.foregroundRole())
-
+        offset = self.contentOffset().y()
         for num, block in self._iter_visible_blocks(event.rect()):
             painter.setPen(text_color)
             block_rect = self.blockBoundingGeometry(block)
             block_height = block_rect.height()
-            draw_y = block_rect.top() + max(block_height - height, 0) / 2
+            draw_y = block_rect.top() + max(block_height - height, 0) / 2 + offset
             painter.drawText(
                 0,
                 int(draw_y),
