@@ -313,23 +313,23 @@ class MacroEdit(TabbedContainer):
         self._file_menu.setToolTipsVisible(True)
         self._menubar.addMenu(self._file_menu)
 
-        self._file_menu.addAction("New window", self._new_window, "Ctrl+Shift+N").setToolTip("Open a new macro editor")
+        self._file_menu.addAction(_action("New window", self._new_window, tooltip="Open a new macro editor"))
         self._file_menu.addSeparator()
-        self._file_menu.addAction("Open file", self._load, "Ctrl+O").setToolTip("Open a python file")
-        self._file_menu.addAction("Save", self._save, "Ctrl+S").setToolTip("Save the macro as a python file")
+        self._file_menu.addAction(_action("Open file", self._load, "Ctrl+O", tooltip="Open a python file"))
+        self._file_menu.addAction(_action("Save", self._save, "Ctrl+S", tooltip="Save the macro as a python file"))
         self._file_menu.addSeparator()
-        self._file_menu.addAction("Close", self._close).setToolTip("Close this macro editor")
+        self._file_menu.addAction(_action("Close", self._close, tooltip="Close this macro editor"))
 
         self._tab_menu = QtW.QMenu("Tab", self.native)
         self._tab_menu.setToolTipsVisible(True)
         self._menubar.addMenu(self._tab_menu)
-        self._tab_menu.addAction("New tab", self._new_tab, "Ctrl+T").setToolTip("Open a new empty tab")
-        self._tab_menu.addAction("Duplicate tab", self._duplicate_tab, "Ctrl+D").setToolTip("Duplicate current tab as a new tab")
-        self._tab_menu.addAction("Current macro in new tab", self._create_native_duplicate).setToolTip("Duplicate current GUI macro in a new tab")
-        self._tab_menu.addAction("Delete tab", self._delete_tab, "Ctrl+W").setToolTip("Delete current tab")
+        self._tab_menu.addAction(_action("New tab", self._new_tab, "Ctrl+T", tooltip="Open a new empty tab"))
+        self._tab_menu.addAction(_action("Duplicate tab", self._duplicate_tab, "Ctrl+D", tooltip="Duplicate current tab as a new tab"))
+        self._tab_menu.addAction(_action("Current macro in new tab", self._create_native_duplicate, tooltip="Duplicate current GUI macro in a new tab"))
+        self._tab_menu.addAction(_action("Delete tab", self._delete_tab, "Ctrl+W", tooltip="Delete current tab"))
         self._tab_menu.addSeparator()
-        self._tab_menu.addAction("Zoom in", self._zoom_in, "Ctrl+Shift+.").setToolTip("Zoom in the text")
-        self._tab_menu.addAction("Zoom out", self._zoom_out, "Ctrl+Shift+,").setToolTip("Zoom out the text")
+        self._tab_menu.addAction(_action("Zoom in", self._zoom_in, "Ctrl+Shift+.", tooltip="Zoom in the text"))
+        self._tab_menu.addAction(_action("Zoom out", self._zoom_out, "Ctrl+Shift+,", tooltip="Zoom out the text"))
 
 
         # set macro menu
@@ -337,17 +337,17 @@ class MacroEdit(TabbedContainer):
         self._macro_menu.setToolTipsVisible(True)
         self._menubar.addMenu(self._macro_menu)
 
-        self._macro_menu.addAction("Execute", self.execute, "Ctrl+F5").setToolTip("Execute the entire script of the current tab")
-        self._macro_menu.addAction("Execute selected lines", self._execute_selected, "Ctrl+Shift+F5").setToolTip("Execute the selected lines of the current tab")
+        self._macro_menu.addAction(_action("Execute", self.execute, "Ctrl+F5", tooltip="Execute the entire script of the current tab"))
+        self._macro_menu.addAction(_action("Execute selected lines", self._execute_selected, "Ctrl+Shift+F5", tooltip="Execute the selected lines of the current tab"))
         self._macro_menu.addSeparator()
-        _action_start = self._macro_menu.addAction("Start recording", self._start_recording)
-        _action_finish = self._macro_menu.addAction("Finish recording", self._finish_recording)
+        _action_start = _action("Start recording", self._start_recording, tooltip="Open a new tab and start recording GUI operations in it")
+        self._macro_menu.addAction(_action_start)
+        _action_finish = _action("Finish recording", self._finish_recording, tooltip="Finish the recording task started by 'Start recording' menu")
+        self._macro_menu.addAction(_action_finish)
 
         _action_finish.setEnabled(False)
         _action_start.triggered.connect(lambda: _action_finish.setEnabled(True))
-        _action_start.setToolTip("Open a new tab and start recording GUI operations in it")
         _action_finish.triggered.connect(lambda: _action_finish.setEnabled(False))
-        _action_finish.setToolTip("Finish recording task started by 'Start recording' menu")
 
         self._command_menu = CommandRunnerMenu(
             "Command",
@@ -356,10 +356,23 @@ class MacroEdit(TabbedContainer):
         )
         self._command_menu.native.setToolTipsVisible(True)
         self._menubar.addMenu(self._command_menu.native)
-        self._command_menu.native.addAction("Create command", self._create_command).setToolTip("Create a command using the selected lines")
-        self._command_menu.native.addAction("Rename command", self._rename_command).setToolTip("Rename regeistered commands.")
+        self._command_menu.native.addAction(_action("Create command", self._create_command, tooltip="Create a command using the selected lines"))
+        self._command_menu.native.addAction(_action("Rename command", self._rename_command, tooltip="Rename regeistered commands."))
         self._command_menu.native.addSeparator()
         # fmt: on
+
+
+def _action(
+    text: str, slot: Callable, shortcut: str | None = None, tooltip: str | None = None
+):
+    """Create a QAction object. Backend compatible."""
+    action = QtW.QAction(text)
+    action.triggered.connect(slot)
+    if shortcut:
+        action.setShortcut(shortcut)
+    if tooltip:
+        action.setToolTip(tooltip)
+    return action
 
 
 class GuiMacro(Macro):
