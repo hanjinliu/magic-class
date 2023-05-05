@@ -65,3 +65,25 @@ filterwarnings = [
     "ignore::DeprecationWarning:vispy",
     "ignore:distutils Version classes are deprecated:DeprecationWarning",
 ]
+
+[tool.hatch.envs.test]
+features = ["testing"]
+
+[tool.hatch.envs.test.scripts]
+run = "pytest -v"
+
+[[tool.hatch.envs.test.matrix]]
+backend = ["pyqt5", "pyqt6", "pyside6"]
+
+[tool.hatch.envs.test.overrides]
+matrix.backend.features = [
+    { value = "pyqt5", if = [
+        "pyqt5",
+    ] },
+    { value = "pyqt6", if = [
+        "pyqt6",
+    ] },
+    { value = "pyside6", if = [
+        "pyside6",
+    ] },
+]

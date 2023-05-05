@@ -1,3 +1,5 @@
+set shell := ["powershell.exe", "-c"]
+
 doc:
 	sphinx-apidoc -f -o ./rst/apidoc ./magicclass
 	sphinx-build -b html ./rst ./docs
@@ -10,3 +12,6 @@ release:
 
 watch-rst:
 	watchfiles "sphinx-build -b html ./rst ./_docs_temp" rst
+
+test:
+    hatch -v run test:run
