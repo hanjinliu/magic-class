@@ -51,8 +51,3 @@ jobs:
         uses: aganders3/headless-gui@v1
         with:
           run: hatch -v run +backend=${{ matrix.backend }} test:run
-
-      - name: Coverage
-        uses: codecov/codecov-action@v3
-        with:
-          fail_ci_if_error: false
