@@ -176,7 +176,7 @@ class _MagicTemplateMeta(ABCMeta):
 _W = TypeVar("_W", bound=Widget)
 
 
-class MagicTemplate(MutableSequence[_W], metaclass=_MagicTemplateMeta):
+class MagicTemplate(MutableSequence[Widget], metaclass=_MagicTemplateMeta):
     __doc__ = ""
     __magicclass_parent__: None | MagicTemplate
     __magicclass_children__: list[MagicTemplate]
@@ -225,11 +225,11 @@ class MagicTemplate(MutableSequence[_W], metaclass=_MagicTemplateMeta):
         raise NotImplementedError()
 
     @overload
-    def __getitem__(self, key: int | str) -> _W:
+    def __getitem__(self, key: int | str) -> Widget:
         ...
 
     @overload
-    def __getitem__(self, key: slice) -> Self[_W]:
+    def __getitem__(self, key: slice) -> Self[Widget]:
         ...
 
     def __getitem__(self, key):
@@ -237,7 +237,7 @@ class MagicTemplate(MutableSequence[_W], metaclass=_MagicTemplateMeta):
 
     if TYPE_CHECKING:
 
-        def __iter__(self) -> Iterator[_W]:
+        def __iter__(self) -> Iterator[Widget]:
             raise NotImplementedError()
 
         def index(self, value: Any, start: int, stop: int) -> int:
@@ -246,10 +246,10 @@ class MagicTemplate(MutableSequence[_W], metaclass=_MagicTemplateMeta):
         def remove(self, value: Widget | str):
             raise NotImplementedError()
 
-    def _fast_insert(self, key: int, widget: _W | Callable) -> None:
+    def _fast_insert(self, key: int, widget: Widget | Callable) -> None:
         raise NotImplementedError()
 
-    def insert(self, key: int, widget: _W | Callable) -> None:
+    def insert(self, key: int, widget: Widget | Callable) -> None:
         self._fast_insert(key, widget)
         self._unify_label_widths()
 
