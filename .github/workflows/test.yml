@@ -20,7 +20,7 @@ jobs:
       matrix:
         python-version: ["3.9", "3.10", "3.11"]
         platform: [ubuntu-latest, macos-latest, windows-latest]
-        backend: [pyqt5, pyside2]
+        backend: [pyqt5, pyqt6, pyside6]
         include:
           - python-version: "3.10"
             platform: ubuntu-latest
