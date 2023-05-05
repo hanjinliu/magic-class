@@ -74,3 +74,4 @@ def test_basic_keybindings(qtbot: QtBot):
     app.processEvents()
     mock.assert_called_once()
     mock.reset_mock()
+    ui.close()

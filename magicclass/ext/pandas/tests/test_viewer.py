@@ -13,4 +13,6 @@ def test_build():
             pd.Series([1 + 2j, 1 - 2j, 0, 1, 2, 3], dtype="complex"),
         ]
     )
-    DataFrameView(value=df).show()
+    view = DataFrameView(value=df)
+    view.show()
+    view.close()

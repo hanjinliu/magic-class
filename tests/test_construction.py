@@ -177,6 +177,8 @@ def test_tooltip():
     assert ui.Menu["func"].mgui.a.tooltip == _PARAM_TOOLTIP
     assert ui.Tool["func"].mgui.a.tooltip == _PARAM_TOOLTIP
 
+    ui.close()
+
 
 def test_post_append():
     @magicclass(widget_type="mainwindow")

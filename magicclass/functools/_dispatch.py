@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import sys
 from typing import Callable, Sequence, Any, get_type_hints, overload
 from abc import get_cache_token
 import functools
@@ -117,6 +118,8 @@ class singledispatchmethod(functools.singledispatchmethod):
 
         self.dispatcher = singledispatch(func)
         self.func = func
+        if sys.version_info < (3, 10):
+            self._wrapped_func = func
         functools.update_wrapper(
             self, func, assigned=("__name__", "__qualname__", "__doc__")
         )

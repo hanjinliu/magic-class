@@ -12,4 +12,6 @@ def test_build():
             pl.date_range(date(2021, 1, 1), date(2021, 1, 6), timedelta(1), eager=True),
         ]
     )
-    DataFrameView(value=df).show()
+    view = DataFrameView(value=df)
+    view.show()
+    view.close()
