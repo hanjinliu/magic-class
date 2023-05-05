@@ -1,0 +1,66 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "magic-class"
+classifiers = [
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
+dynamic = ["version"]
+description = "Generate multifunctional GUIs from classes"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.8"
+authors = [
+    { name = "Hanjin Liu", email = "liuhanjin-sc@g.ecc.u-tokyo.ac.jp" },
+]
+dependencies = [
+    "macro-kit>=0.4.0",
+    "magicgui>=0.7.0",
+    "qtpy>=1.10.0",
+    "superqt>=0.4.0",
+]
+
+[project.optional-dependencies]
+pyqt5 = ["pyqt5>=5.12.0"]
+pyqt6 = ["pyqt6"]
+pyside2 = [
+    "pyside2>=5.14 ; python_version=='3.8'",
+    "pyside2>=5.15 ; python_version>='3.9'",
+]
+pyside6 = ["pyside6"]
+testing = [
+    "pyqtgraph>=0.13.2",
+    "vispy>=0.11.0",
+    "vedo>=2023.4.4",
+    "pandas>=1.5.0",
+    "polars>=0.17.10",
+]
+
+[project.urls]
+Download = "https://github.com/hanjinliu/magic-class"
+
+[tool.hatch.version]
+path = "magicclass/__init__.py"
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/magicclass",
+]
+
+
+[tool.pytest.ini_options]
+testpaths = ["**/tests"]
+filterwarnings = [
+    "ignore::DeprecationWarning:qtpy",
+    "ignore::DeprecationWarning:vispy",
+    "ignore:distutils Version classes are deprecated:DeprecationWarning",
+]

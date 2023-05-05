@@ -1,17 +1,22 @@
-from setuptools import setup, find_packages
+import sys
 
-with open("magicclass/__init__.py", encoding="utf-8") as f:
-    line = next(iter(f))
-    VERSION = line.strip().split()[-1][1:-1]
+sys.stderr.write(
+    """
+    =======================================================================
+    collections-undo does not support `python setup.py install`. Please use
 
-with open("README.md") as f:
-    readme = f.read()
+        $ python -m pip install .
+
+    instead.
+    =======================================================================
+    """
+)
+sys.exit(1)
+
 
 setup(
     name="magic-class",
-    version=VERSION,
     description="Generate multifunctional GUIs from classes",
-    long_description=readme,
     long_description_content_type="text/markdown",
     author="Hanjin Liu",
     author_email="liuhanjin-sc@g.ecc.u-tokyo.ac.jp",

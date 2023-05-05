@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import Any, Callable, Sequence, TypeVar
 import warnings
+from psygnal import Signal
 from qtpy.QtWidgets import QMenuBar, QWidget, QMainWindow, QBoxLayout, QDockWidget
 from qtpy.QtCore import Qt
 from magicgui.widgets import (
@@ -218,10 +219,6 @@ class ClassGuiBase(BaseGui[Widget]):
 
                 elif isinstance(widget, (Widget, Callable)):
                     if (not isinstance(widget, Widget)) and callable(widget):
-                        # Methods or any callable objects, but FunctionGui is not included.
-                        # NOTE: Here any custom callable objects could be given. Some callable
-                        # objects can be incompatible (like "Signal" object in magicgui) but
-                        # useful. Those callable objects should be passed from widget construction.
                         if name.startswith("_") or not get_additional_option(
                             attr, "gui", True
                         ):
@@ -231,7 +228,13 @@ class ClassGuiBase(BaseGui[Widget]):
                                     keys=keybinding, parent=self.native, target=widget
                                 )
                             continue
+                        if isinstance(widget, Signal):
+                            continue
                         try:
+                            # Methods or any callable objects, but FunctionGui is not included.
+                            # NOTE: Here any custom callable objects could be given. Some callable
+                            # objects can be incompatible but useful. Those callable objects should
+                            # be passed from widget construction.
                             widget = self._create_widget_from_method(widget)
                         except AttributeError as e:
                             warnings.warn(

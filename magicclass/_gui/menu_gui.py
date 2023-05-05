@@ -4,6 +4,7 @@ import warnings
 from magicgui.widgets import Image, Table, Label, FunctionGui, Widget
 from magicgui.widgets.bases import ButtonWidget
 from macrokit import Symbol
+from psygnal import Signal
 from qtpy.QtWidgets import QMenu
 from qtpy.QtCore import Qt
 
@@ -132,6 +133,8 @@ class MenuGuiBase(ContainerLikeGui):
                                 register_shortcut(
                                     keys=keybinding, parent=self.native, target=widget
                                 )
+                            continue
+                        if isinstance(widget, Signal):
                             continue
                         widget = self._create_widget_from_method(widget)
 
