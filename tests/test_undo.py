@@ -1,6 +1,6 @@
 from magicgui import magicgui
-from magicclass import magicclass, field, vfield
-from magicclass.undo import undo_callback
+from magicclass import magicclass, vfield
+from magicclass.undo import undo_callback, undoable
 
 def test_undo_func():
     @magicclass
@@ -15,6 +15,37 @@ def test_undo_func():
             def undo():
                 self._x = old_value
             return undo
+
+    ui = A()
+    ui.f(1)
+    ui.f(2)
+    assert ui._x == 2
+    assert len(ui.macro) == 3 and str(ui.macro[-1]) == "ui.f(x=2)"
+    ui.macro.undo()
+    assert ui._x == 1
+    assert len(ui.macro) == 2 and str(ui.macro[-1]) == "ui.f(x=1)"
+    ui.macro.undo()
+    assert ui._x == 0
+    assert len(ui.macro) == 1 and str(ui.macro[-1])
+    ui.macro.redo()
+    assert ui._x == 1
+    assert len(ui.macro) == 2 and str(ui.macro[-1]) == "ui.f(x=1)"
+    ui.macro.redo()
+    assert ui._x == 2
+    assert len(ui.macro) == 3 and str(ui.macro[-1]) == "ui.f(x=2)"
+
+def test_undo_func_using_generator():
+    @magicclass
+    class A:
+        def __init__(self):
+            self._x = 0
+
+        @undoable
+        def f(self, x: int):
+            old_value = self._x
+            self._x = x
+            yield
+            self._x = old_value
 
     ui = A()
     ui.f(1)
@@ -122,3 +153,37 @@ def test_autocall_method():
     assert ui._x == 3
     ui.macro.undo()
     assert ui._x == 0
+
+def test_undo_thread_worker():
+    from magicclass.utils import thread_worker
+
+    @magicclass
+    class A:
+        def __init__(self) -> None:
+            self._x = 0
+
+        @thread_worker
+        @undoable
+        def f(self, x: int):
+            old_value = self._x
+            self._x = x
+            yield
+            self._x = old_value
+
+    ui = A()
+    ui.f(1)
+    ui.f(2)
+    assert ui._x == 2
+    assert len(ui.macro) == 3 and str(ui.macro[-1]) == "ui.f(x=2)"
+    ui.macro.undo()
+    assert ui._x == 1
+    assert len(ui.macro) == 2 and str(ui.macro[-1]) == "ui.f(x=1)"
+    ui.macro.undo()
+    assert ui._x == 0
+    assert len(ui.macro) == 1 and str(ui.macro[-1])
+    ui.macro.redo()
+    assert ui._x == 1
+    assert len(ui.macro) == 2 and str(ui.macro[-1]) == "ui.f(x=1)"
+    ui.macro.redo()
+    assert ui._x == 2
+    assert len(ui.macro) == 3 and str(ui.macro[-1]) == "ui.f(x=2)"

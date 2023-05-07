@@ -407,6 +407,7 @@ class GuiMacro(Macro):
         return self.widget.__magicclass_parent__
 
     def clear_undo_stack(self) -> None:
+        """Clear all the history of undo/redo."""
         self._stack_undo.clear()
         self._stack_redo.clear()
 
@@ -419,6 +420,7 @@ class GuiMacro(Macro):
         return self._stack_undo.pop()
 
     def undo(self):
+        """Undo the last operation if undo is defined."""
         if len(self._stack_undo) == 0:
             return
         undo = self._stack_undo.pop()
@@ -433,6 +435,7 @@ class GuiMacro(Macro):
             self._stack_redo.append((expr, undo))
 
     def redo(self):
+        """Redo the last undo operation."""
         if len(self._stack_redo) == 0:
             return
         expr, undo = self._stack_redo.pop()
@@ -447,7 +450,8 @@ class GuiMacro(Macro):
             self._stack_undo.append(undo)
 
     def copy(self) -> Macro:
-        """GuiMacro does not support deepcopy (and apparently _widget should not be copied)."""
+        """Copy the macro instance."""
+        # GuiMacro does not support deepcopy (and apparently _widget should not be copied)
         from copy import deepcopy
 
         return Macro(deepcopy(self.args), flags=self._flags)
