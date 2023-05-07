@@ -258,7 +258,7 @@ def _define_macro_recorder(sig: inspect.Signature, func: Callable):
             bgui.macro.append(expr)
             bgui.macro._last_setval = None
             if isinstance(out, UndoFunction):
-                bgui.macro._stack_undo.append(out)
+                bgui.macro._append_undo(out)
             else:
                 bgui.macro.clear_undo_stack()
             return None
@@ -321,8 +321,8 @@ def _define_macro_recorder_for_partial(
                 ):
                     bgui.macro.pop()
                     bgui.macro._erase_last()
-                if isinstance(out, UndoFunction):
-                    bgui.macro._pop_undo()
+                    if isinstance(out, UndoFunction):
+                        bgui.macro._pop_undo()
 
             bgui.macro.append(expr)
             bgui.macro._last_setval = None
@@ -353,8 +353,6 @@ def _define_macro_recorder_for_partial(
                 ):
                     bgui.macro.pop()
                     bgui.macro._erase_last()
-                    if isinstance(out, UndoFunction):
-                        bgui.macro._pop_undo()
 
             bgui.macro.append(expr)
             bgui.macro._last_setval = None
