@@ -31,25 +31,8 @@ def test_undo_func():
     assert ui._x == 1
     assert len(ui.macro) == 2 and str(ui.macro[-1]) == "ui.f(x=1)"
     ui.macro.redo()
-    assert ui._x == 1
+    assert ui._x == 2
     assert len(ui.macro) == 3 and str(ui.macro[-1]) == "ui.f(x=2)"
-
-def test_default_field_undo():
-    @magicclass
-    class A:
-        x = field(10)
-        y = vfield("a")
-
-    ui = A()
-    ui.x.value = 20
-    ui.x.value = 30
-    assert len(ui.macro) == 2 and str(ui.macro[-1]) == "ui.x.value = 30"
-    ui.macro.undo()
-    assert ui.x.value == 10
-    assert len(ui.macro) == 1
-    ui.macro.redo()
-    assert ui.x.value == 30
-    assert len(ui.macro) == 2 and str(ui.macro[-1]) == "ui.x.value = 30"
 
 def test_magicgui_undo():
     @magicclass
@@ -67,8 +50,10 @@ def test_magicgui_undo():
             return undo
 
     ui = A()
-    ui.f(1)
-    ui.f(2)
+    ui[0].x.value = 1
+    ui[0].call_button.changed()
+    ui[0].x.value = 2
+    ui[0].call_button.changed()
     assert ui._x == 2
     assert len(ui.macro) == 3 and str(ui.macro[-1]) == "ui.f(x=2)"
     ui.macro.undo()
@@ -76,12 +61,12 @@ def test_magicgui_undo():
     assert len(ui.macro) == 2 and str(ui.macro[-1]) == "ui.f(x=1)"
     ui.macro.undo()
     assert ui._x == 0
-    assert len(ui.macro) == 1 and str(ui.macro[-1]) == "ui.f(x=0)"
+    assert len(ui.macro) == 1
     ui.macro.redo()
     assert ui._x == 1
     assert len(ui.macro) == 2 and str(ui.macro[-1]) == "ui.f(x=1)"
     ui.macro.redo()
-    assert ui._x == 1
+    assert ui._x == 2
     assert len(ui.macro) == 3 and str(ui.macro[-1]) == "ui.f(x=2)"
 
 def test_clear_undo_stack():

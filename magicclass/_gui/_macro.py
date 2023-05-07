@@ -9,7 +9,7 @@ from magicgui.widgets import FileEdit, LineEdit
 
 from magicclass.widgets import CodeEdit, TabbedContainer, ScrollableContainer, Dialog
 from magicclass.utils import move_to_screen_center
-from magicclass.undo import UndoFunction
+from magicclass.undo import ImplementsUndo
 from magicclass._gui.runner import CommandRunnerMenu
 
 if TYPE_CHECKING:
@@ -393,8 +393,8 @@ class GuiMacro(Macro):
         now = datetime.now()
         self.append(Expr(Head.comment, [now.strftime("%Y/%m/%d %H:%M:%S")]))
 
-        self._stack_undo: list[UndoFunction] = []
-        self._stack_redo: list[tuple[Expr, UndoFunction]] = []
+        self._stack_undo: list[ImplementsUndo] = []
+        self._stack_redo: list[tuple[Expr, ImplementsUndo]] = []
 
     @property
     def widget(self) -> MacroEdit:
@@ -410,12 +410,12 @@ class GuiMacro(Macro):
         self._stack_undo.clear()
         self._stack_redo.clear()
 
-    def _append_undo(self, undo: UndoFunction) -> None:
+    def _append_undo(self, undo: ImplementsUndo) -> None:
         self._stack_undo.append(undo)
         self._stack_redo.clear()
         return None
 
-    def _pop_undo(self) -> UndoFunction:
+    def _pop_undo(self) -> ImplementsUndo:
         return self._stack_undo.pop()
 
     def undo(self):

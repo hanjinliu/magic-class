@@ -1,12 +1,15 @@
 from __future__ import annotations
 
 from typing import Callable, Generic, TypeVar
+from abc import ABC, abstractmethod
+from magicgui.widgets import FunctionGui
 
 _R = TypeVar("_R")
 _V = TypeVar("_V")
 
 
-class ImplementsUndo:
+class ImplementsUndo(ABC):
+    @abstractmethod
     def call(self) -> None:
         raise NotImplementedError
 
@@ -26,19 +29,10 @@ class UndoFunction(Generic[_R], ImplementsUndo):
     def with_args(self, *args, **kwargs) -> UndoFunction[_R]:
         _kwargs = self._kwargs.copy()
         _kwargs.update(kwargs)
-        return UndoFunction(self._func, self._args + args, **_kwargs)
+        return self.__class__(self._func, self._args + args, **_kwargs)
 
-
-class SetterUndoFuncion(Generic[_V], ImplementsUndo):
-    def __init__(self, setter: Callable[[_V], None], old_value: _V) -> None:
-        self._setter = setter
-        self._old_value = old_value
-
-    def __repr__(self) -> str:
-        return f"SetterUndoFuncion<{self._setter!r}>"
-
-    def call(self) -> _R:
-        return self._setter(self._old_value)
+    def to_function(self) -> Callable[[], _R]:
+        return lambda: self.call()
 
 
 def to_undo(func: Callable[..., _R]) -> UndoFunction[_R]:

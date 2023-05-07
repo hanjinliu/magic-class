@@ -2,6 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Callable, TypeVar
 import inspect
 from functools import partial, partialmethod, wraps as functools_wraps
+import warnings
 from macrokit import Symbol, Expr, Head, symbol
 from magicgui.widgets import FunctionGui
 from magicgui.widgets.bases import ValueWidget
@@ -9,7 +10,7 @@ from magicgui.widgets.bases import ValueWidget
 from .utils import get_parameters
 from magicclass.utils import get_signature, thread_worker
 from magicclass.signature import MagicMethodSignature
-from magicclass.undo import UndoFunction, SetterUndoFuncion
+from magicclass.undo import UndoFunction
 
 if TYPE_CHECKING:
     from ._base import MagicTemplate
@@ -56,15 +57,11 @@ def value_widget_callback(
 
         if gui.macro._last_setval == target and len(gui.macro) > 0:
             gui.macro.pop()
-            _undo_to_append = gui.macro._pop_undo()
-            if not isinstance(_undo_to_append, SetterUndoFuncion):
-                raise RuntimeError(f"Unexpected undo function: {_undo_to_append}")
         else:
             gui.macro._last_setval = target
-            _undo_to_append = SetterUndoFuncion(setter, initial_value)
 
         gui.macro.append(expr)
-        gui.macro._append_undo(_undo_to_append)
+        gui.macro.clear_undo_stack()
         return None
 
     return _set_value
@@ -97,14 +94,18 @@ def nested_function_gui_callback(gui: MagicTemplate, fgui: FunctionGui[_R]):
             ):
                 gui.macro.pop()
                 if isinstance(out, UndoFunction):
-                    gui.macro._pop_undo()
-
+                    warnings.warn(
+                        "User-defined undo operation of auto-call function is not "
+                        "supported yet. Ignore the returned undo function.",
+                        UserWarning,
+                    )
+        else:
+            if isinstance(out, UndoFunction):
+                gui.macro._stack_undo.append(out)
+            else:
+                gui.macro.clear_undo_stack()
         gui.macro.append(expr)
         gui.macro._last_setval = None
-        if isinstance(out, UndoFunction):
-            gui.macro._stack_undo.append(out)
-        else:
-            gui.macro.clear_undo_stack()
 
     return _after_run
 

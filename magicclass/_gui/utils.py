@@ -8,17 +8,7 @@ from magicgui.types import Undefined
 from magicgui.type_map import get_widget_class
 from magicgui.signature import magic_signature, MagicParameter
 
-MAGICGUI_BEFORE_0_6 = _magicgui_version < "0.6"
-
-if not MAGICGUI_BEFORE_0_6:
-    from functools import partial
-
-    # since magicgui 0.6, raise_on_unknown is newly implemented, which caused
-    # inconsistency. See https://github.com/napari/magicgui/pull/476
-    get_widget_class = partial(get_widget_class, raise_on_unknown=False)
-
 from macrokit import Symbol
-
 from magicclass.signature import split_annotated_type
 
 if TYPE_CHECKING:
@@ -137,5 +127,5 @@ def _parameter_to_widget_class(param: MagicParameter):
     value = Undefined if param.default in (param.empty, TZ_EMPTY) else param.default
     annotation, options = split_annotated_type(param.annotation)
     options = options.copy()
-    wdg_class, _ = get_widget_class(value, annotation, options)
+    wdg_class, _ = get_widget_class(value, annotation, options, raise_on_unknown=False)
     return wdg_class
