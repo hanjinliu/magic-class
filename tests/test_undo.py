@@ -1,6 +1,6 @@
 from magicgui import magicgui
 from magicclass import magicclass, field, vfield
-from magicclass.undo import to_undo
+from magicclass.undo import undo_callback
 
 def test_undo_func():
     @magicclass
@@ -11,7 +11,7 @@ def test_undo_func():
         def f(self, x: int):
             old_value = self._x
             self._x = x
-            @to_undo
+            @undo_callback
             def undo():
                 self._x = old_value
             return undo
@@ -44,7 +44,7 @@ def test_magicgui_undo():
         def f(self, x: int):
             old_value = self._x
             self._x = x
-            @to_undo
+            @undo_callback
             def undo():
                 self._x = old_value
             return undo
@@ -75,7 +75,7 @@ def test_clear_undo_stack():
         x = vfield(10)
 
         def undoable(self):
-            return to_undo(lambda: None)
+            return undo_callback(lambda: None)
 
         def not_undoable(self):
             pass
@@ -90,3 +90,35 @@ def test_clear_undo_stack():
     assert len(ui.macro._stack_undo) == len(ui.macro._stack_redo) == 1
     ui.not_undoable()
     assert len(ui.macro._stack_undo) == len(ui.macro._stack_redo) == 0
+
+def test_autocall_method():
+    from magicclass import set_options, get_function_gui
+
+    @magicclass
+    class A:
+        def __init__(self) -> None:
+            self._x = 0
+
+        @set_options(auto_call=True)
+        def f(self, x: int):
+            old_value = self._x
+            self._x = x
+            @undo_callback
+            def undo():
+                self._x = old_value
+            return undo
+
+        def g(self):
+            @undo_callback
+            def undo():
+                pass
+            return undo
+
+    ui = A()
+    fgui = get_function_gui(ui.f)
+    fgui.x.value = 1
+    fgui.x.value = 2
+    fgui.x.value = 3
+    assert ui._x == 3
+    ui.macro.undo()
+    assert ui._x == 0

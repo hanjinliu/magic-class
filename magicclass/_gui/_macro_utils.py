@@ -10,7 +10,7 @@ from magicgui.widgets.bases import ValueWidget
 from .utils import get_parameters
 from magicclass.utils import get_signature, thread_worker
 from magicclass.signature import MagicMethodSignature
-from magicclass.undo import UndoFunction
+from magicclass.undo import UndoCallback
 
 if TYPE_CHECKING:
     from ._base import MagicTemplate
@@ -36,9 +36,6 @@ def value_widget_callback(
         sub = Expr(head=Head.getattr, args=[sym_name, Symbol("value")])  # name.value
     else:
         sub = sym_name
-
-    initial_value = widget.value
-    setter = lambda val: setattr(widget, "value", val)
 
     def _set_value(value):
         if not widget.enabled or not gui.macro.active:
@@ -93,14 +90,14 @@ def nested_function_gui_callback(gui: MagicTemplate, fgui: FunctionGui[_R]):
                 and len(gui.macro) > 0
             ):
                 gui.macro.pop()
-                if isinstance(out, UndoFunction):
+                if isinstance(out, UndoCallback):
                     warnings.warn(
                         "User-defined undo operation of auto-call function is not "
                         "supported yet. Ignore the returned undo function.",
                         UserWarning,
                     )
         else:
-            if isinstance(out, UndoFunction):
+            if isinstance(out, UndoCallback):
                 gui.macro._stack_undo.append(out)
             else:
                 gui.macro.clear_undo_stack()
@@ -249,12 +246,12 @@ def _define_macro_recorder(sig: inspect.Signature, func: Callable):
                     and len(bgui.macro) > 0
                 ):
                     bgui.macro.pop()
-                    if isinstance(out, UndoFunction):
-                        bgui.macro._pop_undo()
+                    if isinstance(out, UndoCallback):
+                        out = bgui.macro._pop_undo()
 
             bgui.macro.append(expr)
             bgui.macro._last_setval = None
-            if isinstance(out, UndoFunction):
+            if isinstance(out, UndoCallback):
                 bgui.macro._append_undo(out)
             else:
                 bgui.macro.clear_undo_stack()
@@ -316,12 +313,12 @@ def _define_macro_recorder_for_partial(
                     and len(bgui.macro) > 0
                 ):
                     bgui.macro.pop()
-                    if isinstance(out, UndoFunction):
+                    if isinstance(out, UndoCallback):
                         bgui.macro._pop_undo()
 
             bgui.macro.append(expr)
             bgui.macro._last_setval = None
-            if isinstance(out, UndoFunction):
+            if isinstance(out, UndoCallback):
                 bgui.macro._append_undo(out)
             else:
                 bgui.macro.clear_undo_stack()
