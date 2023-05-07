@@ -36,6 +36,7 @@ def value_widget_callback(
     else:
         sub = sym_name
 
+    initial_value = widget.value
     setter = lambda val: setattr(widget, "value", val)
 
     def _set_value(value):
@@ -55,15 +56,12 @@ def value_widget_callback(
 
         if gui.macro._last_setval == target and len(gui.macro) > 0:
             gui.macro.pop()
-            gui.macro._erase_last()
-            _undo = gui.macro._pop_undo()
-            if isinstance(_undo, SetterUndoFuncion):
-                _undo_to_append = _undo.merge_with(value)
-            else:
-                raise RuntimeError(f"Unexpected undo function: {_undo}")
+            _undo_to_append = gui.macro._pop_undo()
+            if not isinstance(_undo_to_append, SetterUndoFuncion):
+                raise RuntimeError(f"Unexpected undo function: {_undo_to_append}")
         else:
             gui.macro._last_setval = target
-            _undo_to_append = SetterUndoFuncion(setter, value, None)
+            _undo_to_append = SetterUndoFuncion(setter, initial_value)
 
         gui.macro.append(expr)
         gui.macro._append_undo(_undo_to_append)
@@ -98,7 +96,6 @@ def nested_function_gui_callback(gui: MagicTemplate, fgui: FunctionGui[_R]):
                 and len(gui.macro) > 0
             ):
                 gui.macro.pop()
-                gui.macro._erase_last()
                 if isinstance(out, UndoFunction):
                     gui.macro._pop_undo()
 
@@ -251,7 +248,6 @@ def _define_macro_recorder(sig: inspect.Signature, func: Callable):
                     and len(bgui.macro) > 0
                 ):
                     bgui.macro.pop()
-                    bgui.macro._erase_last()
                     if isinstance(out, UndoFunction):
                         bgui.macro._pop_undo()
 
@@ -282,7 +278,6 @@ def _define_macro_recorder(sig: inspect.Signature, func: Callable):
                     and len(bgui.macro) > 0
                 ):
                     bgui.macro.pop()
-                    bgui.macro._erase_last()
 
             bgui.macro.append(expr)
             bgui.macro._last_setval = None
@@ -320,7 +315,6 @@ def _define_macro_recorder_for_partial(
                     and len(bgui.macro) > 0
                 ):
                     bgui.macro.pop()
-                    bgui.macro._erase_last()
                     if isinstance(out, UndoFunction):
                         bgui.macro._pop_undo()
 
@@ -352,7 +346,6 @@ def _define_macro_recorder_for_partial(
                     and len(bgui.macro) > 0
                 ):
                     bgui.macro.pop()
-                    bgui.macro._erase_last()
 
             bgui.macro.append(expr)
             bgui.macro._last_setval = None

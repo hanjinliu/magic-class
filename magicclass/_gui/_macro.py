@@ -385,6 +385,7 @@ class GuiMacro(Macro):
         super().__init__(flags=flags)
         self._max_lines = max_lines
         self.on_appended.append(self._on_macro_added)
+        self.on_popped.append(self._on_macro_popped)
 
         self._widget = MacroEdit(name="Macro")
         self._widget.__magicclass_parent__ = ui
@@ -422,12 +423,13 @@ class GuiMacro(Macro):
             return
         undo = self._stack_undo.pop()
         try:
-            undo.call()
+            with self.blocked():
+                undo.call()
         except Exception as e:
             self._stack_undo.append(undo)
             raise e
         else:
-            expr = self.args.pop()
+            expr = self.pop()
             self._stack_redo.append((expr, undo))
 
     def redo(self):
@@ -435,12 +437,13 @@ class GuiMacro(Macro):
             return
         expr, undo = self._stack_redo.pop()
         try:
-            expr.eval({self._gui_parent._my_symbol: self._gui_parent})
+            with self.blocked():
+                expr.eval({self._gui_parent._my_symbol: self._gui_parent})
         except Exception as e:
             self._stack_redo.append((expr, undo))
             raise e
         else:
-            self.args.append(expr)
+            self.append(expr)
             self._stack_undo.append(undo)
 
     def copy(self) -> Macro:
@@ -523,6 +526,9 @@ class GuiMacro(Macro):
             wdt.append(line)
         if len(self) > self._max_lines:
             del self[0]
+
+    def _on_macro_popped(self, expr=None):
+        self._erase_last()
 
     def _erase_last(self):
         if wdt := self.widget.native_macro:

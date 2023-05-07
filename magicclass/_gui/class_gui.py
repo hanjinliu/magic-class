@@ -19,6 +19,7 @@ from magicgui.widgets.bases import (
     ContainerWidget,
     ContainerWidget,
 )
+from magicgui.types import Undefined
 from magicgui.widgets._concrete import _LabeledWidget
 from macrokit import Symbol
 
@@ -90,17 +91,19 @@ class ClassGuiBase(BaseGui[Widget]):
 
         if isinstance(widget, (ValueWidget, ContainerWidget)):
             # If the field has callbacks, connect it to the newly generated widget.
-            if (
-                isinstance(widget, ValueWidget) or hasattr(widget, "value")
-            ) and fld.record:
-                # By default, set value function will be connected to the widget.
+            if fld.record:
                 getvalue = type(fld) is MagicField
-                f = value_widget_callback(self, widget, name, getvalue=getvalue)
-                widget.changed.connect(f)
+                if isinstance(widget, ValueWidget):
+                    if widget._bound_value is Undefined:
+                        f = value_widget_callback(self, widget, name, getvalue=getvalue)
+                        widget.changed.connect(f)
+                elif hasattr(widget, "value"):
+                    f = value_widget_callback(self, widget, name, getvalue=getvalue)
+                    widget.changed.connect(f)
 
         elif fld.callbacks:
             warnings.warn(
-                f"{type(widget).__name__} does not have value-change callback. "
+                f"{type(widget).__name__} does not have `changed` signal. "
                 "Connecting callback functions does no effect.",
                 UserWarning,
             )
