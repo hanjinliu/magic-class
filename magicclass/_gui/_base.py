@@ -976,7 +976,7 @@ def _create_gui_method(self: BaseGui, obj: MethodType):
     # Method type cannot set __signature__ attribute.
     @functools.wraps(obj)
     def func(*args, **kwargs):
-        return obj(*args, **kwargs)
+        out = obj(*args, **kwargs)
 
     func.__signature__ = func_sig
 

@@ -9,6 +9,7 @@ from magicgui.widgets import FileEdit, LineEdit
 
 from magicclass.widgets import CodeEdit, TabbedContainer, ScrollableContainer, Dialog
 from magicclass.utils import move_to_screen_center
+from magicclass.undo import UndoFunction
 from magicclass._gui.runner import CommandRunnerMenu
 
 if TYPE_CHECKING:
@@ -383,13 +384,16 @@ class GuiMacro(Macro):
 
         super().__init__(flags=flags)
         self._max_lines = max_lines
-        self.callbacks.append(self._update_widget)
+        self.on_appended.append(self._on_macro_added)
 
         self._widget = MacroEdit(name="Macro")
         self._widget.__magicclass_parent__ = ui
         self._widget._add_code_edit(native=True)
         now = datetime.now()
         self.append(Expr(Head.comment, [now.strftime("%Y/%m/%d %H:%M:%S")]))
+
+        self._stack_undo: list[UndoFunction] = []
+        self._stack_redo: list[tuple[Expr, UndoFunction]] = []
 
     @property
     def widget(self) -> MacroEdit:
@@ -400,6 +404,44 @@ class GuiMacro(Macro):
     def _gui_parent(self) -> BaseGui:
         """The parent GUI object."""
         return self.widget.__magicclass_parent__
+
+    def clear_undo_stack(self) -> None:
+        self._stack_undo.clear()
+        self._stack_redo.clear()
+
+    def _append_undo(self, undo: UndoFunction) -> None:
+        self._stack_undo.append(undo)
+        self._stack_redo.clear()
+        return None
+
+    def _pop_undo(self) -> UndoFunction:
+        return self._stack_undo.pop()
+
+    def undo(self):
+        if len(self._stack_undo) == 0:
+            return
+        undo = self._stack_undo.pop()
+        try:
+            undo.call()
+        except Exception as e:
+            self._stack_undo.append(undo)
+            raise e
+        else:
+            expr = self.args.pop()
+            self._stack_redo.append((expr, undo))
+
+    def redo(self):
+        if len(self._stack_redo) == 0:
+            return
+        expr, undo = self._stack_redo.pop()
+        try:
+            expr.eval({self._gui_parent._my_symbol: self._gui_parent})
+        except Exception as e:
+            self._stack_redo.append((expr, undo))
+            raise e
+        else:
+            self.args.append(expr)
+            self._stack_undo.append(undo)
 
     def copy(self) -> Macro:
         """GuiMacro does not support deepcopy (and apparently _widget should not be copied)."""
@@ -473,7 +515,7 @@ class GuiMacro(Macro):
                 )
         return None
 
-    def _update_widget(self, expr=None):
+    def _on_macro_added(self, expr=None):
         line = str(self.args[-1])
         if wdt := self.widget.native_macro:
             wdt.append(line)
@@ -492,3 +534,12 @@ class GuiMacro(Macro):
 class DummyMacro(Macro):
     def insert(self, index, expr):
         pass
+
+    def _append_undo(self, undo) -> None:
+        return None
+
+    def _pop_undo(self) -> None:
+        return None
+
+    def clear_undo_stack(self) -> None:
+        return None

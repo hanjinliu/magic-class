@@ -1,16 +1,20 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING, Callable, TypeVar
 import inspect
 from functools import partial, partialmethod, wraps as functools_wraps
 from macrokit import Symbol, Expr, Head, symbol
 from magicgui.widgets import FunctionGui
 from magicgui.widgets.bases import ValueWidget
+
 from .utils import get_parameters
 from magicclass.utils import get_signature, thread_worker
 from magicclass.signature import MagicMethodSignature
+from magicclass.undo import UndoFunction, SetterUndoFuncion
 
 if TYPE_CHECKING:
     from ._base import MagicTemplate
+
+_R = TypeVar("_R")
 
 
 def value_widget_callback(
@@ -32,7 +36,9 @@ def value_widget_callback(
     else:
         sub = sym_name
 
-    def _set_value():
+    setter = lambda val: setattr(widget, "value", val)
+
+    def _set_value(value):
         if not widget.enabled or not gui.macro.active:
             # If widget is read only, it means that value is set in script (not manually).
             # Thus this event should not be recorded as a macro.
@@ -50,19 +56,27 @@ def value_widget_callback(
         if gui.macro._last_setval == target and len(gui.macro) > 0:
             gui.macro.pop()
             gui.macro._erase_last()
+            _undo = gui.macro._pop_undo()
+            if isinstance(_undo, SetterUndoFuncion):
+                _undo_to_append = _undo.merge_with(value)
+            else:
+                raise RuntimeError(f"Unexpected undo function: {_undo}")
         else:
             gui.macro._last_setval = target
+            _undo_to_append = SetterUndoFuncion(setter, value, None)
+
         gui.macro.append(expr)
+        gui.macro._append_undo(_undo_to_append)
         return None
 
     return _set_value
 
 
-def nested_function_gui_callback(gui: MagicTemplate, fgui: FunctionGui):
+def nested_function_gui_callback(gui: MagicTemplate, fgui: FunctionGui[_R]):
     """Define a FunctionGui callback, including macro recording."""
     fgui_name = Symbol(fgui.name)
 
-    def _after_run():
+    def _after_run(out: _R):
         if not fgui.enabled or not gui.macro.active:
             # If widget is read only, it means that value is set in script (not manually).
             # Thus this event should not be recorded as a macro.
@@ -85,9 +99,15 @@ def nested_function_gui_callback(gui: MagicTemplate, fgui: FunctionGui):
             ):
                 gui.macro.pop()
                 gui.macro._erase_last()
+                if isinstance(out, UndoFunction):
+                    gui.macro._pop_undo()
 
         gui.macro.append(expr)
         gui.macro._last_setval = None
+        if isinstance(out, UndoFunction):
+            gui.macro._stack_undo.append(out)
+        else:
+            gui.macro.clear_undo_stack()
 
     return _after_run
 
@@ -232,9 +252,15 @@ def _define_macro_recorder(sig: inspect.Signature, func: Callable):
                 ):
                     bgui.macro.pop()
                     bgui.macro._erase_last()
+                    if isinstance(out, UndoFunction):
+                        bgui.macro._pop_undo()
 
             bgui.macro.append(expr)
             bgui.macro._last_setval = None
+            if isinstance(out, UndoFunction):
+                bgui.macro._stack_undo.append(out)
+            else:
+                bgui.macro.clear_undo_stack()
             return None
 
     else:
@@ -295,9 +321,15 @@ def _define_macro_recorder_for_partial(
                 ):
                     bgui.macro.pop()
                     bgui.macro._erase_last()
+                if isinstance(out, UndoFunction):
+                    bgui.macro._pop_undo()
 
             bgui.macro.append(expr)
             bgui.macro._last_setval = None
+            if isinstance(out, UndoFunction):
+                bgui.macro._append_undo(out)
+            else:
+                bgui.macro.clear_undo_stack()
             return None
 
     else:
@@ -321,6 +353,8 @@ def _define_macro_recorder_for_partial(
                 ):
                     bgui.macro.pop()
                     bgui.macro._erase_last()
+                    if isinstance(out, UndoFunction):
+                        bgui.macro._pop_undo()
 
             bgui.macro.append(expr)
             bgui.macro._last_setval = None
