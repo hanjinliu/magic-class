@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, Callable, Iterable, overload
 import warnings
 from qtpy import QtWidgets as QtW, QtCore
-from macrokit import Symbol, Expr, Head, Macro, parse
+from macrokit import Symbol, Expr, Head, BaseMacro, parse
 from magicgui.widgets import FileEdit, LineEdit
 
 from magicclass.widgets import CodeEdit, TabbedContainer, ScrollableContainer, Dialog
@@ -376,13 +376,13 @@ def _action(
     return action
 
 
-class GuiMacro(Macro):
+class GuiMacro(BaseMacro):
     """Macro object with GUI-specific functions."""
 
-    def __init__(self, max_lines: int, flags={}, ui: BaseGui = None):
+    def __init__(self, max_lines: int, ui: BaseGui = None):
         from datetime import datetime
 
-        super().__init__(flags=flags)
+        super().__init__()
         self._max_lines = max_lines
         self.on_appended.append(self._on_macro_added)
         self.on_popped.append(self._on_macro_popped)
@@ -449,30 +449,30 @@ class GuiMacro(Macro):
             self.append(expr)
             self._stack_undo.append(undo)
 
-    def copy(self) -> Macro:
+    def copy(self) -> BaseMacro:
         """Copy the macro instance."""
         # GuiMacro does not support deepcopy (and apparently _widget should not be copied)
         from copy import deepcopy
 
-        return Macro(deepcopy(self.args), flags=self._flags)
+        return BaseMacro(deepcopy(self.args))
 
     @overload
     def __getitem__(self, key: int) -> Expr:
         ...
 
     @overload
-    def __getitem__(self, key: slice) -> Macro:
+    def __getitem__(self, key: slice) -> BaseMacro:
         ...
 
     def __getitem__(self, key):
         if isinstance(key, slice):
-            return Macro(self._args, flags=self.flags)[key]
+            return BaseMacro(self._args)[key]
         return super().__getitem__(key)
 
-    def subset(self, indices: Iterable[int]) -> Macro:
+    def subset(self, indices: Iterable[int]) -> BaseMacro:
         """Generate a subset of macro."""
         args = [self._args[i] for i in indices]
-        return Macro(args, flags=self.flags)
+        return BaseMacro(args)
 
     def get_command(self, key: int) -> Callable[[], Any]:
         """Get the command function at the give index."""
@@ -541,7 +541,7 @@ class GuiMacro(Macro):
             wdt.erase_last()
 
 
-class DummyMacro(Macro):
+class DummyMacro(BaseMacro):
     def insert(self, index, expr):
         pass
 

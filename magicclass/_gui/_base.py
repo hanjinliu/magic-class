@@ -808,7 +808,6 @@ class BaseGui(MagicTemplate[_W]):
     ):
         self._macro_instance = GuiMacro(
             max_lines=defaults["macro-max-history"],
-            flags={"Get": False, "Return": False},
             ui=self,
         )
         self.__magicclass_parent__: BaseGui | None = None
