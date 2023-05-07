@@ -67,6 +67,7 @@ def value_widget_callback(
 def nested_function_gui_callback(gui: MagicTemplate, fgui: FunctionGui[_R]):
     """Define a FunctionGui callback, including macro recording."""
     fgui_name = Symbol(fgui.name)
+    _qualname = getattr(fgui._function, "__qualname__", None)
 
     def _after_run(out: _R):
         if not fgui.enabled or not gui.macro.active:
@@ -98,7 +99,7 @@ def nested_function_gui_callback(gui: MagicTemplate, fgui: FunctionGui[_R]):
                     )
         else:
             if isinstance(out, UndoCallback):
-                gui.macro._stack_undo.append(out)
+                gui.macro._stack_undo.append(out.with_name(str(expr)))
             else:
                 gui.macro.clear_undo_stack()
         gui.macro.append(expr)
@@ -229,6 +230,8 @@ def _define_macro_recorder(sig: inspect.Signature, func: Callable):
     else:
         _auto_call = False
 
+    _qualname = getattr(func, "__qualname__", None)
+
     if sig.return_annotation is inspect.Parameter.empty:
 
         def _record_macro(bgui: MagicTemplate, out, *args, **kwargs):
@@ -252,7 +255,7 @@ def _define_macro_recorder(sig: inspect.Signature, func: Callable):
             bgui.macro.append(expr)
             bgui.macro._last_setval = None
             if isinstance(out, UndoCallback):
-                bgui.macro._append_undo(out)
+                bgui.macro._append_undo(out.with_name(str(expr)))
             else:
                 bgui.macro.clear_undo_stack()
             return None
@@ -295,6 +298,8 @@ def _define_macro_recorder_for_partial(
     else:
         _auto_call = False
 
+    _qualname = getattr(base_func, "__qualname__", None)
+
     if sig.return_annotation is inspect.Parameter.empty:
 
         def _record_macro(bgui: MagicTemplate, out, *args, **kwargs):
@@ -319,7 +324,7 @@ def _define_macro_recorder_for_partial(
             bgui.macro.append(expr)
             bgui.macro._last_setval = None
             if isinstance(out, UndoCallback):
-                bgui.macro._append_undo(out)
+                bgui.macro._append_undo(out.with_name(str(expr)))
             else:
                 bgui.macro.clear_undo_stack()
             return None

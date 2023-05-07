@@ -1,6 +1,6 @@
 from magicgui import magicgui
 from magicclass import magicclass, vfield
-from magicclass.undo import undo_callback, undoable
+from magicclass.undo import undo_callback
 
 def test_undo_func():
     @magicclass
@@ -21,6 +21,7 @@ def test_undo_func():
     ui.f(2)
     assert ui._x == 2
     assert len(ui.macro) == 3 and str(ui.macro[-1]) == "ui.f(x=2)"
+
     ui.macro.undo()
     assert ui._x == 1
     assert len(ui.macro) == 2 and str(ui.macro[-1]) == "ui.f(x=1)"
@@ -34,24 +35,6 @@ def test_undo_func():
     assert ui._x == 2
     assert len(ui.macro) == 3 and str(ui.macro[-1]) == "ui.f(x=2)"
 
-def test_undo_func_using_generator():
-    @magicclass
-    class A:
-        def __init__(self):
-            self._x = 0
-
-        @undoable
-        def f(self, x: int):
-            old_value = self._x
-            self._x = x
-            yield
-            self._x = old_value
-
-    ui = A()
-    ui.f(1)
-    ui.f(2)
-    assert ui._x == 2
-    assert len(ui.macro) == 3 and str(ui.macro[-1]) == "ui.f(x=2)"
     ui.macro.undo()
     assert ui._x == 1
     assert len(ui.macro) == 2 and str(ui.macro[-1]) == "ui.f(x=1)"
@@ -64,6 +47,7 @@ def test_undo_func_using_generator():
     ui.macro.redo()
     assert ui._x == 2
     assert len(ui.macro) == 3 and str(ui.macro[-1]) == "ui.f(x=2)"
+
 
 def test_magicgui_undo():
     @magicclass
@@ -163,12 +147,13 @@ def test_undo_thread_worker():
             self._x = 0
 
         @thread_worker
-        @undoable
         def f(self, x: int):
             old_value = self._x
             self._x = x
-            yield
-            self._x = old_value
+            @undo_callback
+            def out():
+                self._x = old_value
+            return out
 
     ui = A()
     ui.f(1)
@@ -187,3 +172,52 @@ def test_undo_thread_worker():
     ui.macro.redo()
     assert ui._x == 2
     assert len(ui.macro) == 3 and str(ui.macro[-1]) == "ui.f(x=2)"
+
+def test_undoable_in_undo():
+    @magicclass
+    class A:
+        def __init__(self):
+            self._values = []
+
+        def add_value(self, x: int):
+            self._values.append(x)
+            @undo_callback
+            def out():
+                self.pop_value()
+            return out
+
+        def pop_value(self):
+            val = self._values.pop()
+            @undo_callback
+            def out():
+                self.add_value(val)
+            return out
+
+    ui = A()
+    ui.add_value(1)
+    ui.add_value(2)
+    assert ui._values == [1, 2]
+    ui.macro.undo()
+    assert ui._values == [1]
+    ui.macro.undo()
+    assert ui._values == []
+    ui.macro.undo()
+    assert ui._values == []
+    ui.macro.redo()
+    assert ui._values == [1]
+    ui.macro.redo()
+    assert ui._values == [1, 2]
+    ui.macro.redo()
+    assert ui._values == [1, 2]
+    ui.macro.undo()
+    assert ui._values == [1]
+    ui.macro.undo()
+    assert ui._values == []
+    ui.macro.undo()
+    assert ui._values == []
+    ui.macro.redo()
+    assert ui._values == [1]
+    ui.macro.redo()
+    assert ui._values == [1, 2]
+    ui.macro.redo()
+    assert ui._values == [1, 2]

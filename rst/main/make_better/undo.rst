@@ -20,67 +20,39 @@ The undo/redo operations can be executed from the macro instance using
 Basic Syntax
 ============
 
-There are two ways to define undoable methods using functions from submodule
-:mod:`magicclass.undo`.
+You can define undoable methods using functions from submodule :mod:`magicclass.undo`.
 
-1. Use the :func:`undo_callback` decorator.
+:func:`undo_callback` is a decorator that converts a function into a
+callback that can be recognized by magic-classes. Returned callback
+will be properly processed so that the GUI operations can be recorded
+in the undo stack.
 
-    :func:`undo_callback` is a decorator that converts a function into a
-    callback that can be recognized by magic-classes. Returned callback
-    will be properly processed so that the GUI operations can be recorded
-    in the undo stack.
+.. code-block:: python
 
-    .. code-block:: python
+    from magicclass import magicclass
+    from magicclass.undo import undo_callback
 
-        from magicclass import magicclass
-        from magicclass.undo import undo_callback
+    @magicclass
+    class A:
+        ...
 
-        @magicclass
-        class A:
-            ...
-
-            def func(self, ...):
-                ########################
-                #   forward function   #
-                ########################
-                @undo_callback
-                def undo():
-                    ########################
-                    #   reverse function   #
-                    ########################
-                return undo
-
-    .. note::
-
-        The reason why we need to define the reverse function inside the
-        forward function is that the reverse function usually needs the
-        local variables of the forward function to return the GUI state
-        to the original.
-
-2. Use the :func:`undoable` decorator.
-
-    :func:`undoable` decorator can do the same thing as :func:`undo_callback`,
-    but it uses generator instead of callback function.
-
-    .. code-block:: python
-
-        from magicclass import magicclass
-        from magicclass.undo import undoable
-
-        @magicclass
-        class A:
-            ...
-
-            @undoable
-            def func(self, ...):
-                ########################
-                #   forward function   #
-                ########################
-                yield
+        def func(self, ...):
+            ########################
+            #   forward function   #
+            ########################
+            @undo_callback
+            def undo():
                 ########################
                 #   reverse function   #
                 ########################
-                return
+            return undo
+
+.. note::
+
+    The reason why we need to define the reverse function inside the
+    forward function is that the reverse function usually needs the
+    local variables of the forward function to return the GUI state
+    to the original.
 
 An example of undoable setter method is like this:
 
@@ -165,7 +137,7 @@ that you have to be careful about.
 
         import numpy as np
         from magicclass import magicclass, set_options, vfield
-        from magicclass.undo import undoable
+        from magicclass.undo import undo_callback
 
         def get_array(*_):
             return np.arange(10)
@@ -175,12 +147,13 @@ that you have to be careful about.
             array = vfield(str, record=False)
 
             @set_options(x={"bind": get_array})
-            @undoable
             def show_array(self, x):
                 old_str = self.array
                 self.array = str(x)
-                yield
-                self.array = old_str
+                @undo_callback
+                def out():
+                    self.array = old_str
+                return out
 
     :mod:`macro-kit` does not implement the object-to-string conversion
     for :class:`numpy.ndarray` by default because the array data can
@@ -199,9 +172,10 @@ that you have to be careful about.
             array = vfield(str, record=False)
 
             @set_options(x={"bind": get_array})
-            @undoable
             def show_array(self, x):
                 old_str = self.array
                 self.array = str(np.asarray(x))
-                yield
-                self.array = old_str
+                @undo_callback
+                def out():
+                    self.array = old_str
+                return out

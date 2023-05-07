@@ -438,6 +438,8 @@ class GuiMacro(BaseMacro):
         """Redo the last undo operation."""
         if len(self._stack_redo) == 0:
             return
+        if not self.active:
+            raise ValueError("Cannot redo when the macro is blocked.")
         expr, undo = self._stack_redo.pop()
         try:
             with self.blocked():
