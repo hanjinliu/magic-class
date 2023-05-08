@@ -379,11 +379,12 @@ def _action(
 class GuiMacro(BaseMacro):
     """Macro object with GUI-specific functions."""
 
-    def __init__(self, max_lines: int, ui: BaseGui = None):
+    def __init__(self, ui: BaseGui = None, max_lines: int = 10000, max_undo: int = 100):
         from datetime import datetime
 
         super().__init__()
         self._max_lines = max_lines
+        self._max_undo = max_undo
         self.on_appended.append(self._on_macro_added)
         self.on_popped.append(self._on_macro_popped)
 
@@ -414,6 +415,8 @@ class GuiMacro(BaseMacro):
     def _append_undo(self, undo: ImplementsUndo) -> None:
         self._stack_undo.append(undo)
         self._stack_redo.clear()
+        if len(self._stack_undo) > self._max_undo:
+            self._stack_undo.pop(0)
         return None
 
     def _pop_undo(self) -> ImplementsUndo:

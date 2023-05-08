@@ -177,8 +177,13 @@ def ismodifier(s: str) -> bool:
 
 def parse_key_combo(key_combo: str) -> QtKey:
     # For compatibility with napari
-    parsed = re.split("-(?=.+)", key_combo)
-    return strs2keycombo(*parsed)
+    parsed = re.split(r"\+(?=.+)", key_combo)
+    try:
+        out = strs2keycombo(*parsed)
+    except ValueError:
+        parsed = re.split("-(?=.+)", key_combo)
+        out = strs2keycombo(*parsed)
+    return out
 
 
 def strs2keycombo(*args: tuple[str | Key, ...]) -> KeyCombo:

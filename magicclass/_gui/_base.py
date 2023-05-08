@@ -88,6 +88,7 @@ defaults = {
     "close_on_run": True,
     "macro-max-history": 100000,
     "macro-highlight": False,
+    "undo-max-history": 100,
 }
 
 _RESERVED = frozenset(
@@ -698,11 +699,19 @@ class MagicTemplate(MutableSequence[Widget], metaclass=_MagicTemplateMeta):
 
         # Get the number of parameters except for empty widgets.
         # With these lines, "bind" method of magicgui works inside magicclass.
-        fgui_classes = callable_to_classes(func)
+        fgui_info = callable_to_classes(func)
         n_empty = len(
-            [_wdg_cls for _wdg_cls in fgui_classes if _wdg_cls is EmptyWidget]
+            [
+                0
+                for _wdg_cls, _prm in fgui_info
+                if _wdg_cls is EmptyWidget or _prm.options.get("bind", None) is not None
+            ]
         )
         nparams = argcount(func) - n_empty
+        if len(fgui_info) == 0:
+            _first_is_file_edit = False
+        else:
+            _first_is_file_edit = issubclass(fgui_info[0][0], FileEdit)
 
         has_preview = get_additional_option(func, "preview", None) is not None
 
@@ -717,7 +726,7 @@ class MagicTemplate(MutableSequence[Widget], metaclass=_MagicTemplateMeta):
 
                 return out
 
-        elif nparams == 1 and issubclass(fgui_classes[0], FileEdit) and not has_preview:
+        elif nparams == 1 and _first_is_file_edit and not has_preview:
             # We don't want to open a magicgui dialog and again open a file dialog.
 
             def run_function():
@@ -751,7 +760,7 @@ class MagicTemplate(MutableSequence[Widget], metaclass=_MagicTemplateMeta):
                     if self._close_on_run and not mgui._auto_call:
                         self._popup_mode.connect_close_callback(mgui)
 
-                if nparams == 1 and issubclass(fgui_classes[0], FileEdit):
+                if nparams == 1 and _first_is_file_edit:
                     fdialog: FileEdit = mgui[int(_need_title_bar)]
                     if result := fdialog._show_file_dialog(
                         fdialog.mode,
@@ -808,6 +817,7 @@ class BaseGui(MagicTemplate[_W]):
     ):
         self._macro_instance = GuiMacro(
             max_lines=defaults["macro-max-history"],
+            max_undo=defaults["undo-max-history"],
             ui=self,
         )
         self.__magicclass_parent__: BaseGui | None = None
