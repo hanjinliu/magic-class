@@ -27,6 +27,11 @@ callback that can be recognized by magic-classes. Returned callback
 will be properly processed so that the GUI operations can be recorded
 in the undo stack.
 
+Standard methods
+----------------
+
+For standard methods, just return the undo callback.
+
 .. code-block:: python
 
     from magicclass import magicclass
@@ -74,25 +79,83 @@ An example of undoable setter method is like this:
                 self._x = old_state
             return undo
 
-How Undo Commands are Managed
-=============================
+Thread workers
+--------------
+
+When you use :doc:`./use_worker`, you'll usually return returned-callbacks, which seems to
+collide with the undo callback. In this case, you can return an undo callback from the
+returned-callback.
 
 .. code-block:: python
 
-    ui = A()
+    from magicclass.utils import thread_worker
 
-    ui.func(x=0)  # "ui.func(x=0)" is recorded to the macro instance
-                  # and the corresponding undo command is added to
-                  # the undo stack
+    @magicclass
+    class A:
+        @thread_worker
+        def long_running_function(self, ...):
+            ########################
+            #   forward function   #
+            ########################
 
-    ui.macro.undo()  # undo command is popped from the undo stack,
-                     # executed and added to the redo stack.
+            @undo_callback
+            def undo():
+                ########################
+                #   reverse function   #
+                ########################
 
-    ui.macro.redo()  # redo command (the macro string "ui.func(x=0)")
-                     # is popped from the redo stack, evaluated and
-                     # added to the undo stack.
+            @thread_worker.to_callback
+            def out():
+                ########################
+                #   returned-callback  #
+                ########################
+                return undo
+            return out
 
-    ui.not_undoable()  # undo stack is cleared.
+The Undo Stack
+==============
+
+Executed undoable operations are all stored in the "undo stack".
+Suppose you've defined two undoable methods :meth:`f`, :meth:`g` and
+a non-undoable method :meth:`not_undoable` in magic class ``A``, the
+undo stack will change as follow.
+
+.. code-block:: python
+
+                        # Undo list / redo list
+    ui = A()            # [], []
+    ui.f(x=0)           # [<ui.f(x=0)>], []
+    ui.g(y=1)           # [<ui.f(x=0)>, <ui.g(y=1)>], []
+    ui.macro.undo()     # [<ui.f(x=0)>], [<ui.g(y=1)>]
+    ui.macro.undo()     # [], [<ui.f(x=0)>, <ui.g(y=1)>]
+    ui.macro.undo()     # [], [<ui.f(x=0)>, <ui.g(y=1)>] (excessive undo does nothing)
+    ui.macro.redo()     # [<ui.f(x=0)>], [<ui.g(y=1)>]
+    ui.macro.redo()     # [<ui.f(x=0)>, <ui.g(y=1)>], []
+    ui.macro.redo()     # [<ui.f(x=0)>, <ui.g(y=1)>], [] (excessive redo does nothing)
+    ui.not_undoable()   # [], [] (non-undoable function call clears the undo stack)
+
+Since undo operation is tightly connected to the macro, non-recordable
+methods will not added to undo stack, nor will they clears the undo
+stack when get called.
+
+.. code-block:: python
+
+    @magicclass
+    class A:
+        @do_not_record
+        def non_recordable(self): ...
+
+        def undoable(self):
+            @undo_callback
+            def out():
+                ...
+            return out
+                         # Undo list / redo list
+    ui = A()             # [], []
+    ui.undoable()        # [<ui.undoable()>], []
+    ui.undoable()        # [<ui.undoable()>] * 2, []
+    ui.non_recordable()  # [<ui.undoable()>] * 2, []
+    ui.undoable()        # [<ui.undoable()>] * 3, []
 
 Call Undo/Redo in GUI
 =====================
@@ -130,8 +193,8 @@ that you have to be careful about.
 2. Make sure the recorded macro is executable.
 
     The redo operation fully relies on the macro string. If the macro
-    string is not executable, redoing will fail. In following example,
-    redo does not work.
+    string is not executable, the redo operation will fail. In following
+    example, redo does not work.
 
     .. code-block:: python
 

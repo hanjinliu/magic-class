@@ -442,8 +442,12 @@ class GuiMacro(BaseMacro):
             raise ValueError("Cannot redo when the macro is blocked.")
         expr, undo = self._stack_redo.pop()
         try:
+            ns = {self._gui_parent._my_symbol: self._gui_parent}
+            parent = self._widget.__magicclass_parent__
+            if (viewer := parent.parent_viewer) is not None:
+                ns.setdefault(Symbol.var("viewer"), viewer)
             with self.blocked():
-                expr.eval({self._gui_parent._my_symbol: self._gui_parent})
+                expr.eval(ns)
         except Exception as e:
             self._stack_redo.append((expr, undo))
             raise e

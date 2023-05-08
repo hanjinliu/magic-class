@@ -640,12 +640,6 @@ class thread_worker(Generic[_P]):
             **kwargs,
         )
 
-        @worker.returned.connect
-        def _on_returned(out):
-            if gui.macro.active and self._recorder is not None:
-                self._recorder(gui, out, *args, **kwargs)
-            return
-
         return worker
 
     def _create_method(self, gui: BaseGui) -> Callable[_P, None]:
@@ -679,7 +673,7 @@ class thread_worker(Generic[_P]):
 
                 worker.started.connect(init_pbar.__get__(pbar))
 
-            self._bind_callbacks(worker, gui)
+            self._bind_callbacks(worker, gui, *args, **kwargs)
 
             if self._progress:
                 if not getattr(pbar, "visible", False):
@@ -749,14 +743,23 @@ class thread_worker(Generic[_P]):
         params = list(sig.parameters.values())[1:]
         return sig.replace(parameters=params)
 
-    def _bind_callbacks(self, worker: FunctionWorker | GeneratorWorker, gui: BaseGui):
+    def _bind_callbacks(
+        self, worker: FunctionWorker | GeneratorWorker, gui: BaseGui, *args, **kwargs
+    ):
         # bind callbacks
         is_generator = isinstance(worker, GeneratorWorker)
         for c in self.started._iter_as_method(gui):
             worker.started.connect(c)
         for c in self.returned._iter_as_method(gui):
             worker.returned.connect(c)
-        worker.returned.connect(partial(Callback.catch, macro=gui.macro))
+        cb_returned = partial(
+            Callback.catch,
+            gui=gui,
+            tw=self,
+            args=args,
+            kwargs=kwargs,
+        )
+        worker.returned.connect(cb_returned)
         for c in self.errored._iter_as_method(gui):
             worker.errored.connect(c)
         for c in self.finished._iter_as_method(gui):
@@ -767,7 +770,10 @@ class thread_worker(Generic[_P]):
                 worker.aborted.connect(c)
             for c in self.yielded._iter_as_method(gui):
                 worker.yielded.connect(c)
-            worker.yielded.connect(partial(Callback.catch, macro=gui.macro))
+            cb_yielded = partial(
+                Callback.catch, gui=gui, tw=self, args=args, kwargs=kwargs, record=False
+            )
+            worker.yielded.connect(cb_yielded)
 
     @property
     def __signature__(self) -> inspect.Signature:
@@ -946,10 +952,12 @@ class Callback:
         self._func = f
 
     @staticmethod
-    def catch(out, macro: GuiMacro):
+    def catch(out, gui: BaseGui, tw: thread_worker, args, kwargs, record=True):
         if isinstance(out, Callback):
-            with macro.blocked():
-                out._func()
+            with gui.macro.blocked():
+                out = out._func()
+        if record and gui.macro.active and tw._recorder is not None:
+            tw._recorder(gui, out, *args, **kwargs)
 
     def __call__(self, *args, **kwargs) -> Callback:
         """Return a partial callback."""

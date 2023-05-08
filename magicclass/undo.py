@@ -35,6 +35,7 @@ class UndoCallback(Generic[_R], ImplementsUndo):
         return self.__class__(self._func, *self._args, **self._kwargs)
 
     def with_args(self, *args, **kwargs) -> UndoCallback[_R]:
+        """Return a new callback with updated arguments."""
         _kwargs = self._kwargs.copy()
         _kwargs.update(kwargs)
         new = self.__class__(self._func, *(self._args + args), **_kwargs)
@@ -42,6 +43,7 @@ class UndoCallback(Generic[_R], ImplementsUndo):
         return new
 
     def with_name(self, name: str) -> UndoCallback[_R]:
+        """Return a new callback with the updated name."""
         if not isinstance(name, str):
             raise TypeError("name must be a string")
         new = self.copy()
