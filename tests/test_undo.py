@@ -314,3 +314,38 @@ def test_undo_in_worker():
     ui.macro.redo()
     assert ui._x == 2
     assert len(ui.macro) == 3 and str(ui.macro[-1]) == "ui.f(x=2)"
+
+def test_custom_redo():
+    @magicclass
+    class A:
+        def __init__(self):
+            self._x = 0
+            self._custom_redo = False
+
+        def f(self, x: int):
+            old_value = self._x
+            self._x = x
+            @undo_callback
+            def undo():
+                self._x = old_value
+            @undo.with_redo
+            def undo():
+                self._x = x
+                self._custom_redo = True
+            return undo
+
+    ui = A()
+    ui.f(1)
+    assert ui._x == 1
+    ui.macro.undo()
+    assert ui._x == 0
+    assert not ui._custom_redo
+    ui.macro.redo()
+    assert ui._x == 1
+    assert ui._custom_redo
+    ui._custom_redo = False
+    ui.macro.undo()
+    assert ui._x == 0
+    ui.macro.redo()
+    assert ui._x == 1
+    assert ui._custom_redo

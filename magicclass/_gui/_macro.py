@@ -9,7 +9,7 @@ from magicgui.widgets import FileEdit, LineEdit
 
 from magicclass.widgets import CodeEdit, TabbedContainer, ScrollableContainer, Dialog
 from magicclass.utils import move_to_screen_center
-from magicclass.undo import ImplementsUndo
+from magicclass.undo import ImplementsUndo, RedoAction
 from magicclass._gui.runner import CommandRunnerMenu
 
 if TYPE_CHECKING:
@@ -426,7 +426,7 @@ class GuiMacro(BaseMacro):
         undo = self._stack_undo.pop()
         try:
             with self.blocked():
-                undo.call()
+                undo.run()
         except Exception as e:
             self._stack_undo.append(undo)
             raise e
@@ -442,12 +442,19 @@ class GuiMacro(BaseMacro):
             raise ValueError("Cannot redo when the macro is blocked.")
         expr, undo = self._stack_redo.pop()
         try:
-            ns = {self._gui_parent._my_symbol: self._gui_parent}
-            parent = self._widget.__magicclass_parent__
-            if (viewer := parent.parent_viewer) is not None:
-                ns.setdefault(Symbol.var("viewer"), viewer)
-            with self.blocked():
-                expr.eval(ns)
+            redo_action = undo.redo_action
+            if redo_action.matches("default"):
+                ns = {self._gui_parent._my_symbol: self._gui_parent}
+                parent = self._widget.__magicclass_parent__
+                if (viewer := parent.parent_viewer) is not None:
+                    ns.setdefault(Symbol.var("viewer"), viewer)
+                with self.blocked():
+                    expr.eval(ns)
+            elif redo_action.matches("custom"):
+                redo_action: RedoAction.Custom
+                redo_action.run()
+            else:
+                raise ValueError(f"Redo is not defined for {undo}")
         except Exception as e:
             self._stack_redo.append((expr, undo))
             raise e
