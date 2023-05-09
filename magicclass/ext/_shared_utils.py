@@ -11,3 +11,7 @@ def convert_color_code(c):
 def to_rgba(pen) -> np.ndarray:
     rgba = pen.color().getRgb()
     return np.array(rgba) / 255
+
+
+def as_float_color(rgba) -> np.ndarray:
+    return np.array(rgba) / 255

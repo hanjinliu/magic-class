@@ -6,11 +6,11 @@ from .widgets2d import VispyPlotCanvas, VispyMultiPlotCanvas, VispyImageCanvas
 if TYPE_CHECKING:
     from .widgets2d import Has2DViewBox, MultiPlot
 
-CURRENT_MULTI_CANVAS: MultiPlot = None
-CURRENT_CANVAS: Has2DViewBox = None
+CURRENT_MULTI_CANVAS: MultiPlot | None = None
+CURRENT_CANVAS: Has2DViewBox | None = None
 
 
-def _current_canvas() -> VispyPlotCanvas:
+def gca() -> VispyPlotCanvas:
     global CURRENT_CANVAS
     if CURRENT_CANVAS is None:
         CURRENT_CANVAS = VispyPlotCanvas()
@@ -31,12 +31,8 @@ def _set_current_multi_canvas(multi):
 
 def gcf():
     if CURRENT_MULTI_CANVAS is None:
-        return CURRENT_CANVAS
-    return CURRENT_CANVAS
-
-
-def gca():
-    return CURRENT_CANVAS
+        return gca()
+    return CURRENT_MULTI_CANVAS
 
 
 def figure():
@@ -81,7 +77,7 @@ def plot(
     ls: str = "-",
     symbol=None,
 ) -> VispyPlotCanvas:
-    return _current_canvas().add_curve(
+    return gca().add_curve(
         x=x,
         y=y,
         face_color=face_color,
@@ -105,7 +101,7 @@ def scatter(
     name: str | None = None,
     symbol=None,
 ) -> VispyPlotCanvas:
-    return _current_canvas().add_scatter(
+    return gca().add_scatter(
         x=x,
         y=y,
         face_color=face_color,
@@ -117,13 +113,29 @@ def scatter(
     )
 
 
+def hist(
+    data,
+    bins: int = 10,
+    face_color=None,
+    edge_color=None,
+    color="white",
+    name: str | None = None,
+) -> VispyPlotCanvas:
+    return gca().add_hist(
+        data,
+        bins=bins,
+        face_color=face_color,
+        edge_color=edge_color,
+        color=color,
+        name=name,
+    )
+
+
 def show():
     if CURRENT_MULTI_CANVAS is not None:
         CURRENT_MULTI_CANVAS.show()
     else:
-        CURRENT_CANVAS.show()
-    _set_current_canvas(None)
-    _set_current_multi_canvas(None)
+        gca().show()
 
 
 def imshow(image, cmap=None, vmin=None, vmax=None):

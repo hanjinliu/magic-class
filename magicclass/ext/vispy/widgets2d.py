@@ -47,7 +47,6 @@ class Has2DViewBox(HasViewBox):
         ls: str = "-",
         symbol=None,
     ):
-
         """
         Add a line plot like ``plt.plot(x, y)``.
 
@@ -97,9 +96,8 @@ class Has2DViewBox(HasViewBox):
         name: str | None = None,
         symbol=None,
     ):
-
         """
-        Add a line plot like ``plt.plot(x, y)``.
+        Add a scatter plot like ``plt.scatter(x, y)``.
 
         Parameters
         ----------
@@ -110,8 +108,8 @@ class Has2DViewBox(HasViewBox):
 
         Returns
         -------
-        Curve
-            A plot item of a curve.
+        Scatter
+            A plot item of a scatter.
         """
         x, y = _check_xy(x, y)
         face_color, edge_color = _check_colors(face_color, edge_color, color)
@@ -140,9 +138,25 @@ class Has2DViewBox(HasViewBox):
         bins: int = 10,
         face_color=None,
         edge_color=None,
-        color=None,
+        color="white",
         name: str | None = None,
     ) -> Histogram:
+        """
+        Add a histogram like ``plt.hist(x)``.
+
+        Parameters
+        ----------
+        data: array-like
+            Input 1D data.
+        bins: int, default is 10
+            Number of bins to draw the histogram.
+        {face_color}{edge_color}{color}{name}
+
+        Returns
+        -------
+        Histogram
+            A plot item of a histogram.
+        """
         data = np.asarray(data)
         face_color, edge_color = _check_colors(face_color, edge_color, color)
 

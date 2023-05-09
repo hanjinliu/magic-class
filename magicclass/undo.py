@@ -62,12 +62,25 @@ class UndoCallback(Generic[_R], ImplementsUndo):
         new._name = name
         return new
 
-    def with_redo(self, redo_func: Callable[[], Any]) -> UndoCallback[_R]:
-        """Return a new callback with the updated redo function."""
-        if not callable(redo_func):
-            raise TypeError("redo_func must be callable")
+    def with_redo(self, action: Callable[[], Any] | bool) -> UndoCallback[_R]:
+        """
+        Return a new callback with the updated redo action.
+
+        >>> self.with_redo(True)  # use default action (eval macro string)
+        >>> self.with_redo(False)  # disable redo
+        >>> self.with_redo(fn)  # custom redo function
+        """
+        if isinstance(action, bool):
+            if action:
+                _action = RedoAction.Default
+            else:
+                _action = RedoAction.Undefined
+        elif callable(action):
+            _action = RedoAction.Custom(action)
+        else:
+            raise TypeError("action must be callable or a boolean value.")
         new = self.copy()
-        new._redo_action = RedoAction.Custom(redo_func)
+        new._redo_action = _action
         return new
 
     def to_function(self) -> Callable[[], _R]:

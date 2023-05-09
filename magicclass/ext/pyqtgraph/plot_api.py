@@ -1,16 +1,17 @@
 from __future__ import annotations
-from typing import overload, TYPE_CHECKING
+
+from typing import overload, TYPE_CHECKING, Sequence
 import numpy as np
 from .widgets import QtPlotCanvas, QtMultiPlotCanvas, QtImageCanvas
 
 if TYPE_CHECKING:
     from .widgets import HasViewBox, _MultiPlot
 
-CURRENT_MULTI_CANVAS: _MultiPlot = None
-CURRENT_CANVAS: HasViewBox = None
+CURRENT_MULTI_CANVAS: _MultiPlot | None = None
+CURRENT_CANVAS: HasViewBox | None = None
 
 
-def _current_canvas() -> QtPlotCanvas:
+def gca() -> QtPlotCanvas:
     global CURRENT_CANVAS
     if CURRENT_CANVAS is None:
         CURRENT_CANVAS = QtPlotCanvas()
@@ -31,12 +32,11 @@ def _set_current_multi_canvas(multi):
 
 def gcf():
     if CURRENT_MULTI_CANVAS is None:
-        return CURRENT_CANVAS
-    return CURRENT_CANVAS
+        return gca()
+    return CURRENT_MULTI_CANVAS
 
 
-def gca():
-    return CURRENT_CANVAS
+gcw = gcf
 
 
 def figure():
@@ -81,7 +81,7 @@ def plot(
     ls: str = "-",
     symbol=None,
 ) -> QtPlotCanvas:
-    return _current_canvas().add_curve(
+    return gca().add_curve(
         x=x,
         y=y,
         face_color=face_color,
@@ -105,7 +105,7 @@ def scatter(
     name: str | None = None,
     symbol=None,
 ) -> QtPlotCanvas:
-    return _current_canvas().add_scatter(
+    return gca().add_scatter(
         x=x,
         y=y,
         face_color=face_color,
@@ -117,13 +117,37 @@ def scatter(
     )
 
 
+def hist(
+    data: Sequence[float],
+    bins: int | Sequence | str = 10,
+    range=None,
+    density: bool = False,
+    face_color=None,
+    edge_color=None,
+    color=None,
+    name: str | None = None,
+    lw: float = 1,
+    ls: str = "-",
+) -> QtPlotCanvas:
+    return gca().add_hist(
+        data,
+        bins=bins,
+        range=range,
+        density=density,
+        face_color=face_color,
+        edge_color=edge_color,
+        color=color,
+        name=name,
+        lw=lw,
+        ls=ls,
+    )
+
+
 def show():
     if CURRENT_MULTI_CANVAS is not None:
         CURRENT_MULTI_CANVAS.show()
     else:
-        CURRENT_CANVAS.show()
-    _set_current_canvas(None)
-    _set_current_multi_canvas(None)
+        gca().show()
 
 
 def imshow(image, cmap=None, vmin=None, vmax=None):

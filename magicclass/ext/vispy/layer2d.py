@@ -1,11 +1,13 @@
 from __future__ import annotations
+
 from typing import Sequence
 import numpy as np
 from numpy.typing import ArrayLike
 from vispy.scene import visuals, ViewBox
+from vispy.visuals import LinePlotVisual, MarkersVisual, HistogramVisual
 from vispy.color import get_color_dict
 from ._base import LayerItem
-from .._shared_utils import convert_color_code, to_rgba
+from .._shared_utils import convert_color_code, as_float_color
 
 
 _SYMBOL_MAP = {
@@ -15,7 +17,7 @@ _SYMBOL_MAP = {
 
 
 class PlotDataLayer(LayerItem):
-    _visual: visuals.LinePlot | visuals.Markers
+    _visual: LinePlotVisual | MarkersVisual
     _data: np.ndarray
 
     @property
@@ -73,7 +75,7 @@ class PlotDataLayer(LayerItem):
     def edge_color(self) -> np.ndarray:
         """Edge color of the data."""
         col = self._visual._line.color
-        return to_rgba(col)
+        return as_float_color(col)
 
     @edge_color.setter
     def edge_color(self, value: str | Sequence):
@@ -84,7 +86,7 @@ class PlotDataLayer(LayerItem):
     def face_color(self) -> np.ndarray:
         """Face color of the data."""
         col = self._visual._markers._data["face_color"]
-        return to_rgba(col)
+        return as_float_color(col)
 
     @face_color.setter
     def face_color(self, value: str | Sequence):
@@ -169,39 +171,14 @@ class Histogram(LayerItem):
         name: str | None = None,
     ) -> None:
         self._viewbox = viewbox
-        self._visual = visuals.Histogram(
+        self._visual: HistogramVisual = visuals.Histogram(
             data,
             bins=bins,
-            # color=edge_color,
             parent=self._viewbox.scene,
         )
 
-        if isinstance(face_color, str):
-            rgb_html = get_color_dict()[face_color][1:]
-            face_color = np.array(
-                [
-                    int(rgb_html[0:2], 16) / 255,
-                    int(rgb_html[2:4], 16) / 255,
-                    int(rgb_html[4:6], 16) / 255,
-                ]
-            )
-
-        if isinstance(edge_color, str):
-            rgb_html = get_color_dict()[edge_color][1:]
-            edge_color = np.array(
-                [
-                    int(rgb_html[0:2], 16) / 255,
-                    int(rgb_html[2:4], 16) / 255,
-                    int(rgb_html[4:6], 16) / 255,
-                ]
-            )
-
-        self._visual.mesh_data.set_face_colors(
-            np.stack([face_color] * self._visual.mesh_data.n_faces, axis=0)
-        )
-        self._visual.mesh_data.set_vertex_colors(
-            np.stack([edge_color] * self._visual.mesh_data.n_vertices, axis=0)
-        )
+        self.face_color = face_color
+        self.edge_color = edge_color
         self._visual.mesh_data_changed()
 
         self._name = name
@@ -210,3 +187,58 @@ class Histogram(LayerItem):
     @property
     def name(self):
         return self._name
+
+    @property
+    def edge_color(self) -> np.ndarray:
+        """Edge color of the data."""
+        return self._edge_color.copy()
+
+    @edge_color.setter
+    def edge_color(self, value: str | Sequence):
+        if isinstance(value, str):
+            _edge_color = _str_to_float_color(value)
+        else:
+            _edge_color = np.asarray(value)
+        self._edge_color = _edge_color
+        self._visual.mesh_data.set_face_colors(
+            np.stack([_edge_color] * self._visual.mesh_data.n_faces, axis=0)
+        )
+        self._visual.mesh_data_changed()
+
+    @property
+    def face_color(self) -> np.ndarray:
+        """Face color of the data."""
+        return self._face_color.copy()
+
+    @face_color.setter
+    def face_color(self, value: str | Sequence):
+        if isinstance(value, str):
+            _face_color = _str_to_float_color(value)
+        else:
+            _face_color = np.asarray(value)
+        self._face_color = _face_color
+        self._visual.mesh_data.set_vertex_colors(
+            np.stack([_face_color] * self._visual.mesh_data.n_vertices, axis=0)
+        )
+        self._visual.mesh_data_changed()
+
+    color = property()
+
+    @color.setter
+    def color(self, value: str | Sequence):
+        """Set face color and edge color at the same time."""
+        self.face_color = value
+        self.edge_color = value
+
+
+def _str_to_float_color(s: str) -> np.ndarray:
+    if not s.startswith("#"):
+        s = get_color_dict()[s][1:]
+    return np.array(
+        [
+            int(s[0:2], 16) / 255,
+            int(s[2:4], 16) / 255,
+            int(s[4:6], 16) / 255,
+            1,
+        ]
+    )
