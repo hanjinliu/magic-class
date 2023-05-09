@@ -592,6 +592,11 @@ def make_gui(
                 self.native.removeDockWidget(dock)
                 self.__magicclass_children__.pop(i_dock)
 
+            def close(self: ClassGuiBase):
+                """Close GUI."""
+                self.native.close()
+                return None
+
             @property
             def status(self: MainWindowClassGui) -> str:
                 """Get status tip."""

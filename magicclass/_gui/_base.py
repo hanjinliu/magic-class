@@ -216,7 +216,7 @@ class MagicTemplate(MutableSequence[Widget], metaclass=_MagicTemplateMeta):
 
     __init_subclass__ = check_override
 
-    def show(self, run: bool) -> None:
+    def show(self, run: bool = True) -> None:
         raise NotImplementedError()
 
     def hide(self) -> None:

@@ -25,6 +25,7 @@ def test_get_choices(widget_type):
     ui._a = [3, 4]
     ui.reset_choices()
     assert fgui.x.choices == (3, 4)
+    fgui.close()
 
 @pytest.mark.parametrize("widget_type", ["ComboBox", "RadioButtons", "Select"])
 def test_nesting(widget_type):
@@ -59,7 +60,8 @@ def test_nesting(widget_type):
     ui.reset_choices()
     assert fgui0.x.choices == (3, 4)
     assert fgui1.x.choices == (3, 4)
-
+    fgui0.close()
+    fgui1.close()
 
 def test_wraps():
     @magicclass
@@ -86,6 +88,7 @@ def test_wraps():
     ui._a = [3, 4]
     ui.reset_choices()
     assert fgui.x.choices == (3, 4)
+    fgui.close()
 
 def test_field():
     @magicclass

@@ -177,6 +177,9 @@ def test_tooltip():
     assert ui.Menu["func"].mgui.a.tooltip == _PARAM_TOOLTIP
     assert ui.Tool["func"].mgui.a.tooltip == _PARAM_TOOLTIP
 
+    ui["func"].mgui.close()
+    ui.Menu["func"].mgui.close()
+    ui.Tool["func"].mgui.close()
     ui.close()
 
 

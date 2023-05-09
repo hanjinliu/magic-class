@@ -38,6 +38,7 @@ def test_all_works(popup_mode):
         assert not btn.mgui.visible
         btn.changed()
         assert btn.mgui.visible
+        btn.mgui.close()
 
     ui.close()
 
@@ -77,6 +78,8 @@ def test_first():
     ui["a5"].changed()
     assert len(ui) == l + 2
     assert ui[0] is ui["a5"].mgui
+    ui["a2"].mgui.close()
+    ui["a5"].mgui.close()
 
 
 def test_last():
@@ -90,3 +93,5 @@ def test_last():
     ui["a5"].changed()
     assert len(ui) == l + 2
     assert ui[-1] is ui["a5"].mgui
+    ui["a2"].mgui.close()
+    ui["a5"].mgui.close()
