@@ -9,7 +9,7 @@ from magicgui.widgets import FileEdit, LineEdit
 
 from magicclass.widgets import CodeEdit, TabbedContainer, ScrollableContainer, Dialog
 from magicclass.utils import move_to_screen_center
-from magicclass.undo import ImplementsUndo, RedoAction
+from magicclass.undo import ImplementsUndo, RedoAction, UndoCallback
 from magicclass._gui.runner import CommandRunnerMenu
 
 if TYPE_CHECKING:
@@ -412,6 +412,17 @@ class GuiMacro(BaseMacro):
         self._stack_undo.clear()
         self._stack_redo.clear()
 
+    def append_with_undo(self, expr: Expr, undo: UndoCallback) -> None:
+        """Append an expression with its undo action."""
+        if not isinstance(undo, UndoCallback):
+            if callable(undo):
+                undo = UndoCallback(undo)
+            else:
+                raise TypeError(f"undo must be callable, not {type(undo)}")
+        self.append(expr)
+        self._append_undo(undo)
+        return None
+
     def _append_undo(self, undo: ImplementsUndo) -> None:
         self._stack_undo.append(undo)
         self._stack_redo.clear()
@@ -421,6 +432,15 @@ class GuiMacro(BaseMacro):
 
     def _pop_undo(self) -> ImplementsUndo:
         return self._stack_undo.pop()
+
+    @property
+    def undo_stack(self) -> dict[str, list[Expr]]:
+        """Return a copy of undo stack info."""
+        n_undo = len(self._stack_undo)
+        return dict(
+            undo=[expr.copy() for expr in self.args[-n_undo:]],
+            redo=[expr.copy() for expr, _ in self._stack_redo],
+        )
 
     def undo(self):
         """Undo the last operation if undo is defined."""
@@ -448,7 +468,7 @@ class GuiMacro(BaseMacro):
             redo_action = undo.redo_action
             if redo_action.matches("default"):
                 ns = {self._gui_parent._my_symbol: self._gui_parent}
-                parent = self._widget.__magicclass_parent__
+                parent = self._gui_parent
                 if (viewer := parent.parent_viewer) is not None:
                     ns.setdefault(Symbol.var("viewer"), viewer)
                 with self.blocked():
