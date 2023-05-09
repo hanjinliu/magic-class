@@ -6,12 +6,12 @@ Implement Undo/Redo
 
 Undo is important for the user to be able to correct mistakes, but it is
 extremely difficult to implement. There are several undo/redo architectures.
-In :mod:`magic-class`, an undoable method is defined by a forward function
-and a reverse function. When a forward function converts GUI state from A to
+In :mod:`magic-class`, an undoable method is defined by a **forward function**
+and a **reverse function**. When a forward function converts GUI state from A to
 B, then the reverse function should do the opposite (B to A).
 
 The undo/redo operations can be executed from the macro instance using
-:meth:`ui.macro.undo` and :meth:`ui.macro.redo()`.
+:meth:`ui.macro.undo` and :meth:`ui.macro.redo`.
 
 .. contents:: Contents
     :local:
@@ -20,12 +20,15 @@ The undo/redo operations can be executed from the macro instance using
 Basic Syntax
 ============
 
-You can define undoable methods using functions from submodule :mod:`magicclass.undo`.
+:func:`magicclass.undo.undo_callback` is a decorator that converts a function
+into a callback that can be recognized by magic-classes. Returned callback
+will be properly processed so that the GUI operations can be recorded in the
+undo stack.
 
-:func:`undo_callback` is a decorator that converts a function into a
-callback that can be recognized by magic-classes. Returned callback
-will be properly processed so that the GUI operations can be recorded
-in the undo stack.
+.. note::
+
+    You don't have to define the redo function. The redo action can be
+    automatically defined using the GUI macro strings.
 
 Standard methods
 ----------------
@@ -82,9 +85,9 @@ An example of undoable setter method is like this:
 Thread workers
 --------------
 
-When you use :doc:`./use_worker`, you'll usually return returned-callbacks, which seems to
-collide with the undo callback. In this case, you can return an undo callback from the
-returned-callback.
+When you use :doc:`multi threading<./use_worker>`, you'll usually return returned-callbacks,
+which seems to collide with the undo callback. In this case, you can return an undo callback
+from the returned-callback.
 
 .. code-block:: python
 
@@ -135,7 +138,7 @@ undo stack will change as follow.
     ui.not_undoable()   # [], [] (non-undoable function call clears the undo stack)
 
 Since undo operation is tightly connected to the macro, non-recordable
-methods will not added to undo stack, nor will they clears the undo
+methods will not added to undo stack, nor will they clear the undo
 stack when get called.
 
 .. code-block:: python
@@ -157,8 +160,82 @@ stack when get called.
     ui.non_recordable()  # [<ui.undoable()>] * 2, []
     ui.undoable()        # [<ui.undoable()>] * 3, []
 
-Call Undo/Redo in GUI
-=====================
+
+.. _custom-redo-action:
+
+Custom Redo Action
+==================
+
+Redo action is defined by the GUI macro string. However, you can also define
+it by yourself. It is useful when the forward function is a long-running task.
+
+Following GUI can calculate the ``_very_heavy_task`` with the given ``x`` and
+show the result in the ``self.result`` widget.
+
+.. code-block:: python
+
+    from magicclass import magicclass, vfield
+    from magicclass.undo import undo_callback
+
+    @magicclass
+    class A:
+        result = vfield(int)
+
+        def func(self, x: int):
+            old_result = self.result
+            result = self._very_heavy_task(x)
+            self.result = result
+
+            @undo_callback
+            def out():
+                self.result = old_result  # undo
+
+            return out
+
+Although the undo/redo operations are well-defined, it takes a long time again
+to redo.
+
+.. code-block:: python
+
+    ui = A()
+    ui.func(1)  # long-running task
+    ui.macro.undo()  # very fast
+    ui.macro.redo()  # long-running task again!!
+
+Function decorated by :func:`magicclass.undo.undo_callback` has an attribute
+:attr:`with_redo`, which allows you to define the redo action similar to the
+getter/setter definition of ``property``.
+
+.. code-block:: python
+
+    @magicclass
+    class A:
+        result = vfield(int)
+
+        def func(self, x: int):
+            old_result = self.result
+            result = self._very_heavy_task(x)
+            self.result = result
+
+            @undo_callback
+            def out():
+                self.result = old_result  # undo
+
+            @out.with_redo
+            def out():
+                self.result = result  # redo
+
+            return out
+
+.. code-block:: python
+
+    ui = A()
+    ui.func(1)  # long-running task
+    ui.macro.undo()  # very fast
+    ui.macro.redo()  # very fast!!
+
+Best Practice of Undo/Redo
+==========================
 
 Undo/Redo should be called in GUI in most cases. Many applications map the
 key sequence ``Ctrl+Z`` to undo and ``Ctrl+Y`` to redo, or add tool buttons
@@ -190,11 +267,66 @@ that you have to be careful about.
             def redo(self):
                 self.macro.redo()
 
-2. Make sure the recorded macro is executable.
+2. Do not rely on the GUI state within the method.
 
-    The redo operation fully relies on the macro string. If the macro
-    string is not executable, the redo operation will fail. In following
-    example, redo does not work.
+    GUI state is the global state. Relying on the global state is very
+    error prone. There's a bug in following code.
+
+    .. code-block:: python
+
+        from magicclass import magicclass, vfield
+        from magicclass.undo import undo_callback
+
+        # widget that set "value" to "inner_value" when clicked.
+        @magicclass
+        class A:
+            inner_value = vfield(int, record=False)
+            value = vfield(int, record=False)
+
+            def apply_value(self):
+                old_value = self.inner_value
+                self.inner_value = self.value
+                @undo_callback
+                def out():
+                    self.inner_value = self.value = old_value
+                return out
+
+    The redo step will fail in following steps.
+
+    1. Manually set ``value`` to 1.
+    2. Click "apply_value" button. ``inner_value`` is now 1.
+    3. Run ``ui.macro.undo()``. Both ``inner_value`` and ``value`` are now 0.
+    4. Run ``ui.macro.redo()``. Since ``value`` is 0, ``inner_value`` is also 0 (redo fails).
+
+    The reason is that ``value`` is a global state, which changes during undo/redo. To fix
+    this, you can provide the value as a parameter to the method. The best way is to use
+    :doc:`the bind options<./use_bind>`.
+
+    .. code-block:: python
+
+        from magicclass import magicclass, vfield
+        from magicclass.undo import undo_callback
+        from typing import Annotated
+
+        @magicclass
+        class A:
+            inner_value = vfield(int, record=False)
+            value = vfield(int, record=False)
+
+            def apply_value(self, value: Annotated[int, {"bind": value}]):
+                old_value = self.inner_value
+                self.inner_value = self.value = value
+                @undo_callback
+                def out():
+                    self.inner_value = self.value = old_value
+                return out
+
+
+3. Make sure the recorded macro is executable.
+
+    If you don't use :ref:`custom-redo-action`, the redo operation fully
+    relies on the macro string. If the macro string is not executable,
+    the redo operation will fail. In following example, redo does not work.
 
     .. code-block:: python
 
