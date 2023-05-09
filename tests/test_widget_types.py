@@ -42,4 +42,7 @@ def test_all_works(wtype):
     ui.B[1].changed()
     if hasattr(ui, "current_index"):
         ui.current_index = 1
+    ui["a1"].mgui.close()
+    ui["b1"].mgui.close()
+    ui.B["b2"].mgui.close()
     ui.close()

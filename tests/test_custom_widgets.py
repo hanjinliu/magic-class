@@ -17,6 +17,7 @@ def test_checkbutton():
 
     ui["f"].changed()
     assert isinstance(ui["f"].mgui[0], wdt.CheckButton)
+    ui["f"].mgui.close()
 
 # def test_figure():
 #     @magicclass

@@ -2,16 +2,16 @@ from magicclass import field, magicclass
 from magicclass.ext.pyqtgraph import QtPlotCanvas
 import numpy as np
 
-def test_plot_canvas():
-    @magicclass
-    class A:
-        plot = field(QtPlotCanvas)
+@magicclass
+class A:
+    plot = field(QtPlotCanvas)
 
+def test_curve():
     ui = A()
+    ui.show(run=False)
     ndata = 100
     data = np.random.random(ndata)
 
-    # test curve
     ui.plot.add_curve(data)
     ui.plot.add_curve(np.arange(ndata)*2, data)
     item = ui.plot.add_curve(data, face_color="green", edge_color="green", name="test", lw=2, ls=":")
@@ -34,9 +34,13 @@ def test_plot_canvas():
     assert item.ndata == ndata
 
     assert len(ui.plot.layers) == 3
-    ui.plot.layers.clear()
+    ui.close()
 
-    # test scatter
+def test_scatter():
+    ui = A()
+    ui.show(run=False)
+    ndata = 100
+    data = np.random.random(ndata)
     ui.plot.add_scatter(data)
     ui.plot.add_scatter(np.arange(ndata)*2, data)
     item = ui.plot.add_scatter(data, face_color="green", edge_color="green", name="test", lw=2, ls=":", size=6, symbol="*")
@@ -58,9 +62,13 @@ def test_plot_canvas():
     assert item.ndata == ndata
 
     assert len(ui.plot.layers) == 3
-    ui.plot.layers.clear()
+    ui.close()
 
-    # test bar
+def test_bar():
+    ui = A()
+    ui.show(run=False)
+    ndata = 100
+    data = np.random.random(ndata)
     ui.plot.add_bar(data)
     ui.plot.add_bar(np.arange(ndata)*2, data)
     item = ui.plot.add_bar(data, face_color="green", edge_color="green", name="test", lw=2, ls=":")
@@ -80,8 +88,13 @@ def test_plot_canvas():
     assert item.ndata == ndata
 
     assert len(ui.plot.layers) == 3
-    ui.plot.layers.clear()
+    ui.close()
 
+def test_hist():
+    ui = A()
+    ui.show(run=False)
+    ndata = 100
+    data = np.random.random(ndata)
     ui.plot.add_hist(data)
     item = ui.plot.add_hist(data, bins=14, range=[-0.5, 1.5], density=True)
     item.visible
@@ -97,8 +110,19 @@ def test_plot_canvas():
         item.ls = ls
 
     assert len(ui.plot.layers) == 2
+    ui.close()
 
-    # test region
+def test_infline():
+    ui = A()
+    ui.plot.add_infline(0.5, 0.3)  # slope/intercept
+    ui.plot.add_infline(0.5, intercept=0.3)  # slope/intercept
+    ui.plot.add_infline(slope=0.5, intercept=0.3)  # slope/intercept
+    ui.plot.add_infline((1, 1), 83)  # pos/degree
+    ui.plot.add_infline((1, 1), degree=83)  # pos/degree
+    ui.plot.add_infline(pos=(1, 1), degree=83)  # pos/degree
+
+def test_region():
+    ui = A()
     ui.plot.region.visible
     ui.plot.region.visible = True
     ui.plot.region.value
@@ -108,7 +132,8 @@ def test_plot_canvas():
     ui.plot.region.color
     ui.plot.region.color = "blue"
 
-    # test legend
+def test_legend():
+    ui = A()
     ui.plot.legend.visible
     ui.plot.legend.visible = True
     ui.plot.legend.color
@@ -119,16 +144,3 @@ def test_plot_canvas():
     ui.plot.legend.background_color = [1, 1, 1, 0.2]
     ui.plot.legend.border
     ui.plot.legend.border = "red"
-
-def test_infline():
-    @magicclass
-    class A:
-        plot = field(QtPlotCanvas)
-
-    ui = A()
-    ui.plot.add_infline(0.5, 0.3)  # slope/intercept
-    ui.plot.add_infline(0.5, intercept=0.3)  # slope/intercept
-    ui.plot.add_infline(slope=0.5, intercept=0.3)  # slope/intercept
-    ui.plot.add_infline((1, 1), 83)  # pos/degree
-    ui.plot.add_infline((1, 1), degree=83)  # pos/degree
-    ui.plot.add_infline(pos=(1, 1), degree=83)  # pos/degree
