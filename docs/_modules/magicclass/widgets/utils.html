@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.widgets.utils &mdash; magic-class 0.6.13 documentation</title>
+  <title>magicclass.widgets.utils &mdash; magic-class 0.7.0rc0 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
@@ -25,14 +25,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../index.html" class="icon icon-home"> magic-class
+
+
+
+          <a href="../../../index.html" class="icon icon-home">
+            magic-class
           </a>
               <div class="version">
-                0.6.13
+                0.7.0rc0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -64,9 +68,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../../index.html">Module code</a> &raquo;</li>
-      <li>magicclass.widgets.utils</li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">magicclass.widgets.utils</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -81,7 +85,7 @@
 <span class="kn">import</span> <span class="nn">weakref</span>
 <span class="kn">from</span> <span class="nn">qtpy.QtWidgets</span> <span class="kn">import</span> <span class="n">QWidget</span><span class="p">,</span> <span class="n">QVBoxLayout</span><span class="p">,</span> <span class="n">QGridLayout</span><span class="p">,</span> <span class="n">QHBoxLayout</span>
 <span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">Widget</span>
-<span class="kn">from</span> <span class="nn">magicclass._magicgui_compat</span> <span class="kn">import</span> <span class="n">merge_super_sigs</span> <span class="k">as</span> <span class="n">_merge_super_sigs</span>
+<span class="kn">from</span> <span class="nn">magicgui.widgets._concrete</span> <span class="kn">import</span> <span class="n">merge_super_sigs</span> <span class="k">as</span> <span class="n">_merge_super_sigs</span>
 <span class="kn">from</span> <span class="nn">magicgui.backends._qtpy.widgets</span> <span class="kn">import</span> <span class="n">QBaseWidget</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
@@ -89,7 +93,7 @@
 
 
 <span class="k">class</span> <span class="nc">_NotInitialized</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;This class helps better error handling.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;This class helps better error handling.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">msg</span> <span class="o">=</span> <span class="n">msg</span>
@@ -99,7 +103,7 @@
 
 
 <div class="viewcode-block" id="FreeWidget"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.utils.FreeWidget">[docs]</a><span class="k">class</span> <span class="nc">FreeWidget</span><span class="p">(</span><span class="n">Widget</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A Widget class with any QWidget as a child.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A Widget class with any QWidget as a child.&quot;&quot;&quot;</span>
 
     <span class="n">_widget</span> <span class="o">=</span> <span class="n">_NotInitialized</span><span class="p">(</span>
         <span class="s2">&quot;Widget is not correctly initialized. Must call `super().__init__` before using &quot;</span>
@@ -124,13 +128,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_magicclass_parent_ref</span> <span class="o">=</span> <span class="kc">None</span>
 
 <div class="viewcode-block" id="FreeWidget.set_widget"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.utils.FreeWidget.set_widget">[docs]</a>    <span class="k">def</span> <span class="nf">set_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">:</span> <span class="n">QWidget</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Set the central widget to the widget.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the central widget to the widget.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
         <span class="n">widget</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">central_widget</span> <span class="o">=</span> <span class="n">widget</span></div>
 
 <div class="viewcode-block" id="FreeWidget.remove_widget"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.utils.FreeWidget.remove_widget">[docs]</a>    <span class="k">def</span> <span class="nf">remove_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">:</span> <span class="n">QWidget</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Set the central widget from the widget.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the central widget from the widget.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">removeWidget</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
         <span class="n">widget</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">central_widget</span> <span class="o">=</span> <span class="kc">None</span></div>
@@ -140,7 +144,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">__magicclass_parent__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseGui</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Return parent magic class if exists.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return parent magic class if exists.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_magicclass_parent_ref</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_magicclass_parent_ref</span><span class="p">()</span>

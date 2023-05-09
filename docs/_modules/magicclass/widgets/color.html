@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.widgets.color &mdash; magic-class 0.6.13 documentation</title>
+  <title>magicclass.widgets.color &mdash; magic-class 0.7.0rc0 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
@@ -25,14 +25,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../index.html" class="icon icon-home"> magic-class
+
+
+
+          <a href="../../../index.html" class="icon icon-home">
+            magic-class
           </a>
               <div class="version">
-                0.6.13
+                0.7.0rc0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -64,9 +68,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../../index.html">Module code</a> &raquo;</li>
-      <li>magicclass.widgets.color</li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">magicclass.widgets.color</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -92,7 +96,7 @@
 <span class="kn">from</span> <span class="nn">qtpy.QtGui</span> <span class="kn">import</span> <span class="n">QColor</span>
 <span class="kn">from</span> <span class="nn">qtpy.QtCore</span> <span class="kn">import</span> <span class="n">Qt</span><span class="p">,</span> <span class="n">Signal</span> <span class="k">as</span> <span class="n">QtSignal</span>
 
-<span class="kn">from</span> <span class="nn">magicclass._magicgui_compat</span> <span class="kn">import</span> <span class="n">ValueWidget</span>
+<span class="kn">from</span> <span class="nn">magicgui.widgets.bases</span> <span class="kn">import</span> <span class="n">ValueWidget</span>
 <span class="kn">from</span> <span class="nn">magicgui.backends._qtpy.widgets</span> <span class="kn">import</span> <span class="n">QBaseValueWidget</span>
 <span class="kn">from</span> <span class="nn">magicgui.application</span> <span class="kn">import</span> <span class="n">use_app</span>
 <span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">merge_super_sigs</span>
@@ -128,11 +132,11 @@
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">w</span> <span class="o">*</span> <span class="mf">0.667</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">_update_swatch_style</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">rgba</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;rgba(</span><span class="si">{</span><span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="o">*</span><span class="mi">255</span><span class="p">))</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_color</span><span class="p">)</span><span class="si">}</span><span class="s1">)&#39;</span>
+        <span class="n">rgba</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;rgba(</span><span class="si">{</span><span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="o">*</span><span class="mi">255</span><span class="p">))</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">_color</span><span class="p">)</span><span class="si">}</span><span class="s1">)&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="s2">&quot;QColorSwatch {background-color: &quot;</span> <span class="o">+</span> <span class="n">rgba</span> <span class="o">+</span> <span class="s2">&quot;;}&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="QColorSwatch.mouseReleaseEvent"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.color.QColorSwatch.mouseReleaseEvent">[docs]</a>    <span class="k">def</span> <span class="nf">mouseReleaseEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Show QColorPopup picker when the user clicks on the swatch.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Show QColorPopup picker when the user clicks on the swatch.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">button</span><span class="p">()</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">MouseButton</span><span class="o">.</span><span class="n">LeftButton</span><span class="p">:</span>
             <span class="n">initial</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getQColor</span><span class="p">()</span>
             <span class="n">dlg</span> <span class="o">=</span> <span class="n">QColorDialog</span><span class="p">(</span><span class="n">initial</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
@@ -159,7 +163,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_color_converter</span> <span class="o">=</span> <span class="n">matplotlib</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">to_rgba</span>
 
 <div class="viewcode-block" id="QColorLineEdit.setText"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.color.QColorLineEdit.setText">[docs]</a>    <span class="k">def</span> <span class="nf">setText</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">]):</span>
-        <span class="sd">&quot;&quot;&quot;Set the text of the lineEdit using any ColorType.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the text of the lineEdit using any ColorType.</span>
 
 <span class="sd">        Colors will be converted to standard SVG spec names if possible,</span>
 <span class="sd">        or shown as #RGBA hex if not.</span>
@@ -178,7 +182,7 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">color</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="QColorLineEdit.getQColor"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.color.QColorLineEdit.getQColor">[docs]</a>    <span class="k">def</span> <span class="nf">getQColor</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QColor</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get color as QColor object&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get color as QColor object&quot;&quot;&quot;</span>
         <span class="n">rgba</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_color_converter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
         <span class="k">return</span> <span class="n">rgba_to_qcolor</span><span class="p">(</span><span class="n">rgba</span><span class="p">)</span></div>
 
@@ -214,11 +218,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_color_swatch</span><span class="o">.</span><span class="n">setColor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_line_edit</span><span class="o">.</span><span class="n">getQColor</span><span class="p">())</span>
 
 <div class="viewcode-block" id="QColorEdit.color"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.color.QColorEdit.color">[docs]</a>    <span class="k">def</span> <span class="nf">color</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return the current color.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the current color.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_color_swatch</span><span class="o">.</span><span class="n">_color</span></div>
 
 <div class="viewcode-block" id="QColorEdit.setColor"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.color.QColorEdit.setColor">[docs]</a>    <span class="k">def</span> <span class="nf">setColor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Set value as the current color.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set value as the current color.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="n">QColor</span><span class="p">):</span>
             <span class="n">color</span> <span class="o">=</span> <span class="n">qcolor_to_rgba</span><span class="p">(</span><span class="n">color</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_line_edit</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">color</span><span class="p">)</span>
@@ -338,11 +342,11 @@
         <span class="k">return</span> <span class="n">qslider</span></div>
 
 <div class="viewcode-block" id="QColorSlider.color"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.color.QColorSlider.color">[docs]</a>    <span class="k">def</span> <span class="nf">color</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return the current color.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the current color.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">sl</span><span class="o">.</span><span class="n">value</span><span class="p">()</span> <span class="k">for</span> <span class="n">sl</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_qsliders</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="QColorSlider.setColor"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.color.QColorSlider.setColor">[docs]</a>    <span class="k">def</span> <span class="nf">setColor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Set value as the current color.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set value as the current color.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="n">QColor</span><span class="p">):</span>
             <span class="n">color</span> <span class="o">=</span> <span class="n">qcolor_to_rgba</span><span class="p">(</span><span class="n">color</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
@@ -369,7 +373,7 @@
 
 <span class="nd">@merge_super_sigs</span>
 <span class="k">class</span> <span class="nc">ColorEdit</span><span class="p">(</span><span class="n">ValueWidget</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A widget for editing colors.</span>
 
 <span class="sd">    Parameters</span>
@@ -387,7 +391,7 @@
 
 <span class="nd">@merge_super_sigs</span>
 <span class="k">class</span> <span class="nc">ColorSlider</span><span class="p">(</span><span class="n">ValueWidget</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A multi-slider for editing colors.</span>
 
 <span class="sd">    Parameters</span>

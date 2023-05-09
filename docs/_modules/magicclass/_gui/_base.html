@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass._gui._base &mdash; magic-class 0.6.14 documentation</title>
+  <title>magicclass._gui._base &mdash; magic-class 0.7.0rc0 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
@@ -32,7 +32,7 @@
             magic-class
           </a>
               <div class="version">
-                0.6.14
+                0.7.0rc0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -113,10 +113,9 @@
     <span class="n">MainWindow</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">magicgui.application</span> <span class="kn">import</span> <span class="n">use_app</span>
-<span class="kn">from</span> <span class="nn">magicclass._magicgui_compat</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span> <span class="nn">magicgui.types</span> <span class="kn">import</span> <span class="n">Undefined</span>
+<span class="kn">from</span> <span class="nn">magicgui.widgets.bases</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">ButtonWidget</span><span class="p">,</span>
-    <span class="n">Undefined</span><span class="p">,</span>
-    <span class="n">MGUI_SIMPLE_TYPES</span><span class="p">,</span>
     <span class="n">ValueWidget</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">macrokit</span> <span class="kn">import</span> <span class="n">Symbol</span>
@@ -151,9 +150,10 @@
     <span class="n">MagicMethodSignature</span><span class="p">,</span>
     <span class="n">get_additional_option</span><span class="p">,</span>
     <span class="n">split_annotated_type</span><span class="p">,</span>
+    <span class="n">upgrade_signature</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">magicclass.wrappers</span> <span class="kn">import</span> <span class="n">upgrade_signature</span><span class="p">,</span> <span class="n">abstractapi</span>
-<span class="kn">from</span> <span class="nn">magicclass.types</span> <span class="kn">import</span> <span class="n">BoundLiteral</span>
+<span class="kn">from</span> <span class="nn">magicclass.wrappers</span> <span class="kn">import</span> <span class="n">abstractapi</span>
+<span class="kn">from</span> <span class="nn">magicclass.types</span> <span class="kn">import</span> <span class="n">BoundLiteral</span><span class="p">,</span> <span class="n">MGUI_SIMPLE_TYPES</span>
 <span class="kn">from</span> <span class="nn">magicclass.functools</span> <span class="kn">import</span> <span class="n">wraps</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
@@ -170,6 +170,7 @@
     <span class="s2">&quot;close_on_run&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
     <span class="s2">&quot;macro-max-history&quot;</span><span class="p">:</span> <span class="mi">100000</span><span class="p">,</span>
     <span class="s2">&quot;macro-highlight&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;undo-max-history&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
 <span class="p">}</span>
 
 <span class="n">_RESERVED</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span>
@@ -258,7 +259,7 @@
 <span class="n">_W</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;_W&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">Widget</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="MagicTemplate"><a class="viewcode-back" href="../../../apidoc/magicclass.html#magicclass.MagicTemplate">[docs]</a><span class="k">class</span> <span class="nc">MagicTemplate</span><span class="p">(</span><span class="n">MutableSequence</span><span class="p">[</span><span class="n">_W</span><span class="p">],</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">_MagicTemplateMeta</span><span class="p">):</span>
+<div class="viewcode-block" id="MagicTemplate"><a class="viewcode-back" href="../../../apidoc/magicclass.html#magicclass.MagicTemplate">[docs]</a><span class="k">class</span> <span class="nc">MagicTemplate</span><span class="p">(</span><span class="n">MutableSequence</span><span class="p">[</span><span class="n">Widget</span><span class="p">],</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">_MagicTemplateMeta</span><span class="p">):</span>
     <span class="vm">__doc__</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
     <span class="n">__magicclass_parent__</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="n">MagicTemplate</span>
     <span class="n">__magicclass_children__</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">MagicTemplate</span><span class="p">]</span>
@@ -297,7 +298,7 @@
 
     <span class="n">__init_subclass__</span> <span class="o">=</span> <span class="n">check_override</span>
 
-<div class="viewcode-block" id="MagicTemplate.show"><a class="viewcode-back" href="../../../apidoc/magicclass.html#magicclass.MagicTemplate.show">[docs]</a>    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="MagicTemplate.show"><a class="viewcode-back" href="../../../apidoc/magicclass.html#magicclass.MagicTemplate.show">[docs]</a>    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="MagicTemplate.hide"><a class="viewcode-back" href="../../../apidoc/magicclass.html#magicclass.MagicTemplate.hide">[docs]</a>    <span class="k">def</span> <span class="nf">hide</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -307,11 +308,11 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
 
     <span class="nd">@overload</span>
-    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_W</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Widget</span><span class="p">:</span>
         <span class="o">...</span>
 
     <span class="nd">@overload</span>
-    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">slice</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">[</span><span class="n">_W</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">slice</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">[</span><span class="n">Widget</span><span class="p">]:</span>
         <span class="o">...</span>
 
     <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
@@ -319,7 +320,7 @@
 
     <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
 
-        <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">_W</span><span class="p">]:</span>
+        <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Widget</span><span class="p">]:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
         <span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">stop</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
@@ -328,10 +329,10 @@
         <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Widget</span> <span class="o">|</span> <span class="nb">str</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_fast_insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">widget</span><span class="p">:</span> <span class="n">_W</span> <span class="o">|</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_fast_insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">widget</span><span class="p">:</span> <span class="n">Widget</span> <span class="o">|</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
-<div class="viewcode-block" id="MagicTemplate.insert"><a class="viewcode-back" href="../../../apidoc/magicclass.html#magicclass.MagicTemplate.insert">[docs]</a>    <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">widget</span><span class="p">:</span> <span class="n">_W</span> <span class="o">|</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="MagicTemplate.insert"><a class="viewcode-back" href="../../../apidoc/magicclass.html#magicclass.MagicTemplate.insert">[docs]</a>    <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">widget</span><span class="p">:</span> <span class="n">Widget</span> <span class="o">|</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_fast_insert</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">widget</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_unify_label_widths</span><span class="p">()</span></div>
 
@@ -780,11 +781,19 @@
 
         <span class="c1"># Get the number of parameters except for empty widgets.</span>
         <span class="c1"># With these lines, &quot;bind&quot; method of magicgui works inside magicclass.</span>
-        <span class="n">fgui_classes</span> <span class="o">=</span> <span class="n">callable_to_classes</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+        <span class="n">fgui_info</span> <span class="o">=</span> <span class="n">callable_to_classes</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
         <span class="n">n_empty</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span>
-            <span class="p">[</span><span class="n">_wdg_cls</span> <span class="k">for</span> <span class="n">_wdg_cls</span> <span class="ow">in</span> <span class="n">fgui_classes</span> <span class="k">if</span> <span class="n">_wdg_cls</span> <span class="ow">is</span> <span class="n">EmptyWidget</span><span class="p">]</span>
+            <span class="p">[</span>
+                <span class="mi">0</span>
+                <span class="k">for</span> <span class="n">_wdg_cls</span><span class="p">,</span> <span class="n">_prm</span> <span class="ow">in</span> <span class="n">fgui_info</span>
+                <span class="k">if</span> <span class="n">_wdg_cls</span> <span class="ow">is</span> <span class="n">EmptyWidget</span> <span class="ow">or</span> <span class="n">_prm</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;bind&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="p">]</span>
         <span class="p">)</span>
         <span class="n">nparams</span> <span class="o">=</span> <span class="n">argcount</span><span class="p">(</span><span class="n">func</span><span class="p">)</span> <span class="o">-</span> <span class="n">n_empty</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fgui_info</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">_first_is_file_edit</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">_first_is_file_edit</span> <span class="o">=</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">fgui_info</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">FileEdit</span><span class="p">)</span>
 
         <span class="n">has_preview</span> <span class="o">=</span> <span class="n">get_additional_option</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s2">&quot;preview&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
 
@@ -799,7 +808,7 @@
 
                 <span class="k">return</span> <span class="n">out</span>
 
-        <span class="k">elif</span> <span class="n">nparams</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">fgui_classes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">FileEdit</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">has_preview</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">nparams</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">_first_is_file_edit</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">has_preview</span><span class="p">:</span>
             <span class="c1"># We don&#39;t want to open a magicgui dialog and again open a file dialog.</span>
 
             <span class="k">def</span> <span class="nf">run_function</span><span class="p">():</span>
@@ -833,7 +842,7 @@
                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_close_on_run</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">mgui</span><span class="o">.</span><span class="n">_auto_call</span><span class="p">:</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">_popup_mode</span><span class="o">.</span><span class="n">connect_close_callback</span><span class="p">(</span><span class="n">mgui</span><span class="p">)</span>
 
-                <span class="k">if</span> <span class="n">nparams</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">fgui_classes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">FileEdit</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">nparams</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">_first_is_file_edit</span><span class="p">:</span>
                     <span class="n">fdialog</span><span class="p">:</span> <span class="n">FileEdit</span> <span class="o">=</span> <span class="n">mgui</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">_need_title_bar</span><span class="p">)]</span>
                     <span class="k">if</span> <span class="n">result</span> <span class="o">:=</span> <span class="n">fdialog</span><span class="o">.</span><span class="n">_show_file_dialog</span><span class="p">(</span>
                         <span class="n">fdialog</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span>
@@ -890,7 +899,7 @@
     <span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_macro_instance</span> <span class="o">=</span> <span class="n">GuiMacro</span><span class="p">(</span>
             <span class="n">max_lines</span><span class="o">=</span><span class="n">defaults</span><span class="p">[</span><span class="s2">&quot;macro-max-history&quot;</span><span class="p">],</span>
-            <span class="n">flags</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Get&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;Return&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">},</span>
+            <span class="n">max_undo</span><span class="o">=</span><span class="n">defaults</span><span class="p">[</span><span class="s2">&quot;undo-max-history&quot;</span><span class="p">],</span>
             <span class="n">ui</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__magicclass_parent__</span><span class="p">:</span> <span class="n">BaseGui</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
@@ -1054,6 +1063,7 @@
 
 <span class="k">def</span> <span class="nf">_create_gui_method</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">BaseGui</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">MethodType</span><span class="p">):</span>
     <span class="n">func_sig</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+
     <span class="c1"># Method type cannot set __signature__ attribute.</span>
     <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -1156,8 +1166,7 @@
         <span class="p">)</span>
         <span class="c1"># set function GUI.</span>
         <span class="n">widget_</span><span class="o">.</span><span class="n">mgui</span> <span class="o">=</span> <span class="n">mgui</span>
-        <span class="n">name</span> <span class="o">=</span> <span class="n">widget_</span><span class="o">.</span><span class="n">name</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
-        <span class="n">mgui</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="n">name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+        <span class="n">mgui</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="n">widget_</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="n">widget_</span><span class="o">.</span><span class="n">name</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
 
         <span class="n">preview_setting</span> <span class="o">=</span> <span class="n">opt</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;preview&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">preview_setting</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -1344,7 +1353,6 @@
         <span class="kn">from</span> <span class="nn">.class_gui</span> <span class="kn">import</span> <span class="n">MainWindowClassGui</span>
 
         <span class="k">def</span> <span class="nf">_prep</span><span class="p">(</span><span class="n">mgui</span><span class="p">:</span> <span class="n">FunctionGui</span><span class="p">):</span>
-
             <span class="n">parent_self</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_search_parent_magicclass</span><span class="p">()</span>
             <span class="n">viewer</span> <span class="o">=</span> <span class="n">parent_self</span><span class="o">.</span><span class="n">parent_viewer</span>
             <span class="k">if</span> <span class="n">viewer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -1407,7 +1415,7 @@
                     <span class="n">msg</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
                     <span class="n">e</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="p">(</span>
                         <span class="sa">f</span><span class="s2">&quot;Exception happened on evaluating condition </span><span class="si">{</span><span class="n">condition</span><span class="si">!r}</span><span class="s2">.</span><span class="se">\n</span><span class="s2">&quot;</span>
-                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
                     <span class="p">)</span>
                     <span class="k">raise</span> <span class="n">e</span>
             <span class="k">elif</span> <span class="n">callable</span><span class="p">(</span><span class="n">condition</span><span class="p">):</span>

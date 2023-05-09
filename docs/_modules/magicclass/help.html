@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.help &mdash; magic-class 0.6.13 documentation</title>
+  <title>magicclass.help &mdash; magic-class 0.7.0rc0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/columns.css" type="text/css" />
@@ -25,14 +25,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> magic-class
+
+
+
+          <a href="../../index.html" class="icon icon-home">
+            magic-class
           </a>
               <div class="version">
-                0.6.13
+                0.7.0rc0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -64,9 +68,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">Module code</a> &raquo;</li>
-      <li>magicclass.help</li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">magicclass.help</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -107,7 +111,7 @@
 
 
 <span class="k">class</span> <span class="nc">_HelpWidget</span><span class="p">(</span><span class="n">QtW</span><span class="o">.</span><span class="n">QSplitter</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A Qt widget that will show information of a magic-class widget, built from its</span>
 <span class="sd">    class structure, function docstrings and type annotations.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -335,7 +339,7 @@
 
 
 <span class="k">def</span> <span class="nf">_render</span><span class="p">(</span><span class="n">qwidget</span><span class="p">:</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QWidget</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Render Qt widgets. Used in certain type of containers.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Render Qt widgets. Used in certain type of containers.&quot;&quot;&quot;</span>
     <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
     <span class="n">img</span> <span class="o">=</span> <span class="n">qwidget</span><span class="o">.</span><span class="n">grab</span><span class="p">()</span><span class="o">.</span><span class="n">toImage</span><span class="p">()</span>
@@ -365,7 +369,7 @@
 
 
 <span class="k">def</span> <span class="nf">_get_relative_pos</span><span class="p">(</span><span class="n">widget</span><span class="p">:</span> <span class="n">Widget</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;Get relative position of a widget seen from its parent.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get relative position of a widget seen from its parent.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="s2">&quot;_labeled_widget&quot;</span><span class="p">):</span>
         <span class="n">w</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">_labeled_widget</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">w</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -407,7 +411,7 @@
 
 
 <span class="k">def</span> <span class="nf">_docstring_to_html</span><span class="p">(</span><span class="n">docs</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Convert docstring into rich text html.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert docstring into rich text html.&quot;&quot;&quot;</span>
     <span class="kn">from</span> <span class="nn">docstring_parser</span> <span class="kn">import</span> <span class="n">parse</span>
     <span class="kn">import</span> <span class="nn">re</span>
 

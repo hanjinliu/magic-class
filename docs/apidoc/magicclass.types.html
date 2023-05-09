@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="English" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>magicclass.types package &mdash; magic-class 0.7.0rc0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/columns.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="magicclass.utils package" href="magicclass.utils.html" />
+    <link rel="prev" title="magicclass.stylesheets package" href="magicclass.stylesheets.html" />
+</head>
+
+<body class="wy-body-for-nav">
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+
+          <a href="../index.html" class="icon icon-home">
+            magic-class
+          </a>
+              <div class="version">
+                0.7.0rc0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../main/quick_start.html">Quick Start</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../main/basics/index.html">Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/make_better/index.html">Make Your GUI Better</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/visualization/index.html">Data Visualization</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../main/advanced/index.html">Advanced Topics</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../main/advanced/freewidget.html">Convert QtWidgets into a Magic Widget</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main/advanced/keybinding.html">Define Custom Keybindings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main/advanced/customize_macro.html">Customize Macro Recording</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main/advanced/class_inheritance.html">Inherit Magic Class</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../main/advanced/api.html">API References</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="magicclass.html">magicclass package</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="magicclass.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#module-magicclass.command_palette">magicclass.command_palette module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#module-magicclass.core">magicclass.core module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#module-magicclass.help">magicclass.help module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#module-magicclass.plot_api">magicclass.plot_api module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#module-magicclass.signature">magicclass.signature module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#module-magicclass.testing">magicclass.testing module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#module-magicclass.undo">magicclass.undo module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="magicclass.html#module-magicclass">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.ext.html">magicclass.ext package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.utils.html">magicclass.utils package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.widgets.html">magicclass.widgets package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.widgets.pywidgets.html">magicclass.widgets.pywidgets package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../main/best_practice.html">Best Practice</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">magic-class</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../main/advanced/index.html">Advanced Topics</a></li>
+          <li class="breadcrumb-item"><a href="../main/advanced/api.html">API References</a></li>
+          <li class="breadcrumb-item"><a href="magicclass.html">magicclass package</a></li>
+      <li class="breadcrumb-item active">magicclass.types package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/apidoc/magicclass.types.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+
+  <section id="magicclass-types-package">
+<h1>magicclass.types package<a class="headerlink" href="#magicclass-types-package" title="Permalink to this headline">¶</a></h1>
+<section id="module-magicclass.types">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-magicclass.types" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.types.Bound">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">magicclass.types.</span></span><span class="sig-name descname"><span class="pre">Bound</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/types/_bound.html#Bound"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.types.Bound" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Make Annotated type from a MagicField or a method, such as:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nd">@magicclass</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">MyClass</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">i</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n">Bound</span><span class="p">[</span><span class="n">i</span><span class="p">]):</span>
+<span class="gp">... </span>        <span class="o">...</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Bound[value]</span></code> is identical to <code class="docutils literal notranslate"><span class="pre">Annotated[Any,</span> <span class="pre">{&quot;bind&quot;:</span> <span class="pre">value}]</span></code>.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.types.BoundLiteral">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">magicclass.types.</span></span><span class="sig-name descname"><span class="pre">BoundLiteral</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/types/_bound.html#BoundLiteral"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.types.BoundLiteral" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class used to represent a future evaluable expression.</p>
+<p>This object will be created when a string is passed to the <code class="docutils literal notranslate"><span class="pre">Bound[...]</span></code> type.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.types.BoundLiteral.eval">
+<span class="sig-name descname"><span class="pre">eval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cls</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference internal" href="../_modules/magicclass/types/_bound.html#BoundLiteral.eval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.types.BoundLiteral.eval" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.types.Choices">
+<span class="sig-prename descclassname"><span class="pre">magicclass.types.</span></span><span class="sig-name descname"><span class="pre">Choices</span></span><a class="headerlink" href="#magicclass.types.Choices" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#magicclass.types.OneOf" title="magicclass.types._choices.OneOf"><code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.types._choices.OneOf</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.types.ExprStr">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">magicclass.types.</span></span><span class="sig-name descname"><span class="pre">ExprStr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/types/_expr.html#ExprStr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.types.ExprStr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
+<p>An expression string.</p>
+<p><cite>ExprStr</cite> is a subclass of str that will be considered as an evaluation expression.
+<cite>magicgui</cite> interpret this type as a <cite>EvalLineEdit</cite>.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nd">@magicgui</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">ExprStr</span><span class="p">):</span> <span class="o">...</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nd">@magicgui</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">ExprStr</span><span class="o">.</span><span class="n">In</span><span class="p">[{</span><span class="s2">&quot;np&quot;</span><span class="p">:</span> <span class="n">np</span><span class="p">}]):</span> <span class="o">...</span>  <span class="c1"># with given dict as namespace</span>
+</pre></div>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.types.ExprStr.In">
+<span class="sig-name descname"><span class="pre">In</span></span><a class="headerlink" href="#magicclass.types.ExprStr.In" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.types._expr._ExprIn</span></code></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="magicclass.types.ExprStr.eval">
+<span class="sig-name descname"><span class="pre">eval</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/types/_expr.html#ExprStr.eval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.types.ExprStr.eval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate the expression string.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.types.OneOf">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">magicclass.types.</span></span><span class="sig-name descname"><span class="pre">OneOf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/types/_choices.html#OneOf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.types.OneOf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Make Annotated type from a method, such as:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nd">@magicclass</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">MyClass</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n">OneOf</span><span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)]):</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="o">...</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">OneOf[value]</span></code> is identical to <code class="docutils literal notranslate"><span class="pre">Annotated[Any,</span> <span class="pre">{&quot;choices&quot;:</span> <span class="pre">value}]</span></code>.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.types.Optional">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">magicclass.types.</span></span><span class="sig-name descname"><span class="pre">Optional</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/types/_optional.html#Optional"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.types.Optional" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Make Annotated type similar to <code class="docutils literal notranslate"><span class="pre">typing.Optional</span></code>.</p>
+<p>Arguments annotated with <code class="docutils literal notranslate"><span class="pre">Optional[int]</span></code> will create a
+<code class="docutils literal notranslate"><span class="pre">OptionalWidget</span></code> with a <code class="docutils literal notranslate"><span class="pre">SpinBox</span></code> as an inner widget.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">set_options</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">magicclass.types</span> <span class="kn">import</span> <span class="n">Optional</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nd">@magicclass</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="nd">@set_options</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;options&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">}})</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]):</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="nb">print</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ui</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ui</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.types.Path">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">magicclass.types.</span></span><span class="sig-name descname"><span class="pre">Path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/types/_path.html#Path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.types.Path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pathlib.Path</span></code></p>
+<p>A subclass of <code class="docutils literal notranslate"><span class="pre">pathlib.Path</span></code> with additional type annotation variations.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Path</span>  <span class="c1"># identical to pathlib.Path for magicgui</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Path</span><span class="o">.</span><span class="n">Read</span>  <span class="c1"># pathlib.Path with mode &quot;r&quot; (identical to Path)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Path</span><span class="o">.</span><span class="n">Save</span>  <span class="c1"># pathlib.Path with mode &quot;w&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Path</span><span class="o">.</span><span class="n">Dir</span>  <span class="c1"># pathlib.Path with mode &quot;d&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Path</span><span class="o">.</span><span class="n">Multiple</span>  <span class="c1"># pathlib.Path with mode &quot;rm&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Path</span><span class="o">.</span><span class="n">Read</span><span class="p">[</span><span class="s2">&quot;*.py&quot;</span><span class="p">]</span>  <span class="c1"># pathlib.Path with mode &quot;r&quot; and filter &quot;*.py&quot;</span>
+</pre></div>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.types.Path.Dir">
+<span class="sig-name descname"><span class="pre">Dir</span></span><a class="headerlink" href="#magicclass.types.Path.Dir" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.types._path._DirPath</span></code></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.types.Path.Multiple">
+<span class="sig-name descname"><span class="pre">Multiple</span></span><a class="headerlink" href="#magicclass.types.Path.Multiple" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.types._path._MultiplePaths</span></code></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.types.Path.Read">
+<span class="sig-name descname"><span class="pre">Read</span></span><a class="headerlink" href="#magicclass.types.Path.Read" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.types._path._Path</span></code></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.types.Path.Save">
+<span class="sig-name descname"><span class="pre">Save</span></span><a class="headerlink" href="#magicclass.types.Path.Save" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.types._path._SavePath</span></code></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.types.SomeOf">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">magicclass.types.</span></span><span class="sig-name descname"><span class="pre">SomeOf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/types/_choices.html#SomeOf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.types.SomeOf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Make Annotated type from a method, such as:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nd">@magicclass</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">MyClass</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n">Choices</span><span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)]):</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="o">...</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Choices[value]</span></code> is identical to <code class="docutils literal notranslate"><span class="pre">Annotated[Any,</span> <span class="pre">{&quot;choices&quot;:</span> <span class="pre">value}]</span></code>.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.types.Union">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">magicclass.types.</span></span><span class="sig-name descname"><span class="pre">Union</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/types/_union.html#Union"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.types.Union" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Make Annotated type similar to <code class="docutils literal notranslate"><span class="pre">typing.Union</span></code>.</p>
+<p>Arguments annotated with <code class="docutils literal notranslate"><span class="pre">Union[int,</span> <span class="pre">str]</span></code> will create a
+<code class="docutils literal notranslate"><span class="pre">UnionWidget</span></code> with a <code class="docutils literal notranslate"><span class="pre">SpinBox</span></code> and a <code class="docutils literal notranslate"><span class="pre">LineEdit</span></code> as inner widgets.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">magicclass.types</span> <span class="kn">import</span> <span class="n">Union</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nd">@magicclass</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]):</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="nb">print</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ui</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ui</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="magicclass.types.WidgetType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">magicclass.types.</span></span><span class="sig-name descname"><span class="pre">WidgetType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/types/_const.html#WidgetType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.types.WidgetType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.types.WidgetType.button">
+<span class="sig-name descname"><span class="pre">button</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'button'</span></em><a class="headerlink" href="#magicclass.types.WidgetType.button" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.types.WidgetType.collapsible">
+<span class="sig-name descname"><span class="pre">collapsible</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'collapsible'</span></em><a class="headerlink" href="#magicclass.types.WidgetType.collapsible" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.types.WidgetType.draggable">
+<span class="sig-name descname"><span class="pre">draggable</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'draggable'</span></em><a class="headerlink" href="#magicclass.types.WidgetType.draggable" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.types.WidgetType.frame">
+<span class="sig-name descname"><span class="pre">frame</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'frame'</span></em><a class="headerlink" href="#magicclass.types.WidgetType.frame" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.types.WidgetType.groupbox">
+<span class="sig-name descname"><span class="pre">groupbox</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'groupbox'</span></em><a class="headerlink" href="#magicclass.types.WidgetType.groupbox" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.types.WidgetType.hcollapsible">
+<span class="sig-name descname"><span class="pre">hcollapsible</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'hcollapsible'</span></em><a class="headerlink" href="#magicclass.types.WidgetType.hcollapsible" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.types.WidgetType.list">
+<span class="sig-name descname"><span class="pre">list</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'list'</span></em><a class="headerlink" href="#magicclass.types.WidgetType.list" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.types.WidgetType.mainwindow">
+<span class="sig-name descname"><span class="pre">mainwindow</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'mainwindow'</span></em><a class="headerlink" href="#magicclass.types.WidgetType.mainwindow" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.types.WidgetType.none">
+<span class="sig-name descname"><span class="pre">none</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'none'</span></em><a class="headerlink" href="#magicclass.types.WidgetType.none" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.types.WidgetType.scrollable">
+<span class="sig-name descname"><span class="pre">scrollable</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'scrollable'</span></em><a class="headerlink" href="#magicclass.types.WidgetType.scrollable" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.types.WidgetType.split">
+<span class="sig-name descname"><span class="pre">split</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'split'</span></em><a class="headerlink" href="#magicclass.types.WidgetType.split" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.types.WidgetType.stacked">
+<span class="sig-name descname"><span class="pre">stacked</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'stacked'</span></em><a class="headerlink" href="#magicclass.types.WidgetType.stacked" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.types.WidgetType.subwindows">
+<span class="sig-name descname"><span class="pre">subwindows</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'subwindows'</span></em><a class="headerlink" href="#magicclass.types.WidgetType.subwindows" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.types.WidgetType.tabbed">
+<span class="sig-name descname"><span class="pre">tabbed</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'tabbed'</span></em><a class="headerlink" href="#magicclass.types.WidgetType.tabbed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.types.WidgetType.toolbox">
+<span class="sig-name descname"><span class="pre">toolbox</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'toolbox'</span></em><a class="headerlink" href="#magicclass.types.WidgetType.toolbox" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="magicclass.types.bound">
+<span class="sig-prename descclassname"><span class="pre">magicclass.types.</span></span><span class="sig-name descname"><span class="pre">bound</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/types/_bound.html#bound"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.types.bound" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function version of <code class="docutils literal notranslate"><span class="pre">Bound[...]</span></code>.</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="magicclass.stylesheets.html" class="btn btn-neutral float-left" title="magicclass.stylesheets package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="magicclass.utils.html" class="btn btn-neutral float-right" title="magicclass.utils package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Hanjin Liu.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+</body>
+</html>

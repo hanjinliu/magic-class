@@ -10,6 +10,7 @@ and tidiness of the source code.
    :maxdepth: 1
 
    use_wraps
+   undo
    use_bind
    use_choices
    use_setup

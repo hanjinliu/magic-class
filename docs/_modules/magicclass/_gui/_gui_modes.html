@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass._gui._gui_modes &mdash; magic-class 0.6.14 documentation</title>
+  <title>magicclass._gui._gui_modes &mdash; magic-class 0.7.0rc0 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
@@ -32,7 +32,7 @@
             magic-class
           </a>
               <div class="version">
-                0.6.14
+                0.7.0rc0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -112,7 +112,6 @@
         <span class="p">}</span></div>
 
 <div class="viewcode-block" id="PopUpMode.activate_magicgui"><a class="viewcode-back" href="../../../apidoc/magicclass.html#magicclass.PopUpMode.activate_magicgui">[docs]</a>    <span class="k">def</span> <span class="nf">activate_magicgui</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mgui</span><span class="p">:</span> <span class="n">FunctionGuiPlus</span><span class="p">):</span>
-
         <span class="k">if</span> <span class="bp">self</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span>
             <span class="n">PopUpMode</span><span class="o">.</span><span class="n">dock</span><span class="p">,</span>
             <span class="n">PopUpMode</span><span class="o">.</span><span class="n">dialog</span><span class="p">,</span>
@@ -124,7 +123,11 @@
         <span class="k">elif</span> <span class="bp">self</span> <span class="ow">is</span> <span class="n">PopUpMode</span><span class="o">.</span><span class="n">parentsub</span><span class="p">:</span>
             <span class="n">mgui</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">mgui</span><span class="o">.</span><span class="n">exec_as_dialog</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span></div>
+            <span class="n">mgui</span><span class="o">.</span><span class="n">exec_as_dialog</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">mgui</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setFocus</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">pass</span></div>
 
 <div class="viewcode-block" id="PopUpMode.connect_close_callback"><a class="viewcode-back" href="../../../apidoc/magicclass.html#magicclass.PopUpMode.connect_close_callback">[docs]</a>    <span class="k">def</span> <span class="nf">connect_close_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mgui</span><span class="p">:</span> <span class="n">FunctionGui</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="n">PopUpMode</span><span class="o">.</span><span class="n">dock</span><span class="p">,</span> <span class="n">PopUpMode</span><span class="o">.</span><span class="n">parentsub</span><span class="p">,</span> <span class="n">PopUpMode</span><span class="o">.</span><span class="n">dialog</span><span class="p">}:</span>

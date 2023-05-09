@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 from typing import Any, Callable, Generic, TypeVar, overload
-from typing_extensions import ParamSpec
 from abc import ABC, abstractmethod, abstractproperty
 
-_P = ParamSpec("_P")
+__all__ = ["undo_callback"]
+
 _R = TypeVar("_R")
 
 

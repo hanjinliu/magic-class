@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.ext.vispy.plot_api &mdash; magic-class 0.6.12 documentation</title>
+  <title>magicclass.ext.vispy.plot_api &mdash; magic-class 0.7.0rc0 documentation</title>
       <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/columns.css" type="text/css" />
@@ -25,14 +25,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../../index.html" class="icon icon-home"> magic-class
+
+
+
+          <a href="../../../../index.html" class="icon icon-home">
+            magic-class
           </a>
               <div class="version">
-                0.6.12
+                0.7.0rc0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -64,9 +68,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../../../index.html">Module code</a> &raquo;</li>
-      <li>magicclass.ext.vispy.plot_api</li>
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">magicclass.ext.vispy.plot_api</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -84,15 +88,15 @@
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">.widgets2d</span> <span class="kn">import</span> <span class="n">Has2DViewBox</span><span class="p">,</span> <span class="n">MultiPlot</span>
 
-<span class="n">CURRENT_MULTI_CANVAS</span><span class="p">:</span> <span class="n">MultiPlot</span> <span class="o">=</span> <span class="kc">None</span>
-<span class="n">CURRENT_CANVAS</span><span class="p">:</span> <span class="n">Has2DViewBox</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">CURRENT_MULTI_CANVAS</span><span class="p">:</span> <span class="n">MultiPlot</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">CURRENT_CANVAS</span><span class="p">:</span> <span class="n">Has2DViewBox</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 
 
-<span class="k">def</span> <span class="nf">_current_canvas</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">VispyPlotCanvas</span><span class="p">:</span>
+<div class="viewcode-block" id="gca"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.plot_api.gca">[docs]</a><span class="k">def</span> <span class="nf">gca</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">VispyPlotCanvas</span><span class="p">:</span>
     <span class="k">global</span> <span class="n">CURRENT_CANVAS</span>
     <span class="k">if</span> <span class="n">CURRENT_CANVAS</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">CURRENT_CANVAS</span> <span class="o">=</span> <span class="n">VispyPlotCanvas</span><span class="p">()</span>
-    <span class="k">return</span> <span class="n">CURRENT_CANVAS</span>
+    <span class="k">return</span> <span class="n">CURRENT_CANVAS</span></div>
 
 
 <span class="k">def</span> <span class="nf">_set_current_canvas</span><span class="p">(</span><span class="n">canvas</span><span class="p">):</span>
@@ -109,12 +113,8 @@
 
 <div class="viewcode-block" id="gcf"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.plot_api.gcf">[docs]</a><span class="k">def</span> <span class="nf">gcf</span><span class="p">():</span>
     <span class="k">if</span> <span class="n">CURRENT_MULTI_CANVAS</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">CURRENT_CANVAS</span>
-    <span class="k">return</span> <span class="n">CURRENT_CANVAS</span></div>
-
-
-<div class="viewcode-block" id="gca"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.plot_api.gca">[docs]</a><span class="k">def</span> <span class="nf">gca</span><span class="p">():</span>
-    <span class="k">return</span> <span class="n">CURRENT_CANVAS</span></div>
+        <span class="k">return</span> <span class="n">gca</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">CURRENT_MULTI_CANVAS</span></div>
 
 
 <div class="viewcode-block" id="figure"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.plot_api.figure">[docs]</a><span class="k">def</span> <span class="nf">figure</span><span class="p">():</span>
@@ -159,7 +159,7 @@
     <span class="n">ls</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span>
     <span class="n">symbol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VispyPlotCanvas</span><span class="p">:</span>
-    <span class="k">return</span> <span class="n">_current_canvas</span><span class="p">()</span><span class="o">.</span><span class="n">add_curve</span><span class="p">(</span>
+    <span class="k">return</span> <span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">add_curve</span><span class="p">(</span>
         <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span>
         <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span>
         <span class="n">face_color</span><span class="o">=</span><span class="n">face_color</span><span class="p">,</span>
@@ -183,7 +183,7 @@
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">symbol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VispyPlotCanvas</span><span class="p">:</span>
-    <span class="k">return</span> <span class="n">_current_canvas</span><span class="p">()</span><span class="o">.</span><span class="n">add_scatter</span><span class="p">(</span>
+    <span class="k">return</span> <span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">add_scatter</span><span class="p">(</span>
         <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span>
         <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span>
         <span class="n">face_color</span><span class="o">=</span><span class="n">face_color</span><span class="p">,</span>
@@ -195,13 +195,29 @@
     <span class="p">)</span></div>
 
 
+<div class="viewcode-block" id="hist"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.plot_api.hist">[docs]</a><span class="k">def</span> <span class="nf">hist</span><span class="p">(</span>
+    <span class="n">data</span><span class="p">,</span>
+    <span class="n">bins</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="n">face_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">edge_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VispyPlotCanvas</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">add_hist</span><span class="p">(</span>
+        <span class="n">data</span><span class="p">,</span>
+        <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span>
+        <span class="n">face_color</span><span class="o">=</span><span class="n">face_color</span><span class="p">,</span>
+        <span class="n">edge_color</span><span class="o">=</span><span class="n">edge_color</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
 <div class="viewcode-block" id="show"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.plot_api.show">[docs]</a><span class="k">def</span> <span class="nf">show</span><span class="p">():</span>
     <span class="k">if</span> <span class="n">CURRENT_MULTI_CANVAS</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">CURRENT_MULTI_CANVAS</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">CURRENT_CANVAS</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-    <span class="n">_set_current_canvas</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
-    <span class="n">_set_current_multi_canvas</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span></div>
+        <span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="imshow"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.plot_api.imshow">[docs]</a><span class="k">def</span> <span class="nf">imshow</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>

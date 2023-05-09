@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.logging.core &mdash; magic-class 0.6.14 documentation</title>
+  <title>magicclass.logging.core &mdash; magic-class 0.7.0rc0 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
@@ -25,14 +25,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../index.html" class="icon icon-home"> magic-class
+
+
+
+          <a href="../../../index.html" class="icon icon-home">
+            magic-class
           </a>
               <div class="version">
-                0.6.14
+                0.7.0rc0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -64,9 +68,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../../index.html">Module code</a> &raquo;</li>
-      <li>magicclass.logging.core</li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">magicclass.logging.core</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -88,7 +92,7 @@
 
 
 <div class="viewcode-block" id="MagicClassLogger"><a class="viewcode-back" href="../../../apidoc/magicclass.logging.html#magicclass.logging.core.MagicClassLogger">[docs]</a><span class="k">class</span> <span class="nc">MagicClassLogger</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">Logger</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A magicclass widget-bound logger.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A magicclass widget-bound logger.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">:</span> <span class="n">Logger</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">NOTSET</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">level</span><span class="p">)</span>
@@ -96,19 +100,19 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">widget</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Logger</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The magicclass logger widget&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The magicclass logger widget&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_widget</span>
 
 <div class="viewcode-block" id="MagicClassLogger.print"><a class="viewcode-back" href="../../../apidoc/magicclass.logging.html#magicclass.logging.core.MagicClassLogger.print">[docs]</a>    <span class="k">def</span> <span class="nf">print</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Print things in the end of the logger widget.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Print things in the end of the logger widget.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_widget</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="n">sep</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="MagicClassLogger.print_html"><a class="viewcode-back" href="../../../apidoc/magicclass.logging.html#magicclass.logging.core.MagicClassLogger.print_html">[docs]</a>    <span class="k">def</span> <span class="nf">print_html</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;&lt;br&gt;&lt;/br&gt;&quot;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Print things in the end of the logger widget using HTML string.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Print things in the end of the logger widget using HTML string.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_widget</span><span class="o">.</span><span class="n">print_html</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="MagicClassLogger.print_rst"><a class="viewcode-back" href="../../../apidoc/magicclass.logging.html#magicclass.logging.core.MagicClassLogger.print_rst">[docs]</a>    <span class="k">def</span> <span class="nf">print_rst</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rst</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Print things in the end of the logger widget using rST string.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Print things in the end of the logger widget using rST string.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_widget</span><span class="o">.</span><span class="n">print_rst</span><span class="p">(</span><span class="n">rst</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="MagicClassLogger.print_table"><a class="viewcode-back" href="../../../apidoc/magicclass.logging.html#magicclass.logging.core.MagicClassLogger.print_table">[docs]</a>    <span class="k">def</span> <span class="nf">print_table</span><span class="p">(</span>
@@ -118,7 +122,7 @@
         <span class="n">index</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">precision</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Print object as a table in the logger widget.</span>
 
 <span class="sd">        Parameters</span>
@@ -144,35 +148,35 @@
         <span class="n">width</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">height</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Print an array as an image in the logger widget. Can be a path.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Print an array as an image in the logger widget. Can be a path.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_widget</span><span class="o">.</span><span class="n">print_image</span><span class="p">(</span>
             <span class="n">arr</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">vmax</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">height</span>
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="MagicClassLogger.print_figure"><a class="viewcode-back" href="../../../apidoc/magicclass.logging.html#magicclass.logging.core.MagicClassLogger.print_figure">[docs]</a>    <span class="k">def</span> <span class="nf">print_figure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fig</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Print matplotlib Figure object like inline plot.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Print matplotlib Figure object like inline plot.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_widget</span><span class="o">.</span><span class="n">print_figure</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="MagicClassLogger.set_stdout"><a class="viewcode-back" href="../../../apidoc/magicclass.logging.html#magicclass.logging.core.MagicClassLogger.set_stdout">[docs]</a>    <span class="k">def</span> <span class="nf">set_stdout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;A context manager for printing things in this widget.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A context manager for printing things in this widget.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_widget</span><span class="o">.</span><span class="n">set_stdout</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="MagicClassLogger.set_logger"><a class="viewcode-back" href="../../../apidoc/magicclass.logging.html#magicclass.logging.core.MagicClassLogger.set_logger">[docs]</a>    <span class="k">def</span> <span class="nf">set_logger</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clear</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;A context manager for logging things in this widget.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A context manager for logging things in this widget.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_widget</span><span class="o">.</span><span class="n">set_logger</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">clear</span><span class="o">=</span><span class="n">clear</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="MagicClassLogger.set_plt"><a class="viewcode-back" href="../../../apidoc/magicclass.logging.html#magicclass.logging.core.MagicClassLogger.set_plt">[docs]</a>    <span class="k">def</span> <span class="nf">set_plt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">style</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">rc_context</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}):</span>
-        <span class="sd">&quot;&quot;&quot;A context manager for inline plot in the logger widget.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A context manager for inline plot in the logger widget.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_widget</span><span class="o">.</span><span class="n">set_plt</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="n">style</span><span class="p">,</span> <span class="n">rc_context</span><span class="o">=</span><span class="n">rc_context</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="MagicClassLogger.setLevel"><a class="viewcode-back" href="../../../apidoc/magicclass.logging.html#magicclass.logging.core.MagicClassLogger.setLevel">[docs]</a>    <span class="k">def</span> <span class="nf">setLevel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Set the logging level of this logger.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the logging level of this logger.&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">level</span><span class="p">)</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">level</span><span class="p">)</span>  <span class="c1"># must set the root logger level</span></div></div>
 
 
 <div class="viewcode-block" id="getLogger"><a class="viewcode-back" href="../../../apidoc/magicclass.logging.html#magicclass.logging.core.getLogger">[docs]</a><span class="k">def</span> <span class="nf">getLogger</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">show</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicClassLogger</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get a magicclass logger.</span>
 
 <span class="sd">    The returned logger has a name specific logger widget. Many method of</span>

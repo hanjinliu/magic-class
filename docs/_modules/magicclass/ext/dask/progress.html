@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.ext.dask.progress &mdash; magic-class 0.6.14 documentation</title>
+  <title>magicclass.ext.dask.progress &mdash; magic-class 0.7.0rc0 documentation</title>
       <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/columns.css" type="text/css" />
@@ -32,7 +32,7 @@
             magic-class
           </a>
               <div class="version">
-                0.6.14
+                0.7.0rc0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
@@ -293,12 +293,6 @@
             <span class="nd">@self</span><span class="o">.</span><span class="n">yielded</span><span class="o">.</span><span class="n">connect</span>
             <span class="k">def</span> <span class="nf">_</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
                 <span class="n">pbar</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mi">0</span>
-
-        <span class="nd">@worker</span><span class="o">.</span><span class="n">returned</span><span class="o">.</span><span class="n">connect</span>
-        <span class="k">def</span> <span class="nf">_on_returned</span><span class="p">(</span><span class="n">out</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">gui</span><span class="o">.</span><span class="n">macro</span><span class="o">.</span><span class="n">active</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_recorder</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_recorder</span><span class="p">(</span><span class="n">gui</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-            <span class="k">return</span>
 
         <span class="k">return</span> <span class="n">worker</span>
 

@@ -1,16 +1,13 @@
 magicclass.ext.pandas package
 =============================
 
-Submodules
-----------
+Subpackages
+-----------
 
-magicclass.ext.pandas.io module
--------------------------------
+.. toctree::
+   :maxdepth: 4
 
-.. automodule:: magicclass.ext.pandas.io
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   magicclass.ext.pandas.tests
 
 Module contents
 ---------------

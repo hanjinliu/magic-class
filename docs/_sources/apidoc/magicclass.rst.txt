@@ -12,8 +12,10 @@ Subpackages
    magicclass.functools
    magicclass.logging
    magicclass.stylesheets
+   magicclass.types
    magicclass.utils
    magicclass.widgets
+   magicclass.wrappers
 
 Submodules
 ----------
@@ -66,18 +68,10 @@ magicclass.testing module
    :undoc-members:
    :show-inheritance:
 
-magicclass.types module
------------------------
+magicclass.undo module
+----------------------
 
-.. automodule:: magicclass.types
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-magicclass.wrappers module
---------------------------
-
-.. automodule:: magicclass.wrappers
+.. automodule:: magicclass.undo
    :members:
    :undoc-members:
    :show-inheritance:

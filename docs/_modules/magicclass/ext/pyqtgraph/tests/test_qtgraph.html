@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.ext.pyqtgraph.tests.test_qtgraph &mdash; magic-class 0.6.14 documentation</title>
+  <title>magicclass.ext.pyqtgraph.tests.test_qtgraph &mdash; magic-class 0.7.0rc0 documentation</title>
       <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../../../_static/columns.css" type="text/css" />
@@ -25,14 +25,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../../../index.html" class="icon icon-home"> magic-class
+
+
+
+          <a href="../../../../../index.html" class="icon icon-home">
+            magic-class
           </a>
               <div class="version">
-                0.6.14
+                0.7.0rc0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -64,9 +68,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../../../../index.html">Module code</a> &raquo;</li>
-      <li>magicclass.ext.pyqtgraph.tests.test_qtgraph</li>
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">magicclass.ext.pyqtgraph.tests.test_qtgraph</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -80,16 +84,16 @@
 <span class="kn">from</span> <span class="nn">magicclass.ext.pyqtgraph</span> <span class="kn">import</span> <span class="n">QtPlotCanvas</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<div class="viewcode-block" id="test_plot_canvas"><a class="viewcode-back" href="../../../../../apidoc/magicclass.ext.pyqtgraph.tests.html#magicclass.ext.pyqtgraph.tests.test_qtgraph.test_plot_canvas">[docs]</a><span class="k">def</span> <span class="nf">test_plot_canvas</span><span class="p">():</span>
-    <span class="nd">@magicclass</span>
-    <span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
-        <span class="n">plot</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">QtPlotCanvas</span><span class="p">)</span>
+<div class="viewcode-block" id="A"><a class="viewcode-back" href="../../../../../apidoc/magicclass.ext.pyqtgraph.tests.html#magicclass.ext.pyqtgraph.tests.test_qtgraph.A">[docs]</a><span class="nd">@magicclass</span>
+<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+    <span class="n">plot</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">QtPlotCanvas</span><span class="p">)</span></div>
 
+<div class="viewcode-block" id="test_curve"><a class="viewcode-back" href="../../../../../apidoc/magicclass.ext.pyqtgraph.tests.html#magicclass.ext.pyqtgraph.tests.test_qtgraph.test_curve">[docs]</a><span class="k">def</span> <span class="nf">test_curve</span><span class="p">():</span>
     <span class="n">ui</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
+    <span class="n">ui</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">run</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">ndata</span> <span class="o">=</span> <span class="mi">100</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="n">ndata</span><span class="p">)</span>
 
-    <span class="c1"># test curve</span>
     <span class="n">ui</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">add_curve</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
     <span class="n">ui</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">add_curve</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">ndata</span><span class="p">)</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
     <span class="n">item</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">add_curve</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">face_color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span> <span class="n">edge_color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
@@ -112,9 +116,13 @@
     <span class="k">assert</span> <span class="n">item</span><span class="o">.</span><span class="n">ndata</span> <span class="o">==</span> <span class="n">ndata</span>
 
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">ui</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">layers</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span>
-    <span class="n">ui</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="n">ui</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
-    <span class="c1"># test scatter</span>
+<div class="viewcode-block" id="test_scatter"><a class="viewcode-back" href="../../../../../apidoc/magicclass.ext.pyqtgraph.tests.html#magicclass.ext.pyqtgraph.tests.test_qtgraph.test_scatter">[docs]</a><span class="k">def</span> <span class="nf">test_scatter</span><span class="p">():</span>
+    <span class="n">ui</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
+    <span class="n">ui</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">run</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">ndata</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="n">ndata</span><span class="p">)</span>
     <span class="n">ui</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">add_scatter</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
     <span class="n">ui</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">add_scatter</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">ndata</span><span class="p">)</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
     <span class="n">item</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">add_scatter</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">face_color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span> <span class="n">edge_color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">symbol</span><span class="o">=</span><span class="s2">&quot;*&quot;</span><span class="p">)</span>
@@ -136,9 +144,13 @@
     <span class="k">assert</span> <span class="n">item</span><span class="o">.</span><span class="n">ndata</span> <span class="o">==</span> <span class="n">ndata</span>
 
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">ui</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">layers</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span>
-    <span class="n">ui</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="n">ui</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
-    <span class="c1"># test bar</span>
+<div class="viewcode-block" id="test_bar"><a class="viewcode-back" href="../../../../../apidoc/magicclass.ext.pyqtgraph.tests.html#magicclass.ext.pyqtgraph.tests.test_qtgraph.test_bar">[docs]</a><span class="k">def</span> <span class="nf">test_bar</span><span class="p">():</span>
+    <span class="n">ui</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
+    <span class="n">ui</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">run</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">ndata</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="n">ndata</span><span class="p">)</span>
     <span class="n">ui</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">add_bar</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
     <span class="n">ui</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">add_bar</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">ndata</span><span class="p">)</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
     <span class="n">item</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">add_bar</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">face_color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span> <span class="n">edge_color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
@@ -158,8 +170,13 @@
     <span class="k">assert</span> <span class="n">item</span><span class="o">.</span><span class="n">ndata</span> <span class="o">==</span> <span class="n">ndata</span>
 
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">ui</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">layers</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span>
-    <span class="n">ui</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="n">ui</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
+<div class="viewcode-block" id="test_hist"><a class="viewcode-back" href="../../../../../apidoc/magicclass.ext.pyqtgraph.tests.html#magicclass.ext.pyqtgraph.tests.test_qtgraph.test_hist">[docs]</a><span class="k">def</span> <span class="nf">test_hist</span><span class="p">():</span>
+    <span class="n">ui</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
+    <span class="n">ui</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">run</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">ndata</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="n">ndata</span><span class="p">)</span>
     <span class="n">ui</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">add_hist</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
     <span class="n">item</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">add_hist</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span> <span class="nb">range</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">],</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">item</span><span class="o">.</span><span class="n">visible</span>
@@ -175,8 +192,19 @@
         <span class="n">item</span><span class="o">.</span><span class="n">ls</span> <span class="o">=</span> <span class="n">ls</span>
 
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">ui</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">layers</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+    <span class="n">ui</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
-    <span class="c1"># test region</span>
+<div class="viewcode-block" id="test_infline"><a class="viewcode-back" href="../../../../../apidoc/magicclass.ext.pyqtgraph.tests.html#magicclass.ext.pyqtgraph.tests.test_qtgraph.test_infline">[docs]</a><span class="k">def</span> <span class="nf">test_infline</span><span class="p">():</span>
+    <span class="n">ui</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
+    <span class="n">ui</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">add_infline</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">)</span>  <span class="c1"># slope/intercept</span>
+    <span class="n">ui</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">add_infline</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">intercept</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>  <span class="c1"># slope/intercept</span>
+    <span class="n">ui</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">add_infline</span><span class="p">(</span><span class="n">slope</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">intercept</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>  <span class="c1"># slope/intercept</span>
+    <span class="n">ui</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">add_infline</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="mi">83</span><span class="p">)</span>  <span class="c1"># pos/degree</span>
+    <span class="n">ui</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">add_infline</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">degree</span><span class="o">=</span><span class="mi">83</span><span class="p">)</span>  <span class="c1"># pos/degree</span>
+    <span class="n">ui</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">add_infline</span><span class="p">(</span><span class="n">pos</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">degree</span><span class="o">=</span><span class="mi">83</span><span class="p">)</span>  <span class="c1"># pos/degree</span></div>
+
+<div class="viewcode-block" id="test_region"><a class="viewcode-back" href="../../../../../apidoc/magicclass.ext.pyqtgraph.tests.html#magicclass.ext.pyqtgraph.tests.test_qtgraph.test_region">[docs]</a><span class="k">def</span> <span class="nf">test_region</span><span class="p">():</span>
+    <span class="n">ui</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
     <span class="n">ui</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">region</span><span class="o">.</span><span class="n">visible</span>
     <span class="n">ui</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">region</span><span class="o">.</span><span class="n">visible</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="n">ui</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">region</span><span class="o">.</span><span class="n">value</span>
@@ -184,9 +212,10 @@
     <span class="n">ui</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">region</span><span class="o">.</span><span class="n">enabled</span>
     <span class="n">ui</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">region</span><span class="o">.</span><span class="n">enabled</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="n">ui</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">region</span><span class="o">.</span><span class="n">color</span>
-    <span class="n">ui</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">region</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="s2">&quot;blue&quot;</span>
+    <span class="n">ui</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">region</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="s2">&quot;blue&quot;</span></div>
 
-    <span class="c1"># test legend</span>
+<div class="viewcode-block" id="test_legend"><a class="viewcode-back" href="../../../../../apidoc/magicclass.ext.pyqtgraph.tests.html#magicclass.ext.pyqtgraph.tests.test_qtgraph.test_legend">[docs]</a><span class="k">def</span> <span class="nf">test_legend</span><span class="p">():</span>
+    <span class="n">ui</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
     <span class="n">ui</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">legend</span><span class="o">.</span><span class="n">visible</span>
     <span class="n">ui</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">legend</span><span class="o">.</span><span class="n">visible</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="n">ui</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">legend</span><span class="o">.</span><span class="n">color</span>
@@ -197,19 +226,6 @@
     <span class="n">ui</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">legend</span><span class="o">.</span><span class="n">background_color</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">]</span>
     <span class="n">ui</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">legend</span><span class="o">.</span><span class="n">border</span>
     <span class="n">ui</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">legend</span><span class="o">.</span><span class="n">border</span> <span class="o">=</span> <span class="s2">&quot;red&quot;</span></div>
-
-<div class="viewcode-block" id="test_infline"><a class="viewcode-back" href="../../../../../apidoc/magicclass.ext.pyqtgraph.tests.html#magicclass.ext.pyqtgraph.tests.test_qtgraph.test_infline">[docs]</a><span class="k">def</span> <span class="nf">test_infline</span><span class="p">():</span>
-    <span class="nd">@magicclass</span>
-    <span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
-        <span class="n">plot</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">QtPlotCanvas</span><span class="p">)</span>
-
-    <span class="n">ui</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
-    <span class="n">ui</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">add_infline</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">)</span>  <span class="c1"># slope/intercept</span>
-    <span class="n">ui</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">add_infline</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">intercept</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>  <span class="c1"># slope/intercept</span>
-    <span class="n">ui</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">add_infline</span><span class="p">(</span><span class="n">slope</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">intercept</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>  <span class="c1"># slope/intercept</span>
-    <span class="n">ui</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">add_infline</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="mi">83</span><span class="p">)</span>  <span class="c1"># pos/degree</span>
-    <span class="n">ui</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">add_infline</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">degree</span><span class="o">=</span><span class="mi">83</span><span class="p">)</span>  <span class="c1"># pos/degree</span>
-    <span class="n">ui</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">add_infline</span><span class="p">(</span><span class="n">pos</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">degree</span><span class="o">=</span><span class="mi">83</span><span class="p">)</span>  <span class="c1"># pos/degree</span></div>
 </pre></div>
 
            </div>

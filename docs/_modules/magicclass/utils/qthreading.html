@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.utils.qthreading &mdash; magic-class 0.6.14 documentation</title>
+  <title>magicclass.utils.qthreading &mdash; magic-class 0.7.0rc0 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
@@ -32,7 +32,7 @@
             magic-class
           </a>
               <div class="version">
-                0.6.14
+                0.7.0rc0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -722,12 +722,6 @@
             <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="nd">@worker</span><span class="o">.</span><span class="n">returned</span><span class="o">.</span><span class="n">connect</span>
-        <span class="k">def</span> <span class="nf">_on_returned</span><span class="p">(</span><span class="n">out</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">gui</span><span class="o">.</span><span class="n">macro</span><span class="o">.</span><span class="n">active</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_recorder</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_recorder</span><span class="p">(</span><span class="n">gui</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-            <span class="k">return</span>
-
         <span class="k">return</span> <span class="n">worker</span>
 
     <span class="k">def</span> <span class="nf">_create_method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gui</span><span class="p">:</span> <span class="n">BaseGui</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[</span><span class="n">_P</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
@@ -761,7 +755,7 @@
 
                 <span class="n">worker</span><span class="o">.</span><span class="n">started</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">init_pbar</span><span class="o">.</span><span class="fm">__get__</span><span class="p">(</span><span class="n">pbar</span><span class="p">))</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">_bind_callbacks</span><span class="p">(</span><span class="n">worker</span><span class="p">,</span> <span class="n">gui</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_bind_callbacks</span><span class="p">(</span><span class="n">worker</span><span class="p">,</span> <span class="n">gui</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_progress</span><span class="p">:</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">pbar</span><span class="p">,</span> <span class="s2">&quot;visible&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
@@ -831,14 +825,23 @@
         <span class="n">params</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">sig</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">1</span><span class="p">:]</span>
         <span class="k">return</span> <span class="n">sig</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">parameters</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_bind_callbacks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">worker</span><span class="p">:</span> <span class="n">FunctionWorker</span> <span class="o">|</span> <span class="n">GeneratorWorker</span><span class="p">,</span> <span class="n">gui</span><span class="p">:</span> <span class="n">BaseGui</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_bind_callbacks</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">worker</span><span class="p">:</span> <span class="n">FunctionWorker</span> <span class="o">|</span> <span class="n">GeneratorWorker</span><span class="p">,</span> <span class="n">gui</span><span class="p">:</span> <span class="n">BaseGui</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">):</span>
         <span class="c1"># bind callbacks</span>
         <span class="n">is_generator</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">worker</span><span class="p">,</span> <span class="n">GeneratorWorker</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">started</span><span class="o">.</span><span class="n">_iter_as_method</span><span class="p">(</span><span class="n">gui</span><span class="p">):</span>
             <span class="n">worker</span><span class="o">.</span><span class="n">started</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">returned</span><span class="o">.</span><span class="n">_iter_as_method</span><span class="p">(</span><span class="n">gui</span><span class="p">):</span>
             <span class="n">worker</span><span class="o">.</span><span class="n">returned</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
-        <span class="n">worker</span><span class="o">.</span><span class="n">returned</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">partial</span><span class="p">(</span><span class="n">Callback</span><span class="o">.</span><span class="n">catch</span><span class="p">,</span> <span class="n">macro</span><span class="o">=</span><span class="n">gui</span><span class="o">.</span><span class="n">macro</span><span class="p">))</span>
+        <span class="n">cb_returned</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
+            <span class="n">Callback</span><span class="o">.</span><span class="n">catch</span><span class="p">,</span>
+            <span class="n">gui</span><span class="o">=</span><span class="n">gui</span><span class="p">,</span>
+            <span class="n">tw</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
+            <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span>
+            <span class="n">kwargs</span><span class="o">=</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">worker</span><span class="o">.</span><span class="n">returned</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">cb_returned</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">errored</span><span class="o">.</span><span class="n">_iter_as_method</span><span class="p">(</span><span class="n">gui</span><span class="p">):</span>
             <span class="n">worker</span><span class="o">.</span><span class="n">errored</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">finished</span><span class="o">.</span><span class="n">_iter_as_method</span><span class="p">(</span><span class="n">gui</span><span class="p">):</span>
@@ -849,7 +852,10 @@
                 <span class="n">worker</span><span class="o">.</span><span class="n">aborted</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">yielded</span><span class="o">.</span><span class="n">_iter_as_method</span><span class="p">(</span><span class="n">gui</span><span class="p">):</span>
                 <span class="n">worker</span><span class="o">.</span><span class="n">yielded</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
-            <span class="n">worker</span><span class="o">.</span><span class="n">yielded</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">partial</span><span class="p">(</span><span class="n">Callback</span><span class="o">.</span><span class="n">catch</span><span class="p">,</span> <span class="n">macro</span><span class="o">=</span><span class="n">gui</span><span class="o">.</span><span class="n">macro</span><span class="p">))</span>
+            <span class="n">cb_yielded</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
+                <span class="n">Callback</span><span class="o">.</span><span class="n">catch</span><span class="p">,</span> <span class="n">gui</span><span class="o">=</span><span class="n">gui</span><span class="p">,</span> <span class="n">tw</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">record</span><span class="o">=</span><span class="kc">False</span>
+            <span class="p">)</span>
+            <span class="n">worker</span><span class="o">.</span><span class="n">yielded</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">cb_yielded</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">__signature__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Signature</span><span class="p">:</span>
@@ -1028,10 +1034,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_func</span> <span class="o">=</span> <span class="n">f</span>
 
 <div class="viewcode-block" id="Callback.catch"><a class="viewcode-back" href="../../../apidoc/magicclass.utils.html#magicclass.utils.qthreading.Callback.catch">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">catch</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">macro</span><span class="p">:</span> <span class="n">GuiMacro</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">catch</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">gui</span><span class="p">:</span> <span class="n">BaseGui</span><span class="p">,</span> <span class="n">tw</span><span class="p">:</span> <span class="n">thread_worker</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">,</span> <span class="n">record</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">Callback</span><span class="p">):</span>
-            <span class="k">with</span> <span class="n">macro</span><span class="o">.</span><span class="n">blocked</span><span class="p">():</span>
-                <span class="n">out</span><span class="o">.</span><span class="n">_func</span><span class="p">()</span></div>
+            <span class="k">with</span> <span class="n">gui</span><span class="o">.</span><span class="n">macro</span><span class="o">.</span><span class="n">blocked</span><span class="p">():</span>
+                <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">_func</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">record</span> <span class="ow">and</span> <span class="n">gui</span><span class="o">.</span><span class="n">macro</span><span class="o">.</span><span class="n">active</span> <span class="ow">and</span> <span class="n">tw</span><span class="o">.</span><span class="n">_recorder</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">tw</span><span class="o">.</span><span class="n">_recorder</span><span class="p">(</span><span class="n">gui</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callback</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a partial callback.&quot;&quot;&quot;</span>

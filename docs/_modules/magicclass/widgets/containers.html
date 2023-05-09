@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.widgets.containers &mdash; magic-class 0.6.14 documentation</title>
+  <title>magicclass.widgets.containers &mdash; magic-class 0.7.0rc0 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
@@ -32,7 +32,7 @@
             magic-class
           </a>
               <div class="version">
-                0.6.14
+                0.7.0rc0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -89,12 +89,13 @@
 
 <span class="kn">from</span> <span class="nn">magicgui.application</span> <span class="kn">import</span> <span class="n">use_app</span>
 <span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">Widget</span>
+<span class="kn">from</span> <span class="nn">magicgui.widgets._concrete</span> <span class="kn">import</span> <span class="n">_LabeledWidget</span>
 <span class="kn">from</span> <span class="nn">magicgui.backends._qtpy.widgets</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">QBaseWidget</span><span class="p">,</span>
     <span class="n">Container</span> <span class="k">as</span> <span class="n">ContainerBase</span><span class="p">,</span>
     <span class="n">MainWindow</span> <span class="k">as</span> <span class="n">MainWindowBase</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">magicclass._magicgui_compat</span> <span class="kn">import</span> <span class="n">ContainerWidget</span>
+<span class="kn">from</span> <span class="nn">magicgui.widgets.bases</span> <span class="kn">import</span> <span class="n">ContainerWidget</span>
 
 <span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">merge_super_sigs</span>
 
@@ -201,7 +202,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_qwidget</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">setContentsMargins</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_mgui_insert_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">widget</span><span class="p">:</span> <span class="n">Widget</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_tab_widget</span><span class="o">.</span><span class="n">insertTab</span><span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="n">widget</span><span class="o">.</span><span class="n">native</span><span class="p">,</span> <span class="n">widget</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="n">_LabeledWidget</span><span class="p">):</span>
+            <span class="n">tabname</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">_label_widget</span><span class="o">.</span><span class="n">value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">tabname</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">name</span> <span class="ow">or</span> <span class="n">widget</span><span class="o">.</span><span class="n">label</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tab_widget</span><span class="o">.</span><span class="n">insertTab</span><span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="n">widget</span><span class="o">.</span><span class="n">native</span><span class="p">,</span> <span class="n">tabname</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_mgui_remove_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">:</span> <span class="n">Widget</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tab_widget</span><span class="o">.</span><span class="n">count</span><span class="p">()):</span>
@@ -331,6 +336,7 @@
     <span class="s2">&quot;property-name&quot;</span><span class="p">:</span> <span class="sa">b</span><span class="s2">&quot;maximumWidth&quot;</span><span class="p">,</span>
     <span class="s2">&quot;layout&quot;</span><span class="p">:</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QHBoxLayout</span><span class="p">,</span>
 <span class="p">}</span>
+
 
 <span class="c1"># modified from superqt\collapsible\_collapsible.py</span>
 <span class="k">class</span> <span class="nc">_QCollapsible</span><span class="p">(</span><span class="n">QtW</span><span class="o">.</span><span class="n">QWidget</span><span class="p">):</span>

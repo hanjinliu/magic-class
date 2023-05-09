@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass._gui.keybinding &mdash; magic-class 0.6.12 documentation</title>
+  <title>magicclass._gui.keybinding &mdash; magic-class 0.7.0rc0 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
@@ -25,14 +25,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../index.html" class="icon icon-home"> magic-class
+
+
+
+          <a href="../../../index.html" class="icon icon-home">
+            magic-class
           </a>
               <div class="version">
-                0.6.12
+                0.7.0rc0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -64,9 +68,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../../index.html">Module code</a> &raquo;</li>
-      <li>magicclass._gui.keybinding</li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">magicclass._gui.keybinding</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -102,7 +106,7 @@
 
 
 <span class="k">def</span> <span class="nf">_bit_sum</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Equivalent to a | b | c | d | ... operation.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Equivalent to a | b | c | d | ... operation.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">reduce</span><span class="p">(</span><span class="n">or_</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
 
 
@@ -255,8 +259,13 @@
 
 <span class="k">def</span> <span class="nf">parse_key_combo</span><span class="p">(</span><span class="n">key_combo</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QtKey</span><span class="p">:</span>
     <span class="c1"># For compatibility with napari</span>
-    <span class="n">parsed</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;-(?=.+)&quot;</span><span class="p">,</span> <span class="n">key_combo</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">strs2keycombo</span><span class="p">(</span><span class="o">*</span><span class="n">parsed</span><span class="p">)</span>
+    <span class="n">parsed</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\+(?=.+)&quot;</span><span class="p">,</span> <span class="n">key_combo</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">strs2keycombo</span><span class="p">(</span><span class="o">*</span><span class="n">parsed</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="n">parsed</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;-(?=.+)&quot;</span><span class="p">,</span> <span class="n">key_combo</span><span class="p">)</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">strs2keycombo</span><span class="p">(</span><span class="o">*</span><span class="n">parsed</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">out</span>
 
 
 <span class="k">def</span> <span class="nf">strs2keycombo</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">Key</span><span class="p">,</span> <span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">KeyCombo</span><span class="p">:</span>
@@ -279,7 +288,7 @@
 
 
 <span class="k">def</span> <span class="nf">register_shortcut</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="n">parent</span><span class="p">:</span> <span class="n">QWidget</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Register a callback to a key-binding globally.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Register a callback to a key-binding globally.&quot;&quot;&quot;</span>
     <span class="n">shortcut</span> <span class="o">=</span> <span class="n">QShortcut</span><span class="p">(</span><span class="n">as_shortcut</span><span class="p">(</span><span class="n">keys</span><span class="p">),</span> <span class="n">parent</span><span class="p">)</span>
     <span class="n">shortcut</span><span class="o">.</span><span class="n">activated</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
     <span class="k">return</span> <span class="kc">None</span>

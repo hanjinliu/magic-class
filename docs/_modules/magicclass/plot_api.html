@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.plot_api &mdash; magic-class 0.6.13 documentation</title>
+  <title>magicclass.plot_api &mdash; magic-class 0.7.0rc0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/columns.css" type="text/css" />
@@ -25,14 +25,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> magic-class
+
+
+
+          <a href="../../index.html" class="icon icon-home">
+            magic-class
           </a>
               <div class="version">
-                0.6.13
+                0.7.0rc0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -64,9 +68,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">Module code</a> &raquo;</li>
-      <li>magicclass.plot_api</li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">magicclass.plot_api</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -139,18 +143,18 @@
 
 <span class="nd">@wraps</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">gcf</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Get current figure.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get current figure.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">CURRENT_WIDGET</span><span class="o">.</span><span class="n">figure</span>
 
 
 <span class="nd">@wraps</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">gca</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Get current axis.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get current axis.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">CURRENT_WIDGET</span><span class="o">.</span><span class="n">axes</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="gcw"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.plot_api.gcw">[docs]</a><span class="k">def</span> <span class="nf">gcw</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Figure</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Get current widget.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get current widget.&quot;&quot;&quot;</span>
     <span class="k">global</span> <span class="n">CURRENT_WIDGET</span>
     <span class="k">if</span> <span class="n">CURRENT_WIDGET</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">CURRENT_WIDGET</span> <span class="o">=</span> <span class="n">Figure</span><span class="p">()</span>
@@ -188,12 +192,12 @@
 
 
 <div class="viewcode-block" id="show"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.plot_api.show">[docs]</a><span class="k">def</span> <span class="nf">show</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Show current figure widget.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Show current figure widget.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">gcw</span><span class="p">()</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="close"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.plot_api.close">[docs]</a><span class="k">def</span> <span class="nf">close</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Close current figure widget&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Close current figure widget&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">gcw</span><span class="p">()</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
 
@@ -298,7 +302,7 @@
 
 
 <div class="viewcode-block" id="draw"><a class="viewcode-back" href="../../apidoc/magicclass.html#magicclass.plot_api.draw">[docs]</a><span class="k">def</span> <span class="nf">draw</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Draw current figure widget.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Draw current figure widget.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">gcw</span><span class="p">()</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span></div>
 </pre></div>
 

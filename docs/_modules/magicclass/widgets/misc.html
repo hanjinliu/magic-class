@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.widgets.misc &mdash; magic-class 0.6.13 documentation</title>
+  <title>magicclass.widgets.misc &mdash; magic-class 0.7.0rc0 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
@@ -25,14 +25,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../index.html" class="icon icon-home"> magic-class
+
+
+
+          <a href="../../../index.html" class="icon icon-home">
+            magic-class
           </a>
               <div class="version">
-                0.6.13
+                0.7.0rc0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -64,9 +68,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../../index.html">Module code</a> &raquo;</li>
-      <li>magicclass.widgets.misc</li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">magicclass.widgets.misc</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -103,7 +107,8 @@
 <span class="kn">from</span> <span class="nn">magicgui.application</span> <span class="kn">import</span> <span class="n">use_app</span>
 <span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">LineEdit</span>
 <span class="kn">from</span> <span class="nn">magicgui.types</span> <span class="kn">import</span> <span class="n">FileDialogMode</span>
-<span class="kn">from</span> <span class="nn">magicclass._magicgui_compat</span> <span class="kn">import</span> <span class="n">ValueWidget</span><span class="p">,</span> <span class="n">Undefined</span>
+<span class="kn">from</span> <span class="nn">magicgui.widgets.bases</span> <span class="kn">import</span> <span class="n">ValueWidget</span>
+<span class="kn">from</span> <span class="nn">magicgui.types</span> <span class="kn">import</span> <span class="n">Undefined</span>
 <span class="kn">from</span> <span class="nn">magicgui.backends._qtpy.widgets</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">QBaseWidget</span><span class="p">,</span>
     <span class="n">QBaseStringWidget</span><span class="p">,</span>
@@ -125,7 +130,7 @@
 
 <span class="nd">@merge_super_sigs</span>
 <span class="k">class</span> <span class="nc">OptionalWidget</span><span class="p">(</span><span class="n">Container</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A container that can represent optional argument.</span>
 
 <span class="sd">    Parameters</span>
@@ -219,7 +224,7 @@
 
 
 <div class="viewcode-block" id="ConsoleTextEdit"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.misc.ConsoleTextEdit">[docs]</a><span class="k">class</span> <span class="nc">ConsoleTextEdit</span><span class="p">(</span><span class="n">TextEdit</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A text edit with console-like setting.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A text edit with console-like setting.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -247,11 +252,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setTabStopWidth</span><span class="p">(</span><span class="n">size</span> <span class="o">*</span> <span class="n">metrics</span><span class="o">.</span><span class="n">width</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">))</span>
 
 <div class="viewcode-block" id="ConsoleTextEdit.append"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.misc.ConsoleTextEdit.append">[docs]</a>    <span class="k">def</span> <span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Append new text.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Append new text.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ConsoleTextEdit.erase_last"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.misc.ConsoleTextEdit.erase_last">[docs]</a>    <span class="k">def</span> <span class="nf">erase_last</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Erase the last line.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Erase the last line.&quot;&quot;&quot;</span>
         <span class="n">cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">textCursor</span><span class="p">()</span>
         <span class="n">cursor</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveOperation</span><span class="o">.</span><span class="n">End</span><span class="p">)</span>
         <span class="n">cursor</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">SelectionType</span><span class="o">.</span><span class="n">LineUnderCursor</span><span class="p">)</span>
@@ -260,7 +265,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setTextCursor</span><span class="p">(</span><span class="n">cursor</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ConsoleTextEdit.erase_first"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.misc.ConsoleTextEdit.erase_first">[docs]</a>    <span class="k">def</span> <span class="nf">erase_first</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Erase the first line.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Erase the first line.&quot;&quot;&quot;</span>
         <span class="n">cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">textCursor</span><span class="p">()</span>
         <span class="n">cursor</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveOperation</span><span class="o">.</span><span class="n">Start</span><span class="p">)</span>
         <span class="n">cursor</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">SelectionType</span><span class="o">.</span><span class="n">LineUnderCursor</span><span class="p">)</span>
@@ -272,12 +277,12 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">selected</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Return selected string.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return selected string.&quot;&quot;&quot;</span>
         <span class="n">cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">textCursor</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">cursor</span><span class="o">.</span><span class="n">selectedText</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\u2029</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ConsoleTextEdit.syntax_highlight"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.misc.ConsoleTextEdit.syntax_highlight">[docs]</a>    <span class="k">def</span> <span class="nf">syntax_highlight</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lang</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;python&quot;</span><span class="p">,</span> <span class="n">theme</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Highlight syntax.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Highlight syntax.&quot;&quot;&quot;</span>
         <span class="kn">from</span> <span class="nn">superqt.utils</span> <span class="kn">import</span> <span class="n">CodeSyntaxHighlight</span>
 
         <span class="n">highlight</span> <span class="o">=</span> <span class="n">CodeSyntaxHighlight</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">document</span><span class="p">(),</span> <span class="n">lang</span><span class="p">,</span> <span class="n">theme</span><span class="o">=</span><span class="n">theme</span><span class="p">)</span>
@@ -286,7 +291,7 @@
 
 
 <div class="viewcode-block" id="CheckButton"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.misc.CheckButton">[docs]</a><span class="k">class</span> <span class="nc">CheckButton</span><span class="p">(</span><span class="n">PushButton</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A checkable button.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A checkable button.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -358,7 +363,7 @@
 
 
 <div class="viewcode-block" id="AbstractRangeSlider"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.misc.AbstractRangeSlider">[docs]</a><span class="k">class</span> <span class="nc">AbstractRangeSlider</span><span class="p">(</span><span class="n">ValueWidget</span><span class="p">,</span> <span class="n">Generic</span><span class="p">[</span><span class="n">_V</span><span class="p">]):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A slider widget that represent a range like (2, 5).</span>
 
 <span class="sd">    This class is a temporary one and may be substituted by magicgui widget soon.</span>
@@ -527,7 +532,7 @@
 
 
 <div class="viewcode-block" id="SpreadSheet"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.misc.SpreadSheet">[docs]</a><span class="k">class</span> <span class="nc">SpreadSheet</span><span class="p">(</span><span class="n">FreeWidget</span><span class="p">,</span> <span class="n">MutableSequence</span><span class="p">[</span><span class="n">Table</span><span class="p">]):</span>
-    <span class="sd">&quot;&quot;&quot;A simple spread sheet widget.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A simple spread sheet widget.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">read_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
@@ -576,7 +581,7 @@
         <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tables</span><span class="p">)</span>
 
 <div class="viewcode-block" id="SpreadSheet.insert"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.misc.SpreadSheet.insert">[docs]</a>    <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Insert a table-like data as a new sheet.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Insert a table-like data as a new sheet.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">key</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">key</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">)</span>
@@ -586,7 +591,7 @@
         <span class="k">return</span> <span class="kc">None</span></div>
 
 <div class="viewcode-block" id="SpreadSheet.rename"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.misc.SpreadSheet.rename">[docs]</a>    <span class="k">def</span> <span class="nf">rename</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Rename tab at index `index` with name `name`.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Rename tab at index `index` with name `name`.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">central_widget</span><span class="o">.</span><span class="n">renameTab</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">None</span></div>
 
@@ -646,7 +651,7 @@
         <span class="p">)</span>
 
 <div class="viewcode-block" id="HistoryLineEdit.append_history"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.misc.HistoryLineEdit.append_history">[docs]</a>    <span class="k">def</span> <span class="nf">append_history</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Append new history to the line edit&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Append new history to the line edit&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">_append_history</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></div></div>
 
 

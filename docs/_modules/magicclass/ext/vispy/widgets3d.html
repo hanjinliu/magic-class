@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.ext.vispy.widgets3d &mdash; magic-class 0.6.14 documentation</title>
+  <title>magicclass.ext.vispy.widgets3d &mdash; magic-class 0.7.0rc0 documentation</title>
       <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/columns.css" type="text/css" />
@@ -25,14 +25,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../../index.html" class="icon icon-home"> magic-class
+
+
+
+          <a href="../../../../index.html" class="icon icon-home">
+            magic-class
           </a>
               <div class="version">
-                0.6.14
+                0.7.0rc0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -64,9 +68,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../../../index.html">Module code</a> &raquo;</li>
-      <li>magicclass.ext.vispy.widgets3d</li>
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">magicclass.ext.vispy.widgets3d</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -91,7 +95,7 @@
 
 
 <div class="viewcode-block" id="Has3DViewBox"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.widgets3d.Has3DViewBox">[docs]</a><span class="k">class</span> <span class="nc">Has3DViewBox</span><span class="p">(</span><span class="n">HasViewBox</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A Vispy canvas for 3-D object visualization.</span>
 
 <span class="sd">    Very similar to napari. This widget can be used independent of napari, or</span>
@@ -104,12 +108,12 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">layers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return the layer list.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the layer list.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_layerlist</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">camera</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Camera</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Return the native camera.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the native camera.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_camera</span>
 
 <div class="viewcode-block" id="Has3DViewBox.add_image"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.widgets3d.Has3DViewBox.add_image">[docs]</a>    <span class="k">def</span> <span class="nf">add_image</span><span class="p">(</span>
@@ -125,7 +129,7 @@
         <span class="n">interpolation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;linear&quot;</span><span class="p">,</span>
         <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">layer3d</span><span class="o">.</span><span class="n">Image</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add a 3D array as a volumic image.</span>
 
 <span class="sd">        Parameters</span>
@@ -181,7 +185,7 @@
         <span class="n">shading</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;smooth&quot;</span><span class="p">,</span>
         <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">layer3d</span><span class="o">.</span><span class="n">IsoSurface</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add a 3D array as a iso-surface.</span>
 
 <span class="sd">        The difference between this method and the iso-surface rendering of</span>
@@ -229,7 +233,7 @@
         <span class="n">shading</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;smooth&quot;</span><span class="p">,</span>
         <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">layer3d</span><span class="o">.</span><span class="n">Surface</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add vertices, faces and optional values as a surface.</span>
 
 <span class="sd">        Parameters</span>
@@ -266,7 +270,7 @@
         <span class="n">blending</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;translucent&quot;</span><span class="p">,</span>
         <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">layer3d</span><span class="o">.</span><span class="n">Curve3D</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add a (N, 3) array as a curve.</span>
 
 <span class="sd">        Parameters</span>
@@ -306,7 +310,7 @@
         <span class="n">spherical</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">layer3d</span><span class="o">.</span><span class="n">Points3D</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add a (N, 3) array as a point cloud.</span>
 
 <span class="sd">        Parameters</span>
@@ -354,7 +358,7 @@
         <span class="n">blending</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;translucent&quot;</span><span class="p">,</span>
         <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">layer3d</span><span class="o">.</span><span class="n">Arrows3D</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add a (N, P, 3) array as a set of arrows.</span>
 
 <span class="sd">        ``P`` is the number of points in each arrow. If you want to draw simple</span>
@@ -394,7 +398,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_layer</span><span class="p">(</span><span class="n">arrows</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Has3DViewBox.add_layer"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.widgets3d.Has3DViewBox.add_layer">[docs]</a>    <span class="k">def</span> <span class="nf">add_layer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layer</span><span class="p">:</span> <span class="n">LayerItem</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Add a layer item to the canvas.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a layer item to the canvas.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">layer</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">low</span><span class="p">,</span> <span class="n">high</span> <span class="o">=</span> <span class="n">layer</span><span class="o">.</span><span class="n">_get_bbox</span><span class="p">()</span>
@@ -407,7 +411,7 @@
 
 
 <div class="viewcode-block" id="Vispy3DCanvas"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.widgets3d.Vispy3DCanvas">[docs]</a><span class="k">class</span> <span class="nc">Vispy3DCanvas</span><span class="p">(</span><span class="n">FreeWidget</span><span class="p">,</span> <span class="n">Has3DViewBox</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A Vispy based 3-D canvas.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A Vispy based 3-D canvas.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">app</span> <span class="o">=</span> <span class="n">get_app</span><span class="p">()</span>
@@ -422,7 +426,7 @@
 
 
 <div class="viewcode-block" id="VispyMulti3DCanvas"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.widgets3d.VispyMulti3DCanvas">[docs]</a><span class="k">class</span> <span class="nc">VispyMulti3DCanvas</span><span class="p">(</span><span class="n">MultiPlot</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A multiple Vispy based 3-D canvas.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A multiple Vispy based 3-D canvas.&quot;&quot;&quot;</span>
 
     <span class="n">_base_class</span> <span class="o">=</span> <span class="n">Has3DViewBox</span></div>
 

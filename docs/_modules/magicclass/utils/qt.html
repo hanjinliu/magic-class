@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.utils.qt &mdash; magic-class 0.6.14 documentation</title>
+  <title>magicclass.utils.qt &mdash; magic-class 0.7.0rc0 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
@@ -25,14 +25,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../index.html" class="icon icon-home"> magic-class
+
+
+
+          <a href="../../../index.html" class="icon icon-home">
+            magic-class
           </a>
               <div class="version">
-                0.6.14
+                0.7.0rc0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -64,9 +68,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../../index.html">Module code</a> &raquo;</li>
-      <li>magicclass.utils.qt</li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">magicclass.utils.qt</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -105,7 +109,7 @@
     <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Freeze the GUI and open a messagebox dialog.</span>
 
 <span class="sd">    Parameters</span>
@@ -130,7 +134,7 @@
 
 
 <div class="viewcode-block" id="open_url"><a class="viewcode-back" href="../../../apidoc/magicclass.utils.html#magicclass.utils.qt.open_url">[docs]</a><span class="k">def</span> <span class="nf">open_url</span><span class="p">(</span><span class="n">link</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Open the link with the default browser.</span>
 
 <span class="sd">    Parameters</span>
@@ -145,13 +149,13 @@
 
 
 <div class="viewcode-block" id="screen_center"><a class="viewcode-back" href="../../../apidoc/magicclass.utils.html#magicclass.utils.qt.screen_center">[docs]</a><span class="k">def</span> <span class="nf">screen_center</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Get the center coordinate of the screen.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the center coordinate of the screen.&quot;&quot;&quot;</span>
     <span class="n">_screen_rect</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QGuiApplication</span><span class="o">.</span><span class="n">primaryScreen</span><span class="p">()</span><span class="o">.</span><span class="n">geometry</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">_screen_rect</span><span class="o">.</span><span class="n">center</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="move_to_screen_center"><a class="viewcode-back" href="../../../apidoc/magicclass.utils.html#magicclass.utils.qt.move_to_screen_center">[docs]</a><span class="k">def</span> <span class="nf">move_to_screen_center</span><span class="p">(</span><span class="n">qwidget</span><span class="p">:</span> <span class="n">QWidget</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Move a QWidget to the center of screen.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Move a QWidget to the center of screen.&quot;&quot;&quot;</span>
     <span class="n">point</span> <span class="o">=</span> <span class="n">screen_center</span><span class="p">()</span> <span class="o">-</span> <span class="n">qwidget</span><span class="o">.</span><span class="n">rect</span><span class="p">()</span><span class="o">.</span><span class="n">center</span><span class="p">()</span>
     <span class="n">qwidget</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">point</span><span class="p">)</span>
     <span class="n">qwidget</span><span class="o">.</span><span class="n">adjustSize</span><span class="p">()</span>
@@ -159,7 +163,7 @@
 
 
 <div class="viewcode-block" id="screen_scale"><a class="viewcode-back" href="../../../apidoc/magicclass.utils.html#magicclass.utils.qt.screen_scale">[docs]</a><span class="k">def</span> <span class="nf">screen_scale</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Get the scale of main screen.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the scale of main screen.&quot;&quot;&quot;</span>
     <span class="kn">from</span> <span class="nn">qtpy.QtGui</span> <span class="kn">import</span> <span class="n">QGuiApplication</span>
 
     <span class="n">screen</span> <span class="o">=</span> <span class="n">QGuiApplication</span><span class="o">.</span><span class="n">screens</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
@@ -167,7 +171,7 @@
 
 
 <div class="viewcode-block" id="to_clipboard"><a class="viewcode-back" href="../../../apidoc/magicclass.utils.html#magicclass.utils.qt.to_clipboard">[docs]</a><span class="k">def</span> <span class="nf">to_clipboard</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Copy an object of any type to the clipboard.</span>
 <span class="sd">    You can copy text, ndarray as an image or data frame as a table data.</span>
 

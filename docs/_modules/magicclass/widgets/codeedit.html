@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.widgets.codeedit &mdash; magic-class 0.6.14 documentation</title>
+  <title>magicclass.widgets.codeedit &mdash; magic-class 0.7.0rc0 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
@@ -25,14 +25,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../index.html" class="icon icon-home"> magic-class
+
+
+
+          <a href="../../../index.html" class="icon icon-home">
+            magic-class
           </a>
               <div class="version">
-                0.6.14
+                0.7.0rc0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -64,9 +68,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../../index.html">Module code</a> &raquo;</li>
-      <li>magicclass.widgets.codeedit</li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">magicclass.widgets.codeedit</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -87,10 +91,11 @@
 <span class="kn">from</span> <span class="nn">magicgui.backends._qtpy.widgets</span> <span class="kn">import</span> <span class="n">TextEdit</span> <span class="k">as</span> <span class="n">QBaseTextEdit</span><span class="p">,</span> <span class="n">QBaseStringWidget</span>
 <span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">TextEdit</span><span class="p">,</span> <span class="n">EmptyWidget</span><span class="p">,</span> <span class="n">FileEdit</span>
 <span class="kn">from</span> <span class="nn">magicgui.application</span> <span class="kn">import</span> <span class="n">use_app</span>
+<span class="kn">from</span> <span class="nn">magicgui.widgets.bases</span> <span class="kn">import</span> <span class="n">ValueWidget</span>
+<span class="kn">from</span> <span class="nn">magicgui.types</span> <span class="kn">import</span> <span class="n">Undefined</span>
 
 <span class="kn">from</span> <span class="nn">macrokit</span> <span class="kn">import</span> <span class="n">parse</span><span class="p">,</span> <span class="n">Symbol</span><span class="p">,</span> <span class="n">Expr</span><span class="p">,</span> <span class="n">Head</span>
 <span class="kn">from</span> <span class="nn">magicclass._gui.utils</span> <span class="kn">import</span> <span class="n">show_dialog_from_mgui</span>
-<span class="kn">from</span> <span class="nn">magicclass._magicgui_compat</span> <span class="kn">import</span> <span class="n">ValueWidget</span><span class="p">,</span> <span class="n">Undefined</span>
 <span class="kn">from</span> <span class="nn">magicclass.utils</span> <span class="kn">import</span> <span class="n">show_messagebox</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
@@ -331,7 +336,7 @@
         <span class="k">return</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">_analyze_line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">:</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QPoint</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Analyze the line under position.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Analyze the line under position.&quot;&quot;&quot;</span>
         <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wordAt</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">info</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="s2">&quot;&quot;</span>
@@ -425,7 +430,7 @@
         <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span></div>
 
 <div class="viewcode-block" id="QCodeEditor.block"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.codeedit.QCodeEditor.block">[docs]</a>    <span class="k">def</span> <span class="nf">block</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QTextBlock</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Return the text block at index or None if not found.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the text block at index or None if not found.&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">num</span><span class="p">,</span> <span class="n">block</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iter_visible_blocks</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">num</span> <span class="o">==</span> <span class="n">index</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">block</span>
@@ -450,12 +455,12 @@
 
         <span class="n">height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fontMetrics</span><span class="p">()</span><span class="o">.</span><span class="n">height</span><span class="p">()</span>
         <span class="n">text_color</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">palette</span><span class="p">()</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">foregroundRole</span><span class="p">())</span>
-
+        <span class="n">offset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">contentOffset</span><span class="p">()</span><span class="o">.</span><span class="n">y</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">num</span><span class="p">,</span> <span class="n">block</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iter_visible_blocks</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">rect</span><span class="p">()):</span>
             <span class="n">painter</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">text_color</span><span class="p">)</span>
             <span class="n">block_rect</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">blockBoundingGeometry</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
             <span class="n">block_height</span> <span class="o">=</span> <span class="n">block_rect</span><span class="o">.</span><span class="n">height</span><span class="p">()</span>
-            <span class="n">draw_y</span> <span class="o">=</span> <span class="n">block_rect</span><span class="o">.</span><span class="n">top</span><span class="p">()</span> <span class="o">+</span> <span class="nb">max</span><span class="p">(</span><span class="n">block_height</span> <span class="o">-</span> <span class="n">height</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+            <span class="n">draw_y</span> <span class="o">=</span> <span class="n">block_rect</span><span class="o">.</span><span class="n">top</span><span class="p">()</span> <span class="o">+</span> <span class="nb">max</span><span class="p">(</span><span class="n">block_height</span> <span class="o">-</span> <span class="n">height</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">offset</span>
             <span class="n">painter</span><span class="o">.</span><span class="n">drawText</span><span class="p">(</span>
                 <span class="mi">0</span><span class="p">,</span>
                 <span class="nb">int</span><span class="p">(</span><span class="n">draw_y</span><span class="p">),</span>
@@ -500,7 +505,7 @@
             <span class="n">cursor</span><span class="o">.</span><span class="n">removeSelectedText</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="QCodeEditor.syntaxHighlight"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.codeedit.QCodeEditor.syntaxHighlight">[docs]</a>    <span class="k">def</span> <span class="nf">syntaxHighlight</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lang</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;python&quot;</span><span class="p">,</span> <span class="n">theme</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Highlight syntax.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Highlight syntax.&quot;&quot;&quot;</span>
         <span class="kn">from</span> <span class="nn">superqt.utils</span> <span class="kn">import</span> <span class="n">CodeSyntaxHighlight</span>
 
         <span class="n">highlight</span> <span class="o">=</span> <span class="n">CodeSyntaxHighlight</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">document</span><span class="p">(),</span> <span class="n">lang</span><span class="p">,</span> <span class="n">theme</span><span class="o">=</span><span class="n">theme</span><span class="p">)</span>
@@ -508,7 +513,7 @@
         <span class="k">return</span> <span class="kc">None</span></div>
 
 <div class="viewcode-block" id="QCodeEditor.eraseLast"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.codeedit.QCodeEditor.eraseLast">[docs]</a>    <span class="k">def</span> <span class="nf">eraseLast</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Erase the last line.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Erase the last line.&quot;&quot;&quot;</span>
         <span class="n">cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">textCursor</span><span class="p">()</span>
         <span class="n">cursor</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveOperation</span><span class="o">.</span><span class="n">End</span><span class="p">)</span>
         <span class="n">cursor</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">SelectionType</span><span class="o">.</span><span class="n">LineUnderCursor</span><span class="p">)</span>
@@ -517,7 +522,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">setTextCursor</span><span class="p">(</span><span class="n">cursor</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="QCodeEditor.eraseFirst"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.codeedit.QCodeEditor.eraseFirst">[docs]</a>    <span class="k">def</span> <span class="nf">eraseFirst</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Erase the first line.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Erase the first line.&quot;&quot;&quot;</span>
         <span class="n">cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">textCursor</span><span class="p">()</span>
         <span class="n">cursor</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveOperation</span><span class="o">.</span><span class="n">Start</span><span class="p">)</span>
         <span class="n">cursor</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">SelectionType</span><span class="o">.</span><span class="n">LineUnderCursor</span><span class="p">)</span>
@@ -528,16 +533,16 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">setTextCursor</span><span class="p">(</span><span class="n">cursor</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="QCodeEditor.selectedText"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.codeedit.QCodeEditor.selectedText">[docs]</a>    <span class="k">def</span> <span class="nf">selectedText</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Return selected string.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return selected string.&quot;&quot;&quot;</span>
         <span class="n">cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">textCursor</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">cursor</span><span class="o">.</span><span class="n">selectedText</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\u2029</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="QCodeEditor.selectedLines"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.codeedit.QCodeEditor.selectedLines">[docs]</a>    <span class="k">def</span> <span class="nf">selectedLines</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Return the selected lines that contain the cursor selection.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the selected lines that contain the cursor selection.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">cursor</span><span class="o">.</span><span class="n">block</span><span class="p">()</span><span class="o">.</span><span class="n">text</span><span class="p">()</span> <span class="k">for</span> <span class="n">cursor</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">iter_selected_lines</span><span class="p">()]</span></div>
 
 <div class="viewcode-block" id="QCodeEditor.iter_selected_lines"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.codeedit.QCodeEditor.iter_selected_lines">[docs]</a>    <span class="k">def</span> <span class="nf">iter_selected_lines</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Iterate text cursors for each selected line.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterate text cursors for each selected line.&quot;&quot;&quot;</span>
         <span class="n">_cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">textCursor</span><span class="p">()</span>
         <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">_cursor</span><span class="o">.</span><span class="n">selectionStart</span><span class="p">(),</span> <span class="n">_cursor</span><span class="o">.</span><span class="n">selectionEnd</span><span class="p">()])</span>
         <span class="n">_cursor</span><span class="o">.</span><span class="n">setPosition</span><span class="p">(</span><span class="n">start</span><span class="p">)</span>
@@ -558,11 +563,11 @@
             <span class="n">_cursor</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QTextCursor</span><span class="o">.</span><span class="n">MoveOperation</span><span class="o">.</span><span class="n">NextCharacter</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="QCodeEditor.text"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.codeedit.QCodeEditor.text">[docs]</a>    <span class="k">def</span> <span class="nf">text</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Return the text.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the text.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">toPlainText</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\u2029</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="QCodeEditor.setText"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.codeedit.QCodeEditor.setText">[docs]</a>    <span class="k">def</span> <span class="nf">setText</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Set the text.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the text.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setPlainText</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\u2029</span><span class="s2">&quot;</span><span class="p">))</span></div></div>
 
 
@@ -675,24 +680,24 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_qcode_edit</span><span class="p">()</span><span class="o">.</span><span class="n">setTabSize</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
 
 <div class="viewcode-block" id="CodeEdit.erase_last"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.codeedit.CodeEdit.erase_last">[docs]</a>    <span class="k">def</span> <span class="nf">erase_last</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Erase the last line.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Erase the last line.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_qcode_edit</span><span class="p">()</span><span class="o">.</span><span class="n">eraseLast</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="CodeEdit.erase_first"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.codeedit.CodeEdit.erase_first">[docs]</a>    <span class="k">def</span> <span class="nf">erase_first</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Erase the first line.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Erase the first line.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_qcode_edit</span><span class="p">()</span><span class="o">.</span><span class="n">eraseFirst</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="CodeEdit.append"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.codeedit.CodeEdit.append">[docs]</a>    <span class="k">def</span> <span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Append text to the end of the document.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Append text to the end of the document.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_qcode_edit</span><span class="p">()</span><span class="o">.</span><span class="n">appendPlainText</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">selected</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Return selected string.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return selected string.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_qcode_edit</span><span class="p">()</span><span class="o">.</span><span class="n">selectedText</span><span class="p">()</span>
 
 <div class="viewcode-block" id="CodeEdit.syntax_highlight"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.codeedit.CodeEdit.syntax_highlight">[docs]</a>    <span class="k">def</span> <span class="nf">syntax_highlight</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lang</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;python&quot;</span><span class="p">,</span> <span class="n">theme</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Highlight syntax.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Highlight syntax.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_qcode_edit</span><span class="p">()</span><span class="o">.</span><span class="n">syntaxHighlight</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="n">theme</span><span class="p">)</span></div>
 
     <span class="nd">@property</span>
@@ -704,11 +709,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_qcode_edit</span><span class="p">()</span><span class="o">.</span><span class="n">_magicclass_parent_ref</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
 
 <div class="viewcode-block" id="CodeEdit.zoom_in"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.codeedit.CodeEdit.zoom_in">[docs]</a>    <span class="k">def</span> <span class="nf">zoom_in</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Zoom in.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Zoom in.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_qcode_edit</span><span class="p">()</span><span class="o">.</span><span class="n">zoomIn</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="CodeEdit.zoom_out"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.codeedit.CodeEdit.zoom_out">[docs]</a>    <span class="k">def</span> <span class="nf">zoom_out</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Zoom out.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Zoom out.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_qcode_edit</span><span class="p">()</span><span class="o">.</span><span class="n">zoomOut</span><span class="p">()</span></div></div>
 </pre></div>
 

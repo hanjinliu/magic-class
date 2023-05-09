@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="English" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>magicclass.wrappers._misc &mdash; magic-class 0.7.0rc0 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+</head>
+
+<body class="wy-body-for-nav">
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+
+          <a href="../../../index.html" class="icon icon-home">
+            magic-class
+          </a>
+              <div class="version">
+                0.7.0rc0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../main/quick_start.html">Quick Start</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../main/basics/index.html">Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../main/make_better/index.html">Make Your GUI Better</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../main/visualization/index.html">Data Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../main/advanced/index.html">Advanced Topics</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../main/best_practice.html">Best Practice</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">magic-class</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">magicclass.wrappers._misc</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+
+  <h1>Source code for magicclass.wrappers._misc</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">overload</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">FunctionGui</span>
+
+<span class="kn">from</span> <span class="nn">magicclass.types</span> <span class="kn">import</span> <span class="n">Color</span>
+<span class="kn">from</span> <span class="nn">magicclass.signature</span> <span class="kn">import</span> <span class="n">get_additional_option</span><span class="p">,</span> <span class="n">upgrade_signature</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">magicclass._gui</span> <span class="kn">import</span> <span class="n">BaseGui</span>
+
+<span class="n">R</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;R&quot;</span><span class="p">)</span>
+<span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span>
+<span class="n">F</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;F&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">Callable</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="set_options"><a class="viewcode-back" href="../../../apidoc/magicclass.wrappers.html#magicclass.set_options">[docs]</a><span class="k">def</span> <span class="nf">set_options</span><span class="p">(</span>
+    <span class="n">layout</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;vertical&quot;</span><span class="p">,</span>
+    <span class="n">labels</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">call_button</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">auto_call</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">options</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">F</span><span class="p">],</span> <span class="n">F</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Set MagicSignature to functions.</span>
+
+<span class="sd">    By decorating a method with this function, ``magicgui`` will create a widget with these</span>
+<span class="sd">    options. These codes are similar in appearance.</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        # A magicgui way</span>
+<span class="sd">        @magicgui(a={...})</span>
+<span class="sd">        def func(a):</span>
+<span class="sd">            ...</span>
+
+<span class="sd">        # A magicclass way</span>
+<span class="sd">        @magicclass</span>
+<span class="sd">        class A:</span>
+<span class="sd">            @set_options(a={...})</span>
+<span class="sd">            def func(self, a):</span>
+<span class="sd">                ...</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    layout : str, default is &quot;vertical&quot;</span>
+<span class="sd">        The type of layout to use in FunctionGui. Must be one of {&#39;horizontal&#39;, &#39;vertical&#39;}.</span>
+<span class="sd">    labels : bool, default is True</span>
+<span class="sd">        Whether labels are shown in the FunctionGui.</span>
+<span class="sd">    call_button : bool or str, optional</span>
+<span class="sd">        If ``True``, create an additional button that calls the original</span>
+<span class="sd">        function when clicked.  If a ``str``, set the button text. If None (the</span>
+<span class="sd">        default), it defaults to True when ``auto_call`` is False, and False</span>
+<span class="sd">        otherwise.</span>
+<span class="sd">    auto_call : bool, optional</span>
+<span class="sd">        If ``True``, changing any parameter in either the GUI or the widget attributes</span>
+<span class="sd">        will call the original function with the current settings. by default False</span>
+<span class="sd">    options : dict</span>
+<span class="sd">        Parameter options.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">F</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">F</span><span class="p">:</span>
+        <span class="n">sig</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+        <span class="n">rem</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">-</span> <span class="n">sig</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">rem</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Unknown arguments found in set_options of </span><span class="si">{</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">rem</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="ne">UserWarning</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="n">upgrade_signature</span><span class="p">(</span>
+            <span class="n">func</span><span class="p">,</span>
+            <span class="n">gui_options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span>
+            <span class="n">additional_options</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;call_button&quot;</span><span class="p">:</span> <span class="n">call_button</span><span class="p">,</span>
+                <span class="s2">&quot;layout&quot;</span><span class="p">:</span> <span class="n">layout</span><span class="p">,</span>
+                <span class="s2">&quot;labels&quot;</span><span class="p">:</span> <span class="n">labels</span><span class="p">,</span>
+                <span class="s2">&quot;auto_call&quot;</span><span class="p">:</span> <span class="n">auto_call</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">func</span>
+
+    <span class="k">return</span> <span class="n">wrapper</span></div>
+
+
+<div class="viewcode-block" id="set_design"><a class="viewcode-back" href="../../../apidoc/magicclass.wrappers.html#magicclass.set_design">[docs]</a><span class="k">def</span> <span class="nf">set_design</span><span class="p">(</span>
+    <span class="n">width</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">height</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">min_width</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">min_height</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">max_width</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">max_height</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">icon</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">font_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">font_family</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">font_color</span><span class="p">:</span> <span class="n">Color</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">background_color</span><span class="p">:</span> <span class="n">Color</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">visible</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">type</span><span class="p">[</span><span class="n">T</span><span class="p">]],</span> <span class="nb">type</span><span class="p">[</span><span class="n">T</span><span class="p">]]</span> <span class="o">|</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">F</span><span class="p">],</span> <span class="n">F</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Change button/action design by calling setter when the widget is created.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    width : int, optional</span>
+<span class="sd">        Button width. Call ``button.width = width``.</span>
+<span class="sd">    height : int, optional</span>
+<span class="sd">        Button height. Call ``button.height = height``.</span>
+<span class="sd">    min_width : int, optional</span>
+<span class="sd">        Button minimum width. Call ``button.min_width = min_width``.</span>
+<span class="sd">    min_height : int, optional</span>
+<span class="sd">        Button minimum height. Call ``button.min_height = min_height``.</span>
+<span class="sd">    max_width : int, optional</span>
+<span class="sd">        Button maximum width. Call ``button.max_width = max_width``.</span>
+<span class="sd">    max_height : int, optional</span>
+<span class="sd">        Button maximum height. Call ``button.max_height = max_height``.</span>
+<span class="sd">    text : str, optional</span>
+<span class="sd">        Button text. Call ``button.text = text``.</span>
+<span class="sd">    icon : str, optional</span>
+<span class="sd">        Path to icon file. ``min_width`` and ``min_height`` will be automatically set to the icon size</span>
+<span class="sd">        if not given.</span>
+<span class="sd">    font_size : int, optional</span>
+<span class="sd">        Font size of the text.</span>
+<span class="sd">    visible : bool default is True</span>
+<span class="sd">        Button visibility.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">caller_options</span> <span class="o">=</span> <span class="nb">locals</span><span class="p">()</span>
+    <span class="n">caller_options</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">caller_options</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
+            <span class="n">_post_init</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s2">&quot;__post_init__&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="kc">None</span><span class="p">)</span>
+
+            <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                <span class="n">_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">caller_options</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+
+            <span class="n">obj</span><span class="o">.</span><span class="n">__post_init__</span> <span class="o">=</span> <span class="n">__post_init__</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">upgrade_signature</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">caller_options</span><span class="o">=</span><span class="n">caller_options</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">obj</span>
+
+    <span class="k">return</span> <span class="n">wrapper</span></div>
+
+
+<span class="nd">@overload</span>
+<span class="k">def</span> <span class="nf">do_not_record</span><span class="p">(</span><span class="n">method</span><span class="p">:</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">recursive</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">F</span><span class="p">],</span> <span class="n">F</span><span class="p">]:</span>
+    <span class="o">...</span>
+
+
+<span class="nd">@overload</span>
+<span class="k">def</span> <span class="nf">do_not_record</span><span class="p">(</span><span class="n">method</span><span class="p">:</span> <span class="n">F</span><span class="p">,</span> <span class="n">recursive</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">F</span><span class="p">:</span>
+    <span class="o">...</span>
+
+
+<div class="viewcode-block" id="do_not_record"><a class="viewcode-back" href="../../../apidoc/magicclass.wrappers.html#magicclass.do_not_record">[docs]</a><span class="k">def</span> <span class="nf">do_not_record</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wrapped method will not be recorded in macro.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    recursive : bool, default is False</span>
+<span class="sd">        If True, all recordable methods called inside this method will also be</span>
+<span class="sd">        suppressed.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">recursive</span><span class="p">:</span>
+            <span class="n">record</span> <span class="o">=</span> <span class="s2">&quot;all-false&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">record</span> <span class="o">=</span> <span class="s2">&quot;false&quot;</span>
+        <span class="n">upgrade_signature</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">additional_options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;record&quot;</span><span class="p">:</span> <span class="n">record</span><span class="p">})</span>
+        <span class="k">return</span> <span class="n">f</span>
+
+    <span class="k">return</span> <span class="n">wrapper</span> <span class="k">if</span> <span class="n">method</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">wrapper</span><span class="p">(</span><span class="n">method</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="bind_key"><a class="viewcode-back" href="../../../apidoc/magicclass.wrappers.html#magicclass.bind_key">[docs]</a><span class="k">def</span> <span class="nf">bind_key</span><span class="p">(</span><span class="o">*</span><span class="n">key</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">F</span><span class="p">],</span> <span class="n">F</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Define a keybinding to a button or an action.</span>
+<span class="sd">    This function accepts several styles of shortcut expression.</span>
+
+<span class="sd">    &gt;&gt;&gt; @bind_key(&quot;Ctrl-A&quot;)         # napari style</span>
+<span class="sd">    &gt;&gt;&gt; @bind_key(&quot;Ctrl&quot;, &quot;A&quot;)      # separately</span>
+<span class="sd">    &gt;&gt;&gt; @bind_key(Key.Ctrl + Key.A) # use Key class</span>
+<span class="sd">    &gt;&gt;&gt; @bind_key(Key.Ctrl, Key.A)  # use Key class separately</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="n">key</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="n">method</span><span class="p">:</span> <span class="n">F</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">F</span><span class="p">:</span>
+        <span class="n">upgrade_signature</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">additional_options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;keybinding&quot;</span><span class="p">:</span> <span class="n">key</span><span class="p">})</span>
+        <span class="k">return</span> <span class="n">method</span>
+
+    <span class="k">return</span> <span class="n">wrapper</span></div>
+
+
+<div class="viewcode-block" id="nogui"><a class="viewcode-back" href="../../../apidoc/magicclass.wrappers.html#magicclass.nogui">[docs]</a><span class="k">def</span> <span class="nf">nogui</span><span class="p">(</span><span class="n">method</span><span class="p">:</span> <span class="n">F</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">F</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wrapped method will not be converted into a widget.&quot;&quot;&quot;</span>
+    <span class="n">upgrade_signature</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">additional_options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;gui&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">})</span>
+    <span class="k">return</span> <span class="n">method</span></div>
+
+
+<div class="viewcode-block" id="setup_function_gui"><a class="viewcode-back" href="../../../apidoc/magicclass.wrappers.html#magicclass.setup_function_gui">[docs]</a><span class="k">def</span> <span class="nf">setup_function_gui</span><span class="p">(</span><span class="n">target</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Mark a function as a setup function for a FunctionGui.</span>
+
+<span class="sd">    Function decorated with ``setup_function_gui(func)`` will be called when the</span>
+<span class="sd">    FunctionGui widget for method ``func`` was built. This decorator is used to</span>
+<span class="sd">    define complicated setting of a FunctionGui, which is not achievable by</span>
+<span class="sd">    simple configurations.</span>
+
+<span class="sd">    &gt;&gt;&gt; @magicclass</span>
+<span class="sd">    &gt;&gt;&gt; class A:</span>
+<span class="sd">    ...     def func(self, x: int, xmax: int):</span>
+<span class="sd">    ...         # target function</span>
+<span class="sd">    ...</span>
+<span class="sd">    ...     @setup_function_gui(func)</span>
+<span class="sd">    ...     def _setup_func(self, gui: FunctionGui):</span>
+<span class="sd">    ...         @gui.xmax.changed.connect</span>
+<span class="sd">    ...         def _(xmax_value):</span>
+<span class="sd">    ...             gui.x.max = xmax_value</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="n">setup</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">BaseGui</span><span class="p">,</span> <span class="n">FunctionGui</span><span class="p">],</span> <span class="kc">None</span><span class="p">]):</span>
+        <span class="n">setup_qualname</span> <span class="o">=</span> <span class="n">setup</span><span class="o">.</span><span class="vm">__qualname__</span>
+        <span class="n">target_qualname</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="vm">__qualname__</span>
+        <span class="n">setup_qualname_list</span> <span class="o">=</span> <span class="n">setup_qualname</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="nb">len</span><span class="p">(</span><span class="n">setup_qualname_list</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span>
+            <span class="ow">and</span> <span class="n">setup_qualname_list</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">!=</span> <span class="n">target_qualname</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+        <span class="p">):</span>
+            <span class="c1"># have to search for the proper parent instance</span>
+            <span class="k">def</span> <span class="nf">_setup</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">BaseGui</span><span class="p">,</span> <span class="n">mgui</span><span class="p">:</span> <span class="n">FunctionGui</span><span class="p">):</span>
+                <span class="n">prev_ns</span> <span class="o">=</span> <span class="n">setup_qualname_list</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+                <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">!=</span> <span class="n">prev_ns</span><span class="p">:</span>
+                    <span class="bp">self</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__magicclass_parent__</span>
+                <span class="k">return</span> <span class="n">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mgui</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">_setup</span> <span class="o">=</span> <span class="n">setup</span>
+        <span class="n">upgrade_signature</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">additional_options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;setup&quot;</span><span class="p">:</span> <span class="n">_setup</span><span class="p">})</span>
+        <span class="n">upgrade_signature</span><span class="p">(</span><span class="n">setup</span><span class="p">,</span> <span class="n">additional_options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;nogui&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+        <span class="k">return</span> <span class="n">setup</span>
+
+    <span class="k">return</span> <span class="n">wrapper</span></div>
+
+
+<span class="n">_Fn</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;_Fn&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">Callable</span><span class="p">[[</span><span class="n">FunctionGui</span><span class="p">],</span> <span class="n">Any</span><span class="p">])</span>
+
+
+<div class="viewcode-block" id="mark_on_calling"><a class="viewcode-back" href="../../../apidoc/magicclass.wrappers.html#magicclass.mark_on_calling">[docs]</a><span class="k">def</span> <span class="nf">mark_on_calling</span><span class="p">(</span><span class="n">function</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">_Fn</span><span class="p">],</span> <span class="n">_Fn</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">_wrapper</span><span class="p">(</span><span class="n">on_calling</span><span class="p">:</span> <span class="n">_Fn</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Fn</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">opt</span> <span class="o">:=</span> <span class="n">get_additional_option</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="s2">&quot;on_calling&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="n">opt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">on_calling</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">upgrade_signature</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">additional_options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;on_calling&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">on_calling</span><span class="p">]})</span>
+        <span class="k">return</span> <span class="n">on_calling</span>
+
+    <span class="k">return</span> <span class="n">_wrapper</span></div>
+
+
+<div class="viewcode-block" id="mark_on_called"><a class="viewcode-back" href="../../../apidoc/magicclass.wrappers.html#magicclass.mark_on_called">[docs]</a><span class="k">def</span> <span class="nf">mark_on_called</span><span class="p">(</span><span class="n">function</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">_Fn</span><span class="p">],</span> <span class="n">_Fn</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">_wrapper</span><span class="p">(</span><span class="n">on_called</span><span class="p">:</span> <span class="n">_Fn</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Fn</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">opt</span> <span class="o">:=</span> <span class="n">get_additional_option</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="s2">&quot;on_called&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="n">opt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">on_called</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">upgrade_signature</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">additional_options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;on_called&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">on_called</span><span class="p">]})</span>
+        <span class="k">return</span> <span class="n">on_called</span>
+
+    <span class="k">return</span> <span class="n">_wrapper</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Hanjin Liu.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+</body>
+</html>

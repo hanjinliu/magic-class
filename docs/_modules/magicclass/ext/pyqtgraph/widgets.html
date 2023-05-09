@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.ext.pyqtgraph.widgets &mdash; magic-class 0.6.14 documentation</title>
+  <title>magicclass.ext.pyqtgraph.widgets &mdash; magic-class 0.7.0rc0 documentation</title>
       <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/columns.css" type="text/css" />
@@ -25,14 +25,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../../index.html" class="icon icon-home"> magic-class
+
+
+
+          <a href="../../../../index.html" class="icon icon-home">
+            magic-class
           </a>
               <div class="version">
-                0.6.14
+                0.7.0rc0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -64,9 +68,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../../../index.html">Module code</a> &raquo;</li>
-      <li>magicclass.ext.pyqtgraph.widgets</li>
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">magicclass.ext.pyqtgraph.widgets</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -109,7 +113,7 @@
 
 
 <div class="viewcode-block" id="LayerList"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.LayerList">[docs]</a><span class="k">class</span> <span class="nc">LayerList</span><span class="p">(</span><span class="n">MutableSequence</span><span class="p">[</span><span class="n">LayerItem</span><span class="p">]):</span>
-    <span class="sd">&quot;&quot;&quot;A napari-like layer list for plot item handling.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A napari-like layer list for plot item handling.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">:</span> <span class="n">HasDataItems</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">parent</span>
@@ -169,26 +173,18 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">_graphics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pg</span><span class="o">.</span><span class="n">GraphicsWidget</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Target widget to add graphics items.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Target widget to add graphics items.&quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">layers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LayerList</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">LayerList</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
-    <span class="nd">@overload</span>
-    <span class="k">def</span> <span class="nf">add_curve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Curve</span><span class="p">:</span>
-        <span class="o">...</span>
-
-    <span class="nd">@overload</span>
-    <span class="k">def</span> <span class="nf">add_curve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">y</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Curve</span><span class="p">:</span>
-        <span class="o">...</span>
-
 <div class="viewcode-block" id="HasDataItems.add_curve"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.HasDataItems.add_curve">[docs]</a>    <span class="nd">@write_docs</span>
     <span class="k">def</span> <span class="nf">add_curve</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">x</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">y</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">face_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">edge_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -196,9 +192,9 @@
         <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">lw</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
         <span class="n">ls</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span>
-        <span class="n">symbol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">symbol</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Curve</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add a line plot like ``plt.plot(x, y)``.</span>
 
 <span class="sd">        Parameters</span>
@@ -230,19 +226,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_add_item</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">item</span></div>
 
-    <span class="nd">@overload</span>
-    <span class="k">def</span> <span class="nf">add_scatter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Scatter</span><span class="p">:</span>
-        <span class="o">...</span>
-
-    <span class="nd">@overload</span>
-    <span class="k">def</span> <span class="nf">add_scatter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">y</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Scatter</span><span class="p">:</span>
-        <span class="o">...</span>
-
 <div class="viewcode-block" id="HasDataItems.add_scatter"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.HasDataItems.add_scatter">[docs]</a>    <span class="nd">@write_docs</span>
     <span class="k">def</span> <span class="nf">add_scatter</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">x</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">y</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">face_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">edge_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -252,7 +240,7 @@
         <span class="n">ls</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span>
         <span class="n">symbol</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Scatter</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add scatter plot like ``plt.scatter(x, y)``.</span>
 
 <span class="sd">        Parameters</span>
@@ -298,7 +286,7 @@
         <span class="n">lw</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
         <span class="n">ls</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Histogram</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add histogram like ``plt.hist(data)``.</span>
 
 <span class="sd">        Parameters</span>
@@ -335,19 +323,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_add_item</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">item</span></div>
 
-    <span class="nd">@overload</span>
-    <span class="k">def</span> <span class="nf">add_bar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BarPlot</span><span class="p">:</span>
-        <span class="o">...</span>
-
-    <span class="nd">@overload</span>
-    <span class="k">def</span> <span class="nf">add_bar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">y</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BarPlot</span><span class="p">:</span>
-        <span class="o">...</span>
-
 <div class="viewcode-block" id="HasDataItems.add_bar"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.HasDataItems.add_bar">[docs]</a>    <span class="nd">@write_docs</span>
     <span class="k">def</span> <span class="nf">add_bar</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">x</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">y</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">width</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.6</span><span class="p">,</span>
         <span class="n">face_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">edge_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -356,7 +336,7 @@
         <span class="n">lw</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
         <span class="n">ls</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BarPlot</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add a bar plot like ``plt.bar(x, y)``.</span>
 
 <span class="sd">        Parameters</span>
@@ -387,22 +367,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_add_item</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">item</span></div>
 
-    <span class="nd">@overload</span>
-    <span class="k">def</span> <span class="nf">add_fillbetween</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FillBetween</span><span class="p">:</span>
-        <span class="o">...</span>
-
-    <span class="nd">@overload</span>
-    <span class="k">def</span> <span class="nf">add_fillbetween</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">y</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FillBetween</span><span class="p">:</span>
-        <span class="o">...</span>
-
 <div class="viewcode-block" id="HasDataItems.add_fillbetween"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.HasDataItems.add_fillbetween">[docs]</a>    <span class="nd">@write_docs</span>
     <span class="k">def</span> <span class="nf">add_fillbetween</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">y1</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">y2</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">x</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">y1</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">y2</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">face_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">edge_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -512,21 +482,46 @@
         <span class="k">return</span> <span class="n">item</span></div>
 
     <span class="nd">@overload</span>
-    <span class="k">def</span> <span class="nf">add_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TextGroup</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">add_text</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">x</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">y</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">size</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">9.0</span><span class="p">,</span>
+        <span class="n">anchor</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TextGroup</span><span class="p">:</span>
         <span class="o">...</span>
 
     <span class="nd">@overload</span>
     <span class="k">def</span> <span class="nf">add_text</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">y</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">text</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">x</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
+        <span class="n">y</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
+        <span class="n">text</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">size</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">9.0</span><span class="p">,</span>
+        <span class="n">anchor</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TextGroup</span><span class="p">:</span>
         <span class="o">...</span>
 
-<div class="viewcode-block" id="HasDataItems.add_text"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.HasDataItems.add_text">[docs]</a>    <span class="k">def</span> <span class="nf">add_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TextGroup</span><span class="p">:</span>
+<div class="viewcode-block" id="HasDataItems.add_text"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.HasDataItems.add_text">[docs]</a>    <span class="k">def</span> <span class="nf">add_text</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">x</span><span class="p">,</span>
+        <span class="n">y</span><span class="p">,</span>
+        <span class="n">text</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">9</span><span class="p">,</span>
+        <span class="n">anchor</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TextGroup</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">y</span><span class="p">):</span>
             <span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span>
             <span class="n">y</span> <span class="o">=</span> <span class="p">[</span><span class="n">y</span><span class="p">]</span>
             <span class="n">text</span> <span class="o">=</span> <span class="p">[</span><span class="n">text</span><span class="p">]</span>
-        <span class="n">item</span> <span class="o">=</span> <span class="n">TextGroup</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">TextGroup</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">,</span> <span class="n">anchor</span><span class="o">=</span><span class="n">anchor</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_add_item</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">item</span></div>
 
@@ -646,7 +641,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">xlim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Range limits of X-axis.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Range limits of X-axis.&quot;&quot;&quot;</span>
         <span class="p">(</span><span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">),</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">viewRange</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span>
 
@@ -656,7 +651,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">ylim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Range limits of Y-axis.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Range limits of Y-axis.&quot;&quot;&quot;</span>
         <span class="n">_</span><span class="p">,</span> <span class="p">(</span><span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">viewRange</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span>
 
@@ -666,7 +661,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">enabled</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Mouse interactivity&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Mouse interactivity&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_enabled</span>
 
     <span class="nd">@enabled</span><span class="o">.</span><span class="n">setter</span>
@@ -702,7 +697,7 @@
 
 
 <div class="viewcode-block" id="PlotItem"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.PlotItem">[docs]</a><span class="k">class</span> <span class="nc">PlotItem</span><span class="p">(</span><span class="n">HasViewBox</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A 1-D plot item that has similar API as napari Viewer.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -733,17 +728,17 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">region</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Region</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Linear region item.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Linear region item.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_region</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">legend</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Legend</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Legend item.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Legend item.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_legend</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">xlabel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Label of X-axis.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Label of X-axis.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_xlabel</span>
 
     <span class="nd">@xlabel</span><span class="o">.</span><span class="n">setter</span>
@@ -753,7 +748,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">ylabel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Label of Y-axis.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Label of Y-axis.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ylabel</span>
 
     <span class="nd">@ylabel</span><span class="o">.</span><span class="n">setter</span>
@@ -763,7 +758,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">title</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Title text of the graph.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Title text of the graph.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pgitem</span><span class="o">.</span><span class="n">titleLabel</span><span class="o">.</span><span class="n">text</span>
 
     <span class="nd">@title</span><span class="o">.</span><span class="n">setter</span>
@@ -772,7 +767,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">pgitem</span><span class="o">.</span><span class="n">setTitle</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
 <div class="viewcode-block" id="PlotItem.show_grid"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.PlotItem.show_grid">[docs]</a>    <span class="k">def</span> <span class="nf">show_grid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Show grid lines.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Show grid lines.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pgitem</span><span class="o">.</span><span class="n">showGrid</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">_update_scene</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -877,12 +872,12 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">text_overlay</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TextItem</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Text overlay on the image.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Text overlay on the image.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_text_overlay</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">title</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Title text of the graph.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Title text of the graph.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_title</span><span class="o">.</span><span class="n">text</span>
 
     <span class="nd">@title</span><span class="o">.</span><span class="n">setter</span>
@@ -891,7 +886,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">xlabel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Label of X-axis.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Label of X-axis.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_xlabel</span><span class="o">.</span><span class="n">text</span>
 
     <span class="nd">@xlabel</span><span class="o">.</span><span class="n">setter</span>
@@ -900,7 +895,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">ylabel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Label of Y-axis.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Label of Y-axis.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ylabel</span><span class="o">.</span><span class="n">text</span>
 
     <span class="nd">@xlabel</span><span class="o">.</span><span class="n">setter</span>
@@ -909,12 +904,12 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">scale_bar</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ScaleBar</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Scale bar on the image.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Scale bar on the image.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale_bar</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">lock_contrast_limits</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;True if enable auto-contrast.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;True if enable auto-contrast.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock_contrast_limits</span>
 
     <span class="nd">@lock_contrast_limits</span><span class="o">.</span><span class="n">setter</span>
@@ -927,7 +922,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">image</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Image data&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Image data&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image_item</span><span class="o">.</span><span class="n">image</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">else</span><span class="p">:</span>
@@ -966,7 +961,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">contrast_limits</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Contrast limits of image&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Contrast limits of image&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image_item</span><span class="o">.</span><span class="n">levels</span>
 
     <span class="nd">@contrast_limits</span><span class="o">.</span><span class="n">setter</span>
@@ -975,7 +970,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">cmap</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Color map&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Color map&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cmap</span>
 
     <span class="nd">@cmap</span><span class="o">.</span><span class="n">setter</span>
@@ -1000,7 +995,7 @@
 
 
 <div class="viewcode-block" id="QtPlotCanvas"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.QtPlotCanvas">[docs]</a><span class="k">class</span> <span class="nc">QtPlotCanvas</span><span class="p">(</span><span class="n">HasBackground</span><span class="p">,</span> <span class="n">PlotItem</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A 1-D data viewer that have similar API as napari Viewer.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A 1-D data viewer that have similar API as napari Viewer.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">app</span> <span class="o">=</span> <span class="n">get_app</span><span class="p">()</span>
@@ -1015,7 +1010,7 @@
 
 
 <div class="viewcode-block" id="QtImageCanvas"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.QtImageCanvas">[docs]</a><span class="k">class</span> <span class="nc">QtImageCanvas</span><span class="p">(</span><span class="n">HasBackground</span><span class="p">,</span> <span class="n">ImageItem</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A 2-D image viewer that have similar API as napari Viewer.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A 2-D image viewer that have similar API as napari Viewer.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lock_contrast_limits</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">app</span> <span class="o">=</span> <span class="n">get_app</span><span class="p">()</span>
@@ -1039,7 +1034,7 @@
 
 
 <div class="viewcode-block" id="Qt2YPlotCanvas"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.Qt2YPlotCanvas">[docs]</a><span class="k">class</span> <span class="nc">Qt2YPlotCanvas</span><span class="p">(</span><span class="n">HasBackground</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A plot canvas with two Y-axis.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A plot canvas with two Y-axis.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">app</span> <span class="o">=</span> <span class="n">get_app</span><span class="p">()</span>
@@ -1088,7 +1083,7 @@
         <span class="n">sharey</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Multi-axes ``pyqtgraph`` canvas widget. Can contain multiple objects</span>
 <span class="sd">        of {cls}.</span>
 
@@ -1119,7 +1114,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">nrows</span><span class="p">,</span> <span class="n">ncols</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__init_subclass__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Update doc.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update doc.&quot;&quot;&quot;</span>
         <span class="n">init</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="fm">__init__</span>
         <span class="n">init</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">init</span><span class="o">.</span><span class="vm">__doc__</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">cls</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">_base_item_class</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -1130,7 +1125,7 @@
         <span class="n">rowspan</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
         <span class="n">colspan</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_C</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Add a new axis to widget.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a new axis to widget.&quot;&quot;&quot;</span>
         <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_base_item_class</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_axes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">layoutwidget</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">_graphics</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">rowspan</span><span class="p">,</span> <span class="n">colspan</span><span class="p">)</span>
@@ -1165,13 +1160,13 @@
 
 
 <div class="viewcode-block" id="QtMultiPlotCanvas"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.QtMultiPlotCanvas">[docs]</a><span class="k">class</span> <span class="nc">QtMultiPlotCanvas</span><span class="p">(</span><span class="n">_MultiPlot</span><span class="p">[</span><span class="n">PlotItem</span><span class="p">]):</span>
-    <span class="sd">&quot;&quot;&quot;A pyqtgraph-based canvas with multiple plot.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A pyqtgraph-based canvas with multiple plot.&quot;&quot;&quot;</span>
 
     <span class="n">_base_item_class</span> <span class="o">=</span> <span class="n">PlotItem</span></div>
 
 
 <div class="viewcode-block" id="QtMultiImageCanvas"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.widgets.QtMultiImageCanvas">[docs]</a><span class="k">class</span> <span class="nc">QtMultiImageCanvas</span><span class="p">(</span><span class="n">_MultiPlot</span><span class="p">[</span><span class="n">ImageItem</span><span class="p">]):</span>
-    <span class="sd">&quot;&quot;&quot;A pyqtgraph-based canvas with multiple images.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A pyqtgraph-based canvas with multiple images.&quot;&quot;&quot;</span>
 
     <span class="n">_base_item_class</span> <span class="o">=</span> <span class="n">ImageItem</span></div>
 

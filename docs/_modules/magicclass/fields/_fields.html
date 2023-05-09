@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.fields._fields &mdash; magic-class 0.6.14 documentation</title>
+  <title>magicclass.fields._fields &mdash; magic-class 0.7.0rc0 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
@@ -32,7 +32,7 @@
             magic-class
           </a>
               <div class="version">
-                0.6.14
+                0.7.0rc0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -92,13 +92,13 @@
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">_AnnotatedAlias</span>
 <span class="kn">from</span> <span class="nn">magicgui.widgets</span> <span class="kn">import</span> <span class="n">create_widget</span><span class="p">,</span> <span class="n">Widget</span>
-<span class="kn">from</span> <span class="nn">magicclass._magicgui_compat</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span> <span class="nn">magicgui.widgets.bases</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">ValueWidget</span><span class="p">,</span>
     <span class="n">ContainerWidget</span><span class="p">,</span>
     <span class="n">CategoricalWidget</span><span class="p">,</span>
-    <span class="n">Undefined</span><span class="p">,</span>
-    <span class="n">MGUI_SIMPLE_TYPES</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="kn">from</span> <span class="nn">magicgui.types</span> <span class="kn">import</span> <span class="n">Undefined</span>
+<span class="kn">from</span> <span class="nn">magicclass.types</span> <span class="kn">import</span> <span class="n">MGUI_SIMPLE_TYPES</span>
 
 <span class="kn">from</span> <span class="nn">._define</span> <span class="kn">import</span> <span class="n">define_callback</span><span class="p">,</span> <span class="n">define_callback_gui</span>
 
@@ -134,7 +134,7 @@
 <span class="n">_F</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;_F&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">Callable</span><span class="p">)</span>
 
 
-<span class="k">class</span> <span class="nc">MagicField</span><span class="p">(</span><span class="n">_FieldObject</span><span class="p">,</span> <span class="n">Generic</span><span class="p">[</span><span class="n">_W</span><span class="p">,</span> <span class="n">_V</span><span class="p">]):</span>
+<span class="k">class</span> <span class="nc">MagicField</span><span class="p">(</span><span class="n">_FieldObject</span><span class="p">,</span> <span class="n">Generic</span><span class="p">[</span><span class="n">_W</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Field class for magicgui construction.</span>
 
@@ -216,7 +216,7 @@
 
     <span class="k">def</span> <span class="nf">with_options</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">value</span><span class="p">:</span> <span class="n">_V</span> <span class="o">=</span> <span class="n">Undefined</span><span class="p">,</span>
+        <span class="n">value</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">Undefined</span><span class="p">,</span>
         <span class="n">tooltip</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Undefined</span><span class="p">,</span>
         <span class="n">visible</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Undefined</span><span class="p">,</span>
         <span class="n">enabled</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Undefined</span><span class="p">,</span>
@@ -326,7 +326,7 @@
 
         <span class="k">return</span> <span class="n">widget</span>
 
-    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">[</span><span class="n">_W</span><span class="p">,</span> <span class="n">_V</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicField</span><span class="p">[</span><span class="n">_W</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Copy object.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span>
             <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
@@ -408,7 +408,7 @@
 
         <span class="k">return</span> <span class="n">action</span>
 
-    <span class="k">def</span> <span class="nf">as_getter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">],</span> <span class="n">_V</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">as_getter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">],</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Make a function that get the value of Widget or Action.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="k">lambda</span> <span class="n">w</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_guis</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">obj</span><span class="p">)]</span><span class="o">.</span><span class="n">value</span>
 
@@ -446,7 +446,7 @@
         <span class="k">return</span> <span class="n">_func</span>
 
     <span class="nd">@overload</span>
-    <span class="k">def</span> <span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span> <span class="n">objtype</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicField</span><span class="p">[</span><span class="n">_W</span><span class="p">,</span> <span class="n">_V</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span> <span class="n">objtype</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicField</span><span class="p">[</span><span class="n">_W</span><span class="p">]:</span>
         <span class="o">...</span>
 
     <span class="nd">@overload</span>
@@ -607,14 +607,14 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_widget_type</span>
 
 
-<span class="k">class</span> <span class="nc">MagicValueField</span><span class="p">(</span><span class="n">MagicField</span><span class="p">[</span><span class="n">_W</span><span class="p">,</span> <span class="n">_V</span><span class="p">]):</span>
+<span class="k">class</span> <span class="nc">MagicValueField</span><span class="p">(</span><span class="n">MagicField</span><span class="p">[</span><span class="n">ValueWidget</span><span class="p">[</span><span class="n">_V</span><span class="p">]]):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Field class for magicgui construction. Unlike MagicField, object of this class</span>
 <span class="sd">    always returns value itself.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="nd">@overload</span>
-    <span class="k">def</span> <span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span> <span class="n">objtype</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicValueField</span><span class="p">[</span><span class="n">_W</span><span class="p">,</span> <span class="n">_V</span><span class="p">]</span> <span class="o">|</span> <span class="n">_V</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span> <span class="n">objtype</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicValueField</span><span class="p">[</span><span class="n">_V</span><span class="p">]</span> <span class="o">|</span> <span class="n">_V</span><span class="p">:</span>
         <span class="o">...</span>
 
     <span class="nd">@overload</span>
@@ -626,10 +626,13 @@
             <span class="k">return</span> <span class="bp">self</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_postgethook</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_widget</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__set__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">_M</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">_V</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__set__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">MagicTemplate</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">_V</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">obj</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot set </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">get_widget</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_presethook</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicValueField</span><span class="p">[</span><span class="n">_V</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">post_get_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hook</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">,</span> <span class="n">_V</span><span class="p">],</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">_V</span><span class="p">],</span> <span class="n">Any</span><span class="p">]):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -685,34 +688,34 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_presethook</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">_</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">hook</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">hook</span>
 
-    <span class="k">def</span> <span class="nf">_postgethook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_postgethook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">_V</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_V</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">value</span>
 
-    <span class="k">def</span> <span class="nf">_presethook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_presethook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">_V</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_V</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">value</span>
 
     <span class="nd">@overload</span>
     <span class="k">def</span> <span class="nf">with_choices</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">choices</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">_U</span><span class="p">]]</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicValueField</span><span class="p">[</span><span class="n">CategoricalWidget</span><span class="p">,</span> <span class="n">_U</span><span class="p">]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicValueField</span><span class="p">[</span><span class="n">CategoricalWidget</span><span class="p">[</span><span class="n">_U</span><span class="p">],</span> <span class="n">_U</span><span class="p">]:</span>
         <span class="o">...</span>
 
     <span class="nd">@overload</span>
     <span class="k">def</span> <span class="nf">with_choices</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">choices</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">_U</span><span class="p">]</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicValueField</span><span class="p">[</span><span class="n">CategoricalWidget</span><span class="p">,</span> <span class="n">_U</span><span class="p">]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicValueField</span><span class="p">[</span><span class="n">CategoricalWidget</span><span class="p">[</span><span class="n">_U</span><span class="p">],</span> <span class="n">_U</span><span class="p">]:</span>
         <span class="o">...</span>
 
     <span class="nd">@overload</span>
     <span class="k">def</span> <span class="nf">with_choices</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">choices</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">_U</span><span class="p">]]]</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicValueField</span><span class="p">[</span><span class="n">CategoricalWidget</span><span class="p">,</span> <span class="n">_U</span><span class="p">]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicValueField</span><span class="p">[</span><span class="n">CategoricalWidget</span><span class="p">[</span><span class="n">_U</span><span class="p">],</span> <span class="n">_U</span><span class="p">]:</span>
         <span class="o">...</span>
 
     <span class="nd">@overload</span>
     <span class="k">def</span> <span class="nf">with_choices</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">choices</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">_U</span><span class="p">]]</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicValueField</span><span class="p">[</span><span class="n">CategoricalWidget</span><span class="p">,</span> <span class="n">_U</span><span class="p">]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicValueField</span><span class="p">[</span><span class="n">CategoricalWidget</span><span class="p">[</span><span class="n">_U</span><span class="p">],</span> <span class="n">_U</span><span class="p">]:</span>
         <span class="o">...</span>
 
     <span class="k">def</span> <span class="nf">with_choices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">choices</span><span class="p">):</span>
@@ -729,7 +732,7 @@
     <span class="n">widget_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{},</span>
     <span class="n">record</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicField</span><span class="p">[</span><span class="n">_M</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicField</span><span class="p">[</span><span class="n">_M</span><span class="p">]:</span>
     <span class="o">...</span>
 
 
@@ -741,7 +744,7 @@
     <span class="n">label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{},</span>
     <span class="n">record</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicField</span><span class="p">[</span><span class="n">_W</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicField</span><span class="p">[</span><span class="n">_W</span><span class="p">]:</span>
     <span class="o">...</span>
 
 
@@ -754,7 +757,7 @@
     <span class="n">widget_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{},</span>
     <span class="n">record</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicField</span><span class="p">[</span><span class="n">ValueWidget</span><span class="p">,</span> <span class="n">_X</span><span class="p">]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicField</span><span class="p">[</span><span class="n">ValueWidget</span><span class="p">[</span><span class="n">_X</span><span class="p">]]:</span>
     <span class="o">...</span>
 
 
@@ -767,7 +770,7 @@
     <span class="n">widget_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{},</span>
     <span class="n">record</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicField</span><span class="p">[</span><span class="n">ValueWidget</span><span class="p">,</span> <span class="n">_X</span><span class="p">]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicField</span><span class="p">[</span><span class="n">ValueWidget</span><span class="p">[</span><span class="n">_X</span><span class="p">]]:</span>
     <span class="o">...</span>
 
 
@@ -780,7 +783,7 @@
     <span class="n">widget_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">_W</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{},</span>
     <span class="n">record</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicField</span><span class="p">[</span><span class="n">_W</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicField</span><span class="p">[</span><span class="n">_W</span><span class="p">]:</span>
     <span class="o">...</span>
 
 
@@ -793,7 +796,7 @@
     <span class="n">widget_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{},</span>
     <span class="n">record</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicField</span><span class="p">[</span><span class="n">Widget</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicField</span><span class="p">[</span><span class="n">Widget</span><span class="p">]:</span>
     <span class="o">...</span>
 
 
@@ -805,7 +808,7 @@
     <span class="n">widget_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">type</span><span class="p">[</span><span class="n">Widget</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{},</span>
     <span class="n">record</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicField</span><span class="p">[</span><span class="n">Widget</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicField</span><span class="p">[</span><span class="n">Widget</span><span class="p">]:</span>
     <span class="o">...</span>
 
 
@@ -852,13 +855,25 @@
 
 <span class="nd">@overload</span>
 <span class="k">def</span> <span class="nf">vfield</span><span class="p">(</span>
-    <span class="n">widget_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">_W</span><span class="p">],</span>
+    <span class="n">widget_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">ValueWidget</span><span class="p">[</span><span class="n">_V</span><span class="p">]],</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{},</span>
     <span class="n">record</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicValueField</span><span class="p">[</span><span class="n">_W</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicValueField</span><span class="p">[</span><span class="n">_V</span><span class="p">]:</span>
+    <span class="o">...</span>
+
+
+<span class="nd">@overload</span>
+<span class="k">def</span> <span class="nf">vfield</span><span class="p">(</span>
+    <span class="n">widget_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">Widget</span><span class="p">],</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{},</span>
+    <span class="n">record</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicValueField</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
     <span class="o">...</span>
 
 
@@ -871,7 +886,7 @@
     <span class="n">widget_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">type</span><span class="p">[</span><span class="n">Widget</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{},</span>
     <span class="n">record</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicValueField</span><span class="p">[</span><span class="n">ValueWidget</span><span class="p">,</span> <span class="n">_X</span><span class="p">]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicValueField</span><span class="p">[</span><span class="n">_X</span><span class="p">]:</span>
     <span class="o">...</span>
 
 
@@ -884,20 +899,20 @@
     <span class="n">widget_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">type</span><span class="p">[</span><span class="n">Widget</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{},</span>
     <span class="n">record</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicValueField</span><span class="p">[</span><span class="n">ValueWidget</span><span class="p">,</span> <span class="n">_X</span><span class="p">]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicValueField</span><span class="p">[</span><span class="n">_X</span><span class="p">]:</span>
     <span class="o">...</span>
 
 
 <span class="nd">@overload</span>
 <span class="k">def</span> <span class="nf">vfield</span><span class="p">(</span>
-    <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">widget_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">_W</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">widget_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">ValueWidget</span><span class="p">[</span><span class="n">_V</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{},</span>
     <span class="n">record</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicValueField</span><span class="p">[</span><span class="n">_W</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicValueField</span><span class="p">[</span><span class="n">_V</span><span class="p">]:</span>
     <span class="o">...</span>
 
 
@@ -910,7 +925,7 @@
     <span class="n">widget_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">type</span><span class="p">[</span><span class="n">Widget</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{},</span>
     <span class="n">record</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicValueField</span><span class="p">[</span><span class="n">Widget</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicValueField</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
     <span class="o">...</span>
 
 
@@ -922,7 +937,7 @@
     <span class="n">widget_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">type</span><span class="p">[</span><span class="n">Widget</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{},</span>
     <span class="n">record</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicValueField</span><span class="p">[</span><span class="n">Widget</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MagicValueField</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
     <span class="o">...</span>
 
 

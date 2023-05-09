@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="English" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>magicclass.types._choices &mdash; magic-class 0.7.0rc0 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+</head>
+
+<body class="wy-body-for-nav">
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+
+          <a href="../../../index.html" class="icon icon-home">
+            magic-class
+          </a>
+              <div class="version">
+                0.7.0rc0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../main/quick_start.html">Quick Start</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../main/basics/index.html">Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../main/make_better/index.html">Make Your GUI Better</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../main/visualization/index.html">Data Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../main/advanced/index.html">Advanced Topics</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../main/best_practice.html">Best Practice</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">magic-class</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">magicclass.types._choices</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+
+  <h1>Source code for magicclass.types._choices</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Any</span><span class="p">,</span>
+    <span class="n">Iterable</span><span class="p">,</span>
+    <span class="n">overload</span><span class="p">,</span>
+    <span class="n">TypeVar</span><span class="p">,</span>
+    <span class="n">Callable</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Annotated</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">_tp_cache</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">_tp_cache</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span>
+
+
+<span class="n">_V</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;_V&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">_OneOfAlias</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;metaclass of ``OneOf``.&quot;&quot;&quot;</span>
+
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">_V</span><span class="p">]]])</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">[</span><span class="n">_V</span><span class="p">]:</span>
+        <span class="o">...</span>
+
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">_V</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">[</span><span class="n">_V</span><span class="p">]:</span>
+        <span class="o">...</span>
+
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">_V</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">[</span><span class="n">_V</span><span class="p">]:</span>
+        <span class="o">...</span>
+
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">_V</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">[</span><span class="n">_V</span><span class="p">]:</span>
+        <span class="o">...</span>
+
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">slice</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">[</span><span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">]:</span>
+        <span class="o">...</span>
+
+    <span class="nd">@_tp_cache</span>
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+            <span class="n">outtype</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="vm">__annotations__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;return&quot;</span><span class="p">,</span> <span class="n">Any</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s2">&quot;__iter__&quot;</span><span class="p">):</span>
+            <span class="n">outtype</span> <span class="o">=</span> <span class="n">Any</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">slice</span><span class="p">):</span>
+            <span class="n">outtype</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">_normalize_slice</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;&#39;bound&#39; can only convert callable or iterable objects.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">outtype</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;choices&quot;</span><span class="p">:</span> <span class="n">value</span><span class="p">,</span> <span class="s2">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">}]</span>
+
+
+<span class="k">def</span> <span class="nf">_normalize_slice</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">slice</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span> <span class="o">|</span> <span class="nb">list</span><span class="p">:</span>
+    <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">step</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">start</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">,</span> <span class="n">value</span><span class="o">.</span><span class="n">stop</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">,</span> <span class="n">value</span><span class="o">.</span><span class="n">step</span> <span class="ow">or</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="nb">float</span> <span class="ow">in</span> <span class="p">[</span><span class="nb">type</span><span class="p">(</span><span class="n">start</span><span class="p">),</span> <span class="nb">type</span><span class="p">(</span><span class="n">stop</span><span class="p">),</span> <span class="nb">type</span><span class="p">(</span><span class="n">step</span><span class="p">)]:</span>
+        <span class="kn">import</span> <span class="nn">math</span>
+
+        <span class="n">ndigits</span> <span class="o">=</span> <span class="o">-</span><span class="nb">int</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">start</span><span class="p">),</span> <span class="n">math</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">stop</span><span class="p">),</span> <span class="n">math</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">step</span><span class="p">)))</span> <span class="o">+</span> <span class="mi">4</span>
+        <span class="n">outtype</span> <span class="o">=</span> <span class="nb">float</span>
+        <span class="n">outvalue</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">step</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">start</span>
+            <span class="k">while</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">stop</span><span class="p">:</span>
+                <span class="n">outvalue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">step</span><span class="p">,</span> <span class="n">ndigits</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">stop</span>
+            <span class="k">while</span> <span class="n">start</span> <span class="o">&lt;</span> <span class="n">x</span><span class="p">:</span>
+                <span class="n">outvalue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">step</span><span class="p">,</span> <span class="n">ndigits</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">outtype</span> <span class="o">=</span> <span class="nb">int</span>
+        <span class="n">outvalue</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">step</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">outtype</span><span class="p">,</span> <span class="n">outvalue</span>
+
+
+<div class="viewcode-block" id="OneOf"><a class="viewcode-back" href="../../../apidoc/magicclass.types.html#magicclass.types.OneOf">[docs]</a><span class="k">class</span> <span class="nc">OneOf</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">_OneOfAlias</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Make Annotated type from a method, such as:</span>
+
+<span class="sd">    &gt;&gt;&gt; from magicclass import magicclass</span>
+<span class="sd">    &gt;&gt;&gt; @magicclass</span>
+<span class="sd">    &gt;&gt;&gt; class MyClass:</span>
+<span class="sd">    &gt;&gt;&gt;     def func(self, v: OneOf[(1, 2, 3)]):</span>
+<span class="sd">    &gt;&gt;&gt;         ...</span>
+
+<span class="sd">    ``OneOf[value]`` is identical to ``Annotated[Any, {&quot;choices&quot;: value}]``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;OneOf cannot be instantiated. Use OneOf[...] instead.&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__init_subclass__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot subclass </span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__module__</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<span class="n">Choices</span> <span class="o">=</span> <span class="n">OneOf</span>  <span class="c1"># alias</span>
+
+
+<span class="k">class</span> <span class="nc">_SomeOfAlias</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;This metaclass is necessary for ``mypy`` to reveal type.&quot;&quot;&quot;</span>
+
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">_V</span><span class="p">]]]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">_V</span><span class="p">]]:</span>
+        <span class="o">...</span>
+
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">_V</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">_V</span><span class="p">]]:</span>
+        <span class="o">...</span>
+
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">_V</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">_V</span><span class="p">]]:</span>
+        <span class="o">...</span>
+
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">_V</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">_V</span><span class="p">]]:</span>
+        <span class="o">...</span>
+
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">slice</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">[</span><span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">]:</span>
+        <span class="o">...</span>
+
+    <span class="nd">@_tp_cache</span>
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+            <span class="n">outtype</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="vm">__annotations__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;return&quot;</span><span class="p">,</span> <span class="n">Any</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s2">&quot;__iter__&quot;</span><span class="p">):</span>
+            <span class="n">outtype</span> <span class="o">=</span> <span class="n">Any</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">slice</span><span class="p">):</span>
+            <span class="n">outtype</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">_normalize_slice</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;&#39;bound&#39; can only convert callable or iterable objects.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Annotated</span><span class="p">[</span>
+            <span class="n">outtype</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;choices&quot;</span><span class="p">:</span> <span class="n">value</span><span class="p">,</span> <span class="s2">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;widget_type&quot;</span><span class="p">:</span> <span class="s2">&quot;Select&quot;</span><span class="p">}</span>
+        <span class="p">]</span>
+
+
+<div class="viewcode-block" id="SomeOf"><a class="viewcode-back" href="../../../apidoc/magicclass.types.html#magicclass.types.SomeOf">[docs]</a><span class="k">class</span> <span class="nc">SomeOf</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">_SomeOfAlias</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Make Annotated type from a method, such as:</span>
+
+<span class="sd">    &gt;&gt;&gt; from magicclass import magicclass</span>
+
+<span class="sd">    &gt;&gt;&gt; @magicclass</span>
+<span class="sd">    &gt;&gt;&gt; class MyClass:</span>
+<span class="sd">    &gt;&gt;&gt;     def func(self, v: Choices[(1, 2, 3)]):</span>
+<span class="sd">    &gt;&gt;&gt;         ...</span>
+
+<span class="sd">    ``Choices[value]`` is identical to ``Annotated[Any, {&quot;choices&quot;: value}]``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;SomeOf cannot be instantiated. Use SomeOf[...] instead.&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__init_subclass__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot subclass </span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__module__</span><span class="si">}</span><span class="s2">.SomeOf&quot;</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Hanjin Liu.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+</body>
+</html>

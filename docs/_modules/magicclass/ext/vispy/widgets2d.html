@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.ext.vispy.widgets2d &mdash; magic-class 0.6.13 documentation</title>
+  <title>magicclass.ext.vispy.widgets2d &mdash; magic-class 0.7.0rc0 documentation</title>
       <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/columns.css" type="text/css" />
@@ -25,14 +25,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../../index.html" class="icon icon-home"> magic-class
+
+
+
+          <a href="../../../../index.html" class="icon icon-home">
+            magic-class
           </a>
               <div class="version">
-                0.6.13
+                0.7.0rc0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -64,9 +68,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../../../index.html">Module code</a> &raquo;</li>
-      <li>magicclass.ext.vispy.widgets2d</li>
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">magicclass.ext.vispy.widgets2d</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -93,7 +97,7 @@
 <div class="viewcode-block" id="Has2DViewBox"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.widgets2d.Has2DViewBox">[docs]</a><span class="k">class</span> <span class="nc">Has2DViewBox</span><span class="p">(</span><span class="n">HasViewBox</span><span class="p">):</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">xrange</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Range of X dimension.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Range of X dimension.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">camera</span><span class="o">.</span><span class="n">_xlim</span>
 
     <span class="nd">@xrange</span><span class="o">.</span><span class="n">setter</span>
@@ -103,7 +107,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">yrange</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Range of Y dimension.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Range of Y dimension.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_viewbox</span><span class="o">.</span><span class="n">camera</span><span class="o">.</span><span class="n">_ylim</span>
 
     <span class="nd">@yrange</span><span class="o">.</span><span class="n">setter</span>
@@ -125,8 +129,7 @@
         <span class="n">ls</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span>
         <span class="n">symbol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add a line plot like ``plt.plot(x, y)``.</span>
 
 <span class="sd">        Parameters</span>
@@ -175,9 +178,8 @@
         <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">symbol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Add a line plot like ``plt.plot(x, y)``.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add a scatter plot like ``plt.scatter(x, y)``.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -188,8 +190,8 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        Curve</span>
-<span class="sd">            A plot item of a curve.</span>
+<span class="sd">        Scatter</span>
+<span class="sd">            A plot item of a scatter.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">_check_xy</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
         <span class="n">face_color</span><span class="p">,</span> <span class="n">edge_color</span> <span class="o">=</span> <span class="n">_check_colors</span><span class="p">(</span><span class="n">face_color</span><span class="p">,</span> <span class="n">edge_color</span><span class="p">,</span> <span class="n">color</span><span class="p">)</span>
@@ -218,9 +220,25 @@
         <span class="n">bins</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
         <span class="n">face_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">edge_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span>
         <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Histogram</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add a histogram like ``plt.hist(x)``.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data: array-like</span>
+<span class="sd">            Input 1D data.</span>
+<span class="sd">        bins: int, default is 10</span>
+<span class="sd">            Number of bins to draw the histogram.</span>
+<span class="sd">        {face_color}{edge_color}{color}{name}</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Histogram</span>
+<span class="sd">            A plot item of a histogram.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
         <span class="n">face_color</span><span class="p">,</span> <span class="n">edge_color</span> <span class="o">=</span> <span class="n">_check_colors</span><span class="p">(</span><span class="n">face_color</span><span class="p">,</span> <span class="n">edge_color</span><span class="p">,</span> <span class="n">color</span><span class="p">)</span>
 
@@ -279,7 +297,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">title</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The title string.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The title string.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_title</span><span class="o">.</span><span class="n">text</span>
 
     <span class="nd">@title</span><span class="o">.</span><span class="n">setter</span>
@@ -288,7 +306,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">xlabel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The x-label string.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The x-label string.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x_axis</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">axis_label</span>
 
     <span class="nd">@xlabel</span><span class="o">.</span><span class="n">setter</span>
@@ -302,7 +320,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">ylabel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The y-label string.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The y-label string.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y_axis</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">axis_label</span>
 
     <span class="nd">@xlabel</span><span class="o">.</span><span class="n">setter</span>
@@ -380,7 +398,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">title</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The title string.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The title string.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_title</span><span class="o">.</span><span class="n">text</span>
 
     <span class="nd">@title</span><span class="o">.</span><span class="n">setter</span>
@@ -389,7 +407,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">xlabel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The x-label string.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The x-label string.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x_axis</span><span class="o">.</span><span class="n">text</span>
 
     <span class="nd">@xlabel</span><span class="o">.</span><span class="n">setter</span>
@@ -398,7 +416,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">ylabel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The y-label string.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The y-label string.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y_axis</span><span class="o">.</span><span class="n">text</span>
 
     <span class="nd">@xlabel</span><span class="o">.</span><span class="n">setter</span>
@@ -407,7 +425,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">contrast_limits</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Contrast limits of the image.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Contrast limits of the image.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image</span><span class="o">.</span><span class="n">clim</span>
 
     <span class="nd">@contrast_limits</span><span class="o">.</span><span class="n">setter</span>
@@ -416,7 +434,7 @@
 
 
 <div class="viewcode-block" id="VispyPlotCanvas"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.widgets2d.VispyPlotCanvas">[docs]</a><span class="k">class</span> <span class="nc">VispyPlotCanvas</span><span class="p">(</span><span class="n">FreeWidget</span><span class="p">,</span> <span class="n">PlotItem</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A Vispy based 2-D plot canvas for curve, histogram, bar plot etc.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A Vispy based 2-D plot canvas for curve, histogram, bar plot etc.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">app</span> <span class="o">=</span> <span class="n">get_app</span><span class="p">()</span>
@@ -431,7 +449,7 @@
 
 
 <div class="viewcode-block" id="VispyImageCanvas"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.widgets2d.VispyImageCanvas">[docs]</a><span class="k">class</span> <span class="nc">VispyImageCanvas</span><span class="p">(</span><span class="n">FreeWidget</span><span class="p">,</span> <span class="n">ImageItem</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A Vispy based 2-D plot canvas for images.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A Vispy based 2-D plot canvas for images.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">app</span> <span class="o">=</span> <span class="n">get_app</span><span class="p">()</span>
@@ -446,13 +464,13 @@
 
 
 <div class="viewcode-block" id="VispyMultiPlotCanvas"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.widgets2d.VispyMultiPlotCanvas">[docs]</a><span class="k">class</span> <span class="nc">VispyMultiPlotCanvas</span><span class="p">(</span><span class="n">MultiPlot</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A multiple Vispy based 2-D plot canvas.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A multiple Vispy based 2-D plot canvas.&quot;&quot;&quot;</span>
 
     <span class="n">_base_class</span> <span class="o">=</span> <span class="n">PlotItem</span></div>
 
 
 <div class="viewcode-block" id="VispyMultiImageCanvas"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.widgets2d.VispyMultiImageCanvas">[docs]</a><span class="k">class</span> <span class="nc">VispyMultiImageCanvas</span><span class="p">(</span><span class="n">MultiPlot</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A multiple Vispy based 2-D plot canvas for images.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A multiple Vispy based 2-D plot canvas for images.&quot;&quot;&quot;</span>
 
     <span class="n">_base_class</span> <span class="o">=</span> <span class="n">ImageItem</span></div>
 

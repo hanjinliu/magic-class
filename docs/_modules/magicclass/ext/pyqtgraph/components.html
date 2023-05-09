@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.ext.pyqtgraph.components &mdash; magic-class 0.6.13 documentation</title>
+  <title>magicclass.ext.pyqtgraph.components &mdash; magic-class 0.7.0rc0 documentation</title>
       <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/columns.css" type="text/css" />
@@ -25,14 +25,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../../index.html" class="icon icon-home"> magic-class
+
+
+
+          <a href="../../../../index.html" class="icon icon-home">
+            magic-class
           </a>
               <div class="version">
-                0.6.13
+                0.7.0rc0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -64,9 +68,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../../../index.html">Module code</a> &raquo;</li>
-      <li>magicclass.ext.pyqtgraph.components</li>
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">magicclass.ext.pyqtgraph.components</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -89,7 +93,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">visible</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Linear region visibility.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Linear region visibility.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">isVisible</span><span class="p">()</span>
 
     <span class="nd">@visible</span><span class="o">.</span><span class="n">setter</span>
@@ -105,7 +109,7 @@
 
 
 <div class="viewcode-block" id="Region"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.components.Region">[docs]</a><span class="k">class</span> <span class="nc">Region</span><span class="p">(</span><span class="n">GraphicComponent</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A linear region with magicgui-like API&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A linear region with magicgui-like API&quot;&quot;&quot;</span>
 
     <span class="n">changed</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">(</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span>
     <span class="n">native</span><span class="p">:</span> <span class="n">pg</span><span class="o">.</span><span class="n">LinearRegionItem</span>
@@ -119,7 +123,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Get the limits of linear region.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the limits of linear region.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">getRegion</span><span class="p">()</span>
 
     <span class="nd">@value</span><span class="o">.</span><span class="n">setter</span>
@@ -170,7 +174,7 @@
 
 
 <div class="viewcode-block" id="TextItem"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.components.TextItem">[docs]</a><span class="k">class</span> <span class="nc">TextItem</span><span class="p">(</span><span class="n">GraphicComponent</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A text item with napari-like API.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A text item with napari-like API.&quot;&quot;&quot;</span>
 
     <span class="n">native</span><span class="p">:</span> <span class="n">pg</span><span class="o">.</span><span class="n">TextItem</span>
 
@@ -239,7 +243,7 @@
 
 
 <div class="viewcode-block" id="ScaleBar"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.components.ScaleBar">[docs]</a><span class="k">class</span> <span class="nc">ScaleBar</span><span class="p">(</span><span class="n">GraphicComponent</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A scale bar with napari-like API&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A scale bar with napari-like API&quot;&quot;&quot;</span>
 
     <span class="n">native</span><span class="p">:</span> <span class="n">pg</span><span class="o">.</span><span class="n">ScaleBar</span>
 
@@ -277,7 +281,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">color</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Text color.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Text color.&quot;&quot;&quot;</span>
         <span class="n">color</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">labelTextColor</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">color</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">color</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">mkPen</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">color</span><span class="p">()</span>
@@ -291,7 +295,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Text size.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Text size.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">labelTextSize</span><span class="p">()</span>
 
     <span class="nd">@size</span><span class="o">.</span><span class="n">setter</span>
@@ -300,7 +304,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">border</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Border color.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Border color.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">to_rgba</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">pen</span><span class="p">())</span>
 
     <span class="nd">@border</span><span class="o">.</span><span class="n">setter</span>
@@ -310,7 +314,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">background_color</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Background color.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Background color.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">to_rgba</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">brush</span><span class="p">())</span>
 
     <span class="nd">@background_color</span><span class="o">.</span><span class="n">setter</span>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.widgets.eval &mdash; magic-class 0.6.14 documentation</title>
+  <title>magicclass.widgets.eval &mdash; magic-class 0.7.0rc0 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
@@ -25,14 +25,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../index.html" class="icon icon-home"> magic-class
+
+
+
+          <a href="../../../index.html" class="icon icon-home">
+            magic-class
           </a>
               <div class="version">
-                0.6.14
+                0.7.0rc0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -64,9 +68,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../../index.html">Module code</a> &raquo;</li>
-      <li>magicclass.widgets.eval</li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">magicclass.widgets.eval</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -88,7 +92,7 @@
 <span class="kn">from</span> <span class="nn">qtpy.QtCore</span> <span class="kn">import</span> <span class="n">Qt</span>
 
 <span class="kn">from</span> <span class="nn">magicgui.backends._qtpy.widgets</span> <span class="kn">import</span> <span class="n">QBaseStringWidget</span>
-<span class="kn">from</span> <span class="nn">magicclass._magicgui_compat</span> <span class="kn">import</span> <span class="n">ValueWidget</span>
+<span class="kn">from</span> <span class="nn">magicgui.widgets.bases</span> <span class="kn">import</span> <span class="n">ValueWidget</span>
 
 
 <span class="k">def</span> <span class="nf">_get_last_group</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
@@ -133,10 +137,17 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setFocusPolicy</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">FocusPolicy</span><span class="o">.</span><span class="n">NoFocus</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">itemClicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_on_item_clicked</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">setFixedWidth</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setVerticalScrollBarPolicy</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">ScrollBarPolicy</span><span class="o">.</span><span class="n">ScrollBarAlwaysOff</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setHorizontalScrollBarPolicy</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">ScrollBarPolicy</span><span class="o">.</span><span class="n">ScrollBarAlwaysOff</span><span class="p">)</span>
 
 <div class="viewcode-block" id="QCompletionPopup.parentWidget"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.eval.QCompletionPopup.parentWidget">[docs]</a>    <span class="k">def</span> <span class="nf">parentWidget</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QEvalLineEdit</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">parentWidget</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="QCompletionPopup.resizeForContents"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.eval.QCompletionPopup.resizeForContents">[docs]</a>    <span class="k">def</span> <span class="nf">resizeForContents</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setFixedSize</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sizeHintForColumn</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">frameWidth</span><span class="p">()</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sizeHintForRow</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">frameWidth</span><span class="p">()</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">200</span><span class="p">),</span>
+        <span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">_on_item_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">QtW</span><span class="o">.</span><span class="n">QListWidgetItem</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parentWidget</span><span class="p">()</span><span class="o">.</span><span class="n">_complete_with_current_item</span><span class="p">()</span>
@@ -147,8 +158,24 @@
 <div class="viewcode-block" id="QCompletionPopup.setNext"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.eval.QCompletionPopup.setNext">[docs]</a>    <span class="k">def</span> <span class="nf">setNext</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setCurrentRow</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">currentRow</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="p">())</span></div>
 
+<div class="viewcode-block" id="QCompletionPopup.setNextPage"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.eval.QCompletionPopup.setNextPage">[docs]</a>    <span class="k">def</span> <span class="nf">setNextPage</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">h0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sizeHintForRow</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setCurrentRow</span><span class="p">(</span>
+            <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">currentRow</span><span class="p">()</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">()</span> <span class="o">//</span> <span class="n">h0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="QCompletionPopup.setLast"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.eval.QCompletionPopup.setLast">[docs]</a>    <span class="k">def</span> <span class="nf">setLast</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setCurrentRow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span></div>
+
 <div class="viewcode-block" id="QCompletionPopup.setPrevious"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.eval.QCompletionPopup.setPrevious">[docs]</a>    <span class="k">def</span> <span class="nf">setPrevious</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">setCurrentRow</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">currentRow</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="p">())</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setCurrentRow</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">currentRow</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="QCompletionPopup.setPreviousPage"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.eval.QCompletionPopup.setPreviousPage">[docs]</a>    <span class="k">def</span> <span class="nf">setPreviousPage</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">h0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sizeHintForRow</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setCurrentRow</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">currentRow</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">()</span> <span class="o">//</span> <span class="n">h0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="QCompletionPopup.setFirst"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.eval.QCompletionPopup.setFirst">[docs]</a>    <span class="k">def</span> <span class="nf">setFirst</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setCurrentRow</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="QEvalLineEdit"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.eval.QEvalLineEdit">[docs]</a><span class="k">class</span> <span class="nc">QEvalLineEdit</span><span class="p">(</span><span class="n">QtW</span><span class="o">.</span><span class="n">QLineEdit</span><span class="p">):</span>
@@ -203,6 +230,7 @@
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="c1"># don&#39;t show the list widget if there are no items</span>
                 <span class="k">return</span>
+        <span class="n">list_widget</span><span class="o">.</span><span class="n">resizeForContents</span><span class="p">()</span>
         <span class="n">list_widget</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mapToGlobal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cursorRect</span><span class="p">()</span><span class="o">.</span><span class="n">bottomRight</span><span class="p">()))</span>
         <span class="n">list_widget</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_list_widget</span> <span class="o">=</span> <span class="n">list_widget</span>
@@ -255,6 +283,7 @@
                 <span class="k">return</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_list_widget</span><span class="o">.</span><span class="n">addItems</span><span class="p">(</span><span class="n">items</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_list_widget</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mapToGlobal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cursorRect</span><span class="p">()</span><span class="o">.</span><span class="n">bottomLeft</span><span class="p">()))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_list_widget</span><span class="o">.</span><span class="n">resizeForContents</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">_complete_with</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">comp</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
@@ -274,11 +303,29 @@
                 <span class="k">return</span> <span class="kc">True</span>
             <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Key</span><span class="o">.</span><span class="n">Key_Down</span><span class="p">:</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_list_widget</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_list_widget</span><span class="o">.</span><span class="n">setNext</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">modifiers</span><span class="p">()</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">KeyboardModifier</span><span class="o">.</span><span class="n">NoModifier</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_list_widget</span><span class="o">.</span><span class="n">setNext</span><span class="p">()</span>
+                    <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">modifiers</span><span class="p">()</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">KeyboardModifier</span><span class="o">.</span><span class="n">ControlModifier</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_list_widget</span><span class="o">.</span><span class="n">setLast</span><span class="p">()</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="kc">False</span>
+                    <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Key</span><span class="o">.</span><span class="n">Key_PageDown</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_list_widget</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_list_widget</span><span class="o">.</span><span class="n">setNextPage</span><span class="p">()</span>
                     <span class="k">return</span> <span class="kc">True</span>
             <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Key</span><span class="o">.</span><span class="n">Key_Up</span><span class="p">:</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_list_widget</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_list_widget</span><span class="o">.</span><span class="n">setPrevious</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">modifiers</span><span class="p">()</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">KeyboardModifier</span><span class="o">.</span><span class="n">NoModifier</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_list_widget</span><span class="o">.</span><span class="n">setPrevious</span><span class="p">()</span>
+                    <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">modifiers</span><span class="p">()</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">KeyboardModifier</span><span class="o">.</span><span class="n">ControlModifier</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_list_widget</span><span class="o">.</span><span class="n">setFirst</span><span class="p">()</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="kc">False</span>
+                    <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Key</span><span class="o">.</span><span class="n">Key_PageUp</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_list_widget</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_list_widget</span><span class="o">.</span><span class="n">setPreviousPage</span><span class="p">()</span>
                     <span class="k">return</span> <span class="kc">True</span>
             <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Key</span><span class="o">.</span><span class="n">Key_Return</span><span class="p">:</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_list_widget</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -289,6 +336,11 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">_list_widget</span><span class="o">.</span><span class="n">deleteLater</span><span class="p">()</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_list_widget</span> <span class="o">=</span> <span class="kc">None</span>
                     <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">type</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QEvent</span><span class="o">.</span><span class="n">Type</span><span class="o">.</span><span class="n">Move</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_list_widget</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;moved&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_list_widget</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_list_widget</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">event</span><span class="p">(</span><span class="n">event</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">_complete_with_current_item</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -325,16 +377,16 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">namespace</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Namespace of the eval line edit.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Namespace of the eval line edit.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">MappingProxyType</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">namespace</span><span class="p">())</span>
 
     <span class="nd">@namespace</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">namespace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ns</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
-        <span class="sd">&quot;&quot;&quot;Set the namespace of the eval line edit.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the namespace of the eval line edit.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">setNamespace</span><span class="p">(</span><span class="n">ns</span><span class="p">)</span>
 
 <div class="viewcode-block" id="EvalLineEdit.eval"><a class="viewcode-back" href="../../../apidoc/magicclass.widgets.html#magicclass.widgets.eval.EvalLineEdit.eval">[docs]</a>    <span class="k">def</span> <span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Evaluate current text.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate current text.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">eval</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">namespace</span><span class="p">(),</span> <span class="p">{})</span></div></div>
 </pre></div>
 

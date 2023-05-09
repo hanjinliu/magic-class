@@ -159,7 +159,3 @@ purpose.
 
 ``SomeOf[...]`` returns a ``list[...]`` like type annotation based on the contents
 so that the function passes type checkers.
-
-.. note::
-
-    ``Choices`` can also be used as an alias of ``OneOf``.

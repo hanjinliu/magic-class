@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.ext.vispy.camera &mdash; magic-class 0.6.14 documentation</title>
+  <title>magicclass.ext.vispy.camera &mdash; magic-class 0.7.0rc0 documentation</title>
       <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/columns.css" type="text/css" />
@@ -25,14 +25,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../../index.html" class="icon icon-home"> magic-class
+
+
+
+          <a href="../../../../index.html" class="icon icon-home">
+            magic-class
           </a>
               <div class="version">
-                0.6.14
+                0.7.0rc0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -64,9 +68,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../../../index.html">Module code</a> &raquo;</li>
-      <li>magicclass.ext.vispy.camera</li>
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">magicclass.ext.vispy.camera</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -86,7 +90,7 @@
 
 
 <div class="viewcode-block" id="VispyCamera"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.camera.VispyCamera">[docs]</a><span class="k">class</span> <span class="nc">VispyCamera</span><span class="p">(</span><span class="n">scene</span><span class="o">.</span><span class="n">ArcballCamera</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The camera for the 3D view.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The camera for the 3D view.&quot;&quot;&quot;</span>
 
     <span class="n">changed</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">()</span>
 
@@ -99,7 +103,7 @@
 
 
 <div class="viewcode-block" id="EulerAngleEdit"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.camera.EulerAngleEdit">[docs]</a><span class="k">class</span> <span class="nc">EulerAngleEdit</span><span class="p">(</span><span class="n">Container</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The TupleEdit for Euler angles.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The TupleEdit for Euler angles.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -134,7 +138,7 @@
 
 
 <div class="viewcode-block" id="Camera"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.camera.Camera">[docs]</a><span class="k">class</span> <span class="nc">Camera</span><span class="p">(</span><span class="n">HasFields</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The camera interface for vispy canvas.</span>
 
 <span class="sd">    Attributes</span>
@@ -202,7 +206,7 @@
 
 <span class="c1"># copied from napari/_vispy/utils/quaternion.py</span>
 <div class="viewcode-block" id="quaternion2euler"><a class="viewcode-back" href="../../../../apidoc/magicclass.ext.vispy.html#magicclass.ext.vispy.camera.quaternion2euler">[docs]</a><span class="k">def</span> <span class="nf">quaternion2euler</span><span class="p">(</span><span class="n">quaternion</span><span class="p">,</span> <span class="n">degrees</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;Converts VisPy quaternion into euler angle representation.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts VisPy quaternion into euler angle representation.</span>
 
 <span class="sd">    Euler angles have degeneracies, so the output might different</span>
 <span class="sd">    from the Euler angles that might have been used to generate</span>

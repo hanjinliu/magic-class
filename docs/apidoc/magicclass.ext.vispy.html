@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.ext.vispy package &mdash; magic-class 0.6.14 documentation</title>
+  <title>magicclass.ext.vispy package &mdash; magic-class 0.7.0rc0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/columns.css" type="text/css" />
@@ -35,7 +35,7 @@
             magic-class
           </a>
               <div class="version">
-                0.6.14
+                0.7.0rc0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -58,20 +58,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../main/advanced/customize_macro.html">Customize Macro Recording</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../main/advanced/class_inheritance.html">Inherit Magic Class</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../main/advanced/api.html">API References</a><ul class="current">
-<li class="toctree-l3 current"><a class="reference internal" href="magicclass.html">magicclass package</a><ul class="current">
-<li class="toctree-l4 current"><a class="reference internal" href="magicclass.html#subpackages">Subpackages</a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.html#module-magicclass.command_palette">magicclass.command_palette module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.html#module-magicclass.core">magicclass.core module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.html#module-magicclass.help">magicclass.help module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.html#module-magicclass.plot_api">magicclass.plot_api module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.html#module-magicclass.signature">magicclass.signature module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.html#module-magicclass.testing">magicclass.testing module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.html#module-magicclass.types">magicclass.types module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.html#module-magicclass.wrappers">magicclass.wrappers module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.html#module-magicclass">Module contents</a></li>
-</ul>
-</li>
+<li class="toctree-l3"><a class="reference internal" href="magicclass.html">magicclass package</a></li>
 <li class="toctree-l3 current"><a class="reference internal" href="magicclass.ext.html">magicclass.ext package</a><ul class="current">
 <li class="toctree-l4 current"><a class="reference internal" href="magicclass.ext.html#subpackages">Subpackages</a></li>
 <li class="toctree-l4"><a class="reference internal" href="magicclass.ext.html#module-magicclass.ext">Module contents</a></li>
@@ -297,6 +284,23 @@ that are closer than the chosen epsilon from it.</p>
 <dt class="sig sig-object py" id="magicclass.ext.vispy.layer2d.Histogram">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">magicclass.ext.vispy.layer2d.</span></span><span class="sig-name descname"><span class="pre">Histogram</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">viewbox</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">vispy.scene.widgets.viewbox.ViewBox</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bins</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">face_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vispy/layer2d.html#Histogram"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.layer2d.Histogram" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">magicclass.ext.vispy._base.LayerItem</span></code></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.ext.vispy.layer2d.Histogram.color">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">color</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer2d.Histogram.color" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.ext.vispy.layer2d.Histogram.edge_color">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">edge_color</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#magicclass.ext.vispy.layer2d.Histogram.edge_color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Edge color of the data.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="magicclass.ext.vispy.layer2d.Histogram.face_color">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">face_color</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#magicclass.ext.vispy.layer2d.Histogram.face_color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Face color of the data.</p>
+</dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="magicclass.ext.vispy.layer2d.Histogram.name">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#magicclass.ext.vispy.layer2d.Histogram.name" title="Permalink to this definition">¶</a></dt>
@@ -704,12 +708,17 @@ always returns value itself.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="magicclass.ext.vispy.plot_api.gca">
-<span class="sig-prename descclassname"><span class="pre">magicclass.ext.vispy.plot_api.</span></span><span class="sig-name descname"><span class="pre">gca</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vispy/plot_api.html#gca"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.plot_api.gca" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">magicclass.ext.vispy.plot_api.</span></span><span class="sig-name descname"><span class="pre">gca</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#magicclass.ext.vispy.widgets2d.VispyPlotCanvas" title="magicclass.ext.vispy.widgets2d.VispyPlotCanvas"><span class="pre">magicclass.ext.vispy.widgets2d.VispyPlotCanvas</span></a></span></span><a class="reference internal" href="../_modules/magicclass/ext/vispy/plot_api.html#gca"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.plot_api.gca" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="magicclass.ext.vispy.plot_api.gcf">
 <span class="sig-prename descclassname"><span class="pre">magicclass.ext.vispy.plot_api.</span></span><span class="sig-name descname"><span class="pre">gcf</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vispy/plot_api.html#gcf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.plot_api.gcf" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="magicclass.ext.vispy.plot_api.hist">
+<span class="sig-prename descclassname"><span class="pre">magicclass.ext.vispy.plot_api.</span></span><span class="sig-name descname"><span class="pre">hist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bins</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">face_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'white'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#magicclass.ext.vispy.widgets2d.VispyPlotCanvas" title="magicclass.ext.vispy.widgets2d.VispyPlotCanvas"><span class="pre">magicclass.ext.vispy.widgets2d.VispyPlotCanvas</span></a></span></span><a class="reference internal" href="../_modules/magicclass/ext/vispy/plot_api.html#hist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.plot_api.hist" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
@@ -791,13 +800,38 @@ supports.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="magicclass.ext.vispy.widgets2d.Has2DViewBox.add_hist">
-<span class="sig-name descname"><span class="pre">add_hist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bins</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">face_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#magicclass.ext.vispy.layer2d.Histogram" title="magicclass.ext.vispy.layer2d.Histogram"><span class="pre">magicclass.ext.vispy.layer2d.Histogram</span></a></span></span><a class="reference internal" href="../_modules/magicclass/ext/vispy/widgets2d.html#Has2DViewBox.add_hist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.widgets2d.Has2DViewBox.add_hist" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">add_hist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bins</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">face_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'white'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#magicclass.ext.vispy.layer2d.Histogram" title="magicclass.ext.vispy.layer2d.Histogram"><span class="pre">magicclass.ext.vispy.layer2d.Histogram</span></a></span></span><a class="reference internal" href="../_modules/magicclass/ext/vispy/widgets2d.html#Has2DViewBox.add_hist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.widgets2d.Has2DViewBox.add_hist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a histogram like <code class="docutils literal notranslate"><span class="pre">plt.hist(x)</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>array-like</em>) -- Input 1D data.</p></li>
+<li><p><strong>bins</strong> (<em>int</em><em>, </em><em>default is 10</em>) -- Number of bins to draw the histogram.</p></li>
+<li><p><strong>face_color</strong> (<em>str</em><em> or </em><em>array-like</em><em>, </em><em>optional</em>) -- <dl class="simple">
+<dt>Face color of plot. Graphic object will be filled with this color.</dt><dd><p>edge_color: str or array-like, optional</p>
+</dd>
+<dt>Edge color of plot.</dt><dd><p>color: str or array-like, optional</p>
+</dd>
+<dt>Set face color and edge color at the same time.</dt><dd><p>name: str, optional</p>
+</dd>
+</dl>
+<p>Object name of the plot item.</p>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A plot item of a histogram.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.Histogram" title="magicclass.ext.pyqtgraph.graph_items.Histogram">Histogram</a></p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="magicclass.ext.vispy.widgets2d.Has2DViewBox.add_scatter">
 <span class="sig-name descname"><span class="pre">add_scatter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">face_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">7</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symbol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/ext/vispy/widgets2d.html#Has2DViewBox.add_scatter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.ext.vispy.widgets2d.Has2DViewBox.add_scatter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add a line plot like <code class="docutils literal notranslate"><span class="pre">plt.plot(x,</span> <span class="pre">y)</span></code>.</p>
+<dd><p>Add a scatter plot like <code class="docutils literal notranslate"><span class="pre">plt.scatter(x,</span> <span class="pre">y)</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -825,10 +859,10 @@ supports.</p>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>A plot item of a curve.</p>
+<dd class="field-even"><p>A plot item of a scatter.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.Curve" title="magicclass.ext.pyqtgraph.graph_items.Curve">Curve</a></p>
+<dd class="field-odd"><p><a class="reference internal" href="magicclass.ext.pyqtgraph.html#magicclass.ext.pyqtgraph.graph_items.Scatter" title="magicclass.ext.pyqtgraph.graph_items.Scatter">Scatter</a></p>
 </dd>
 </dl>
 </dd></dl>
