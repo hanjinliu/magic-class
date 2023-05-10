@@ -310,42 +310,41 @@ class MacroEdit(TabbedContainer):
         self.native.layout().setMenuBar(self._menubar)
 
         # fmt: off
-        self._file_menu = QtW.QMenu("File", self.native)
-        self._file_menu.setToolTipsVisible(True)
-        self._menubar.addMenu(self._file_menu)
+        _file_menu = QtW.QMenu("File", self.native)
+        _file_menu.setToolTipsVisible(True)
+        self._menubar.addMenu(_file_menu)
 
-        self._file_menu.addAction(_action("New window", self._new_window, tooltip="Open a new macro editor"))
-        self._file_menu.addSeparator()
-        self._file_menu.addAction(_action("Open file", self._load, "Ctrl+O", tooltip="Open a python file"))
-        self._file_menu.addAction(_action("Save", self._save, "Ctrl+S", tooltip="Save the macro as a python file"))
-        self._file_menu.addSeparator()
-        self._file_menu.addAction(_action("Close", self._close, tooltip="Close this macro editor"))
+        _file_menu.addAction(_action("New window", self._new_window, tooltip="Open a new macro editor", parent=_file_menu))
+        _file_menu.addSeparator()
+        _file_menu.addAction(_action("Open file", self._load, "Ctrl+O", tooltip="Open a python file", parent=_file_menu))
+        _file_menu.addAction(_action("Save", self._save, "Ctrl+S", tooltip="Save the macro as a python file", parent=_file_menu))
+        _file_menu.addSeparator()
+        _file_menu.addAction(_action("Close", self._close, tooltip="Close this macro editor", parent=_file_menu))
 
-        self._tab_menu = QtW.QMenu("Tab", self.native)
-        self._tab_menu.setToolTipsVisible(True)
-        self._menubar.addMenu(self._tab_menu)
-        self._tab_menu.addAction(_action("New tab", self._new_tab, "Ctrl+T", tooltip="Open a new empty tab"))
-        self._tab_menu.addAction(_action("Duplicate tab", self._duplicate_tab, "Ctrl+D", tooltip="Duplicate current tab as a new tab"))
-        self._tab_menu.addAction(_action("Current macro in new tab", self._create_native_duplicate, tooltip="Duplicate current GUI macro in a new tab"))
-        self._tab_menu.addAction(_action("Delete tab", self._delete_tab, "Ctrl+W", tooltip="Delete current tab"))
-        self._tab_menu.addSeparator()
-        self._tab_menu.addAction(_action("Zoom in", self._zoom_in, "Ctrl+Shift+.", tooltip="Zoom in the text"))
-        self._tab_menu.addAction(_action("Zoom out", self._zoom_out, "Ctrl+Shift+,", tooltip="Zoom out the text"))
+        _tab_menu = QtW.QMenu("Tab", self.native)
+        _tab_menu.setToolTipsVisible(True)
+        self._menubar.addMenu(_tab_menu)
+        _tab_menu.addAction(_action("New tab", self._new_tab, "Ctrl+T", tooltip="Open a new empty tab", parent=_tab_menu))
+        _tab_menu.addAction(_action("Duplicate tab", self._duplicate_tab, "Ctrl+D", tooltip="Duplicate current tab as a new tab", parent=_tab_menu))
+        _tab_menu.addAction(_action("Current macro in new tab", self._create_native_duplicate, tooltip="Duplicate current GUI macro in a new tab", parent=_tab_menu))
+        _tab_menu.addAction(_action("Delete tab", self._delete_tab, "Ctrl+W", tooltip="Delete current tab", parent=_tab_menu))
+        _tab_menu.addSeparator()
+        _tab_menu.addAction(_action("Zoom in", self._zoom_in, "Ctrl+Shift+.", tooltip="Zoom in the text", parent=_tab_menu))
+        _tab_menu.addAction(_action("Zoom out", self._zoom_out, "Ctrl+Shift+,", tooltip="Zoom out the text", parent=_tab_menu))
 
 
         # set macro menu
-        self._macro_menu = QtW.QMenu("Macro", self.native)
-        self._macro_menu.setToolTipsVisible(True)
-        self._menubar.addMenu(self._macro_menu)
+        _macro_menu = QtW.QMenu("Macro", self.native)
+        _macro_menu.setToolTipsVisible(True)
+        self._menubar.addMenu(_macro_menu)
 
-        self._macro_menu.addAction(_action("Execute", self.execute, "Ctrl+F5", tooltip="Execute the entire script of the current tab"))
-        self._macro_menu.addAction(_action("Execute selected lines", self._execute_selected, "Ctrl+Shift+F5", tooltip="Execute the selected lines of the current tab"))
-        self._macro_menu.addSeparator()
-        _action_start = _action("Start recording", self._start_recording, tooltip="Open a new tab and start recording GUI operations in it")
-        self._macro_menu.addAction(_action_start)
-        _action_finish = _action("Finish recording", self._finish_recording, tooltip="Finish the recording task started by 'Start recording' menu")
-        self._macro_menu.addAction(_action_finish)
-
+        _macro_menu.addAction(_action("Execute", self.execute, "Ctrl+F5", tooltip="Execute the entire script of the current tab", parent=_macro_menu))
+        _macro_menu.addAction(_action("Execute selected lines", self._execute_selected, "Ctrl+Shift+F5", tooltip="Execute the selected lines of the current tab", parent=_macro_menu))
+        _macro_menu.addSeparator()
+        _action_start = _action("Start recording", self._start_recording, tooltip="Open a new tab and start recording GUI operations in it", parent=_macro_menu)
+        _macro_menu.addAction(_action_start)
+        _action_finish = _action("Finish recording", self._finish_recording, tooltip="Finish the recording task started by 'Start recording' menu", parent=_macro_menu)
+        _macro_menu.addAction(_action_finish)
         _action_finish.setEnabled(False)
         _action_start.triggered.connect(lambda: _action_finish.setEnabled(True))
         _action_finish.triggered.connect(lambda: _action_finish.setEnabled(False))
@@ -357,17 +356,21 @@ class MacroEdit(TabbedContainer):
         )
         self._command_menu.native.setToolTipsVisible(True)
         self._menubar.addMenu(self._command_menu.native)
-        self._command_menu.native.addAction(_action("Create command", self._create_command, tooltip="Create a command using the selected lines"))
-        self._command_menu.native.addAction(_action("Rename command", self._rename_command, tooltip="Rename regeistered commands."))
+        self._command_menu.native.addAction(_action("Create command", self._create_command, tooltip="Create a command using the selected lines", parent=self._command_menu.native))
+        self._command_menu.native.addAction(_action("Rename command", self._rename_command, tooltip="Rename regeistered commands.", parent=self._command_menu.native))
         self._command_menu.native.addSeparator()
         # fmt: on
 
 
 def _action(
-    text: str, slot: Callable, shortcut: str | None = None, tooltip: str | None = None
+    text: str,
+    slot: Callable,
+    shortcut: str | None = None,
+    tooltip: str | None = None,
+    parent=None,
 ):
     """Create a QAction object. Backend compatible."""
-    action = QtW.QAction(text)
+    action = QtW.QAction(text, parent=parent)
     action.triggered.connect(slot)
     if shortcut:
         action.setShortcut(shortcut)
