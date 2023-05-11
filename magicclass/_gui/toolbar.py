@@ -24,7 +24,6 @@ from magicclass.signature import get_additional_option
 from magicclass.fields import MagicField
 from magicclass.widgets import FreeWidget, Separator
 from magicclass.utils import iter_members, Tooltips
-from magicclass.wrappers import abstractapi
 
 if TYPE_CHECKING:
     import napari
