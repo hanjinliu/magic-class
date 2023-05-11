@@ -75,6 +75,10 @@ class MagicClassLogger(logging.Logger):
         """Print matplotlib Figure object like inline plot."""
         self._widget.print_figure(fig)
 
+    def print_link(self, text: str, href: str):
+        """Print a hypter link in the logger widget."""
+        self._widget.print_link(text, href)
+
     def set_stdout(self):
         """A context manager for printing things in this widget."""
         return self._widget.set_stdout()

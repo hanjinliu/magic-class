@@ -3,12 +3,13 @@ import sys
 import logging
 from pathlib import Path
 from contextlib import contextmanager, suppress
+
 from qtpy import QtWidgets as QtW, QtGui, QtCore
 from qtpy.QtCore import Qt, Signal
 from magicgui.backends._qtpy.widgets import QBaseWidget
 from magicgui.widgets import Widget
 import logging
-from typing import TYPE_CHECKING, Any, Union, overload
+from typing import TYPE_CHECKING, Any, Union, overload, NamedTuple
 
 from magicclass.utils import rst_to_html
 
@@ -50,9 +51,60 @@ class Output:
     TEXT = 0
     HTML = 1
     IMAGE = 2
+    LINK = 3
 
 
-Printable = Union[str, QtGui.QImage]
+class linkedStr(NamedTuple):
+    text: str
+    link: str
+
+
+Printable = Union[str, QtGui.QImage, linkedStr]
+# HREF_PATTERN = re.compile(r"<a href=.+>.+</a>")
+
+
+class QFinderWidget(QtW.QWidget):
+    def __init__(self):
+        super().__init__()
+        _layout = QtW.QHBoxLayout(self)
+        _layout.setContentsMargins(2, 2, 2, 2)
+        self.setLayout(_layout)
+        _line = QtW.QLineEdit()
+        _btn_prev = QtW.QPushButton("▲")
+        _btn_next = QtW.QPushButton("▼")
+        _btn_prev.setFixedSize(20, 20)
+        _btn_next.setFixedSize(20, 20)
+        _layout.addWidget(_line)
+        _layout.addWidget(_btn_prev)
+        _layout.addWidget(_btn_next)
+        _btn_prev.clicked.connect(self._find_prev)
+        _btn_next.clicked.connect(self._find_next)
+        _line.editingFinished.connect(self._find_next)
+        self._line_edit = _line
+
+    if TYPE_CHECKING:
+
+        def parentWidget(self) -> QtLogger:
+            ...  # fmt: skip
+
+    def _find_prev(self):
+        qlogger = self.parentWidget()
+        flag = QtGui.QTextDocument.FindFlag.FindBackward
+        found = qlogger.find(self._line_edit.text(), flag)
+        if not found:
+            qlogger.moveCursor(QtGui.QTextCursor.MoveOperation.End)
+            exists = qlogger.find(self._line_edit.text(), flag)
+            if not exists:
+                QtW.QMessageBox.information(self, "Find", "No text matches.")
+
+    def _find_next(self):
+        qlogger = self.parentWidget()
+        found = qlogger.find(self._line_edit.text())
+        if not found:
+            qlogger.moveCursor(QtGui.QTextCursor.MoveOperation.Start)
+            exists = qlogger.find(self._line_edit.text())
+            if not exists:
+                QtW.QMessageBox.information(self, "Find", "No text matches.")
 
 
 class QtLogger(QtW.QTextEdit):
@@ -75,6 +127,8 @@ class QtLogger(QtW.QTextEdit):
                 menu.exec_(self.mapToGlobal(point))
 
         self._last_save_path = None
+        self._finder_widget = None
+        self._anchor = None
 
     def update(self, output: tuple[int, Printable]):
         output_type, obj = output
@@ -91,6 +145,15 @@ class QtLogger(QtW.QTextEdit):
             cursor.insertImage(obj)
             self.insertPlainText("\n\n")
             self.verticalScrollBar().setValue(self.verticalScrollBar().maximum())
+        elif output_type == Output.LINK:
+            linkedstr = linkedStr(*obj)
+            cursor = self.textCursor()
+            linkFormat = cursor.charFormat()
+            linkFormat.setAnchor(True)
+            linkFormat.setAnchorHref(linkedstr.link)
+            linkFormat.setFontUnderline(True)
+            linkFormat.setForeground(QtGui.QBrush(QtGui.QColor("blue")))
+            cursor.insertText(linkedstr.text, linkFormat)
         else:
             raise TypeError("Wrong type.")
         self._post_append()
@@ -107,6 +170,10 @@ class QtLogger(QtW.QTextEdit):
     def appendImage(self, qimage: QtGui.QImage):
         """Append image in the main thread."""
         self._emit_output(Output.IMAGE, qimage)
+
+    def appendHref(self, text: str, link: str):
+        """Append link in the main thread."""
+        self._emit_output(Output.LINK, linkedStr(text, link))
 
     def _emit_output(self, output: int, obj: Printable):
         with suppress(RuntimeError):
@@ -135,14 +202,16 @@ class QtLogger(QtW.QTextEdit):
     def _make_contextmenu(self, pos):
         """Reimplemented to return a custom context menu for images."""
         format = self.cursorForPosition(pos).charFormat()
-        name = format.stringProperty(QtGui.QTextFormat.Property.ImageName)
-        if name:
-            menu = QtW.QMenu(self)
-
+        menu = QtW.QMenu(self)
+        menu.addAction("Find ...", self._find_string)
+        menu.addAction("Export as HTML", self._export_as_html)
+        menu.addSeparator()
+        if name := format.stringProperty(QtGui.QTextFormat.Property.ImageName):
             menu.addAction("Copy Image", lambda: self._copy_image(name))
             menu.addAction("Save Image As...", lambda: self._save_image(name))
-            menu.addSeparator()
-            return menu
+        if name := format.stringProperty(QtGui.QTextFormat.Property.AnchorName):
+            menu.addAction("Copy Link", lambda: self._copy_link(name))
+        return menu
 
     def _copy_image(self, name):
         image = self._get_image(name)
@@ -164,6 +233,17 @@ class QtLogger(QtW.QTextEdit):
             self._last_save_path = Path(filename).parent
         return None
 
+    def _find_string(self):
+        if self._finder_widget is None:
+            self._finder_widget = QFinderWidget()
+        self._finder_widget.setParent(self, self.windowFlags())
+        self._finder_widget.show()
+
+    def _export_as_html(self):
+        from ._html import HtmlExporter
+
+        HtmlExporter(self).export()
+
     def _get_image(self, name):
         """Returns the QImage stored as the ImageResource with 'name'."""
         document = self.document()
@@ -171,6 +251,30 @@ class QtLogger(QtW.QTextEdit):
             QtGui.QTextDocument.ResourceType.ImageResource, QtCore.QUrl(name)
         )
         return image
+
+    def mousePressEvent(self, e: QtGui.QMouseEvent):
+        self._anchor = self.anchorAt(e.pos())
+        self.viewport().setCursor(
+            Qt.CursorShape.PointingHandCursor
+            if self._anchor
+            else Qt.CursorShape.IBeamCursor
+        )
+        return super().mousePressEvent(e)
+
+    def mouseMoveEvent(self, e: QtGui.QMouseEvent) -> None:
+        super().mouseMoveEvent(e)
+        _anchor = self.anchorAt(e.pos())
+        self.viewport().setCursor(
+            Qt.CursorShape.PointingHandCursor if _anchor else Qt.CursorShape.IBeamCursor
+        )
+        return None
+
+    def mouseReleaseEvent(self, e: QtGui.QMouseEvent):
+        _anchor = self.anchorAt(e.pos())
+        if self._anchor == _anchor:
+            QtGui.QDesktopServices.openUrl(QtCore.QUrl(self._anchor))
+        self._anchor = None
+        return super().mouseReleaseEvent(e)
 
 
 class Logger(Widget, logging.Handler):
@@ -342,6 +446,11 @@ class Logger(Widget, logging.Handler):
             )
 
         self.native.appendImage(image)
+        return None
+
+    def print_link(self, text: str, href: str):
+        """Print a link in the logger widget."""
+        self.native.appendHref(text, href)
         return None
 
     def print_figure(self, fig: mpl_Figure) -> None:
