@@ -63,48 +63,65 @@ Printable = Union[str, QtGui.QImage, linkedStr]
 # HREF_PATTERN = re.compile(r"<a href=.+>.+</a>")
 
 
-class QFinderWidget(QtW.QWidget):
-    def __init__(self):
-        super().__init__()
+class QFinderWidget(QtW.QDialog):
+    def __init__(self, parent: QtW.QWidget | None = None):
+        super().__init__(parent, Qt.WindowType.SubWindow)
         _layout = QtW.QHBoxLayout(self)
         _layout.setContentsMargins(2, 2, 2, 2)
         self.setLayout(_layout)
         _line = QtW.QLineEdit()
         _btn_prev = QtW.QPushButton("▲")
         _btn_next = QtW.QPushButton("▼")
-        _btn_prev.setFixedSize(20, 20)
-        _btn_next.setFixedSize(20, 20)
+        _btn_prev.setFixedSize(18, 18)
+        _btn_next.setFixedSize(18, 18)
         _layout.addWidget(_line)
         _layout.addWidget(_btn_prev)
         _layout.addWidget(_btn_next)
         _btn_prev.clicked.connect(self._find_prev)
         _btn_next.clicked.connect(self._find_next)
+        _line.textChanged.connect(self._find_next)
         _line.editingFinished.connect(self._find_next)
         self._line_edit = _line
 
+    # fmt: off
     if TYPE_CHECKING:
+        def parentWidget(self) -> QtLogger: ...
+    # fmt: on
 
-        def parentWidget(self) -> QtLogger:
-            ...  # fmt: skip
+    def lineEdit(self) -> QtW.QLineEdit:
+        return self._line_edit
 
     def _find_prev(self):
+        text = self._line_edit.text()
+        if text == "":
+            return
         qlogger = self.parentWidget()
         flag = QtGui.QTextDocument.FindFlag.FindBackward
-        found = qlogger.find(self._line_edit.text(), flag)
+        found = qlogger.find(text, flag)
         if not found:
             qlogger.moveCursor(QtGui.QTextCursor.MoveOperation.End)
-            exists = qlogger.find(self._line_edit.text(), flag)
-            if not exists:
-                QtW.QMessageBox.information(self, "Find", "No text matches.")
+            qlogger.find(text, flag)
 
     def _find_next(self):
+        text = self._line_edit.text()
+        if text == "":
+            return
         qlogger = self.parentWidget()
-        found = qlogger.find(self._line_edit.text())
+        found = qlogger.find(text)
         if not found:
             qlogger.moveCursor(QtGui.QTextCursor.MoveOperation.Start)
-            exists = qlogger.find(self._line_edit.text())
-            if not exists:
-                QtW.QMessageBox.information(self, "Find", "No text matches.")
+            qlogger.find(text)
+
+    def keyPressEvent(self, a0: QtGui.QKeyEvent) -> None:
+        if a0.key() == Qt.Key.Key_Escape:
+            self.hide()
+            self.parentWidget().setFocus()
+        elif a0.key() in (Qt.Key.Key_Enter, Qt.Key.Key_Return):
+            if a0.modifiers() & Qt.KeyboardModifier.ShiftModifier:
+                self._find_prev()
+            else:
+                self._find_next()
+        return super().keyPressEvent(a0)
 
 
 class QtLogger(QtW.QTextEdit):
@@ -235,9 +252,23 @@ class QtLogger(QtW.QTextEdit):
 
     def _find_string(self):
         if self._finder_widget is None:
-            self._finder_widget = QFinderWidget()
-        self._finder_widget.setParent(self, self.windowFlags())
+            self._finder_widget = QFinderWidget(self)
         self._finder_widget.show()
+        self._finder_widget.lineEdit().setFocus()
+        self._align_finder()
+
+    def resizeEvent(self, event):
+        if self._finder_widget is not None:
+            self._align_finder()
+        super().resizeEvent(event)
+
+    def _align_finder(self):
+        if fd := self._finder_widget:
+            vbar = self.verticalScrollBar()
+            if vbar.isVisible():
+                fd.move(self.width() - fd.width() - vbar.width() - 3, 5)
+            else:
+                fd.move(self.width() - fd.width() - 3, 5)
 
     def _export_as_html(self):
         from ._html import HtmlExporter
