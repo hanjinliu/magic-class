@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.logging.core &mdash; magic-class 0.7.0rc0 documentation</title>
+  <title>magicclass.logging.core &mdash; magic-class 0.7.0 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
@@ -32,7 +32,7 @@
             magic-class
           </a>
               <div class="version">
-                0.7.0rc0
+                0.7.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -156,6 +156,10 @@
 <div class="viewcode-block" id="MagicClassLogger.print_figure"><a class="viewcode-back" href="../../../apidoc/magicclass.logging.html#magicclass.logging.core.MagicClassLogger.print_figure">[docs]</a>    <span class="k">def</span> <span class="nf">print_figure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fig</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Print matplotlib Figure object like inline plot.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_widget</span><span class="o">.</span><span class="n">print_figure</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MagicClassLogger.print_link"><a class="viewcode-back" href="../../../apidoc/magicclass.logging.html#magicclass.logging.core.MagicClassLogger.print_link">[docs]</a>    <span class="k">def</span> <span class="nf">print_link</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">href</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Print a hypter link in the logger widget.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_widget</span><span class="o">.</span><span class="n">print_link</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">href</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="MagicClassLogger.set_stdout"><a class="viewcode-back" href="../../../apidoc/magicclass.logging.html#magicclass.logging.core.MagicClassLogger.set_stdout">[docs]</a>    <span class="k">def</span> <span class="nf">set_stdout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;A context manager for printing things in this widget.&quot;&quot;&quot;</span>
