@@ -80,7 +80,6 @@ class QFinderWidget(QtW.QDialog):
         _btn_prev.clicked.connect(self._find_prev)
         _btn_next.clicked.connect(self._find_next)
         _line.textChanged.connect(self._find_next)
-        _line.editingFinished.connect(self._find_next)
         self._line_edit = _line
 
     # fmt: off
