@@ -41,8 +41,10 @@ def _iter_method_with_button(ui):
             yield from _iter_method_with_button(child)
 
 
-def assert_function_gui_buildable(ui: MagicTemplate):
+def assert_function_gui_buildable(ui: MagicTemplate, skips: list = []):
     """Assert that all methods in ``ui`` can be built into GUI."""
 
     for method in _iter_method_with_button(ui):
-        get_function_gui(method)
+        if not method in skips:
+            fgui = get_function_gui(method)
+            fgui.__signature__.bind()
