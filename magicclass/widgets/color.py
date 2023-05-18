@@ -1,5 +1,6 @@
 from __future__ import annotations
 from typing import Iterable
+from PyQt5 import QtGui
 from qtpy.QtWidgets import (
     QLineEdit,
     QColorDialog,
@@ -45,6 +46,7 @@ class QColorSwatch(QFrame):
         self._color: tuple[float, float, float, float] = (0.0, 0.0, 0.0, 0.0)
         self.colorChanged.connect(self._update_swatch_style)
         self.setMinimumWidth(40)
+        self._pressed_pos = None
 
     def heightForWidth(self, w: int) -> int:
         return int(w * 0.667)
@@ -53,8 +55,22 @@ class QColorSwatch(QFrame):
         rgba = f'rgba({",".join(str(int(x*255)) for x in self._color)})'
         self.setStyleSheet("QColorSwatch {background-color: " + rgba + ";}")
 
-    def mouseReleaseEvent(self, event):
+    def mousePressEvent(self, a0: QtGui.QMouseEvent) -> None:
+        self._pressed_pos = self.mapToGlobal(a0.pos())
+        return super().mousePressEvent(a0)
+
+    def mouseReleaseEvent(self, event: QtGui.QMouseEvent) -> None:
         """Show QColorPopup picker when the user clicks on the swatch."""
+        # inside the widget?
+        if self._pressed_pos is None or not self.rect().contains(event.pos()):
+            return None
+        # moved?
+        pos = self.mapToGlobal(event.pos())
+        dx = self._pressed_pos.x() - pos.x()
+        dy = self._pressed_pos.y() - pos.y()
+        maxmove = 5
+        if dx**2 + dy**2 > maxmove**2:
+            return None
         if event.button() == Qt.MouseButton.LeftButton:
             initial = self.getQColor()
             dlg = QColorDialog(initial, self)
@@ -62,6 +78,7 @@ class QColorSwatch(QFrame):
             ok = dlg.exec_()
             if ok:
                 self.setColor(dlg.selectedColor())
+        self._pressed_pos = None
 
     def getQColor(self) -> QColor:
         return rgba_to_qcolor(self._color)
