@@ -1,3 +1,7 @@
+from magicclass import MagicTemplate, abstractapi, get_function_gui
+from magicclass._gui.mgui_ext import PushButtonPlus, Action
+
+
 class MockConfirmation:
     """Class used for confirmation test."""
 
@@ -27,6 +31,18 @@ class MockConfirmation:
         assert self.text is None and self.gui is None
 
 
-def click_methods(ui):
-    # TODO
-    ...
+def _iter_method_with_button(ui):
+    for child in ui:
+        if isinstance(child, (PushButtonPlus, Action)):
+            method = getattr(ui, child.name)
+            if callable(method) and not isinstance(method, abstractapi):
+                yield method
+        if isinstance(child, MagicTemplate):
+            yield from _iter_method_with_button(child)
+
+
+def assert_function_gui_buildable(ui: MagicTemplate):
+    """Assert that all methods in ``ui`` can be built into GUI."""
+
+    for method in _iter_method_with_button(ui):
+        get_function_gui(method)

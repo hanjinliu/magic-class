@@ -1056,6 +1056,10 @@ def _create_gui_method(self: BaseGui, obj: MethodType):
     return func
 
 
+class MagicGuiBuildError(RuntimeError):
+    """Error raised when magicgui cannot build a gui."""
+
+
 def _build_mgui(widget_: Action | PushButtonPlus, func: Callable, parent: BaseGui):
     """Build a magicgui from a function for the give button/action."""
     if widget_.mgui is not None:
@@ -1102,7 +1106,7 @@ def _build_mgui(widget_: Action | PushButtonPlus, func: Callable, parent: BaseGu
             f"{func.__name__}.\n{e.__class__.__name__}: {e}"
         )
         widget_.mgui = None
-        raise type(e)(msg)
+        raise MagicGuiBuildError(msg)
 
     return _connect_functiongui_event(mgui, opt)
 
