@@ -103,6 +103,7 @@ class QColormapEdit(QtW.QWidget):
     def __init__(self, parent: QtW.QWidget | None = None) -> None:
         super().__init__(parent)
         layout = QtW.QHBoxLayout(self)
+        layout.setContentsMargins(25, 20, 25, 20)
         self._qcmap = QColormap(self)
         self._handles: list[QColormapHandle] = []
         layout.addWidget(self._qcmap)
@@ -123,11 +124,9 @@ class QColormapEdit(QtW.QWidget):
         hsize = handle.size()
         size = self._qcmap.size()
         self._handles.append(handle)
-        rect = self._qcmap.rect()
-        pos = self._qcmap.mapToParent(self._qcmap.pos())
-        # pos = self._qcmap.pos()
+        pos = self._qcmap.pos()
         handle_pos = QtCore.QPoint(
-            val * (rect.width() + 1) - hsize.width() // 2 + pos.x(),
+            val * (self._qcmap.width() + 1) - hsize.width() // 2 + pos.x(),
             size.height() // 2 - hsize.height() // 2 + pos.y(),
         )
         handle.move(handle_pos)
@@ -136,21 +135,15 @@ class QColormapEdit(QtW.QWidget):
 
     def _handle_dragged(self, handle: QColormapHandle, delta: float):
         width = self._qcmap.width() + 1
-        posx = handle.mapToParent(handle.pos()).x() + delta + handle.width() // 2
-        pos = self._qcmap.mapToParent(self._qcmap.pos())
-        if posx < pos.x():
-            posx = pos.x()
-        if posx > pos.x() + width:
-            posx = pos.x() + width
+        posx = handle.pos().x() + delta + handle.width() // 2
+        pos = self._qcmap.pos()
+        posx = max(pos.x(), min(posx, pos.x() + width))
         dist = posx - pos.x()
         value = dist / width
         handle.setValue(value)
-        new = handle.mapFromParent(QtCore.QPoint(posx, 0))
         handle.move(
-            new.x() - handle.width() // 2, self.height() // 2 - handle.height() // 2
+            posx - handle.width() // 2, self.height() // 2 - handle.height() // 2
         )
-
-        print(value)
         self._update_colormap()
         return None
 
@@ -166,12 +159,11 @@ class QColormapEdit(QtW.QWidget):
         return None
 
     def resizeEvent(self, a0: QtGui.QResizeEvent) -> None:
-        rect = self._qcmap.rect()
-        pos = self._qcmap.mapToParent(self._qcmap.pos())
+        pos = self._qcmap.pos()
         for handle in self._handles:
             val = handle.value()
             handle.move(
-                val * (rect.width() + 1) - handle.width() // 2 + pos.x(),
+                val * (self._qcmap.width() + 1) - handle.width() // 2 + pos.x(),
                 self.height() // 2 - handle.height() // 2,
             )
         return super().resizeEvent(a0)
