@@ -30,16 +30,16 @@ class QColormapHandle(QtW.QFrame):
         layout.addWidget(self._swatch)
         self.setLayout(layout)
 
-        self.setFixedSize(40, 40)
+        self.setFixedSize(20, 32)
         self._drag_start: QtCore.QPoint | None = None
         self._value = 0.0
 
         # https://stackoverflow.com/questions/48100574/how-to-create-a-qwidget-with-a-triangle-shape
-        _path = QtGui.QPainterPath()
-        _path.moveTo(QtCore.QPoint(20, 20))
-        _path.lineTo(QtCore.QPoint(80, 20))
-        _path.lineTo(QtCore.QPoint(50, 80))
-        _path.lineTo(QtCore.QPoint(20, 20))
+        # _path = QtGui.QPainterPath()
+        # _path.moveTo(QtCore.QPoint(20, 20))
+        # _path.lineTo(QtCore.QPoint(80, 20))
+        # _path.lineTo(QtCore.QPoint(50, 80))
+        # _path.lineTo(QtCore.QPoint(20, 20))
         # self._region = QtGui.QRegion(QtGui.QPolygonF(_path))
         # self.setMask(self._region)
 
@@ -135,35 +135,43 @@ class QColormapEdit(QtW.QWidget):
 
     def _handle_dragged(self, handle: QColormapHandle, delta: float):
         width = self._qcmap.width() + 1
-        posx = handle.pos().x() + delta + handle.width() // 2
         pos = self._qcmap.pos()
-        posx = max(pos.x(), min(posx, pos.x() + width))
-        dist = posx - pos.x()
+        hx = handle.pos().x() + delta + handle.width() // 2
+        hx = max(pos.x(), min(hx, pos.x() + width))
+        dist = hx - pos.x()
         value = dist / width
         handle.setValue(value)
         handle.move(
-            posx - handle.width() // 2, self.height() // 2 - handle.height() // 2
+            int(hx) - handle.width() // 2, self.height() // 2 - handle.height() // 2
         )
         self._update_colormap()
         return None
 
-    def makeColormap(self):
+    def _make_colormap(self) -> dict[float, QtGui.QColor]:
         cmap = {}
         for handle in self._handles:
             cmap[handle.value()] = handle.color()
         return cmap
 
     def _update_colormap(self):
-        cmap = self.makeColormap()
+        cmap = self._make_colormap()
         self._qcmap.setColormap(cmap)
         return None
 
     def resizeEvent(self, a0: QtGui.QResizeEvent) -> None:
         pos = self._qcmap.pos()
+        width = self._qcmap.width() + 1
         for handle in self._handles:
             val = handle.value()
             handle.move(
-                val * (self._qcmap.width() + 1) - handle.width() // 2 + pos.x(),
+                int(val * width - handle.width() // 2 + pos.x()),
                 self.height() // 2 - handle.height() // 2,
             )
         return super().resizeEvent(a0)
+
+    def colormap(self) -> dict[float, tuple[float, float, float, float]]:
+        return {k: v.getRgbF() for k, v in self._qcmap.colormap().items()}
+
+    def setColormap(self, cmap: dict[float, tuple[float, float, float, float]]):
+        self._qcmap.setColormap({k: QtGui.QColor.fromRgbF(*v) for k, v in cmap.items()})
+        return None
