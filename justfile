@@ -9,3 +9,10 @@ watch-rst:
 
 test:
     hatch -v run test:run
+
+remove-cache:
+	#!python
+	from pathlib import Path
+
+	for path in Path(".").glob("**/__pycache__/*"):
+		path.unlink(missing_ok=False)

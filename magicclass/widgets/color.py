@@ -1,5 +1,6 @@
 from __future__ import annotations
-from typing import Iterable
+from functools import lru_cache
+from typing import Any, Callable, Iterable
 from qtpy import QtGui, QtCore, QtWidgets as QtW
 from qtpy.QtCore import Qt, Signal as QtSignal
 
@@ -82,12 +83,31 @@ class QColorSwatch(QtW.QFrame):
         return super().event(event)
 
 
-class QColorLineEdit(QtW.QLineEdit):
-    def __init__(self, parent=None):
-        super().__init__(parent)
+@lru_cache(maxsize=1)
+def _get_color_converter() -> Callable[[Any], tuple[float, float, float, float]]:
+    """Get a function that converts a color to a tuple of floats."""
+    import pkgutil
+
+    all_pkg = set(pkgutil.iter_importers())
+    if "cmap" in all_pkg:
+        import cmap
+
+        return lambda x: cmap.Color(x).rgba
+    elif "matplotlib" in all_pkg:
         import matplotlib.colors
 
-        self._color_converter = matplotlib.colors.to_rgba
+        return matplotlib.colors.to_rgba
+    elif "vispy" in all_pkg:
+        from vispy import color as vispycolor
+
+        return lambda x: tuple(vispycolor.Color(x).rgba)
+    else:
+        return lambda x: QtGui.QColor(x).getRgbF()
+
+
+class QColorLineEdit(QtW.QLineEdit):
+    def _color_converter(self, x):
+        return _get_color_converter()(x)
 
     def setText(self, color: str | Iterable[float]):
         """Set the text of the lineEdit using any ColorType.
