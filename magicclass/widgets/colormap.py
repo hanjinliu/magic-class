@@ -6,6 +6,7 @@ from qtpy.QtCore import Qt, Signal as QtSignal
 from magicgui.widgets.bases import ValueWidget
 from magicgui.backends._qtpy.widgets import QBaseValueWidget
 from magicgui.application import use_app
+
 from .utils import merge_super_sigs
 from .color import QColorSwatch
 
@@ -106,6 +107,24 @@ class QColormap(QtW.QLabel):
         return None
 
 
+def _get_float_spinbox(value: float) -> tuple[QtW.QWidget, QtW.QDoubleSpinBox]:
+    spin = QtW.QDoubleSpinBox()
+    spin.setMinimum(0.0)
+    spin.setMaximum(1.0)
+    spin.setValue(value)
+    spin.setSingleStep(0.01)
+    label = QtW.QLabel("Value")
+    metric = QtGui.QFontMetrics(label.font())
+    label.setFixedWidth(metric.width(label.text()) + 10)
+    widget = QtW.QWidget()
+    _layout = QtW.QHBoxLayout(widget)
+    _layout.setContentsMargins(0, 0, 0, 0)
+    widget.setLayout(_layout)
+    widget.layout().addWidget(label)
+    widget.layout().addWidget(spin)
+    return widget, spin
+
+
 class QColormapEdit(QtW.QWidget):
     colormapChanged = QtSignal(dict)
 
@@ -126,6 +145,15 @@ class QColormapEdit(QtW.QWidget):
         self._qcmap.customContextMenuRequested.connect(self._show_cmap_context_menu)
         self._qcmap.doubleClicked.connect(self._add_section)
 
+        self.setHandleFrameColor(QtGui.QColor("gray"))
+
+    def setHandleFrameColor(self, col: QtGui.QColor):
+        c0 = col.lighter(120).name()
+        c1 = col.darker(120).name()
+        ss = f"qlineargradient( x1: 0 y1: 0, x2: 0 y2: 1, stop:0 {c0}, stop:1 {c1})"
+        self.setStyleSheet(f"QColormapHandle {{ background: {ss}; }}")
+        return None
+
     def addHandleAt(self, val: float, color: QtGui.QColor):
         if not 0 <= val <= 1:
             raise ValueError("pos must be between 0 and 1")
@@ -137,9 +165,19 @@ class QColormapEdit(QtW.QWidget):
     def _add_handle_no_check(self, val: float, color: QtGui.QColor):
         handle = QColormapHandle(self)
         handle.colorChanged.connect(self._update_colormap)
-        handle.setColor(color)
-        handle.setValue(val)
         handle.show()
+        handle.setColor(color)
+        self._set_handle_value(handle, val)
+        handle.dragged.connect(lambda delta: self._handle_dragged(handle, delta))
+        handle.dragFinished.connect(self._sort_handle_list)
+        handle._swatch.customContextMenuRequested.connect(
+            lambda pos: self._show_color_context_menu(pos, handle)
+        )
+        handle._swatch._tooltip = lambda: self._swatch_tooltip(handle)
+        return None
+
+    def _set_handle_value(self, handle: QColormapHandle, val: float):
+        handle.setValue(val)
         hsize = handle.size()
         size = self._qcmap.size()
         self._handles.append(handle)
@@ -149,12 +187,6 @@ class QColormapEdit(QtW.QWidget):
             size.height() // 2 - hsize.height() // 2 + pos.y(),
         )
         handle.move(handle_pos)
-        handle.dragged.connect(lambda delta: self._handle_dragged(handle, delta))
-        handle.dragFinished.connect(self._sort_handle_list)
-        handle._swatch.customContextMenuRequested.connect(
-            lambda pos: self._show_color_context_menu(pos, handle)
-        )
-        handle._swatch._tooltip = lambda: self._swatch_tooltip(handle)
         return None
 
     def removeHandle(self, handle: QColormapHandle):
@@ -183,14 +215,17 @@ class QColormapEdit(QtW.QWidget):
         )
         self._update_colormap()
 
-        gpos = self.mapToGlobal(handle.pos())
+        tooltip_pos = self._handle_pos(handle)
         txt = self._make_tooltip_text(value, handle.color())
-        tooltip_pos = QtCore.QPoint(
-            gpos.x() + handle.width() // 2,
-            gpos.y() + handle.height(),
-        )
         QtW.QToolTip.showText(tooltip_pos, txt, self)
         return None
+
+    def _handle_pos(self, handle: QColormapHandle) -> QtCore.QPoint:
+        gpos = self.mapToGlobal(handle.pos())
+        return QtCore.QPoint(
+            gpos.x() + handle.width() // 2,
+            gpos.y() + handle.height() // 2,
+        )
 
     def _sort_handle_list(self):
         # sort handles by its value
@@ -223,6 +258,20 @@ class QColormapEdit(QtW.QWidget):
         )
         if len(self._handles) == 2:
             action.setEnabled(False)
+        set_val = QtW.QWidgetAction(menu)
+
+        labeled_spin, spin = _get_float_spinbox(handle.value())
+        set_val.setDefaultWidget(labeled_spin)
+
+        @spin.valueChanged.connect
+        def _():
+            self._set_handle_value(handle, spin.value())
+            pos = self._handle_pos(handle)
+            pos.setY(menu.pos().y())
+            menu.move(pos)
+            self._update_colormap()
+
+        menu.addAction(set_val)
         menu.exec(handle._swatch.mapToGlobal(pos))
 
     def _add_section(self, pos: QtCore.QPoint) -> None:
@@ -285,19 +334,6 @@ class QColormapEdit(QtW.QWidget):
                 txt = self._make_tooltip_text(val, color)
                 QtW.QToolTip.showText(pos, txt, self)
                 return True
-        elif a0.type() == QtCore.QEvent.Type.ParentChange:
-            # get parent background color
-            pal = self.parentWidget().palette()
-            bg = pal.color(QtGui.QPalette.ColorRole.Background)
-            if sum(bg.getRgb()) < 383:
-                c0 = bg.lighter(120).name()
-                c1 = bg.lighter(110).name()
-            else:
-                c0 = bg.darker(110).name()
-                c1 = bg.darker(120).name()
-            ss = f"qlineargradient( x1: 0 y1: 0, x2: 0 y2: 1, stop:0 {c0}, stop:1 {c1})"
-            self.setStyleSheet(f"QColormapHandle {{ background: {ss}; }}")
-            return True
 
         return super().event(a0)
 
