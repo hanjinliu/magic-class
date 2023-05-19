@@ -64,6 +64,16 @@ def _iter_method_with_button_or_gui(
             yield child
 
 
+def _qualname(method: MethodType):
+    try:
+        qualname = method.__qualname__
+    except Exception:
+        return str(method)
+    if not isinstance(qualname, str):
+        return str(method)
+    return qualname.rsplit("<locals>", 1)[-1]
+
+
 def check_function_gui_buildable(ui: MagicTemplate, skips: list = []):
     """Assert that all methods in ``ui`` can be built into GUI."""
 
@@ -73,7 +83,9 @@ def check_function_gui_buildable(ui: MagicTemplate, skips: list = []):
             try:
                 fgui = get_function_gui(method)
             except MagicGuiBuildError as e:
-                failed.append(("Error on building FunctionGui.", method, str(e)))
+                failed.append(
+                    ("Error on building FunctionGui.", _qualname(method), str(e))
+                )
                 continue
 
             try:
@@ -87,16 +99,20 @@ def check_function_gui_buildable(ui: MagicTemplate, skips: list = []):
                         kwargs[param.name] = object()  # dummy object
             except Exception as e:
                 failed.append(
-                    ("Untrackable error on refering signature.", method, str(e))
+                    (
+                        "Untrackable error on refering signature.",
+                        _qualname(method),
+                        str(e),
+                    )
                 )
                 continue
 
             try:
                 sig.bind()  # raise TypeError if not correctly defined
             except TypeError as e:
-                failed.append(("Wrong function signature.", method, str(e)))
+                failed.append(("Wrong function signature.", _qualname(method), str(e)))
             except Exception as e:
-                failed.append(("Untrackable error.", method, str(e)))
+                failed.append(("Untrackable error.", _qualname(method), str(e)))
 
     if failed:
         txt = "\n".join(f"{obj!r}: {typ} {msg}" for typ, obj, msg in failed)
@@ -121,7 +137,9 @@ def check_tooltip(ui: MagicTemplate):
             for arg in tooltips.parameters:
                 params = set(inspect.signature(obj).parameters.keys())
                 if arg not in params:
-                    failed.append((obj, f"{arg!r} not found in method {obj!r}"))
+                    failed.append(
+                        (obj, f"{arg!r} not found in method {_qualname(obj)}")
+                    )
 
     if failed:
         txt = "\n".join(f"{obj!r}: {msg}" for obj, msg in failed)
