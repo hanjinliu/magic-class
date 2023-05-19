@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Literal, Union, Iterable
+from typing import Literal, Union, Iterable, Dict
 import datetime
 import pathlib
 
@@ -58,6 +58,7 @@ PopUpModeStr = Literal[
 ErrorModeStr = Literal["msgbox", "stderr", "stdout"]
 
 Color = Union[Iterable[float], str]
+Colormap = Dict[float, Color]
 
 MGUI_SIMPLE_TYPES = (
     Union[

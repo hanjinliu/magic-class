@@ -1,3 +1,4 @@
+from magicclass.widgets import ColorEdit, ColormapEdit
 from magicclass.widgets.eval import _get_last_group
 import pytest
 
@@ -13,3 +14,24 @@ import pytest
 )
 def test_get_last(text: str, expected: str):
     assert _get_last_group(text) == expected
+
+@pytest.mark.parametrize(
+    "color",
+    ["red", "#FF0000", "#FF0000AF", "#ff00ad", [0, 0.3, 0.2], [0.1, 0.2, 0.3, 0.4]]
+)
+def test_color(color):
+    edit = ColorEdit(value=color)
+    edit.value = color
+
+@pytest.mark.parametrize(
+    "cmap",
+    [
+        {0: [1, 1, 1], 1: [0, 1, 1]},
+        {0: [1, 1, 1, 1], 1: [0, 1, 1, 1]},
+        {0: [1, 1, 1], 0.4: [0, 1, 1], 1: [1, 0, 0]},
+        {0: "red", 1: [0, 1, 1]}
+    ]
+)
+def test_cmap(cmap):
+    edit = ColormapEdit(value=cmap)
+    edit.value = cmap
