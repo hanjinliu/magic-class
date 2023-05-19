@@ -1,6 +1,5 @@
 from __future__ import annotations
 from typing import Any, TYPE_CHECKING
-from PyQt5 import QtGui
 from qtpy import QtWidgets as QtW, QtGui, QtCore
 from qtpy.QtCore import Qt, Signal as QtSignal
 
@@ -115,6 +114,7 @@ class QColormapEdit(QtW.QWidget):
         layout = QtW.QHBoxLayout(self)
         layout.setContentsMargins(25, 10, 25, 10)
         self._qcmap = QColormap(self)
+        self._limits = (0.0, 1.0)
         self._handles: list[QColormapHandle] = []
         layout.addWidget(self._qcmap)
         self.setLayout(layout)
@@ -154,6 +154,8 @@ class QColormapEdit(QtW.QWidget):
         handle._swatch.customContextMenuRequested.connect(
             lambda pos: self._show_color_context_menu(pos, handle)
         )
+        handle._swatch._tooltip = lambda: self._swatch_tooltip(handle)
+        return None
 
     def removeHandle(self, handle: QColormapHandle):
         if len(self._handles) <= 2:
@@ -180,6 +182,14 @@ class QColormapEdit(QtW.QWidget):
             int(hx) - handle.width() // 2, self.height() // 2 - handle.height() // 2
         )
         self._update_colormap()
+
+        gpos = self.mapToGlobal(handle.pos())
+        txt = self._make_tooltip_text(value, handle.color())
+        tooltip_pos = QtCore.QPoint(
+            gpos.x() + handle.width() // 2,
+            gpos.y() + handle.height(),
+        )
+        QtW.QToolTip.showText(tooltip_pos, txt, self)
         return None
 
     def _sort_handle_list(self):
@@ -222,22 +232,18 @@ class QColormapEdit(QtW.QWidget):
         val = max(0, min(val, 1))
         self.addHandleAt(val, self._color_at(pos))
 
-    def _value_at(self, pos: QtCore.QPoint) -> float:
+    def _rel_value_at(self, pos: QtCore.QPoint) -> float:
         width = self._qcmap.width() + 1
         return pos.x() / width
 
-    def _color_at(self, pos: QtCore.QPoint) -> QtGui.QColor:
-        val = self._value_at(pos)
-
-        # linear interpolation
+    def _map_value(self, rval: float) -> QtGui.QColor:
         cmap = self.colormap()
         clow = chigh = None
-        ratio = val
         for v, col in cmap.items():
-            if v > val:
+            if v > rval:
                 chigh = col
                 break
-            ratio = val - v
+            ratio = rval - v
             clow = col
         if clow is None:
             return QtGui.QColor.fromRgbF(*chigh)
@@ -247,19 +253,38 @@ class QColormapEdit(QtW.QWidget):
             *[l * ratio + h * (1 - ratio) for l, h in zip(clow, chigh)]
         )
 
+    def _color_at(self, pos: QtCore.QPoint) -> QtGui.QColor:
+        return self._map_value(self._rel_value_at(pos))
+
+    def _transform_value(self, rval: float) -> float:
+        l, h = self._limits
+        return rval * (h - l) + l
+
+    def _make_tooltip_text(self, rval: float, color: QtGui.QColor):
+        _r, _g, _b, _a = color.getRgb()
+        val = self._transform_value(rval)
+        txt = f"value = {val:3g}\nR: {_r}\nG: {_g}\nB: {_b}"
+        if _a < 0:
+            txt *= f"\n {_a}"
+        return txt
+
+    def _swatch_tooltip(self, handle: QColormapHandle) -> str:
+        rval = handle.value()
+        color = self._map_value(rval)
+        return self._make_tooltip_text(rval, color)
+
     def event(self, a0: QtCore.QEvent) -> bool:
         if a0.type() == QtCore.QEvent.Type.ToolTip:
             a0 = QtGui.QHelpEvent(a0)
             pos = self.mapToGlobal(a0.pos())
             localpos = self._qcmap.mapFromGlobal(pos)
-            val = self._value_at(localpos)
-            if 0 <= val <= 1:
+            rval = self._rel_value_at(localpos)
+            if 0.0 <= rval <= 1.0:
                 color = self._color_at(localpos)
-                _r, _g, _b, _a = color.getRgb()
-                txt = f"Position = {val:3f}\nR: {_r}\nG: {_g}\nB {_b}\n"
-                if _a < 0:
-                    txt *= f"\n {_a}"
+                val = self._transform_value(rval)
+                txt = self._make_tooltip_text(val, color)
                 QtW.QToolTip.showText(pos, txt, self)
+                return True
         elif a0.type() == QtCore.QEvent.Type.ParentChange:
             # get parent background color
             pal = self.parentWidget().palette()
@@ -272,6 +297,7 @@ class QColormapEdit(QtW.QWidget):
                 c1 = bg.darker(120).name()
             ss = f"qlineargradient( x1: 0 y1: 0, x2: 0 y2: 1, stop:0 {c0}, stop:1 {c1})"
             self.setStyleSheet(f"QColormapHandle {{ background: {ss}; }}")
+            return True
 
         return super().event(a0)
 
