@@ -1,13 +1,26 @@
 from __future__ import annotations
-from typing import Any, Callable, TypedDict
+
+from typing import Any, Callable, TypedDict, overload, Literal, TYPE_CHECKING
 from typing_extensions import _AnnotatedAlias, get_args
+
 from magicgui.signature import MagicSignature
 from magicgui.widgets import FunctionGui
 import inspect
+
+from macrokit import Mock
 from magicclass.utils import get_signature
 
+if TYPE_CHECKING:
+    from magicclass._gui import BaseGui
 
-class AdditionalOptions(TypedDict):
+
+class ConfirmDict(TypedDict):
+    text: str
+    condition: str | Mock | Callable
+    callback: Callable[[str, BaseGui], Any]
+
+
+class AdditionalOptions(TypedDict, total=False):
     record: bool
     keybinding: str
     into: str
@@ -15,6 +28,7 @@ class AdditionalOptions(TypedDict):
     moveto: str
     gui: bool
     on_called: list[Callable]
+    confirm: ConfirmDict
 
 
 def upgrade_signature(
@@ -76,7 +90,23 @@ def upgrade_signature(
     return func
 
 
-def get_additional_option(obj: Any, option: str, default: Any = None):
+# fmt: off
+@overload
+def get_additional_option(obj: Any, option: Literal["preview"], default: Any = None) -> tuple[str, bool, Callable]: ...
+@overload
+def get_additional_option(obj: Any, option: Literal["confirm"], default: Any = None) -> ConfirmDict: ...
+@overload
+def get_additional_option(obj: Any, option: Literal["gui"], default: Any = None) -> bool: ...
+@overload
+def get_additional_option(obj: Any, option: Literal["record"], default: Any = None) -> str: ...
+@overload
+def get_additional_option(obj: Any, option: Literal["setup"], default: Any = None) -> Callable: ...
+@overload
+def get_additional_option(obj: Any, option: str, default: Any = None) -> Any: ...
+# fmt: on
+
+
+def get_additional_option(obj, option, default=None):
     """Safely get an additional option from any objects."""
     if isinstance(obj, FunctionGui):
         sig = getattr(obj._function, "__signature__", None)
