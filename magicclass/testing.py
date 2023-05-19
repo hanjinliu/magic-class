@@ -41,7 +41,11 @@ class MockConfirmation:
 
 
 def _iter_method_with_button(ui: MagicTemplate) -> Iterator[MethodType]:
+    processed = set()
     for child in ui:
+        if id(child) in processed:
+            continue
+        processed.add(id(child))
         if isinstance(child, (PushButtonPlus, Action)):
             method = getattr(ui, child.name)
             if callable(method) and not isinstance(method, abstractapi):
@@ -49,28 +53,44 @@ def _iter_method_with_button(ui: MagicTemplate) -> Iterator[MethodType]:
         if isinstance(child, MagicTemplate):
             yield from _iter_method_with_button(child)
 
+    for child in ui.__magicclass_children__:
+        if id(child) in processed:
+            continue
+        processed.add(id(child))
+        yield from _iter_method_with_button(child)
+
 
 def _iter_method_with_button_or_gui(
     ui: MagicTemplate,
 ) -> Iterator[MethodType | MagicTemplate]:
     yield ui
+    processed = set()
     for child in ui:
+        if id(child) in processed:
+            continue
+        processed.add(id(child))
+
         if isinstance(child, (PushButtonPlus, Action)):
             method = getattr(ui, child.name)
             if callable(method) and not isinstance(method, abstractapi):
                 yield method
         if isinstance(child, MagicTemplate):
             yield from _iter_method_with_button_or_gui(child)
-            yield child
+
+    for child in ui.__magicclass_children__:
+        if id(child) in processed:
+            continue
+        processed.add(id(child))
+        yield from _iter_method_with_button_or_gui(child)
 
 
-def _qualname(method: MethodType):
+def _qualname(obj: MethodType | type):
     try:
-        qualname = method.__qualname__
+        qualname = obj.__qualname__
     except Exception:
-        return str(method)
+        return str(obj)
     if not isinstance(qualname, str):
-        return str(method)
+        return str(obj)
     return qualname.rsplit("<locals>", 1)[-1]
 
 
@@ -87,15 +107,20 @@ def check_function_gui_buildable(ui: MagicTemplate, skips: list = []):
                     ("Error on building FunctionGui.", _qualname(method), str(e))
                 )
                 continue
-
+            try:
+                sig = fgui.__signature__
+            except Exception as e:
+                failed.append(
+                    ("Failed to get FunctionGui signature.", _qualname(method), str(e))
+                )
+                continue
             try:
                 method_sig = getattr(method, "__signature__", None)
-                sig = fgui.__signature__
                 if method_sig is None:
                     method_sig = sig
                 kwargs = {}
                 for param in method_sig.parameters.values():
-                    if param.default is param.empty and "bind" in param.options:
+                    if "bind" in param.options:
                         kwargs[param.name] = object()  # dummy object
             except Exception as e:
                 failed.append(
@@ -108,14 +133,14 @@ def check_function_gui_buildable(ui: MagicTemplate, skips: list = []):
                 continue
 
             try:
-                sig.bind()  # raise TypeError if not correctly defined
+                sig.bind(**kwargs)  # raise TypeError if not correctly defined
             except TypeError as e:
                 failed.append(("Wrong function signature.", _qualname(method), str(e)))
             except Exception as e:
                 failed.append(("Untrackable error.", _qualname(method), str(e)))
 
     if failed:
-        txt = "\n".join(f"{obj!r}: {typ} {msg}" for typ, obj, msg in failed)
+        txt = "\n".join(f"{_qualname(obj)}: {typ} {msg}" for typ, obj, msg in failed)
         raise AssertionError(txt)
 
 
@@ -127,11 +152,18 @@ def check_tooltip(ui: MagicTemplate):
         tooltips = Tooltips(obj)
         if isinstance(obj, MagicTemplate):
             for attr in tooltips.attributes:
-                if not isinstance(
-                    getattr(ui.__class__, attr, None), (Widget, _FieldObject)
+                if not hasattr(obj, attr):
+                    failed.append(
+                        (obj, f"{_qualname(obj)} does not have attribute {attr!r}.")
+                    )
+                elif not isinstance(
+                    getattr(obj.__class__, attr, None), (Widget, _FieldObject)
                 ):
                     failed.append(
-                        (obj, f"Widget or field named {attr!r} not found in {ui!r}")
+                        (
+                            obj,
+                            f"Widget or field named {attr!r} not found in {_qualname(obj)}",
+                        )
                     )
         else:
             for arg in tooltips.parameters:
@@ -142,5 +174,5 @@ def check_tooltip(ui: MagicTemplate):
                     )
 
     if failed:
-        txt = "\n".join(f"{obj!r}: {msg}" for obj, msg in failed)
+        txt = "\n".join(f"{_qualname(obj)}: {msg}" for obj, msg in failed)
         raise AssertionError(f"Tooltip check failed:\n\n{txt}")

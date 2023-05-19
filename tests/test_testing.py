@@ -1,5 +1,5 @@
 from typing import Annotated
-from magicclass import magicclass, abstractapi, vfield
+from magicclass import magicclass, abstractapi, field, vfield
 from magicclass.types import Bound
 from magicclass.testing import check_function_gui_buildable, check_tooltip
 import pytest
@@ -125,8 +125,12 @@ def test_tooltip_check():
         ----------
         x : int
             description about x
+        y : str
+            description about y
         """
         x = vfield(1)
+        y = field(str)
+
         def f(self, i: int):
             """
             description
