@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from types import MethodType
 from typing import Iterator
 
@@ -5,6 +7,7 @@ import inspect
 from magicgui.widgets import Widget
 from magicclass import MagicTemplate, abstractapi, get_function_gui
 from magicclass.fields._fields import _FieldObject
+from magicclass._gui._base import MagicGuiBuildError
 from magicclass._gui.mgui_ext import PushButtonPlus, Action
 
 
@@ -64,18 +67,40 @@ def _iter_method_with_button_or_gui(
 def check_function_gui_buildable(ui: MagicTemplate, skips: list = []):
     """Assert that all methods in ``ui`` can be built into GUI."""
 
+    failed = []
     for method in _iter_method_with_button(ui):
         if not method in skips:
-            fgui = get_function_gui(method)
-            method_sig = getattr(method, "__signature__", None)
-            sig = fgui.__signature__
-            if method_sig is None:
-                method_sig = sig
-            kwargs = {}
-            for param in method_sig.parameters.values():
-                if param.default is param.empty and "bind" in param.options:
-                    kwargs[param.name] = object()  # dummy object
-            sig.bind()  # raise TypeError if not correctly defined
+            try:
+                fgui = get_function_gui(method)
+            except MagicGuiBuildError as e:
+                failed.append(("Error on building FunctionGui.", method, str(e)))
+                continue
+
+            try:
+                method_sig = getattr(method, "__signature__", None)
+                sig = fgui.__signature__
+                if method_sig is None:
+                    method_sig = sig
+                kwargs = {}
+                for param in method_sig.parameters.values():
+                    if param.default is param.empty and "bind" in param.options:
+                        kwargs[param.name] = object()  # dummy object
+            except Exception as e:
+                failed.append(
+                    ("Untrackable error on refering signature.", method, str(e))
+                )
+                continue
+
+            try:
+                sig.bind()  # raise TypeError if not correctly defined
+            except TypeError as e:
+                failed.append(("Wrong function signature.", method, str(e)))
+            except Exception as e:
+                failed.append(("Untrackable error.", method, str(e)))
+
+    if failed:
+        txt = "\n".join(f"{obj!r}: {typ} {msg}" for typ, obj, msg in failed)
+        raise AssertionError(txt)
 
 
 def check_tooltip(ui: MagicTemplate):

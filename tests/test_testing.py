@@ -1,7 +1,6 @@
 from typing import Annotated
 from magicclass import magicclass, abstractapi, vfield
 from magicclass.types import Bound
-from magicclass._gui._base import MagicGuiBuildError
 from magicclass.testing import check_function_gui_buildable, check_tooltip
 import pytest
 
@@ -40,7 +39,7 @@ def test_not_buildable_due_to_typing():
 
     ui = A()
 
-    with pytest.raises(TypeError):
+    with pytest.raises(AssertionError):
         check_function_gui_buildable(ui)
 
 def test_not_buildable_due_to_bind_args():
@@ -54,7 +53,7 @@ def test_not_buildable_due_to_bind_args():
 
     ui = A()
 
-    with pytest.raises(TypeError):
+    with pytest.raises(AssertionError):
         check_function_gui_buildable(ui)
 
 def test_not_buildable_due_to_error_in_bind():
@@ -68,7 +67,7 @@ def test_not_buildable_due_to_error_in_bind():
 
     ui = A()
 
-    with pytest.raises(ValueError):
+    with pytest.raises(AssertionError):
         check_function_gui_buildable(ui)
 
 def test_not_buildable_due_to_choices():
@@ -82,7 +81,7 @@ def test_not_buildable_due_to_choices():
 
     ui = A()
 
-    with pytest.raises(MagicGuiBuildError):
+    with pytest.raises(AssertionError):
         check_function_gui_buildable(ui)
 
 def test_not_buildable_due_to_error_in_choices():
@@ -96,7 +95,7 @@ def test_not_buildable_due_to_error_in_choices():
 
     ui = A()
 
-    with pytest.raises(MagicGuiBuildError):
+    with pytest.raises(AssertionError):
         check_function_gui_buildable(ui)
 
 def test_bound():
