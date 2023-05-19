@@ -1,7 +1,11 @@
+from enum import auto
 from typing import Annotated
-from magicclass import magicclass, abstractapi, field, vfield
+from unittest.mock import MagicMock
+from magicclass import magicclass, abstractapi, field, vfield, confirm, impl_preview
 from magicclass.types import Bound
-from magicclass.testing import check_function_gui_buildable, check_tooltip
+from magicclass.testing import (
+    check_function_gui_buildable, check_tooltip, FunctionGuiTester, MockConfirmation
+)
 import pytest
 
 def test_fgui():
@@ -180,3 +184,98 @@ def test_tooltip_check_fails_by_parameter_name():
     ui = A()
     with pytest.raises(AssertionError):
         check_tooltip(ui)
+
+def test_check_confirm():
+    mock_conf = MockConfirmation()
+    mock = MagicMock()
+
+    @magicclass
+    class A:
+        @confirm(text="text", condition="x>3", callback=mock_conf)
+        def f(self, x: int):
+            mock(x)
+
+    ui = A()
+    testf = FunctionGuiTester(ui.f)
+    mock.assert_not_called()
+    testf.call(1)
+    mock.assert_called_once()
+    mock.reset_mock()
+    mock_conf.assert_not_called()
+    assert testf.has_confirmation
+    assert not testf.has_preview
+    assert testf.confirm_count == 0
+    mock.assert_not_called()
+    testf.call(10)
+    mock_conf.assert_not_called()
+    assert testf.confirm_count == 1
+    mock.assert_called_once()
+    mock.reset_mock()
+
+def test_check_preview():
+    mock = MagicMock()
+    hist = []
+
+    @magicclass
+    class A:
+        def f(self, x: int):
+            mock(x)
+
+        @impl_preview(f)
+        def _preview(self, x: int):
+            hist.append(0)
+            yield
+            hist.append(1)
+
+    ui = A()
+    testf = FunctionGuiTester(ui.f)
+    assert testf.has_preview
+    assert not testf.has_confirmation
+    assert hist == []
+    mock.assert_not_called()
+    testf.call(1)
+    mock.assert_called_once()
+    assert hist == []
+    testf.click_preview()
+    assert hist == [0]
+    testf.click_preview()
+    assert hist == [0, 1, 0]
+    testf.click_preview()
+    assert hist == [0, 1, 0, 1, 0]
+    testf.call(2)
+    assert hist == [0, 1, 0, 1, 0, 1]
+    testf.click_preview()
+    assert hist == [0, 1, 0, 1, 0, 1, 0]
+    testf.click_preview()
+    assert hist == [0, 1, 0, 1, 0, 1, 0, 1, 0]
+
+def test_check_preview_autocall():
+
+    mock = MagicMock()
+    hist = []
+
+    @magicclass
+    class A:
+        def f(self, x: int):
+            mock(x)
+
+        @impl_preview(f, auto_call=True)
+        def _preview(self, x: int):
+            hist.append(0)
+            yield
+            hist.append(1)
+
+    ui = A()
+    testf = FunctionGuiTester(ui.f)
+    assert testf.has_preview
+    assert not testf.has_confirmation
+    testf.update_parameters(x=1)
+    assert hist == []
+    testf.click_preview()
+    assert hist == [0]
+    testf.update_parameters(x=2)
+    assert hist == [0, 1, 0]
+    testf.click_preview()
+    assert hist == [0, 1, 0, 1]
+    testf.update_parameters(x=4)
+    assert hist == [0, 1, 0, 1]

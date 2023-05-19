@@ -75,15 +75,17 @@ class FunctionGuiTester(Generic[_P]):
         prev_widget = self._fgui[idx]
         if self._prev_auto_call:
             assert isinstance(prev_widget, CheckBox)
+            prev_widget.value = not prev_widget.value
         else:
             assert isinstance(prev_widget, PushButton)
-
-        prev_widget.changed.emit(True)
+            prev_widget.changed.emit(True)
 
     def update_parameters(self, **kwargs):
         self._fgui.update(**kwargs)
 
     def call(self, *args: _P.args, **kwargs: _P.kwargs):
+        if not self.has_confirmation:
+            return self._fgui(*args, **kwargs)
         cb = self._conf_dict["callback"]
         self._conf_dict["callback"] = self._mock_confirmation
         try:
