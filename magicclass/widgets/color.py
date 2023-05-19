@@ -1,31 +1,13 @@
 from __future__ import annotations
-from typing import Iterable
-from qtpy.QtWidgets import (
-    QLineEdit,
-    QColorDialog,
-    QFrame,
-    QWidget,
-    QVBoxLayout,
-    QHBoxLayout,
-    QLabel,
-    QDoubleSpinBox,
-    QSlider,
-)
-from qtpy.QtGui import QColor
+from functools import lru_cache
+from typing import Any, Callable, Iterable
+from qtpy import QtGui, QtCore, QtWidgets as QtW
 from qtpy.QtCore import Qt, Signal as QtSignal
 
 from magicgui.widgets.bases import ValueWidget
 from magicgui.backends._qtpy.widgets import QBaseValueWidget
 from magicgui.application import use_app
 from .utils import merge_super_sigs
-
-
-def rgba_to_qcolor(rgba: Iterable[float]) -> QColor:
-    return QColor(*[int(round(255 * c)) for c in rgba])
-
-
-def qcolor_to_rgba(qcolor: QColor) -> tuple[float, float, float, float]:
-    return tuple(c / 255 for c in qcolor.getRgb())
 
 
 def rgba_to_html(rgba: Iterable[float]) -> str:
@@ -36,7 +18,7 @@ def rgba_to_html(rgba: Iterable[float]) -> str:
 
 
 # modified from napari/_qt/widgets/qt_color_swatch.py
-class QColorSwatch(QFrame):
+class QColorSwatch(QtW.QFrame):
     colorChanged = QtSignal()
 
     def __init__(self, parent=None):
@@ -45,6 +27,9 @@ class QColorSwatch(QFrame):
         self._color: tuple[float, float, float, float] = (0.0, 0.0, 0.0, 0.0)
         self.colorChanged.connect(self._update_swatch_style)
         self.setMinimumWidth(40)
+        self._pressed_pos = None
+        self.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self._tooltip = lambda: rgba_to_html(self.getQColor().getRgbF())
 
     def heightForWidth(self, w: int) -> int:
         return int(w * 0.667)
@@ -53,32 +38,76 @@ class QColorSwatch(QFrame):
         rgba = f'rgba({",".join(str(int(x*255)) for x in self._color)})'
         self.setStyleSheet("QColorSwatch {background-color: " + rgba + ";}")
 
-    def mouseReleaseEvent(self, event):
+    def mousePressEvent(self, a0: QtGui.QMouseEvent) -> None:
+        self._pressed_pos = self.mapToGlobal(a0.pos())
+        return super().mousePressEvent(a0)
+
+    def mouseMoveEvent(self, a0: QtGui.QMouseEvent) -> None:
+        # moved?
+        if self._pressed_pos is not None:
+            pos = self.mapToGlobal(a0.pos())
+            dx = self._pressed_pos.x() - pos.x()
+            dy = self._pressed_pos.y() - pos.y()
+            if dx**2 + dy**2 > 4:
+                self._pressed_pos = None
+        return super().mouseMoveEvent(a0)
+
+    def mouseReleaseEvent(self, event: QtGui.QMouseEvent) -> None:
         """Show QColorPopup picker when the user clicks on the swatch."""
+        # inside the widget?
+        if self._pressed_pos is None or not self.rect().contains(event.pos()):
+            return None
         if event.button() == Qt.MouseButton.LeftButton:
             initial = self.getQColor()
-            dlg = QColorDialog(initial, self)
-            dlg.setOptions(QColorDialog.ColorDialogOption.ShowAlphaChannel)
+            dlg = QtW.QColorDialog(initial, self)
+            dlg.setOptions(QtW.QColorDialog.ColorDialogOption.ShowAlphaChannel)
             ok = dlg.exec_()
             if ok:
                 self.setColor(dlg.selectedColor())
+        self._pressed_pos = None
 
-    def getQColor(self) -> QColor:
-        return rgba_to_qcolor(self._color)
+    def getQColor(self) -> QtGui.QColor:
+        return QtGui.QColor.fromRgbF(*self._color)
 
-    def setColor(self, color: QColor) -> None:
+    def setColor(self, color: QtGui.QColor) -> None:
         old_color = rgba_to_html(self._color)
-        self._color = qcolor_to_rgba(color)
+        self._color = QtGui.QColor.getRgbF(color)
         if rgba_to_html(self._color) != old_color:
             self.colorChanged.emit()
 
+    def event(self, event: QtCore.QEvent) -> bool:
+        if event.type() == QtCore.QEvent.Type.ToolTip:
+            event = QtGui.QHelpEvent(event)
+            QtW.QToolTip.showText(event.globalPos(), self._tooltip(), self)
+            return True
+        return super().event(event)
 
-class QColorLineEdit(QLineEdit):
-    def __init__(self, parent=None):
-        super().__init__(parent)
+
+@lru_cache(maxsize=1)
+def _get_color_converter() -> Callable[[Any], tuple[float, float, float, float]]:
+    """Get a function that converts a color to a tuple of floats."""
+    import pkgutil
+
+    all_pkg = set(pkgutil.iter_importers())
+    if "cmap" in all_pkg:
+        import cmap
+
+        return lambda x: cmap.Color(x).rgba
+    elif "matplotlib" in all_pkg:
         import matplotlib.colors
 
-        self._color_converter = matplotlib.colors.to_rgba
+        return matplotlib.colors.to_rgba
+    elif "vispy" in all_pkg:
+        from vispy import color as vispycolor
+
+        return lambda x: tuple(vispycolor.Color(x).rgba)
+    else:
+        return lambda x: QtGui.QColor(x).getRgbF()
+
+
+class QColorLineEdit(QtW.QLineEdit):
+    def _color_converter(self, x):
+        return _get_color_converter()(x)
 
     def setText(self, color: str | Iterable[float]):
         """Set the text of the lineEdit using any ColorType.
@@ -92,23 +121,23 @@ class QColorLineEdit(QLineEdit):
             Can be any ColorType recognized by our
             utils.colormaps.standardize_color.transform_color function.
         """
-        if isinstance(color, QColor):
-            color = rgba_to_html(qcolor_to_rgba(color))
+        if isinstance(color, QtGui.QColor):
+            color = rgba_to_html(QtGui.QColor.getRgbF(color))
         elif not isinstance(color, str):
             color = rgba_to_html(color)
 
         super().setText(color)
 
-    def getQColor(self) -> QColor:
-        """Get color as QColor object"""
+    def getQColor(self) -> QtGui.QColor:
+        """Get color as QtGui.QColor object"""
         rgba = self._color_converter(self.text())
-        return rgba_to_qcolor(rgba)
+        return QtGui.QColor.fromRgbF(*rgba)
 
-    def setColor(self, color: QColor | str):
+    def setColor(self, color: QtGui.QColor | str):
         if isinstance(color, str):
             color = self._color_converter(color)
-        elif isinstance(color, QColor):
-            color = qcolor_to_rgba(color)
+        elif isinstance(color, QtGui.QColor):
+            color = QtGui.QColor.getRgbF(color)
         code = "#" + "".join(
             hex(int(round(c * 255)))[2:].upper().zfill(2) for c in color
         )
@@ -117,12 +146,12 @@ class QColorLineEdit(QLineEdit):
         self.setText(code)
 
 
-class QColorEdit(QWidget):
+class QColorEdit(QtW.QWidget):
     colorChanged = QtSignal(tuple)
 
     def __init__(self, parent=None, value: str = "white"):
         super().__init__(parent)
-        _layout = QHBoxLayout()
+        _layout = QtW.QHBoxLayout()
         self._color_swatch = QColorSwatch(self)
         self._line_edit = QColorLineEdit(self)
         _layout.addWidget(self._color_swatch)
@@ -141,8 +170,8 @@ class QColorEdit(QWidget):
 
     def setColor(self, color):
         """Set value as the current color."""
-        if isinstance(color, QColor):
-            color = qcolor_to_rgba(color)
+        if isinstance(color, QtGui.QColor):
+            color = QtGui.QColor.getRgbF(color)
         self._line_edit.setText(color)
         color = self._line_edit.getQColor()
         self._color_swatch.setColor(color)
@@ -164,7 +193,7 @@ class QColorEdit(QWidget):
 
 
 # See https://stackoverflow.com/questions/42820380/use-float-for-qslider
-class QDoubleSlider(QSlider):
+class QDoubleSlider(QtW.QSlider):
     changed = QtSignal(float)
 
     def __init__(self, parent=None, decimals: int = 3):
@@ -196,7 +225,7 @@ class QDoubleSlider(QSlider):
         return super().setSingleStep(value * self.scale)
 
 
-class QColorSlider(QWidget):
+class QColorSlider(QtW.QWidget):
     colorChanged = QtSignal(tuple)
 
     def __init__(self, parent=None, value="white"):
@@ -204,7 +233,7 @@ class QColorSlider(QWidget):
         import matplotlib.colors
 
         self._color_converter = matplotlib.colors.to_rgba
-        _layout = QVBoxLayout()
+        _layout = QtW.QVBoxLayout()
         self.setLayout(_layout)
         _layout.setContentsMargins(0, 0, 0, 0)
         self._qsliders = [
@@ -223,24 +252,24 @@ class QColorSlider(QWidget):
         self._color_edit._color_swatch.setEnabled(False)
 
         @self.colorChanged.connect
-        def _set_color_swatch(color: QColor):
-            qcolor = rgba_to_qcolor(color)
+        def _set_color_swatch(color: QtGui.QColor):
+            qcolor = QtGui.QColor.fromRgbF(*color)
             self._color_edit._color_swatch.setColor(qcolor)
 
         _layout.addWidget(self._color_edit)
 
     def addSlider(self, label: str):
-        qlabel = QLabel(label)
+        qlabel = QtW.QLabel(label)
         qlabel.setFixedWidth(15)
         qslider = QDoubleSlider()
         qslider.setMaximum(1.0)
         qslider.setSingleStep(0.001)
-        qspinbox = QDoubleSpinBox()
+        qspinbox = QtW.QDoubleSpinBox()
         qspinbox.setMaximum(1.0)
         qspinbox.setSingleStep(0.001)
         qspinbox.setAlignment(Qt.AlignmentFlag.AlignRight)
 
-        qspinbox.setButtonSymbols(QDoubleSpinBox.ButtonSymbols.NoButtons)
+        qspinbox.setButtonSymbols(QtW.QDoubleSpinBox.ButtonSymbols.NoButtons)
         qspinbox.setStyleSheet("background:transparent; border: 0;")
 
         qslider.changed.connect(qspinbox.setValue)
@@ -248,8 +277,8 @@ class QColorSlider(QWidget):
         qspinbox.editingFinished.connect(qslider.setValue)
         qspinbox.editingFinished.connect(lambda e: self.setColor(qspinbox.text()))
 
-        _container = QWidget(self)
-        layout = QHBoxLayout()
+        _container = QtW.QWidget(self)
+        layout = QtW.QHBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         _container.setLayout(layout)
         layout.addWidget(qlabel)
@@ -265,8 +294,8 @@ class QColorSlider(QWidget):
 
     def setColor(self, color):
         """Set value as the current color."""
-        if isinstance(color, QColor):
-            color = qcolor_to_rgba(color)
+        if isinstance(color, QtGui.QColor):
+            color = QtGui.QColor.getRgbF(color)
         elif isinstance(color, str):
             color = self._color_converter(color)
         self._color_edit.setColor(color)
