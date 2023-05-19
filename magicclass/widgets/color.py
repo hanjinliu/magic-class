@@ -1,6 +1,5 @@
 from __future__ import annotations
 from typing import Iterable
-from PyQt5 import QtGui
 from qtpy.QtWidgets import (
     QLineEdit,
     QColorDialog,
@@ -12,6 +11,7 @@ from qtpy.QtWidgets import (
     QDoubleSpinBox,
     QSlider,
 )
+from qtpy import QtGui
 from qtpy.QtGui import QColor
 from qtpy.QtCore import Qt, Signal as QtSignal
 
@@ -47,6 +47,7 @@ class QColorSwatch(QFrame):
         self.colorChanged.connect(self._update_swatch_style)
         self.setMinimumWidth(40)
         self._pressed_pos = None
+        self.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
 
     def heightForWidth(self, w: int) -> int:
         return int(w * 0.667)

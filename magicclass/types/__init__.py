@@ -6,6 +6,7 @@ from ._const import (
     PopUpModeStr,
     ErrorModeStr,
     Color,
+    Colormap,
     MGUI_SIMPLE_TYPES,
 )
 from ._expr import ExprStr
@@ -25,6 +26,7 @@ __all__ = [
     "PopUpModeStr",
     "ErrorModeStr",
     "Color",
+    "Colormap",
     "MGUI_SIMPLE_TYPES",
     "ExprStr",
     "Optional",

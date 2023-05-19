@@ -4,8 +4,8 @@ from macrokit import Expr, Head, symbol
 from enum import Enum
 import pathlib
 import datetime
-from magicclass.types import Color, Path, ExprStr
-from magicclass.widgets import ColorEdit, EvalLineEdit
+from magicclass.types import Color, Colormap, Path, ExprStr
+from magicclass.widgets import ColorEdit, EvalLineEdit, ColormapEdit
 from magicclass._gui._base import MagicTemplate
 
 # classes
@@ -57,6 +57,7 @@ def find_myname(gui: MagicTemplate):
 import magicgui as mgui
 
 mgui.register_type(Color, widget_type=ColorEdit)
+mgui.register_type(Colormap, widget_type=ColormapEdit)
 mgui.register_type(Path.Save, widget_type="FileEdit", mode="w")
 mgui.register_type(Path.Dir, widget_type="FileEdit", mode="d")
 mgui.register_type(Path.Multiple, widget_type="FileEdit", mode="rm")

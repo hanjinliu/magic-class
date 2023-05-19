@@ -19,6 +19,7 @@ from .containers import (
 )
 from .pywidgets import ListWidget, DictWidget
 from .color import ColorEdit, ColorSlider
+from .colormap import ColormapEdit
 from .misc import (
     OptionalWidget,
     ConsoleTextEdit,
@@ -41,6 +42,7 @@ __all__ = [
     "ButtonContainer",
     "CodeEdit",
     "ColorEdit",
+    "ColormapEdit",
     "ColorSlider",
     "ConsoleTextEdit",
     "CheckButton",
