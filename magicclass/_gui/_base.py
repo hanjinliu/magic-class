@@ -12,7 +12,7 @@ from typing import (
 )
 from types import MethodType
 from abc import ABCMeta
-from typing_extensions import _AnnotatedAlias, Literal
+from typing_extensions import _AnnotatedAlias
 import inspect
 import warnings
 from qtpy.QtWidgets import QWidget, QDockWidget
@@ -65,6 +65,7 @@ from magicclass.utils import (
 from magicclass.widgets import Separator, FreeWidget
 from magicclass.fields import MagicField, MagicValueField, field, vfield
 from magicclass.signature import (
+    ConfirmDict,
     MagicMethodSignature,
     get_additional_option,
     split_annotated_type,
@@ -1056,6 +1057,10 @@ def _create_gui_method(self: BaseGui, obj: MethodType):
     return func
 
 
+class MagicGuiBuildError(RuntimeError):
+    """Error raised when magicgui cannot build a gui."""
+
+
 def _build_mgui(widget_: Action | PushButtonPlus, func: Callable, parent: BaseGui):
     """Build a magicgui from a function for the give button/action."""
     if widget_.mgui is not None:
@@ -1068,9 +1073,8 @@ def _build_mgui(widget_: Action | PushButtonPlus, func: Callable, parent: BaseGu
             opt = {}
 
         # confirmation
-        conf = opt.get("confirm", None)
-        if conf is not None:
-            func = _implement_confirmation(func, parent, **conf)
+        if "confirm" in opt:
+            func = _implement_confirmation(func, parent, opt["confirm"])
 
         # Wrap function to deal with errors in a right way.
         func = parent._error_mode.wrap_handler(func, parent=parent)
@@ -1102,7 +1106,7 @@ def _build_mgui(widget_: Action | PushButtonPlus, func: Callable, parent: BaseGu
             f"{func.__name__}.\n{e.__class__.__name__}: {e}"
         )
         widget_.mgui = None
-        raise type(e)(msg)
+        raise MagicGuiBuildError(msg)
 
     return _connect_functiongui_event(mgui, opt)
 
@@ -1311,9 +1315,7 @@ def _define_popup(self: BaseGui, obj, widget: PushButtonPlus | Action):
 def _implement_confirmation(
     method: MethodType,
     self: BaseGui,
-    text: str,
-    condition: Callable[[BaseGui], bool] | str,
-    callback: Callable[[str, BaseGui], None],
+    opt: ConfirmDict,
 ):
     """Implement confirmation callback to a method."""
     sig = inspect.signature(method)
@@ -1326,6 +1328,7 @@ def _implement_confirmation(
             all_args = arguments.arguments
             all_args.update(self=self)
             need_confirmation = False
+            condition = opt["condition"]
             if isinstance(condition, str):
                 try:
                     need_confirmation = eval(condition, {}, all_args)
@@ -1345,6 +1348,8 @@ def _implement_confirmation(
                     UserWarning,
                 )
             if need_confirmation:
+                callback = opt["callback"]
+                text = opt["text"]
                 callback(text.format(**all_args), self)
 
         return method(*args, **kwargs)

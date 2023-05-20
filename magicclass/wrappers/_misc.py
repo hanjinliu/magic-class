@@ -245,7 +245,7 @@ def setup_function_gui(target: Callable):
         else:
             _setup = setup
         upgrade_signature(target, additional_options={"setup": _setup})
-        upgrade_signature(setup, additional_options={"nogui": True})
+        upgrade_signature(setup, additional_options={"gui": False})
         return setup
 
     return wrapper

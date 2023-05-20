@@ -478,7 +478,8 @@ class GuiMacro(BaseMacro):
                     expr.eval(ns)
             elif redo_action.matches("custom"):
                 redo_action: RedoAction.Custom
-                redo_action.run()
+                with self.blocked():
+                    redo_action.run()
             else:
                 raise ValueError(f"Redo is not defined for {undo}")
         except Exception as e:
