@@ -33,12 +33,13 @@ def test_set_options():
     assert opt[1].visible
     assert opt[1].min == -1
 
-def test_optional_with_annotated():
-    T = Annotated[Optional[int], {"text": "x-text", "options": {"min": -1}}]
-
+def test_optional_in_annotated():
     @magicclass
     class A:
-        def f(self, x: T = None):
+        def f(
+            self,
+            x: Annotated[Optional[int], {"text": "T", "options": {"min": -1}}] = None
+        ):
             x.as_integer_ratio()
 
     ui = A()
@@ -46,9 +47,44 @@ def test_optional_with_annotated():
     opt = get_function_gui(ui.f)[0]
 
     assert isinstance(opt, widgets.OptionalWidget)
-    assert opt.text == "x-text"
+    assert opt.text == "T"
     assert not opt[1].visible
     assert opt[1].min == -1
+
+def test_annotated_in_optional():
+    @magicclass
+    class A:
+        def f(
+            self,
+            x: Optional[Annotated[int, {"min": -1}]] = None,
+        ):
+            x.as_integer_ratio()
+
+    ui = A()
+    ui["f"].changed()
+    opt = get_function_gui(ui.f)[0]
+
+    assert isinstance(opt, widgets.OptionalWidget)
+    assert opt._inner_value_widget.min == -1
+    assert not opt[1].visible
+    assert opt[1].min == -1
+
+def test_nested_annotated_in_optional():
+    @magicclass
+    class A:
+        def f(
+            self,
+            x: Optional[list[Annotated[int, {"text": "T", "options": {"min": -1}}]]] = None,
+        ):
+            x.sort()
+
+    ui = A()
+    ui["f"].changed()
+    opt = get_function_gui(ui.f)[0]
+
+    assert isinstance(opt, widgets.OptionalWidget)
+    assert not opt[1].visible
+
 
 def test_union():
     @magicclass
