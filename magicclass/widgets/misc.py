@@ -2,15 +2,11 @@ from __future__ import annotations
 from pathlib import Path
 import sys
 from typing import (
-    TYPE_CHECKING,
-    Generic,
     Iterable,
     MutableSequence,
     Any,
-    TypeVar,
 )
 from typing_extensions import _AnnotatedAlias, get_args
-from psygnal import Signal
 from qtpy import QtWidgets as QtW, QtGui
 from qtpy.QtCore import Qt
 from magicgui.widgets import (
@@ -24,26 +20,23 @@ from magicgui.widgets import (
 )
 from magicgui.application import use_app
 from magicgui.widgets import LineEdit
-from magicgui.types import FileDialogMode
+from magicgui.types import FileDialogMode, Undefined
 from magicgui.widgets.bases import ValueWidget
-from magicgui.types import Undefined
 from magicgui.backends._qtpy.widgets import (
-    QBaseWidget,
     QBaseStringWidget,
     LineEdit as BaseLineEdit,
 )
 from .utils import FreeWidget, merge_super_sigs
 from magicclass.signature import split_annotated_type
-
-if TYPE_CHECKING:
-    from qtpy.QtWidgets import QTextEdit
-    from superqt import QLabeledRangeSlider
+from magicclass.types._optional import _FakeOptional
 
 
 if sys.platform == "win32":
     _FONT = "Consolas"
-else:
+elif sys.platform == "darwin":
     _FONT = "Menlo"
+else:
+    _FONT = "Monospace"
 
 
 @merge_super_sigs
@@ -75,8 +68,6 @@ class OptionalWidget(Container):
     ):
         if text is None:
             text = "Use default value"
-        if options is None:
-            options = {}
         self._checkbox = CheckBox(text=text, value=True)
 
         if inner_widget is None:
@@ -91,6 +82,7 @@ class OptionalWidget(Container):
                     annot_arg = type(value)
 
             if isinstance(annot_arg, _AnnotatedAlias):
+                options = options or {}
                 annot_arg, metadata = split_annotated_type(annot_arg)
                 options.update(metadata)
 
@@ -148,7 +140,7 @@ class ConsoleTextEdit(TextEdit):
         super().__init__(*args, **kwargs)
         from qtpy.QtGui import QFont, QTextOption
 
-        self.native: QTextEdit
+        self.native: QtW.QTextEdit
         font = QFont(_FONT)
         font.setStyleHint(QFont.StyleHint.Monospace)
         font.setFixedPitch(True)
@@ -262,137 +254,6 @@ class FloatEdit(LineEdit):
             widget_type=QFloatEdit,
             **kwargs,
         )
-
-
-_V = TypeVar("_V")
-
-
-class QRangeSlider(QBaseWidget):
-    _qwidget: QLabeledRangeSlider
-
-    def _mgui_get_value(self):
-        pass
-
-    def _mgui_bind_change_callback(self, callback):
-        pass
-
-    def _mgui_set_value(self, rng):
-        pass
-
-
-class AbstractRangeSlider(ValueWidget, Generic[_V]):
-    """
-    A slider widget that represent a range like (2, 5).
-
-    This class is a temporary one and may be substituted by magicgui widget soon.
-    See https://github.com/napari/magicgui/pull/337.
-    """
-
-    changed = Signal(tuple)
-
-    def __init__(
-        self,
-        value=Undefined,
-        min=0,
-        max=1000,
-        orientation: str = "horizontal",
-        nullable: bool = True,
-        **kwargs,
-    ):
-        sl = self._construct_qt()
-        sl.setMinimum(min)
-        sl.setMaximum(max)
-        sl.valueChanged.connect(self.changed)
-        if orientation == "horizontal":
-            sl.setOrientation(Qt.Orientation.Horizontal)
-        elif orientation == "vertical":
-            sl.setOrientation(Qt.Orientation.Vertical)
-        else:
-            raise ValueError(
-                "Only horizontal and vertical orientation are currently supported"
-            )
-        self._slider = sl
-        super().__init__(
-            value=value,
-            widget_type=QRangeSlider,
-            backend_kwargs={"qwidg": QtW.QWidget},
-            **kwargs,
-        )
-        self.native.setLayout(QtW.QVBoxLayout())
-        self.native.setContentsMargins(0, 0, 0, 0)
-        self.native.layout().addWidget(sl)
-
-    @classmethod
-    def _construct_qt(cls, *args, **kwargs) -> QLabeledRangeSlider:
-        raise NotImplementedError()
-
-    @property
-    def value(self) -> tuple[_V, _V]:
-        return self._slider.value()
-
-    @value.setter
-    def value(self, rng: tuple[_V, _V]) -> None:
-        x0, x1 = rng
-        if x0 > x1:
-            raise ValueError(f"lower value exceeds higher value ({x0} > {x1}).")
-        self._slider.setValue((x0, x1))
-
-    @property
-    def range(self) -> tuple[_V, _V]:
-        return self._slider.minimum(), self._slider.maximum()
-
-    @range.setter
-    def range(self, rng: tuple[_V, _V]) -> None:
-        x0, x1 = rng
-        if x0 > x1:
-            raise ValueError(f"Minimum value exceeds maximum value ({x0} > {x1}).")
-        self._slider.setMinimum(x0)
-        self._slider.setMaximum(x1)
-
-    @property
-    def min(self) -> _V:
-        return self._slider.minimum()
-
-    @min.setter
-    def min(self, value: _V) -> None:
-        self._slider.setMinimum(value)
-
-    @property
-    def max(self) -> _V:
-        return self._slider.maximum()
-
-    @max.setter
-    def max(self, value: _V) -> None:
-        self._slider.setMaximum(value)
-
-
-class RangeSlider(AbstractRangeSlider[int]):
-    @classmethod
-    def _construct_qt(cls, *args, **kwargs):
-        from superqt import QLabeledRangeSlider
-
-        sl = QLabeledRangeSlider()
-        sl.setHandleLabelPosition(QLabeledRangeSlider.LabelPosition.LabelsAbove)
-        sl.setEdgeLabelMode(QLabeledRangeSlider.EdgeLabelMode.NoLabel)
-        return sl
-
-
-class FloatRangeSlider(AbstractRangeSlider[float]):
-    @classmethod
-    def _construct_qt(cls, *args, **kwargs):
-        from superqt import QLabeledDoubleRangeSlider
-
-        sl = QLabeledDoubleRangeSlider()
-        sl.setHandleLabelPosition(QLabeledDoubleRangeSlider.LabelPosition.LabelsAbove)
-        sl.setEdgeLabelMode(QLabeledDoubleRangeSlider.EdgeLabelMode.NoLabel)
-        return sl
-
-
-# magicgui>=0.6.0 has its own range sliders.
-try:
-    from magicgui.widgets import RangeSlider, FloatRangeSlider
-except ImportError:
-    pass
 
 
 class _QtSpreadSheet(QtW.QTabWidget):

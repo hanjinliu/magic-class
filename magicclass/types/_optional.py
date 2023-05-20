@@ -3,8 +3,11 @@ import typing
 from typing import (
     TYPE_CHECKING,
     Any,
+    Generic,
     overload,
     TypeVar,
+    get_args,
+    get_origin,
 )
 from typing_extensions import Annotated, _AnnotatedAlias
 from magicclass.utils import is_type_like
@@ -39,8 +42,28 @@ class _OptionalAlias(type):
             opt.update(annotation=type_, options=opt0)
             return Annotated[type_, opt]
         else:
-            opt.update(annotation=typing.Optional[value])
-            return Annotated[typing.Optional[value], opt]
+            value_unwrapped = _unwrap_annotated(value)
+            try:
+                new_annot = typing.Optional[value]
+            except TypeError:  # unhashable
+                new_annot = _FakeOptional[value]
+            opt.update(annotation=new_annot)
+            return Annotated[value_unwrapped, opt]
+
+
+def _unwrap_annotated(typ):
+    origin = get_origin(typ)
+    args = get_args(typ)
+    if origin is Annotated:
+        return args[0]
+    if origin is not None and args:
+        unwrapped = tuple(_unwrap_annotated(arg) for arg in args)
+        return origin[unwrapped]
+    return typ
+
+
+class _FakeOptional(Generic[_T]):
+    """This type is recognized as typing.Optional by OptionalWidget."""
 
 
 if TYPE_CHECKING:
