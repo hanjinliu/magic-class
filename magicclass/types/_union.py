@@ -31,7 +31,7 @@ class _UnionAlias(type):
         ...
 
     def __getitem__(cls, value):
-        from magicclass.functools._dispatch import UnionWidget
+        from magicclass.widgets import UnionWidget
 
         annotations = []
         opt = dict(widget_type=UnionWidget, nullable=False, annotations=annotations)

@@ -35,6 +35,7 @@ from .logger import Logger
 from .codeedit import CodeEdit
 from .toggle_switch import ToggleSwitch
 from .eval import EvalLineEdit
+from ._union import UnionWidget
 
 __all__ = [
     "ButtonContainer",
@@ -69,4 +70,5 @@ __all__ = [
     "TabbedContainer",
     "ToggleSwitch",
     "ToolBoxContainer",
+    "UnionWidget",
 ]
