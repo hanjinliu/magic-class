@@ -240,6 +240,7 @@ class QColormapEdit(QtW.QWidget):
     def _update_colormap(self):
         cmap = self._make_colormap()
         self._qcmap.setColormap(cmap)
+        self.colormapChanged.emit(self.colormap())
         return None
 
     def _show_cmap_context_menu(self, pos: QtCore.QPoint) -> None:
