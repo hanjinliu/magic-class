@@ -667,3 +667,19 @@ def test_with_options():
     assert ui.a_float.max == 20.0
     assert not ui.a_str.enabled
     assert not ui.a_bool.visible
+
+def test_with_choices():
+    @magicclass
+    class A:
+        def _get_choices(self, w):
+            return [1, 2, 3]
+        a_int1 = field(int).with_choices([1, 2, 3])
+        b_int1 = field().with_choices(_get_choices)
+        a_int2 = vfield(int).with_choices([1, 2, 3])
+        b_int2 = vfield().with_choices(_get_choices)
+
+    ui = A()
+    assert ui["a_int1"].widget_type == "ComboBox"
+    assert ui["b_int1"].widget_type == "ComboBox"
+    assert ui["a_int2"].widget_type == "ComboBox"
+    assert ui["b_int2"].widget_type == "ComboBox"

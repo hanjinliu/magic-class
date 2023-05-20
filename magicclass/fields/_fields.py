@@ -172,23 +172,23 @@ class MagicField(_FieldObject, Generic[_W]):
     @overload
     def with_choices(
         self, choices: Sequence[tuple[str, _U]]
-    ) -> MagicField[CategoricalWidget, _U]:
+    ) -> MagicField[CategoricalWidget[_U]]:
         ...
 
     @overload
-    def with_choices(self, choices: Sequence[_U]) -> MagicField[CategoricalWidget, _U]:
+    def with_choices(self, choices: Sequence[_U]) -> MagicField[CategoricalWidget[_U]]:
         ...
 
     @overload
     def with_choices(
         self, choices: Callable[..., Sequence[tuple[str, _U]]]
-    ) -> MagicField[CategoricalWidget, _U]:
+    ) -> MagicField[CategoricalWidget[_U]]:
         ...
 
     @overload
     def with_choices(
         self, choices: Callable[..., Sequence[_U]]
-    ) -> MagicField[CategoricalWidget, _U]:
+    ) -> MagicField[CategoricalWidget[_U]]:
         ...
 
     def with_choices(self, choices):
@@ -613,27 +613,21 @@ class MagicValueField(MagicField[ValueWidget[_V]]):
         return value
 
     @overload
-    def with_choices(
-        self, choices: Sequence[tuple[str, _U]]
-    ) -> MagicValueField[CategoricalWidget[_U], _U]:
+    def with_choices(self, choices: Sequence[tuple[str, _U]]) -> MagicValueField[_U]:
         ...
 
     @overload
-    def with_choices(
-        self, choices: Sequence[_U]
-    ) -> MagicValueField[CategoricalWidget[_U], _U]:
+    def with_choices(self, choices: Sequence[_U]) -> MagicValueField[_U]:
         ...
 
     @overload
     def with_choices(
         self, choices: Callable[..., Sequence[tuple[str, _U]]]
-    ) -> MagicValueField[CategoricalWidget[_U], _U]:
+    ) -> MagicValueField[_U]:
         ...
 
     @overload
-    def with_choices(
-        self, choices: Callable[..., Sequence[_U]]
-    ) -> MagicValueField[CategoricalWidget[_U], _U]:
+    def with_choices(self, choices: Callable[..., Sequence[_U]]) -> MagicValueField[_U]:
         ...
 
     def with_choices(self, choices):
