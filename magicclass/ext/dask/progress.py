@@ -22,7 +22,6 @@ class DaskProgressBar(DefaultProgressBar, DaskCallback):
     """A progress bar widget for dask computation."""
 
     computed = Signal(object)
-    new_cycle = Signal(int)
 
     def __init__(
         self,
@@ -37,6 +36,7 @@ class DaskProgressBar(DefaultProgressBar, DaskCallback):
         super().__init__(max=max)
         self._computed_signal = QtSignal()
         self._computed_signal.connect(self._on_computed)
+        self._new_cycle_signal = QtSignal()
 
     def __enter__(self):
         self._n_computation = 0
@@ -46,7 +46,7 @@ class DaskProgressBar(DefaultProgressBar, DaskCallback):
     def _start(self, dsk):
         self._state = None
         self._frac = 0.0
-        self.new_cycle.emit(self._n_computation)
+        self._new_cycle_signal.emit(self._n_computation)
         self._n_computation += 1
         self._timer.reset()
         self._start_thread()
@@ -192,7 +192,7 @@ class dask_thread_worker(thread_worker):
             self._progress["desc"] = next(_descs(), "<No description>")
             it = _descs()
 
-            @pbar.new_cycle.connect
+            @pbar._new_cycle_signal.connect
             def _(i: int):
                 pbar.set_description(next(it, "<No description>"))
 

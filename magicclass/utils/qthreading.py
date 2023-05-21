@@ -634,7 +634,7 @@ class thread_worker(Generic[_P]):
 
         worker = create_worker(
             _run,
-            _ignore_errors=self._ignore_errors,
+            _ignore_errors=True,  # NOTE: reraising is processed in _create_method
             _start_thread=False,
             *args,
             **kwargs,
@@ -647,6 +647,7 @@ class thread_worker(Generic[_P]):
 
         @wraps(self)
         def _create_worker(*args, **kwargs):
+            _is_non_blocking = self.button(gui).running
             # create a worker object
             worker = self._create_qt_worker(gui, *args, **kwargs)
             is_generator = isinstance(worker, GeneratorWorker)
@@ -689,7 +690,15 @@ class thread_worker(Generic[_P]):
                 if hasattr(pbar, "set_title"):
                     pbar.set_title(self._func.__name__.replace("_", " "))
 
-            if self.button(gui).running:
+            if is_generator:
+
+                @worker.aborted.connect
+                def _on_abort():
+                    gui._error_mode.wrap_handler(Aborted.raise_, parent=gui)()
+                    gui.macro.active = True
+                    Aborted.raise_()
+
+            if _is_non_blocking:
 
                 @worker.errored.connect
                 def _on_error(err: Exception):
@@ -697,13 +706,8 @@ class thread_worker(Generic[_P]):
                     # cannot catch them. Macro has to be reactived here.
                     gui._error_mode.get_handler()(err, parent=gui)
                     gui.macro.active = True
-
-                if is_generator:
-
-                    @worker.aborted.connect
-                    def _on_abort():
-                        gui._error_mode.wrap_handler(Aborted.raise_, parent=gui)()
-                        gui.macro.active = True
+                    if not self._ignore_errors:
+                        raise err  # reraise
 
                 worker.start()
             else:
@@ -723,20 +727,48 @@ class thread_worker(Generic[_P]):
         pbar: ProgressBar | None,
     ):
         app = use_app()
+
+        if isinstance(pbar, DefaultProgressBar):
+            pbar.pause_button.enabled = False
         worker.started.connect(app.process_events)
         worker.finished.connect(app.process_events)
+
+        _empty = object()
+        result = err = _empty
+
+        @worker.returned.connect
+        def _(val):
+            nonlocal result
+            result = val
+
+        @worker.errored.connect
+        def _(exc):
+            nonlocal err
+            err = exc
+
+        if isinstance(worker, GeneratorWorker):
+
+            @worker.aborted.connect
+            def _():
+                nonlocal err
+                err = Aborted("Aborted.")
+
         if isinstance(worker, GeneratorWorker):
             worker.yielded.connect(app.process_events)
         try:
             worker.run()
 
-        except KeyboardInterrupt:
+        except KeyboardInterrupt as e:
             if isinstance(pbar, DefaultProgressBar):
                 pbar._abort_worker()
             else:
                 worker.quit()
             worker.finished.emit()
             gui._error_mode.wrap_handler(Aborted.raise_, parent=gui)()
+            raise e
+
+        if result is _empty and err is not _empty:
+            raise err
 
     def _get_method_signature(self) -> inspect.Signature:
         sig = self.__signature__

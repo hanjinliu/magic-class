@@ -1,4 +1,3 @@
-from contextlib import suppress
 import pytest
 from magicclass import magicclass, magicmenu, set_options, do_not_record, vfield, get_function_gui
 from magicclass.types import Bound
@@ -218,17 +217,24 @@ def test_callable_desc():
 def test_error(qtbot: QtBot):
     @magicclass(error_mode="stderr")
     class A:
+        x = vfield(int)
         @thread_worker
         def f(self, n: int = 3):
             if n > 10:
                 raise ValueError
 
+        def g(self):
+            self.f(20)
+            # to check self.f(20) actually raises an error
+            self.x = 100
+
     ui = A()
     ui.f(3)
     assert str(ui.macro[-1]) == "ui.f(n=3)"
-    with qtbot.capture_exceptions():
-        ui.f(20)
+    with pytest.raises(ValueError):
+        ui.g()
     assert str(ui.macro[-1]) == "ui.f(n=3)"
+    assert ui.x < 100
 
 def test_callback():
     @magicclass
