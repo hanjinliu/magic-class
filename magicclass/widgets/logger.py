@@ -16,6 +16,8 @@ from magicclass.utils import rst_to_html
 if TYPE_CHECKING:
     import numpy as np
     from matplotlib.figure import Figure as mpl_Figure
+    from matplotlib.backend_bases import FigureManagerBase, RendererBase
+
 
 # See https://stackoverflow.com/questions/28655198/best-way-to-display-logs-in-pyqt
 
@@ -494,14 +496,13 @@ class Logger(Widget, logging.Handler):
         self.native.appendHref(text, href)
         return None
 
-    def print_figure(self, fig: mpl_Figure) -> None:
+    def print_figure(self, fig: mpl_Figure | FigureManagerBase) -> None:
         """Print matplotlib Figure object like inline plot."""
         import numpy as np
 
         fig.canvas.draw()
         data = np.asarray(fig.canvas.renderer.buffer_rgba(), dtype=np.uint8)
         self.print_image(data)
-
         return None
 
     def write(self, msg) -> None:
@@ -574,6 +575,10 @@ class Logger(Widget, logging.Handler):
             except RuntimeError:
                 style = "default"
 
+        if "figure.dpi" not in rc_context:
+            rc_context["figure.dpi"] = 800
+        if "figure.figsize" not in rc_context:
+            rc_context["figure.figsize"] = (4, 3)
         backend = mpl.get_backend()
         show._called = False
         try:
