@@ -2,12 +2,7 @@ from __future__ import annotations
 from abc import ABCMeta
 
 import pathlib
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    List,
-    Sequence,
-)
+from typing import TYPE_CHECKING, Any, Sequence
 from typing_extensions import Annotated
 
 
@@ -32,7 +27,7 @@ class _AnnotatedPathAlias2(_AnnotatedPathAlias):
 
 class _AnnotatedMultiPathAlias(ABCMeta):
     def __getitem__(cls, filter: str) -> Self:
-        return Annotated[List[Path], {"mode": "rm", "filter": filter}]
+        return Annotated[list[Path], {"mode": "rm", "filter": filter}]
 
 
 class _Path(pathlib.Path, metaclass=_AnnotatedPathAlias):

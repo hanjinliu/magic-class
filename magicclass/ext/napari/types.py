@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Annotated, Iterable, Tuple, List
+from typing import TYPE_CHECKING, Annotated, Iterable
 
 # for now...
 if TYPE_CHECKING:
@@ -53,6 +53,6 @@ class FeatureInfo(metaclass=_FeatureInfoAlias):
         raise TypeError(f"Type {cls.__name__} cannot be instantiated.")
 
 
-class FeatureInfoInstance(Tuple["pd.DataFrame", List[str]]):
+class FeatureInfoInstance(tuple["pd.DataFrame", list[str]]):
     def __new__(cls, *args, **kwargs):
         raise TypeError(f"Type {cls.__name__} cannot be instantiated.")

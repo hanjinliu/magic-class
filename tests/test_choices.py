@@ -1,6 +1,5 @@
 from magicclass import magicclass, set_options, field, vfield, get_function_gui
 from magicgui.widgets import Select
-from typing import List, Tuple
 import pytest
 
 @pytest.mark.parametrize("widget_type", ["ComboBox", "RadioButtons", "Select"])
@@ -179,7 +178,7 @@ def test_choices_type():
             def _get_choices(self, w=None):
                 return [1, 2]
 
-            def _get_choices_with_name(self, w=None) -> List[Tuple[str, int]]:
+            def _get_choices_with_name(self, w=None) -> list[tuple[str, int]]:
                 return [("a", 1), ("b", 2)]
 
         def f(self, c: OneOf[B._get_choices], d: OneOf[B._get_choices_with_name]):
@@ -205,7 +204,7 @@ def test_someof_type():
             def _get_choices(self, w=None):
                 return [1, 2]
 
-            def _get_choices_with_name(self, w=None) -> List[Tuple[str, int]]:
+            def _get_choices_with_name(self, w=None) -> list[tuple[str, int]]:
                 return [("a", 1), ("b", 2)]
 
         def f(self, c: SomeOf[B._get_choices], d: SomeOf[B._get_choices_with_name]):
