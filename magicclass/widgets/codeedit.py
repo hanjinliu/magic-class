@@ -1,4 +1,5 @@
 from __future__ import annotations
+from contextlib import contextmanager
 import sys
 from typing import Any, Iterator, NamedTuple, TYPE_CHECKING
 import weakref
@@ -430,25 +431,40 @@ class QCodeEditor(QtW.QPlainTextEdit):
         self._highlight = highlight
         return None
 
+    @contextmanager
+    def _fix_horizontal_position(self):
+        hbar = self.horizontalScrollBar()
+        pos = hbar.value()
+        try:
+            yield
+        finally:
+            hbar.setValue(pos)
+
+    def appendPlainText(self, txt: str):
+        with self._fix_horizontal_position():
+            super().appendPlainText(txt)
+
     def eraseLast(self):
         """Erase the last line."""
-        cursor = self.textCursor()
-        cursor.movePosition(QtGui.QTextCursor.MoveOperation.End)
-        cursor.select(QtGui.QTextCursor.SelectionType.LineUnderCursor)
-        cursor.removeSelectedText()
-        cursor.deletePreviousChar()
-        self.setTextCursor(cursor)
+        with self._fix_horizontal_position():
+            cursor = self.textCursor()
+            cursor.movePosition(QtGui.QTextCursor.MoveOperation.End)
+            cursor.select(QtGui.QTextCursor.SelectionType.LineUnderCursor)
+            cursor.removeSelectedText()
+            cursor.deletePreviousChar()
+            self.setTextCursor(cursor)
 
     def eraseFirst(self):
         """Erase the first line."""
-        cursor = self.textCursor()
-        cursor.movePosition(QtGui.QTextCursor.MoveOperation.Start)
-        cursor.select(QtGui.QTextCursor.SelectionType.LineUnderCursor)
-        cursor.removeSelectedText()
-        cursor.movePosition(QtGui.QTextCursor.MoveOperation.Down)
-        cursor.deletePreviousChar()
-        cursor.movePosition(QtGui.QTextCursor.MoveOperation.End)
-        self.setTextCursor(cursor)
+        with self._fix_horizontal_position():
+            cursor = self.textCursor()
+            cursor.movePosition(QtGui.QTextCursor.MoveOperation.Start)
+            cursor.select(QtGui.QTextCursor.SelectionType.LineUnderCursor)
+            cursor.removeSelectedText()
+            cursor.movePosition(QtGui.QTextCursor.MoveOperation.Down)
+            cursor.deletePreviousChar()
+            cursor.movePosition(QtGui.QTextCursor.MoveOperation.End)
+            self.setTextCursor(cursor)
 
     def selectedText(self) -> str:
         """Return selected string."""
