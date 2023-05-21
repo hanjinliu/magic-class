@@ -225,16 +225,19 @@ class QtLogger(QtW.QTextEdit):
         if name := format.stringProperty(QtGui.QTextFormat.Property.ImageName):
             menu.addAction("Copy Image", lambda: self._copy_image(name))
             menu.addAction("Save Image As...", lambda: self._save_image(name))
-        if name := format.stringProperty(QtGui.QTextFormat.Property.AnchorName):
-            menu.addAction("Copy Link", lambda: self._copy_link(name))
         return menu
 
     def _copy_image(self, name):
         image = self._get_image(name)
+        if image is None:
+            raise ValueError("Image not found")
         return QtW.QApplication.clipboard().setImage(image)
 
     def _save_image(self, name, format="PNG"):
         """Shows a save dialog for the ImageResource with 'name'."""
+        image = self._get_image(name)
+        if image is None:
+            raise ValueError("Image not found")
         dialog = QtW.QFileDialog(self, "Save Image")
         dialog.setAcceptMode(QtW.QFileDialog.AcceptMode.AcceptSave)
         dialog.setDefaultSuffix(format.lower())
@@ -244,7 +247,6 @@ class QtLogger(QtW.QTextEdit):
         dialog.setNameFilter(f"{format} file (*.{format.lower()})")
         if dialog.exec_():
             filename = dialog.selectedFiles()[0]
-            image = self._get_image(name)
             image.save(filename, format)
             self._last_save_path = Path(filename).parent
         return None
@@ -297,14 +299,23 @@ class QtLogger(QtW.QTextEdit):
         self.viewport().setCursor(
             Qt.CursorShape.PointingHandCursor if _anchor else Qt.CursorShape.IBeamCursor
         )
-        return None
+        return super().mouseMoveEvent(e)
 
     def mouseReleaseEvent(self, e: QtGui.QMouseEvent):
-        _anchor = self.anchorAt(e.pos())
-        if self._anchor == _anchor:
-            QtGui.QDesktopServices.openUrl(QtCore.QUrl(self._anchor))
-        self._anchor = None
+        if e.button() == Qt.MouseButton.LeftButton:
+            _anchor = self.anchorAt(e.pos())
+            if self._anchor == _anchor:
+                QtGui.QDesktopServices.openUrl(QtCore.QUrl(self._anchor))
+            self._anchor = None
         return super().mouseReleaseEvent(e)
+
+    def keyPressEvent(self, e: QtGui.QKeyEvent):
+        mod = e.modifiers()
+        if mod == Qt.KeyboardModifier.ControlModifier:
+            if e.key() == Qt.Key.Key_F:
+                self._find_string()
+                return None
+        return super().keyPressEvent(e)
 
 
 class Logger(Widget, logging.Handler):
