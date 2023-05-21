@@ -1,9 +1,12 @@
 from __future__ import annotations
-from typing import Sequence, Tuple
+from typing import Sequence, Tuple, TYPE_CHECKING
 import numpy as np
 import pyqtgraph as pg
 from psygnal import Signal
 from .._shared_utils import convert_color_code, to_rgba
+
+if TYPE_CHECKING:
+    from qtpy.QtWidgets import QGraphicsTextItem
 
 
 class GraphicComponent:
@@ -84,9 +87,10 @@ class Roi(GraphicComponent):
         self.native.setPen(pg.mkPen(value))
         self.native._updateView()
 
+
 class Grid(GraphicComponent):
     native: pg.GridItem
-    
+
     def __init__(self) -> None:
         self.native = pg.GridItem()
 
@@ -105,6 +109,7 @@ class TextItem(GraphicComponent):
 
     @property
     def color(self):
+        """Text color."""
         rgba = self.native.color.getRgb()
         return np.array(rgba) / 255
 
@@ -115,6 +120,7 @@ class TextItem(GraphicComponent):
 
     @property
     def background_color(self):
+        """Text background color"""
         return to_rgba(self.native.fill)
 
     @background_color.setter
@@ -135,6 +141,7 @@ class TextItem(GraphicComponent):
 
     @property
     def text(self):
+        """Text string."""
         return self.native.toPlainText()
 
     @text.setter
@@ -148,16 +155,31 @@ class TextItem(GraphicComponent):
 
     @pos.setter
     def pos(self, value):
+        """Text position in the canvas."""
         self.native.setPos(*value)
 
     @property
     def anchor(self) -> np.ndarray:
+        """Anchor relative to the text position."""
         anchor = self.native.anchor
         return np.array([anchor.x(), anchor.y()])
 
     @anchor.setter
     def anchor(self, value):
         self.native.setAnchor(value)
+
+    @property
+    def font_size(self) -> int:
+        """Text font size."""
+        item: QGraphicsTextItem = self.native.textItem
+        return item.font().pointSize()
+
+    @font_size.setter
+    def font_size(self, size: int) -> int:
+        item: QGraphicsTextItem = self.native.textItem
+        font = item.font()
+        font.setPointSize(size)
+        item.setFont(font)
 
 
 class ScaleBar(GraphicComponent):
