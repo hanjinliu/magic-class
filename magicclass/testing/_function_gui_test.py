@@ -1,12 +1,15 @@
 from __future__ import annotations
 
-from typing import Callable, Generic, TypeVar
+from typing import Callable, Generic, TypeVar, TYPE_CHECKING
 from typing_extensions import ParamSpec
 
 from magicgui.widgets import PushButton, CheckBox
 
 from magicclass import get_function_gui
 from magicclass.signature import get_additional_option
+
+if TYPE_CHECKING:
+    from magicclass._gui import BaseGui
 
 
 class MockConfirmation:
@@ -45,6 +48,10 @@ _R = TypeVar("_R")
 class FunctionGuiTester(Generic[_P]):
     def __init__(self, method: Callable[_P, _R]):
         self._fgui = get_function_gui(method)
+        # NOTE: if the widget is in napari etc., choices depend on the parent.
+        ui: BaseGui = method.__self__
+        self._fgui.native.setParent(ui.native, self._fgui.native.windowFlags())
+        self._fgui.reset_choices()
         self._method = method
         if prev := get_additional_option(method, "preview", None):
             _, self._prev_auto_call, self._prev_func = prev

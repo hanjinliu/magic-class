@@ -5,6 +5,7 @@ from typing import (
     Iterable,
     MutableSequence,
     Any,
+    TypeVar,
 )
 from typing_extensions import _AnnotatedAlias, get_args
 from qtpy import QtWidgets as QtW, QtGui
@@ -17,19 +18,19 @@ from magicgui.widgets import (
     CheckBox,
     FileEdit,
     create_widget,
+    LineEdit,
 )
 from magicgui.application import use_app
-from magicgui.widgets import LineEdit
 from magicgui.types import FileDialogMode, Undefined
-from magicgui.widgets.bases import ValueWidget
+from magicgui.widgets.bases import ValueWidget, RangedWidget
 from magicgui.backends._qtpy.widgets import (
     QBaseStringWidget,
     LineEdit as BaseLineEdit,
 )
 from .utils import FreeWidget, merge_super_sigs
 from magicclass.signature import split_annotated_type
-from magicclass.types._optional import _FakeOptional
 
+_W = TypeVar("_W", bound=ValueWidget)
 
 if sys.platform == "win32":
     _FONT = "Consolas"
@@ -58,7 +59,7 @@ class OptionalWidget(Container):
 
     def __init__(
         self,
-        inner_widget: type[ValueWidget] | None = None,
+        inner_widget: _W | None = None,
         text: str | None = None,
         layout: str = "vertical",
         nullable: bool = True,
@@ -131,6 +132,40 @@ class OptionalWidget(Container):
     @text.setter
     def text(self, v: str) -> None:
         self._checkbox.text = v
+
+    @property
+    def inner_widget(self) -> _W:
+        return self._inner_value_widget
+
+    @property
+    def min(self):
+        if isinstance(self.inner_widget, RangedWidget):
+            return self.inner_widget.min
+        raise AttributeError(f"Inner widget {self.inner_widget} has no attribute 'min'")
+
+    @min.setter
+    def min(self, v):
+        if isinstance(self.inner_widget, RangedWidget):
+            self.inner_widget.min = v
+        else:
+            raise AttributeError(
+                f"Inner widget {self.inner_widget} has no attribute 'min'"
+            )
+
+    @property
+    def max(self):
+        if isinstance(self.inner_widget, RangedWidget):
+            return self.inner_widget.max
+        raise AttributeError(f"Inner widget {self.inner_widget} has no attribute 'max'")
+
+    @max.setter
+    def max(self, v):
+        if isinstance(self.inner_widget, RangedWidget):
+            self.inner_widget.max = v
+        else:
+            raise AttributeError(
+                f"Inner widget {self.inner_widget} has no attribute 'max'"
+            )
 
 
 class ConsoleTextEdit(TextEdit):
