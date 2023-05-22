@@ -433,11 +433,27 @@ class _QEditableComboBox(QtW.QComboBox):
             self.showPopup()
         super().keyPressEvent(event)
 
+    def wheelEvent(self, e: QtGui.QWheelEvent) -> None:
+        """Don't change the value when scrolling the mouse wheel."""
+        return None
+
     def _append_history(self, text: str):
         i = self.findText(text)
         if i >= 0:
             self.removeItem(i)
-        return self.addItem(text)
+        self.addItem(text)
+        if self.count() == 1:
+            self.setCurrentIndex(0)
+
+    def _pop_history(self, i: int):
+        nhist = self.count()
+        if i < 0:
+            i += nhist
+        if 0 <= i < nhist:
+            return self.removeItem(i)
+        raise IndexError(
+            f"Index {i} out of range. There are {nhist} items in the history."
+        )
 
 
 class QHistoryLineEdit(QBaseStringWidget):
@@ -464,9 +480,17 @@ class HistoryLineEdit(LineEdit):
             **kwargs,
         )
 
-    def append_history(self, text: str):
+    def append_history(self, text: str) -> None:
         """Append new history to the line edit"""
         return self.native._append_history(text)
+
+    def pop_history(self, i: int):
+        """Pop history at index `i`"""
+        return self.native._pop_history(i)
+
+    def get_history(self) -> list[str]:
+        """Return the history as a list"""
+        return [self.native.itemText(i) for i in range(self.native.count())]
 
 
 class HistoryFileEdit(FileEdit):
@@ -495,9 +519,9 @@ class HistoryFileEdit(FileEdit):
         self.line_edit.changed.disconnect()
         self.choose_btn.changed.connect(self._on_choose_clicked)
         self.line_edit.changed.connect(lambda: self.changed.emit(self.value))
+        self._append_history_of_current()
 
-    def _on_choose_clicked(self):
-        super()._on_choose_clicked()
+    def _append_history_of_current(self):
         val = self.value
         if isinstance(val, (str, Path)):
             val = str(val)
@@ -505,3 +529,19 @@ class HistoryFileEdit(FileEdit):
                 self.line_edit.append_history(val)
         elif isinstance(val, tuple):
             self.line_edit.append_history("; ".join(map(str, val)))
+
+    def _on_choose_clicked(self):
+        super()._on_choose_clicked()
+        self._append_history_of_current()
+
+    def append_history(self, path: str | Path):
+        """Append new history to the line edit""" ""
+        return self.line_edit.append_history(path)
+
+    def pop_history(self, i: int):
+        """Pop history at index `i`"""
+        return self.line_edit.pop_history(i)
+
+    def get_history(self) -> list[Path]:
+        """Return the history as a list"""
+        return [Path(p) for p in self.line_edit.get_history()]

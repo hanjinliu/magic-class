@@ -1,5 +1,6 @@
 from typing import Tuple
 from magicclass import magicclass, set_options, field, vfield, magictoolbar
+from magicclass.core import get_button
 from magicclass.types import Bound, Optional
 
 def test_bind_value():
@@ -11,7 +12,7 @@ def test_bind_value():
             pass
 
     ui = A()
-    ui["func"].changed()
+    get_button(ui.func).changed()
     assert str(ui.macro[-1]) == "ui.func(x=10)"
 
 def test_bind_method():
@@ -31,9 +32,9 @@ def test_bind_method():
     ui0 = A()
     ui1 = A()
 
-    ui0["func"].changed()
+    get_button(ui0.func).changed()
     assert str(ui0.macro[-1]) == "ui.func(x=1)"
-    ui0["func"].changed()
+    get_button(ui0.func).changed()
     assert str(ui0.macro[-1]) == "ui.func(x=2)"
     assert ui0.i == 2
     assert ui1.i == 0
@@ -53,17 +54,48 @@ def test_bind_field():
             pass
 
     ui = A()
-    ui["func_a"].changed()
+    get_button(ui.func_a).changed()
     assert str(ui.macro[-1]) == "ui.func_a(a=0)"
     ui.a.value = 10
-    ui["func_a"].changed()
+    get_button(ui.func_a).changed()
     assert str(ui.macro[-1]) == "ui.func_a(a=10)"
 
-    ui["func_b"].changed()
+    get_button(ui.func_b).changed()
     assert str(ui.macro[-1]) == "ui.func_b(b=0)"
     ui.b = 10
-    ui["func_b"].changed()
+    get_button(ui.func_b).changed()
     assert str(ui.macro[-1]) == "ui.func_b(b=10)"
+
+
+def test_bind_at_same_level():
+    @magicclass
+    class A:
+        @magicclass
+        class B:
+            a = vfield(5)
+
+            def f2(self, a: Bound[a]):
+                self.new_attr = a
+
+    ui = A()
+    get_button(ui.B.f2).changed()
+    assert ui.B.new_attr == 5
+
+def test_bind_at_same_level_external():
+    @magicclass
+    class B:
+        a = vfield(5)
+
+        def f2(self, a: Bound[a]):
+            self.new_attr = a
+    @magicclass
+    class A:
+        b = field(B)
+
+    ui = A()
+    get_button(ui.b.f2).changed()
+    assert ui.b.new_attr == 5
+
 
 def test_Bound():
     @magicclass
