@@ -12,8 +12,7 @@ like other wrappers, you don't have to worry about reducing code readability.
 How to Define Keybindings
 -------------------------
 
-All you have to do is to wrap methods with ``bind_key`` function. There are several ways to
-describe keybindings.
+All you have to do is to wrap methods with ``bind_key`` function.
 
 .. code-block:: python
 
@@ -21,11 +20,11 @@ describe keybindings.
 
     @magicclass
     class Main:
-        @bind_key("Ctrl-A")     # napari-style
+        @bind_key("Ctrl+A") # Qt-style
         def function_1(self):
             print(1)
 
-        @bind_key("Ctrl", "B")  # strings separately
+        @bind_key("Ctrl-B") # napari-style
         def function_2(self):
             print(2)
 
@@ -48,19 +47,35 @@ to change widget values with shortcut.
     @magicclass
     class Main:
         a = field(int)
+        def button(self):
+            """Click this button to remove focus from the spin box."""
 
         @bind_key("Up")
-        @do_not_record
         def _increment(self):
             self.a.value = min(self.a.value + 1, self.a.max)
 
         @bind_key("Down")
-        @do_not_record
         def _decrement(self):
             self.a.value = max(self.a.value - 1, self.a.min)
 
 Widget defined by this class is equipped with shortcuts that can change the value of ``a``
 without clicking the spin box.
+
+Key combos
+----------
+
+As Qt supports it, you can also define key combos.
+
+.. code-block:: python
+
+    from magicclass import magicclass, bind_key
+
+    @magicclass
+    class Main:
+        @bind_key("Ctrl+K, Ctrl+L")
+        def function_1(self):
+            print(1)
+
 
 Compatibility with Other Features
 ---------------------------------
@@ -80,7 +95,7 @@ You can call parent methods by combining with ``wraps`` method (see :doc:`/main/
             def some_function(self): ...
 
         @Menu.wraps
-        @bind_key("Ctrl-A")
+        @bind_key("Ctrl+A")
         def some_function(self):
             print(self.__class__.__name__) # should be "Main"
 

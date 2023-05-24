@@ -185,13 +185,27 @@ def bind_key(*key) -> Callable[[F], F]:
     This function accepts several styles of shortcut expression.
 
     >>> @bind_key("Ctrl-A")         # napari style
-    >>> @bind_key("Ctrl", "A")      # separately
-    >>> @bind_key(Key.Ctrl + Key.A) # use Key class
-    >>> @bind_key(Key.Ctrl, Key.A)  # use Key class separately
+    >>> @bind_key("Ctrl+A")         # Qt style
+
+    >>> @bind_key("Ctrl+K, Ctrl+V") # Key combo
 
     """
-    if isinstance(key[0], tuple):
+    if len(key) == 1 and isinstance(key[0], str):
         key = key[0]
+        # check Ctrl-A style
+        lower = key.lower()
+        for k in ["ctrl", "cmd", "shift", "alt"]:
+            if f"{k}-" in lower:
+                lower = lower.replace(f"{k}-", f"{k}+")
+        key = lower
+    else:
+        warnings.warn(
+            "`bind_key` now accepts only one string argument. "
+            "Please use such as `bind_key('Ctrl+A')`.",
+            DeprecationWarning,
+        )
+        if isinstance(key[0], tuple):
+            key = key[0]
 
     def wrapper(method: F) -> F:
         upgrade_signature(method, additional_options={"keybinding": key})

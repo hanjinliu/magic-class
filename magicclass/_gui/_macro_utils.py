@@ -230,8 +230,6 @@ def _define_macro_recorder(sig: inspect.Signature, func: Callable):
     else:
         _auto_call = False
 
-    _qualname = getattr(func, "__qualname__", None)
-
     if sig.return_annotation is inspect.Parameter.empty:
 
         def _record_macro(bgui: MagicTemplate, out, *args, **kwargs):
@@ -297,8 +295,6 @@ def _define_macro_recorder_for_partial(
         _auto_call = opt.get("auto_call", False)
     else:
         _auto_call = False
-
-    _qualname = getattr(base_func, "__qualname__", None)
 
     if sig.return_annotation is inspect.Parameter.empty:
 

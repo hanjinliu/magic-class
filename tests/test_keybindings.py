@@ -13,7 +13,7 @@ def test_basic_keybindings(qtbot: QtBot):
         class B:
             @bind_key("Ctrl-T")
             def f(self): pass
-            @bind_key("Ctrl-U")
+            @bind_key("Ctrl+U")
             def _g(self):
                 mock()
 
@@ -32,7 +32,7 @@ def test_basic_keybindings(qtbot: QtBot):
 
         @bind_key("Ctrl-A")
         def f(self): pass
-        @bind_key("Ctrl-B")
+        @bind_key("Ctrl+B")
         def _g(self):
             mock()
 
@@ -75,3 +75,25 @@ def test_basic_keybindings(qtbot: QtBot):
     mock.assert_called_once()
     mock.reset_mock()
     ui.close()
+
+def test_key_combo(qtbot: QtBot):
+    mock = MagicMock()
+    app = get_app()
+    @magicclass
+    class A:
+        @bind_key("Ctrl+K, Ctrl+A")
+        def f(self):
+            mock()
+
+    ui = A()
+    with qtbot.waitExposed(ui.native, timeout=500):
+        ui.show(False)
+    qtbot.addWidget(ui.native)
+    app.processEvents()
+    qtbot.keyClick(ui.native, Qt.Key.Key_K, Qt.KeyboardModifier.ControlModifier)
+    app.processEvents()
+    mock.assert_not_called()
+    qtbot.keyClick(ui.native, Qt.Key.Key_A, Qt.KeyboardModifier.ControlModifier)
+    app.processEvents()
+    qtbot.wait(400)
+    mock.assert_called_once()

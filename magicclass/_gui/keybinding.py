@@ -193,7 +193,7 @@ def strs2keycombo(*args: tuple[str | Key, ...]) -> KeyCombo:
     return tuple(Key.to_qtmodifier(m) for m in modifiers) + (Key.to_qtkey(key),)
 
 
-def as_shortcut(key_combo: tuple) -> QKeySequence:
+def _as_shortcut_old(key_combo: tuple) -> QKeySequence:
     if not isinstance(key_combo, tuple):
         raise TypeError(f"Unsupported key combo: {key_combo!r}.")
 
@@ -203,6 +203,12 @@ def as_shortcut(key_combo: tuple) -> QKeySequence:
     else:
         qtkeycombo = strs2keycombo(*key_combo)
     return QKeySequence(_bit_sum(qtkeycombo))
+
+
+def as_shortcut(key_combo) -> QKeySequence:
+    if isinstance(key_combo, str):
+        return QKeySequence(key_combo)
+    return _as_shortcut_old(key_combo)
 
 
 def register_shortcut(keys, parent: QWidget, target: Callable):
