@@ -52,7 +52,7 @@ class LayerItem:
 
 
 class PlotDataLayer(LayerItem):
-    native: pg.PlotCurveItem | pg.ScatterPlotItem
+    native: pg.PlotDataItem | pg.ScatterPlotItem
 
     @property
     def xdata(self) -> np.ndarray:
@@ -105,26 +105,6 @@ class PlotDataLayer(LayerItem):
         ydata = self.ydata[sl]
         self.native.setData(xdata, ydata)
         return None
-
-    @property
-    def edge_color(self) -> np.ndarray:
-        """Edge color of the data."""
-        return to_rgba(self.native.opts["pen"])
-
-    @edge_color.setter
-    def edge_color(self, value: str | Sequence):
-        value = convert_color_code(value)
-        self.native.setPen(value, width=self.lw, style=self.ls)
-
-    @property
-    def face_color(self) -> np.ndarray:
-        """Face color of the data."""
-        return to_rgba(self.native.opts["brush"])
-
-    @face_color.setter
-    def face_color(self, value: str | Sequence):
-        value = convert_color_code(value)
-        self.native.setBrush(value)
 
     color = property()
 
@@ -183,6 +163,26 @@ class Scatter(PlotDataLayer):
             x=x, y=y, pen=pen, brush=brush, size=size, symbol=symbol
         )
         self.name = name
+
+    @property
+    def edge_color(self) -> np.ndarray:
+        """Edge color of the data."""
+        return to_rgba(self.native.opts["pen"])
+
+    @edge_color.setter
+    def edge_color(self, value: str | Sequence):
+        value = convert_color_code(value)
+        self.native.setPen([value] * self.xdata.size, width=self.lw, style=self.ls)
+
+    @property
+    def face_color(self) -> np.ndarray:
+        """Face color of the data."""
+        return to_rgba(self.native.opts["brush"])
+
+    @face_color.setter
+    def face_color(self, value: str | Sequence):
+        value = convert_color_code(value)
+        self.native.setBrush([value] * self.xdata.size)
 
     @property
     def symbol(self):
@@ -442,6 +442,26 @@ class InfLine(LayerItem):
     @name.setter
     def name(self, value: str):
         self.native.setName(value)
+
+    @property
+    def edge_color(self) -> np.ndarray:
+        """Edge color of the data."""
+        return to_rgba(self.native.opts["pen"])
+
+    @edge_color.setter
+    def edge_color(self, value: str | Sequence):
+        value = convert_color_code(value)
+        self.native.setPen(value, width=self.lw, style=self.ls)
+
+    @property
+    def face_color(self) -> np.ndarray:
+        """Face color of the data."""
+        return to_rgba(self.native.opts["brush"])
+
+    @face_color.setter
+    def face_color(self, value: str | Sequence):
+        value = convert_color_code(value)
+        self.native.setBrush(value)
 
     @property
     def lw(self):
