@@ -5,7 +5,8 @@ from typing import TYPE_CHECKING, Any, Callable, Iterable, overload
 import warnings
 from qtpy import QtWidgets as QtW, QtCore
 from macrokit import Symbol, Expr, Head, BaseMacro, parse
-from magicgui.widgets import FileEdit, LineEdit
+from magicgui.widgets import FileEdit, LineEdit, EmptyWidget, PushButton
+from magicclass.utils.qthreading import thread_worker
 
 from magicclass.widgets import CodeEdit, TabbedContainer, ScrollableContainer, Dialog
 from magicclass.utils import move_to_screen_center
@@ -537,10 +538,40 @@ class GuiMacro(BaseMacro):
         return lambda: subset.eval(ns)
 
     def repeat_method(
-        self, index: int = -1, same_args: bool = False, wait: bool = False
+        self,
+        index: int = -1,
+        *,
+        same_args: bool = False,
+        blocking: bool = True,
+        raise_parse_error: bool = True,
+        check_nargs: bool = False,
     ) -> None:
-        _object, _args, _kwargs = self[index].split_call()
-        _ui, *_attributes, _last = _object.split_getattr()
+        """
+        Repeat the method call at the given index.
+
+        Parameters
+        ----------
+        index : int, default is -1
+            Index of the method call to repeat.
+        same_args : bool, default is False
+            If True, method will be called with the same arguments as before. Otherwise,
+            magicgui widget will be opened.
+        blocking : bool, default is True
+            If True, the method will be called in blocking mode if it is a thread worker.
+            Note that programatically calling "repeat_method" in non-blocking mode will
+            cause unexpected macro recording.
+        check_nargs : bool, default is False
+            If False, the method will be called even if it has no arguments. Otherwise,
+            raise ValueError. This option is useful to avoid calling long-running commands.
+        """
+        try:
+            _object, _args, _kwargs = self[index].split_call()
+            _ui, *_attributes, _last = _object.split_getattr()
+        except ValueError as e:
+            if raise_parse_error:
+                raise e
+            else:
+                return None
         ui = self._gui_parent
         assert _ui == ui._my_symbol
         ins = ui
@@ -548,18 +579,31 @@ class GuiMacro(BaseMacro):
             ins = getattr(ins, attr.name)
 
         wdt: Clickable = ins[_last.name]
-        if not wait:
+        if wdt.mgui is None:
+            raise ValueError(f"Method {_object} is not called yet.")
+        if check_nargs and not same_args:
+            n_widget_args = sum(
+                not isinstance(w, EmptyWidget)
+                for w in wdt.mgui
+                if not isinstance(w, PushButton)
+            )
+            if n_widget_args == 0:
+                raise ValueError(f"Method {_object} does not have any arguments.")
+
+        if not blocking:
             if same_args:
-                wdt.mgui.call_button.changed()
+                wdt.mgui.call_button.changed()  # click the call button
             else:
-                wdt.changed()
+                wdt.changed()  # click the button to open magicgui
         else:
             if same_args:
-                wdt.mgui()
+                wdt.mgui()  # call the method
             else:
-                raise NotImplementedError(
-                    "wait=True and same_args=False is not implemented yet."
-                )
+                if isinstance(wdt.mgui._function, thread_worker):
+                    raise ValueError(
+                        "same_args=False is not supported for blocking=True."
+                    )
+                wdt.changed()  # save as blocking=False for non-thread worker
         return None
 
     def _on_macro_added(self, expr=None):

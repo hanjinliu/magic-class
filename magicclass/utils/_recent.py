@@ -45,10 +45,10 @@ def call_recent_menu(
     MenuGuiBase
         magicmenu object.
     """
-    from ..core import magicmenu
-    from .._gui import MagicTemplate
-    from ..wrappers import mark_on_called
-    from ..functools._partial import partial
+    from magicclass.core import magicmenu
+    from magicclass._gui import MagicTemplate
+    from magicclass.wrappers import mark_on_called
+    from magicclass.functools._partial import partial
 
     # dispatch text type
     if text is None:
