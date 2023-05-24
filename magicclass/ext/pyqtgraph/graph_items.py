@@ -307,6 +307,26 @@ class Histogram(PlotDataLayer):
         y, x = np.histogram(data, bins=bins, range=range, density=density)
         self.native.setData(x=x, y=y)
 
+    @property
+    def edge_color(self) -> np.ndarray:
+        """Edge color of the data."""
+        return to_rgba(self.native.opts["pen"])
+
+    @edge_color.setter
+    def edge_color(self, value: str | Sequence):
+        value = convert_color_code(value)
+        self.native.setPen(value, width=self.lw, style=self.ls)
+
+    @property
+    def face_color(self) -> np.ndarray:
+        """Face color of the data."""
+        return to_rgba(self.native.opts["brush"])
+
+    @face_color.setter
+    def face_color(self, value: str | Sequence):
+        value = convert_color_code(value)
+        self.native.setBrush(value)
+
 
 class BarPlot(PlotDataLayer):
     native: pg.BarGraphItem
