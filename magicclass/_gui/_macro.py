@@ -441,8 +441,12 @@ class GuiMacro(BaseMacro):
     def undo_stack(self) -> dict[str, list[Expr]]:
         """Return a copy of undo stack info."""
         n_undo = len(self._stack_undo)
+        if n_undo == 0:
+            undo = []
+        else:
+            undo = [expr.copy() for expr in self.args[-n_undo:]]
         return dict(
-            undo=[expr.copy() for expr in self.args[-n_undo:]],
+            undo=undo,
             redo=[expr.copy() for expr, _ in self._stack_redo],
         )
 
