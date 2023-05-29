@@ -54,7 +54,7 @@ Download = "https://github.com/hanjinliu/magic-class"
 path = "magicclass/__init__.py"
 
 [tool.hatch.build]
-include = ["**/*.pyi"]
+include = ["*.pyi"]
 
 [tool.hatch.build.targets.sdist]
 include = [
