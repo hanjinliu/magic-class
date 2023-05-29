@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.utils.qthreading &mdash; magic-class 0.7.0rc0 documentation</title>
+  <title>magicclass.utils.qthreading &mdash; magic-class 0.7.1 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
@@ -32,7 +32,7 @@
             magic-class
           </a>
               <div class="version">
-                0.7.0rc0
+                0.7.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -716,7 +716,7 @@
 
         <span class="n">worker</span> <span class="o">=</span> <span class="n">create_worker</span><span class="p">(</span>
             <span class="n">_run</span><span class="p">,</span>
-            <span class="n">_ignore_errors</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_ignore_errors</span><span class="p">,</span>
+            <span class="n">_ignore_errors</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># NOTE: reraising is processed in _create_method</span>
             <span class="n">_start_thread</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="o">*</span><span class="n">args</span><span class="p">,</span>
             <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
@@ -729,6 +729,7 @@
 
         <span class="nd">@wraps</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="k">def</span> <span class="nf">_create_worker</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="n">_is_non_blocking</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">button</span><span class="p">(</span><span class="n">gui</span><span class="p">)</span><span class="o">.</span><span class="n">running</span>
             <span class="c1"># create a worker object</span>
             <span class="n">worker</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_qt_worker</span><span class="p">(</span><span class="n">gui</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
             <span class="n">is_generator</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">worker</span><span class="p">,</span> <span class="n">GeneratorWorker</span><span class="p">)</span>
@@ -771,7 +772,15 @@
                 <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">pbar</span><span class="p">,</span> <span class="s2">&quot;set_title&quot;</span><span class="p">):</span>
                     <span class="n">pbar</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_func</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">))</span>
 
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">button</span><span class="p">(</span><span class="n">gui</span><span class="p">)</span><span class="o">.</span><span class="n">running</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">is_generator</span><span class="p">:</span>
+
+                <span class="nd">@worker</span><span class="o">.</span><span class="n">aborted</span><span class="o">.</span><span class="n">connect</span>
+                <span class="k">def</span> <span class="nf">_on_abort</span><span class="p">():</span>
+                    <span class="n">gui</span><span class="o">.</span><span class="n">_error_mode</span><span class="o">.</span><span class="n">wrap_handler</span><span class="p">(</span><span class="n">Aborted</span><span class="o">.</span><span class="n">raise_</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">gui</span><span class="p">)()</span>
+                    <span class="n">gui</span><span class="o">.</span><span class="n">macro</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="n">Aborted</span><span class="o">.</span><span class="n">raise_</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">_is_non_blocking</span><span class="p">:</span>
 
                 <span class="nd">@worker</span><span class="o">.</span><span class="n">errored</span><span class="o">.</span><span class="n">connect</span>
                 <span class="k">def</span> <span class="nf">_on_error</span><span class="p">(</span><span class="n">err</span><span class="p">:</span> <span class="ne">Exception</span><span class="p">):</span>
@@ -779,13 +788,8 @@
                     <span class="c1"># cannot catch them. Macro has to be reactived here.</span>
                     <span class="n">gui</span><span class="o">.</span><span class="n">_error_mode</span><span class="o">.</span><span class="n">get_handler</span><span class="p">()(</span><span class="n">err</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">gui</span><span class="p">)</span>
                     <span class="n">gui</span><span class="o">.</span><span class="n">macro</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">True</span>
-
-                <span class="k">if</span> <span class="n">is_generator</span><span class="p">:</span>
-
-                    <span class="nd">@worker</span><span class="o">.</span><span class="n">aborted</span><span class="o">.</span><span class="n">connect</span>
-                    <span class="k">def</span> <span class="nf">_on_abort</span><span class="p">():</span>
-                        <span class="n">gui</span><span class="o">.</span><span class="n">_error_mode</span><span class="o">.</span><span class="n">wrap_handler</span><span class="p">(</span><span class="n">Aborted</span><span class="o">.</span><span class="n">raise_</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">gui</span><span class="p">)()</span>
-                        <span class="n">gui</span><span class="o">.</span><span class="n">macro</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ignore_errors</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="n">err</span>  <span class="c1"># reraise</span>
 
                 <span class="n">worker</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
             <span class="k">else</span><span class="p">:</span>
@@ -805,20 +809,48 @@
         <span class="n">pbar</span><span class="p">:</span> <span class="n">ProgressBar</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="n">app</span> <span class="o">=</span> <span class="n">use_app</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pbar</span><span class="p">,</span> <span class="n">DefaultProgressBar</span><span class="p">):</span>
+            <span class="n">pbar</span><span class="o">.</span><span class="n">pause_button</span><span class="o">.</span><span class="n">enabled</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="n">worker</span><span class="o">.</span><span class="n">started</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">process_events</span><span class="p">)</span>
         <span class="n">worker</span><span class="o">.</span><span class="n">finished</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">process_events</span><span class="p">)</span>
+
+        <span class="n">_empty</span> <span class="o">=</span> <span class="nb">object</span><span class="p">()</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">err</span> <span class="o">=</span> <span class="n">_empty</span>
+
+        <span class="nd">@worker</span><span class="o">.</span><span class="n">returned</span><span class="o">.</span><span class="n">connect</span>
+        <span class="k">def</span> <span class="nf">_</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+            <span class="k">nonlocal</span> <span class="n">result</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">val</span>
+
+        <span class="nd">@worker</span><span class="o">.</span><span class="n">errored</span><span class="o">.</span><span class="n">connect</span>
+        <span class="k">def</span> <span class="nf">_</span><span class="p">(</span><span class="n">exc</span><span class="p">):</span>
+            <span class="k">nonlocal</span> <span class="n">err</span>
+            <span class="n">err</span> <span class="o">=</span> <span class="n">exc</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">worker</span><span class="p">,</span> <span class="n">GeneratorWorker</span><span class="p">):</span>
+
+            <span class="nd">@worker</span><span class="o">.</span><span class="n">aborted</span><span class="o">.</span><span class="n">connect</span>
+            <span class="k">def</span> <span class="nf">_</span><span class="p">():</span>
+                <span class="k">nonlocal</span> <span class="n">err</span>
+                <span class="n">err</span> <span class="o">=</span> <span class="n">Aborted</span><span class="p">(</span><span class="s2">&quot;Aborted.&quot;</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">worker</span><span class="p">,</span> <span class="n">GeneratorWorker</span><span class="p">):</span>
             <span class="n">worker</span><span class="o">.</span><span class="n">yielded</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">process_events</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">worker</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 
-        <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+        <span class="k">except</span> <span class="ne">KeyboardInterrupt</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pbar</span><span class="p">,</span> <span class="n">DefaultProgressBar</span><span class="p">):</span>
                 <span class="n">pbar</span><span class="o">.</span><span class="n">_abort_worker</span><span class="p">()</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">worker</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
             <span class="n">worker</span><span class="o">.</span><span class="n">finished</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span>
             <span class="n">gui</span><span class="o">.</span><span class="n">_error_mode</span><span class="o">.</span><span class="n">wrap_handler</span><span class="p">(</span><span class="n">Aborted</span><span class="o">.</span><span class="n">raise_</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">gui</span><span class="p">)()</span>
+            <span class="k">raise</span> <span class="n">e</span>
+
+        <span class="k">if</span> <span class="n">result</span> <span class="ow">is</span> <span class="n">_empty</span> <span class="ow">and</span> <span class="n">err</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">_empty</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">err</span>
 
     <span class="k">def</span> <span class="nf">_get_method_signature</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Signature</span><span class="p">:</span>
         <span class="n">sig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__signature__</span>

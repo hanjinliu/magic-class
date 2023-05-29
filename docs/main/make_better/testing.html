@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="English" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Testing Magic classes &mdash; magic-class 0.7.1 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/columns.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Data Visualization" href="../visualization/index.html" />
+    <link rel="prev" title="Container Variations" href="containers.html" />
+</head>
+
+<body class="wy-body-for-nav">
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+
+          <a href="../../index.html" class="icon icon-home">
+            magic-class
+          </a>
+              <div class="version">
+                0.7.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../quick_start.html">Quick Start</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../basics/index.html">Basics</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Make Your GUI Better</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="use_wraps.html">Call Parent Methods from its Child</a></li>
+<li class="toctree-l2"><a class="reference internal" href="undo.html">Implement Undo/Redo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="use_bind.html">Binding Values to Arguments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="use_choices.html">Set Choices Dynamically</a></li>
+<li class="toctree-l2"><a class="reference internal" href="use_setup.html">Complicated Settings of FunctionGui</a></li>
+<li class="toctree-l2"><a class="reference internal" href="use_preview.html">Add Preview Functionalities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="use_confirm.html">Pre-run Confirmation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="use_worker.html">Multi-threading</a></li>
+<li class="toctree-l2"><a class="reference internal" href="use_icon.html">Set Custom Icons</a></li>
+<li class="toctree-l2"><a class="reference internal" href="use_logging.html">Logging in magic-class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="use_functools.html">Use functools-like API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="additional_types.html">Additional types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="containers.html">Container Variations</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Testing Magic classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#testing-function-gui-creation">Testing Function GUI Creation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#testing-docstrings">Testing Docstrings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#testing-preview-and-confirmation">Testing Preview and Confirmation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/index.html">Data Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced/index.html">Advanced Topics</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../best_practice.html">Best Practice</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">magic-class</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Make Your GUI Better</a></li>
+      <li class="breadcrumb-item active">Testing Magic classes</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/main/make_better/testing.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+
+  <section id="testing-magic-classes">
+<h1>Testing Magic classes<a class="headerlink" href="#testing-magic-classes" title="Permalink to this headline">¶</a></h1>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 0.7.1.</span></p>
+</div>
+<p><a class="reference internal" href="../../apidoc/magicclass.testing.html#module-magicclass.testing" title="magicclass.testing"><code class="xref py py-mod docutils literal notranslate"><span class="pre">magicclass.testing</span></code></a> contains several functions to test the magic classes.</p>
+<div class="contents local topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#testing-function-gui-creation" id="id1">Testing Function GUI Creation</a></p></li>
+<li><p><a class="reference internal" href="#testing-docstrings" id="id2">Testing Docstrings</a></p></li>
+<li><p><a class="reference internal" href="#testing-preview-and-confirmation" id="id3">Testing Preview and Confirmation</a></p></li>
+</ul>
+</div>
+<section id="testing-function-gui-creation">
+<h2><a class="toc-backref" href="#id1">Testing Function GUI Creation</a><a class="headerlink" href="#testing-function-gui-creation" title="Permalink to this headline">¶</a></h2>
+<p>All the <code class="xref py py-class docutils literal notranslate"><span class="pre">FunctionGui</span></code> s are built lazily, that is, they are built only
+after user clicked the corresponding button. Therefore, the building error
+cannot be detected in the &quot;compile&quot; time.</p>
+<p>To test if all the <code class="xref py py-class docutils literal notranslate"><span class="pre">FunctionGui`s</span> <span class="pre">can</span> <span class="pre">be</span> <span class="pre">built</span> <span class="pre">successfully,</span> <span class="pre">you</span> <span class="pre">can</span>
+<span class="pre">use</span> <span class="pre">:meth:`check_function_gui_buildable</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span>
+<span class="kn">from</span> <span class="nn">magicclass.testing</span> <span class="kn">import</span> <span class="n">check_function_gui_buildable</span>
+
+<span class="nd">@magicclass</span>
+<span class="k">class</span> <span class="nc">MyGui</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>  <span class="c1"># x is not annotated, so @magicgui will fail</span>
+        <span class="o">...</span>          <span class="c1"># to build a functional GUI.</span>
+
+<span class="n">ui</span> <span class="o">=</span> <span class="n">MyGui</span><span class="p">()</span>
+
+<span class="n">check_function_gui_buildable</span><span class="p">(</span><span class="n">ui</span><span class="p">)</span>  <span class="c1"># this will raise an error on &quot;f&quot;</span>
+</pre></div>
+</div>
+<p><code class="xref py py-meth docutils literal notranslate"><span class="pre">check_function_gui_buildable()</span></code> can also detect inappropriate
+<a class="reference internal" href="use_bind.html"><span class="doc">bind options</span></a> and <a class="reference internal" href="use_choices.html"><span class="doc">choices</span></a>.</p>
+</section>
+<section id="testing-docstrings">
+<h2><a class="toc-backref" href="#id2">Testing Docstrings</a><a class="headerlink" href="#testing-docstrings" title="Permalink to this headline">¶</a></h2>
+<p>Magic classes can use the python docstring (<code class="docutils literal notranslate"><span class="pre">__doc__</span></code>) to generate the
+tooltips of the corresponding widgets. However, when you renamed some
+of the variables, IDE may not rename the docstrings automatically. This
+will cause the tooltips not matching the actual variables.</p>
+<p>To test if all the docstrings are correct, you can use <code class="xref py py-meth docutils literal notranslate"><span class="pre">check_tooltip()</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span>
+<span class="kn">from</span> <span class="nn">magicclass.testing</span> <span class="kn">import</span> <span class="n">check_tooltip</span>
+
+<span class="nd">@magicclass</span>
+<span class="k">class</span> <span class="nc">MyGui</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        ......</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        y : int         # &lt;---- this should be &quot;x&quot;</span>
+<span class="sd">            ......</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+<span class="n">ui</span> <span class="o">=</span> <span class="n">MyGui</span><span class="p">()</span>
+
+<span class="n">check_tooltip</span><span class="p">(</span><span class="n">ui</span><span class="p">)</span>  <span class="c1"># wrong &quot;y&quot; will be reported</span>
+</pre></div>
+</div>
+</section>
+<section id="testing-preview-and-confirmation">
+<h2><a class="toc-backref" href="#id3">Testing Preview and Confirmation</a><a class="headerlink" href="#testing-preview-and-confirmation" title="Permalink to this headline">¶</a></h2>
+<p><code class="xref py py-mod docutils literal notranslate"><span class="pre">magic-class</span></code> natively supports method <a class="reference internal" href="use_preview.html"><span class="doc">preview</span></a> and
+<a class="reference internal" href="use_confirm.html"><span class="doc">confirmation</span></a>. These are again a runtime feature, so they
+is hard to be tested.</p>
+<p><code class="xref py py-class docutils literal notranslate"><span class="pre">FunctionGuiTester</span></code> is the class for this purpose.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">magicclass</span> <span class="kn">import</span> <span class="n">magicclass</span><span class="p">,</span> <span class="n">confirm</span><span class="p">,</span> <span class="n">impl_preview</span><span class="p">,</span> <span class="n">vfield</span>
+<span class="kn">from</span> <span class="nn">magicclass.testing</span> <span class="kn">import</span> <span class="n">FunctionGuiTester</span>
+
+<span class="nd">@magicclass</span>
+<span class="k">class</span> <span class="nc">MyGui</span><span class="p">:</span>
+    <span class="c1"># confirm before run if x is too large</span>
+    <span class="nd">@confirm</span><span class="p">(</span><span class="n">condition</span><span class="o">=</span><span class="s2">&quot;x&gt;100&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+    <span class="c1"># method g has a preview function &quot;_g_preview&quot;</span>
+    <span class="k">def</span> <span class="nf">g</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">result</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="nd">@impl_preview</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_g_preview</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="n">old</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">result</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">g</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>  <span class="c1"># prerun</span>
+        <span class="k">yield</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">result</span> <span class="o">=</span> <span class="n">old</span>  <span class="c1"># cleanup</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">vfield</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>  <span class="c1"># show the result of &quot;g&quot;</span>
+
+<span class="n">ui</span> <span class="o">=</span> <span class="n">MyGui</span><span class="p">()</span>
+<span class="n">tester</span> <span class="o">=</span> <span class="n">FunctionGuiTester</span><span class="p">(</span><span class="n">ui</span><span class="o">.</span><span class="n">f</span><span class="p">)</span>  <span class="c1"># create a tester for function &quot;f&quot;</span>
+</pre></div>
+</div>
+<p><code class="xref py py-meth docutils literal notranslate"><span class="pre">FunctionGuiTester.call()</span></code> will call the method as if it is called from
+GUI, but it will not open the default confirmation dialog (otherwise your test
+session will wait for your response). The confirmation callback is temporarily
+replaced by a dummy function. You can check if the confirmation is called using
+the <code class="xref py py-attr docutils literal notranslate"><span class="pre">confirm_count</span></code> attribute.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># test if the confirmation works</span>
+<span class="n">tester</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">tester</span><span class="o">.</span><span class="n">confirm_count</span> <span class="o">==</span> <span class="mi">1</span>
+</pre></div>
+</div>
+<p>To test preview function, you can use <code class="xref py py-meth docutils literal notranslate"><span class="pre">FunctionGuiTester.update_parameters()</span></code>
+to update the GUI state and <code class="xref py py-meth docutils literal notranslate"><span class="pre">FunctionGuiTester.click_preview()</span></code> to trigger
+the preview function.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">tester</span> <span class="o">=</span> <span class="n">FunctionGuiTester</span><span class="p">(</span><span class="n">ui</span><span class="o">.</span><span class="n">g</span><span class="p">)</span>  <span class="c1"># create a tester for function &quot;g&quot;</span>
+
+<span class="c1"># test if the confirmation works</span>
+<span class="n">tester</span><span class="o">.</span><span class="n">update_parameters</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">ui</span><span class="o">.</span><span class="n">result</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span>  <span class="c1"># check preview is not called yet</span>
+<span class="n">tester</span><span class="o">.</span><span class="n">click_preview</span><span class="p">()</span>
+<span class="k">assert</span> <span class="n">ui</span><span class="o">.</span><span class="n">result</span> <span class="o">==</span> <span class="s2">&quot;25&quot;</span>  <span class="c1"># check preview is working</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="containers.html" class="btn btn-neutral float-left" title="Container Variations" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../visualization/index.html" class="btn btn-neutral float-right" title="Data Visualization" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Hanjin Liu.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+</body>
+</html>

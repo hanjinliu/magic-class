@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.ext.dask.progress &mdash; magic-class 0.7.0rc0 documentation</title>
+  <title>magicclass.ext.dask.progress &mdash; magic-class 0.7.1 documentation</title>
       <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/columns.css" type="text/css" />
@@ -32,7 +32,7 @@
             magic-class
           </a>
               <div class="version">
-                0.7.0rc0
+                0.7.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
@@ -104,7 +104,6 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A progress bar widget for dask computation.&quot;&quot;&quot;</span>
 
     <span class="n">computed</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">(</span><span class="nb">object</span><span class="p">)</span>
-    <span class="n">new_cycle</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -119,6 +118,7 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="nb">max</span><span class="o">=</span><span class="nb">max</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_computed_signal</span> <span class="o">=</span> <span class="n">QtSignal</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_computed_signal</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_on_computed</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_new_cycle_signal</span> <span class="o">=</span> <span class="n">QtSignal</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_n_computation</span> <span class="o">=</span> <span class="mi">0</span>
@@ -128,7 +128,7 @@
     <span class="k">def</span> <span class="nf">_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dsk</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_frac</span> <span class="o">=</span> <span class="mf">0.0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">new_cycle</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_computation</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_new_cycle_signal</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_computation</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_n_computation</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_timer</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_start_thread</span><span class="p">()</span>
@@ -274,7 +274,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_progress</span><span class="p">[</span><span class="s2">&quot;desc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">_descs</span><span class="p">(),</span> <span class="s2">&quot;&lt;No description&gt;&quot;</span><span class="p">)</span>
             <span class="n">it</span> <span class="o">=</span> <span class="n">_descs</span><span class="p">()</span>
 
-            <span class="nd">@pbar</span><span class="o">.</span><span class="n">new_cycle</span><span class="o">.</span><span class="n">connect</span>
+            <span class="nd">@pbar</span><span class="o">.</span><span class="n">_new_cycle_signal</span><span class="o">.</span><span class="n">connect</span>
             <span class="k">def</span> <span class="nf">_</span><span class="p">(</span><span class="n">i</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
                 <span class="n">pbar</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">it</span><span class="p">,</span> <span class="s2">&quot;&lt;No description&gt;&quot;</span><span class="p">))</span>
 

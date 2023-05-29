@@ -321,7 +321,7 @@ You may want to use the command palette with the :meth:`bind_key` decorator.
 
         def func(self): ...
 
-        @bind_key("Ctrl-Shift-P")
+        @bind_key("Ctrl+Shift+P")
         def _show_palette(self):
             exec_command_palette(self)
 

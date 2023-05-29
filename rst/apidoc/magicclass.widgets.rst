@@ -29,6 +29,14 @@ magicclass.widgets.color module
    :undoc-members:
    :show-inheritance:
 
+magicclass.widgets.colormap module
+----------------------------------
+
+.. automodule:: magicclass.widgets.colormap
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 magicclass.widgets.containers module
 ------------------------------------
 

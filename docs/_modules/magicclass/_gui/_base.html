@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass._gui._base &mdash; magic-class 0.7.0 documentation</title>
+  <title>magicclass._gui._base &mdash; magic-class 0.7.1 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
@@ -32,7 +32,7 @@
             magic-class
           </a>
               <div class="version">
-                0.7.0
+                0.7.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -94,7 +94,7 @@
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="n">MethodType</span>
 <span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span>
-<span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">_AnnotatedAlias</span><span class="p">,</span> <span class="n">Literal</span>
+<span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">_AnnotatedAlias</span>
 <span class="kn">import</span> <span class="nn">inspect</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">qtpy.QtWidgets</span> <span class="kn">import</span> <span class="n">QWidget</span><span class="p">,</span> <span class="n">QDockWidget</span>
@@ -147,6 +147,7 @@
 <span class="kn">from</span> <span class="nn">magicclass.widgets</span> <span class="kn">import</span> <span class="n">Separator</span><span class="p">,</span> <span class="n">FreeWidget</span>
 <span class="kn">from</span> <span class="nn">magicclass.fields</span> <span class="kn">import</span> <span class="n">MagicField</span><span class="p">,</span> <span class="n">MagicValueField</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">vfield</span>
 <span class="kn">from</span> <span class="nn">magicclass.signature</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ConfirmDict</span><span class="p">,</span>
     <span class="n">MagicMethodSignature</span><span class="p">,</span>
     <span class="n">get_additional_option</span><span class="p">,</span>
     <span class="n">split_annotated_type</span><span class="p">,</span>
@@ -1138,6 +1139,10 @@
     <span class="k">return</span> <span class="n">func</span>
 
 
+<span class="k">class</span> <span class="nc">MagicGuiBuildError</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Error raised when magicgui cannot build a gui.&quot;&quot;&quot;</span>
+
+
 <span class="k">def</span> <span class="nf">_build_mgui</span><span class="p">(</span><span class="n">widget_</span><span class="p">:</span> <span class="n">Action</span> <span class="o">|</span> <span class="n">PushButtonPlus</span><span class="p">,</span> <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">parent</span><span class="p">:</span> <span class="n">BaseGui</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Build a magicgui from a function for the give button/action.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">widget_</span><span class="o">.</span><span class="n">mgui</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -1150,9 +1155,8 @@
             <span class="n">opt</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="c1"># confirmation</span>
-        <span class="n">conf</span> <span class="o">=</span> <span class="n">opt</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;confirm&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">conf</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">func</span> <span class="o">=</span> <span class="n">_implement_confirmation</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="o">**</span><span class="n">conf</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;confirm&quot;</span> <span class="ow">in</span> <span class="n">opt</span><span class="p">:</span>
+            <span class="n">func</span> <span class="o">=</span> <span class="n">_implement_confirmation</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">opt</span><span class="p">[</span><span class="s2">&quot;confirm&quot;</span><span class="p">])</span>
 
         <span class="c1"># Wrap function to deal with errors in a right way.</span>
         <span class="n">func</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">_error_mode</span><span class="o">.</span><span class="n">wrap_handler</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
@@ -1184,7 +1188,7 @@
             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.</span><span class="se">\n</span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
         <span class="n">widget_</span><span class="o">.</span><span class="n">mgui</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">raise</span> <span class="nb">type</span><span class="p">(</span><span class="n">e</span><span class="p">)(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">MagicGuiBuildError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">_connect_functiongui_event</span><span class="p">(</span><span class="n">mgui</span><span class="p">,</span> <span class="n">opt</span><span class="p">)</span>
 
@@ -1393,9 +1397,7 @@
 <span class="k">def</span> <span class="nf">_implement_confirmation</span><span class="p">(</span>
     <span class="n">method</span><span class="p">:</span> <span class="n">MethodType</span><span class="p">,</span>
     <span class="bp">self</span><span class="p">:</span> <span class="n">BaseGui</span><span class="p">,</span>
-    <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">condition</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">BaseGui</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">callback</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">,</span> <span class="n">BaseGui</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span>
+    <span class="n">opt</span><span class="p">:</span> <span class="n">ConfirmDict</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Implement confirmation callback to a method.&quot;&quot;&quot;</span>
     <span class="n">sig</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
@@ -1408,6 +1410,7 @@
             <span class="n">all_args</span> <span class="o">=</span> <span class="n">arguments</span><span class="o">.</span><span class="n">arguments</span>
             <span class="n">all_args</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
             <span class="n">need_confirmation</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">condition</span> <span class="o">=</span> <span class="n">opt</span><span class="p">[</span><span class="s2">&quot;condition&quot;</span><span class="p">]</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
                 <span class="k">try</span><span class="p">:</span>
                     <span class="n">need_confirmation</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="p">{},</span> <span class="n">all_args</span><span class="p">)</span>
@@ -1427,6 +1430,8 @@
                     <span class="ne">UserWarning</span><span class="p">,</span>
                 <span class="p">)</span>
             <span class="k">if</span> <span class="n">need_confirmation</span><span class="p">:</span>
+                <span class="n">callback</span> <span class="o">=</span> <span class="n">opt</span><span class="p">[</span><span class="s2">&quot;callback&quot;</span><span class="p">]</span>
+                <span class="n">text</span> <span class="o">=</span> <span class="n">opt</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">]</span>
                 <span class="n">callback</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">all_args</span><span class="p">),</span> <span class="bp">self</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">method</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>

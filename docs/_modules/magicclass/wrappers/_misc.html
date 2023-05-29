@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.wrappers._misc &mdash; magic-class 0.7.0rc0 documentation</title>
+  <title>magicclass.wrappers._misc &mdash; magic-class 0.7.1 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/columns.css" type="text/css" />
@@ -32,7 +32,7 @@
             magic-class
           </a>
               <div class="version">
-                0.7.0rc0
+                0.7.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -267,13 +267,27 @@
 <span class="sd">    This function accepts several styles of shortcut expression.</span>
 
 <span class="sd">    &gt;&gt;&gt; @bind_key(&quot;Ctrl-A&quot;)         # napari style</span>
-<span class="sd">    &gt;&gt;&gt; @bind_key(&quot;Ctrl&quot;, &quot;A&quot;)      # separately</span>
-<span class="sd">    &gt;&gt;&gt; @bind_key(Key.Ctrl + Key.A) # use Key class</span>
-<span class="sd">    &gt;&gt;&gt; @bind_key(Key.Ctrl, Key.A)  # use Key class separately</span>
+<span class="sd">    &gt;&gt;&gt; @bind_key(&quot;Ctrl+A&quot;)         # Qt style</span>
+
+<span class="sd">    &gt;&gt;&gt; @bind_key(&quot;Ctrl+K, Ctrl+V&quot;) # Key combo</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">key</span> <span class="o">=</span> <span class="n">key</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c1"># check Ctrl-A style</span>
+        <span class="n">lower</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;ctrl&quot;</span><span class="p">,</span> <span class="s2">&quot;cmd&quot;</span><span class="p">,</span> <span class="s2">&quot;shift&quot;</span><span class="p">,</span> <span class="s2">&quot;alt&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">-&quot;</span> <span class="ow">in</span> <span class="n">lower</span><span class="p">:</span>
+                <span class="n">lower</span> <span class="o">=</span> <span class="n">lower</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">-&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">+&quot;</span><span class="p">)</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="n">lower</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="s2">&quot;`bind_key` now accepts only one string argument. &quot;</span>
+            <span class="s2">&quot;Please use such as `bind_key(&#39;Ctrl+A&#39;)`.&quot;</span><span class="p">,</span>
+            <span class="ne">DeprecationWarning</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="n">key</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="n">method</span><span class="p">:</span> <span class="n">F</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">F</span><span class="p">:</span>
         <span class="n">upgrade_signature</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">additional_options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;keybinding&quot;</span><span class="p">:</span> <span class="n">key</span><span class="p">})</span>
@@ -327,7 +341,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">_setup</span> <span class="o">=</span> <span class="n">setup</span>
         <span class="n">upgrade_signature</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">additional_options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;setup&quot;</span><span class="p">:</span> <span class="n">_setup</span><span class="p">})</span>
-        <span class="n">upgrade_signature</span><span class="p">(</span><span class="n">setup</span><span class="p">,</span> <span class="n">additional_options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;nogui&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+        <span class="n">upgrade_signature</span><span class="p">(</span><span class="n">setup</span><span class="p">,</span> <span class="n">additional_options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;gui&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">})</span>
         <span class="k">return</span> <span class="n">setup</span>
 
     <span class="k">return</span> <span class="n">wrapper</span></div>

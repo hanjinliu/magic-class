@@ -12,6 +12,7 @@ Subpackages
    magicclass.functools
    magicclass.logging
    magicclass.stylesheets
+   magicclass.testing
    magicclass.types
    magicclass.utils
    magicclass.widgets
@@ -56,14 +57,6 @@ magicclass.signature module
 ---------------------------
 
 .. automodule:: magicclass.signature
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-magicclass.testing module
--------------------------
-
-.. automodule:: magicclass.testing
    :members:
    :undoc-members:
    :show-inheritance:

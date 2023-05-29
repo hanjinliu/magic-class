@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass.wrappers package &mdash; magic-class 0.7.0 documentation</title>
+  <title>magicclass.wrappers package &mdash; magic-class 0.7.1 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/columns.css" type="text/css" />
@@ -35,7 +35,7 @@
             magic-class
           </a>
               <div class="version">
-                0.7.0
+                0.7.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -66,7 +66,6 @@
 <li class="toctree-l4"><a class="reference internal" href="magicclass.html#module-magicclass.help">magicclass.help module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="magicclass.html#module-magicclass.plot_api">magicclass.plot_api module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="magicclass.html#module-magicclass.signature">magicclass.signature module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="magicclass.html#module-magicclass.testing">magicclass.testing module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="magicclass.html#module-magicclass.undo">magicclass.undo module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="magicclass.html#module-magicclass">Module contents</a></li>
 </ul>
@@ -155,9 +154,10 @@ of magic-classes.</p>
 <dd><p>Define a keybinding to a button or an action.
 This function accepts several styles of shortcut expression.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nd">@bind_key</span><span class="p">(</span><span class="s2">&quot;Ctrl-A&quot;</span><span class="p">)</span>         <span class="c1"># napari style</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nd">@bind_key</span><span class="p">(</span><span class="s2">&quot;Ctrl&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">)</span>      <span class="c1"># separately</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nd">@bind_key</span><span class="p">(</span><span class="n">Key</span><span class="o">.</span><span class="n">Ctrl</span> <span class="o">+</span> <span class="n">Key</span><span class="o">.</span><span class="n">A</span><span class="p">)</span> <span class="c1"># use Key class</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nd">@bind_key</span><span class="p">(</span><span class="n">Key</span><span class="o">.</span><span class="n">Ctrl</span><span class="p">,</span> <span class="n">Key</span><span class="o">.</span><span class="n">A</span><span class="p">)</span>  <span class="c1"># use Key class separately</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nd">@bind_key</span><span class="p">(</span><span class="s2">&quot;Ctrl+A&quot;</span><span class="p">)</span>         <span class="c1"># Qt style</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nd">@bind_key</span><span class="p">(</span><span class="s2">&quot;Ctrl+K, Ctrl+V&quot;</span><span class="p">)</span> <span class="c1"># Key combo</span>
 </pre></div>
 </div>
 </dd></dl>

@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>magicclass package &mdash; magic-class 0.7.0 documentation</title>
+  <title>magicclass package &mdash; magic-class 0.7.1 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/columns.css" type="text/css" />
@@ -35,7 +35,7 @@
             magic-class
           </a>
               <div class="version">
-                0.7.0
+                0.7.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -66,7 +66,6 @@
 <li class="toctree-l4"><a class="reference internal" href="#module-magicclass.help">magicclass.help module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-magicclass.plot_api">magicclass.plot_api module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-magicclass.signature">magicclass.signature module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-magicclass.testing">magicclass.testing module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-magicclass.undo">magicclass.undo module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-magicclass">Module contents</a></li>
 </ul>
@@ -206,6 +205,10 @@
 <li class="toctree-l2"><a class="reference internal" href="magicclass.stylesheets.html#module-magicclass.stylesheets">Module contents</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="magicclass.testing.html">magicclass.testing package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.testing.html#module-magicclass.testing">Module contents</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="magicclass.types.html">magicclass.types package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="magicclass.types.html#module-magicclass.types">Module contents</a></li>
 </ul>
@@ -240,6 +243,7 @@
 <li class="toctree-l2"><a class="reference internal" href="magicclass.widgets.html#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="magicclass.widgets.html#module-magicclass.widgets.codeedit">magicclass.widgets.codeedit module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="magicclass.widgets.html#module-magicclass.widgets.color">magicclass.widgets.color module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="magicclass.widgets.html#module-magicclass.widgets.colormap">magicclass.widgets.colormap module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="magicclass.widgets.html#module-magicclass.widgets.containers">magicclass.widgets.containers module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="magicclass.widgets.html#module-magicclass.widgets.eval">magicclass.widgets.eval module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="magicclass.widgets.html#module-magicclass.widgets.logger">magicclass.widgets.logger module</a></li>
@@ -559,6 +563,11 @@ Import this submodule</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">magicclass.signature.</span></span><span class="sig-name descname"><span class="pre">AdditionalOptions</span></span><a class="reference internal" href="../_modules/magicclass/signature.html#AdditionalOptions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.signature.AdditionalOptions" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TypedDict</span></code></p>
 <dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.signature.AdditionalOptions.confirm">
+<span class="sig-name descname"><span class="pre">confirm</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#magicclass.signature.ConfirmDict" title="magicclass.signature.ConfirmDict"><span class="pre">magicclass.signature.ConfirmDict</span></a></em><a class="headerlink" href="#magicclass.signature.AdditionalOptions.confirm" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="magicclass.signature.AdditionalOptions.copyto">
 <span class="sig-name descname"><span class="pre">copyto</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#magicclass.signature.AdditionalOptions.copyto" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -596,6 +605,27 @@ Import this submodule</p>
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="magicclass.signature.ConfirmDict">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">magicclass.signature.</span></span><span class="sig-name descname"><span class="pre">ConfirmDict</span></span><a class="reference internal" href="../_modules/magicclass/signature.html#ConfirmDict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.signature.ConfirmDict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TypedDict</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.signature.ConfirmDict.callback">
+<span class="sig-name descname"><span class="pre">callback</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">BaseGui</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#magicclass.signature.ConfirmDict.callback" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.signature.ConfirmDict.condition">
+<span class="sig-name descname"><span class="pre">condition</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Mock</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Callable</span></em><a class="headerlink" href="#magicclass.signature.ConfirmDict.condition" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="magicclass.signature.ConfirmDict.text">
+<span class="sig-name descname"><span class="pre">text</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#magicclass.signature.ConfirmDict.text" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="magicclass.signature.MagicMethodSignature">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">magicclass.signature.</span></span><span class="sig-name descname"><span class="pre">MagicMethodSignature</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_annotation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gui_options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">caller_options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">additional_options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/signature.html#MagicMethodSignature"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.signature.MagicMethodSignature" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">magicgui.signature.MagicSignature</span></code></p>
@@ -624,7 +654,17 @@ to override them in the new copy.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="magicclass.signature.get_additional_option">
-<span class="sig-prename descclassname"><span class="pre">magicclass.signature.</span></span><span class="sig-name descname"><span class="pre">get_additional_option</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">option</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/signature.html#get_additional_option"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.signature.get_additional_option" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">magicclass.signature.</span></span><span class="sig-name descname"><span class="pre">get_additional_option</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">option</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'preview'</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/magicclass/signature.html#get_additional_option"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.signature.get_additional_option" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">magicclass.signature.</span></span><span class="sig-name descname"><span class="pre">get_additional_option</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">option</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'confirm'</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#magicclass.signature.ConfirmDict" title="magicclass.signature.ConfirmDict"><span class="pre">magicclass.signature.ConfirmDict</span></a></span></span></dt>
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">magicclass.signature.</span></span><span class="sig-name descname"><span class="pre">get_additional_option</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">option</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'gui'</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span></dt>
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">magicclass.signature.</span></span><span class="sig-name descname"><span class="pre">get_additional_option</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">option</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'record'</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span></dt>
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">magicclass.signature.</span></span><span class="sig-name descname"><span class="pre">get_additional_option</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">option</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'setup'</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span></span></span></dt>
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">magicclass.signature.</span></span><span class="sig-name descname"><span class="pre">get_additional_option</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">option</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span></dt>
 <dd><p>Safely get an additional option from any objects.</p>
 </dd></dl>
 
@@ -656,36 +696,6 @@ a inspect.Signature or magicgui.signature.Magicsignature.</p>
 </dd>
 </dl>
 </dd></dl>
-
-</section>
-<section id="module-magicclass.testing">
-<span id="magicclass-testing-module"></span><h2>magicclass.testing module<a class="headerlink" href="#module-magicclass.testing" title="Permalink to this headline">¶</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="magicclass.testing.MockConfirmation">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">magicclass.testing.</span></span><span class="sig-name descname"><span class="pre">MockConfirmation</span></span><a class="reference internal" href="../_modules/magicclass/testing.html#MockConfirmation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.testing.MockConfirmation" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Class used for confirmation test.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="magicclass.testing.MockConfirmation.assert_not_called">
-<span class="sig-name descname"><span class="pre">assert_not_called</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/testing.html#MockConfirmation.assert_not_called"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.testing.MockConfirmation.assert_not_called" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="magicclass.testing.MockConfirmation.assert_value">
-<span class="sig-name descname"><span class="pre">assert_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gui</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/testing.html#MockConfirmation.assert_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.testing.MockConfirmation.assert_value" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="magicclass.testing.MockConfirmation.value">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">value</span></span><a class="headerlink" href="#magicclass.testing.MockConfirmation.value" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="magicclass.testing.click_methods">
-<span class="sig-prename descclassname"><span class="pre">magicclass.testing.</span></span><span class="sig-name descname"><span class="pre">click_methods</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ui</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/magicclass/testing.html#click_methods"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#magicclass.testing.click_methods" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
 
 </section>
 <section id="module-magicclass.undo">
@@ -1985,9 +1995,10 @@ of magic-classes.</p>
 <dd><p>Define a keybinding to a button or an action.
 This function accepts several styles of shortcut expression.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nd">@bind_key</span><span class="p">(</span><span class="s2">&quot;Ctrl-A&quot;</span><span class="p">)</span>         <span class="c1"># napari style</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nd">@bind_key</span><span class="p">(</span><span class="s2">&quot;Ctrl&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">)</span>      <span class="c1"># separately</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nd">@bind_key</span><span class="p">(</span><span class="n">Key</span><span class="o">.</span><span class="n">Ctrl</span> <span class="o">+</span> <span class="n">Key</span><span class="o">.</span><span class="n">A</span><span class="p">)</span> <span class="c1"># use Key class</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nd">@bind_key</span><span class="p">(</span><span class="n">Key</span><span class="o">.</span><span class="n">Ctrl</span><span class="p">,</span> <span class="n">Key</span><span class="o">.</span><span class="n">A</span><span class="p">)</span>  <span class="c1"># use Key class separately</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nd">@bind_key</span><span class="p">(</span><span class="s2">&quot;Ctrl+A&quot;</span><span class="p">)</span>         <span class="c1"># Qt style</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nd">@bind_key</span><span class="p">(</span><span class="s2">&quot;Ctrl+K, Ctrl+V&quot;</span><span class="p">)</span> <span class="c1"># Key combo</span>
 </pre></div>
 </div>
 </dd></dl>
