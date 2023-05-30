@@ -56,6 +56,9 @@ path = "magicclass/__init__.py"
 [tool.hatch.build.targets.sdist]
 include = ["/magicclass"]
 
+[tool.hatch.build.targets.wheel]
+exclude = ["/examples", "/rst", "/tests", "setup.py"]
+
 [tool.hatch.build.targets.wheel.force-include]
 "magicclass/core.pyi" = "magicclass/core.pyi"
 "magicclass/testing" = "magicclass/testing"
