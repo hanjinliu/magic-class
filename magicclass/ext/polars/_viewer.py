@@ -184,7 +184,7 @@ class QDataFrameView(QtW.QTableView):
         df = self.model().df
         columns = df.columns[cstart:cstop]
         df_sub = df.select(columns)[rstart:rstop]
-        text = df_sub.write_csv(sep="\t")
+        text = df_sub.write_csv(separator="\t")
         clipboard = QtGui.QGuiApplication.clipboard()
         clipboard.setText(text)
 
