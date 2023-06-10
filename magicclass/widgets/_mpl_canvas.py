@@ -36,7 +36,7 @@ class InteractiveFigureCanvas(FigureCanvas):
             return
         delta = event.angleDelta().y() / 120
         event = self.get_mouse_event(event)
-        factor = 0.75 ** delta
+        factor = 0.75**delta
 
         _zoom_x_wheel(ax, factor)
         _zoom_y_wheel(ax, factor)
@@ -129,17 +129,39 @@ class InteractiveFigureCanvas(FigureCanvas):
         menu.addAction("Copy ...", self._copy_canvas)
         menu.addAction("Save As...", self._save_canvas_dialog)
         menu.addSeparator()
+        menu.addAction("Reset Zoom", self._reset_zoom)
+        menu.addAction("Toggle legend", self._toggle_legend)
         return menu
 
     def _save_canvas_dialog(self, format="PNG"):
         """Open a file dialog and save the current canvas state."""
         dialog = QtW.QFileDialog(self, "Save Image")
-        dialog.setAcceptMode(QtW.QFileDialog.AcceptSave)
+        dialog.setAcceptMode(QtW.QFileDialog.AcceptMode.AcceptSave)
         dialog.setDefaultSuffix(format.lower())
         dialog.setNameFilter(f"{format} file (*.{format.lower()})")
         if dialog.exec_():
             filename = dialog.selectedFiles()[0]
             self._save_canvas(filename)
+
+    def _reset_zoom(self):
+        """Reset zoom to initial state."""
+        ax = self.last_axis
+        if not ax:
+            return
+        ax.autoscale(axis="both")
+        self.figure.canvas.draw()
+
+    def _toggle_legend(self):
+        """Toggle legend."""
+        ax = self.last_axis
+        if not ax:
+            return
+        if getattr(ax, "legend_", None) is None:
+            ax.legend()
+        else:
+            visible = not ax.legend_.get_visible()
+            ax.legend_.set_visible(visible)
+        self.figure.canvas.draw()
 
     def _save_canvas(self, path: str):
         """Save current canvas state at the specified path."""
@@ -154,7 +176,7 @@ class InteractiveFigureCanvas(FigureCanvas):
         arr = self._asarray()
         clipboard = QtW.QApplication.clipboard()
         h, w, _ = arr.shape
-        image = QtGui.QImage(arr, w, h, QtGui.QImage.Format_RGBA8888)
+        image = QtGui.QImage(arr, w, h, QtGui.QImage.Format.Format_RGBA8888)
         clipboard.setImage(image)
 
 

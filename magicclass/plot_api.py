@@ -18,7 +18,7 @@ from functools import wraps
 import matplotlib.pyplot as plt
 from magicclass.widgets import Figure
 
-CURRENT_WIDGET: Figure = None
+CURRENT_WIDGET: Figure | None = None
 
 
 @wraps(plt.figure)
