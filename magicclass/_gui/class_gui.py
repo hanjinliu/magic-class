@@ -425,16 +425,6 @@ def make_gui(
             self.native.setObjectName(self.name)
             self.native.setWindowTitle(self.name)
 
-        # ui["x"] will not return widget if x is a MagicValueField.
-        # To ensure __getitem__ returns a Widget, this method should be overriden.
-        def __getitem__(self: ClassGuiBase, key):
-            """Get item by integer, str, or slice."""
-            if isinstance(key, str):
-                for widget in self._list:
-                    if key == widget.name:
-                        return widget
-            return container.__getattr__(self, key)
-
         def __setattr__(self, name: str, value: Any) -> None:
             if not isinstance(getattr(self.__class__, name, None), MagicField):
                 container.__setattr__(self, name, value)
@@ -613,6 +603,9 @@ def make_gui(
             cls.status = status
 
         cls.__init__ = __init__
+        cls.__delitem__ = container.__delitem__
+        cls.__iter__ = container.__iter__
+        cls.__len__ = container.__len__
         cls.__setattr__ = __setattr__
         cls.insert = insert
         cls.show = show
@@ -625,76 +618,35 @@ def make_gui(
     return wrapper
 
 
+# fmt: off
 @make_gui(Container)
-class ClassGui:
-    pass
-
-
+class ClassGui: pass
 @make_gui(SplitterContainer)
-class SplitClassGui:
-    pass
-
-
+class SplitClassGui: pass
 @make_gui(ScrollableContainer)
-class ScrollableClassGui:
-    pass
-
-
+class ScrollableClassGui: pass
 @make_gui(DraggableContainer)
-class DraggableClassGui:
-    pass
-
-
+class DraggableClassGui: pass
 @make_gui(CollapsibleContainer)
-class CollapsibleClassGui:
-    pass
-
-
+class CollapsibleClassGui: pass
 @make_gui(HCollapsibleContainer)
-class HCollapsibleClassGui:
-    pass
-
-
+class HCollapsibleClassGui: pass
 @make_gui(ButtonContainer)
-class ButtonClassGui:
-    pass
-
-
+class ButtonClassGui: pass
 @make_gui(ToolBoxContainer, no_margin=False)
-class ToolBoxClassGui:
-    pass
-
-
+class ToolBoxClassGui: pass
 @make_gui(TabbedContainer, no_margin=False)
-class TabbedClassGui:
-    pass
-
-
+class TabbedClassGui: pass
 @make_gui(StackedContainer, no_margin=False)
-class StackedClassGui:
-    pass
-
-
+class StackedClassGui: pass
 @make_gui(ListContainer, no_margin=False)
-class ListClassGui:
-    pass
-
-
+class ListClassGui: pass
 @make_gui(SubWindowsContainer, no_margin=False)
-class SubWindowsClassGui:
-    pass
-
-
+class SubWindowsClassGui: pass
 @make_gui(GroupBoxContainer, no_margin=False)
-class GroupBoxClassGui:
-    pass
-
-
+class GroupBoxClassGui: pass
 @make_gui(FrameContainer, no_margin=False)
-class FrameClassGui:
-    pass
-
-
+class FrameClassGui: pass
 @make_gui(MainWindow)
-class MainWindowClassGui:
-    pass
+class MainWindowClassGui: pass
+# fmt: on

@@ -12,7 +12,7 @@ from typing import (
 )
 from types import MethodType
 from abc import ABCMeta
-from typing_extensions import _AnnotatedAlias
+from typing_extensions import _AnnotatedAlias, NoReturn
 import inspect
 import warnings
 from qtpy.QtWidgets import QWidget, QDockWidget
@@ -237,10 +237,19 @@ class MagicTemplate(MutableSequence[Widget], metaclass=_MagicTemplateMeta):
     def __getitem__(self, key):
         raise NotImplementedError()
 
-    if TYPE_CHECKING:
+    def __setitem__(self, key: int, value: Any) -> NoReturn:
+        raise NotImplementedError("Cannot set item in magicclass. Use insert instead.")
 
-        def __iter__(self) -> Iterator[Widget]:
-            raise NotImplementedError()
+    def __delitem__(self, key: int) -> None:
+        raise NotImplementedError()
+
+    def __iter__(self) -> Iterator[Widget]:
+        raise NotImplementedError()
+
+    def __len__(self) -> int:
+        raise NotImplementedError()
+
+    if TYPE_CHECKING:
 
         def index(self, value: Any, start: int, stop: int) -> int:
             raise NotImplementedError()
@@ -949,7 +958,7 @@ class ContainerLikeGui(BaseGui[Action], mguiLike):
         bits = img.constBits()
         h, w, c = img.height(), img.width(), 4
         if qtpy.API_NAME == "PySide2":
-            arr = np.array(bits).reshape(h, w, c)
+            arr = np.asarray(bits).reshape(h, w, c)
         else:
             bits.setsize(h * w * c)
             arr = np.frombuffer(bits, np.uint8).reshape(h, w, c)
