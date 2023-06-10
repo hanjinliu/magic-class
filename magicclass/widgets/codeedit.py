@@ -90,6 +90,7 @@ class QCodeEditor(QtW.QPlainTextEdit):
         self.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.customContextMenuRequested.connect(self._show_context_menu)
         self._magicclass_parent_ref: weakref.ReferenceType[MagicTemplate] = None
+        self._highlight = None
 
     def tabSize(self):
         metrics = self.fontMetrics()

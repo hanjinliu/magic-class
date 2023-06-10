@@ -1,6 +1,7 @@
 from __future__ import annotations
-from types import TracebackType
 
+from types import TracebackType
+from contextlib import contextmanager
 from typing import Callable
 from enum import Enum
 import functools
@@ -101,6 +102,14 @@ class ErrorMode(Enum):
             return out
 
         return wrapped_func
+
+    @contextmanager
+    def raise_with_handler(self, parent):
+        """Raise error with the error handler in this context."""
+        try:
+            yield
+        except Exception as e:
+            self.get_handler()(e, parent=parent)
 
 
 ErrorModeHandlers = {

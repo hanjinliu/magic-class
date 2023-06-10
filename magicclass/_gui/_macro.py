@@ -3,6 +3,7 @@ from pathlib import Path
 
 from typing import TYPE_CHECKING, Any, Callable, Iterable, overload
 import warnings
+import inspect
 from qtpy import QtWidgets as QtW, QtCore
 from macrokit import Symbol, Expr, Head, BaseMacro, parse
 from magicgui.widgets import FileEdit, LineEdit, EmptyWidget, PushButton
@@ -29,9 +30,11 @@ class MacroEdit(TabbedContainer):
         self.__magicclass_parent__: BaseGui | None = None
         self.native.setWindowTitle("Macro")
         self.native_tab_widget.setTabBarAutoHide(True)
-        self._native_macro = None
-        self._recorded_macro = None
+        self._native_macro: CodeEdit | None = None
+        self._recorded_macro: CodeEdit | None = None
         self._set_menubar()
+        self._attribute_check = True
+        self._signature_check = True
 
     def _add_code_edit(self, name: str = "macro", native: bool = False) -> CodeEdit:
         """Add a new code edit widget as a new tab."""
@@ -238,15 +241,38 @@ class MacroEdit(TabbedContainer):
     def _execute(self, code: Expr):
         """Run macro."""
         parent = self._search_parent_magicclass()
-        try:
+        ns = {Symbol.var("ui"): parent}
+        with parent._error_mode.raise_with_handler(self):
+            if self._attribute_check:
+                for line in code.iter_lines():
+                    for expr in code.iter_getattr():
+                        try:
+                            expr.eval(ns)
+                        except AttributeError as e:
+                            msg = e.args[0]
+                            e.args = (f"{msg}\n>>> {line}",)
+                            raise e
+            if self._signature_check:
+                for line in code.iter_lines():
+                    for fexpr, args, kwargs in line.iter_call_args():
+                        if (
+                            not isinstance(fexpr, Expr)
+                            or fexpr.head is not Head.getattr
+                            or fexpr.split_getattr()[0] != Symbol("ui")
+                        ):
+                            continue
+                        _method = fexpr.eval(ns)
+                        try:
+                            inspect.signature(_method).bind(*args, **kwargs)
+                        except TypeError as e:
+                            msg = e.args[0]
+                            e.args = (f"{msg}\n>>> {line}",)
+                            raise e
             if str(code) == "":
                 raise ValueError("No code selected")
-            ns = {Symbol.var("ui"): parent}
             if (viewer := parent.parent_viewer) is not None:
                 ns.setdefault(Symbol.var("viewer"), viewer)
             code.eval(ns)
-        except Exception as e:
-            parent._error_mode.get_handler()(e, self)
 
     def _execute_selected(self, e=None):
         """Run selected line of macro."""
@@ -410,6 +436,32 @@ class GuiMacro(BaseMacro):
     def _gui_parent(self) -> BaseGui:
         """The parent GUI object."""
         return self.widget.__magicclass_parent__
+
+    @property
+    def max_undo(self) -> int:
+        """Maximum number of undo steps."""
+        return self._max_undo
+
+    @max_undo.setter
+    def max_undo(self, value: int):
+        if value < 0:
+            raise ValueError("max_undo must be >= 0")
+        if value > len(self._stack_undo):
+            raise ValueError("max_undo must be <= current number of undo steps")
+        self._max_undo = value
+
+    @property
+    def max_lines(self) -> int:
+        """Maximum number of lines."""
+        return self._max_lines
+
+    @max_lines.setter
+    def max_lines(self, value: int):
+        if value < 0:
+            raise ValueError("max_lines must be >= 0")
+        if value > len(self):
+            raise ValueError("max_lines must be <= current number of lines")
+        self._max_lines = value
 
     def clear_undo_stack(self) -> None:
         """Clear all the history of undo/redo."""
