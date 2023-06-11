@@ -31,6 +31,7 @@ from ._base import (
     BaseGui,
     PopUpMode,
     ErrorMode,
+    convert_function,
 )
 from .utils import format_error, connect_magicclasses
 from ._macro_utils import value_widget_callback, nested_function_gui_callback
@@ -300,9 +301,7 @@ class ClassGuiBase(BaseGui[Widget]):
                     obj.called.connect(f)
                 widget = obj
             else:
-                from ._base import inject_recorder
-
-                obj = inject_recorder(obj, is_method=False).__get__(self)
+                obj = convert_function(obj, is_method=False).__get__(self)
                 widget = self._create_widget_from_method(obj)
 
             method_name = getattr(obj, "__name__", None)

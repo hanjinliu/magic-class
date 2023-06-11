@@ -11,6 +11,7 @@ from typing import (
     MutableSequence,
 )
 from types import MethodType
+from functools import wraps as functools_wraps
 from abc import ABCMeta
 from typing_extensions import _AnnotatedAlias, NoReturn
 import inspect
@@ -89,6 +90,9 @@ defaults = {
     "close_on_run": True,
     "macro-max-history": 100000,
     "macro-highlight": False,
+    "macro-attribute-check": True,
+    "macro-signature-check": True,
+    "macro-name-check": True,
     "undo-max-history": 100,
 }
 
@@ -825,11 +829,7 @@ class BaseGui(MagicTemplate[_W]):
     def __init__(
         self, close_on_run=True, popup_mode=PopUpMode.popup, error_mode=ErrorMode.msgbox
     ):
-        self._macro_instance = GuiMacro(
-            max_lines=defaults["macro-max-history"],
-            max_undo=defaults["undo-max-history"],
-            ui=self,
-        )
+        self._macro_instance = GuiMacro(self, options=defaults)
         self.__magicclass_parent__: BaseGui | None = None
         self.__magicclass_children__: list[MagicTemplate] = []
         self._close_on_run = close_on_run
@@ -1164,6 +1164,34 @@ def _child_that_has_widget(
     return child_instance
 
 
+def convert_function(obj: Callable, default: str | None = None, is_method: bool = True):
+    """Convert function for macro recording."""
+    _record_policy = get_additional_option(obj, "record", default)
+    if _record_policy is None:
+        new_attr = inject_recorder(obj, is_method)
+    elif _record_policy == "false":
+        if is_method:
+            new_attr = obj
+        else:
+            sig = get_signature(obj)
+
+            @functools_wraps(obj)
+            def _func(self, *args, **kwargs):
+                return obj(*args, **kwargs)
+
+            _self = inspect.Parameter("self", inspect.Parameter.POSITIONAL_OR_KEYWORD)
+            _func.__signature__ = sig.replace(
+                parameters=[_self] + list(sig.parameters.values()),
+                return_annotation=sig.return_annotation,
+            )
+            new_attr = _func
+    elif _record_policy == "all-false":
+        new_attr = inject_silencer(obj, is_method)
+    else:
+        raise ValueError(f"Invalid record policy: {_record_policy}")
+    return new_attr
+
+
 def convert_attributes(
     cls: type[_T], hide: tuple[type, ...], record: bool = True
 ) -> dict[str, Any]:
@@ -1208,15 +1236,7 @@ def convert_attributes(
                 # private method, non-action-like object, not-callable object are passed.
                 new_attr = obj
             elif _isfunc:
-                _record_policy = get_additional_option(obj, "record", default)
-                if _record_policy is None:
-                    new_attr = inject_recorder(obj)
-                elif _record_policy == "false":
-                    new_attr = obj
-                elif _record_policy == "all-false":
-                    new_attr = inject_silencer(obj)
-                else:
-                    raise ValueError(f"Invalid record policy: {_record_policy}")
+                new_attr = convert_function(obj, default)
             else:
                 new_attr = obj
 

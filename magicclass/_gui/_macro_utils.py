@@ -366,6 +366,7 @@ def _format_arguments(bound: inspect.BoundArguments):
     """Use keyword argument as much as possible"""
     args = []
     kwargs = {}
+    bound.apply_defaults()
     for name, param in bound.signature.parameters.items():
         if param.kind is inspect.Parameter.POSITIONAL_ONLY:
             args.append(bound.arguments[name])

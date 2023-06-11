@@ -15,9 +15,10 @@ from ._base import (
     PopUpMode,
     ErrorMode,
     ContainerLikeGui,
+    convert_function,
 )
 from .utils import format_error, connect_magicclasses
-from ._macro_utils import nested_function_gui_callback, inject_recorder
+from ._macro_utils import nested_function_gui_callback
 
 from magicclass.signature import get_additional_option
 from magicclass.fields import MagicField
@@ -179,7 +180,7 @@ class MenuGuiBase(ContainerLikeGui):
                     obj.called.connect(f)
                 _obj = obj
             else:
-                obj = inject_recorder(obj, is_method=False).__get__(self)
+                obj = convert_function(obj, is_method=False).__get__(self)
                 _obj = self._create_widget_from_method(obj)
 
             method_name = getattr(obj, "__name__", None)

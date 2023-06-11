@@ -3,9 +3,10 @@ from pathlib import Path
 
 from typing import TYPE_CHECKING, Any, Callable, Iterable, overload
 import warnings
-import inspect
+from datetime import datetime
 from qtpy import QtWidgets as QtW, QtCore
 from macrokit import Symbol, Expr, Head, BaseMacro, parse
+from macrokit.utils import check_call_args, check_attributes
 from magicgui.widgets import FileEdit, LineEdit, EmptyWidget, PushButton
 from magicclass.utils.qthreading import thread_worker
 
@@ -35,10 +36,11 @@ class MacroEdit(TabbedContainer):
         self._set_menubar()
         self._attribute_check = True
         self._signature_check = True
+        self._name_check = True
+        self._syntax_highlight = True
 
     def _add_code_edit(self, name: str = "macro", native: bool = False) -> CodeEdit:
         """Add a new code edit widget as a new tab."""
-        from magicclass._gui._base import defaults
 
         textedit = CodeEdit(name=name)
         if native:
@@ -48,7 +50,7 @@ class MacroEdit(TabbedContainer):
             self._native_macro = textedit
 
         self.append(textedit)
-        if defaults["macro-highlight"]:
+        if self._syntax_highlight:
             textedit.syntax_highlight()
         textedit.__magicclass_parent__ = self.__magicclass_parent__
         textedit.executing.connect(self._on_executing)
@@ -244,30 +246,19 @@ class MacroEdit(TabbedContainer):
         ns = {Symbol.var("ui"): parent}
         with parent._error_mode.raise_with_handler(self):
             if self._attribute_check:
-                for line in code.iter_lines():
-                    for expr in code.iter_getattr():
-                        try:
-                            expr.eval(ns)
-                        except AttributeError as e:
-                            msg = e.args[0]
-                            e.args = (f"{msg}\n>>> {line}",)
-                            raise e
+                strs = [f"- {exc}" for exc in check_attributes(code, ns)]
+                if strs:
+                    raise AttributeError("Attribute check failed.\n" + "\n".join(strs))
+
             if self._signature_check:
-                for line in code.iter_lines():
-                    for fexpr, args, kwargs in line.iter_call_args():
-                        if (
-                            not isinstance(fexpr, Expr)
-                            or fexpr.head is not Head.getattr
-                            or fexpr.split_getattr()[0] != Symbol("ui")
-                        ):
-                            continue
-                        _method = fexpr.eval(ns)
-                        try:
-                            inspect.signature(_method).bind(*args, **kwargs)
-                        except TypeError as e:
-                            msg = e.args[0]
-                            e.args = (f"{msg}\n>>> {line}",)
-                            raise e
+                strs = [f"- {exc}" for exc in check_call_args(code, ns)]
+                if strs:
+                    raise AttributeError("Signature check failed.\n" + "\n".join(strs))
+
+            if self._name_check:
+                # TODO
+                pass
+
             if str(code) == "":
                 raise ValueError("No code selected")
             if (viewer := parent.parent_viewer) is not None:
@@ -406,15 +397,90 @@ def _action(
     return action
 
 
+class PropertyGroup:
+    def __init__(self, parent: GuiMacro | None = None):
+        self._instances = dict[int, PropertyGroup]()
+        self._parent = parent
+        self._max_lines = 10000
+        self._max_undo = 100
+
+    def __get__(self, instance: GuiMacro, owner) -> PropertyGroup:
+        if instance is None:
+            return self
+        return self._instances.setdefault(id(instance), self.__class__(parent=instance))
+
+    @property
+    def macro(self) -> GuiMacro:
+        if self._parent is None:
+            raise RuntimeError("This property group is not bound to any macro.")
+        return self._parent
+
+    @property
+    def max_lines(self) -> int:
+        return self._max_lines
+
+    @max_lines.setter
+    def max_lines(self, value: int):
+        if value < 0:
+            raise ValueError("max_lines must be >= 0")
+        if value < len(self.macro):
+            raise ValueError("max_lines must be larger than current number of lines")
+        self._max_lines = value
+
+    @property
+    def max_undo(self) -> int:
+        return self._max_undo
+
+    @max_undo.setter
+    def max_undo(self, value: int):
+        if value < 0:
+            raise ValueError("max_undo must be >= 0")
+        if value < len(self.macro._stack_undo):
+            raise ValueError(
+                "max_undo must be larger than current number of undo steps"
+            )
+        self._max_undo = value
+
+    @property
+    def syntax_highlight(self) -> bool:
+        return self.macro.widget._syntax_highlight
+
+    @syntax_highlight.setter
+    def syntax_highlight(self, value: bool):
+        self.macro.widget._syntax_highlight = bool(value)
+
+    @property
+    def attribute_check(self) -> bool:
+        return self.macro.widget._attribute_check
+
+    @attribute_check.setter
+    def attribute_check(self, value: bool):
+        self.macro.widget._attribute_check = bool(value)
+
+    @property
+    def signature_check(self) -> bool:
+        return self.macro.widget._signature_check
+
+    @signature_check.setter
+    def signature_check(self, value: bool):
+        self.macro.widget._signature_check = bool(value)
+
+    @property
+    def name_check(self) -> bool:
+        return self.macro.widget._name_check
+
+    @name_check.setter
+    def name_check(self, value: bool):
+        self.macro.widget._name_check = bool(value)
+
+
 class GuiMacro(BaseMacro):
     """Macro object with GUI-specific functions."""
 
-    def __init__(self, ui: BaseGui = None, max_lines: int = 10000, max_undo: int = 100):
-        from datetime import datetime
+    options = PropertyGroup()
 
+    def __init__(self, ui: BaseGui = None, options: dict[str, Any] = {}):
         super().__init__()
-        self._max_lines = max_lines
-        self._max_undo = max_undo
         self.on_appended.append(self._on_macro_added)
         self.on_popped.append(self._on_macro_popped)
 
@@ -426,6 +492,12 @@ class GuiMacro(BaseMacro):
 
         self._stack_undo: list[ImplementsUndo] = []
         self._stack_redo: list[tuple[Expr, ImplementsUndo]] = []
+        self.options.max_lines = options.get("macro-max-history", 10000)
+        self.options.max_undo = options.get("undo-max-history", 100)
+        self.options.syntax_highlight = options.get("macro-highlight", False)
+        self.options.attribute_check = options.get("macro-attribute-check", True)
+        self.options.signature_check = options.get("macro-signature-check", True)
+        self.options.name_check = options.get("macro-name-check", True)
 
     @property
     def widget(self) -> MacroEdit:
@@ -436,32 +508,6 @@ class GuiMacro(BaseMacro):
     def _gui_parent(self) -> BaseGui:
         """The parent GUI object."""
         return self.widget.__magicclass_parent__
-
-    @property
-    def max_undo(self) -> int:
-        """Maximum number of undo steps."""
-        return self._max_undo
-
-    @max_undo.setter
-    def max_undo(self, value: int):
-        if value < 0:
-            raise ValueError("max_undo must be >= 0")
-        if value > len(self._stack_undo):
-            raise ValueError("max_undo must be <= current number of undo steps")
-        self._max_undo = value
-
-    @property
-    def max_lines(self) -> int:
-        """Maximum number of lines."""
-        return self._max_lines
-
-    @max_lines.setter
-    def max_lines(self, value: int):
-        if value < 0:
-            raise ValueError("max_lines must be >= 0")
-        if value > len(self):
-            raise ValueError("max_lines must be <= current number of lines")
-        self._max_lines = value
 
     def clear_undo_stack(self) -> None:
         """Clear all the history of undo/redo."""
@@ -482,7 +528,7 @@ class GuiMacro(BaseMacro):
     def _append_undo(self, undo: ImplementsUndo) -> None:
         self._stack_undo.append(undo)
         self._stack_redo.clear()
-        if len(self._stack_undo) > self._max_undo:
+        if len(self._stack_undo) > self.options.max_undo:
             self._stack_undo.pop(0)
         return None
 
@@ -668,7 +714,7 @@ class GuiMacro(BaseMacro):
             wdt.append(line)
         if wdt := self.widget.recorded_macro:
             wdt.append(line)
-        if len(self) > self._max_lines:
+        if len(self) > self.options.max_lines:
             del self[0]
 
     def _on_macro_popped(self, expr=None):

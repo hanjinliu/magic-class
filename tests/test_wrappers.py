@@ -2,7 +2,10 @@ from types import MethodType
 from unittest.mock import MagicMock
 
 import pytest
-from magicclass import magicclass, set_options, get_function_gui, abstractapi, setup_function_gui
+from magicclass import (
+    magicclass, magicmenu, magictoolbar, set_options, get_function_gui, abstractapi,
+    setup_function_gui, do_not_record
+)
 from magicclass.testing import MockConfirmation
 from magicgui.widgets import PushButton
 
@@ -91,7 +94,6 @@ def test_do_not_record():
     assert len(ui.macro) == 1
 
 def test_do_not_record_recursive():
-    from magicclass import do_not_record
     @magicclass
     class A:
         def g(self): pass
@@ -104,7 +106,6 @@ def test_do_not_record_recursive():
     assert len(ui.macro) == 1
 
 def test_do_not_record_not_recursive():
-    from magicclass import do_not_record
     @magicclass
     class A:
         def g(self): pass
@@ -117,6 +118,27 @@ def test_do_not_record_not_recursive():
     assert len(ui.macro) == 2
     assert str(ui.macro[-1]) == "ui.g()"
 
+def test_do_not_record_post_append():
+    @magicclass
+    class A:
+        @magicmenu
+        class Menu:
+            pass
+        @magictoolbar
+        class Tool:
+            pass
+    @do_not_record
+    def f(): pass
+    ui = A()
+    ui.append(f)
+    ui.Menu.append(f)
+    ui.Tool.append(f)
+    ui["f"].changed()
+    assert len(ui.macro) == 1
+    ui.Menu["f"].changed()
+    assert len(ui.macro) == 1
+    ui.Tool["f"].changed()
+    assert len(ui.macro) == 1
 
 def test_nogui():
     from magicclass import nogui

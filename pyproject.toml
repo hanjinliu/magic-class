@@ -22,7 +22,7 @@ authors = [
     { name = "Hanjin Liu", email = "liuhanjin-sc@g.ecc.u-tokyo.ac.jp" },
 ]
 dependencies = [
-    "macro-kit>=0.4.0",
+    "macro-kit>=0.4.4",
     "magicgui>=0.7.0",
     "qtpy>=1.10.0",
     "superqt>=0.4.0",
