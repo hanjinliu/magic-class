@@ -55,7 +55,7 @@ PopUpModeStr = Literal[
 ]
 
 
-ErrorModeStr = Literal["msgbox", "stderr", "stdout"]
+ErrorModeStr = Literal["msgbox", "stderr", "stdout", "napari", "debug"]
 
 Color = Union[Iterable[float], str]
 Colormap = Dict[float, Color]

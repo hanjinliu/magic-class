@@ -167,9 +167,32 @@ def impl_arg_filter(f: _F, tgt: Callable, tgt_sig: inspect.Signature) -> _F:
                     ins = ins.__magicclass_parent__
                 args = (ins,) + args[1:]
 
-        with ins.macro.blocked():
-            # filter input arguments
+            with ins.macro.blocked(), ins._error_mode.raise_with_handler(ins):
+                # filter input arguments
+                try:
+                    out = f(*_filter(args))
+                except Exception as e:
+                    raise PreviewError(e, f) from e
+        else:
             out = f(*_filter(args))
         return out
 
     return _func
+
+
+class PreviewError(Exception):
+    """Error raised during preview."""
+
+    def __init__(self, exc: Exception, target_func: Callable):
+        super().__init__(str(exc))
+        self._target_qualname: str = getattr(
+            target_func, "__qualname__", repr(target_func)
+        )
+        self._original_type = type(exc)
+
+    def __str__(self):
+        return (
+            f"{self.__class__.__name__}: Error calling preview function of "
+            f"`{self._target_qualname}`...\n{self._original_type.__name__}: "
+            f"{super().__str__()}"
+        )

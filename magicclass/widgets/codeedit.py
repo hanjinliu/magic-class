@@ -283,8 +283,10 @@ class QCodeEditor(QtW.QPlainTextEdit):
         info = self.wordAt(pos)
         if info and is_clickable(info.obj):
             mgui = info.obj.mgui
+            mcls = self._search_parent_magicclass()
             if mgui is None:
-                return show_messagebox("error", "Error", "No magicgui found", self)
+                with mcls._error_mode.raise_with_handler(mcls):
+                    raise ValueError(f"No magicgui found in {info.obj!r}.")
             nwidgets = sum(not isinstance(wdt, EmptyWidget) for wdt in mgui)
             if nwidgets > 1:
                 if isinstance(mgui[0], FileEdit):
@@ -292,12 +294,9 @@ class QCodeEditor(QtW.QPlainTextEdit):
                 else:
                     mgui.show()
             else:
-                show_messagebox(
-                    "error",
-                    "Error",
-                    f"No parameter can be chosen in {info.obj.name!r}.",
-                    self,
-                )
+                with mcls._error_mode.raise_with_handler(mcls):
+                    raise TypeError(f"No parameter can be chosen in {info.obj!r}.")
+
         return
 
     def _show_context_menu(self, pos: QtCore.QPoint):

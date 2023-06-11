@@ -77,11 +77,22 @@ def _napari_notification_raising(e: Exception, parent: Widget):
     return show_error(str(e))
 
 
+def _debug_raising(e: Exception, parent: Widget):
+    from magicclass.testing import GuiErrorMonitor
+
+    monitor = GuiErrorMonitor.get_instance(parent)
+    with monitor.catch():
+        raise e
+
+
 class ErrorMode(Enum):
+    """Mode to handle error raised in magicclass during manual operations."""
+
     msgbox = "msgbox"
     stderr = "stderr"
     stdout = "stdout"
     napari = "napari"
+    debug = "debug"
 
     def get_handler(self):
         """Get error handler."""
@@ -117,6 +128,7 @@ ErrorModeHandlers = {
     ErrorMode.stderr: _stderr_raising,
     ErrorMode.stdout: _stdout_raising,
     ErrorMode.napari: _napari_notification_raising,
+    ErrorMode.debug: _debug_raising,
 }
 
 
