@@ -234,8 +234,7 @@ def _define_macro_recorder(sig: inspect.Signature, func: Callable):
 
         def _record_macro(bgui: MagicTemplate, out, *args, **kwargs):
             bound = sig.bind(*args, **kwargs)
-            kwargs = dict(bound.arguments.items())
-            expr = Expr.parse_method(bgui, func, (), kwargs)
+            expr = Expr.parse_method(bgui, func, *_format_arguments(bound))
             if _auto_call:
                 # Auto-call will cause many redundant macros. To avoid this, only the last
                 # input will be recorded in magic-class.
@@ -263,8 +262,8 @@ def _define_macro_recorder(sig: inspect.Signature, func: Callable):
 
         def _record_macro(bgui: MagicTemplate, out, *args, **kwargs):
             bound = sig.bind(*args, **kwargs)
-            kwargs = dict(bound.arguments.items())
-            expr = Expr.parse_method(bgui, _cname_, (func.__name__,), kwargs)
+            _args, _kwargs = _format_arguments(bound)
+            expr = Expr.parse_method(bgui, _cname_, (func.__name__,) + _args, _kwargs)
             if _auto_call:
                 # Auto-call will cause many redundant macros. To avoid this, only the last
                 # input will be recorded in magic-class.
@@ -301,8 +300,7 @@ def _define_macro_recorder_for_partial(
         def _record_macro(bgui: MagicTemplate, out, *args, **kwargs):
             bound = sig.bind(*args, **kwargs)
             bound.apply_defaults()
-            kwargs = bound.arguments
-            expr = Expr.parse_method(bgui, base_func, (), kwargs)
+            expr = Expr.parse_method(bgui, base_func, *_format_arguments(bound))
             if _auto_call:
                 # Auto-call will cause many redundant macros. To avoid this, only the last
                 # input will be recorded in magic-class.
@@ -332,7 +330,10 @@ def _define_macro_recorder_for_partial(
             bound = sig.bind(*args, **kwargs)
             bound.apply_defaults()
             kwargs = bound.arguments
-            expr = Expr.parse_method(bgui, _cname_, (base_func.__name__,), kwargs)
+            _args, _kwargs = _format_arguments(bound)
+            expr = Expr.parse_method(
+                bgui, _cname_, (base_func.__name__,) * _args, _kwargs
+            )
             if _auto_call:
                 # Auto-call will cause many redundant macros. To avoid this, only the last
                 # input will be recorded in magic-class.
@@ -359,3 +360,15 @@ def _is_recordable(func: Callable):
     if hasattr(func, "__func__"):
         return _is_recordable(func.__func__)
     return False
+
+
+def _format_arguments(bound: inspect.BoundArguments):
+    """Use keyword argument as much as possible"""
+    args = []
+    kwargs = {}
+    for name, param in bound.signature.parameters.items():
+        if param.kind is inspect.Parameter.POSITIONAL_ONLY:
+            args.append(bound.arguments[name])
+        else:
+            kwargs[name] = bound.arguments[name]
+    return tuple(args), kwargs
