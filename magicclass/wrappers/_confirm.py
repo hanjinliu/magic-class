@@ -36,13 +36,7 @@ def confirm(
     ...
 
 
-def confirm(
-    f: _F | None = None,
-    *,
-    text: str | None = None,
-    condition: Callable[[BaseGui], bool] | str | Mock | Expr | None = None,
-    callback: Callable[[str, BaseGui], None] | None = None,
-):
+def confirm(f=None, *, text=None, condition=None, callback=None):
     """
     Confirm if it is OK to run function in GUI.
 

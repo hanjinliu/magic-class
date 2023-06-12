@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 from functools import wraps
 import inspect
 from typing import Any, Callable, TYPE_CHECKING
@@ -30,7 +31,10 @@ class DaskProgressBar(DefaultProgressBar, DaskCallback):
         dt: float = 0.1,
     ):
         self._minimum = minimum
+        self._worker: FunctionWorker | GeneratorWorker | None = None
         self._dt = dt
+        self._state = None
+        self._running = False
         self._frac = 0.0
         self._n_computation = 0
         super().__init__(max=max)
