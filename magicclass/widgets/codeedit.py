@@ -540,8 +540,10 @@ class WordInfo(NamedTuple):
 
 
 def eval_under_cursor(
-    line: str, clicked_pos: int, parent: MagicTemplate
+    line: str, clicked_pos: int, parent: MagicTemplate | None = None
 ) -> WordInfo | None:
+    if parent is None:
+        return None
     expr = parse(line)
     pos_start = 0
     pos_stop = len(line)
