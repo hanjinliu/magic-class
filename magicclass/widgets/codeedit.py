@@ -239,6 +239,24 @@ class QCodeEditor(QtW.QPlainTextEdit):
                         cursor0.insertText(txt)
                         self.setTextCursor(cursor)
                     return True
+                elif ev.key() in (Qt.Key.Key_Enter, Qt.Key.Key_Return):
+                    # get current line, check if it has tabs at the beginning
+                    # if yes, insert the same number of tabs at the next line
+                    _cursor = self.textCursor()
+                    _cursor.movePosition(QtGui.QTextCursor.MoveOperation.StartOfLine)
+                    _cursor.movePosition(
+                        QtGui.QTextCursor.MoveOperation.EndOfLine,
+                        QtGui.QTextCursor.MoveMode.KeepAnchor,
+                    )
+                    line = _cursor.selectedText()
+                    cursor = self.textCursor()
+                    if line.lstrip().endswith(":"):
+                        cursor.insertText("\n" + _get_indents(line) + "    ")
+                    else:
+                        cursor.insertText("\n" + _get_indents(line))
+                    self.setTextCursor(cursor)
+                    return True
+
         except Exception:
             pass
         return super().event(ev)
@@ -503,6 +521,16 @@ class QCodeEditor(QtW.QPlainTextEdit):
     def setText(self, text: str):
         """Set the text."""
         self.setPlainText(text.replace("\n", "\u2029"))
+
+
+def _get_indents(text: str) -> int:
+    prefixes = {" ", "\t"}
+    chars = []
+    for c in text:
+        if c not in prefixes:
+            break
+        chars.append(c)
+    return "".join(chars)
 
 
 class WordInfo(NamedTuple):
