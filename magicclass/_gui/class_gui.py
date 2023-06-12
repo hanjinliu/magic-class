@@ -4,6 +4,7 @@ import warnings
 from psygnal import Signal
 from qtpy.QtWidgets import QMenuBar, QWidget, QMainWindow, QBoxLayout, QDockWidget
 from qtpy.QtCore import Qt
+from magicgui.application import use_app
 from magicgui.widgets import (
     Container,
     MainWindow,
@@ -310,19 +311,6 @@ class ClassGuiBase(BaseGui[Widget]):
         else:
             widget = obj
 
-        # _hide_labels should not contain Container because some ValueWidget like widgets
-        # are Containers.
-        _hide_labels = (
-            _LabeledWidget,
-            ButtonWidget,
-            ClassGuiBase,
-            FreeWidget,
-            Label,
-            Image,
-            Table,
-            FunctionGui,
-        )
-
         if isinstance(widget, (ValueWidget, ContainerWidget)):
             widget.changed.connect(lambda: self.changed.emit(self))
 
@@ -343,7 +331,7 @@ class ClassGuiBase(BaseGui[Widget]):
 
         if self.labels:
             # no labels for button widgets (push buttons, checkboxes, have their own)
-            if not isinstance(widget, _hide_labels) and not remove_label:
+            if not isinstance(widget, _HIDE_LABELS) and not remove_label:
                 _widget = _LabeledWidget(widget)
                 widget.label_changed.connect(self._unify_label_widths)
 
@@ -357,6 +345,120 @@ class ClassGuiBase(BaseGui[Widget]):
         if isinstance(widget, FunctionGui):
             widget.visible = True
         return None
+
+    def insert(self, key: int, widget: Widget) -> None:
+        """Insert widget at the give position."""
+        self._fast_insert(key, widget)
+        self._unify_label_widths()
+        return None
+
+    def __setattr__(self, name: str, value: Any) -> None:
+        if not isinstance(getattr(self.__class__, name, None), MagicField):
+            Container.__setattr__(self, name, value)
+        else:
+            object.__setattr__(self, name, value)
+
+    def reset_choices(self, *_: Any):
+        """Reset child Categorical widgets"""
+        all_widgets: set[Widget] = set()
+
+        for item in self._list:
+            widget = getattr(item, "_inner_widget", item)
+            all_widgets.add(widget)
+        for widget in self.__magicclass_children__:
+            all_widgets.add(widget)
+
+        for w in all_widgets:
+            if hasattr(w, "reset_choices"):
+                w.reset_choices()
+        return None
+
+    def show(self, run: bool = True) -> None:
+        """
+        Show GUI. If any of the parent GUI is a dock widget in napari, then this
+        will also show up as a dock widget (floating if in popup mode).
+
+        Parameters
+        ----------
+        run : bool, default is True
+            *Unlike magicgui, this parameter should always be True* unless you want
+            to close the window immediately. If true, application gets executed if
+            needed.
+        """
+        mcls_parent = self.__magicclass_parent__
+        if mcls_parent is not None and self.parent is None:
+            # If child magic class is closed before, we have to set parent again.
+            self.native.setParent(mcls_parent.native, self.native.windowFlags())
+
+        viewer = self.parent_viewer
+        if viewer is not None and self.parent is not None:
+            name = self.parent.objectName()
+            if name in viewer.window._dock_widgets and isinstance(
+                self.parent, QDockWidget
+            ):
+                viewer.window._dock_widgets[name].show()
+            else:
+                _floating = self._popup_mode == PopUpMode.popup
+                _area = "left" if _floating else "right"
+                dock = viewer.window.add_dock_widget(
+                    self,
+                    name=self.name.replace("_", " ").strip(),
+                    area=_area,
+                    allowed_areas=["left", "right"],
+                )
+                dock.setFloating(_floating)
+        else:
+            Container.show(self, run=False)
+            if mcls_parent is not None:
+                topleft = mcls_parent.native.geometry().topLeft()
+                topleft.setX(topleft.x() + 20)
+                topleft.setY(topleft.y() + 20)
+                self.native.move(topleft)
+            self.native.activateWindow()
+            if run:
+                run_app()
+        return None
+
+    def close(self):
+        """Close GUI. if this widget is a dock widget, then also close it."""
+
+        current_self = self._search_parent_magicclass()
+
+        viewer = current_self.parent_viewer
+        if viewer is not None:
+            try:
+                viewer.window.remove_dock_widget(self.parent)
+            except Exception:
+                pass
+
+        Container.close(self)
+
+        return None
+
+    def _unify_label_widths(self):
+        if not self._initialized:
+            return
+
+        need_labels = [w for w in self._list if not isinstance(w, _HIDE_LABELS)]
+        if self.layout == "vertical" and self.labels and need_labels:
+            measure = use_app().get_obj("get_text_width")
+            widest_label = max(measure(w.label) for w in need_labels)
+            for w in self:
+                labeled_widget = w._labeled_widget()
+                if labeled_widget:
+                    labeled_widget.label_width = widest_label
+
+
+_HIDE_LABELS = (
+    _LabeledWidget,
+    ButtonWidget,
+    ClassGuiBase,
+    FreeWidget,
+    Label,
+    Image,
+    Table,
+    FunctionGui,
+)
 
 
 def find_window_ancestor(widget: Widget) -> SubWindowsClassGui:
@@ -424,93 +526,7 @@ def make_gui(
             self.native.setObjectName(self.name)
             self.native.setWindowTitle(self.name)
 
-        def __setattr__(self, name: str, value: Any) -> None:
-            if not isinstance(getattr(self.__class__, name, None), MagicField):
-                container.__setattr__(self, name, value)
-            else:
-                object.__setattr__(self, name, value)
-
-        def insert(self: ClassGuiBase, key: int, widget: Widget) -> None:
-            self._fast_insert(key, widget)
-            self._unify_label_widths()
-            return None
-
-        def reset_choices(self: ClassGuiBase, *_: Any):
-            """Reset child Categorical widgets"""
-            all_widgets: set[Widget] = set()
-
-            for item in self._list:
-                widget = getattr(item, "_inner_widget", item)
-                all_widgets.add(widget)
-            for widget in self.__magicclass_children__:
-                all_widgets.add(widget)
-
-            for w in all_widgets:
-                if hasattr(w, "reset_choices"):
-                    w.reset_choices()
-            return None
-
-        def show(self: ClassGuiBase, run: bool = True) -> None:
-            """
-            Show GUI. If any of the parent GUI is a dock widget in napari, then this
-            will also show up as a dock widget (floating if in popup mode).
-
-            Parameters
-            ----------
-            run : bool, default is True
-                *Unlike magicgui, this parameter should always be True* unless you want
-                to close the window immediately. If true, application gets executed if
-                needed.
-            """
-            mcls_parent = self.__magicclass_parent__
-            if mcls_parent is not None and self.parent is None:
-                # If child magic class is closed before, we have to set parent again.
-                self.native.setParent(mcls_parent.native, self.native.windowFlags())
-
-            viewer = self.parent_viewer
-            if viewer is not None and self.parent is not None:
-                name = self.parent.objectName()
-                if name in viewer.window._dock_widgets and isinstance(
-                    self.parent, QDockWidget
-                ):
-                    viewer.window._dock_widgets[name].show()
-                else:
-                    _floating = self._popup_mode == PopUpMode.popup
-                    _area = "left" if _floating else "right"
-                    dock = viewer.window.add_dock_widget(
-                        self,
-                        name=self.name.replace("_", " ").strip(),
-                        area=_area,
-                        allowed_areas=["left", "right"],
-                    )
-                    dock.setFloating(_floating)
-            else:
-                container.show(self, run=False)
-                if mcls_parent is not None:
-                    topleft = mcls_parent.native.geometry().topLeft()
-                    topleft.setX(topleft.x() + 20)
-                    topleft.setY(topleft.y() + 20)
-                    self.native.move(topleft)
-                self.native.activateWindow()
-                if run:
-                    run_app()
-            return None
-
-        def close(self: ClassGuiBase):
-            """Close GUI. if this widget is a dock widget, then also close it."""
-
-            current_self = self._search_parent_magicclass()
-
-            viewer = current_self.parent_viewer
-            if viewer is not None:
-                try:
-                    viewer.window.remove_dock_widget(self.parent)
-                except Exception:
-                    pass
-
-            container.close(self)
-
-            return None
+        close = ClassGuiBase.close
 
         if issubclass(container, MainWindow):
             # Similar to napari's viewer.window.add_dock_widget.
@@ -581,7 +597,7 @@ def make_gui(
                 self.native.removeDockWidget(dock)
                 self.__magicclass_children__.pop(i_dock)
 
-            def close(self: ClassGuiBase):
+            def close(self: MainWindowClassGui):
                 """Close GUI."""
                 self.native.close()
                 return None
@@ -605,10 +621,11 @@ def make_gui(
         cls.__delitem__ = container.__delitem__
         cls.__iter__ = container.__iter__
         cls.__len__ = container.__len__
-        cls.__setattr__ = __setattr__
-        cls.insert = insert
-        cls.show = show
-        cls.reset_choices = reset_choices
+        cls._unify_label_widths = ClassGuiBase._unify_label_widths
+        cls.__setattr__ = ClassGuiBase.__setattr__
+        cls.insert = ClassGuiBase.insert
+        cls.show = ClassGuiBase.show
+        cls.reset_choices = ClassGuiBase.reset_choices
         cls.close = close
         cls._container_widget = container
         cls._remove_child_margins = no_margin

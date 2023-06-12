@@ -131,6 +131,7 @@ _RESERVED = frozenset(
         "_unwrap_method",
         "_search_parent_magicclass",
         "_iter_child_magicclasses",
+        "_initialized",
     }
 )
 
