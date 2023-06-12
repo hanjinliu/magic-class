@@ -13,10 +13,10 @@ from typing import (
 from types import MethodType
 from functools import wraps as functools_wraps
 from abc import ABCMeta
-from typing_extensions import _AnnotatedAlias, NoReturn
+from typing_extensions import _AnnotatedAlias
 import inspect
 import warnings
-from qtpy.QtWidgets import QWidget, QDockWidget
+from qtpy import QtWidgets as QtW
 
 from psygnal import Signal
 from magicgui.signature import MagicParameter
@@ -209,7 +209,7 @@ class MagicTemplate(MutableSequence[Widget], metaclass=_MagicTemplateMeta):
     min_height: int
     min_width: int
     name: str
-    native: QWidget
+    native: QtW.QWidget
     options: dict
     param_kind: inspect._ParameterKind
     parent: Widget | None
@@ -220,15 +220,6 @@ class MagicTemplate(MutableSequence[Widget], metaclass=_MagicTemplateMeta):
     width: int
 
     __init_subclass__ = check_override
-
-    def show(self, run: bool = True) -> None:
-        raise NotImplementedError()
-
-    def hide(self) -> None:
-        raise NotImplementedError()
-
-    def close(self) -> None:
-        raise NotImplementedError()
 
     @overload
     def __getitem__(self, key: int | str) -> Widget:
@@ -241,13 +232,10 @@ class MagicTemplate(MutableSequence[Widget], metaclass=_MagicTemplateMeta):
     def __getitem__(self, key):
         raise NotImplementedError()
 
-    def __setitem__(self, key: int, value: Any) -> NoReturn:
-        raise NotImplementedError("Cannot set item in magicclass. Use insert instead.")
-
-    def __delitem__(self, key: int) -> None:
+    def __setitem__(self, key: int, value: Any):
         raise NotImplementedError()
 
-    def __iter__(self) -> Iterator[Widget]:
+    def __delitem__(self, key: int) -> None:
         raise NotImplementedError()
 
     def __len__(self) -> int:
@@ -260,6 +248,15 @@ class MagicTemplate(MutableSequence[Widget], metaclass=_MagicTemplateMeta):
 
         def remove(self, value: Widget | str):
             raise NotImplementedError()
+
+    def show(self, run: bool = True) -> None:
+        raise NotImplementedError()
+
+    def hide(self) -> None:
+        raise NotImplementedError()
+
+    def close(self) -> None:
+        raise NotImplementedError()
 
     def _fast_insert(self, key: int, widget: Widget | Callable) -> None:
         raise NotImplementedError()
@@ -289,12 +286,12 @@ class MagicTemplate(MutableSequence[Widget], metaclass=_MagicTemplateMeta):
     def parent_viewer(self) -> napari.Viewer | None:
         """Return napari.Viewer if magic class is a dock widget of a viewer."""
         parent_self = self._search_parent_magicclass()
-        if not isinstance(parent_self.native.parent(), QDockWidget):
+        if not isinstance(parent_self.native.parent(), QtW.QDockWidget):
             return None
         return _find_viewer_ancestor(parent_self.native)
 
     @property
-    def parent_dock_widget(self) -> QDockWidget | None:
+    def parent_dock_widget(self) -> QtW.QDockWidget | None:
         """
         Return dock widget object if magic class is a dock widget of a main
         window widget, such as a napari Viewer.
@@ -302,7 +299,7 @@ class MagicTemplate(MutableSequence[Widget], metaclass=_MagicTemplateMeta):
         parent_self = self._search_parent_magicclass()
         try:
             dock = parent_self.native.parent()
-            if not isinstance(dock, QDockWidget):
+            if not isinstance(dock, QtW.QDockWidget):
                 dock = None
         except AttributeError:
             dock = None
@@ -862,6 +859,7 @@ class ContainerLikeGui(BaseGui[Action], mguiLike):
     _component_class = Action
     changed = Signal(object)
     _list: list[AbstractAction | ContainerLikeGui]
+    native: QtW.QMenu | QtW.QToolBar
 
     def reset_choices(self, *_: Any):
         """Reset child Categorical widgets"""
@@ -982,6 +980,24 @@ class ContainerLikeGui(BaseGui[Action], mguiLike):
             imsave(file_obj, self.render(), format="png")
             file_obj.seek(0)
             return file_obj.read()
+
+    def close(self):
+        """Close the widget."""
+        return self.native.close()
+
+    def hide(self):
+        """Hide the widget."""
+        return self.native.hide()
+
+    def show(self, run=True):
+        """Show the widget."""
+        return self.native.show()
+
+    def __iter__(self) -> Iterator[ContainerLikeGui | AbstractAction]:
+        return iter(self._list)
+
+    def __len__(self) -> int:
+        return len(self._list)
 
 
 def _get_widget_name(widget: Widget):
@@ -1396,7 +1412,7 @@ def _empty_func(name: str) -> Callable[[Any], None]:
     return f
 
 
-def _find_viewer_ancestor(widget: QWidget) -> napari.Viewer | None:
+def _find_viewer_ancestor(widget: QtW.QWidget) -> napari.Viewer | None:
     """Return the closest parent napari Viewer."""
     parent = widget.parent()
     while parent:
