@@ -4,15 +4,12 @@ from typing import Callable, TYPE_CHECKING, TypeVar, overload
 from macrokit import Mock, Expr
 from magicclass.utils import show_messagebox
 from magicclass.signature import upgrade_signature
+from magicclass._exceptions import Canceled
 
 if TYPE_CHECKING:
     from magicclass._gui import BaseGui
 
 _F = TypeVar("_F", bound=Callable)
-
-
-class Canceled(RuntimeError):
-    """Raised when a function is canceled"""
 
 
 @overload

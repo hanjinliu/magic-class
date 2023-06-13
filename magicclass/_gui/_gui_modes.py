@@ -7,6 +7,7 @@ from enum import Enum
 import functools
 from magicgui.widgets import FunctionGui, Widget
 from .mgui_ext import FunctionGuiPlus
+from magicclass._exceptions import Canceled
 
 
 class PopUpMode(Enum):
@@ -106,6 +107,8 @@ class ErrorMode(Enum):
         def wrapped_func(*args, **kwargs):
             try:
                 out = func(*args, **kwargs)
+            except Canceled as e:
+                out = e  # Do not raise "Canceled" message box
             except Exception as e:
                 e.__traceback__ = _cleanup_tb(e.__traceback__)
                 handler(e, parent=parent)
