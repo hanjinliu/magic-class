@@ -907,10 +907,13 @@ class ContainerLikeGui(BaseGui[Action], mguiLike):
         return out
 
     def __setitem__(self, key, value):
-        raise NotImplementedError()
+        raise AttributeError("Can't set item to widgets. Use append or insert instead.")
 
     def __delitem__(self, key: int | str) -> None:
+        if isinstance(key, str):
+            key = self.index(key)
         self.native.removeAction(self[key].native)
+        del self._list[key]
 
     def __iter__(self) -> Iterator[ContainerLikeGui | AbstractAction]:
         return iter(self._list)
