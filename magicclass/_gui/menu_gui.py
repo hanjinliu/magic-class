@@ -169,7 +169,7 @@ class MenuGuiBase(ContainerLikeGui):
     def _fast_insert(
         self,
         key: int,
-        obj: Callable | MenuGuiBase | AbstractAction,
+        obj: Callable | MenuGuiBase | AbstractAction | Widget,
         remove_label: bool = False,
     ) -> None:
         if isinstance(obj, Callable):
@@ -188,6 +188,9 @@ class MenuGuiBase(ContainerLikeGui):
                 object.__setattr__(self, method_name, obj)
         else:
             _obj = obj
+
+        if isinstance(_obj, Widget):
+            _obj = WidgetAction(_obj)
 
         if isinstance(_obj, (self._component_class, MenuGuiBase)):
             insert_action_like(self.native, key, _obj.native)

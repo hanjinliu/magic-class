@@ -924,6 +924,12 @@ class ContainerLikeGui(BaseGui[Action], mguiLike):
     def append(self, obj: Callable | ContainerLikeGui | AbstractAction) -> None:
         return self.insert(len(self._list), obj)
 
+    def index(self, value: Any, start: int = 0, stop: int = 9223372036854775807) -> int:
+        """Return index of a specific widget instance (or widget name)."""
+        if isinstance(value, str):
+            value = self[value]
+        return super().index(value, start, stop)
+
     def _unify_label_widths(self):
         _hide_labels = (
             _LabeledWidgetAction,
