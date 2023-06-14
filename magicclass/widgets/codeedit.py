@@ -15,10 +15,11 @@ from magicgui.types import Undefined
 
 from macrokit import parse, Symbol, Expr, Head
 from magicclass._gui.utils import show_dialog_from_mgui
-from magicclass.utils import show_messagebox
 
 if TYPE_CHECKING:
     from magicclass import MagicTemplate
+
+_TAB = " " * 4
 
 
 class QLineNumberArea(QtW.QWidget):
@@ -138,13 +139,13 @@ class QCodeEditor(QtW.QPlainTextEdit):
                 ev = QtGui.QKeyEvent(ev)
                 if (
                     ev.key() == Qt.Key.Key_Tab
-                    and ev.modifiers() & Qt.KeyboardModifier.NoModifier
+                    and ev.modifiers() == Qt.KeyboardModifier.NoModifier
                 ):
                     if self.textCursor().hasSelection():
                         for cursor in self.iter_selected_lines():
-                            self.add_at_the_start("\t", cursor)
+                            self.add_at_the_start(_TAB, cursor)
                     else:
-                        self.textCursor().insertText("\t")
+                        self.textCursor().insertText(_TAB)
                     return True
                 if (
                     ev.key() == Qt.Key.Key_Tab
@@ -152,7 +153,7 @@ class QCodeEditor(QtW.QPlainTextEdit):
                 ) or ev.key() == Qt.Key.Key_Backtab:
                     # unindent
                     for cursor in self.iter_selected_lines():
-                        self.remove_at_the_start("\t", cursor)
+                        self.remove_at_the_start(_TAB, cursor)
                     return True
                 # comment out selected lines
                 elif (
@@ -242,20 +243,23 @@ class QCodeEditor(QtW.QPlainTextEdit):
                 elif ev.key() in (Qt.Key.Key_Enter, Qt.Key.Key_Return):
                     # get current line, check if it has tabs at the beginning
                     # if yes, insert the same number of tabs at the next line
+                    self._new_line_event()
+                    return True
+                elif (
+                    ev.key() == Qt.Key.Key_Backspace
+                    and ev.modifiers() == Qt.KeyboardModifier.NoModifier
+                ):
+                    # delete 4 spaces
                     _cursor = self.textCursor()
-                    _cursor.movePosition(QtGui.QTextCursor.MoveOperation.StartOfLine)
                     _cursor.movePosition(
-                        QtGui.QTextCursor.MoveOperation.EndOfLine,
+                        QtGui.QTextCursor.MoveOperation.StartOfLine,
                         QtGui.QTextCursor.MoveMode.KeepAnchor,
                     )
                     line = _cursor.selectedText()
-                    cursor = self.textCursor()
-                    if line.lstrip().endswith(":"):
-                        cursor.insertText("\n" + _get_indents(line) + "    ")
-                    else:
-                        cursor.insertText("\n" + _get_indents(line))
-                    self.setTextCursor(cursor)
-                    return True
+                    if line.endswith("    "):
+                        for _ in range(4):
+                            self.textCursor().deletePreviousChar()
+                        return True
 
         except Exception:
             pass
@@ -521,6 +525,57 @@ class QCodeEditor(QtW.QPlainTextEdit):
     def setText(self, text: str):
         """Set the text."""
         self.setPlainText(text.replace("\n", "\u2029"))
+
+    def _text_of_current_line(self):
+        _cursor = self.textCursor()
+        _cursor.movePosition(QtGui.QTextCursor.MoveOperation.StartOfLine)
+        _cursor.movePosition(
+            QtGui.QTextCursor.MoveOperation.EndOfLine,
+            QtGui.QTextCursor.MoveMode.KeepAnchor,
+        )
+        return _cursor.selectedText()
+
+    def _text_of_line_before_cursor(self):
+        _cursor = self.textCursor()
+        _cursor.movePosition(
+            QtGui.QTextCursor.MoveOperation.StartOfLine,
+            QtGui.QTextCursor.MoveMode.KeepAnchor,
+        )
+        return _cursor.selectedText()
+
+    def _new_line_event(self):
+        line = self._text_of_line_before_cursor()
+        cursor = self.textCursor()
+        line_rstripped = line.rstrip()
+        indent = _get_indents(line)
+        if line_rstripped == "":
+            cursor.insertText("\n" + indent)
+            self.setTextCursor(cursor)
+            return
+
+        ndel = len(line) - len(line_rstripped)
+        last_char = line_rstripped[-1]
+        if last_char in "([{:":
+            for _ in range(ndel):
+                cursor.deletePreviousChar()
+            cursor.insertText("\n" + indent + _TAB)
+            if _close := {"(": ")", "{": "}", "[": "]"}.get(last_char):
+                cursor.insertText("\n" + indent + _close)
+                cursor.movePosition(QtGui.QTextCursor.MoveOperation.Up)
+                cursor.movePosition(QtGui.QTextCursor.MoveOperation.EndOfLine)
+        else:
+            cursor.insertText("\n" + indent)
+
+        line_lstripped = line.lstrip()
+        if (
+            line_lstripped.startswith("return ")
+            or line_lstripped.startswith("raise ")
+            or line_lstripped in ("return", "raise", "break", "continue", "pass")
+        ):
+            if line.startswith(_TAB):
+                for _ in range(4):
+                    cursor.deletePreviousChar()
+        self.setTextCursor(cursor)
 
 
 def _get_indents(text: str) -> int:
