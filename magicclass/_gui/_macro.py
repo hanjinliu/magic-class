@@ -682,7 +682,13 @@ class GuiMacro(BaseMacro):
 
         wdt: Clickable = ins[_last.name]
         if wdt.mgui is None:
-            raise ValueError(f"Method {_object} is not called yet.")
+            # If macro is added by users, the internal magicgui will not be tagged
+            # to the button. Create one here.
+            from ._base import _build_mgui, _create_gui_method
+
+            func = _create_gui_method(ui, getattr(ins, _last.name))
+            wdt.mgui = _build_mgui(wdt, func, ui)
+
         if check_nargs and not same_args:
             n_widget_args = sum(
                 not isinstance(w, EmptyWidget)
