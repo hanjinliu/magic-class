@@ -242,6 +242,10 @@ class QCodeEditor(QtW.QPlainTextEdit):
                         for _ in range(4):
                             self.textCursor().deletePreviousChar()
                         return True
+                elif _key == Qt.Key.Key_D and _mod & Mod.Ctrl:
+                    return self._select_word_event()
+                elif _key == Qt.Key.Key_L and _mod & Mod.Ctrl:
+                    return self._select_line_event()
 
         except Exception:
             pass
@@ -559,6 +563,30 @@ class QCodeEditor(QtW.QPlainTextEdit):
                     self.remove_at_the_start("#", cursor)
             else:
                 self.add_at_the_start("# ", cursor)
+        return True
+
+    def _select_word_event(self):
+        cursor = self.textCursor()
+        cursor.movePosition(QtGui.QTextCursor.MoveOperation.NextWord)
+        cursor.movePosition(
+            QtGui.QTextCursor.MoveOperation.PreviousWord,
+            QtGui.QTextCursor.MoveMode.KeepAnchor,
+        )
+        self.setTextCursor(cursor)
+        return True
+
+    def _select_line_event(self):
+        cursor = self.textCursor()
+        cursor.movePosition(QtGui.QTextCursor.MoveOperation.StartOfLine)
+        cursor.movePosition(
+            QtGui.QTextCursor.MoveOperation.EndOfLine,
+            QtGui.QTextCursor.MoveMode.KeepAnchor,
+        )
+        cursor.movePosition(
+            QtGui.QTextCursor.MoveOperation.NextCharacter,
+            QtGui.QTextCursor.MoveMode.KeepAnchor,
+        )
+        self.setTextCursor(cursor)
         return True
 
     def _new_line_event(self):
