@@ -145,9 +145,9 @@ def test_repeat():
             pass
     ui = A()
     ui.f()
-    repeat(ui)
+    ui.macro.repeat_method(same_args=True)
     ui.g(2)
-    repeat(ui)
+    ui.macro.repeat_method(same_args=True)
     assert str(ui.macro[1]) == "ui.f()"
     assert str(ui.macro[2]) == "ui.f()"
     assert str(ui.macro[3]) == "ui.g(a=2)"

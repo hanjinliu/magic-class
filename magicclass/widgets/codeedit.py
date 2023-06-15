@@ -282,14 +282,19 @@ class QCodeEditor(QtW.QPlainTextEdit):
             mgui = info.widget.mgui
             mcls = self._search_parent_magicclass()
             if mgui is None:
-                with mcls._error_mode.raise_with_handler(mcls):
-                    raise ValueError(f"No magicgui found in {info.widget!r}.")
+                # macro is not added from GUI. Create one.
+                from magicclass._gui._base import _build_mgui, _create_gui_method
+
+                func = _create_gui_method(mcls, info.obj)
+                mgui = _build_mgui(info.widget, func, mcls)
+                info.widget.mgui = mgui
+
             nwidgets = sum(not isinstance(wdt, EmptyWidget) for wdt in mgui)
             if nwidgets > 1:
                 if isinstance(mgui[0], FileEdit):
                     show_dialog_from_mgui(mgui)
                 else:
-                    mgui.show()
+                    info.widget.changed()
             else:
                 with mcls._error_mode.raise_with_handler(mcls):
                     raise TypeError(f"No parameter can be chosen in {info.widget!r}.")
