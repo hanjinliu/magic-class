@@ -1,5 +1,6 @@
 from __future__ import annotations
 from contextlib import contextmanager
+import inspect
 import sys
 from typing import Any, Iterator, NamedTuple, TYPE_CHECKING
 import weakref
@@ -15,10 +16,12 @@ from magicgui.types import Undefined
 
 from macrokit import parse, Symbol, Expr, Head
 from magicclass._gui.utils import show_dialog_from_mgui
-from magicclass.utils import show_messagebox
+from magicclass.signature import split_annotated_type, is_annotated
 
 if TYPE_CHECKING:
     from magicclass import MagicTemplate
+
+_TAB = " " * 4
 
 
 class QLineNumberArea(QtW.QWidget):
@@ -60,6 +63,13 @@ class QLineNumberArea(QtW.QWidget):
                 QtGui.QTextCursor.MoveMode.KeepAnchor,
             )
             self.editor.setTextCursor(cursor)
+
+
+class Mod:
+    No = Qt.KeyboardModifier.NoModifier
+    Ctrl = Qt.KeyboardModifier.ControlModifier
+    Shift = Qt.KeyboardModifier.ShiftModifier
+    Alt = Qt.KeyboardModifier.AltModifier
 
 
 class QCodeEditor(QtW.QPlainTextEdit):
@@ -131,54 +141,30 @@ class QCodeEditor(QtW.QPlainTextEdit):
     def event(self, ev: QtCore.QEvent):
         try:
             if ev.type() == QtCore.QEvent.Type.ToolTip:
-                ev = QtGui.QHelpEvent(ev)
-                line = self._analyze_line(self.viewport().mapFromGlobal(ev.globalPos()))
-                QtW.QToolTip.showText(ev.globalPos(), str(line), self)
+                return self._show_tooltip(ev)
             elif ev.type() == QtCore.QEvent.Type.KeyPress:
                 ev = QtGui.QKeyEvent(ev)
-                if (
-                    ev.key() == Qt.Key.Key_Tab
-                    and ev.modifiers() & Qt.KeyboardModifier.NoModifier
-                ):
-                    if self.textCursor().hasSelection():
-                        for cursor in self.iter_selected_lines():
-                            self.add_at_the_start("\t", cursor)
-                    else:
-                        self.textCursor().insertText("\t")
-                    return True
-                if (
-                    ev.key() == Qt.Key.Key_Tab
-                    and ev.modifiers() & Qt.KeyboardModifier.ShiftModifier
-                ) or ev.key() == Qt.Key.Key_Backtab:
-                    # unindent
-                    for cursor in self.iter_selected_lines():
-                        self.remove_at_the_start("\t", cursor)
-                    return True
+                _key = ev.key()
+                _mod = ev.modifiers()
+                if _key == Qt.Key.Key_Tab and _mod == Mod.No:
+                    return self._tab_event()
+                elif _key == Qt.Key.Key_Tab and _mod & Mod.Shift:
+                    return self._back_tab_event()
+                elif _key == Qt.Key.Key_Backtab:
+                    return self._back_tab_event()
                 # comment out selected lines
-                elif (
-                    ev.key() == Qt.Key.Key_Slash
-                    and ev.modifiers() & Qt.KeyboardModifier.ControlModifier
-                ):
-                    for cursor in self.iter_selected_lines():
-                        line = cursor.block().text()
-                        if line.startswith("#"):
-                            if line.startswith("# "):
-                                self.remove_at_the_start("# ", cursor)
-                            else:
-                                self.remove_at_the_start("#", cursor)
-                        else:
-                            self.add_at_the_start("# ", cursor)
-                    return True
+                elif _key == Qt.Key.Key_Slash and _mod & Mod.Ctrl:
+                    return self._ctrl_slash_event()
                 # move selected lines up or down
                 elif (
-                    ev.key() in (Qt.Key.Key_Up, Qt.Key.Key_Down)
-                    and ev.modifiers() & Qt.KeyboardModifier.AltModifier
+                    _key in (Qt.Key.Key_Up, Qt.Key.Key_Down)
+                    and _mod & Qt.KeyboardModifier.AltModifier
                 ):
                     cursor = self.textCursor()
                     cursor0 = self.textCursor()
                     start = cursor.selectionStart()
                     end = cursor.selectionEnd()
-                    if ev.key() == Qt.Key.Key_Up and min(start, end) > 0:
+                    if _key == Qt.Key.Key_Up and min(start, end) > 0:
                         cursor0.setPosition(start)
                         cursor0.movePosition(
                             QtGui.QTextCursor.MoveOperation.PreviousBlock
@@ -209,7 +195,7 @@ class QCodeEditor(QtW.QPlainTextEdit):
                         cursor0.insertText(txt)
                         self.setTextCursor(cursor)
                     elif (
-                        ev.key() == Qt.Key.Key_Down
+                        _key == Qt.Key.Key_Down
                         and max(start, end) < self.document().characterCount() - 1
                     ):
                         cursor0.setPosition(end)
@@ -239,23 +225,27 @@ class QCodeEditor(QtW.QPlainTextEdit):
                         cursor0.insertText(txt)
                         self.setTextCursor(cursor)
                     return True
-                elif ev.key() in (Qt.Key.Key_Enter, Qt.Key.Key_Return):
+                elif _key in (Qt.Key.Key_Enter, Qt.Key.Key_Return):
                     # get current line, check if it has tabs at the beginning
                     # if yes, insert the same number of tabs at the next line
+                    self._new_line_event()
+                    return True
+                elif _key == Qt.Key.Key_Backspace and _mod == Mod.No:
+                    # delete 4 spaces
                     _cursor = self.textCursor()
-                    _cursor.movePosition(QtGui.QTextCursor.MoveOperation.StartOfLine)
                     _cursor.movePosition(
-                        QtGui.QTextCursor.MoveOperation.EndOfLine,
+                        QtGui.QTextCursor.MoveOperation.StartOfLine,
                         QtGui.QTextCursor.MoveMode.KeepAnchor,
                     )
                     line = _cursor.selectedText()
-                    cursor = self.textCursor()
-                    if line.lstrip().endswith(":"):
-                        cursor.insertText("\n" + _get_indents(line) + "    ")
-                    else:
-                        cursor.insertText("\n" + _get_indents(line))
-                    self.setTextCursor(cursor)
-                    return True
+                    if line.endswith("    "):
+                        for _ in range(4):
+                            self.textCursor().deletePreviousChar()
+                        return True
+                elif _key == Qt.Key.Key_D and _mod & Mod.Ctrl:
+                    return self._select_word_event()
+                elif _key == Qt.Key.Key_L and _mod & Mod.Ctrl:
+                    return self._select_line_event()
 
         except Exception:
             pass
@@ -272,13 +262,6 @@ class QCodeEditor(QtW.QPlainTextEdit):
         if obj := self._magicclass_parent_ref():
             return obj._search_parent_magicclass()
         return None
-
-    def _analyze_line(self, pos: QtCore.QPoint):
-        """Analyze the line under position."""
-        info = self.wordAt(pos)
-        if info is None:
-            return ""
-        return f"{info.expr} (type: {type(info.obj).__name__})"
 
     def wordAt(self, pos: QtCore.QPoint) -> WordInfo | None:
         cursor = self.cursorForPosition(pos)
@@ -299,21 +282,26 @@ class QCodeEditor(QtW.QPlainTextEdit):
         from magicclass._gui.mgui_ext import is_clickable
 
         info = self.wordAt(pos)
-        if info and is_clickable(info.obj):
-            mgui = info.obj.mgui
+        if info and is_clickable(info.widget):
+            mgui = info.widget.mgui
             mcls = self._search_parent_magicclass()
             if mgui is None:
-                with mcls._error_mode.raise_with_handler(mcls):
-                    raise ValueError(f"No magicgui found in {info.obj!r}.")
+                # macro is not added from GUI. Create one.
+                from magicclass._gui._base import _build_mgui, _create_gui_method
+
+                func = _create_gui_method(mcls, info.obj)
+                mgui = _build_mgui(info.widget, func, mcls)
+                info.widget.mgui = mgui
+
             nwidgets = sum(not isinstance(wdt, EmptyWidget) for wdt in mgui)
             if nwidgets > 1:
                 if isinstance(mgui[0], FileEdit):
                     show_dialog_from_mgui(mgui)
                 else:
-                    mgui.show()
+                    info.widget.changed()
             else:
                 with mcls._error_mode.raise_with_handler(mcls):
-                    raise TypeError(f"No parameter can be chosen in {info.obj!r}.")
+                    raise TypeError(f"No parameter can be chosen in {info.widget!r}.")
 
         return
 
@@ -522,6 +510,119 @@ class QCodeEditor(QtW.QPlainTextEdit):
         """Set the text."""
         self.setPlainText(text.replace("\n", "\u2029"))
 
+    def _text_of_current_line(self):
+        _cursor = self.textCursor()
+        _cursor.movePosition(QtGui.QTextCursor.MoveOperation.StartOfLine)
+        _cursor.movePosition(
+            QtGui.QTextCursor.MoveOperation.EndOfLine,
+            QtGui.QTextCursor.MoveMode.KeepAnchor,
+        )
+        return _cursor.selectedText()
+
+    def _text_of_line_before_cursor(self):
+        _cursor = self.textCursor()
+        _cursor.movePosition(
+            QtGui.QTextCursor.MoveOperation.StartOfLine,
+            QtGui.QTextCursor.MoveMode.KeepAnchor,
+        )
+        return _cursor.selectedText()
+
+    def _show_tooltip(self, ev: QtGui.QHelpEvent):
+        pos = self.viewport().mapFromGlobal(ev.globalPos())
+        info = self.wordAt(pos)
+        if info is None:
+            return False
+        try:
+            tooltip = info.get_method_tooltip()
+        except Exception:
+            tooltip = info.get_simple_tooltip()
+        QtW.QToolTip.showText(ev.globalPos(), tooltip, self)
+        return True
+
+    def _tab_event(self):
+        if self.textCursor().hasSelection():
+            for cursor in self.iter_selected_lines():
+                self.add_at_the_start(_TAB, cursor)
+        else:
+            self.textCursor().insertText(_TAB)
+        return True
+
+    def _back_tab_event(self):
+        # unindent
+        for cursor in self.iter_selected_lines():
+            self.remove_at_the_start(_TAB, cursor)
+        return True
+
+    def _ctrl_slash_event(self):
+        for cursor in self.iter_selected_lines():
+            line = cursor.block().text()
+            if line.startswith("#"):
+                if line.startswith("# "):
+                    self.remove_at_the_start("# ", cursor)
+                else:
+                    self.remove_at_the_start("#", cursor)
+            else:
+                self.add_at_the_start("# ", cursor)
+        return True
+
+    def _select_word_event(self):
+        cursor = self.textCursor()
+        cursor.movePosition(QtGui.QTextCursor.MoveOperation.NextWord)
+        cursor.movePosition(
+            QtGui.QTextCursor.MoveOperation.PreviousWord,
+            QtGui.QTextCursor.MoveMode.KeepAnchor,
+        )
+        self.setTextCursor(cursor)
+        return True
+
+    def _select_line_event(self):
+        cursor = self.textCursor()
+        cursor.movePosition(QtGui.QTextCursor.MoveOperation.StartOfLine)
+        cursor.movePosition(
+            QtGui.QTextCursor.MoveOperation.EndOfLine,
+            QtGui.QTextCursor.MoveMode.KeepAnchor,
+        )
+        cursor.movePosition(
+            QtGui.QTextCursor.MoveOperation.NextCharacter,
+            QtGui.QTextCursor.MoveMode.KeepAnchor,
+        )
+        self.setTextCursor(cursor)
+        return True
+
+    def _new_line_event(self):
+        line = self._text_of_line_before_cursor()
+        cursor = self.textCursor()
+        line_rstripped = line.rstrip()
+        indent = _get_indents(line)
+        if line_rstripped == "":
+            cursor.insertText("\n" + indent)
+            self.setTextCursor(cursor)
+            return
+
+        ndel = len(line) - len(line_rstripped)
+        last_char = line_rstripped[-1]
+        if last_char in "([{:":
+            for _ in range(ndel):
+                cursor.deletePreviousChar()
+            cursor.insertText("\n" + indent + _TAB)
+            if _close := {"(": ")", "{": "}", "[": "]"}.get(last_char):
+                cursor.insertText("\n" + indent + _close)
+                cursor.movePosition(QtGui.QTextCursor.MoveOperation.Up)
+                cursor.movePosition(QtGui.QTextCursor.MoveOperation.EndOfLine)
+        else:
+            cursor.insertText("\n" + indent)
+
+        line_lstripped = line.lstrip()
+        if (
+            line_lstripped.startswith("return ")
+            or line_lstripped.startswith("raise ")
+            or line_lstripped in ("return", "raise", "break", "continue", "pass")
+        ):
+            if line.startswith(_TAB):
+                for _ in range(4):
+                    cursor.deletePreviousChar()
+        self.setTextCursor(cursor)
+
 
 def _get_indents(text: str) -> int:
     prefixes = {" ", "\t"}
@@ -534,9 +635,64 @@ def _get_indents(text: str) -> int:
 
 
 class WordInfo(NamedTuple):
-    obj: Any
-    expr: Expr
-    word: str
+    """Info of a word in the code."""
+
+    widget: Any  # hovered widget (if available)
+    expr: Expr  # hovered expression
+    word: str  # hovered word
+    obj: Any = None
+
+    def get_simple_tooltip(self) -> str:
+        return f"{self.expr} (widget: {annot_to_str(type(self.widget))})"
+
+    def get_method_tooltip(self) -> str:
+        sig = inspect.signature(self.obj)
+        doc = getattr(self.obj, "__doc__", None)
+        if doc is None:
+            doc = "<No Docstring>"
+        param_strs: list[str] = []
+        for name, param in sig.parameters.items():
+            if param.annotation is param.empty:
+                repr_ = name
+            else:
+                repr_ = f"{name}: {annot_to_str(param.annotation)}"
+            if param.default is not param.empty:
+                repr_ += f" = {safe_repr(param.default)}"
+            param_strs.append(repr_)
+        if sig.return_annotation is not sig.empty:
+            ret_annot = f" -> {annot_to_str(sig.return_annotation)}"
+        else:
+            ret_annot = ""
+        if len(param_strs) == 0:
+            all_args_str = ""
+        else:
+            all_args_str = "\n  " + ",\n  ".join(param_strs) + "\n"
+        return (
+            f"{self.expr} (widget: {annot_to_str(type(self.widget))})\n"
+            f"def {self.expr.args[-1]}({all_args_str}){ret_annot}\n"
+            f"{doc}"
+        )
+
+
+def annot_to_str(annot: Any) -> str:
+    if isinstance(annot, type):
+        return annot.__name__
+    if is_annotated(annot):
+        return annot_to_str(split_annotated_type(annot)[0])
+    s = str(annot)
+    if s.startswith("typing."):
+        return s[7:]
+    return s
+
+
+def safe_repr(obj: Any) -> str:
+    try:
+        out = repr(obj)
+    except Exception:
+        return "???"
+    if len(out) > 36:
+        return out[:36] + " ..."
+    return out
 
 
 def eval_under_cursor(
@@ -549,11 +705,11 @@ def eval_under_cursor(
     pos_stop = len(line)
     if not isinstance(expr, Expr):
         # got a Symbol
-        obj = expr.eval({expr: parent})
+        obj = widget = expr.eval({expr: parent})
         words = expr
 
     elif expr.head is Head.call:
-        first = expr.args[0]
+        first = expr.args[0]  # e.g. ui, ui.method. ui.subclass.method
         while isinstance(first, Expr) and first.head is Head.getattr:
             next_first, _ = first.args
             _length = len(str(next_first))
@@ -566,9 +722,10 @@ def eval_under_cursor(
             left, right = first.args
             words = first
             expr = Expr(Head.getitem, [left, str(right)])
-            obj = expr.eval({Symbol.var("ui"): parent})
+            widget = expr.eval({Symbol.var("ui"): parent})
+            obj = first.eval({Symbol.var("ui"): parent})
         else:
-            obj = first.eval({first: parent})
+            obj = widget = first.eval({first: parent})
             words = first
 
     elif expr.head is Head.assign:
@@ -587,16 +744,17 @@ def eval_under_cursor(
             left, right = first.args
             left_obj = left.eval({Symbol.var("ui"): parent})
             if hasattr(left_obj, "__getitem__"):
-                obj = left_obj[str(right)]
+                widget = left_obj[str(right)]
+                obj = first.eval({Symbol.var("ui"): parent})
             else:
-                obj = getattr(left_obj, str(right))
+                obj = widget = getattr(left_obj, str(right))
             words = first
         else:
-            obj = first.eval({first: parent})
+            obj = widget = first.eval({first: parent})
             words = first
     else:
         return None
-    return WordInfo(obj, words, str(words).split(".")[-1])
+    return WordInfo(widget, words, str(words).split(".")[-1], obj)
 
 
 # ##############################################################################

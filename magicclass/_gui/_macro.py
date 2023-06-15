@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Any, Callable, Iterable, overload
 import warnings
 from datetime import datetime
 from qtpy import QtWidgets as QtW, QtCore
-from macrokit import Symbol, Expr, Head, BaseMacro, parse
+from macrokit import Symbol, Expr, Head, BaseMacro, parse, symbol
 from macrokit.utils import check_call_args, check_attributes
 from magicgui.widgets import FileEdit, LineEdit, EmptyWidget, PushButton
 from magicclass.utils.qthreading import thread_worker
@@ -343,7 +343,7 @@ class MacroEdit(TabbedContainer):
         _tab_menu.setToolTipsVisible(True)
         self._menubar.addMenu(_tab_menu)
         _tab_menu.addAction(_action("New tab", self._new_tab, "Ctrl+T", tooltip="Open a new empty tab", parent=_tab_menu))
-        _tab_menu.addAction(_action("Duplicate tab", self._duplicate_tab, "Ctrl+D", tooltip="Duplicate current tab as a new tab", parent=_tab_menu))
+        _tab_menu.addAction(_action("Duplicate tab", self._duplicate_tab, "Ctrl+Shift+D", tooltip="Duplicate current tab as a new tab", parent=_tab_menu))
         _tab_menu.addAction(_action("Current macro in new tab", self._create_native_duplicate, tooltip="Duplicate current GUI macro in a new tab", parent=_tab_menu))
         _tab_menu.addAction(_action("Delete tab", self._delete_tab, "Ctrl+W", tooltip="Delete current tab", parent=_tab_menu))
         _tab_menu.addSeparator()
@@ -700,12 +700,16 @@ class GuiMacro(BaseMacro):
 
         if not blocking:
             if same_args:
+                _args, _kwargs = self[index].eval_call_args({symbol(ui): ui})
+                _input = wdt.mgui.__signature__.bind_partial(_args, _kwargs).arguments
+                with wdt.mgui.changed.blocked():
+                    wdt.mgui.update(**_input)
                 wdt.mgui.call_button.changed()  # click the call button
             else:
                 wdt.changed()  # click the button to open magicgui
         else:
             if same_args:
-                wdt.mgui()  # call the method
+                self[index].eval({symbol(ui): ui})  # call the method
             else:
                 if isinstance(wdt.mgui._function, thread_worker):
                     raise ValueError(
